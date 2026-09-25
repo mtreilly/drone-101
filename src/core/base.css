@@ -453,3 +453,34 @@ main {
     }
   }
 }
+
+/* popover scales from its trigger (top-right); drawer slides in; scrim fades */
+.legend-pop {
+  transform-origin: top right;
+}
+.legend-pop:not([hidden]) {
+  animation: pop-in 170ms var(--ease-out);
+}
+.drawer:not([hidden]) {
+  animation: drawer-in 280ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+.scrim:not([hidden]) {
+  animation: fade-in 200ms ease;
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+@keyframes drawer-in {
+  from {
+    translate: 100% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .legend-pop:not([hidden]),
+  .drawer:not([hidden]) {
+    animation: fade-in 150ms ease;
+  }
+}
