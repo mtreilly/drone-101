@@ -1,0 +1,26 @@
+/* progress towards the 10-second goal, under the "in the band" read-out */
+.streak-meter {
+  display: block;
+  height: 4px;
+  margin-top: 4px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--c-setpoint) 16%, transparent);
+  overflow: hidden;
+}
+.streak-meter i {
+  display: block;
+  height: 100%;
+  background: var(--c-setpoint);
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+/* reaching the goal: the frame's edge warms to green once (not on every frame) */
+[data-widget='manual'] > .widget-frame {
+  transition: box-shadow 400ms var(--ease-out);
+}
+[data-widget='manual'] > .widget-frame.celebrate {
+  box-shadow:
+    var(--shadow),
+    0 0 0 2px color-mix(in srgb, var(--c-setpoint) 55%, transparent);
+}

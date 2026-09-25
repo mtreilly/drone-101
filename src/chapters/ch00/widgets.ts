@@ -7,6 +7,7 @@ import { readout, segmented, slider, transport } from '../../ui/controls';
 import { Loop } from '../../ui/loop';
 import { Plot } from '../../ui/plot';
 import { ShowerView } from '../../ui/shower-view';
+import './ch00.css';
 
 export interface SavedShowerRun {
   t: number[];
@@ -74,19 +75,29 @@ const manual: WidgetFactory = (host, ctx) => {
   const view = new ShowerView(left, {
     labels: viewLabels(t),
     onKnob: (u) => {
+      if (state === 'done') reset();
       sim.u = u;
       if (state === 'ready') start();
     },
   });
   const plot = tempPlot(right, t, t('plot.aria'));
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite' }, t('status.ready'));
+  // the visual status changes many times a second; screen readers only hear milestones
+  const status = h('p', { class: 'w-status', 'aria-hidden': 'true' }, t('status.ready'));
+  const announce = h('p', { class: 'visually-hidden', 'aria-live': 'polite' });
+  const say = (msg: string) => {
+    status.textContent = msg;
+    announce.textContent = msg;
+  };
   const rTime = readout(t('readout.time'));
   const rStreak = readout(t('readout.streak'), 'sp');
+  const meter = h('span', { class: 'streak-meter', 'aria-hidden': 'true' }, h('i'));
+  rStreak.el.append(meter);
+  const setMeter = (f: number) => ((meter.firstChild as HTMLElement).style.transform = `scaleX(${Math.min(1, f)})`);
   const rCross = readout(t('readout.crossings'), 'err');
   const startBtn = h('button', { class: 'btn primary small', type: 'button' }, t('start'));
   const resetBtn = h('button', { class: 'btn small', type: 'button' }, tc('transport.reset'));
   right.append(h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rTime.el, rStreak.el, rCross.el), h('div', { class: 'w-row' }, startBtn, resetBtn)));
-  host.append(status, h('p', { class: 'w-help' }, t('help')));
+  host.append(status, announce, h('p', { class: 'w-help' }, t('help')));
 
   const loop = new Loop((dt) => {
     if (state !== 'running') return;
@@ -98,8 +109,9 @@ const manual: WidgetFactory = (host, ctx) => {
     else streak = 0;
     if (streak >= GOAL && Number.isNaN(won)) {
       won = sim.t;
-      status.textContent = t('status.won', { t: fmt(won, 1), n: crossings });
+      say(t(crossings === 0 ? 'status.wonZero' : crossings === 1 ? 'status.wonOne' : 'status.won', { t: fmt(won, 1), n: crossings }));
       status.className = 'w-status good';
+      host.classList.add('celebrate');
     }
     acc += dt;
     if (acc >= 0.1) {
@@ -112,7 +124,8 @@ const manual: WidgetFactory = (host, ctx) => {
     }
     view.update({ u: sim.u, pipe: sim.pipeProfile(30), temp: sim.temp }, dt);
     rTime.set(`${fmt(sim.t, 1)} s`);
-    rStreak.set(`${fmt(streak, 1)} / ${GOAL} s`, streak >= GOAL ? 'good' : '');
+    rStreak.set(`${fmt(Math.min(streak, GOAL), 1)} / ${GOAL} s`, streak >= GOAL || !Number.isNaN(won) ? 'good' : '');
+    setMeter(Number.isNaN(won) ? streak / GOAL : 1);
     rCross.set(String(crossings));
     if (state === 'running' && Number.isNaN(won) && streak > 0.5 && streak < GOAL) {
       status.textContent = t('status.inband');
@@ -128,7 +141,7 @@ const manual: WidgetFactory = (host, ctx) => {
     if (state === 'running') return;
     state = 'running';
     startBtn.disabled = true;
-    status.textContent = t('status.go');
+    say(t('status.go'));
     loop.play();
   }
 
@@ -138,9 +151,10 @@ const manual: WidgetFactory = (host, ctx) => {
     progress.save(SHOWER_RUN_KEY, rec);
     ctx.bus.emit('shower:done', { won, crossings });
     if (Number.isNaN(won)) {
-      status.textContent = t('status.timeup', { n: crossings });
+      say(t(crossings === 1 ? 'status.timeupOne' : 'status.timeup', { n: crossings }));
       status.className = 'w-status bad';
     }
+    resetBtn.textContent = t('again');
   }
 
   function reset(): void {
@@ -157,6 +171,9 @@ const manual: WidgetFactory = (host, ctx) => {
     view.setKnob(0);
     view.update({ u: 0, pipe: sim.pipeProfile(30), temp: sim.temp });
     startBtn.disabled = false;
+    resetBtn.textContent = tc('transport.reset');
+    host.classList.remove('celebrate');
+    setMeter(0);
     status.textContent = t('status.ready');
     status.className = 'w-status';
     rTime.set('0 s');
@@ -179,7 +196,7 @@ const robots: WidgetFactory = (host, ctx) => {
   type Hand = keyof typeof policies;
   let hand: Hand = 'normal';
   let sim = new ShowerSim(SHOWER, policies[hand], 0);
-  let acc = 0;
+  let nextSample = 0.1;
   const grid = h('div', { class: 'w-grid side' });
   const left = h('div');
   const right = h('div');
@@ -187,27 +204,40 @@ const robots: WidgetFactory = (host, ctx) => {
   const view = new ShowerView(left, { labels: viewLabels(t) });
   const plot = tempPlot(right, t, t('plot.aria'));
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
-  const loop = new Loop((dt) => {
-    sim.advance(dt);
-    acc += dt;
-    if (acc >= 0.1) {
-      acc = 0;
-      plot.push('T', sim.t, sim.temp);
-      plot.push('mix', sim.t, sim.mix(sim.u));
+  /** advances the robot by `dt` seconds, sampling the plot every 0.1 s */
+  const tick = (dt: number) => {
+    const target = Math.min(DURATION, sim.t + dt);
+    while (sim.t < target - 1e-9) {
+      sim.step();
+      if (sim.t >= nextSample - 1e-9) {
+        nextSample += 0.1;
+        plot.push('T', sim.t, sim.temp);
+        plot.push('mix', sim.t, sim.mix(sim.u));
+      }
     }
     view.update({ u: sim.u, pipe: sim.pipeProfile(30), temp: sim.temp }, dt);
-    if (sim.t >= DURATION) {
+    if (sim.t >= DURATION - 1e-9) {
       loop.pause();
       status.textContent = t(`result.${hand}`);
     }
-  }, host);
+  };
+  const loop = new Loop(tick, host);
   loop.speed = 2;
   const reset = () => {
     loop.pause();
     sim = new ShowerSim(SHOWER, policies[hand], 0);
+    nextSample = 0.1;
     plot.clear();
+    plot.push('T', 0, sim.temp);
+    plot.push('mix', 0, sim.mix(sim.u));
     view.update({ u: 0, pipe: sim.pipeProfile(30), temp: sim.temp });
     status.textContent = t(`intro.${hand}`);
+  };
+  /** runs the chosen hand: animated, or straight to the result with reduced motion */
+  const go = () => {
+    reset();
+    if (Loop.autoplay) loop.play();
+    else tick(DURATION);
   };
   const seg = segmented(
     t('choose'),
@@ -215,17 +245,20 @@ const robots: WidgetFactory = (host, ctx) => {
     hand,
     (v) => {
       hand = v;
-      reset();
-      loop.play();
+      go();
     },
   );
-  host.append(h('p', { class: 'w-title' }, t('title')), seg.el, grid);
-  right.append(status, transport({ loop, onReset: reset, onStep: () => sim.advance(0.5) }));
+  host.append(
+    h('p', { class: 'w-title' }, t('title')),
+    seg.el,
+    grid,
+    h('div', { class: 'w-controls' }, transport({ loop, onReset: reset, onStep: () => tick(0.5) })),
+    status,
+  );
   const off = ctx.bus.on('predict:ch0-harder', () => {
     hand = 'harder';
     seg.set('harder');
-    reset();
-    loop.play();
+    go();
   });
   reset();
   return () => {
@@ -296,7 +329,7 @@ const lag: WidgetFactory = (host, ctx) => {
   };
   const sl = slider({ label: t('slider'), min: 0, max: 6, step: 0.1, value: 0, unit: 's', color: 'eff', onInput: draw });
   host.prepend(h('p', { class: 'w-title' }, t('title')));
-  host.append(h('p', { class: 'w-help' }, source), h('div', { class: 'w-controls' }, sl.el), status);
+  host.append(h('div', { class: 'w-controls' }, sl.el), status, h('p', { class: 'w-help' }, source));
   draw(0);
 };
 
