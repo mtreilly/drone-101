@@ -558,3 +558,10 @@
     font-size: 0.72rem;
   }
 }
+/* labels in the drone view keep a paper halo so they stay legible when the drone passes over them */
+.drone-view text {
+  paint-order: stroke;
+  stroke: var(--card);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
