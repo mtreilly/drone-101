@@ -83,7 +83,9 @@ function installGlobalHandlers(): void {
       readBar?.parentElement?.classList.toggle('on', isChapter);
       if (!isChapter || !readBar) return;
       const max = document.documentElement.scrollHeight - innerHeight;
-      readBar.style.transform = `scaleX(${max > 0 ? Math.min(1, scrollY / max) : 0})`;
+      const frac = max > 0 ? Math.min(1, scrollY / max) : 0;
+      readBar.style.transform = `scaleX(${frac})`;
+      rememberPlace(frac);
     });
   };
   addEventListener('scroll', onScroll, { passive: true });
@@ -111,6 +113,16 @@ export async function startApp(root: HTMLElement): Promise<void> {
     announce(tc('lang.button', { name: languageOf(getLang()).name }));
   });
   await route();
+}
+
+/** Where the reader is in the current chapter (as a fraction), saved at most once a second. */
+let lastSave = 0;
+function rememberPlace(frac: number): void {
+  const m = /^#\/ch\/(\d+)/.exec(location.hash);
+  const now = performance.now();
+  if (!m || now - lastSave < 1000) return;
+  lastSave = now;
+  progress.save('reading', { ch: Number(m[1]), frac });
 }
 
 /** Polite screen-reader announcement for app-level events. */
@@ -390,6 +402,12 @@ async function showChapter(n: number, sectionId?: string, keepScroll = false): P
     else setTimeout(warm, 1500);
   }
   if (keepScroll) return;
+  const place = progress.load<{ ch: number; frac: number }>('reading');
+  if (sectionId === 'resume' && place?.ch === n) {
+    // wait a frame so widgets have their final height, then return to the saved spot
+    requestAnimationFrame(() => scrollTo(0, place.frac * (document.documentElement.scrollHeight - innerHeight)));
+    return;
+  }
   if (sectionId) document.getElementById(sectionId)?.scrollIntoView();
   else {
     window.scrollTo(0, 0);
@@ -408,7 +426,8 @@ function showHome(): void {
   );
   const done = progress.get().completed;
   const visited = progress.get().visited;
-  const resume = visited.length ? Math.min(CHAPTER_COUNT - 1, Math.max(...visited)) : 0;
+  const place = progress.load<{ ch: number; frac: number }>('reading');
+  const resume = place ? place.ch : visited.length ? Math.min(CHAPTER_COUNT - 1, Math.max(...visited)) : 0;
   const list = h(
     'ol',
     { class: 'toc' },
@@ -437,7 +456,7 @@ function showHome(): void {
     h('div', { class: 'home-hero' }, h('p', { class: 'kicker' }, tc('home.kicker')), h('h1', null, tc('app.title')), setRich(h('p', { class: 'driving-q' }), tc('home.question')), heroArt()),
     ...(raw<string[]>('common', 'home.intro') ?? []).map((p) => setRich(h('p'), p)),
     h('div', { class: 'cast' }, cast),
-    h('p', null, h('a', { class: 'btn primary', href: `#/ch/${resume}` }, visited.length ? tc('home.resume', { n: resume }) : tc('home.start'))),
+    h('p', null, h('a', { class: 'btn primary', href: visited.length ? `#/ch/${resume}/resume` : '#/ch/0' }, visited.length ? tc('home.resume', { n: resume }) : tc('home.start'))),
     h('h2', null, tc('home.contents')),
     list,
     h('p', { class: 'w-help' }, tc('home.privacy'), ' ', reset),

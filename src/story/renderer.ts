@@ -243,11 +243,23 @@ function quizCard(title: string, items: { id: string; q: string; options: Option
   card.append(h('div', { class: 'card-title' }, title));
   const solved = new Set<string>();
   const score = h('p', { class: 'quiz-score', 'aria-live': 'polite' });
+  const wasComplete = progress.isComplete(env.chapter);
+  let stamped = false;
   const updateScore = () => {
     score.textContent = tc('story.quizScore', { n: solved.size, total: items.length });
     if (solved.size === items.length) {
       score.textContent += ` ${tc('story.quizDone')}`;
       progress.complete(env.chapter);
+      if (!stamped) {
+        stamped = true;
+        // a rubber stamp lands on the card; it animates only when earned just now
+        const stamp = h('div', { class: `stamp${wasComplete ? '' : ' fresh'}`, 'aria-hidden': 'true' }, tc('story.completeStamp'));
+        card.append(stamp);
+        if (!wasComplete) {
+          const live = document.getElementById('app-announcer');
+          if (live) live.textContent = tc('story.completeAnnounce', { n: env.chapter });
+        }
+      }
     }
   };
   items.forEach((item, qi) => {

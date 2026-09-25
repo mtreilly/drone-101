@@ -843,3 +843,59 @@ main {
     padding: 0 6px;
   }
 }
+
+/* ---------- users who ask for more contrast ---------- */
+@media (prefers-contrast: more) {
+  :root {
+    --ink-2: var(--ink);
+    --ink-3: color-mix(in srgb, var(--ink) 80%, var(--paper));
+    --paper-3: color-mix(in srgb, var(--ink) 35%, var(--paper));
+    --rule: transparent;
+  }
+  .bubble,
+  .card,
+  .widget-frame,
+  .toolbar,
+  .option {
+    border-width: 2px;
+    border-color: var(--ink);
+  }
+}
+
+/* ---------- Windows high-contrast / forced colours ---------- */
+@media (forced-colors: active) {
+  body {
+    background-image: none;
+  }
+  .btn,
+  .tool,
+  .option,
+  .menu-item,
+  .chapter-strip a,
+  .speed label,
+  .segmented label {
+    border: 1px solid ButtonText;
+    forced-color-adjust: auto;
+  }
+  .tool[aria-expanded='true'],
+  .menu-item[aria-checked='true'],
+  .chapter-strip a[aria-current='page'],
+  .speed input:checked + label,
+  .segmented input:checked + label {
+    background: Highlight;
+    color: HighlightText;
+  }
+  :focus-visible {
+    outline: 3px solid Highlight;
+  }
+  [data-tip]::after {
+    border: 1px solid CanvasText;
+  }
+  .avatar-svg,
+  .view,
+  .s-plane,
+  .block-diagram,
+  .concept-map {
+    forced-color-adjust: none;
+  }
+}
