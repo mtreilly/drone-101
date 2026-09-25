@@ -38,7 +38,7 @@ function tempPlot(host: HTMLElement, label: string, tMax: number, series: { id: 
     height: 200,
     label,
   });
-  p.setBands([{ kind: 'h', from: SHOWER.target - SHOWER.band, to: SHOWER.target + SHOWER.band, color: 'rgba(45,122,50,0.14)' }]);
+  p.setBands([{ kind: 'h', from: SHOWER.target - SHOWER.band, to: SHOWER.target + SHOWER.band, color: 'sp@0.16' }]);
   p.setLines([{ kind: 'h', at: SHOWER.target, color: 'sp', label: '38 °C' }]);
   return p;
 }

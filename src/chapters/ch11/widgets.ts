@@ -85,7 +85,7 @@ const mission: WidgetFactory = (host, ctx) => {
     { kind: 'v' as const, at: MISSION.dropAt, color: 'dis', label: t('drop') },
   ];
   hPlot.setLines(events);
-  hPlot.setBands([{ kind: 'h', from: MISSION.setpoint - LIMITS.band, to: MISSION.setpoint + LIMITS.band, color: 'rgba(45,122,50,0.14)' }]);
+  hPlot.setBands([{ kind: 'h', from: MISSION.setpoint - LIMITS.band, to: MISSION.setpoint + LIMITS.band, color: 'sp@0.16' }]);
   const tPlot = new Plot(right, {
     x: { label: tc('plots.time'), min: 0, max: MISSION.duration },
     y: { label: tc('plots.thrust'), min: 0, max: 22 },

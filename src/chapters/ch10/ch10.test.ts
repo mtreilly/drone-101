@@ -3,7 +3,7 @@ import { SHOWER } from '../../sim/shower-model';
 import { comfortTime, handLoop, handPolicy, loopMargins, measureSine, piLoop, piPolicy, runShower, swingPeriod, unwrapNear } from './shower-tools';
 
 describe('Chapter 10 numbers', () => {
-  it('hand (integral) loop: phase crossover 0.457 rad/s, period 13.7 s, critical k 0.0112', () => {
+  it('hand (integral) loop: phase crossover 0.457 rad/s, period 13.75 s (shown as 13.8 s), critical k 0.0112', () => {
     const m = loopMargins(handLoop(1), 2.5);
     expect(m.w180).toBeCloseTo(0.4569, 3);
     expect((2 * Math.PI) / m.w180).toBeCloseTo(13.75, 1);

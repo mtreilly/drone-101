@@ -4,6 +4,7 @@ import { fmt, tc } from '../../core/i18n';
 import { DRONE } from '../../sim/drone-model';
 import type { WidgetCtx, WidgetFactory } from '../../story/types';
 import { readout, segmented, slider, toggle } from '../../ui/controls';
+import { color, withAlpha } from '../../ui/colors';
 import { Plot } from '../../ui/plot';
 import { SPlane } from '../../ui/s-plane';
 import { LIMITED, TARGETS, hoverStep, kiLimit, pid, pidPoles, runDrone, scoreTrace, stars, takeoff } from './pid-tools';
@@ -159,7 +160,7 @@ const poles: WidgetFactory = (host, ctx) => {
     map.overlay = (c, px, py) => {
       const edge = (x: number) => py(Math.min(200, ((DRONE.c + x) * kp) / DRONE.m));
       // below the edge: stable (green tint); above: unstable (red tint)
-      for (const [fill, top] of [['rgba(80,170,90,0.14)', 0], ['rgba(220,80,70,0.12)', 200]] as const) {
+      for (const [fill, top] of [[withAlpha(color('good'), 0.14), 0], [withAlpha(color('bad'), 0.12), 200]] as const) {
         c.fillStyle = fill;
         c.beginPath();
         c.moveTo(px(0), py(top));
