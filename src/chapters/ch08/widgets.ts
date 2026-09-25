@@ -11,6 +11,7 @@ import { Plot } from '../../ui/plot';
 import { SPlane, formatS } from '../../ui/s-plane';
 import { caption, mark, sample } from '../ch06/helpers';
 import './ch08.css';
+import { fallSim, fallTrace } from './fall';
 import { gainsFromPoles, noZeroResponse, overshootOf, settleOf, stepFromPoles, zeroResponse, zetaOf } from './poles';
 
 const { m, c } = DRONE;
@@ -200,7 +201,8 @@ const playground: WidgetFactory = (host, ctx) => {
   const rbox = h('div');
   top.append(vbox, rbox);
   right.append(top);
-  const view = new DroneView(vbox, { hMax: 3, width: 180 });
+  // an unstable drone can fly out of its picture into the page; the hit stalls it and it falls (see fall.ts)
+  const view = new DroneView(vbox, { hMax: 3, width: 180, onCeiling: () => hitPage() });
   const rP = readout(t('poles'));
   const rTs = readout(t('settle'));
   const rOs = readout(t('overshoot'));
@@ -245,15 +247,50 @@ const playground: WidgetFactory = (host, ctx) => {
   let resp = { xs: [] as number[], ys: [] as number[] };
   let f = stepFromPoles(re, im);
   let playT = 0;
+  // the state at the latest frame, and (after hitting the page) the stalled fall that replaces the formula
+  let now = { t: 0, h: 0, v: 0 };
+  let fall: { sim: DroneSim; t0: number; carry: number } | null = null;
+  // once it has hit the ground in this replay, it stays crashed until the replay restarts
+  let downThisCycle = false;
+  let verdict: 'stable' | 'unstable' | 'marginal' = 'stable';
+  function hitPage(): void {
+    if (fall) return;
+    fall = { sim: fallSim(now.h, now.v), t0: now.t, carry: 0 };
+    // the plot shows what really happened: the formula up to the hit, then the fall
+    const tr = fallTrace(now.h, now.v);
+    const keep = resp.xs.findIndex((x) => x > now.t);
+    const xs = [...resp.xs.slice(0, keep < 0 ? undefined : keep), ...tr.t.map((x) => now.t + x)];
+    const ys = [...resp.ys.slice(0, keep < 0 ? undefined : keep), ...tr.h];
+    plot.set('h', xs, ys);
+    status.textContent = `${t(`verdict.${verdict}`)} ${t('verdict.hitPage')}`;
+    status.className = 'w-status bad';
+    plot.describe(status.textContent);
+  }
   const loop = new Loop((dt) => {
+    if (fall) {
+      fall.carry += dt;
+      const n = Math.floor(fall.carry / fall.sim.dt + 1e-9);
+      fall.carry -= n * fall.sim.dt;
+      for (let i = 0; i < n && !fall.sim.landed; i++) fall.sim.step();
+      view.update({ h: fall.sim.h, r: 2, thrust: 0, crashed: fall.sim.crashed });
+      plot.setCursor(Math.min(T1, fall.t0 + fall.sim.t));
+      // it stays where it fell until you move the poles
+      if (fall.sim.landed) loop.pause();
+      return;
+    }
     playT += dt;
-    if (playT > T1 + 1) playT = 0;
+    if (playT > T1 + 1) {
+      playT = 0;
+      downThisCycle = false;
+    }
     const tt = Math.min(playT, T1);
     const hNow = f(tt);
     const v = (f(tt + 1e-4) - f(Math.max(0, tt - 1e-4))) / (tt > 0 ? 2e-4 : 1e-4);
+    now = { t: tt, h: hNow, v };
     const { kp, kd } = gainsFromPoles(re, im);
-    const crashed = hNow <= 0 && tt > 0;
-    view.update({ h: crashed ? 0 : hNow, r: 2, thrust: HOVER_THRUST + kp * (2 - hNow) - kd * v, crashed });
+    downThisCycle ||= hNow <= 0 && tt > 0;
+    const crashed = downThisCycle;
+    view.update({ h: crashed ? 0 : hNow, r: 2, thrust: crashed ? 0 : HOVER_THRUST + kp * (2 - hNow) - kd * v, crashed });
     plot.setCursor(tt);
   }, host);
   const svgEl = plane.svg;
@@ -264,6 +301,9 @@ const playground: WidgetFactory = (host, ctx) => {
     lastKey = performance.now();
   });
   function update(): void {
+    fall = null;
+    downThisCycle = false;
+    if (Loop.autoplay && !loop.playing) loop.play();
     f = stepFromPoles(re, im);
     resp = sample(f, T1, 400);
     plot.set('h', resp.xs, resp.ys);
@@ -297,7 +337,7 @@ const playground: WidgetFactory = (host, ctx) => {
     wLabel.setAttribute('x', String(plane.sx(-10) + 6));
     wLabel.setAttribute('y', String(plane.sy(w) + (w > 7 ? 16 : -6)));
     wLabel.textContent = w > 0.05 ? t('wiggle', { T: fmt((2 * Math.PI) / w, 2) }) : '';
-    const verdict = re < -0.02 ? 'stable' : re > 0.02 ? 'unstable' : 'marginal';
+    verdict = re < -0.02 ? 'stable' : re > 0.02 ? 'unstable' : 'marginal';
     status.textContent = t(`verdict.${verdict}`);
     status.className = `w-status${verdict === 'stable' ? ' good' : verdict === 'unstable' ? ' bad' : ''}`;
     const zeta = zetaOf(re, im);
