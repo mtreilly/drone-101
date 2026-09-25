@@ -28,7 +28,7 @@
         { "t": "widget", "id": "pcontrol" },
         { "t": "p", "text": "Look at the {out|dotted blue line}: that's where the drone ends up hovering, and it's always **below** the {sp|target}. The gap is called the **steady-state error**, or just the **droop**." },
         { "t": "say", "who": "theo", "mood": "happy", "text": "It's a tug of war. Gravity pulls down with 4.9 N, always. The only way the controller can push back with 4.9 N is if there's **some error left over** to multiply." },
-        { "t": "math", "tex": "\\eff{T} = \\text{weight} \\;\\Rightarrow\\; K_p\\,\\err{e} = 4.9 \\;\\Rightarrow\\; \\err{e}_{\\text{droop}} = \\frac{4.9}{K_p}\\ \\text{m}" },
+        { "t": "math", "tex": "\\begin{aligned}\\eff{T} &= \\text{weight} \\\\ \\Longrightarrow K_p\\,\\err{e} &= 4.9 \\\\ \\Longrightarrow \\err{e}_{\\text{droop}} &= \\frac{4.9}{K_p}\\ \\text{m}\\end{aligned}" },
         { "t": "p", "text": "Now slide $K_p$ down to **2 N/m**. The drone doesn't even leave the ground! On the ground the error is 2 m, so the thrust is only $2 \\times 2 = 4$ N, less than the 4.9 N weight. The formula says it would need to droop 2.45 m, which is underground." }
       ]
     },
