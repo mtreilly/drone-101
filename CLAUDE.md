@@ -82,6 +82,49 @@ for layout and `control-course-plan.md` for the pedagogical outline and physical
   (and in a long-word language such as German or Polish), look at the images, fix, and look again.
   Parallel agents per chapter work well for big passes; shared components stay with one owner.
 
+## Page-aware physics: the page is part of the world
+
+When a simulated object overshoots its picture, it does not vanish behind the frame edge: it flies
+out over the page, runs into real content (paragraphs, bubbles, headings, other cards, the sticky
+top bar) and the page reacts. First built for Chapter 1's open-loop widget (`schedule`): the drone
+climbs out of its picture, bonks the paragraph above, its motors stall, and it tumbles back down
+through its own picture and crashes on the grass. Rules for adding this to other interactives:
+
+1. **One object, never a copy.** The drawing inside the widget is the thing that leaves the frame
+   (its SVG gets `overflow: visible`; its wrapper `position: relative; z-index: 40`, under the top
+   bar's 50; the moving group gets `pointer-events: none`). No hand-off to a clone.
+2. **A contact is a real event in the model.** It goes into the simulation (e.g.
+   `DroneSim.hitCeiling()`), so the plots, readouts and status keep telling the truth. Never let
+   the picture and the numbers disagree. The only visual-only freedom is for dimensions the model
+   does not have (the 1-D drone's tumble angle and sideways drift), and those ease back to zero
+   before anything the model can see happens (landing, crash).
+3. **The event must teach.** Choose the model's response for the chapter's idea: in Chapter 1 the
+   stall and crash show that an open-loop plan can't notice a ceiling either. Explain it in the
+   widget's status line (a new string in all six languages). Nothing in the prose may be
+   contradicted by the new outcome.
+4. **Page geometry comes from `src/ui/page-physics.ts`:** `pageSolids()` (what counts as solid:
+   `SOLID_SELECTOR`, the top bar, never the object's own `.widget-frame` or its contents),
+   `ceilingHit()` (swept test, so a fast object can't tunnel through), `wobble()` (the thing that
+   was hit jolts, using individual `translate`/`rotate` so it composes with layout transforms) and
+   `impactBurst()` (hand-drawn strokes, positioned with `translate`, not `transform`). Everything is
+   in document pixels and re-measured each frame, and nothing animates layout properties.
+5. **Once per run.** Detect contacts only while rising and outside the picture, arm again when the
+   object is back on the ground or reset. A reset or navigating away mid-flight must leave nothing
+   behind.
+6. **Precomputed traces** (players that replay arrays instead of stepping a live sim) can't react
+   mid-flight. Measure the ceiling first (how many metres of open page are above the picture), pass
+   it to the sim as a parameter and recompute the trace, so the replay already contains the hit.
+7. **Reduced motion turns it off completely:** the object stays pinned and clipped at its
+   picture's edge as before, and the readout still shows the true value.
+8. **Test it:** a sim test for the event (what happens after it, until reset), unit tests for any
+   geometry helper, and a recorded check (`agent-browser record start …`, then look at frames) at
+   1280 px and 375 px, light and dark: a real bonk, reset mid-flight, navigate away mid-flight, and
+   reduced motion.
+
+How Chapter 1 wires it: `new DroneView(host, { onCeiling })` (via `droneRig({ onCeiling })`) makes the
+drone free-flying; `onCeiling` calls `sim.hitCeiling()` and sets a flag so the crash status reads
+`status.ceiling` instead of `status.crash`.
+
 ## Commands
 
 ```sh
