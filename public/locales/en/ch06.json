@@ -1,6 +1,198 @@
 {
   "kicker": "Chapter 6",
-  "title": "Coming soon",
-  "question": "…",
-  "sections": [{ "id": "s1", "title": "", "blocks": [{ "t": "p", "text": "This notebook is still being written." }] }]
+  "title": "The Drone's Real Personality",
+  "question": "Why does the drone bounce like a spring?",
+  "sections": [
+    {
+      "id": "spring",
+      "title": "The controller is a spring",
+      "blocks": [
+        { "t": "say", "who": "mika", "mood": "think", "text": "Remember the bouncy drone from Chapter 2? The more we cranked $\\eff{K_p}$, the more it boinged. It looked exactly like a weight on a spring." },
+        { "t": "say", "who": "theo", "mood": "think", "text": "\"Looked like\" isn't proof. Let's put them side by side and write down both equations." },
+        { "t": "p", "text": "On the left: a mass of 0.5 kg hanging on a spring with a damper (a little oil-filled piston that resists motion). On the right: our drone, same mass, same drag, under proportional control." },
+        { "t": "note", "text": "To keep gravity from distracting us, we give the drone its hover thrust (4.9 N) for free here, so it doesn't droop. We'll earn that honestly in Chapter 9." },
+        { "t": "widget", "id": "twins" },
+        { "t": "say", "who": "june", "mood": "surprised", "text": "The curves are **on top of each other**. Not similar. *Identical.*" },
+        { "t": "p", "text": "Look at the two equations. The spring pushes back with force $\\eff{k}\\,x$: the further it's stretched, the harder it pulls. Our controller pushes with $\\eff{K_p}(\\sp{2} - \\out{h})$: the further from the target, the harder it pushes. **Same rule.** The controller *is* a spring: an invisible one, pulling the drone towards 2 m." },
+        { "t": "say", "who": "theo", "mood": "happy", "text": "So a P controller is a virtual spring, and the air drag $c$ is a virtual damper. Everything we learn about springs, we get for free." }
+      ]
+    },
+    {
+      "id": "knobs",
+      "title": "Two personality knobs",
+      "blocks": [
+        { "t": "p", "text": "Every mass-spring-damper, and so every P-controlled drone, is described by just **two numbers**:" },
+        {
+          "t": "vocab",
+          "items": [
+            { "term": "Natural frequency $\\omega_n = \\sqrt{k/m}$", "def": "How fast it *wants* to swing, in radians per second. A stiffer spring (bigger $\\eff{k}$) or a lighter mass means a faster swing." },
+            { "term": "Damping ratio $\\zeta = \\dfrac{c}{2\\sqrt{m k}}$", "def": "How quickly the swinging dies out. It's a pure number: 0 means it swings forever, 1 is the exact border between wobbling and not." }
+          ]
+        },
+        { "t": "p", "text": "Now remember Chapter 5. When we guessed $e^{st}$ for a spring, we got $m s^2 + c s + k = 0$. Its two solutions are two points on our map of $s$. Divide by $m$ and it becomes" },
+        { "t": "math", "tex": "s^2 + 2\\zeta\\omega_n\\, s + \\omega_n^2 = 0 \\quad\\Longrightarrow\\quad s = -\\zeta\\omega_n \\pm \\omega_n\\sqrt{\\zeta^2 - 1}" },
+        { "t": "p", "text": "Play with the two knobs. Watch the {out|blue dots} on the map: they're the two values of $s$, and the motion is always a mix of $e^{s_1 t}$ and $e^{s_2 t}$." },
+        { "t": "widget", "id": "personality" },
+        {
+          "t": "vocab",
+          "title": "Three personalities",
+          "items": [
+            { "term": "Underdamped ($\\zeta < 1$)", "def": "The two $s$ values are a mirror-image pair off the real axis, sitting on a circle of radius $\\omega_n$. The response overshoots and wiggles while it settles." },
+            { "term": "Critically damped ($\\zeta = 1$)", "def": "The pair meets on the real axis. The fastest response that doesn't overshoot." },
+            { "term": "Overdamped ($\\zeta > 1$)", "def": "The pair splits along the real axis: one moves left, one creeps towards zero. No overshoot, but sluggish." }
+          ]
+        },
+        { "t": "say", "who": "mika", "mood": "excited", "text": "So the spirals from Chapter 5 were the drone's personality all along. Spinning = wiggling, shrinking = settling!" }
+      ]
+    },
+    {
+      "id": "damping",
+      "title": "Is more damping always better?",
+      "blocks": [
+        { "t": "say", "who": "june", "mood": "happy", "text": "Easy. Wiggles are bad and damping kills wiggles. So I'll set $\\zeta = 5$ to be safe. Safest drone ever." },
+        {
+          "t": "predict",
+          "id": "ch6-damping",
+          "gate": true,
+          "q": "Same spring, same $\\omega_n$. We raise the damping from $\\zeta = 1$ to $\\zeta = 3$. Does it reach the target **faster** or **slower**?",
+          "options": [
+            { "text": "Faster: more damping, less wasted motion", "sketch": "smooth", "why": "It's true that there's no overshoot. But the thick damper also resists the motion *towards* the target." },
+            { "text": "About the same", "sketch": "overshoot", "why": "Past $\\zeta = 1$ there's nothing left to calm down, and the extra damping just slows everything." },
+            { "text": "Slower: it creeps", "sketch": "sluggish", "correct": true, "why": "Right. The damper resists **all** motion, including the motion you want. With $\\zeta = 3$ it takes about four times as long." }
+          ]
+        },
+        { "t": "widget", "id": "race" },
+        { "t": "say", "who": "june", "mood": "worried", "text": "My \"safe\" drone takes forever. It's like moving through honey." },
+        { "t": "say", "who": "mika", "mood": "think", "text": "Look at the map! One dot ran off to the left, super fast. But the other one is sitting really close to zero." },
+        { "t": "say", "who": "theo", "mood": "excited", "text": "And $e^{st}$ with $s$ close to zero dies out **very** slowly. The fast one is gone in a blink. The slow one is in charge." },
+        { "t": "p", "text": "That's a rule we'll keep using: **the $s$ value closest to the vertical axis decides how long you wait.** Too little damping means wobbles, too much means waiting. $\\zeta$ around 0.7 to 1 is the sweet spot most engineers aim for." }
+      ]
+    },
+    {
+      "id": "drone",
+      "title": "Back to the drone",
+      "blocks": [
+        { "t": "p", "text": "Now Chapter 2 finally makes sense. For our drone, the spring constant *is* the gain:" },
+        { "t": "math", "tex": "\\omega_n = \\sqrt{\\frac{\\eff{K_p}}{m}}, \\qquad \\zeta = \\frac{c}{2\\sqrt{m\\,\\eff{K_p}}}" },
+        { "t": "p", "text": "$\\eff{K_p}$ sits in the *bottom* of the damping formula. Turning up the gain makes the drone faster (bigger $\\omega_n$), but **less damped**. With $\\eff{K_p} = 20$ N/m: $\\zeta = 1/(2\\sqrt{0.5 \\times 20}) \\approx 0.16$. Very bouncy, just as we saw." },
+        { "t": "say", "who": "theo", "mood": "worried", "text": "And we can't get more damping without turning $\\eff{K_p}$ way down, which brings back the droop. We need a way to add damping *on purpose*." },
+        { "t": "note", "text": "Try it in the first widget: slide $K_p$ and watch ζ fall as the swings get wilder." }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "What we know now",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "A P-controlled drone obeys **exactly** the same equation as a mass on a spring: the controller is a virtual spring.",
+            "Two numbers capture its personality: $\\omega_n$ (how fast) and $\\zeta$ (how bouncy).",
+            "The motion is a mix of two $e^{st}$ terms. The two $s$ values sit on a circle of radius $\\omega_n$ when underdamped, and split along the real axis when overdamped.",
+            "More damping isn't always better: past $\\zeta = 1$ the slow $s$ value creeps towards zero and everything slows down.",
+            "For the drone, more $K_p$ means less damping. That's why it got wobblier."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch6-q1",
+              "q": "The two $s$ values of a system are $-1 \\pm 4i$. Which response is it?",
+              "options": [
+                { "text": "Overshoots and wiggles", "sketch": "overshoot", "correct": true, "why": "An imaginary part (±4) means spinning, so wiggling. A negative real part (−1) means the wiggles shrink." },
+                { "text": "Rises smoothly, no overshoot", "sketch": "smooth", "why": "Smooth rises come from $s$ values on the real axis (no spinning). These have an imaginary part of ±4." },
+                { "text": "Creeps up slowly", "sketch": "sluggish", "why": "Creeping comes from a real $s$ very close to zero. These values spin, so the response wiggles." }
+              ]
+            },
+            {
+              "id": "ch6-q2",
+              "q": "Our drone ($m = 0.5$ kg, $c = 1$ N·s/m) with $K_p = 20$ N/m is…",
+              "options": [
+                { "text": "Underdamped, $\\zeta \\approx 0.16$", "correct": true, "why": "$\\zeta = 1/(2\\sqrt{0.5\\cdot 20}) = 1/(2\\sqrt{10}) \\approx 0.158$. Well below 1, so bouncy." },
+                { "text": "Critically damped, $\\zeta = 1$", "why": "That would need $c = 2\\sqrt{m K_p} \\approx 6.3$ N·s/m, over six times more drag than we have." },
+                { "text": "Overdamped, $\\zeta > 1$", "why": "Overdamping needs lots of damping compared with stiffness. Our gain is high and our drag small, which is the opposite." }
+              ]
+            },
+            {
+              "id": "ch6-q3",
+              "q": "Using P control only, which $K_p$ would make the drone critically damped ($\\zeta = 1$)?",
+              "options": [
+                { "text": "$K_p = 0.5$ N/m", "correct": true, "why": "Set $c/(2\\sqrt{m K_p}) = 1$ to get $K_p = c^2/(4m) = 0.5$ N/m. But with such a weak spring the drone would need to be 9.8 m *below* the target just to hold itself up, so it never takes off. P control alone can't give us both." },
+                { "text": "$K_p = 20$ N/m", "why": "That's our bouncy default with $\\zeta \\approx 0.16$. More gain means *less* damping." },
+                { "text": "$K_p = 200$ N/m", "why": "More gain lowers $\\zeta$ even further (to about 0.05). Gain sits in the denominator." }
+              ]
+            },
+            {
+              "id": "ch6-q4",
+              "q": "An overdamped system has $s$ values $-0.2$ and $-10$. Which one decides how long you wait?",
+              "options": [
+                { "text": "$-0.2$", "correct": true, "why": "$e^{-0.2t}$ takes about 20 s to fade to 2%, while $e^{-10t}$ is gone in 0.4 s. The one nearest the vertical axis is in charge." },
+                { "text": "$-10$", "why": "$e^{-10t}$ vanishes in a fraction of a second. It's the fast part that's over before you notice." },
+                { "text": "Both equally", "why": "They fade at very different speeds, so the slow one dominates what you see." }
+              ]
+            }
+          ]
+        },
+        { "t": "map" },
+        { "t": "cliff", "text": "Theo: \"We *guessed* our way to these $s$ values. Add gravity, wind, packages and a smarter controller, and guessing gets ugly. Is there a machine that turns this calculus into **plain algebra**?\"" }
+      ]
+    }
+  ],
+  "widgets": {
+    "twins": {
+      "title": "Spring vs. drone",
+      "spring": "mass on a spring",
+      "drone": "drone under P control",
+      "msdAria": "A mass hanging on a spring and a damper, bouncing around its rest position.",
+      "plotY": "distance from target (m)",
+      "plotAria": "Distance from the target over time for the drone and for the spring. The two curves lie on top of each other.",
+      "target": "target / rest",
+      "kp": "Stiffness: spring $k$ = drone gain $K_p$",
+      "personality": "personality",
+      "help": "Both start 1 m below their target and are let go. The slider sets the spring's stiffness and the drone's gain to the same number.",
+      "describe": "Drone is {d} m from target, spring mass is {s} m from rest.",
+      "regime": { "under": "underdamped", "critical": "critically damped", "over": "overdamped" }
+    },
+    "personality": {
+      "title": "Two knobs, two dots, one personality",
+      "response": "response to a 1 m step",
+      "target": "target",
+      "plotAria": "Step response of a second-order system for the chosen natural frequency and damping ratio.",
+      "planeAria": "The map of s, showing the two s values of the system and a dashed circle of radius omega n.",
+      "msdAria": "A mass on a spring replaying the step response.",
+      "panelAria": "Small step response with damping ratio {z}.",
+      "panel": { "0": "underdamped (ζ = {z})", "1": "critical (ζ = {z})", "2": "overdamped (ζ = {z})" },
+      "radius": "radius ωn = {w}",
+      "wn": "Natural frequency $\\omega_n$",
+      "zeta": "Damping ratio $\\zeta$",
+      "overshoot": "overshoot",
+      "settle": "settles (2%)",
+      "roots": "the two s values",
+      "personality": "personality",
+      "never": "never",
+      "playSpring": "▶ Replay on the spring",
+      "stopSpring": "❚❚ Pause the spring",
+      "describe": "Damping ratio {z}, natural frequency {w} radians per second, s values {r}.",
+      "regime": { "under": "underdamped", "critical": "critically damped", "over": "overdamped" }
+    },
+    "race": {
+      "title": "The damping race",
+      "choose": "Your damping",
+      "ref": "ζ = 1 (critical)",
+      "yours": "your ζ",
+      "yoursZ": "ζ = {z}",
+      "msdAria": "A mass on a spring moving towards its rest position.",
+      "plotAria": "Step responses for critical damping and for the chosen damping ratio.",
+      "planeAria": "The two s values for the chosen damping ratio.",
+      "settleRef": "ζ = 1 settles",
+      "settleYours": "your ζ settles",
+      "slow": "slow one",
+      "fast": "fast one",
+      "never": "not within 12 s",
+      "same": "This is the reference itself: the fastest no-overshoot response.",
+      "slower": "Your extra damping made it about {k}× slower.",
+      "replay": "▶ Race again"
+    }
+  }
 }
