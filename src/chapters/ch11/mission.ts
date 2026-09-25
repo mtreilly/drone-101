@@ -117,7 +117,7 @@ function scalePoly(p: number[], k: number): number[] {
 
 function addPoly(a: number[], b: number[]): number[] {
   const n = Math.max(a.length, b.length);
-  const out = new Array(n).fill(0);
+  const out: number[] = Array.from({ length: n }, () => 0);
   a.forEach((x, i) => (out[n - a.length + i] += x));
   b.forEach((x, i) => (out[n - b.length + i] += x));
   return out;
