@@ -1,0 +1,171 @@
+{
+  "kicker": "Kapitel 2",
+  "title": "Proportionalregelung",
+  "question": "Wie stark soll die Drohne drücken, wenn sie zu tief ist?",
+  "sections": [
+    {
+      "id": "push",
+      "title": "Je weiter weg, desto stärker drücken",
+      "blocks": [
+        { "t": "say", "who": "june", "mood": "think", "text": "Letztes Mal hat sich die Drohne mit Paket 25 cm zu tief eingependelt. Ich will wissen, warum." },
+        { "t": "say", "who": "theo", "mood": "think", "text": "Unsere Regel hatte zwei Teile: 4,9 N, um die Drohne zu halten, plus 8 N pro Meter Fehler. Die 4,9 N waren eine Schätzung des Gewichts. Als das Paket das Gewicht geändert hat, war die Schätzung falsch." },
+        { "t": "say", "who": "mika", "mood": "excited", "text": "Dann lassen wir die Schätzung weg! Keine 4,9 mehr. Soll der **Fehler die ganze Arbeit machen**: Drück proportional dazu, wie weit du danebenliegst." },
+        { "t": "p", "text": "Das ist der berühmteste Regler überhaupt, die **Proportionalregelung** (kurz „P-Regler“):" },
+        { "t": "math", "tex": "\\eff{T} = K_p \\, \\err{e} = K_p\\,(\\sp{r} - \\out{h})" },
+        { "t": "p", "text": "$K_p$ ist die **Verstärkung**: wie viele Newton Schub du pro Meter Fehler dazugibst. Die Einheit ist Newton pro Meter (N/m). Großes $K_p$ heißt eifriger Regler, kleines $K_p$ entspannter Regler. Das ist der einzige Knopf, den wir in diesem Kapitel haben." },
+        { "t": "note", "aside": true, "text": "Wir tun immer noch so, als wären die Motoren unbegrenzt. Sie können sogar etwas nach unten ziehen, wenn die Drohne zu hoch ist. Ehrlich zu den Grenzen werden wir in Kapitel 8." },
+        {
+          "t": "predict",
+          "id": "ch2-kp5",
+          "gate": true,
+          "q": "Nimm $K_p = 5$ N/m. Die Drohne startet am Boden und will auf 2 m. Wo **landet** sie am Ende im Schwebeflug?",
+          "options": [
+            { "text": "Genau auf 2 m", "why": "Auf genau 2 m ist der Fehler null, also wäre der Schub $5 \\times 0 = 0$ N, und die Drohne würde fallen. Dort kann sie nicht bleiben." },
+            { "text": "Ungefähr auf 1 m", "correct": true, "why": "Zum Schweben muss der Schub gleich dem Gewicht sein (4,9 N). Mit $K_p = 5$ braucht das einen Fehler von $4.9 / 5 \\approx 0.98$ m, also schwebt sie auf etwa **1,02 m**." },
+            { "text": "Über 2 m", "why": "Über 2 m ist der Fehler negativ, also wäre der Schub negativ, und sie würde sinken. Zu hoch kann kein Ruheplatz sein." }
+          ]
+        },
+        { "t": "widget", "id": "pcontrol" },
+        { "t": "p", "text": "Schau dir die {out|gepunktete blaue Linie} an: Dort pendelt sich die Drohne ein, und das ist immer **unter** dem {sp|Ziel}. Die Lücke heißt **bleibende Regelabweichung**, oder einfach **Durchhängen**." },
+        { "t": "say", "who": "theo", "mood": "happy", "text": "Das ist Tauziehen. Die Schwerkraft zieht immer mit 4,9 N nach unten. Der Regler kann nur dann mit 4,9 N dagegenhalten, wenn **noch etwas Fehler übrig ist**, den er multiplizieren kann." },
+        { "t": "math", "tex": "\\eff{T} = \\text{Gewicht} \\;\\Rightarrow\\; K_p\\,\\err{e} = 4.9 \\;\\Rightarrow\\; \\err{e}_{\\text{Durchhängen}} = \\frac{4.9}{K_p}\\ \\text{m}" },
+        { "t": "p", "text": "Schieb $K_p$ jetzt runter auf **2 N/m**. Die Drohne hebt nicht mal ab! Am Boden ist der Fehler 2 m, also ist der Schub nur $2 \\times 2 = 4$ N, weniger als die 4,9 N Gewicht. Laut Formel müsste sie 2,45 m durchhängen, und das wäre unter der Erde." }
+      ]
+    },
+    {
+      "id": "more",
+      "title": "Einfach aufdrehen!",
+      "blocks": [
+        { "t": "say", "who": "june", "mood": "excited", "text": "Ganz einfach: **Mehr Verstärkung ist immer besser**. Größeres $K_p$, weniger Durchhängen. Aufdrehen!" },
+        { "t": "say", "who": "mika", "mood": "excited", "text": "Mach ich. Volle Power: $K_p = 60$!" },
+        { "t": "widget", "id": "mika-button", "wide": false },
+        { "t": "say", "who": "mika", "mood": "happy", "text": "Nur noch **8 cm** Durchhängen! Nach ein paar Sekunden ist sie praktisch auf 2 m. Sieg!" },
+        { "t": "say", "who": "theo", "mood": "worried", "text": "Mika… schau dir die ersten zwei Sekunden an. Sie ist auf etwa **3,4 Meter** hochgeschossen, weit übers Ziel hinaus. Und schau dir den {eff|Schub} an: 120 N beim Start, dann zieht er *nach unten*, dann wieder hoch. Das ist kein Schweben, das ist Hüpfen." },
+        { "t": "say", "who": "mika", "mood": "worried", "text": "Oh. Ich hab nur geschaut, wo sie am Ende landet. Die {err|rote Fehlerfläche} am Anfang ist riesig." },
+        { "t": "p", "text": "Das war Mikas Fehler: einen Regler nur danach zu beurteilen, wo er sich **am Ende** einpendelt. Wie er **dorthin kommt**, zählt genauso. Probier ein paar Verstärkungen aus und schau auf den blassen Geist deines vorherigen Laufs:" },
+        {
+          "t": "list",
+          "items": [
+            "**Kleine Verstärkung** (kleines $K_p$): sanft, aber sie hängt stark durch. Wenn du weit genug runtergehst, hebt die Drohne nie ab.",
+            "**Große Verstärkung** (großes $K_p$): wenig Durchhängen, aber sie **schwingt über** (schießt über die Höhe hinaus, bei der sie sich einpendelt) und wackelt, bevor sie zur Ruhe kommt."
+          ]
+        },
+        { "t": "say", "who": "june", "mood": "think", "text": "Warum sollte *stärkeres* Drücken sie zum *Wackeln* bringen?" },
+        { "t": "say", "who": "theo", "mood": "think", "text": "Ein großer Schubs bringt sie schnell in Fahrt. Wenn sie die richtige Höhe erreicht, ist sie immer noch schnell unterwegs. Und nichts in unserer Regel sagt „langsamer, du bist fast da“. Nur der Luftwiderstand bremst sie sanft. Also saust sie vorbei, wird zurückgedrückt, saust wieder vorbei…" },
+        { "t": "note", "text": "Ehrlich gesagt: Bei unserer einfachen Drohne wackelt ein P-Regler zwar, aber er **explodiert** nie wirklich. Die Schwünge klingen immer irgendwann ab. Echte Drohnen haben kleine Verzögerungen (Motoren brauchen Zeit zum Hochdrehen), und dadurch wird zu viel Verstärkung wirklich gefährlich. Das kommt in Kapitel 10 und 11." }
+      ]
+    },
+    {
+      "id": "challenge",
+      "title": "Eine Herausforderung",
+      "blocks": [
+        { "t": "p", "text": "Suchen wir den optimalen Punkt. Die Drohne besteht, wenn sie **weniger als 20 cm** durchhängt *und* **weniger als 30 %** überschwingt (Überschwingen messen wir daran, wie weit sie über die Höhe hinausschießt, bei der sie sich am Ende einpendelt). Finde ein $K_p$, das beides schafft." },
+        { "t": "widget", "id": "challenge" },
+        { "t": "say", "who": "mika", "mood": "worried", "text": "Die grünen Zonen überlappen nie! Fürs Durchhängen muss $K_p$ über etwa 24,5 liegen, fürs Überschwingen unter etwa 3,9. Es gibt **keine Lösung**." },
+        { "t": "say", "who": "theo", "mood": "think", "text": "Weil ein einziger Knopf beides steuert und sie in entgegengesetzte Richtungen zieht. Es ist nicht so, dass wir die richtige Zahl noch nicht gefunden haben. **Es gibt keine.** Wir brauchen eine bessere *Art* von Regler." },
+        { "t": "say", "who": "june", "mood": "think", "text": "Um einen besseren zu bauen, müssen wir anständig über das Wackeln reden. „Träge“, „hüpfig“, „kommt irgendwann zur Ruhe“… das sind Gefühle, keine Physik." }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Was wir bis jetzt wissen",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "**Proportionalregelung**: Schub = $K_p \\times$ Fehler. Ein Knopf, die Verstärkung $K_p$ (N/m).",
+            "Gegen die Schwerkraft lässt ein P-Regler immer eine **bleibende Regelabweichung** (Durchhängen) von $4.9 / K_p$ m übrig: Etwas Fehler muss bleiben, um den Schub zu erzeugen, der die Drohne hält.",
+            "Kleine Verstärkung heißt viel Durchhängen und eine träge Reaktion. Große Verstärkung heißt wenig Durchhängen, aber **Überschwingen** und Wackeln.",
+            "„Mehr Verstärkung ist immer besser“ stimmt nicht. Für unsere Drohne gibt es kein einzelnes $K_p$, das wenig Durchhängen und wenig Überschwingen zugleich liefert."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch2-q1",
+              "q": "Mit $K_p = 10$ N/m (und ohne Schwebeschub): Wie weit unter 2 m wird die Drohne schweben?",
+              "options": [
+                { "text": "0 m: Sie erreicht das Ziel", "why": "Am Ziel ist der Fehler null, also auch der Schub. Ein P-Regler allein kann sie dort nicht gegen die Schwerkraft halten." },
+                { "text": "Etwa 0,49 m", "correct": true, "why": "Der Schub muss gleich den 4,9 N Gewicht sein: $10 \\times e = 4.9$ ergibt $e = 0.49$ m. Sie schwebt auf etwa 1,51 m." },
+                { "text": "Etwa 4,9 m", "why": "Das ist das Gewicht in Newton, nicht das Durchhängen. Teil durch die Verstärkung: $4.9 / 10 = 0.49$ m." }
+              ]
+            },
+            {
+              "id": "ch2-q2",
+              "q": "Welcher dieser Verläufe kam vom **größten** $K_p$? (Die gestrichelte Linie ist das Ziel.)",
+              "options": [
+                { "text": "Tief, mit etwas Wackeln", "sketch": "droop", "why": "Viel Durchhängen heißt *kleine* Verstärkung: Es braucht viel Fehler, um genug Schub zu erzeugen." },
+                { "text": "Nah am Ziel, mit großem Wackeln", "sketch": "overshoot", "correct": true, "why": "Wenig Durchhängen und viel Überschwingen sind das Markenzeichen großer Verstärkung." },
+                { "text": "Sanft und genau aufs Ziel", "sketch": "sluggish", "why": "Fangfrage: Ein reiner P-Regler, der gegen die Schwerkraft kämpft, kann **nie** genau auf dem Ziel landen, egal wie groß $K_p$ ist. Da fehlt etwas (Kapitel 9)." }
+              ]
+            },
+            {
+              "id": "ch2-q3",
+              "q": "Warum kann die Drohne mit P-Regler nicht genau auf 2 m schweben?",
+              "options": [
+                { "text": "Bei null Fehler ist der Schub null, also würde die Schwerkraft gewinnen", "correct": true, "why": "Genau. Schweben braucht 4,9 N, und ein P-Regler erzeugt nur Schub, wenn es einen Fehler gibt." },
+                { "text": "Der Höhensensor ist nicht genau genug", "why": "Unser Sensor ist in diesem Kapitel perfekt, und die Drohne hängt trotzdem durch. Es liegt an der Regelvorschrift, nicht an der Messung." },
+                { "text": "Der Luftwiderstand hält sie zurück", "why": "Luftwiderstand wirkt nur, solange die Drohne sich bewegt. Beim ruhigen Schweben gibt es gar keinen, und das Durchhängen ist trotzdem da." }
+              ]
+            },
+            {
+              "id": "ch2-q4",
+              "q": "Die Drohne nimmt ein Paket auf und wird **doppelt so schwer**. Mit demselben $K_p$ wird das Durchhängen…",
+              "options": [
+                { "text": "doppelt so groß", "correct": true, "why": "Durchhängen = Gewicht ÷ $K_p$. Doppeltes Gewicht braucht doppelten Fehler, um es zu halten." },
+                { "text": "halb so groß", "why": "Eine schwerere Drohne braucht *mehr* Schub, also *mehr* Fehler, nicht weniger." },
+                { "text": "gleich groß", "why": "Das Durchhängen ist genau der Fehler, der nötig ist, um das Gewicht auszugleichen. Also hängt es direkt vom Gewicht ab." }
+              ]
+            }
+          ]
+        },
+        { "t": "map" },
+        { "t": "cliff", "text": "Träge. Wackelig. Schwingt über. Kommt zur Ruhe. Wir beschreiben ständig mit schwammigen Wörtern, **wie sich Dinge mit der Zeit ändern**. Wir brauchen eine echte Sprache für Veränderung." }
+      ]
+    }
+  ],
+  "widgets": {
+    "pcontrol": {
+      "title": "P-Regler: Schub = Kp × Fehler",
+      "slider": "Proportionalverstärkung Kp",
+      "sliderHint": "zusätzliche Newton Schub pro Meter Fehler",
+      "plot": {
+        "height": "Höhe",
+        "thrust": "Schub",
+        "aria": "Höhe der Drohne über 10 Sekunden, während sie mit Proportionalregelung Richtung 2 Meter startet; der Fehler rot schattiert, der vorherige Lauf als blasser Geist.",
+        "target": "Ziel 2 m",
+        "hovers": "pendelt sich bei {h} m ein"
+      },
+      "readout": { "final": "pendelt sich ein bei", "droop": "Durchhängen", "overshoot": "Überschwingen", "peakThrust": "Spitzenschub" },
+      "status": {
+        "ground": "Hebt nie ab: Am Boden ist der Schub nur {T} N, weniger als die {w} N Gewicht.",
+        "flies": "Pendelt sich bei {h} m ein ({d} cm Durchhängen), nachdem sie auf {p} m hochgeschossen ist ({o} % Überschwingen)."
+      }
+    },
+    "mika-button": { "label": "Kp = 60 N/m setzen (Mikas Idee)" },
+    "challenge": {
+      "title": "Finde ein Kp mit Durchhängen < 20 cm und Überschwingen < 30 %",
+      "slider": "Proportionalverstärkung Kp",
+      "kpAxis": "Kp (N/m)",
+      "droopAxis": "Durchhängen (m)",
+      "overAxis": "Überschwingen (%)",
+      "droopSeries": "Durchhängen = 4,9 / Kp",
+      "overSeries": "Überschwingen",
+      "droopAria": "Durchhängen über der Verstärkung Kp: Es sinkt, wenn Kp wächst. Die Bestanden-Zone (Durchhängen unter 20 cm) liegt bei Kp über 24,5.",
+      "overAria": "Überschwingen über der Verstärkung Kp: Es steigt, wenn Kp wächst. Die Bestanden-Zone (Überschwingen unter 30 Prozent) liegt bei Kp zwischen 2,45 und 3,9.",
+      "okZone": "besteht",
+      "droopLimit": "20 cm",
+      "overLimit": "30 %",
+      "noflight": "kein Abheben",
+      "readout": { "droop": "Durchhängen", "overshoot": "Überschwingen" },
+      "help": "Jede Kurve zeigt, was die Drohne bei jedem Kp tun würde. Das grüne Band zeigt, wo diese eine Anforderung erfüllt ist.",
+      "status": {
+        "neither": "Hier ist keine Anforderung erfüllt. Such weiter.",
+        "droopOnly": "Durchhängen besteht ✓, aber das Überschwingen ist viel zu groß.",
+        "overOnly": "Überschwingen besteht ✓, aber das Durchhängen ist riesig.",
+        "impossible": "Du hast beide grünen Zonen gefunden, und sie überlappen nie: Fürs Durchhängen braucht es Kp > {a}, fürs Überschwingen Kp < {b}. Kein einzelnes Kp kann bestehen."
+      }
+    }
+  }
+}

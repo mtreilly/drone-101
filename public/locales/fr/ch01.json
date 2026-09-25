@@ -1,0 +1,451 @@
+{
+  "kicker": "Chapitre 1",
+  "title": "Boucle ouverte ou boucle fermée",
+  "question": "Peut-on simplement *dire* au drone quelle poussée utiliser ?",
+  "sections": [
+    {
+      "id": "meet",
+      "title": "Voici le drone",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "J'ai emprunté un drone ! Son boulot : transporter de petits colis et **planer à exactement 2 mètres** pour que quelqu'un puisse les attraper."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "C'est comme la douche, non ? Un nombre qu'on veut (2 m), une chose qu'on peut changer (la force avec laquelle les hélices poussent)."
+        },
+        {
+          "t": "p",
+          "text": "Voici les faits. Le drone pèse **0,5 kg**, donc la gravité le tire vers le bas avec $0{,}5 \\times 9{,}81 \\approx 4{,}9$ newtons. Les hélices poussent vers le haut avec une {eff|poussée} $\\eff{T}$ qu'on choisit. Quand le drone bouge, l'air résiste un peu : environ **1 newton par mètre par seconde** de vitesse."
+        },
+        {
+          "t": "math",
+          "tex": "\\underbrace{0{,}5\\,\\ddot{\\out{h}}}_{\\text{masse}\\times\\text{accélération}} = \\eff{T} - \\underbrace{4{,}9}_{\\text{poids}} - \\underbrace{1{,}0\\,\\dot{\\out{h}}}_{\\text{traînée de l'air}}"
+        },
+        {
+          "t": "p",
+          "text": "Ne t'inquiète pas encore des points au-dessus du $\\out{h}$. Ils veulent dire « à quelle vitesse $\\out{h}$ change », et on les construira proprement au chapitre 3. Pour l'instant, l'idée en mots : **pousse plus que 4,9 N et tu accélères vers le haut ; pousse moins et tu accélères vers le bas.** Pousse exactement 4,9 N et tu continues à faire ce que tu faisais déjà."
+        },
+        {
+          "t": "note",
+          "text": "Simplifications honnêtes : notre drone ne bouge que de haut en bas, la traînée de l'air suit une jolie règle en ligne droite, et pendant les prochains chapitres les moteurs ont une puissance illimitée (ils peuvent même tirer un peu vers le bas). Les vrais drones sont plus compliqués. On remettra le désordre plus tard."
+        }
+      ]
+    },
+    {
+      "id": "plan",
+      "title": "On lui dit juste quoi faire",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "On connaît la physique exactement. Donc on n'a besoin de rien *regarder*. On peut **calculer** un plan : pousser fort un moment pour monter, puis pousser exactement 4,9 N pour planer."
+        },
+        {
+          "t": "p",
+          "text": "Ce genre de plan s'appelle une **boucle ouverte** : le plan décide de la poussée, et personne ne vérifie ce qui se passe vraiment. Essaie. Choisis une poussée de montée et une durée de montée, puis décolle."
+        },
+        {
+          "t": "widget",
+          "id": "schedule"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "J'ai fait le calcul. Pendant la montée, le drone atteint vite une vitesse constante de (poussée en trop ÷ traînée). La hauteur finale, c'est juste **(poussée en trop ÷ traînée) × durée de montée**. Pour 6 N, ça fait $(6 - 4{,}9)/1 \\approx 1{,}1$ m/s, donc il faut monter pendant $2 \\div 1{,}1 \\approx 1{,}83$ secondes."
+        },
+        {
+          "t": "p",
+          "text": "Appuie sur **Plan de Theo**. Il arrive pile à 2,00 m. Magnifique."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Theo, c'est génial ! On a fini ! Fin du chapitre !"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Vérifions quand même ce qui se passe dehors… il y a un peu de vent aujourd'hui."
+        },
+        {
+          "t": "p",
+          "text": "Relance le plan de Theo, et pendant qu'il plane, appuie sur **Rafale** (une poussée vers le bas de 1 N pendant une seconde)."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Il est descendu d'environ un mètre… et il **reste** en bas. Mes calculs étaient justes !"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Tes calculs étaient parfaits. Le vent n'était juste pas dans ton plan. Et le drone n'a aucune idée qu'il n'est pas au bon endroit."
+        },
+        {
+          "t": "p",
+          "text": "C'était notre erreur : on croyait que **« si les calculs sont justes, pas besoin de rétroaction »**. Le succès par air calme était réel, et pourtant le plan est devenu inutile dès que le monde a fait quelque chose d'imprévu. Après la rafale, la poussée revient exactement à 4,9 N, donc le drone reste là où la rafale l'a laissé."
+        }
+      ]
+    },
+    {
+      "id": "package",
+      "title": "Le test du colis",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Passons au vrai boulot. Ci-dessous, le drone plane à 2 m avec une poussée fixe de 4,9 N, qui équilibre exactement son poids. Quelqu'un accroche un **colis de 0,2 kg**."
+        },
+        {
+          "t": "predict",
+          "id": "ch1-package",
+          "gate": true,
+          "q": "Le colis rend le drone plus lourd, mais la poussée reste à 4,9 N. Que se passe-t-il ?",
+          "options": [
+            {
+              "text": "Il descend un peu, puis s'arrête",
+              "sketch": "sink-stop",
+              "why": "On a l'impression que le drone devrait trouver un nouvel équilibre. Mais à 4,9 N constants, il est trop lourd à *n'importe quelle* hauteur : être plus bas ne l'aide en rien."
+            },
+            {
+              "text": "Il descend et continue de descendre, jusqu'en bas",
+              "sketch": "sink-crash",
+              "correct": true,
+              "why": "Les 2 N de poids en plus ne sont jamais compensés. La traînée l'empêche d'aller plus vite qu'environ **2 m/s**, mais il continue de tomber à cette vitesse jusqu'à toucher le sol."
+            },
+            {
+              "text": "Rien : 0,2 kg, c'est trop peu pour compter",
+              "sketch": "flat",
+              "why": "Le moindre déséquilibre entre poussée et poids le fait dériver. 0,2 kg ajoute environ 2 N, ce qui est beaucoup comparé à la traînée."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "feedback"
+        },
+        {
+          "t": "p",
+          "text": "**Crash.** Rien dans un plan en boucle ouverte ne peut remarquer que le drone tombe. Maintenant, passe en mode **Rétroaction : regarder la hauteur**, réinitialise, et réessaie le colis et la rafale."
+        },
+        {
+          "t": "p",
+          "text": "En mode rétroaction, le drone suit une règle simple : **pousser avec la poussée de vol stationnaire, plus 8 N de plus pour chaque mètre en dessous de la cible.**"
+        },
+        {
+          "t": "math",
+          "tex": "\\eff{T} = 4{,}9 + 8 \\times (\\sp{2} - \\out{h})"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Waouh. La rafale le fait descendre de moins de 20 cm, et il remonte aussitôt. Le colis le fait plonger un peu, mais il ne s'écrase pas !"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Il n'a pas besoin de savoir *ce qui* s'est passé. Il voit juste qu'il est trop bas et il pousse plus fort. C'est ça, l'astuce."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Mais regardez : avec le colis, il se stabilise vers **1,75 m**, pas 2. Pourquoi il ne remonte pas jusqu'au bout ?"
+        },
+        {
+          "t": "note",
+          "text": "Garde la question de June dans ta poche. C'est tout le chapitre 2."
+        }
+      ]
+    },
+    {
+      "id": "diagram",
+      "title": "Le dessiner",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Les ingénieurs dessinent ces systèmes avec des boîtes et des flèches qu'on appelle des **schémas-blocs**. Chaque boîte fait quelque chose ; chaque flèche transporte un signal. On a dessiné le nôtre au tableau, morceau par morceau."
+        },
+        {
+          "t": "widget",
+          "id": "whiteboard"
+        },
+        {
+          "t": "p",
+          "text": "La différence clé, c'est cette flèche qui revient de la sortie vers le début. C'est pour ça qu'on appelle la commande par rétroaction une **boucle fermée** : l'information fait tout le tour. Remonte au test du colis : le schéma sous le drone éclaire la partie qui travaille à cet instant."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "{sp|Consigne} $\\sp{r}$",
+              "def": "Ce qu'on veut : 2 m de hauteur, de l'eau à 38 °C."
+            },
+            {
+              "term": "{out|Sortie} $\\out{h}$",
+              "def": "Ce qui se passe vraiment : la hauteur réelle."
+            },
+            {
+              "term": "{err|Erreur} $\\err{e} = \\sp{r} - \\out{h}$",
+              "def": "À quel point on est loin. Positive veut dire trop bas."
+            },
+            {
+              "term": "Correcteur",
+              "def": "La règle qui transforme l'erreur en action. Pour l'instant : « 8 N de plus par mètre trop bas »."
+            },
+            {
+              "term": "{eff|Commande} $\\eff{T}$",
+              "def": "Ce que le correcteur fait réellement : la poussée."
+            },
+            {
+              "term": "Système (procédé)",
+              "def": "La chose qu'on commande : le drone lui-même, avec toute sa physique. (En anglais on dit « plant », un vieux mot qui vient des usines.)"
+            },
+            {
+              "term": "Capteur",
+              "def": "Ce qui mesure la sortie : le capteur de hauteur du drone, ta peau sous la douche."
+            },
+            {
+              "term": "{dis|Perturbation}",
+              "def": "Tout ce que le monde fait sans qu'on l'ait prévu : rafales, colis, quelqu'un qui tire la chasse."
+            },
+            {
+              "term": "Boucle ouverte / boucle fermée",
+              "def": "Agir selon un plan sans regarder / agir d'après ce qu'on mesure."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cruise",
+      "title": "Même dessin, autre machine",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Voici le même schéma pour le **régulateur de vitesse** d'une voiture. La consigne est une vitesse, le système est la voiture, et la perturbation est une côte. Le correcteur appuie plus fort sur l'accélérateur quand la voiture roule moins vite qu'elle ne devrait."
+        },
+        {
+          "t": "widget",
+          "id": "cruise"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Thermostats, régulateur de vitesse, la douche, notre drone… c'est la **même boucle** à chaque fois, avec d'autres étiquettes !"
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Ce qu'on sait pour l'instant",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "**Boucle ouverte** veut dire suivre un plan sans regarder. Ça peut être parfait par temps calme et inutile dès que quelque chose d'imprévu arrive.",
+            "**Boucle fermée (rétroaction)** veut dire mesurer la sortie, la comparer à la consigne (l'**erreur**), et agir en fonction.",
+            "La rétroaction gère des perturbations dont elle n'a jamais entendu parler : rafales, colis, n'importe quoi.",
+            "Les schémas-blocs montrent la boucle : consigne → erreur → correcteur → système → sortie → capteur → et on recommence.",
+            "Notre règle de rétroaction simple a évité le crash, mais avec le colis, le drone s'est stabilisé environ 25 cm trop bas. Pourquoi ?"
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch1-q1",
+              "q": "Dans la douche du chapitre 0, qu'est-ce qui joue le rôle du **capteur** ?",
+              "options": [
+                {
+                  "text": "Le robinet",
+                  "why": "Le robinet, c'est ta façon d'*agir* : il fixe la commande. Il ne mesure rien."
+                },
+                {
+                  "text": "Ta peau",
+                  "correct": true,
+                  "why": "Oui. Ta peau mesure la sortie (la température de l'eau) et la renvoie au correcteur (ton cerveau)."
+                },
+                {
+                  "text": "Le tuyau",
+                  "why": "Le tuyau fait partie du **système**, la chose qu'on commande. C'est de lui que vient le retard."
+                }
+              ]
+            },
+            {
+              "id": "ch1-q2",
+              "q": "Lequel de ces systèmes fonctionne en **boucle fermée** ?",
+              "options": [
+                {
+                  "text": "Un grille-pain avec minuterie",
+                  "why": "La minuterie ne vérifie pas si le pain est doré. Elle suit juste le plan : boucle ouverte."
+                },
+                {
+                  "text": "Un thermostat de maison",
+                  "correct": true,
+                  "why": "Exact. Il mesure la température de la pièce et allume ou éteint le chauffage selon l'erreur."
+                },
+                {
+                  "text": "Un lave-linge qui suit un programme fixe",
+                  "why": "Il suit son programme quel que soit l'état du linge : boucle ouverte."
+                }
+              ]
+            },
+            {
+              "id": "ch1-q3",
+              "q": "La consigne est 2 m et le drone est à 1,5 m. Quelle est l'erreur $\\err{e} = \\sp{r} - \\out{h}$, et que doit faire le correcteur ?",
+              "options": [
+                {
+                  "text": "+0,5 m : pousser plus fort",
+                  "correct": true,
+                  "why": "Une erreur positive veut dire trop bas, donc plus de poussée. Avec notre règle, ça fait $4{,}9 + 8 \\times 0{,}5 = 8{,}9$ N."
+                },
+                {
+                  "text": "−0,5 m : pousser plus fort",
+                  "why": "Vérifie l'ordre : $\\sp{r} - \\out{h} = 2 - 1{,}5 = +0{,}5$. On choisit cette convention de signe pour qu'une erreur positive veuille dire « trop bas »."
+                },
+                {
+                  "text": "3,5 m : pousser beaucoup plus fort",
+                  "why": "L'erreur est une *différence*, pas une somme : $2 - 1{,}5 = 0{,}5$ m."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Il y a un nombre mystère dans notre boucle : **8 newtons par mètre**. Pourquoi 8 ? Pourquoi pas 2, ou 50 ? Et pourquoi le drone se stabilise-t-il trop bas ?"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "schedule": {
+      "title": "Boucle ouverte : programmer la poussée",
+      "slider": {
+        "thrust": "Poussée de montée",
+        "time": "Monter pendant"
+      },
+      "launch": "Décoller",
+      "theo": "Plan de Theo",
+      "gust": "Rafale ↓",
+      "package": "Ajouter un colis",
+      "disturb": "Surprends-le :",
+      "plot": {
+        "height": "hauteur",
+        "thrust": "poussée",
+        "aria": "Hauteur du drone sur 20 secondes, avec la cible à 2 mètres.",
+        "target": "cible 2 m"
+      },
+      "readout": {
+        "height": "hauteur",
+        "speed": "vitesse",
+        "thrust": "poussée"
+      },
+      "status": {
+        "ready": "D'après la formule de Theo, ce plan finit à {h} m. Appuie sur Décoller.",
+        "perfect": "Arrivé à {h} m. Pile sur la cible !",
+        "off": "Arrivé à {h} m, soit {d} m trop {dir}.",
+        "high": "haut",
+        "low": "bas",
+        "crash": "Écrasé au sol !"
+      },
+      "planHelp": "La ligne orange pâle en tirets, c'est ton plan. La ligne pleine, c'est ce que les moteurs ont vraiment fait."
+    },
+    "feedback": {
+      "title": "Planer à 2 m : plan ou rétroaction ?",
+      "mode": "Mode",
+      "open": "Boucle ouverte : 4,9 N fixes",
+      "closed": "Rétroaction : regarder la hauteur",
+      "gust": "Rafale ↓",
+      "package": "Colis",
+      "disturb": "Perturbations :",
+      "plot": {
+        "height": "hauteur",
+        "thrust": "poussée",
+        "aria": "Hauteur du drone en vol stationnaire sur les 15 dernières secondes, avec l'erreur ombrée entre la cible et la hauteur réelle."
+      },
+      "readout": {
+        "height": "hauteur",
+        "error": "erreur r − h",
+        "thrust": "poussée"
+      },
+      "status": {
+        "open": "Boucle ouverte : poussée fixée à 4,9 N, quoi qu'il arrive.",
+        "closed": "Rétroaction : poussée = 4,9 N + 8 N par mètre trop bas.",
+        "crash": "CRASH ! Réinitialise, passe en rétroaction, et réessaie.",
+        "predictRun": "Le colis arrive à t = 1 s…"
+      },
+      "d": {
+        "setpoint": "cible r",
+        "error": "erreur e",
+        "controller": "correcteur",
+        "schedule": "poussée\nfixe",
+        "thrust": "poussée T",
+        "plant": "drone",
+        "disturbance": "vent, colis",
+        "output": "hauteur h",
+        "sensor": "capteur de hauteur",
+        "aria": "Schéma-bloc de la boucle de commande du drone",
+        "description": "La cible moins la hauteur mesurée donne l'erreur ; le correcteur transforme l'erreur en poussée ; la poussée et les perturbations agissent sur le drone ; la hauteur du drone est mesurée par le capteur puis renvoyée pour être soustraite de la cible. En mode boucle ouverte, seul le chemin direct est affiché."
+      }
+    },
+    "whiteboard": {
+      "title": "Dessiner la boucle, morceau par morceau",
+      "back": "Retour",
+      "next": "Suivant",
+      "counter": "Étape {n} sur {total}",
+      "step1": "Mika : « La poussée entre, la hauteur sort. Le drone est une boîte qui transforme l'une en l'autre. » On l'appelle le système.",
+      "step2": "Theo : « Boucle ouverte : on choisit la poussée d'après un plan, en ne regardant que la cible. »",
+      "step3": "June : « Et le monde pousse aussi sur le drone : vent, colis. Des perturbations. »",
+      "step4": "Mika : « Alors mesurons la hauteur avec un capteur… »",
+      "step5": "Theo : « …et soustrayons-la de la cible. Cette différence, c'est l'erreur, et le correcteur agit dessus. La boucle est fermée ! »",
+      "d": {
+        "setpoint": "cible r",
+        "error": "erreur e",
+        "controller": "correcteur",
+        "schedule": "plan de\npoussée",
+        "thrust": "poussée T",
+        "plant": "drone\n(système)",
+        "disturbance": "vent, colis",
+        "output": "hauteur h",
+        "sensor": "capteur",
+        "aria": "Schéma-bloc dessiné étape par étape",
+        "description": "Un schéma-bloc construit en cinq étapes : le système seul ; un plan en boucle ouverte qui l'alimente ; des perturbations qui agissent dessus ; un capteur qui mesure la sortie ; et enfin l'erreur, le correcteur et le comparateur qui ferment la boucle."
+      }
+    },
+    "cruise": {
+      "title": "Régulateur de vitesse : la même boucle",
+      "d": {
+        "setpoint": "vitesse visée",
+        "error": "erreur",
+        "controller": "régulateur\nde vitesse",
+        "schedule": "",
+        "thrust": "pédale",
+        "plant": "voiture",
+        "disturbance": "côtes, vent",
+        "output": "vitesse",
+        "sensor": "compteur de vitesse",
+        "aria": "Schéma-bloc du régulateur de vitesse d'une voiture",
+        "description": "La vitesse visée moins la vitesse mesurée donne l'erreur de vitesse ; le régulateur la transforme en appui sur l'accélérateur ; la pédale et les côtes agissent sur la voiture ; le compteur mesure la vitesse et la renvoie."
+      }
+    }
+  }
+}

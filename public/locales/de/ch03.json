@@ -1,0 +1,229 @@
+{
+  "kicker": "Kapitel 3",
+  "title": "Die Sprache der Veränderung",
+  "question": "Wie beschreiben wir, *wie schnell* sich etwas gerade ändert?",
+  "sections": [
+    {
+      "id": "slope",
+      "title": "Steigung ist Tempo",
+      "blocks": [
+        { "t": "say", "who": "theo", "mood": "think", "text": "Wir sagen ständig „träge“, „wackelig“, „kommt zur Ruhe“. June hat recht: Das sind Gefühle, keine Mathematik. Ich will genau sagen können, *wie schnell* sich die Drohne verändert." },
+        { "t": "say", "who": "june", "mood": "happy", "text": "Spielen wir unsere Drohne aus Kapitel 2 nochmal ab (Kp = 20 N/m) und schauen genau hin." },
+        { "t": "p", "text": "Die {out|blaue Kurve} ist die Höhe der Drohne über die Zeit. Tempo heißt: **wie stark sich die Höhe pro Sekunde ändert**. Im Diagramm ist das, wie *steil* die Kurve in einem Moment ist. Leg ein Lineal so an die Kurve, dass es sie an genau einem Punkt berührt. Dieses Lineal ist die **Tangente**, und ihre Steigung ist das Tempo." },
+        { "t": "say", "who": "mika", "mood": "excited", "text": "Einfach: Ganz oben auf dem Buckel ist die Drohne am schnellsten, weil sie da am höchsten ist!" },
+        { "t": "widget", "id": "tangent" },
+        { "t": "say", "who": "theo", "mood": "surprised", "text": "Stell den Cursor oben auf den Buckel. Die Tangente ist **flach**. Das Tempo ist dort null!" },
+        { "t": "say", "who": "mika", "mood": "worried", "text": "Oh. Die Drohne steigt, verliert ihren Schwung nach oben, bleibt oben einen Augenblick stehen und fällt zurück. **Hoch** und **schnell** sind zwei völlig verschiedene Dinge." },
+        { "t": "p", "text": "Am schnellsten ist sie tatsächlich mitten im Anstieg, wo die Kurve am steilsten ist. Und wenn die Kurve *nach unten* geht, ist die Steigung negativ: Die Drohne fällt." },
+        { "t": "p", "text": "Diese „Steigung in einem Augenblick“ bekommt einen Namen: die **Ableitung**. Wir schreiben sie als winzige Höhenänderung geteilt durch die winzige Zeit, die sie gedauert hat:" },
+        { "t": "math", "tex": "\\text{Tempo} = \\frac{d\\out{h}}{dt} \\approx \\frac{\\text{Höhenänderung}}{\\text{Zeitänderung}}\\quad(\\text{über eine sehr kurze Zeit})" },
+        { "t": "note", "text": "Man schreibt dafür auch $\\dot{h}$ („h Punkt“). Gleiche Idee, weniger Tinte." }
+      ]
+    },
+    {
+      "id": "rule",
+      "title": "Eine Regel fürs Tempo",
+      "blocks": [
+        { "t": "say", "who": "june", "mood": "think", "text": "Mein Kaffee kühlt erst schnell ab und dann ganz langsam. Er kommt nie ganz auf Zimmertemperatur." },
+        { "t": "say", "who": "theo", "mood": "think", "text": "Weil das Abkühltempo davon abhängt, **wie weit er noch hat**. Eine sehr heiße Tasse verliert schnell Wärme. Eine kaum warme Tasse fast gar keine." },
+        { "t": "p", "text": "Schreiben wir das als Regel für die Steigung auf. Die Kaffeetemperatur ist {out|T}, der Raum hat {sp|20 °C}:" },
+        { "t": "math", "tex": "\\frac{d\\out{T}}{dt} = -\\frac{\\out{T} - \\sp{T_{\\text{Raum}}}}{\\tau}" },
+        { "t": "p", "text": "Das Minuszeichen sagt: „Kühl ab, wenn du wärmer als der Raum bist.“ Die Zahl **τ** (tau, die *Zeitkonstante*) sagt, wie träge die Tasse ist. Bei einer normalen Tasse ist τ ≈ 10 Minuten." },
+        { "t": "note", "aside": true, "text": "Ehrlichkeitskasten: Echte Tassen verlieren auch Wärme durch Dampf und Strahlung. Diese einfache Regel (Newtons Abkühlungsgesetz) ist nah genug dran, um nützlich zu sein." },
+        { "t": "p", "text": "Jetzt das Rätsel: Die Regel sagt uns nur die Steigung **genau jetzt**. Kriegen wir daraus die ganze Kurve? Bauen wir sie von Hand: Steigung anschauen, ein Stückchen (Δt) daran entlanggehen, neue Steigung anschauen, wieder gehen…" },
+        { "t": "widget", "id": "coffee" },
+        { "t": "say", "who": "june", "mood": "excited", "text": "Zwölf kleine Schritte sind langweilig. Ich nehm **15-Minuten**-Schritte, dann bin ich im Nu fertig." },
+        { "t": "say", "who": "june", "mood": "surprised", "text": "…Moment. Der Kaffee hat **−15 °C**?! Er ist in einem warmen Raum gefroren?" },
+        { "t": "say", "who": "theo", "mood": "think", "text": "Die Regel ist in Ordnung. Die *Schritte* sind das Problem. Bei einem Riesenschritt nimmst du die steile Steigung vom **Anfang** des Schritts, lange nachdem sie nicht mehr stimmt. Du fliegst glatt an der Zimmertemperatur vorbei." },
+        { "t": "p", "text": "Wir können genau sehen, wie sehr. Jeder Schritt multipliziert den Abstand zur Zimmertemperatur mit derselben Zahl:" },
+        { "t": "math", "tex": "\\text{Abstand}_{\\text{neu}} = \\left(1 - \\frac{\\Delta t}{\\tau}\\right) \\cdot \\text{Abstand}" },
+        {
+          "t": "list",
+          "items": [
+            "Δt kleiner als τ: Der Faktor liegt zwischen 0 und 1. Der Abstand schrumpft, kein Überschwingen.",
+            "Δt zwischen τ und 2τ: Der Faktor ist **negativ**. Der Kaffee schießt unter die Zimmertemperatur, dann darüber, und schwingt hin und her, während die Schwünge kleiner werden.",
+            "Δt größer als 2τ: Der Faktor ist kleiner als −1. Die Schwünge **wachsen** mit jedem Schritt. Unsinnskaffee."
+          ]
+        },
+        { "t": "say", "who": "mika", "mood": "surprised", "text": "Das ist die Dusche! Wer zu mutig auf alte Informationen reagiert, fängt an zu schwingen." },
+        { "t": "note", "text": "Deshalb machen unsere Simulationen winzige, schlaue Schritte (1 Millisekunde, mit einem Verfahren namens RK4). Die Schwünge in späteren Kapiteln sind echte Physik, keine Pannen durch zu große Schritte." },
+        { "t": "p", "text": "Mach Δt klein und schalte die glatte Kurve ein. Die handgebauten Punkte landen genau darauf. Diese glatte Form heißt **exponentieller Abfall**. Sie bekommt im nächsten Kapitel ihr eigenes Kapitel." },
+        { "t": "h3", "text": "Die Zeitkonstante ist ein Lineal" },
+        {
+          "t": "predict",
+          "id": "ch3-two-tau",
+          "gate": true,
+          "q": "Nach **einer** Zeitkonstante hat der Kaffee 63 % des Abstands zur Zimmertemperatur geschafft. Wie viel ist nach **zwei** Zeitkonstanten geschafft?",
+          "options": [
+            { "text": "100 %: Das zweite τ schafft die restlichen 37 %", "why": "Verlockend, aber das zweite τ bringt es nicht zu Ende. Es schafft 63 % von dem, *was noch übrig ist*." },
+            { "text": "Etwa 86 %", "correct": true, "why": "Jedes τ schafft 63 % des verbleibenden Abstands: Nach einem τ bleiben 37 %, nach zweien bleiben 37 % von 37 % ≈ 14 %. Also sind 86 % geschafft." },
+            { "text": "126 %, zweimal 63 %", "why": "Das hieße, unter die Zimmertemperatur zu schießen. Echter (glatter) Kaffee macht das nie. Das haben nur Junes Riesenschritte gemacht." }
+          ]
+        },
+        { "t": "widget", "id": "ruler" },
+        { "t": "p", "text": "Nach 1τ: 63 %. Nach 2τ: 86 %. Nach 3τ: 95 %. Ganz *genau* kommt er nie an, aber nach etwa 4–5 τ merkt das niemand mehr. Schalte auf den **Tank** um: Das einfließende Wasser wird langsamer, je voller der Tank ist. Die Regel ist also dieselbe („das Tempo hängt davon ab, wie weit es bis voll ist“), und die Form auch." },
+        { "t": "say", "who": "june", "mood": "happy", "text": "τ ist also ein eingebautes Lineal. Sag mir τ, und ich weiß, wie träge etwas ist, egal ob Tasse, Tank oder Drohne." },
+        {
+          "t": "vocab",
+          "items": [
+            { "term": "Ableitung", "def": "Die Steigung einer Kurve in einem Augenblick: wie schnell sich etwas ändert. Geschrieben $\\frac{dh}{dt}$ oder $\\dot h$." },
+            { "term": "System 1. Ordnung", "def": "Etwas, dessen Änderungstempo davon abhängt, wie weit es noch von seinem Ziel entfernt ist (Kaffee, Tanks). Seine Kurve ist eine Exponentialfunktion." },
+            { "term": "Zeitkonstante τ", "def": "Wie lange ein System 1. Ordnung braucht, um 63 % der verbleibenden Strecke zu schaffen." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "area",
+      "title": "Rückwärts: Flächen aufsummieren",
+      "blocks": [
+        { "t": "say", "who": "theo", "mood": "think", "text": "Die Steigung macht aus Höhe Tempo. Geht das auch **rückwärts**? Angenommen, der Sensor der Drohne sagt uns nur ihr Tempo. Wo ist sie?" },
+        { "t": "p", "text": "Wenn du 3 s lang konstant mit 2 m/s fliegst, steigst du 6 m: Tempo × Zeit. In einem Tempo-Zeit-Diagramm ist das die **Fläche eines Rechtecks**. Wenn sich das Tempo ständig ändert, schneide die Zeit in dünne Streifen, behandle jeden Streifen als Rechteck und zähl alle zusammen." },
+        { "t": "p", "text": "Fahr mit dem Cursor entlang und schau zu, wie die schattierte Fläche wächst. Die {out|blaue Kurve} unten ist einfach *die Fläche bis hierhin*. Wo das Tempo unter null fällt (die Drohne fällt), zählt die Fläche **negativ**, und die Höhe sinkt." },
+        { "t": "widget", "id": "area" },
+        { "t": "say", "who": "mika", "mood": "happy", "text": "Die aufsummierte Fläche landet genau auf der echten Höhe. Die Steigung bringt dich hin, die Fläche bringt dich zurück." },
+        { "t": "p", "text": "Dieses „Fläche aufsummieren“ heißt **Integral**:" },
+        { "t": "math", "tex": "\\out{h}(t) = \\out{h}(0) + \\int_0^{t} \\text{Tempo}\\;dt" },
+        { "t": "note", "text": "Mehr Integral brauchen wir vorerst nicht. Es kommt zweimal wieder: in Kapitel 7 (eine Transformation, die eine Fläche misst) und in Kapitel 9 (das „I“ in PID sammelt vergangene Fehler an)." }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Was wir bis jetzt wissen",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Die **Ableitung** ist die Steigung einer Kurve in einem Augenblick: wie schnell sie sich ändert. Hoch und schnell sind verschiedene Dinge.",
+            "Eine Regel wie „kühl umso schneller ab, je heißer du bist“ legt die ganze Kurve fest: eine **exponentielle** Annäherung.",
+            "Die **Zeitkonstante τ** ist ein Lineal: 63 % des Wegs nach τ, 86 % nach 2τ, 95 % nach 3τ.",
+            "Wer Kurven mit zu großen Schritten baut, erzeugt falsches Überschwingen und Schwünge, genau wie bei der Dusche.",
+            "Das **Integral** summiert Fläche auf und macht die Ableitung rückgängig."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch3-q1",
+              "q": "Die Drohne ist am **höchsten Punkt** ihres Überschwingens. Wie groß ist ihr Tempo nach oben?",
+              "options": [
+                { "text": "So groß wie nie sonst", "why": "Höhe und Tempo sind verschiedene Dinge. Ganz oben ist die Kurve kurz flach." },
+                { "text": "Null", "correct": true, "why": "Die Tangente oben auf einem Buckel ist flach: Steigung null. Die Drohne hört einen Augenblick auf zu steigen, bevor sie zurückfällt." },
+                { "text": "So negativ wie nie sonst", "why": "Am schnellsten fällt sie etwas später, wo die Kurve am steilsten abfällt." }
+              ]
+            },
+            {
+              "id": "ch3-q2",
+              "q": "Kaffee mit 90 °C, Raum mit 20 °C, τ = 10 min. Wie heiß ist er ungefähr nach 10 Minuten?",
+              "options": [
+                { "text": "20 °C", "why": "Das ist Zimmertemperatur. Es dauert mehrere Zeitkonstanten, bis er nah dran ist, und ganz ankommen tut er nie." },
+                { "text": "Etwa 46 °C", "correct": true, "why": "Nach einem τ sind 63 % des 70-Grad-Abstands geschafft: 90 − 0,63 × 70 ≈ 46 °C." },
+                { "text": "Etwa 55 °C", "why": "Das ist genau die Hälfte. Nach einem τ ist etwas mehr als die Hälfte geschafft: 63 %." }
+              ]
+            },
+            {
+              "id": "ch3-q3",
+              "q": "Eine Drohne steigt 3 s lang mit 2 m/s, dann sinkt ihr Tempo in den nächsten 2 s gleichmäßig auf 0. Wie viel Höhe hat sie gewonnen?",
+              "options": [
+                { "text": "6 m", "why": "Das ist nur das Rechteck (die ersten 3 s). Das Abbremsen bringt noch ein Dreieck dazu." },
+                { "text": "8 m", "correct": true, "why": "Rechteck 2 × 3 = 6 m plus Dreieck ½ × 2 × 2 = 2 m. Gesamtfläche 8 m." },
+                { "text": "10 m", "why": "Da tust du so, als wäre sie die letzten 2 s noch mit vollem Tempo geflogen. Das Tempo ist gesunken, also ist es ein Dreieck, kein Rechteck." }
+              ]
+            },
+            {
+              "id": "ch3-q4",
+              "q": "Du baust die Kaffeekurve von Hand mit Schritten von Δt = 15 min, und τ = 10 min. Was passiert?",
+              "options": [
+                { "text": "Eine leicht zackige Version der echten Kurve", "why": "Das passiert bei Schritten, die kürzer als τ sind. Bei 15 min schießt der Schritt über." },
+                { "text": "Er schießt unter die Zimmertemperatur und schwingt, mit kleiner werdenden Schwüngen", "correct": true, "why": "Jeder Schritt multipliziert den Abstand mit 1 − 15/10 = −0,5: Das Vorzeichen kippt (Überschwingen) und die Größe halbiert sich (die Schwünge werden kleiner)." },
+                { "text": "Er schwingt immer weiter aus", "why": "Dafür braucht es Δt > 2τ = 20 min, dann fällt der Faktor unter −1." }
+              ]
+            }
+          ]
+        },
+        { "t": "map" },
+        { "t": "cliff", "text": "Theo: „Die Kaffeekurve hatte eine komische Eigenschaft: Ihre Steigung war immer **proportional zu ihr selbst**. Gibt es eine besondere Funktion, die so ist?“" }
+      ]
+    }
+  ],
+  "widgets": {
+    "tangent": {
+      "title": "Steigungsdetektiv",
+      "height": "Höhe",
+      "target": "Ziel 2 m",
+      "peak": "höchster Punkt",
+      "speed": "Tempo = Steigung",
+      "speedAxis": "Tempo (m/s)",
+      "cursor": "Zeitcursor",
+      "readSlope": "Steigung (Tempo)",
+      "readHeight": "Höhe",
+      "sweep": "Alles nachzeichnen",
+      "clear": "Neu anfangen",
+      "rising": "Tangente zeigt nach oben: Die Drohne steigt.",
+      "falling": "Tangente zeigt nach unten: Die Drohne fällt (negatives Tempo).",
+      "flat": "Tangente ist flach: Genau hier ist das Tempo null!",
+      "help": "Zieh in einem der Diagramme oder nimm den Schieberegler. Jede Stelle, die du besuchst, fügt der Tempokurve einen Punkt hinzu.",
+      "ariaTop": "Höhe der Drohne über 4 Sekunden mit einer Tangente am Zeitcursor.",
+      "ariaBottom": "Tempokurve, Punkt für Punkt gezeichnet, während der Cursor jeden Zeitpunkt besucht.",
+      "describe": "Bei {t} s ist die Höhe {h} m und die Steigung {v} m pro Sekunde.",
+      "atStart": "Ganz am Anfang steht die Drohne still: Steigung null. Zieh nach rechts, um dem Anstieg zu folgen.",
+      "pause": "Pause"
+    },
+    "coffee": {
+      "title": "Die Kaffeekurve von Hand bauen",
+      "timeAxis": "Zeit (min)",
+      "exact": "glatte Kurve",
+      "hand": "unsere handgebaute Kurve",
+      "room": "Raum 20 °C",
+      "dt": "Schrittweite Δt",
+      "dtHint": "τ = 10 min für diese Tasse",
+      "step1": "Einen Schritt machen",
+      "step10": "10 Schritte",
+      "stepAll": "Bis 120 min auffüllen",
+      "restart": "Neu anfangen",
+      "showExact": "Glatte Kurve zeigen",
+      "aria": "Kaffeetemperatur, Schritt für Schritt gebaut. Jeder Schritt folgt eine Schrittweite lang der aktuellen Steigung. Die gestrichelte orange Linie zeigt den nächsten Schritt vorab.",
+      "status": {
+        "start": "Der Kaffee startet bei 90 °C und kühlt um {r} °C pro Minute ab. Die orangen Striche zeigen, wo ein Schritt landen wird.",
+        "step": "Schritt {n}: Bei {t} min hat der Kaffee {T} °C und kühlt um {r} °C pro Minute ab.",
+        "frozen": "Moment… {T} °C? Der Kaffee ist kälter als der Raum geworden!",
+        "growing": "Und die Schwünge werden größer!",
+        "dipped": "(Unterwegs ist er unter Zimmertemperatur gefallen!)"
+      },
+      "help": "Jeder Schritt geht Δt Minuten lang geradeaus entlang der aktuellen Steigung. Kleine Schritte schmiegen sich an die glatte Kurve, Riesenschritte schießen über."
+    },
+    "ruler": {
+      "title": "Das Zeitkonstanten-Lineal",
+      "which": "Welches System?",
+      "coffee": "Abkühlender Kaffee",
+      "tank": "Volllaufender Tank",
+      "timeAxis": "Zeit (min)",
+      "levelAxis": "Wasserstand (m)",
+      "curve": "Verlauf",
+      "room": "Raum 20 °C",
+      "full": "voll 1,2 m",
+      "tau": "Zeitkonstante τ",
+      "read1": "Wert bei 1τ",
+      "aria": "Exponentialkurve mit senkrechten Markierungen bei einer, zwei und drei Zeitkonstanten, beschriftet mit 63, 86 und 95 Prozent.",
+      "describe": "Zeitkonstante {tau} Minuten. Markierungen bei einer, zwei und drei Zeitkonstanten zeigen 63, 86 und 95 Prozent des Wegs.",
+      "read2": "Wert bei 2τ"
+    },
+    "area": {
+      "title": "Flächen aufsummieren",
+      "speed": "Tempo",
+      "speedAxis": "Tempo (m/s)",
+      "trueHeight": "echte Höhe (zum Vergleich)",
+      "accHeight": "Fläche bis hierhin",
+      "cursor": "Aufsummieren bis",
+      "readArea": "Fläche bis hierhin = gewonnene Höhe",
+      "start": "Drück auf Abspielen (oder zieh im Tempodiagramm), um Streifen aufzusummieren.",
+      "positive": "Tempo über null: Jeder Streifen bringt Höhe dazu.",
+      "negative": "Tempo unter null: Diese Streifen zählen negativ. Die Höhe sinkt.",
+      "ariaTop": "Tempo der Drohne über die Zeit, die Fläche unter der Kurve bis zum Cursor schattiert.",
+      "ariaBottom": "Die aufsummierte Fläche über die Zeit, über der echten Höhenkurve.",
+      "describe": "Bis {t} s beträgt die aufsummierte Fläche {a} Meter.",
+      "help": "Zieh im Tempodiagramm oder nimm den Schieberegler. Streifen über null bringen Höhe dazu, Streifen unter null nehmen sie weg."
+    }
+  }
+}

@@ -1,0 +1,251 @@
+{
+  "app": {
+    "title": "Kto trzyma drona w górze?",
+    "short": "Kto trzyma drona w górze?",
+    "loading": "Temperujemy ołówki…"
+  },
+  "nav": {
+    "skip": "Przejdź do treści",
+    "chapters": "Rozdziały",
+    "chapterN": "Rozdział {n}: {title}",
+    "menu": "Otwórz menu rozdziałów",
+    "close": "Zamknij",
+    "map": "Mapa pojęć",
+    "progress": "Ukończone rozdziały",
+    "prev": "Wstecz",
+    "next": "Dalej",
+    "home": "Strona startowa",
+    "chapterNav": "Nawigacja po rozdziałach",
+    "upNext": "Następny",
+    "readingProgress": "Postęp czytania w tym rozdziale",
+    "tools": "Narzędzia strony"
+  },
+  "theme": {
+    "label": "Motyw kolorów: {mode} (kliknij, aby zmienić)",
+    "auto": "jak w systemie",
+    "light": "papier",
+    "dark": "nocny zeszyt"
+  },
+  "legend": {
+    "button": "Kolory",
+    "title": "Co oznaczają kolory",
+    "setpoint": "Wartość zadana / cel (zielony, przerywany)",
+    "output": "Co dzieje się naprawdę (niebieski)",
+    "error": "Uchyb: cel minus rzeczywistość (czerwony)",
+    "effort": "Sygnał sterujący: ciąg, kurek (pomarańczowy)",
+    "disturbance": "Zakłócenie: wiatr, paczka, grawitacja (fioletowy)",
+    "pole": "Biegun (×)",
+    "zero": "Zero (○)",
+    "ghost": "Poprzedni przebieg (blady duch)",
+    "guess": "Twoje przewidywanie (ołówek)"
+  },
+  "transport": {
+    "label": "Sterowanie symulacją",
+    "play": "Start",
+    "pause": "Pauza",
+    "reset": "Od nowa",
+    "step": "Krok",
+    "speed": "Prędkość"
+  },
+  "splane": {
+    "re": "σ (maleje ← → rośnie)",
+    "im": "ω (wirowanie)",
+    "stable": "uspokaja się",
+    "unstable": "wybucha",
+    "pole": "Biegun",
+    "zero": "Zero",
+    "point": "Punkt",
+    "draggable": "punkt do przeciągania, przesuwaj strzałkami, z Shiftem większe kroki"
+  },
+  "story": {
+    "predict": "Najpierw zgadnij!",
+    "predictRight": "Strzał w dziesiątkę!",
+    "predictSurprise": "Niespodzianka! (A niespodzianki to właśnie miejsca, gdzie się uczymy.)",
+    "predictLocked": "Odpowiedź zapisana. Zobaczmy…",
+    "predictAgain": "Zgadnij jeszcze raz",
+    "check": "Sprawdź się",
+    "quizRight": "Tak!",
+    "quizWrong": "Nie do końca, a oto dlaczego:",
+    "quizScore": "Rozwiązane: {n} z {total}.",
+    "quizDone": "Rozdział ukończony ✓",
+    "recap": "Co udało nam się ustalić",
+    "vocab": "Nowe słowa",
+    "completeStamp": "Gotowe!",
+    "completeAnnounce": "Rozdział {n} ukończony. Dobra robota!"
+  },
+  "cast": {
+    "mika": "Mika",
+    "theo": "Theo",
+    "june": "June"
+  },
+  "home": {
+    "kicker": "Przygoda ze sprzężeniem zwrotnym w dwunastu zeszytach",
+    "question": "Jak maszyna utrzymuje się tam, gdzie powinna być?",
+    "intro": [
+      "Wszystko zaczęło się pod prysznicem. Jedno z nas przekręciło kurek, oparzyło się, przekręciło z powrotem, zamarzło i przekręciło znowu. A potem przyszło nam do głowy: mały dron potrafi wisieć idealnie nieruchomo na wietrze i nie ma przy tym żadnego mózgu. **Jak?**",
+      "To nasze zeszyty z dochodzenia do odpowiedzi, razem z każdym błędnym zakrętem. Zaczynamy od zera: żadna analiza matematyczna nie jest potrzebna. Na końcu będziesz wiedzieć, po co istnieje **transformata Laplace'a**, czym naprawdę są **bieguny**, i nastroisz regulator **PID**, który pobije twoje własne ręce."
+    ],
+    "cast": {
+      "mika": "Zadaje pytania, o których wszyscy po cichu myślą. Każdy suwak przesuwa na maksa, „żeby zobaczyć”.",
+      "theo": "Nie przyjmie żadnej sztuczki, dopóki nie wie, *dlaczego* działa. Świetnie znajduje błędy.",
+      "june": "Buduje różne rzeczy. Zawsze pyta: „a możemy to wypróbować na dronie?”"
+    },
+    "start": "Zacznij od prysznica →",
+    "resume": "Kontynuuj od rozdziału {n} →",
+    "contents": "Zeszyty",
+    "done": "ukończony",
+    "privacy": "Twój postęp i odpowiedzi są zapisywane tylko w tej przeglądarce.",
+    "reset": "Wyzeruj mój postęp"
+  },
+  "chapters": {
+    "0": {
+      "title": "Problem z prysznicem",
+      "short": "Prysznic",
+      "question": "Dlaczego nie mogę po prostu ustawić prysznica na 38 °C?"
+    },
+    "1": {
+      "title": "Układ otwarty kontra zamknięty",
+      "short": "Sprzężenie",
+      "question": "Czy możemy po prostu *powiedzieć* dronowi, jakiego ciągu ma użyć?"
+    },
+    "2": {
+      "title": "Regulacja proporcjonalna",
+      "short": "Regulator P",
+      "question": "Jak mocno dron powinien pchać, kiedy jest za nisko?"
+    },
+    "3": {
+      "title": "Język zmiany",
+      "short": "Zmiana",
+      "question": "Jak opisać, *jak szybko* coś się zmienia?"
+    },
+    "4": {
+      "title": "Dlaczego wykładnicze są magiczne",
+      "short": "Wykładnicze",
+      "question": "Czy istnieje krzywa, której nachylenie jest jej własną kopią?"
+    },
+    "5": {
+      "title": "Wirujące liczby",
+      "short": "Wirowanie",
+      "question": "Jaka liczba do kwadratu daje −1 i dlaczego miałaby się kołysać?"
+    },
+    "6": {
+      "title": "Prawdziwy charakter drona",
+      "short": "2. rząd",
+      "question": "Dlaczego dron podskakuje jak sprężyna?"
+    },
+    "7": {
+      "title": "Transformata Laplace'a",
+      "short": "Laplace",
+      "question": "Czy da się zamienić analizę matematyczną w algebrę?"
+    },
+    "8": {
+      "title": "Transmitancje, bieguny i zera",
+      "short": "Bieguny",
+      "question": "Czy da się odczytać cały charakter układu z jednego ułamka?"
+    },
+    "9": {
+      "title": "PID: naprawiamy wszystko",
+      "short": "PID",
+      "question": "Jak pozbyć się zwisu *i* zatrzymać kołysanie?"
+    },
+    "10": {
+      "title": "Powrót pod prysznic",
+      "short": "Opóźnienie",
+      "question": "Dlaczego oscylowaliśmy i jak blisko krawędzi jesteśmy?"
+    },
+    "11": {
+      "title": "Wyzwanie z dronem",
+      "short": "Finał",
+      "question": "Czy *ty* utrzymasz drona na 2 m mimo wszystkiego?"
+    }
+  },
+  "map": {
+    "title": "Mapa pojęć",
+    "intro": "Każdy pomysł, który zbudowaliśmy, i to, jak się na sobie opierają. Rośnie w miarę czytania. Kliknij bąbelek, aby wrócić tam, gdzie się narodził.",
+    "aria": "Mapa pojęć kursu: pomysły połączone liniami, pogrupowane według rozdziałów.",
+    "listIntro": "Odblokowane dotąd pomysły:",
+    "locked": "Jeszcze nieodkryte",
+    "nodes": {
+      "goal": "wartość zadana",
+      "delay": "opóźnienie",
+      "openloop": "układ otwarty",
+      "feedback": "sprzężenie zwrotne",
+      "blockdiagram": "schemat blokowy",
+      "error": "uchyb",
+      "plant": "obiekt",
+      "disturbance": "zakłócenie",
+      "kp": "regulator P (Kp)",
+      "sserror": "uchyb ustalony",
+      "overshoot": "przeregulowanie",
+      "derivative": "pochodna = nachylenie",
+      "firstorder": "układ pierwszego rzędu",
+      "tau": "stała czasowa τ",
+      "integral": "całka = pole",
+      "exponential": "e^(at)",
+      "guess": "zgadnij wykładniczą",
+      "complex": "i = ćwierć obrotu",
+      "spin": "e^(iωt) wiruje",
+      "spiral": "e^(st) kręci spiralę",
+      "smap": "mapa s",
+      "second": "układ 2. rzędu",
+      "wnzeta": "ωn i ζ",
+      "sum": "suma e^(st)",
+      "laplace": "sonda Laplace'a",
+      "dtos": "d/dt → × s",
+      "table": "nasza tabelka",
+      "splane": "płaszczyzna s",
+      "tf": "transmitancja",
+      "poles": "bieguny",
+      "zeros": "zera",
+      "stability": "stabilność",
+      "integralaction": "I: pozbądź się zwisu",
+      "derivativeaction": "D: dodaj tłumienie",
+      "pid": "PID",
+      "noise": "szum i szarpnięcie",
+      "phaselag": "opóźnienie fazowe",
+      "bode": "charakterystyki Bodego",
+      "margins": "zapas wzmocnienia/fazy",
+      "robust": "odporność",
+      "you": "TY, inżynier automatyk"
+    }
+  },
+  "units": {
+    "m": "m",
+    "s": "s",
+    "N": "N",
+    "C": "°C",
+    "kg": "kg"
+  },
+  "drone": {
+    "aria": "Widok z boku na drona nad ziemią. Przerywana zielona linia oznacza docelową wysokość.",
+    "target": "cel",
+    "height": "wysokość",
+    "thrust": "ciąg",
+    "wind": "wiatr",
+    "package": "paczka",
+    "crash": "BUM!",
+    "ground": "ziemia",
+    "describe": "Dron na wysokości {h} m, cel {r} m, ciąg {T} N."
+  },
+  "plots": {
+    "time": "czas (s)",
+    "height": "wysokość (m)",
+    "thrust": "ciąg (N)",
+    "temp": "temperatura (°C)",
+    "knob": "kurek"
+  },
+  "footer": {
+    "label": "O autorze",
+    "name": "Micheal Reilly",
+    "x": "X / Twitter",
+    "bluesky": "Bluesky",
+    "blog": "Blog",
+    "source": "Kod źródłowy"
+  },
+  "lang": {
+    "button": "Język: {name}",
+    "menu": "Wybierz język",
+    "label": "Język",
+    "switching": "Zmieniamy język…"
+  }
+}

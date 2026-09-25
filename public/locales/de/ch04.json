@@ -1,0 +1,193 @@
+{
+  "kicker": "Kapitel 4",
+  "title": "Warum Exponentialfunktionen magisch sind",
+  "question": "Gibt es eine Kurve, deren Steigung einfach eine Kopie von ihr selbst ist?",
+  "sections": [
+    {
+      "id": "copy",
+      "title": "Eine Kurve, die sich selbst kopiert",
+      "blocks": [
+        { "t": "say", "who": "theo", "mood": "think", "text": "Letztes Mal ist der Abstand des Kaffees zur Zimmertemperatur mit einem Tempo geschrumpft, das **proportional zum Abstand selbst** war. Großer Abstand, schnelles Schrumpfen. Kleiner Abstand, langsames Schrumpfen. Welche Kurve macht so was?" },
+        { "t": "p", "text": "Suchen wir eine Kurve, deren Steigung an jedem Punkt ein festes Vielfaches ihrer Höhe ist. Gute Kandidaten sind die „Verdopplungskurven“: $2^t$, $3^t$ und ihre Freunde. Jede davon multipliziert sich jede Sekunde mit demselben Faktor." },
+        { "t": "say", "who": "mika", "mood": "happy", "text": "$e^t$ hab ich schon in Schulbüchern gesehen. Ist $e$ nicht einfach irgendeine Zahl, die Mathematiker mögen? 2,718-irgendwas, egal." },
+        { "t": "say", "who": "june", "mood": "excited", "text": "Lasst uns messen statt streiten. Leg an jede Kurve eine Tangente und teil ihre Steigung durch ihre Höhe." },
+        { "t": "widget", "id": "bases" },
+        { "t": "p", "text": "Zieh den Cursor an einer Kurve entlang, und die Anzeige **Steigung ÷ Höhe** rührt sich nicht. Jede Exponentialfunktion kopiert sich selbst, skaliert mit einer festen Zahl. Für Basis 2 ist diese Zahl etwa 0,693, für Basis 3 etwa 1,099." },
+        { "t": "p", "text": "Und für genau eine Basis ist die Skalierungszahl **1**, sodass die Steigungskurve genau auf der Kurve selbst liegt. Diese Basis ist $e \\approx 2.718$:" },
+        { "t": "math", "tex": "\\frac{d}{dt}\\,e^{t} = e^{t}" },
+        { "t": "say", "who": "mika", "mood": "surprised", "text": "$e$ ist also gar nicht zufällig. Es ist **die** Zahl, deren Kurve ihre eigene Steigung ist. Okay, ich nehm alles zurück." },
+        { "t": "note", "aside": true, "text": "Die Skalierungszahl für Basis b heißt ln b, der „natürliche Logarithmus“. Den brauchen wir nicht wieder. Wir nehmen einfach e." }
+      ]
+    },
+    {
+      "id": "stretch",
+      "title": "Schneller machen: e^(at)",
+      "blocks": [
+        { "t": "p", "text": "Echte Systeme ändern sich nicht alle gleich schnell. Bauen wir also einen Knopf in den Exponenten ein: $e^{at}$. Die Zahl **a** dehnt oder staucht die Zeit." },
+        { "t": "widget", "id": "expA" },
+        { "t": "p", "text": "Jetzt ist Steigung ÷ Höhe überall auf der Kurve genau **a**. Positives a: Sie wächst (und zwar immer schneller). Negatives a: Sie schrumpft Richtung null, wie der Abstand beim Kaffee. a = 0: Sie bleibt einfach, wo sie ist." },
+        { "t": "math", "tex": "\\frac{d}{dt}\\,e^{at} = a\\,e^{at}" },
+        {
+          "t": "predict",
+          "id": "ch4-double",
+          "gate": true,
+          "q": "Nimm die Steigung von $e^{2t}$ und dann die Steigung **dieser Steigung**. Was kommt raus?",
+          "options": [
+            { "text": "Wieder $e^{2t}$", "why": "Das passiert bei $e^{t}$ (a = 1). Hier ist a = 2, und jede Steigung multipliziert mit 2." },
+            { "text": "$4\\,e^{2t}$", "correct": true, "why": "Die erste Steigung ergibt $2e^{2t}$. Die Steigung *davon* multipliziert nochmal mit 2: $4e^{2t}$. Eine Steigung zu nehmen heißt einfach, jedes Mal mit a zu multiplizieren." },
+            { "text": "$2t\\,e^{2t}$", "why": "Ein typischer Rechenfehler. Das a kommt als einfacher Faktor herunter, und ein t taucht vorne nie auf." }
+          ]
+        },
+        { "t": "math", "tex": "\\frac{d}{dt}e^{at} = a\\,e^{at},\\qquad \\frac{d^2}{dt^2}e^{at} = a^2\\,e^{at}" },
+        { "t": "say", "who": "theo", "mood": "excited", "text": "Moment, das ist riesig. Bei Exponentialfunktionen wird aus dem Nehmen einer Steigung (Analysis) ein **Multiplizieren mit a** (einfache Algebra)." },
+        { "t": "note", "text": "Kleb da einen Zettel dran. In Kapitel 7 wird aus dieser Idee ein Trick, der für *jedes* Signal Analysis in Algebra verwandelt." }
+      ]
+    },
+    {
+      "id": "guess",
+      "title": "Eine Exponentialfunktion raten",
+      "blocks": [
+        { "t": "p", "text": "Daraus wird eine Strategie, um jede „Regel für die Steigung“ zu lösen: **Rate**, dass die Antwort eine Exponentialfunktion ist, setz sie ein und schau, welches a die Regel erfüllt." },
+        { "t": "p", "text": "Die Kaffeeregel war $\\frac{dT}{dt} = -\\frac{T - 20}{\\tau}$ mit τ = 10 min. Unser Tipp ist $T = 20 + 70\\,e^{at}$ (70 ist der Anfangsabstand). Dreh an a, bis die Steigung des Tipps zu dem passt, was die Regel verlangt." },
+        { "t": "widget", "id": "guess" },
+        { "t": "p", "text": "Die Algebra stimmt mit dem Schieberegler überein. Die Steigung des Tipps ist $a \\cdot 70e^{at}$. Die Regel will $-70e^{at}/\\tau$. Das $70e^{at}$ steht auf beiden Seiten und kürzt sich weg:" },
+        { "t": "math", "tex": "a \\cdot 70e^{at} = -\\frac{70e^{at}}{\\tau} \\quad\\Longrightarrow\\quad a = -\\frac{1}{\\tau}" },
+        { "t": "say", "who": "theo", "mood": "happy", "text": "Und sie landet genau auf den Punkten, die wir in Kapitel 3 von Hand gebaut haben. Exponentialfunktion-Raten funktioniert. Die Gleichung, die a festlegt, heißt **charakteristische Gleichung**." }
+      ]
+    },
+    {
+      "id": "spring",
+      "title": "Die Feder macht unseren Trick kaputt",
+      "blocks": [
+        { "t": "say", "who": "june", "mood": "excited", "text": "Probieren wir’s an etwas, das **federt**. Eine Masse an einer Feder ist im Grunde unsere Drohne mit P-Regler: Sie wird umso stärker zurückgezogen, je weiter sie vom Ziel weg ist." },
+        { "t": "p", "text": "Die Feder zieht mit der Kraft $-kx$ zurück. Kraft = Masse × Beschleunigung, und die Beschleunigung ist die Steigung der Steigung. Die Regel lautet also:" },
+        { "t": "math", "tex": "m\\,\\frac{d^2x}{dt^2} = -k\\,x" },
+        { "t": "p", "text": "Rate $x = e^{at}$. Die Steigung der Steigung ist $a^2 e^{at}$, also $m a^2 e^{at} = -k e^{at}$. Kürze $e^{at}$:" },
+        { "t": "math", "tex": "a^2 = -\\frac{k}{m}" },
+        { "t": "p", "text": "Mit k/m = 4 brauchen wir eine Zahl, deren Quadrat **−4** ist. Such eine:" },
+        { "t": "widget", "id": "square" },
+        { "t": "say", "who": "theo", "mood": "worried", "text": "Quadrate sind nie negativ. Die blaue Parabel kommt nie runter bis zur grünen Linie. Es gibt also **kein** solches a. Unser Trick versagt: Federn lassen sich einfach nicht mit Exponentialfunktionen beschreiben." },
+        { "t": "say", "who": "mika", "mood": "think", "text": "Aber die Feder ist doch da und federt fröhlich vor sich hin. Sie *hat* eine Bewegung. Vielleicht ist nicht die Feder falsch, sondern unsere Vorstellung davon, was eine Zahl ist?" },
+        { "t": "say", "who": "theo", "mood": "think", "text": "…Hm. Ich geb zu, ich hab „keine Zahl“ ein bisschen schnell gesagt. Jede Zahl, die ich *kenne*, ergibt zum Quadrat etwas Positives." },
+        { "t": "note", "text": "Behalt das im Auge. Hatte Theo recht? (Spoiler: nein.)" }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Was wir bis jetzt wissen",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Die Steigung jeder Exponentialfunktion ist eine Kopie von ihr selbst: Steigung ÷ Höhe ist konstant.",
+            "$e \\approx 2.718$ ist die Basis, bei der dieses Verhältnis genau 1 ist. Bei $e^{at}$ ist das Verhältnis a.",
+            "Die Steigung von $e^{at}$ zu nehmen heißt einfach **mit a multiplizieren**. Aus Analysis wird Algebra.",
+            "**Rate eine Exponentialfunktion**, setz sie in die Regel ein und löse nach a auf. Beim Kaffee ist a = −1/τ.",
+            "Bei einer Feder verlangt der Tipp $a^2 = -k/m$, und das schafft keine gewöhnliche Zahl. Noch nicht."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch4-q1",
+              "q": "Welche Kurve hat überall Steigung = −0,5 × Höhe?",
+              "options": [
+                { "text": "Sanfter Abfall", "sketch": "decaying-plain", "correct": true, "why": "Das ist $e^{-0.5t}$: Das negative Verhältnis heißt, sie schrumpft, und das Schrumpfen wird langsamer, je kleiner sie wird." },
+                { "text": "Explosives Wachstum", "sketch": "growing-plain", "why": "Wachstum braucht ein *positives* Steigung ÷ Höhe." },
+                { "text": "Gleichmäßiges Wackeln", "sketch": "steady-wiggle", "why": "Die Steigung eines Wackelns ist kein festes Vielfaches seiner Höhe: An den Spitzen ist die Höhe am größten, aber die Steigung null." }
+              ]
+            },
+            {
+              "id": "ch4-q2",
+              "q": "Wenn $x = e^{-3t}$, was ist dann $x'' + 3x'$?",
+              "options": [
+                { "text": "0", "correct": true, "why": "$x' = -3e^{-3t}$ und $x'' = 9e^{-3t}$. Also $9e^{-3t} + 3(-3e^{-3t}) = 0$." },
+                { "text": "$18e^{-3t}$", "why": "Prüf das Vorzeichen von $x'$: Steigungen von $e^{-3t}$ bringen −3 mit, also $3x' = -9e^{-3t}$." },
+                { "text": "$-3e^{-3t}$", "why": "Das ist nur $x'$. Du musst noch den Term $x''$ dazuzählen." }
+              ]
+            },
+            {
+              "id": "ch4-q3",
+              "q": "Ein Tank leert sich nach $h' = -h/20$ (Zeit in Sekunden). Wie groß sind a und die Zeitkonstante?",
+              "options": [
+                { "text": "a = −1/20 pro Sekunde, τ = 20 s", "correct": true, "why": "Rate $h = Ce^{at}$: $a = -1/20$, und τ = −1/a = 20 s, die Zeit, bis 63 % abgelaufen sind." },
+                { "text": "a = −20 pro Sekunde, τ = 1/20 s", "why": "Genau verkehrt herum: Die Regel teilt durch 20, also ist es langsam (τ = 20 s), nicht superschnell." },
+                { "text": "a = +1/20 pro Sekunde, τ = 20 s", "why": "Ein positives a würde den Wasserstand *wachsen* lassen. Das Minuszeichen in der Regel heißt: Er läuft leer." }
+              ]
+            }
+          ]
+        },
+        { "t": "map" },
+        { "t": "note", "text": "Ehrliche Buchführung: Theos „keine Zahl ergibt zum Quadrat etwas Negatives“ ist ein Fehler. Nur einer, den wir noch nicht sehen können. Im nächsten Kapitel darf er sich auf die schönstmögliche Art irren." },
+        { "t": "cliff", "text": "Die Drohne und die Feder **wackeln**. Exponentialfunktionen können nur wachsen oder schrumpfen. Es sei denn… eine Zahl könnte zum Quadrat etwas Negatives ergeben?" }
+      ]
+    }
+  ],
+  "widgets": {
+    "bases": {
+      "title": "Steigung ÷ Höhe für verschiedene Basen",
+      "base": "Basis b",
+      "xAxis": "t",
+      "yAxis": "Höhe bᵗ",
+      "curve": "bᵗ",
+      "slopeCurve": "ihre Steigung",
+      "cursor": "Tangente bei t =",
+      "showSlope": "Steigungskurve einblenden",
+      "readHeight": "Höhe",
+      "readSlope": "Steigung",
+      "readRatio": "Steigung ÷ Höhe",
+      "statusE": "Basis e: Steigung ÷ Höhe ist genau 1. Die Kurve ist ihre eigene Steigung!",
+      "statusOther": "Steigung ÷ Höhe ist überall auf dieser Kurve {r}. Konstant, aber nicht 1.",
+      "aria": "Diagramm einer Exponentialkurve mit einer Tangente am Cursor und wahlweise ihrer Steigungskurve.",
+      "describe": "Basis {b}, bei t = {t} ist Steigung geteilt durch Höhe gleich {r}.",
+      "help": "Wähl eine Basis und zieh dann im Diagramm (oder nimm den Schieberegler), um die Tangente an der Kurve entlangzuschieben."
+    },
+    "expA": {
+      "title": "Ein Knopf im Exponenten",
+      "xAxis": "Zeit (s)",
+      "yAxis": "Wert",
+      "curve": "eᵃᵗ",
+      "slopeCurve": "ihre Steigung",
+      "a": "a",
+      "cursor": "Tangente bei t =",
+      "readRatio": "Steigung ÷ Höhe",
+      "grow": "a > 0: Sie wächst, immer schneller.",
+      "shrink": "a < 0: Sie schrumpft Richtung null, wie der Abstand beim Kaffee.",
+      "flat": "a = 0: Sie ändert sich nie. Steigung null, für immer.",
+      "aria": "Diagramm von e hoch a t, seiner Steigungskurve und einer Tangente.",
+      "describe": "a = {a}. Steigung geteilt durch Höhe ist überall {r}.",
+      "help": "Zieh im Diagramm, um die Tangente zu verschieben. Die blasse gestrichelte Kurve ist dein vorheriges a."
+    },
+    "guess": {
+      "title": "Den Tipp einstellen",
+      "xAxis": "Zeit (min)",
+      "yAxis": "Kaffeetemperatur (°C)",
+      "rule": "die Regel, von Hand gebaut (Kapitel 3)",
+      "guess": "unser Tipp 20 + 70·eᵃᵗ",
+      "room": "Raum 20 °C",
+      "a": "a",
+      "readGuess": "Steigung des Tipps",
+      "readRule": "Steigung der Regel",
+      "tooFast": "Der Tipp kühlt zu schnell ab: Seine Steigung ist steiler, als die Regel erlaubt. Bring a näher an null.",
+      "tooSlow": "Der Tipp kühlt zu langsam ab. Mach a negativer.",
+      "match": "Passt perfekt! a = −0,1 pro Minute = −1/τ. Der Tipp gehorcht überall der Regel.",
+      "aria": "Kaffeetemperatur: die von Hand gebaute Lösung der Abkühlregel und ein exponentieller Tipp, dessen Rate a mit dem Schieberegler eingestellt wird.",
+      "probe": "Steigungen bei 5 min verglichen"
+    },
+    "square": {
+      "title": "Auf der Suche nach a mit a² = −4",
+      "xAxis": "a",
+      "yAxis": "a²",
+      "square": "a²",
+      "need": "gesucht: −k/m = −4",
+      "a": "Probier a =",
+      "status": "a = {a} ergibt a² = {sq}. Immer noch {gap} zu groß. Quadrate werden nie negativ.",
+      "springCaption": "Währenddessen federt die echte Feder (k/m = 4, ohne Dämpfer) fröhlich vor sich hin:",
+      "springAria": "Eine Masse an einer Feder, die auf und ab federt.",
+      "aria": "Parabel von a zum Quadrat mit einer waagerechten Linie bei minus vier, die sie nie erreicht.",
+      "playSpring": "Feder abspielen",
+      "pauseSpring": "Feder anhalten"
+    }
+  }
+}

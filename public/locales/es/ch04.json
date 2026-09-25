@@ -1,0 +1,367 @@
+{
+  "kicker": "Capítulo 4",
+  "title": "Por qué las exponenciales son mágicas",
+  "question": "¿Existe una curva cuya pendiente sea simplemente una copia de sí misma?",
+  "sections": [
+    {
+      "id": "copy",
+      "title": "Una curva que se copia a sí misma",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "La última vez, la diferencia entre el café y la temperatura ambiente se encogía a un ritmo **proporcional a la propia diferencia**. Diferencia grande, se encoge rápido. Diferencia pequeña, se encoge despacio. ¿Qué tipo de curva hace eso?"
+        },
+        {
+          "t": "p",
+          "text": "Busquemos una curva cuya pendiente, en cada punto, sea un múltiplo fijo de su altura. Buenas candidatas son las curvas que \"se duplican\": $2^t$, $3^t$ y compañía. Cada una se multiplica por el mismo factor cada segundo."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "He visto $e^t$ en los libros. ¿No es $e$ un número cualquiera que les gusta a los matemáticos? 2,718 y pico, lo que sea."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Midamos en vez de discutir. Pongamos una tangente en cada curva y dividamos su pendiente entre su altura."
+        },
+        {
+          "t": "widget",
+          "id": "bases"
+        },
+        {
+          "t": "p",
+          "text": "Arrastra el cursor a lo largo de cualquier curva y el valor de **pendiente ÷ altura** no se mueve. Toda exponencial se copia a sí misma, escalada por un número fijo. Para la base 2 ese número es más o menos 0,693; para la base 3, más o menos 1,099."
+        },
+        {
+          "t": "p",
+          "text": "Y para una única base el número de escala es **1**, así que la curva de la pendiente queda justo encima de la propia curva. Esa base es $e \\approx 2.718$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\,e^{t} = e^{t}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "O sea que $e$ no es nada aleatorio. Es **el** número cuya curva es su propia pendiente. Vale, retiro lo dicho."
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "El número de escala para la base b se llama ln b, el \"logaritmo natural\". No lo vamos a volver a necesitar. Usaremos e y listo."
+        }
+      ]
+    },
+    {
+      "id": "stretch",
+      "title": "Acelerándola: e^(at)",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "No todos los sistemas reales cambian al mismo ritmo, así que pongamos un mando en el exponente: $e^{at}$. El número **a** estira o encoge el tiempo."
+        },
+        {
+          "t": "widget",
+          "id": "expA"
+        },
+        {
+          "t": "p",
+          "text": "Ahora pendiente ÷ altura es exactamente **a**, en toda la curva. a positivo: crece (y cada vez más rápido). a negativo: se encoge hacia cero, como la diferencia del café. a = 0: se queda quieta."
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\,e^{at} = a\\,e^{at}"
+        },
+        {
+          "t": "predict",
+          "id": "ch4-double",
+          "gate": true,
+          "q": "Calcula la pendiente de $e^{2t}$ y luego la pendiente **de esa pendiente**. ¿Qué obtienes?",
+          "options": [
+            {
+              "text": "Otra vez $e^{2t}$",
+              "why": "Eso es lo que pasa con $e^{t}$ (a = 1). Aquí a = 2, y cada pendiente multiplica por 2."
+            },
+            {
+              "text": "$4\\,e^{2t}$",
+              "correct": true,
+              "why": "La primera pendiente da $2e^{2t}$. La pendiente de *eso* vuelve a multiplicar por 2: $4e^{2t}$. Calcular una pendiente solo multiplica por a, cada vez."
+            },
+            {
+              "text": "$2t\\,e^{2t}$",
+              "why": "Un despiste de álgebra típico. La a baja como un simple multiplicador y la t nunca aparece delante."
+            }
+          ]
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}e^{at} = a\\,e^{at},\\qquad \\frac{d^2}{dt^2}e^{at} = a^2\\,e^{at}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Espera, esto es enorme. Para las exponenciales, calcular una pendiente (cálculo) se convierte en **multiplicar por a** (álgebra y ya está)."
+        },
+        {
+          "t": "note",
+          "text": "Pon un pósit en esto. En el capítulo 7 esta idea crece hasta convertirse en un truco que transforma el cálculo en álgebra para *cualquier* señal."
+        }
+      ]
+    },
+    {
+      "id": "guess",
+      "title": "Prueba con una exponencial",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Esto nos da una estrategia para resolver cualquier \"regla para la pendiente\": **suponer** que la respuesta es una exponencial, sustituirla y ver qué a hace que la regla se cumpla."
+        },
+        {
+          "t": "p",
+          "text": "La regla del café era $\\frac{dT}{dt} = -\\frac{T - 20}{\\tau}$ con τ = 10 min. Nuestra suposición es $T = 20 + 70\\,e^{at}$ (70 es la diferencia inicial). Ajusta a hasta que la pendiente de la suposición coincida con lo que exige la regla."
+        },
+        {
+          "t": "widget",
+          "id": "guess"
+        },
+        {
+          "t": "p",
+          "text": "El álgebra le da la razón al control deslizante. La pendiente de la suposición es $a \\cdot 70e^{at}$. La regla quiere $-70e^{at}/\\tau$. El $70e^{at}$ aparece a los dos lados y se cancela:"
+        },
+        {
+          "t": "math",
+          "tex": "a \\cdot 70e^{at} = -\\frac{70e^{at}}{\\tau} \\quad\\Longrightarrow\\quad a = -\\frac{1}{\\tau}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Y cae exactamente sobre los puntos que construimos a mano en el capítulo 3. Lo de probar con una exponencial funciona. La ecuación que determina a se llama **ecuación característica**."
+        }
+      ]
+    },
+    {
+      "id": "spring",
+      "title": "El muelle nos rompe el truco",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Probémoslo con algo que **rebote**. Una masa colgada de un muelle es básicamente nuestro dron con control P: cuanto más lejos está del objetivo, más fuerte tira de él hacia atrás."
+        },
+        {
+          "t": "p",
+          "text": "El muelle tira hacia atrás con una fuerza $-kx$. Fuerza = masa × aceleración, y la aceleración es la pendiente de la pendiente. Así que la regla es:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\,\\frac{d^2x}{dt^2} = -k\\,x"
+        },
+        {
+          "t": "p",
+          "text": "Supón $x = e^{at}$. La pendiente de la pendiente es $a^2 e^{at}$, así que $m a^2 e^{at} = -k e^{at}$. Cancela $e^{at}$:"
+        },
+        {
+          "t": "math",
+          "tex": "a^2 = -\\frac{k}{m}"
+        },
+        {
+          "t": "p",
+          "text": "Con k/m = 4, necesitamos un número cuyo cuadrado sea **−4**. A buscarlo:"
+        },
+        {
+          "t": "widget",
+          "id": "square"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Los cuadrados nunca son negativos. La parábola azul nunca baja hasta la línea verde. Así que **no hay** tal a. Nuestro truco falla: los muelles no se pueden describir con exponenciales, y punto."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Pero el muelle está ahí, rebotando tan feliz. *Tiene* un movimiento. ¿Y si lo que falla no es el muelle, sino nuestra idea de lo que cuenta como número?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "…Mmm. Reconozco que he dicho \"no hay ningún número\" un poco rápido. Todos los números *que conozco* dan algo positivo al elevarlos al cuadrado."
+        },
+        {
+          "t": "note",
+          "text": "No le quites ojo a esto. ¿Tenía razón Theo? (Spoiler: no.)"
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Lo que sabemos hasta ahora",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "La pendiente de toda exponencial es una copia de sí misma: pendiente ÷ altura es constante.",
+            "$e \\approx 2.718$ es la base en la que esa razón vale exactamente 1. Con $e^{at}$, la razón es a.",
+            "Calcular la pendiente de $e^{at}$ solo **multiplica por a**. El cálculo se convierte en álgebra.",
+            "**Prueba con una exponencial**, sustitúyela en la regla y despeja a. Para el café, a = −1/τ.",
+            "Para un muelle, la suposición exige $a^2 = -k/m$, y ningún número normal hace eso. Todavía."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch4-q1",
+              "q": "¿Qué curva tiene pendiente = −0,5 × altura en todas partes?",
+              "options": [
+                {
+                  "text": "Decaimiento suave",
+                  "sketch": "decaying-plain",
+                  "correct": true,
+                  "why": "Es $e^{-0.5t}$: la razón negativa significa que se encoge, y el encogimiento se frena a medida que se hace más pequeña."
+                },
+                {
+                  "text": "Crecimiento explosivo",
+                  "sketch": "growing-plain",
+                  "why": "Para crecer hace falta una pendiente ÷ altura *positiva*."
+                },
+                {
+                  "text": "Oscilación constante",
+                  "sketch": "steady-wiggle",
+                  "why": "La pendiente de una oscilación no es un múltiplo fijo de su altura: en los picos la altura es máxima pero la pendiente es cero."
+                }
+              ]
+            },
+            {
+              "id": "ch4-q2",
+              "q": "Si $x = e^{-3t}$, ¿cuánto vale $x'' + 3x'$?",
+              "options": [
+                {
+                  "text": "0",
+                  "correct": true,
+                  "why": "$x' = -3e^{-3t}$ y $x'' = 9e^{-3t}$. Así que $9e^{-3t} + 3(-3e^{-3t}) = 0$."
+                },
+                {
+                  "text": "$18e^{-3t}$",
+                  "why": "Revisa el signo de $x'$: las pendientes de $e^{-3t}$ llevan un −3, así que $3x' = -9e^{-3t}$."
+                },
+                {
+                  "text": "$-3e^{-3t}$",
+                  "why": "Eso es solo $x'$. También hay que sumar el término $x''$."
+                }
+              ]
+            },
+            {
+              "id": "ch4-q3",
+              "q": "Un depósito se vacía siguiendo $h' = -h/20$ (tiempo en segundos). ¿Cuánto valen a y la constante de tiempo?",
+              "options": [
+                {
+                  "text": "a = −1/20 por segundo, τ = 20 s",
+                  "correct": true,
+                  "why": "Supón $h = Ce^{at}$: $a = -1/20$, y τ = −1/a = 20 s, el tiempo que tarda en vaciarse un 63 %."
+                },
+                {
+                  "text": "a = −20 por segundo, τ = 1/20 s",
+                  "why": "Al revés: la regla divide entre 20, así que es lento (τ = 20 s), no superrápido."
+                },
+                {
+                  "text": "a = +1/20 por segundo, τ = 20 s",
+                  "why": "Una a positiva haría que el nivel del agua *creciera*. El signo menos de la regla significa que se vacía."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "note",
+          "text": "Contabilidad honesta: el \"ningún número al cuadrado da negativo\" de Theo es un error. Solo que todavía no lo vemos. En el próximo capítulo, Theo se equivoca de la mejor manera posible."
+        },
+        {
+          "t": "cliff",
+          "text": "El dron y el muelle **oscilan**. Las exponenciales solo crecen o se encogen. A menos que… ¿un número pudiera dar negativo al elevarlo al cuadrado?"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "bases": {
+      "title": "Pendiente ÷ altura para distintas bases",
+      "base": "Base b",
+      "xAxis": "t",
+      "yAxis": "altura bᵗ",
+      "curve": "bᵗ",
+      "slopeCurve": "su pendiente",
+      "cursor": "Tangente en t =",
+      "showSlope": "Superponer la curva de la pendiente",
+      "readHeight": "altura",
+      "readSlope": "pendiente",
+      "readRatio": "pendiente ÷ altura",
+      "statusE": "Base e: pendiente ÷ altura vale exactamente 1. ¡La curva es su propia pendiente!",
+      "statusOther": "Pendiente ÷ altura vale {r} en toda esta curva. Constante, pero no 1.",
+      "aria": "Gráfica de una curva exponencial con una recta tangente en el cursor y, opcionalmente, su curva de pendiente.",
+      "describe": "Base {b}; en t = {t}, la pendiente dividida entre la altura vale {r}.",
+      "help": "Elige una base y arrastra sobre la gráfica (o usa el control deslizante) para mover la tangente a lo largo de la curva."
+    },
+    "expA": {
+      "title": "Pon un mando en el exponente",
+      "xAxis": "tiempo (s)",
+      "yAxis": "valor",
+      "curve": "eᵃᵗ",
+      "slopeCurve": "su pendiente",
+      "a": "a",
+      "cursor": "Tangente en t =",
+      "readRatio": "pendiente ÷ altura",
+      "grow": "a > 0: crece, cada vez más rápido.",
+      "shrink": "a < 0: se encoge hacia cero, como la diferencia del café.",
+      "flat": "a = 0: nunca cambia. Pendiente cero, para siempre.",
+      "aria": "Gráfica de e elevado a a por t, su curva de pendiente y una recta tangente.",
+      "describe": "a = {a}. Pendiente dividida entre altura vale {r} en todas partes.",
+      "help": "Arrastra sobre la gráfica para mover la tangente. La curva tenue y discontinua es tu a anterior."
+    },
+    "guess": {
+      "title": "Ajusta la suposición",
+      "xAxis": "tiempo (min)",
+      "yAxis": "temperatura del café (°C)",
+      "rule": "la regla, construida a mano (capítulo 3)",
+      "guess": "nuestra suposición 20 + 70·eᵃᵗ",
+      "room": "habitación 20 °C",
+      "a": "a",
+      "readGuess": "pendiente de la suposición",
+      "readRule": "pendiente de la regla",
+      "tooFast": "La suposición se enfría demasiado rápido: su pendiente es más empinada de lo que permite la regla. Acerca a a cero.",
+      "tooSlow": "La suposición se enfría demasiado despacio. Haz a más negativa.",
+      "match": "¡Coincidencia perfecta! a = −0,1 por minuto = −1/τ. La suposición obedece la regla en todas partes.",
+      "aria": "Temperatura del café: la solución hecha a mano de la regla de enfriamiento y una suposición exponencial cuyo ritmo a se fija con el control deslizante.",
+      "probe": "pendientes comparadas a los 5 min"
+    },
+    "square": {
+      "title": "Buscando una a con a² = −4",
+      "xAxis": "a",
+      "yAxis": "a²",
+      "square": "a²",
+      "need": "necesitamos −k/m = −4",
+      "a": "Prueba a =",
+      "status": "a = {a} da a² = {sq}. Todavía {gap} de más. Los cuadrados nunca son negativos.",
+      "springCaption": "Mientras tanto, el muelle real (k/m = 4, sin amortiguador) rebota tan feliz:",
+      "springAria": "Una masa colgada de un muelle rebotando arriba y abajo.",
+      "aria": "Parábola de a al cuadrado con una línea horizontal en menos cuatro que nunca alcanza.",
+      "playSpring": "Poner en marcha el muelle",
+      "pauseSpring": "Pausar el muelle"
+    }
+  }
+}

@@ -1,0 +1,451 @@
+{
+  "kicker": "Kapitel 1",
+  "title": "Offener vs. geschlossener Regelkreis",
+  "question": "Können wir der Drohne einfach *sagen*, welchen Schub sie nehmen soll?",
+  "sections": [
+    {
+      "id": "meet",
+      "title": "Darf ich vorstellen: die Drohne",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Ich hab mir eine Drohne geliehen! Ihr Job: kleine Pakete tragen und **genau auf 2 Metern schweben**, damit jemand sie greifen kann."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Das ist wie bei der Dusche, oder? Eine Zahl, die wir wollen (2 m), und eine Sache, die wir ändern können (wie stark die Propeller drücken)."
+        },
+        {
+          "t": "p",
+          "text": "Hier die Fakten. Die Drohne wiegt **0,5 kg**, also zieht die Schwerkraft sie mit $0.5 \\times 9.81 \\approx 4.9$ Newton nach unten. Die Propeller drücken mit einem {eff|Schub} $\\eff{T}$ nach oben, den wir wählen. Wenn die Drohne sich bewegt, drückt die Luft ein bisschen dagegen: etwa **1 Newton pro Meter pro Sekunde** Geschwindigkeit."
+        },
+        {
+          "t": "math",
+          "tex": "\\underbrace{0.5\\,\\ddot{\\out{h}}}_{\\text{Masse}\\times\\text{Beschleunigung}} = \\eff{T} - \\underbrace{4.9}_{\\text{Gewicht}} - \\underbrace{1.0\\,\\dot{\\out{h}}}_{\\text{Luftwiderstand}}"
+        },
+        {
+          "t": "p",
+          "text": "Keine Sorge wegen der Punkte über dem $\\out{h}$. Sie bedeuten „wie schnell sich $\\out{h}$ ändert“, und wir bauen sie in Kapitel 3 richtig auf. Vorerst die Idee in Worten: **Drück stärker als 4,9 N, und du wirst nach oben immer schneller. Drück schwächer, und du wirst nach unten immer schneller.** Drück genau 4,9 N, und du machst einfach weiter, was du gerade tust."
+        },
+        {
+          "t": "note",
+          "text": "Ehrliche Vereinfachungen: Unsere Drohne bewegt sich nur hoch und runter, der Luftwiderstand folgt einer sauberen, geraden Regel, und in den nächsten Kapiteln haben die Motoren unbegrenzt Kraft (sie können sogar ein bisschen nach unten ziehen). Echte Drohnen sind chaotischer. Das Chaos kommt später zurück."
+        }
+      ]
+    },
+    {
+      "id": "plan",
+      "title": "Sag ihr einfach, was sie tun soll",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Wir kennen die Physik genau. Also müssen wir gar nichts *anschauen*. Wir können einen Plan **ausrechnen**: kurz stark drücken, um zu steigen, dann genau 4,9 N, um zu schweben."
+        },
+        {
+          "t": "p",
+          "text": "So ein Plan heißt **offener Regelkreis** (auch Steuerung): Der Plan bestimmt den Schub, und niemand prüft, was wirklich passiert. Probier’s aus. Wähl einen Steigschub und wie lange gestiegen wird, dann starte."
+        },
+        {
+          "t": "widget",
+          "id": "schedule"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Ich hab’s ausgerechnet. Beim Steigen erreicht die Drohne bald ein festes Tempo von (Extraschub ÷ Luftwiderstand). Die Endhöhe ist einfach **(Extraschub ÷ Luftwiderstand) × Steigzeit**. Bei 6 N sind das $(6 - 4.9)/1 \\approx 1.1$ m/s, also $2 \\div 1.1 \\approx 1.83$ Sekunden steigen."
+        },
+        {
+          "t": "p",
+          "text": "Drück auf **Theos Plan**. Sie landet bei 2,00 m. Wunderschön."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Theo, das ist genial! Wir sind fertig! Kapitel vorbei!"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Schauen wir mal kurz, was draußen passiert… heute geht ein bisschen Wind."
+        },
+        {
+          "t": "p",
+          "text": "Starte Theos Plan nochmal. Während sie schwebt, drück auf **Böe** (ein Stoß nach unten, 1 N für eine Sekunde)."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Sie ist etwa einen Meter abgesackt… und **bleibt** da unten. Meine Zahlen waren doch richtig!"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Deine Zahlen waren perfekt. Nur der Wind stand nicht in deinem Plan. Und die Drohne hat keine Ahnung, dass sie am falschen Ort ist."
+        },
+        {
+          "t": "p",
+          "text": "Das war unser Fehler: Wir haben geglaubt, **„wenn die Zahlen stimmen, braucht man keine Rückkopplung“.** Der Erfolg bei Windstille war echt. Trotzdem war der Plan nutzlos, sobald die Welt etwas Unerwartetes tat. Nach der Böe ist der Schub wieder genau 4,9 N, also bleibt die Drohne einfach dort, wo die Böe sie hingeschoben hat."
+        }
+      ]
+    },
+    {
+      "id": "package",
+      "title": "Der Pakettest",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Jetzt der echte Job. Unten schwebt die Drohne auf 2 m mit festen 4,9 N Schub, genau im Gleichgewicht mit ihrem Gewicht. Jemand hängt ein **0,2-kg-Paket** an."
+        },
+        {
+          "t": "predict",
+          "id": "ch1-package",
+          "gate": true,
+          "q": "Das Paket macht die Drohne schwerer, aber der Schub bleibt bei 4,9 N. Was passiert?",
+          "options": [
+            {
+              "text": "Sie sinkt ein bisschen und hält dann an",
+              "sketch": "sink-stop",
+              "why": "Es fühlt sich an, als müsste die Drohne ein neues Gleichgewicht finden. Aber mit festen 4,9 N ist sie in *jeder* Höhe zu schwer: Tiefer sein hilft ihr überhaupt nicht."
+            },
+            {
+              "text": "Sie sinkt und sinkt immer weiter, bis ganz unten",
+              "sketch": "sink-crash",
+              "correct": true,
+              "why": "Die zusätzlichen 2 N Gewicht werden nie ausgeglichen. Der Luftwiderstand verhindert, dass sie schneller als etwa **2 m/s** wird. Aber mit diesem Tempo fällt sie weiter, bis sie am Boden aufschlägt."
+            },
+            {
+              "text": "Nichts: 0,2 kg sind zu wenig, um etwas auszumachen",
+              "sketch": "flat",
+              "why": "Jeder Unterschied zwischen Schub und Gewicht lässt sie driften. 0,2 kg bringen etwa 2 N dazu, und das ist viel im Vergleich zum Luftwiderstand."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "feedback"
+        },
+        {
+          "t": "p",
+          "text": "**Crash.** Nichts in einem Plan ohne Rückkopplung kann merken, dass die Drohne fällt. Stell jetzt den Modus auf **Rückkopplung: auf die Höhe schauen**, setz zurück und probier Paket und Böe nochmal."
+        },
+        {
+          "t": "p",
+          "text": "Im Rückkopplungsmodus nutzt die Drohne eine einfache Regel: **Drück mit dem Schwebeschub, plus 8 N extra für jeden Meter, den sie zu tief ist.**"
+        },
+        {
+          "t": "math",
+          "tex": "\\eff{T} = 4.9 + 8 \\times (\\sp{2} - \\out{h})"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Wow. Die Böe drückt sie keine 20 cm runter, und sie steigt sofort wieder hoch. Das Paket lässt sie absacken, aber sie stürzt nicht ab!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Sie muss gar nicht wissen, *was* passiert ist. Sie sieht nur, dass sie zu tief ist, und drückt stärker. Das ist der Trick."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Aber schaut mal: Mit dem Paket pendelt sie sich bei etwa **1,75 m** ein, nicht bei 2. Warum kommt sie nicht ganz zurück?"
+        },
+        {
+          "t": "note",
+          "text": "Heb dir Junes Frage gut auf. Um sie geht es im ganzen Kapitel 2."
+        }
+      ]
+    },
+    {
+      "id": "diagram",
+      "title": "Aufmalen",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Ingenieurinnen und Ingenieure malen solche Systeme als Kästen und Pfeile, genannt **Blockschaltbilder**. Jeder Kasten tut etwas, jeder Pfeil trägt ein Signal. Wir haben unseres Stück für Stück ans Whiteboard gemalt."
+        },
+        {
+          "t": "widget",
+          "id": "whiteboard"
+        },
+        {
+          "t": "p",
+          "text": "Der entscheidende Unterschied ist dieser eine Pfeil, der vom Ausgang zurück zum Anfang läuft. Deshalb heißt eine Regelung mit Rückkopplung **geschlossener Regelkreis**: Die Information läuft einmal ganz herum. Scroll hoch zum Pakettest: Das Diagramm unter der Drohne leuchtet dort auf, wo gerade etwas los ist."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "{sp|Sollwert} $\\sp{r}$",
+              "def": "Was wir wollen: 2 m Höhe, 38 °C Wassertemperatur."
+            },
+            {
+              "term": "{out|Ausgang} $\\out{h}$",
+              "def": "Was wirklich passiert: die echte Höhe."
+            },
+            {
+              "term": "{err|Regelabweichung} $\\err{e} = \\sp{r} - \\out{h}$",
+              "def": "Wie weit wir danebenliegen, kurz: der Fehler. Positiv heißt: zu tief."
+            },
+            {
+              "term": "Regler",
+              "def": "Die Regel, die aus dem Fehler eine Handlung macht. Bisher: „8 N extra pro Meter zu tief.“"
+            },
+            {
+              "term": "{eff|Stellgröße} $\\eff{T}$",
+              "def": "Was der Regler tatsächlich tut: der Schub."
+            },
+            {
+              "term": "Regelstrecke",
+              "def": "Das Ding, das geregelt wird: die Drohne selbst, mitsamt ihrer Physik. (Im Englischen heißt das seltsamerweise „plant“, nach alten Fabrikanlagen.)"
+            },
+            {
+              "term": "Sensor",
+              "def": "Was auch immer den Ausgang misst: der Höhensensor der Drohne, deine Haut unter der Dusche."
+            },
+            {
+              "term": "{dis|Störung}",
+              "def": "Alles, was die Welt tut und was wir nicht eingeplant haben: Böen, Pakete, jemand drückt die Klospülung."
+            },
+            {
+              "term": "Offener / geschlossener Regelkreis",
+              "def": "Nach Plan handeln, ohne hinzuschauen / auf das reagieren, was man misst."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cruise",
+      "title": "Gleiches Bild, andere Maschine",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Hier dasselbe Diagramm für den **Tempomat** eines Autos. Der Sollwert ist eine Geschwindigkeit, die Regelstrecke ist das Auto, die Störung ist ein Berg. Der Regler tritt stärker aufs Gas, wenn das Auto langsamer ist, als es sein soll."
+        },
+        {
+          "t": "widget",
+          "id": "cruise"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Thermostate, Tempomat, die Dusche, unsere Drohne… es ist jedes Mal **derselbe Kreis**, nur mit anderen Beschriftungen!"
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Was wir bis jetzt wissen",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "**Offener Regelkreis** heißt: einem Plan folgen, ohne hinzuschauen. Bei ruhigen Bedingungen kann das perfekt sein, und nutzlos, sobald etwas Unerwartetes passiert.",
+            "**Geschlossener Regelkreis (Rückkopplung)** heißt: den Ausgang messen, mit dem Sollwert vergleichen (das ist die **Regelabweichung**) und darauf reagieren.",
+            "Rückkopplung wird mit Störungen fertig, von denen sie nie gehört hat: Böen, Pakete, alles Mögliche.",
+            "Blockschaltbilder zeigen den Kreis: Sollwert → Fehler → Regler → Regelstrecke → Ausgang → Sensor → wieder zurück.",
+            "Unsere einfache Rückkopplungsregel hat den Absturz verhindert. Aber mit Paket hat sie sich etwa 25 cm zu tief eingependelt. Warum?"
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch1-q1",
+              "q": "Was spielt bei der Dusche aus Kapitel 0 die Rolle des **Sensors**?",
+              "options": [
+                {
+                  "text": "Der Knopf",
+                  "why": "Mit dem Knopf *handelst* du: Er legt die Stellgröße fest. Messen tut er nichts."
+                },
+                {
+                  "text": "Deine Haut",
+                  "correct": true,
+                  "why": "Ja. Deine Haut misst den Ausgang (die Wassertemperatur) und meldet ihn zurück an den Regler (dein Gehirn)."
+                },
+                {
+                  "text": "Das Rohr",
+                  "why": "Das Rohr gehört zur **Regelstrecke**, also zu dem, was geregelt wird. Von ihm kommt die Verzögerung."
+                }
+              ]
+            },
+            {
+              "id": "ch1-q2",
+              "q": "Welches davon ist ein **geschlossener Regelkreis**?",
+              "options": [
+                {
+                  "text": "Ein Toaster mit Zeitschaltuhr",
+                  "why": "Die Zeitschaltuhr prüft nicht, wie braun der Toast ist. Sie folgt einfach dem Plan: offener Regelkreis."
+                },
+                {
+                  "text": "Ein Raumthermostat",
+                  "correct": true,
+                  "why": "Richtig. Es misst die Raumtemperatur und schaltet die Heizung je nach Fehler an oder aus."
+                },
+                {
+                  "text": "Eine Waschmaschine mit festem Programm",
+                  "why": "Sie folgt ihrem Programm, egal wie schmutzig die Wäsche ist: offener Regelkreis."
+                }
+              ]
+            },
+            {
+              "id": "ch1-q3",
+              "q": "Der Sollwert ist 2 m, die Drohne ist auf 1,5 m. Wie groß ist der Fehler $\\err{e} = \\sp{r} - \\out{h}$, und was sollte der Regler tun?",
+              "options": [
+                {
+                  "text": "+0,5 m: stärker drücken",
+                  "correct": true,
+                  "why": "Positiver Fehler heißt zu tief, also mehr Schub. Mit unserer Regel sind das $4.9 + 8 \\times 0.5 = 8.9$ N."
+                },
+                {
+                  "text": "−0,5 m: stärker drücken",
+                  "why": "Achte auf die Reihenfolge: $\\sp{r} - \\out{h} = 2 - 1.5 = +0.5$. Wir wählen das Vorzeichen so, dass ein positiver Fehler „zu tief“ bedeutet."
+                },
+                {
+                  "text": "3,5 m: viel stärker drücken",
+                  "why": "Der Fehler ist eine *Differenz*, keine Summe: $2 - 1.5 = 0.5$ m."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "In unserem Kreis steckt eine rätselhafte Zahl: **8 Newton pro Meter**. Warum 8? Warum nicht 2 oder 50? Und warum pendelt sich die Drohne zu tief ein?"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "schedule": {
+      "title": "Offener Regelkreis: einen Schubplan programmieren",
+      "slider": {
+        "thrust": "Steigschub",
+        "time": "Steigen für"
+      },
+      "launch": "Start",
+      "theo": "Theos Plan",
+      "gust": "Böe ↓",
+      "package": "Paket dran",
+      "disturb": "Überrasch sie:",
+      "plot": {
+        "height": "Höhe",
+        "thrust": "Schub",
+        "aria": "Höhe der Drohne über 20 Sekunden, mit dem Ziel von 2 Metern.",
+        "target": "Ziel 2 m"
+      },
+      "readout": {
+        "height": "Höhe",
+        "speed": "Tempo",
+        "thrust": "Schub"
+      },
+      "status": {
+        "ready": "Theos Formel sagt, dieser Plan endet bei {h} m. Drück auf Start.",
+        "perfect": "Gelandet bei {h} m. Genau im Ziel!",
+        "off": "Gelandet bei {h} m, {d} m zu {dir}.",
+        "high": "hoch",
+        "low": "tief",
+        "crash": "Auf den Boden gekracht!"
+      },
+      "planHelp": "Die blasse gestrichelte orange Linie ist dein Plan. Die durchgezogene zeigt, was die Motoren wirklich getan haben."
+    },
+    "feedback": {
+      "title": "Schweben auf 2 m: Plan oder Rückkopplung?",
+      "mode": "Modus",
+      "open": "Offener Regelkreis: fest 4,9 N",
+      "closed": "Rückkopplung: auf die Höhe schauen",
+      "gust": "Böe ↓",
+      "package": "Paket",
+      "disturb": "Störungen:",
+      "plot": {
+        "height": "Höhe",
+        "thrust": "Schub",
+        "aria": "Höhe der schwebenden Drohne in den letzten 15 Sekunden, der Fehler als Fläche zwischen Ziel und tatsächlicher Höhe."
+      },
+      "readout": {
+        "height": "Höhe",
+        "error": "Fehler r − h",
+        "thrust": "Schub"
+      },
+      "status": {
+        "open": "Offener Regelkreis: Schub fest auf 4,9 N, egal was passiert.",
+        "closed": "Rückkopplung: Schub = 4,9 N + 8 N für jeden Meter zu tief.",
+        "crash": "CRASH! Zurücksetzen, auf Rückkopplung umschalten und nochmal versuchen.",
+        "predictRun": "Paket kommt bei t = 1 s dran…"
+      },
+      "d": {
+        "setpoint": "Ziel r",
+        "error": "Fehler e",
+        "controller": "Regler",
+        "schedule": "fester\nSchub",
+        "thrust": "Schub T",
+        "plant": "Drohne",
+        "disturbance": "Wind, Paket",
+        "output": "Höhe h",
+        "sensor": "Höhensensor",
+        "aria": "Blockschaltbild des Regelkreises der Drohne",
+        "description": "Ziel minus gemessene Höhe ergibt den Fehler; der Regler macht aus dem Fehler Schub; Schub und Störungen wirken auf die Drohne; der Sensor misst die Höhe der Drohne, und sie wird zurückgeführt und vom Ziel abgezogen. Im offenen Regelkreis wird nur der Vorwärtsweg gezeigt."
+      }
+    },
+    "whiteboard": {
+      "title": "Den Kreis aufmalen, Stück für Stück",
+      "back": "Zurück",
+      "next": "Weiter",
+      "counter": "Schritt {n} von {total}",
+      "step1": "Mika: „Schub geht rein, Höhe kommt raus. Die Drohne ist ein Kasten, der das eine ins andere verwandelt.“ Wir nennen ihn Regelstrecke.",
+      "step2": "Theo: „Offener Regelkreis: Wir nehmen den Schub aus einem Plan, der nur auf dem Ziel beruht.“",
+      "step3": "June: „Und die Welt drückt auch auf die Drohne: Wind, Pakete. Störungen.“",
+      "step4": "Mika: „Also messen wir die Höhe mit einem Sensor…“",
+      "step5": "Theo: „…und ziehen sie vom Ziel ab. Diese Differenz ist der Fehler, und der Regler reagiert darauf. Der Kreis ist geschlossen!“",
+      "d": {
+        "setpoint": "Ziel r",
+        "error": "Fehler e",
+        "controller": "Regler",
+        "schedule": "Schub-\nplan",
+        "thrust": "Schub T",
+        "plant": "Drohne\n(Strecke)",
+        "disturbance": "Wind, Paket",
+        "output": "Höhe h",
+        "sensor": "Sensor",
+        "aria": "Blockschaltbild, das Schritt für Schritt gezeichnet wird",
+        "description": "Ein Blockschaltbild in fünf Schritten: zuerst nur die Regelstrecke; dann ein Plan im offenen Regelkreis, der sie speist; Störungen, die auf sie wirken; ein Sensor, der den Ausgang misst; und schließlich Fehler, Regler und Summierstelle, die den Kreis schließen."
+      }
+    },
+    "cruise": {
+      "title": "Tempomat: derselbe Kreis",
+      "d": {
+        "setpoint": "Wunschtempo",
+        "error": "Fehler",
+        "controller": "Tempomat-\nRegler",
+        "schedule": "",
+        "thrust": "Gaspedal",
+        "plant": "Auto",
+        "disturbance": "Berge, Wind",
+        "output": "Tempo",
+        "sensor": "Tacho",
+        "aria": "Blockschaltbild eines Tempomats im Auto",
+        "description": "Wunschtempo minus gemessenes Tempo ergibt den Tempofehler; der Tempomat macht daraus Gaspedalstellung; Gaspedal und Berge wirken auf das Auto; der Tacho misst das Tempo und meldet es zurück."
+      }
+    }
+  }
+}

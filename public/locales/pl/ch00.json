@@ -1,0 +1,342 @@
+{
+  "kicker": "Rozdział 0",
+  "title": "Problem z prysznicem",
+  "question": "Dlaczego nie mogę po prostu ustawić prysznica na 38 °C?",
+  "sections": [
+    {
+      "id": "hook",
+      "title": "Gorąco! Zimno! Gorąco!",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Dobra, przyznaję się. Dziś rano przekręciłam kurek prysznica, **ugotowałam się**, przekręciłam z powrotem, **zamarzłam** i powtórzyłam to jakieś sześć razy."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Każdy tak ma! Prysznice w starych mieszkaniach są najgorsze."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Ale *dlaczego* to takie trudne? Chcesz jednej liczby: 38 stopni. Masz jeden kurek. To powinno być proste."
+        },
+        {
+          "t": "p",
+          "text": "Sprawdźmy. Poniżej jest prysznic z **długą rurą** między kurkiem a słuchawką, jak w prawdziwym. Woda zmieszana przy kurku potrzebuje paru sekund, żeby dopłynąć rurą na górę. Widać, jak kolor wody pełznie wzdłuż rury."
+        },
+        {
+          "t": "p",
+          "text": "**Twój cel:** doprowadź wodę do {sp|38 °C} (zielony pas) i utrzymaj ją tam przez 10 sekund bez przerwy. Przeciągnij {eff|pomarańczowy kurek} albo kliknij go i użyj strzałek. Zegar rusza, gdy go dotkniesz."
+        },
+        {
+          "t": "widget",
+          "id": "manual"
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Rura ma 2,5 sekundy opóźnienia. Mniej więcej tyle daje kilka metrów rury."
+        },
+        {
+          "t": "p",
+          "text": "Jak poszło? Jeśli temperatura skakała w tę i z powrotem, raz powyżej, raz poniżej zielonego pasa, jesteś w dobrym towarzystwie. Spójrz na {out|niebieską krzywą}: pewnie wije się zygzakiem jak zdenerwowany wąż."
+        }
+      ]
+    },
+    {
+      "id": "broken",
+      "title": "Czy prysznic jest zepsuty?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Chyba prysznic jest zepsuty. Ustawiam kurek na *ciepłą*, a i tak leci *gorąca*!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Hmm. Narysujmy dwie rzeczy: czego kurek **żąda** i co słuchawka **daje**. Jeśli prysznic jest zepsuty, nie powinny do siebie w ogóle pasować."
+        },
+        {
+          "t": "p",
+          "text": "{eff|Kropkowana pomarańczowa krzywa} to temperatura, której *żąda* położenie kurka: mieszanka przy zaworze. {out|Niebieska krzywa} to to, co faktycznie dociera. Przesuń pomarańczową krzywą w czasie do przodu i zobacz, czy się pokryją."
+        },
+        {
+          "t": "widget",
+          "id": "lag"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "O! Przesuń o jakieś 3½ sekundy i to prawie **ta sama krzywa**. Prysznic nie jest zepsuty…"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "…on się po prostu **spóźnia**! Wszystko, co czułam, miało jakieś 3½ sekundy."
+        },
+        {
+          "t": "p",
+          "text": "To pierwszy trop. Kiedy czujesz „za gorąco”, czujesz położenie kurka sprzed kilku sekund. A do tego czasu kurek jest *już* przekręcony na cieplej, więc kręcisz z powrotem, za daleko, i cykl zaczyna się od nowa."
+        },
+        {
+          "t": "note",
+          "text": "2,5 s to rura. Dodatkowa sekunda to mieszanie się wody i nagrzewanie metalu: wygładza to nagłe zmiany, co wygląda bardzo podobnie do jeszcze jednej sekundy spóźnienia."
+        }
+      ]
+    },
+    {
+      "id": "harder",
+      "title": "Czy pomogłoby bardziej się postarać?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Już wiem: byłam za **delikatna**! Jeśli będę kręcić kurkiem **szybciej** za każdym razem, gdy coś jest nie tak, szybciej to naprawię."
+        },
+        {
+          "t": "p",
+          "text": "Zbudowaliśmy trzy robotyczne ręce, żeby testować pomysły bez moczenia się. **Zwykła ręka** kręci kurkiem tym szybciej, im bardziej woda wydaje się nie taka, jak trzeba, czyli tak jak większość ludzi. **Mocniejsza ręka** robi dokładnie to samo, tylko dwa razy energiczniej."
+        },
+        {
+          "t": "predict",
+          "id": "ch0-harder",
+          "gate": true,
+          "q": "Co zrobi **mocniejsza** ręka w porównaniu ze zwykłą?",
+          "options": [
+            {
+              "text": "Szybciej dojdzie do 38 °C i szybciej się ustabilizuje",
+              "sketch": "swing-better",
+              "why": "Tak podpowiada intuicja: więcej wysiłku, szybszy efekt."
+            },
+            {
+              "text": "Mniej więcej to samo, tylko odrobinę szybciej",
+              "sketch": "overshoot",
+              "why": "Rozsądna asekuracja, ale opóźnienie sprawia, że wszystko jest dużo bardziej dramatyczne."
+            },
+            {
+              "text": "Będzie się wahać jeszcze mocniej i nigdy się nie uspokoi",
+              "sketch": "swing-worse",
+              "correct": true,
+              "why": "Szybsze kręcenie oznacza, że zanim (spóźniona) woda powie ci „stop”, kurek jest przekręcony *jeszcze dalej*. Wahania rosną, aż kurek dojdzie do oporu."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "robots"
+        },
+        {
+          "t": "p",
+          "text": "Wypróbuj wszystkie trzy. **Mocniejsza** ręka miota się między lodowatą a wrzącą wodą. **Cierpliwa** ręka ustawia kurek na około 51% (właściwa mieszanka, wyliczona z góry) i po prostu *czeka*. Wygrywa bez trudu."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Czyli samo opóźnienie nie jest problemem. Cierpliwa ręka ma to samo opóźnienie i radzi sobie świetnie. Problemem jest **reagowanie na stare wiadomości, i to zbyt gorliwie**."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Czyli „pchaj mocniej, im dalej jesteś od celu” to *zły* odruch? Przecież to cała moja osobowość."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Ale cierpliwa ręka oszukiwała. Znała właściwą odpowiedź z góry. Jeśli bojler się wychłodzi albo ktoś spuści wodę w toalecie, właściwe położenie kurka się zmieni, a cierpliwa ręka tego nie zauważy."
+        },
+        {
+          "t": "p",
+          "text": "I to jest prawdziwa zagadka. Potrzebujemy czegoś, co **reaguje** (żeby radzić sobie z niespodziankami), ale nie **przesadza z reakcją** (żeby się nie rozhuśtać). Zapamiętaj tę myśl. Cały kurs jest właśnie o tym."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Co już wiemy",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Mieć **cel** (38 °C) i sposób działania (kurek) to za mało. Liczy się, **jak** reagujesz.",
+            "**Opóźnienie** oznacza, że zawsze czujesz stare informacje. Prysznic nie jest zepsuty, tylko się spóźnia.",
+            "Mocniejsze reagowanie na stare informacje sprawia, że wahania są **większe**, a nie mniejsze.",
+            "Ustawienie kurka raz i czekanie działa, ale tylko wtedy, gdy nic się nigdy nie zmienia."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch0-q1",
+              "q": "W chwili t = 5 s gwałtownie przekręcasz kurek z zimnej na ciepłą. Mniej więcej kiedy temperatura przy słuchawce **zacznie** rosnąć?",
+              "options": [
+                {
+                  "text": "Natychmiast, w 5. sekundzie",
+                  "why": "Świeżo zmieszana woda jest jeszcze na dole rury. Słuchawka przez jakiś czas dostaje starą, zimną wodę."
+                },
+                {
+                  "text": "Około 7,5 s",
+                  "correct": true,
+                  "why": "Zgadza się: 2,5 s później, kiedy nowa woda przebędzie rurę. Potem temperatura rośnie płynnie przez mniej więcej sekundę, bo woda się miesza."
+                },
+                {
+                  "text": "Około 15 s",
+                  "why": "Za późno: opóźnienie naszej rury to 2,5 s, a nie 10 s."
+                }
+              ]
+            },
+            {
+              "id": "ch0-q2",
+              "q": "Ustawiasz kurek dokładnie jak trzeba (51%) i odchodzisz. Co się stanie?",
+              "options": [
+                {
+                  "text": "Woda się nagrzeje i ustabilizuje na 38 °C bez wahań",
+                  "correct": true,
+                  "why": "Tak. Opóźnienie tylko wszystko **spóźnia**. Wahania biorą się z *reagowania* na spóźnione informacje."
+                },
+                {
+                  "text": "Będzie się wahać w nieskończoność przez opóźnienie",
+                  "why": "Samo opóźnienie nie tworzy wahań. Nikt nie reaguje, więc nic nie może przestrzelić."
+                },
+                {
+                  "text": "Nigdy nie osiągnie 38 °C",
+                  "why": "Osiągnie: 2,5 s opóźnienia, a potem mniej więcej sekunda płynnego nagrzewania."
+                }
+              ]
+            },
+            {
+              "id": "ch0-q3",
+              "q": "Który wykres temperatury należy do kogoś, kto **reaguje za mocno**?",
+              "options": [
+                {
+                  "text": "Rosnące wahania",
+                  "sketch": "swing-worse",
+                  "correct": true,
+                  "why": "Nadmierne reagowanie na spóźnione informacje pompuje energię w wahania, jak popychanie huśtawki dokładnie w nieodpowiednich momentach."
+                },
+                {
+                  "text": "Wahania, które maleją",
+                  "sketch": "swing-better",
+                  "why": "Malejące wahania oznaczają, że reakcje są na tyle łagodne, że wszystko się uspokaja. To *łagodny* reagujący."
+                },
+                {
+                  "text": "Czekanie, potem płynny wzrost",
+                  "sketch": "delay-then-rise",
+                  "why": "To cierpliwa ręka: ustaw i czekaj. Zero przesadnych reakcji."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Malutki dron wisi idealnie nieruchomo na wysokości 2 metrów, na wietrze, bez żadnego mózgu. Ma ten sam problem co my. **Jak go rozwiązuje?**"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "manual": {
+      "title": "Twój prysznic",
+      "start": "Uruchom zegar",
+      "help": "Klawiatura: Tab do kurka, potem strzałki (małe obroty), Page Up/Down (duże obroty), Home (cała zimna), End (cała gorąca).",
+      "view": {
+        "aria": "Prysznic: kurek w lewym dolnym rogu miesza zimną i gorącą wodę, długa rura prowadzi ją do słuchawki, a termometr pokazuje temperaturę przy słuchawce.",
+        "knob": "Kurek prysznica, od zimnej do gorącej",
+        "cold": "Z",
+        "hot": "G",
+        "pipe": "rura (2,5 s przepływu)",
+        "head": "słuchawka",
+        "thermo": "termometr"
+      },
+      "plot": {
+        "temp": "temperatura przy słuchawce",
+        "mix": "czego żąda kurek",
+        "aria": "Wykres temperatury przy słuchawce prysznica w ciągu 60 sekund, z docelowym pasem 38 stopni."
+      },
+      "readout": {
+        "time": "czas",
+        "streak": "w pasie",
+        "crossings": "przejścia przez 38°"
+      },
+      "status": {
+        "ready": "Dotknij kurka, aby zacząć.",
+        "go": "Start! Doprowadź do 38 °C…",
+        "hot": "Za gorąco! 🔥",
+        "cold": "Za zimno! 🧊",
+        "inband": "W pasie, trzymaj…",
+        "won": "Udało się po {t} s. Liczba przejść przez 38°: {n}. Nieźle!",
+        "timeup": "Koniec czasu! Liczba przejść przez 38°: {n}. Spokojnie, właśnie o to chodzi.",
+        "wonOne": "Udało się po {t} s, z tylko jednym przejściem przez 38°. Gładko!",
+        "wonZero": "Udało się po {t} s i ani razu nie przestrzeliło. Wow!",
+        "timeupOne": "Koniec czasu! Temperatura raz przeszła przez 38°, ale nie udało się jej utrzymać przez 10 s."
+      },
+      "again": "Spróbuj jeszcze raz"
+    },
+    "robots": {
+      "title": "Trzy robotyczne ręce",
+      "choose": "Która ręka?",
+      "hand": {
+        "normal": "Zwykła ręka",
+        "harder": "Mocniejsza ręka",
+        "patient": "Cierpliwa ręka"
+      },
+      "intro": {
+        "normal": "Kręci kurkiem tym szybciej, im bardziej woda odbiega od celu.",
+        "harder": "Ten sam pomysł, ale reaguje dwa razy energiczniej.",
+        "patient": "Raz ustawia kurek na 51%, a potem czeka."
+      },
+      "result": {
+        "normal": "W końcu dochodzi do celu, po kilku dużych wahnięciach.",
+        "harder": "Nigdy się nie uspokaja! Za każdym razem przesadnie reaguje na stare wiadomości.",
+        "patient": "Spokojnie i szybko, ale tylko dlatego, że znała odpowiedź z góry."
+      },
+      "view": {
+        "aria": "Prysznic sterowany robotyczną ręką. Kurek obraca się sam.",
+        "knob": "Kurek prysznica (sterowany przez robota)",
+        "cold": "Z",
+        "hot": "G",
+        "pipe": "rura (2,5 s przepływu)",
+        "head": "słuchawka",
+        "thermo": "termometr"
+      },
+      "plot": {
+        "temp": "temperatura przy słuchawce",
+        "mix": "czego żąda kurek",
+        "aria": "Wykres temperatury prysznica dla wybranej robotycznej ręki; poprzednia ręka widoczna jako blady duch."
+      }
+    },
+    "lag": {
+      "title": "Zepsuty czy tylko spóźniony?",
+      "slider": "Przesuń krzywą kurka później o",
+      "sourceYours": "To twój własny przebieg z góry strony.",
+      "sourceRobot": "To przykładowy przebieg. (Zagraj w grę powyżej i wróć, żeby użyć własnego.)",
+      "plot": {
+        "temp": "temperatura przy słuchawce",
+        "mix": "czego żąda kurek",
+        "aria": "Temperatura mieszanki przy kurku i temperatura przy słuchawce w czasie; suwakiem można przesunąć krzywą kurka później."
+      },
+      "status": {
+        "mismatch": "Jeszcze się nie pokrywają (średnia różnica {e} °C). Przesuwaj dalej.",
+        "match": "Pokrywają się! Słuchawka dostaje to, czego kurek żądał około {s} s wcześniej."
+      }
+    }
+  }
+}

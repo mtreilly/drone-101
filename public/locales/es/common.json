@@ -1,0 +1,251 @@
+{
+  "app": {
+    "title": "¿Quién mantiene el dron en el aire?",
+    "short": "¿Quién mantiene el dron en el aire?",
+    "loading": "Afilando lápices…"
+  },
+  "nav": {
+    "skip": "Saltar al contenido",
+    "chapters": "Capítulos",
+    "chapterN": "Capítulo {n}: {title}",
+    "menu": "Abrir el menú de capítulos",
+    "close": "Cerrar",
+    "map": "Mapa de conceptos",
+    "progress": "Capítulos completados",
+    "prev": "Atrás",
+    "next": "Siguiente",
+    "home": "Página de inicio",
+    "chapterNav": "Navegación entre capítulos",
+    "upNext": "A continuación",
+    "readingProgress": "Progreso de lectura en este capítulo",
+    "tools": "Herramientas de la página"
+  },
+  "theme": {
+    "label": "Tema de color: {mode} (haz clic para cambiar)",
+    "auto": "según el sistema",
+    "light": "papel",
+    "dark": "cuaderno nocturno"
+  },
+  "legend": {
+    "button": "Colores",
+    "title": "Qué significan los colores",
+    "setpoint": "Consigna / objetivo (verde, discontinua)",
+    "output": "Lo que pasa de verdad (azul)",
+    "error": "Error: objetivo menos real (rojo)",
+    "effort": "Esfuerzo de control: empuje, mando (naranja)",
+    "disturbance": "Perturbación: viento, paquete, gravedad (morado)",
+    "pole": "Polo (×)",
+    "zero": "Cero (○)",
+    "ghost": "Intento anterior (fantasma tenue)",
+    "guess": "Tu predicción (lápiz)"
+  },
+  "transport": {
+    "label": "Controles de la simulación",
+    "play": "Reproducir",
+    "pause": "Pausa",
+    "reset": "Reiniciar",
+    "step": "Paso",
+    "speed": "Velocidad"
+  },
+  "splane": {
+    "re": "σ (encoge ← → crece)",
+    "im": "ω (gira)",
+    "stable": "se calma",
+    "unstable": "se dispara",
+    "pole": "Polo",
+    "zero": "Cero",
+    "point": "Punto",
+    "draggable": "punto arrastrable: usa las flechas para moverlo y Mayús para pasos más grandes"
+  },
+  "story": {
+    "predict": "¡Primero, predice!",
+    "predictRight": "¡Lo clavaste!",
+    "predictSurprise": "¡Sorpresa! (Las sorpresas son donde se aprende.)",
+    "predictLocked": "Predicción guardada. Veamos…",
+    "predictAgain": "Predecir otra vez",
+    "check": "Ponte a prueba",
+    "quizRight": "¡Sí!",
+    "quizWrong": "No exactamente, y te explico por qué:",
+    "quizScore": "{n} de {total} resueltas.",
+    "quizDone": "Capítulo completado ✓",
+    "recap": "Lo que descubrimos",
+    "vocab": "Palabras nuevas",
+    "completeStamp": "¡Hecho!",
+    "completeAnnounce": "Capítulo {n} completado. ¡Buen trabajo!"
+  },
+  "cast": {
+    "mika": "Mika",
+    "theo": "Theo",
+    "june": "June"
+  },
+  "home": {
+    "kicker": "Una aventura de realimentación en doce cuadernos",
+    "question": "¿Cómo hace una máquina para mantenerse donde debe estar?",
+    "intro": [
+      "Todo empezó en una ducha. Uno de nosotros giró el mando, se escaldó, lo giró de vuelta, se congeló y lo volvió a girar. Y entonces nos preguntamos: un dron pequeñito puede quedarse perfectamente quieto en el aire, con viento, sin tener cerebro. **¿Cómo?**",
+      "Estos son nuestros cuadernos de cuando lo averiguamos, con todos los errores incluidos. Empezamos desde cero: no hace falta saber cálculo. Al final sabrás por qué existe la **transformada de Laplace**, qué son de verdad los **polos**, y ajustarás un controlador **PID** que le gana a tus propias manos."
+    ],
+    "cast": {
+      "mika": "Hace las preguntas que todos piensan en secreto. Sube cada control deslizante al máximo \"solo para ver\".",
+      "theo": "No acepta un truco hasta saber *por qué* funciona. Genial para encontrar el fallo.",
+      "june": "Construye cosas. Siempre pregunta: \"¿podemos probarlo en el dron?\""
+    },
+    "start": "Empieza por la ducha →",
+    "resume": "Sigue con el capítulo {n} →",
+    "contents": "Los cuadernos",
+    "done": "completado",
+    "privacy": "Tu progreso y tus predicciones se guardan solo en este navegador.",
+    "reset": "Borrar mi progreso"
+  },
+  "chapters": {
+    "0": {
+      "title": "El problema de la ducha",
+      "short": "Ducha",
+      "question": "¿Por qué no consigo que la ducha salga a 38 °C sin más?"
+    },
+    "1": {
+      "title": "Lazo abierto vs. lazo cerrado",
+      "short": "Realimentación",
+      "question": "¿Podemos simplemente *decirle* al dron qué empuje usar?"
+    },
+    "2": {
+      "title": "Control proporcional",
+      "short": "Control P",
+      "question": "¿Con cuánta fuerza debe empujar el dron cuando está demasiado bajo?"
+    },
+    "3": {
+      "title": "El lenguaje del cambio",
+      "short": "Cambio",
+      "question": "¿Cómo describimos *lo rápido* que cambia algo?"
+    },
+    "4": {
+      "title": "Por qué las exponenciales son mágicas",
+      "short": "Exponenciales",
+      "question": "¿Existe una curva cuya pendiente sea una copia de sí misma?"
+    },
+    "5": {
+      "title": "Números que giran",
+      "short": "Giros",
+      "question": "¿Qué número al cuadrado da −1, y por qué iba a oscilar?"
+    },
+    "6": {
+      "title": "La verdadera personalidad del dron",
+      "short": "2.º orden",
+      "question": "¿Por qué el dron rebota como un muelle?"
+    },
+    "7": {
+      "title": "La transformada de Laplace",
+      "short": "Laplace",
+      "question": "¿Podemos convertir el cálculo en álgebra?"
+    },
+    "8": {
+      "title": "Funciones de transferencia, polos y ceros",
+      "short": "Polos",
+      "question": "¿Podemos leer toda la personalidad de un sistema en una sola fracción?"
+    },
+    "9": {
+      "title": "PID: arreglándolo todo",
+      "short": "PID",
+      "question": "¿Cómo eliminamos la caída *y* paramos la oscilación?"
+    },
+    "10": {
+      "title": "De vuelta a la ducha",
+      "short": "Retardo",
+      "question": "¿Por qué oscilábamos, y a qué distancia estamos del abismo?"
+    },
+    "11": {
+      "title": "El desafío del dron",
+      "short": "Final",
+      "question": "¿Puedes *tú* mantener el dron a 2 m pase lo que pase?"
+    }
+  },
+  "map": {
+    "title": "El mapa de conceptos",
+    "intro": "Cada idea que construimos y cómo se apoyan unas en otras. Crece a medida que lees. Haz clic en una burbuja para volver al lugar donde nació.",
+    "aria": "Mapa de conceptos del curso: ideas conectadas por líneas, agrupadas por capítulo.",
+    "listIntro": "Ideas desbloqueadas hasta ahora:",
+    "locked": "Aún sin descubrir",
+    "nodes": {
+      "goal": "consigna",
+      "delay": "retardo",
+      "openloop": "lazo abierto",
+      "feedback": "realimentación",
+      "blockdiagram": "diagrama de bloques",
+      "error": "error",
+      "plant": "planta",
+      "disturbance": "perturbación",
+      "kp": "control P (Kp)",
+      "sserror": "error en estado estacionario",
+      "overshoot": "sobreimpulso",
+      "derivative": "derivada = pendiente",
+      "firstorder": "sistema de primer orden",
+      "tau": "constante de tiempo τ",
+      "integral": "integral = área",
+      "exponential": "e^(at)",
+      "guess": "prueba con una exponencial",
+      "complex": "i = un cuarto de vuelta",
+      "spin": "e^(iωt) gira",
+      "spiral": "e^(st) hace espirales",
+      "smap": "el mapa de s",
+      "second": "sistema de 2.º orden",
+      "wnzeta": "ωn y ζ",
+      "sum": "suma de e^(st)",
+      "laplace": "sonda de Laplace",
+      "dtos": "d/dt → × s",
+      "table": "nuestra tabla",
+      "splane": "plano s",
+      "tf": "función de transferencia",
+      "poles": "polos",
+      "zeros": "ceros",
+      "stability": "estabilidad",
+      "integralaction": "I: adiós a la caída",
+      "derivativeaction": "D: añade amortiguamiento",
+      "pid": "PID",
+      "noise": "ruido y patada",
+      "phaselag": "desfase (retraso de fase)",
+      "bode": "diagrama de Bode",
+      "margins": "margen de ganancia / de fase",
+      "robust": "robustez",
+      "you": "TÚ, ingeniero/a de control"
+    }
+  },
+  "units": {
+    "m": "m",
+    "s": "s",
+    "N": "N",
+    "C": "°C",
+    "kg": "kg"
+  },
+  "drone": {
+    "aria": "Vista lateral del dron sobre el suelo. Una línea verde discontinua marca la altura objetivo.",
+    "target": "objetivo",
+    "height": "altura",
+    "thrust": "empuje",
+    "wind": "viento",
+    "package": "paquete",
+    "crash": "¡CATAPUM!",
+    "ground": "suelo",
+    "describe": "Dron a {h} metros, objetivo {r} metros, empuje {T} newtons."
+  },
+  "plots": {
+    "time": "tiempo (s)",
+    "height": "altura (m)",
+    "thrust": "empuje (N)",
+    "temp": "temperatura (°C)",
+    "knob": "mando"
+  },
+  "footer": {
+    "label": "Sobre el autor",
+    "name": "Micheal Reilly",
+    "x": "X / Twitter",
+    "bluesky": "Bluesky",
+    "blog": "Blog",
+    "source": "Código fuente"
+  },
+  "lang": {
+    "button": "Idioma: {name}",
+    "menu": "Elige un idioma",
+    "label": "Idioma",
+    "switching": "Cambiando de idioma…"
+  }
+}

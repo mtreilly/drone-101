@@ -1,0 +1,439 @@
+{
+  "kicker": "Rozdział 3",
+  "title": "Język zmiany",
+  "question": "Jak opisać, *jak szybko* coś się zmienia?",
+  "sections": [
+    {
+      "id": "slope",
+      "title": "Nachylenie to prędkość",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Ciągle mówimy „ospały”, „rozkołysany”, „uspokaja się”. June ma rację: to wrażenia, a nie matematyka. Chcę precyzyjnie powiedzieć, *jak szybko* dron się zmienia."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Odtwórzmy naszego drona z rozdziału 2 (Kp = 20 N/m) i przyjrzyjmy się z bliska."
+        },
+        {
+          "t": "p",
+          "text": "{out|Niebieska krzywa} to wysokość drona w czasie. Prędkość to **o ile zmienia się wysokość w ciągu sekundy**. Na wykresie to, jak *stroma* jest krzywa w danej chwili. Przyłóż linijkę do krzywej tak, żeby dotykała jej tylko w jednym punkcie. Ta linijka to **styczna**, a jej nachylenie to prędkość."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Proste: dron leci najszybciej na samym szczycie górki, bo tam jest najwyżej!"
+        },
+        {
+          "t": "widget",
+          "id": "tangent"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Ustaw kursor na szczycie górki. Styczna jest **pozioma**. Prędkość wynosi tam zero!"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Oj. Dron się wznosi, traci prędkość w górę, na szczycie zatrzymuje się na moment i spada z powrotem. **Wysoko** i **szybko** to zupełnie różne rzeczy."
+        },
+        {
+          "t": "p",
+          "text": "Najszybszy moment jest tak naprawdę w połowie wznoszenia, tam, gdzie krzywa jest najbardziej stroma. A kiedy krzywa idzie *w dół*, nachylenie jest ujemne: dron spada."
+        },
+        {
+          "t": "p",
+          "text": "To „nachylenie w jednej chwili” ma swoją nazwę: **pochodna**. Zapisujemy ją jak malutką zmianę wysokości podzieloną przez malutki czas, jaki jej to zajęło:"
+        },
+        {
+          "t": "math",
+          "tex": "\\text{prędkość} = \\frac{d\\out{h}}{dt} \\approx \\frac{\\text{zmiana wysokości}}{\\text{zmiana czasu}}\\quad(\\text{w bardzo krótkim czasie})"
+        },
+        {
+          "t": "note",
+          "text": "Pisze się też $\\dot{h}$ („h z kropką”) na to samo. Ta sama idea, mniej atramentu."
+        }
+      ]
+    },
+    {
+      "id": "rule",
+      "title": "Reguła na prędkość",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Moja kawa stygnie najpierw szybko, a potem naprawdę powoli. Nigdy do końca nie dochodzi do temperatury pokojowej."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Bo szybkość stygnięcia zależy od tego, **ile jeszcze zostało do przebycia**. Bardzo gorący kubek szybko traci ciepło. Ledwo ciepły prawie nie traci."
+        },
+        {
+          "t": "p",
+          "text": "Zapiszmy to jako regułę na nachylenie. Temperatura kawy to {out|T}, pokój ma {sp|20 °C}:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d\\out{T}}{dt} = -\\frac{\\out{T} - \\sp{T_{\\text{pokój}}}}{\\tau}"
+        },
+        {
+          "t": "p",
+          "text": "Minus mówi „stygnij, gdy jesteś cieplejsza od pokoju”. Liczba **τ** (tau, *stała czasowa*) mówi, jak ospały jest kubek. Dla zwykłego kubka τ ≈ 10 minut."
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Ramka szczerości: prawdziwe kubki tracą ciepło też przez parowanie i promieniowanie. Ta prosta reguła (prawo stygnięcia Newtona) jest wystarczająco bliska prawdy, żeby się przydać."
+        },
+        {
+          "t": "p",
+          "text": "Zagadka jest taka: reguła mówi nam tylko o nachyleniu **w tej chwili**. Czy da się z niej wyciągnąć całą krzywą? Zbudujmy ją ręcznie: spójrz na nachylenie, idź wzdłuż niego przez chwilkę (Δt), spójrz na nowe nachylenie, idź znowu…"
+        },
+        {
+          "t": "widget",
+          "id": "coffee"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Dwanaście małych kroczków to nuda. Zrobię kroki po **15 minut** i skończę w mgnieniu oka."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "…Chwila. Kawa ma **−15 °C**?! Zamarzła w ciepłym pokoju?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Reguła jest w porządku. Problemem są *kroki*. W jednym gigantycznym kroku cały czas używasz stromego nachylenia z **początku** kroku, długo po tym, jak przestało być prawdziwe. Przelatujesz prosto przez temperaturę pokojową."
+        },
+        {
+          "t": "p",
+          "text": "Możemy dokładnie zobaczyć, o ile. Każdy krok mnoży różnicę względem temperatury pokojowej przez tę samą liczbę:"
+        },
+        {
+          "t": "math",
+          "tex": "\\text{różnica}_{\\text{następna}} = \\left(1 - \\frac{\\Delta t}{\\tau}\\right) \\cdot \\text{różnica}"
+        },
+        {
+          "t": "list",
+          "items": [
+            "Δt mniejsze niż τ: czynnik jest między 0 a 1. Różnica maleje, bez przeregulowania.",
+            "Δt między τ a 2τ: czynnik jest **ujemny**. Kawa przestrzeliwuje poniżej temperatury pokoju, potem powyżej, kołysze się w tę i z powrotem, a wahania maleją.",
+            "Δt większe niż 2τ: czynnik jest mniejszy niż −1. Wahania **rosną** z każdym krokiem. Kawa bez sensu."
+          ]
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "To przecież prysznic! Zbyt śmiałe działanie na podstawie starych informacji powoduje wahania."
+        },
+        {
+          "t": "note",
+          "text": "Dlatego nasze symulacje robią malutkie, sprytne kroki (1 milisekunda, metodą zwaną RK4). Wahania, które zobaczysz w kolejnych rozdziałach, to prawdziwa fizyka, a nie wypadki przy doborze kroku."
+        },
+        {
+          "t": "p",
+          "text": "Ustaw małe Δt i włącz gładką krzywą. Ręcznie zbudowane kropki lądują dokładnie na niej. Ten gładki kształt nazywa się **zanikiem wykładniczym**. Następny rozdział jest cały o nim."
+        },
+        {
+          "t": "h3",
+          "text": "Stała czasowa to linijka"
+        },
+        {
+          "t": "predict",
+          "id": "ch3-two-tau",
+          "gate": true,
+          "q": "Po **jednej** stałej czasowej kawa pokonała 63% różnicy względem temperatury pokojowej. Jaką część różnicy pokona po **dwóch** stałych czasowych?",
+          "options": [
+            {
+              "text": "100%: druga τ pokonuje pozostałe 37%",
+              "why": "Kuszące, ale druga τ nie kończy roboty. Pokonuje 63% *tego, co zostało*."
+            },
+            {
+              "text": "Około 86%",
+              "correct": true,
+              "why": "Każda τ pokonuje 63% pozostałej różnicy: po jednej τ zostaje 37%, a po dwóch 37% z 37% ≈ 14%. Czyli pokonane jest 86%."
+            },
+            {
+              "text": "126%, dwa razy 63%",
+              "why": "To oznaczałoby przestrzelenie poniżej temperatury pokoju. Prawdziwa (gładka) kawa nigdy tego nie robi. Robiły to tylko gigantyczne kroki June."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "ruler"
+        },
+        {
+          "t": "p",
+          "text": "Po 1τ: 63%. Po 2τ: 86%. Po 3τ: 95%. Nigdy nie dochodzi *dokładnie* do celu, ale po mniej więcej 4–5 τ nikt nie zauważy różnicy. Przełącz na **zbiornik**: woda wpływa coraz wolniej, w miarę jak zbiornik się napełnia, więc reguła jest ta sama („tempo zależy od tego, ile brakuje do pełna”) i kształt też."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Czyli τ to wbudowana linijka. Podaj mi τ, a będę wiedzieć, jak ospała jest dana rzecz, czy to kubek, zbiornik, czy dron."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Pochodna",
+              "def": "Nachylenie krzywej w jednej chwili: jak szybko coś się zmienia. Zapisywana $\\frac{dh}{dt}$ lub $\\dot h$."
+            },
+            {
+              "term": "Układ pierwszego rzędu",
+              "def": "Coś, czego tempo zmiany zależy od tego, jak daleko jest od miejsca, do którego zmierza (kawa, zbiorniki). Jego krzywa to wykładnicza."
+            },
+            {
+              "term": "Stała czasowa τ",
+              "def": "Czas, w jakim układ pierwszego rzędu pokonuje 63% pozostałej drogi."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "area",
+      "title": "W drugą stronę: sumowanie pola",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Nachylenie zamienia wysokość w prędkość. Czy da się pójść **w drugą stronę**? Załóżmy, że czujnik drona podaje nam tylko jego prędkość. Gdzie on jest?"
+        },
+        {
+          "t": "p",
+          "text": "Jeśli lecisz ze stałą prędkością 2 m/s przez 3 s, wznosisz się o 6 m: prędkość × czas. Na wykresie prędkości w czasie to **pole prostokąta**. Kiedy prędkość ciągle się zmienia, pokrój czas na cienkie paski, potraktuj każdy pasek jak prostokąt i dodaj je wszystkie."
+        },
+        {
+          "t": "p",
+          "text": "Przesuwaj kursor i patrz, jak rośnie zacieniowane pole. {out|Niebieska krzywa} poniżej to po prostu *pole zebrane do tej pory*. Tam, gdzie prędkość spada poniżej zera (dron spada), pole liczy się jako **ujemne** i wysokość maleje."
+        },
+        {
+          "t": "widget",
+          "id": "area"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Zebrane pole ląduje dokładnie na prawdziwej wysokości. Nachylenie prowadzi w jedną stronę, pole przyprowadza z powrotem."
+        },
+        {
+          "t": "p",
+          "text": "Ta operacja „zbierania pola” nazywa się **całką**:"
+        },
+        {
+          "t": "math",
+          "tex": "\\out{h}(t) = \\out{h}(0) + \\int_0^{t} \\text{prędkość}\\;dt"
+        },
+        {
+          "t": "note",
+          "text": "To na razie cała całka, jakiej potrzebujemy. Wróci jeszcze dwa razy: w rozdziale 7 (transformata, która mierzy pole) i w rozdziale 9 („I” w PID gromadzi dawny uchyb)."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Co już wiemy",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "**Pochodna** to nachylenie krzywej w jednej chwili: jak szybko się zmienia. Wysoko i szybko to różne rzeczy.",
+            "Reguła typu „stygnij tym szybciej, im jesteś cieplejsza” wyznacza całą krzywą: **wykładnicze** dochodzenie do celu.",
+            "**Stała czasowa τ** to linijka: 63% drogi po τ, 86% po 2τ, 95% po 3τ.",
+            "Budowanie krzywych za dużymi krokami tworzy fałszywe przeregulowanie i wahania, zupełnie jak prysznic.",
+            "**Całka** zbiera pole i odwraca pochodną."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch3-q1",
+              "q": "Dron jest w samym **najwyższym punkcie** swojego przeregulowania. Jaka jest jego prędkość pionowa?",
+              "options": [
+                {
+                  "text": "Największa, jaką kiedykolwiek osiąga",
+                  "why": "Wysokość i prędkość to różne rzeczy. Na szczycie krzywa jest przez moment pozioma."
+                },
+                {
+                  "text": "Zero",
+                  "correct": true,
+                  "why": "Styczna na szczycie górki jest pozioma: nachylenie zero. Dron na moment przestaje się wznosić, zanim spadnie z powrotem."
+                },
+                {
+                  "text": "Najbardziej ujemna",
+                  "why": "Najszybszy spadek przychodzi nieco później, tam, gdzie krzywa opada najbardziej stromo."
+                }
+              ]
+            },
+            {
+              "id": "ch3-q2",
+              "q": "Kawa ma 90 °C, pokój 20 °C, τ = 10 min. Mniej więcej jak gorąca jest po 10 minutach?",
+              "options": [
+                {
+                  "text": "20 °C",
+                  "why": "To temperatura pokojowa. Żeby się do niej zbliżyć, trzeba kilku stałych czasowych, a i tak nigdy do końca jej nie osiąga."
+                },
+                {
+                  "text": "Około 46 °C",
+                  "correct": true,
+                  "why": "Po jednej τ pokonane jest 63% z 70-stopniowej różnicy: 90 − 0,63 × 70 ≈ 46 °C."
+                },
+                {
+                  "text": "Około 55 °C",
+                  "why": "To dokładnie połowa drogi. Po jednej τ pokonane jest trochę więcej niż połowa: 63%."
+                }
+              ]
+            },
+            {
+              "id": "ch3-q3",
+              "q": "Dron wznosi się z prędkością 2 m/s przez 3 s, a potem jego prędkość równomiernie spada do 0 przez kolejne 2 s. O ile się wzniósł?",
+              "options": [
+                {
+                  "text": "6 m",
+                  "why": "To tylko prostokąt (pierwsze 3 s). Część z hamowaniem dodaje jeszcze trójkąt."
+                },
+                {
+                  "text": "8 m",
+                  "correct": true,
+                  "why": "Prostokąt 2 × 3 = 6 m plus trójkąt ½ × 2 × 2 = 2 m. Całkowite pole: 8 m."
+                },
+                {
+                  "text": "10 m",
+                  "why": "To tak, jakby przez ostatnie 2 s wciąż leciał z pełną prędkością. Prędkość spadała, więc to trójkąt, a nie prostokąt."
+                }
+              ]
+            },
+            {
+              "id": "ch3-q4",
+              "q": "Budujesz krzywą kawy ręcznie z krokami Δt = 15 min, a τ = 10 min. Co się dzieje?",
+              "options": [
+                {
+                  "text": "Lekko poszarpana wersja prawdziwej krzywej",
+                  "why": "Tak jest przy krokach krótszych niż τ. Przy 15 min krok przestrzeliwuje."
+                },
+                {
+                  "text": "Przestrzeliwuje poniżej temperatury pokoju i się waha, a wahania maleją",
+                  "correct": true,
+                  "why": "Każdy krok mnoży różnicę przez 1 − 15/10 = −0,5: znak się odwraca (przeregulowanie), a wielkość maleje o połowę (wahania maleją)."
+                },
+                {
+                  "text": "Waha się coraz szerzej",
+                  "why": "Do tego potrzeba Δt > 2τ = 20 min, kiedy czynnik spada poniżej −1."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Theo: „Krzywa kawy miała zabawną własność: jej nachylenie było zawsze **proporcjonalne do niej samej**. Czy istnieje taka specjalna funkcja?”"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "tangent": {
+      "title": "Detektyw nachylenia",
+      "height": "wysokość",
+      "target": "cel 2 m",
+      "peak": "najwyższy punkt",
+      "speed": "prędkość = nachylenie",
+      "speedAxis": "prędkość (m/s)",
+      "cursor": "Kursor czasu",
+      "readSlope": "nachylenie (prędkość)",
+      "readHeight": "wysokość",
+      "sweep": "Prześledź całość",
+      "clear": "Od nowa",
+      "rising": "Styczna pochyla się w górę: dron się wznosi.",
+      "falling": "Styczna pochyla się w dół: dron spada (ujemna prędkość).",
+      "flat": "Styczna jest pozioma: prędkość wynosi tu zero!",
+      "help": "Przeciągaj po dowolnym wykresie albo użyj suwaka. Każde odwiedzone miejsce dodaje punkt do krzywej prędkości.",
+      "ariaTop": "Wysokość drona w ciągu 4 sekund ze styczną w miejscu kursora czasu.",
+      "ariaBottom": "Krzywa prędkości, rysowana punkt po punkcie, w miarę jak kursor odwiedza kolejne chwile.",
+      "describe": "W chwili {t} s wysokość wynosi {h} m, a nachylenie {v} m na sekundę.",
+      "atStart": "Na samym początku dron stoi w miejscu: nachylenie zero. Przeciągnij w prawo, żeby śledzić wznoszenie.",
+      "pause": "Pauza"
+    },
+    "coffee": {
+      "title": "Zbuduj krzywą kawy ręcznie",
+      "timeAxis": "czas (min)",
+      "exact": "gładka krzywa",
+      "hand": "nasza ręcznie zbudowana krzywa",
+      "room": "pokój 20 °C",
+      "dt": "Wielkość kroku Δt",
+      "dtHint": "τ = 10 min dla tego kubka",
+      "step1": "Zrób krok",
+      "step10": "10 kroków",
+      "stepAll": "Wypełnij do 120 min",
+      "restart": "Od nowa",
+      "showExact": "Pokaż gładką krzywą",
+      "aria": "Temperatura kawy budowana krok po kroku. Każdy krok podąża za bieżącym nachyleniem przez jedną wielkość kroku. Przerywana pomarańczowa linia pokazuje następny krok.",
+      "status": {
+        "start": "Kawa zaczyna od 90 °C i stygnie o {r} °C na minutę. Pomarańczowe kreski pokazują, gdzie wyląduje jeden krok.",
+        "step": "Krok {n}: po {t} min kawa ma {T} °C i stygnie o {r} °C na minutę.",
+        "frozen": "Chwila… {T} °C? Kawa zrobiła się zimniejsza od pokoju!",
+        "growing": "A wahania są coraz większe!",
+        "dipped": "(Po drodze spadła poniżej temperatury pokojowej!)"
+      },
+      "help": "Każdy krok idzie prosto wzdłuż bieżącego nachylenia przez Δt minut. Małe kroki trzymają się gładkiej krzywej; gigantyczne przestrzeliwują."
+    },
+    "ruler": {
+      "title": "Linijka stałej czasowej",
+      "which": "Który układ?",
+      "coffee": "Stygnąca kawa",
+      "tank": "Napełniany zbiornik",
+      "timeAxis": "czas (min)",
+      "levelAxis": "poziom wody (m)",
+      "curve": "odpowiedź",
+      "room": "pokój 20 °C",
+      "full": "pełny 1,2 m",
+      "tau": "Stała czasowa τ",
+      "read1": "wartość po 1τ",
+      "aria": "Krzywa wykładnicza z pionowymi znacznikami po jednej, dwóch i trzech stałych czasowych, opisanymi 63, 86 i 95 procent.",
+      "describe": "Stała czasowa {tau} minut. Znaczniki po jednej, dwóch i trzech stałych czasowych pokazują 63, 86 i 95 procent drogi.",
+      "read2": "wartość po 2τ"
+    },
+    "area": {
+      "title": "Sumowanie pola",
+      "speed": "prędkość",
+      "speedAxis": "prędkość (m/s)",
+      "trueHeight": "prawdziwa wysokość (do sprawdzenia)",
+      "accHeight": "pole do tej pory",
+      "cursor": "Zbieraj do",
+      "readArea": "pole do tej pory = zyskana wysokość",
+      "start": "Naciśnij start (albo przeciągnij po wykresie prędkości), żeby zacząć dodawać paski.",
+      "positive": "Prędkość powyżej zera: każdy pasek dodaje wysokości.",
+      "negative": "Prędkość poniżej zera: te paski liczą się jako ujemne. Wysokość maleje.",
+      "ariaTop": "Prędkość drona w czasie z zacieniowanym polem pod krzywą aż do kursora.",
+      "ariaBottom": "Zebrane pole w czasie, na tle prawdziwej krzywej wysokości.",
+      "describe": "Do chwili {t} s zebrane pole wynosi {a} m.",
+      "help": "Przeciągaj po wykresie prędkości albo użyj suwaka. Paski powyżej zera dodają wysokości, paski poniżej zera ją odejmują."
+    }
+  }
+}

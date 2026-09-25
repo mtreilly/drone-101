@@ -1,0 +1,350 @@
+{
+  "kicker": "Chapitre 2",
+  "title": "La commande proportionnelle",
+  "question": "Avec quelle force le drone doit-il pousser quand il est trop bas ?",
+  "sections": [
+    {
+      "id": "push",
+      "title": "Pousser d'autant plus fort qu'on est loin",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "La dernière fois, le drone s'est stabilisé 25 cm trop bas avec le colis. Je veux savoir pourquoi."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Notre règle avait deux morceaux : 4,9 N pour tenir le drone en l'air, plus 8 N par mètre d'erreur. Les 4,9 N, c'était une supposition sur le poids. Dès que le colis a changé le poids, la supposition était fausse."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Alors virons la supposition ! Plus de 4,9. Laissons **l'erreur faire tout le travail** : on pousse proportionnellement à la distance qui nous sépare de la cible."
+        },
+        {
+          "t": "p",
+          "text": "C'est le correcteur le plus célèbre qui existe, la **commande proportionnelle** (« commande P » pour faire court) :"
+        },
+        {
+          "t": "math",
+          "tex": "\\eff{T} = K_p \\, \\err{e} = K_p\\,(\\sp{r} - \\out{h})"
+        },
+        {
+          "t": "p",
+          "text": "$K_p$ est le **gain** : combien de newtons de poussée on ajoute par mètre d'erreur. Son unité est le newton par mètre (N/m). Un grand $K_p$, c'est un correcteur impatient ; un petit $K_p$, un correcteur détendu. C'est le seul bouton dont on dispose dans ce chapitre."
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "On fait toujours comme si les moteurs étaient illimités. Ils peuvent même tirer un peu vers le bas si le drone est trop haut. On deviendra honnêtes sur les limites au chapitre 8."
+        },
+        {
+          "t": "predict",
+          "id": "ch2-kp5",
+          "gate": true,
+          "q": "Prenons $K_p = 5$ N/m. Le drone part du sol et vise 2 m. Où **finit**-il par planer ?",
+          "options": [
+            {
+              "text": "Exactement à 2 m",
+              "why": "À exactement 2 m, l'erreur est nulle, donc la poussée serait $5 \\times 0 = 0$ N, et le drone tomberait. Il ne peut pas rester là."
+            },
+            {
+              "text": "Vers 1 m",
+              "correct": true,
+              "why": "Pour planer, la poussée doit égaler le poids (4,9 N). Avec $K_p = 5$, il faut une erreur de $4{,}9 / 5 \\approx 0{,}98$ m, donc il plane vers **1,02 m**."
+            },
+            {
+              "text": "Au-dessus de 2 m",
+              "why": "Au-dessus de 2 m, l'erreur est négative, donc la poussée serait négative et il descendrait. Être trop haut ne peut pas être une position de repos."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "pcontrol"
+        },
+        {
+          "t": "p",
+          "text": "Regarde la {out|ligne bleue en pointillés} : c'est là que le drone finit par planer, et c'est toujours **en dessous** de la {sp|cible}. L'écart s'appelle l'**erreur statique**, ou tout simplement l'**affaissement**."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "C'est un tir à la corde. La gravité tire vers le bas avec 4,9 N, tout le temps. Le seul moyen pour le correcteur de repousser avec 4,9 N, c'est qu'il **reste un peu d'erreur** à multiplier."
+        },
+        {
+          "t": "math",
+          "tex": "\\eff{T} = \\text{poids} \\;\\Rightarrow\\; K_p\\,\\err{e} = 4{,}9 \\;\\Rightarrow\\; \\err{e}_{\\text{affaissement}} = \\frac{4{,}9}{K_p}\\ \\text{m}"
+        },
+        {
+          "t": "p",
+          "text": "Maintenant, descends $K_p$ à **2 N/m**. Le drone ne décolle même pas ! Au sol, l'erreur est de 2 m, donc la poussée n'est que de $2 \\times 2 = 4$ N, moins que les 4,9 N du poids. La formule dit qu'il faudrait s'affaisser de 2,45 m, c'est-à-dire sous terre."
+        }
+      ]
+    },
+    {
+      "id": "more",
+      "title": "Il suffit de monter le gain !",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Solution facile : **plus de gain, c'est toujours mieux**. Plus grand $K_p$, plus petit affaissement. À fond !"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Je m'en occupe. Puissance maximale : $K_p = 60$ !"
+        },
+        {
+          "t": "widget",
+          "id": "mika-button",
+          "wide": false
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "L'affaissement tombe à **8 cm** ! Au bout de quelques secondes, il est quasiment à 2 m. Victoire !"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Mika… regarde les deux premières secondes. Il est monté jusqu'à environ **3,4 mètres**, bien au-delà de la cible. Et regarde la {eff|poussée} : 120 N au décollage, puis elle tire *vers le bas*, puis de nouveau vers le haut. Ce n'est pas planer, ça, c'est rebondir."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Ah. J'ai seulement regardé où il finissait. La {err|zone d'erreur rouge} au début est énorme."
+        },
+        {
+          "t": "p",
+          "text": "C'était l'erreur de Mika : juger un correcteur uniquement sur l'endroit où il se stabilise **au final**. La façon dont il y **arrive** compte tout autant. Essaie quelques gains et observe le fantôme pâle de ton essai précédent :"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Gain faible** (petit $K_p$) : doux, mais il s'affaisse beaucoup. Descends-le assez et le drone ne décolle jamais.",
+            "**Gain élevé** (grand $K_p$) : petit affaissement, mais il fait un **dépassement** (il file au-delà de l'endroit où il va se stabiliser) et oscille avant de se calmer."
+          ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Pourquoi pousser *plus fort* le ferait *osciller* ?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Une grosse poussée le lance vite. Quand il atteint la bonne hauteur, il va encore vite, et rien dans notre règle ne dit « ralentis, tu y es presque ». Seule la traînée de l'air le freine doucement. Alors il file au-delà, se fait repousser, repasse au-delà…"
+        },
+        {
+          "t": "note",
+          "text": "Note honnête : avec notre drone simple, la commande P oscille mais n'**explose** jamais vraiment. Les oscillations finissent toujours par s'éteindre. Les vrais drones ont de petits retards (les moteurs mettent du temps à prendre de la vitesse) qui rendent un gain trop élevé vraiment dangereux. Ce sera pour les chapitres 10 et 11."
+        }
+      ]
+    },
+    {
+      "id": "challenge",
+      "title": "Un défi",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Cherchons le bon compromis. Le drone réussit s'il s'affaisse de **moins de 20 cm** *et* dépasse de **moins de 30 %** (on mesure le dépassement comme la distance dont il monte au-dessus de la hauteur où il finit par se stabiliser). Trouve un $K_p$ qui fait les deux."
+        },
+        {
+          "t": "widget",
+          "id": "challenge"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Les zones vertes ne se chevauchent jamais ! L'affaissement demande $K_p$ au-dessus d'environ 24,5, le dépassement le demande en dessous d'environ 3,9. Il n'y a **pas de réponse**."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Parce qu'un seul bouton règle les deux, et qu'il les tire dans des directions opposées. Ce n'est pas qu'on n'a pas trouvé le bon nombre. **Il n'existe pas.** Il nous faut un autre *type* de correcteur."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Pour en concevoir un meilleur, il faut parler des oscillations sérieusement. « Mou », « rebondissant », « finit par se calmer »… ce sont des impressions, pas de la physique."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Ce qu'on sait pour l'instant",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "**Commande proportionnelle** : poussée = $K_p \\times$ erreur. Un seul bouton, le gain $K_p$ (N/m).",
+            "Face à la gravité, la commande P laisse toujours une **erreur statique** (affaissement) de $4{,}9 / K_p$ m : il doit rester de l'erreur pour produire la poussée qui tient le drone en l'air.",
+            "Un gain faible donne un gros affaissement et une réponse molle. Un gain élevé donne un petit affaissement, mais du **dépassement** et des oscillations.",
+            "« Plus de gain, c'est toujours mieux » est faux. Pour notre drone, aucun $K_p$ ne donne à la fois un petit affaissement et un petit dépassement."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch2-q1",
+              "q": "Avec $K_p = 10$ N/m (et sans poussée de vol stationnaire), à quelle distance sous les 2 m le drone va-t-il planer ?",
+              "options": [
+                {
+                  "text": "0 m : il atteint la cible",
+                  "why": "Sur la cible, l'erreur est nulle, donc la poussée aussi. La commande P seule ne peut pas l'y maintenir contre la gravité."
+                },
+                {
+                  "text": "Environ 0,49 m",
+                  "correct": true,
+                  "why": "La poussée doit égaler les 4,9 N du poids : $10 \\times e = 4{,}9$ donne $e = 0{,}49$ m. Il plane vers 1,51 m."
+                },
+                {
+                  "text": "Environ 4,9 m",
+                  "why": "Ça, c'est le poids en newtons, pas l'affaissement. Divise par le gain : $4{,}9 / 10 = 0{,}49$ m."
+                }
+              ]
+            },
+            {
+              "id": "ch2-q2",
+              "q": "Laquelle de ces réponses vient du $K_p$ le **plus élevé** ? (La ligne en tirets est la cible.)",
+              "options": [
+                {
+                  "text": "Bas, avec une petite oscillation",
+                  "sketch": "droop",
+                  "why": "Un gros affaissement veut dire un *petit* gain : il faut beaucoup d'erreur pour produire assez de poussée."
+                },
+                {
+                  "text": "Près de la cible, avec de grosses oscillations",
+                  "sketch": "overshoot",
+                  "correct": true,
+                  "why": "Petit affaissement et beaucoup de dépassement : c'est la signature d'un gain élevé."
+                },
+                {
+                  "text": "En douceur et pile sur la cible",
+                  "sketch": "sluggish",
+                  "why": "Option piège : un correcteur P pur qui lutte contre la gravité ne peut **jamais** finir exactement sur la cible, quel que soit $K_p$. Il manque quelque chose (chapitre 9)."
+                }
+              ]
+            },
+            {
+              "id": "ch2-q3",
+              "q": "Pourquoi le drone en commande P ne peut-il pas planer exactement à 2 m ?",
+              "options": [
+                {
+                  "text": "À erreur nulle, la poussée est nulle, donc la gravité gagnerait",
+                  "correct": true,
+                  "why": "Exactement. Planer demande 4,9 N, et la commande P ne produit de la poussée que s'il y a de l'erreur."
+                },
+                {
+                  "text": "Le capteur de hauteur n'est pas assez précis",
+                  "why": "Notre capteur est parfait dans ce chapitre, et le drone s'affaisse quand même. C'est la règle de commande, pas la mesure."
+                },
+                {
+                  "text": "La traînée de l'air le retient",
+                  "why": "La traînée n'agit que quand le drone bouge. En vol stationnaire, il n'y a aucune traînée, et l'affaissement est toujours là."
+                }
+              ]
+            },
+            {
+              "id": "ch2-q4",
+              "q": "Le drone ramasse un colis et devient **deux fois plus lourd**. Avec le même $K_p$, l'affaissement…",
+              "options": [
+                {
+                  "text": "double",
+                  "correct": true,
+                  "why": "Affaissement = poids ÷ $K_p$. Deux fois plus de poids demande deux fois plus d'erreur pour le soutenir."
+                },
+                {
+                  "text": "est divisé par deux",
+                  "why": "Un drone plus lourd demande *plus* de poussée, donc *plus* d'erreur, pas moins."
+                },
+                {
+                  "text": "reste le même",
+                  "why": "L'affaissement est exactement l'erreur nécessaire pour équilibrer le poids, donc il dépend directement du poids."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Mou. Oscillant. Dépasse. Se stabilise. On n'arrête pas de décrire **comment les choses changent dans le temps** avec des mots flous. Il nous faut un vrai langage du changement."
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "pcontrol": {
+      "title": "Commande P : poussée = Kp × erreur",
+      "slider": "Gain proportionnel Kp",
+      "sliderHint": "newtons de poussée en plus par mètre d'erreur",
+      "plot": {
+        "height": "hauteur",
+        "thrust": "poussée",
+        "aria": "Hauteur du drone sur 10 secondes pendant qu'il décolle vers 2 mètres en commande proportionnelle, avec l'erreur ombrée en rouge et l'essai précédent en fantôme pâle.",
+        "target": "cible 2 m",
+        "hovers": "se stabilise à {h} m"
+      },
+      "readout": {
+        "final": "se stabilise à",
+        "droop": "affaissement",
+        "overshoot": "dépassement",
+        "peakThrust": "poussée max"
+      },
+      "status": {
+        "ground": "Ne quitte jamais le sol : au sol, la poussée n'est que de {T} N, moins que les {w} N du poids.",
+        "flies": "Se stabilise à {h} m ({d} cm d'affaissement), après être monté jusqu'à {p} m ({o} % de dépassement)."
+      }
+    },
+    "mika-button": {
+      "label": "Mettre Kp = 60 N/m (l'idée de Mika)"
+    },
+    "challenge": {
+      "title": "Trouve un Kp avec affaissement < 20 cm et dépassement < 30 %",
+      "slider": "Gain proportionnel Kp",
+      "kpAxis": "Kp (N/m)",
+      "droopAxis": "affaissement (m)",
+      "overAxis": "dépassement (%)",
+      "droopSeries": "affaissement = 4,9 / Kp",
+      "overSeries": "dépassement",
+      "droopAria": "Affaissement en fonction du gain Kp : il diminue quand Kp augmente. La zone de réussite (affaissement sous 20 cm) correspond à Kp au-dessus de 24,5.",
+      "overAria": "Dépassement en fonction du gain Kp : il augmente avec Kp. La zone de réussite (dépassement sous 30 pour cent) correspond à Kp entre 2,45 et 3,9.",
+      "okZone": "réussi",
+      "droopLimit": "20 cm",
+      "overLimit": "30 %",
+      "noflight": "pas de décollage",
+      "readout": {
+        "droop": "affaissement",
+        "overshoot": "dépassement"
+      },
+      "help": "Chaque courbe montre ce que ferait le drone pour chaque Kp. La bande verte, c'est là où cette exigence-là est satisfaite.",
+      "status": {
+        "neither": "Aucune exigence n'est satisfaite ici. Continue à explorer.",
+        "droopOnly": "L'affaissement est bon ✓ mais le dépassement est bien trop grand.",
+        "overOnly": "Le dépassement est bon ✓ mais l'affaissement est énorme.",
+        "impossible": "Tu as trouvé les deux zones vertes, et elles ne se chevauchent jamais : l'affaissement demande Kp > {a}, le dépassement demande Kp < {b}. Aucun Kp ne peut réussir les deux."
+      }
+    }
+  }
+}

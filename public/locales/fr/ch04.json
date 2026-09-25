@@ -1,0 +1,367 @@
+{
+  "kicker": "Chapitre 4",
+  "title": "Pourquoi les exponentielles sont magiques",
+  "question": "Existe-t-il une courbe dont la pente est simplement une copie d'elle-même ?",
+  "sections": [
+    {
+      "id": "copy",
+      "title": "Une courbe qui se copie elle-même",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "La dernière fois, l'écart entre le café et la température de la pièce diminuait à une vitesse **proportionnelle à l'écart lui-même**. Grand écart, diminution rapide. Petit écart, diminution lente. Quel genre de courbe fait ça ?"
+        },
+        {
+          "t": "p",
+          "text": "Cherchons une courbe dont la pente, en chaque point, est un multiple fixe de sa hauteur. De bons candidats sont les courbes qui « doublent » : $2^t$, $3^t$ et compagnie. Chacune se multiplie par le même facteur à chaque seconde."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "J'ai déjà vu $e^t$ dans des manuels. $e$, c'est pas juste un nombre au hasard que les matheux aiment bien ? 2,718 et des poussières, bref."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Mesurons au lieu de nous disputer. On met une tangente sur chaque courbe et on divise sa pente par sa hauteur."
+        },
+        {
+          "t": "widget",
+          "id": "bases"
+        },
+        {
+          "t": "p",
+          "text": "Fais glisser le curseur le long de n'importe quelle courbe : l'affichage **pente ÷ hauteur** ne bouge pas. Chaque exponentielle se copie elle-même, multipliée par un nombre fixe. Pour la base 2, ce nombre vaut environ 0,693 ; pour la base 3, environ 1,099."
+        },
+        {
+          "t": "p",
+          "text": "Et pour une seule base, ce nombre vaut exactement **1** : la courbe de la pente se superpose pile à la courbe elle-même. Cette base, c'est $e \\approx 2{,}718$ :"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\,e^{t} = e^{t}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Donc $e$ n'a rien d'aléatoire. C'est **le** nombre dont la courbe est sa propre pente. D'accord, je retire ce que j'ai dit."
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Le facteur pour la base b s'appelle ln b, le « logarithme népérien ». On n'en aura plus besoin. On utilisera simplement e."
+        }
+      ]
+    },
+    {
+      "id": "stretch",
+      "title": "On accélère : e^(at)",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Les vrais systèmes ne changent pas tous au même rythme, alors mettons un bouton dans l'exposant : $e^{at}$. Le nombre **a** étire ou comprime le temps."
+        },
+        {
+          "t": "widget",
+          "id": "expA"
+        },
+        {
+          "t": "p",
+          "text": "Maintenant, pente ÷ hauteur vaut exactement **a**, partout sur la courbe. a positif : elle grandit (de plus en plus vite). a négatif : elle diminue vers zéro, comme l'écart du café. a = 0 : elle ne bouge pas."
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\,e^{at} = a\\,e^{at}"
+        },
+        {
+          "t": "predict",
+          "id": "ch4-double",
+          "gate": true,
+          "q": "Prends la pente de $e^{2t}$, puis la pente **de cette pente**. Qu'obtiens-tu ?",
+          "options": [
+            {
+              "text": "$e^{2t}$ à nouveau",
+              "why": "C'est ce qui arrive pour $e^{t}$ (a = 1). Ici a = 2, et chaque pente multiplie par 2."
+            },
+            {
+              "text": "$4\\,e^{2t}$",
+              "correct": true,
+              "why": "La première pente donne $2e^{2t}$. La pente de *celle-ci* multiplie encore par 2 : $4e^{2t}$. Prendre une pente, c'est juste multiplier par a, à chaque fois."
+            },
+            {
+              "text": "$2t\\,e^{2t}$",
+              "why": "Une erreur de calcul classique. Le a descend comme un simple multiplicateur, et t n'apparaît jamais devant."
+            }
+          ]
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}e^{at} = a\\,e^{at},\\qquad \\frac{d^2}{dt^2}e^{at} = a^2\\,e^{at}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Attends, c'est énorme. Pour les exponentielles, prendre une pente (du calcul différentiel) devient **multiplier par a** (de la simple algèbre)."
+        },
+        {
+          "t": "note",
+          "text": "Colle un post-it là-dessus. Au chapitre 7, cette idée va grandir et devenir une astuce qui transforme le calcul différentiel en algèbre pour *n'importe quel* signal."
+        }
+      ]
+    },
+    {
+      "id": "guess",
+      "title": "Deviner une exponentielle",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Ça nous donne une stratégie pour résoudre n'importe quelle « règle pour la pente » : **deviner** que la réponse est une exponentielle, la brancher dans la règle, et voir quel a rend la règle vraie."
+        },
+        {
+          "t": "p",
+          "text": "La règle du café était $\\frac{dT}{dt} = -\\frac{T - 20}{\\tau}$ avec τ = 10 min. Notre supposition est $T = 20 + 70\\,e^{at}$ (70 est l'écart de départ). Règle a jusqu'à ce que la pente de la supposition corresponde à ce que la règle exige."
+        },
+        {
+          "t": "widget",
+          "id": "guess"
+        },
+        {
+          "t": "p",
+          "text": "L'algèbre est d'accord avec le curseur. La pente de la supposition est $a \\cdot 70e^{at}$. La règle veut $-70e^{at}/\\tau$. Le $70e^{at}$ apparaît des deux côtés et se simplifie :"
+        },
+        {
+          "t": "math",
+          "tex": "a \\cdot 70e^{at} = -\\frac{70e^{at}}{\\tau} \\quad\\Longrightarrow\\quad a = -\\frac{1}{\\tau}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Et elle tombe pile sur les points qu'on a construits à la main au chapitre 3. Deviner une exponentielle, ça marche. L'équation qui fixe a s'appelle l'**équation caractéristique**."
+        }
+      ]
+    },
+    {
+      "id": "spring",
+      "title": "Le ressort casse notre astuce",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Essayons sur quelque chose qui **rebondit**. Une masse au bout d'un ressort, c'est à peu près notre drone en commande P : ramené d'autant plus fort qu'il est loin de la cible."
+        },
+        {
+          "t": "p",
+          "text": "Le ressort tire en arrière avec une force $-kx$. Force = masse × accélération, et l'accélération est la pente de la pente. Donc la règle est :"
+        },
+        {
+          "t": "math",
+          "tex": "m\\,\\frac{d^2x}{dt^2} = -k\\,x"
+        },
+        {
+          "t": "p",
+          "text": "Devinons $x = e^{at}$. La pente de la pente est $a^2 e^{at}$, donc $m a^2 e^{at} = -k e^{at}$. On simplifie par $e^{at}$ :"
+        },
+        {
+          "t": "math",
+          "tex": "a^2 = -\\frac{k}{m}"
+        },
+        {
+          "t": "p",
+          "text": "Avec k/m = 4, il nous faut un nombre dont le carré vaut **−4**. Cherchons-en un :"
+        },
+        {
+          "t": "widget",
+          "id": "square"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Un carré n'est jamais négatif. La parabole bleue ne descend jamais jusqu'à la ligne verte. Donc ce a **n'existe pas**. Notre astuce échoue : on ne peut tout simplement pas décrire les ressorts avec des exponentielles."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Mais le ressort est là, il rebondit joyeusement. Il *a* un mouvement. Peut-être que ce n'est pas le ressort qui a tort, mais notre idée de ce qui compte comme un nombre ?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "…Hmm. J'avoue que j'ai dit « aucun nombre » un peu vite. Tous les nombres que *je connais* ont un carré positif."
+        },
+        {
+          "t": "note",
+          "text": "Garde un œil là-dessus. Theo avait-il raison ? (Divulgâchage : non.)"
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Ce qu'on sait pour l'instant",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "La pente de toute exponentielle est une copie d'elle-même : pente ÷ hauteur est constant.",
+            "$e \\approx 2{,}718$ est la base pour laquelle ce rapport vaut exactement 1. Avec $e^{at}$, le rapport vaut a.",
+            "Prendre la pente de $e^{at}$, c'est juste **multiplier par a**. Le calcul différentiel devient de l'algèbre.",
+            "**Deviner une exponentielle**, la brancher dans la règle, et trouver a. Pour le café, a = −1/τ.",
+            "Pour un ressort, la supposition exige $a^2 = -k/m$, et aucun nombre ordinaire ne fait ça. Pour l'instant."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch4-q1",
+              "q": "Quelle courbe a une pente = −0,5 × hauteur partout ?",
+              "options": [
+                {
+                  "text": "Décroissance douce",
+                  "sketch": "decaying-plain",
+                  "correct": true,
+                  "why": "C'est $e^{-0{,}5t}$ : le rapport négatif veut dire qu'elle diminue, et la diminution ralentit à mesure qu'elle devient petite."
+                },
+                {
+                  "text": "Croissance explosive",
+                  "sketch": "growing-plain",
+                  "why": "Une croissance demande un rapport pente ÷ hauteur *positif*."
+                },
+                {
+                  "text": "Oscillation régulière",
+                  "sketch": "steady-wiggle",
+                  "why": "La pente d'une oscillation n'est pas un multiple fixe de sa hauteur : aux sommets, la hauteur est maximale mais la pente est nulle."
+                }
+              ]
+            },
+            {
+              "id": "ch4-q2",
+              "q": "Si $x = e^{-3t}$, que vaut $x'' + 3x'$ ?",
+              "options": [
+                {
+                  "text": "0",
+                  "correct": true,
+                  "why": "$x' = -3e^{-3t}$ et $x'' = 9e^{-3t}$. Donc $9e^{-3t} + 3(-3e^{-3t}) = 0$."
+                },
+                {
+                  "text": "$18e^{-3t}$",
+                  "why": "Vérifie le signe de $x'$ : les pentes de $e^{-3t}$ viennent avec −3, donc $3x' = -9e^{-3t}$."
+                },
+                {
+                  "text": "$-3e^{-3t}$",
+                  "why": "Ça, c'est juste $x'$. Il faut aussi ajouter le terme $x''$."
+                }
+              ]
+            },
+            {
+              "id": "ch4-q3",
+              "q": "Un réservoir se vide selon $h' = -h/20$ (temps en secondes). Que valent a et la constante de temps ?",
+              "options": [
+                {
+                  "text": "a = −1/20 par seconde, τ = 20 s",
+                  "correct": true,
+                  "why": "Devinons $h = Ce^{at}$ : $a = -1/20$, et τ = −1/a = 20 s, le temps pour vider 63 %."
+                },
+                {
+                  "text": "a = −20 par seconde, τ = 1/20 s",
+                  "why": "C'est à l'envers : la règle divise par 20, donc c'est lent (τ = 20 s), pas ultra-rapide."
+                },
+                {
+                  "text": "a = +1/20 par seconde, τ = 20 s",
+                  "why": "Un a positif ferait *monter* le niveau d'eau. Le signe moins dans la règle veut dire qu'il se vide."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "note",
+          "text": "Comptabilité honnête : le « aucun nombre n'a un carré négatif » de Theo est une erreur. C'est juste une erreur qu'on ne voit pas encore. Au prochain chapitre, il va avoir tort de la plus belle des façons."
+        },
+        {
+          "t": "cliff",
+          "text": "Le drone et le ressort **oscillent**. Les exponentielles ne font que grandir ou diminuer. À moins que… un nombre puisse avoir un carré négatif ?"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "bases": {
+      "title": "Pente ÷ hauteur pour différentes bases",
+      "base": "Base b",
+      "xAxis": "t",
+      "yAxis": "hauteur bᵗ",
+      "curve": "bᵗ",
+      "slopeCurve": "sa pente",
+      "cursor": "Tangente en t =",
+      "showSlope": "Superposer la courbe de la pente",
+      "readHeight": "hauteur",
+      "readSlope": "pente",
+      "readRatio": "pente ÷ hauteur",
+      "statusE": "Base e : pente ÷ hauteur vaut exactement 1. La courbe est sa propre pente !",
+      "statusOther": "Pente ÷ hauteur vaut {r} partout sur cette courbe. Constant, mais pas 1.",
+      "aria": "Graphique d'une courbe exponentielle avec une tangente au niveau du curseur, et éventuellement la courbe de sa pente.",
+      "describe": "Base {b}, en t = {t}, la pente divisée par la hauteur vaut {r}.",
+      "help": "Choisis une base, puis fais glisser sur le graphique (ou utilise le curseur) pour déplacer la tangente le long de la courbe."
+    },
+    "expA": {
+      "title": "Mettre un bouton dans l'exposant",
+      "xAxis": "temps (s)",
+      "yAxis": "valeur",
+      "curve": "eᵃᵗ",
+      "slopeCurve": "sa pente",
+      "a": "a",
+      "cursor": "Tangente en t =",
+      "readRatio": "pente ÷ hauteur",
+      "grow": "a > 0 : elle grandit, de plus en plus vite.",
+      "shrink": "a < 0 : elle diminue vers zéro, comme l'écart du café.",
+      "flat": "a = 0 : elle ne change jamais. Pente nulle, pour toujours.",
+      "aria": "Graphique de e puissance a t, de la courbe de sa pente, et d'une tangente.",
+      "describe": "a = {a}. La pente divisée par la hauteur vaut {r} partout.",
+      "help": "Fais glisser sur le graphique pour déplacer la tangente. La courbe pâle en tirets correspond à ton a précédent."
+    },
+    "guess": {
+      "title": "Régler la supposition",
+      "xAxis": "temps (min)",
+      "yAxis": "température du café (°C)",
+      "rule": "la règle, construite à la main (chapitre 3)",
+      "guess": "notre supposition 20 + 70·eᵃᵗ",
+      "room": "pièce 20 °C",
+      "a": "a",
+      "readGuess": "pente de la supposition",
+      "readRule": "pente de la règle",
+      "tooFast": "La supposition refroidit trop vite : sa pente est plus raide que ce que la règle permet. Rapproche a de zéro.",
+      "tooSlow": "La supposition refroidit trop lentement. Rends a plus négatif.",
+      "match": "Correspondance parfaite ! a = −0,1 par minute = −1/τ. La supposition obéit à la règle partout.",
+      "aria": "Température du café : la solution de la règle de refroidissement construite à la main, et une supposition exponentielle dont le taux a est réglé par le curseur.",
+      "probe": "pentes comparées à 5 min"
+    },
+    "square": {
+      "title": "À la recherche d'un a tel que a² = −4",
+      "xAxis": "a",
+      "yAxis": "a²",
+      "square": "a²",
+      "need": "il faut −k/m = −4",
+      "a": "Essaie a =",
+      "status": "a = {a} donne a² = {sq}. Encore {gap} de trop. Un carré n'est jamais négatif.",
+      "springCaption": "Pendant ce temps, le vrai ressort (k/m = 4, sans amortisseur) rebondit joyeusement :",
+      "springAria": "Une masse au bout d'un ressort qui rebondit de haut en bas.",
+      "aria": "Parabole de a au carré avec une ligne horizontale à moins quatre qu'elle n'atteint jamais.",
+      "playSpring": "Lancer le ressort",
+      "pauseSpring": "Mettre le ressort en pause"
+    }
+  }
+}

@@ -1,0 +1,342 @@
+{
+  "kicker": "Capitolo 0",
+  "title": "Il problema della doccia",
+  "question": "Perché non riesco a portare la doccia a 38 °C e basta?",
+  "sections": [
+    {
+      "id": "hook",
+      "title": "Bollente! Gelata! Bollente!",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Ok, confessione. Stamattina ho girato la manopola della doccia, mi sono **lessato**, l'ho girata indietro, mi sono **congelato**, e ho fatto così tipo sei volte."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Lo fanno tutti! Le docce dei vecchi appartamenti sono le peggiori."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Ma *perché* è difficile? Vuoi un solo numero, 38 gradi. Hai una sola manopola. Dovrebbe essere facile."
+        },
+        {
+          "t": "p",
+          "text": "Scopriamolo. Qui sotto c'è una doccia con un **tubo lungo** tra la manopola e il soffione, come quelle vere. L'acqua che misceli alla manopola ci mette un paio di secondi a salire lungo il tubo. Puoi vedere il colore dell'acqua che avanza piano piano."
+        },
+        {
+          "t": "p",
+          "text": "**Il tuo obiettivo:** porta l'acqua a {sp|38 °C} (la fascia verde) e tienila lì per 10 secondi di fila. Trascina la {eff|manopola arancione}, oppure cliccala e usa le frecce. Il cronometro parte quando la tocchi."
+        },
+        {
+          "t": "widget",
+          "id": "manual"
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Il tubo ha un ritardo di 2,5 secondi. È più o meno quello che ottieni con qualche metro di tubo."
+        },
+        {
+          "t": "p",
+          "text": "Com'è andata? Se sei andato avanti e indietro, sopra e sotto la fascia verde, sei in buona compagnia. Guarda la {out|curva blu}: probabilmente fa zig-zag come un serpente nervoso."
+        }
+      ]
+    },
+    {
+      "id": "broken",
+      "title": "La doccia è rotta?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Secondo me la doccia è rotta. Metto la manopola su *tiepido*, e lei continua ad andare sul *bollente* lo stesso!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Mmh. Disegniamo due cose: cosa **chiede** la manopola e cosa **ti dà** il soffione. Se è rotta, non dovrebbero somigliarsi per niente."
+        },
+        {
+          "t": "p",
+          "text": "La {eff|curva arancione punteggiata} è la temperatura che la posizione della manopola *chiede*: la miscela alla valvola. La {out|curva blu} è quella che arriva davvero. Sposta la curva arancione più avanti nel tempo e guarda se si sovrappongono."
+        },
+        {
+          "t": "widget",
+          "id": "lag"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Oh! Spostala di circa 3 secondi e mezzo ed è quasi la **stessa curva**. La doccia non è rotta…"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "…è solo **in ritardo**! Tutto quello che sentivo era vecchio di circa 3 secondi e mezzo."
+        },
+        {
+          "t": "p",
+          "text": "Ecco il primo indizio. Quando senti \"troppo caldo\", stai sentendo la posizione della manopola di qualche secondo fa. Nel frattempo l'hai *già* girata verso il caldo, quindi la giri indietro, troppo, e il ciclo ricomincia."
+        },
+        {
+          "t": "note",
+          "text": "2,5 s sono il tubo. Il secondo in più è l'acqua che si mescola e scalda il metallo: questo smussa i cambiamenti bruschi, e somiglia molto a un secondo di ritardo in più."
+        }
+      ]
+    },
+    {
+      "id": "harder",
+      "title": "Impegnarsi di più aiuterebbe?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Ci sono: ero troppo **delicato**! Se giro la manopola **più in fretta** ogni volta che è sbagliata, sistemo tutto prima."
+        },
+        {
+          "t": "p",
+          "text": "Abbiamo costruito tre mani robot per provare le idee senza bagnarci. La **mano normale** gira la manopola un po' più in fretta quanto più l'acqua le sembra sbagliata, come fanno quasi tutti. La **mano energica** fa esattamente la stessa cosa, con il doppio del vigore."
+        },
+        {
+          "t": "predict",
+          "id": "ch0-harder",
+          "gate": true,
+          "q": "Rispetto alla mano normale, cosa farà la mano **energica**?",
+          "options": [
+            {
+              "text": "Arriverà a 38 °C prima e si stabilizzerà più in fretta",
+              "sketch": "swing-better",
+              "why": "È quello che ci dice la pancia: più sforzo, risultato più rapido."
+            },
+            {
+              "text": "Più o meno uguale, solo un pochino più rapida",
+              "sketch": "overshoot",
+              "why": "Una risposta prudente, ma il ritardo rende le cose molto più drammatiche di così."
+            },
+            {
+              "text": "Oscillerà ancora di più e non si stabilizzerà mai",
+              "sketch": "swing-worse",
+              "correct": true,
+              "why": "Girare più in fretta significa che, quando l'acqua (in ritardo) ti dice di fermarti, hai girato *ancora di più*. Le oscillazioni crescono finché la manopola non arriva a fine corsa."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "robots"
+        },
+        {
+          "t": "p",
+          "text": "Provale tutte e tre. La mano **energica** si dimena tra il gelo e l'ustione. La mano **paziente** mette la manopola al 51% circa (la miscela giusta, calcolata in anticipo) e semplicemente *aspetta*. Vince a mani basse."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Quindi il ritardo da solo non è il problema. La mano paziente ha lo stesso ritardo e se la cava benissimo. Il problema è **reagire a notizie vecchie, con troppa foga**."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Quindi \"spingi di più quando sei più lontano\" è l'istinto *sbagliato*? Ma è tutta la mia personalità."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Però la mano paziente ha barato. Sapeva la risposta giusta in anticipo. Se il boiler si raffredda, o qualcuno tira lo sciacquone, la posizione giusta della manopola cambia e la mano paziente non se ne accorge."
+        },
+        {
+          "t": "p",
+          "text": "Ecco il vero rompicapo. Ci serve qualcosa che **reagisca** (così può gestire le sorprese) ma che non **reagisca troppo** (così non oscilla). Tieni a mente questa idea. Tutto il corso parla di questo."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Cosa sappiamo finora",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Avere un **obiettivo** (38 °C) e un modo per agire (la manopola) non basta. Conta **come** reagisci.",
+            "Un **ritardo** significa che senti sempre informazioni vecchie. La doccia non è rotta, è in ritardo.",
+            "Reagire più forte a informazioni vecchie rende le oscillazioni **peggiori**, non migliori.",
+            "Mettere la manopola una volta sola e aspettare funziona, ma solo se non cambia mai niente."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch0-q1",
+              "q": "A t = 5 s giri di scatto la manopola da freddo a tiepido. Più o meno quando la temperatura al soffione **comincia** a salire?",
+              "options": [
+                {
+                  "text": "Subito, a 5 s",
+                  "why": "L'acqua che hai appena miscelato è ancora in fondo al tubo. Il soffione continua a ricevere la vecchia acqua fredda per un po'."
+                },
+                {
+                  "text": "Verso i 7,5 s",
+                  "correct": true,
+                  "why": "Esatto: 2,5 s dopo, quando l'acqua nuova ha percorso il tubo. Poi sale dolcemente in circa un secondo mentre si mescola."
+                },
+                {
+                  "text": "Verso i 15 s",
+                  "why": "Troppo tardi: il ritardo del nostro tubo è 2,5 s, non 10 s."
+                }
+              ]
+            },
+            {
+              "id": "ch0-q2",
+              "q": "Metti la manopola esattamente giusta (51%) e te ne vai. Cosa succede?",
+              "options": [
+                {
+                  "text": "Si scalda e si assesta a 38 °C senza oscillare",
+                  "correct": true,
+                  "why": "Sì. Il ritardo rende solo le cose **tardive**. Le oscillazioni nascono dal *reagire* a informazioni in ritardo."
+                },
+                {
+                  "text": "Oscilla per sempre, per colpa del ritardo",
+                  "why": "Il ritardo da solo non crea oscillazioni. Nessuno sta reagendo, quindi niente può andare oltre."
+                },
+                {
+                  "text": "Non arriva mai a 38 °C",
+                  "why": "Ci arriva: 2,5 s di ritardo, poi circa un secondo di riscaldamento dolce."
+                }
+              ]
+            },
+            {
+              "id": "ch0-q3",
+              "q": "Quale grafico della temperatura appartiene a qualcuno che **reagisce troppo forte**?",
+              "options": [
+                {
+                  "text": "Oscillazioni che crescono",
+                  "sketch": "swing-worse",
+                  "correct": true,
+                  "why": "Reagire troppo a informazioni in ritardo pompa energia nelle oscillazioni, come spingere un'altalena proprio nei momenti sbagliati."
+                },
+                {
+                  "text": "Oscillazioni che si riducono",
+                  "sketch": "swing-better",
+                  "why": "Oscillazioni che si riducono significano reazioni abbastanza gentili da calmarsi. Quello è uno che reagisce *con delicatezza*."
+                },
+                {
+                  "text": "Attesa, poi salita dolce",
+                  "sketch": "delay-then-rise",
+                  "why": "Quella è la mano paziente: imposta e aspetta. Nessuna reazione eccessiva."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Un minuscolo drone resta perfettamente fermo a 2 metri, nel vento, senza avere un cervello. Ha il nostro stesso problema. **Come lo risolve?**"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "manual": {
+      "title": "La tua doccia",
+      "start": "Fai partire il cronometro",
+      "help": "Tastiera: Tab fino alla manopola, poi frecce (piccole rotazioni), Pag Su/Giù (grandi rotazioni), Home (tutto freddo), Fine (tutto caldo).",
+      "view": {
+        "aria": "Doccia: una manopola in basso a sinistra miscela acqua fredda e calda, un lungo tubo la porta al soffione e un termometro mostra la temperatura al soffione.",
+        "knob": "Manopola della doccia, da freddo a caldo",
+        "cold": "F",
+        "hot": "C",
+        "pipe": "tubo (2,5 s di viaggio)",
+        "head": "soffione",
+        "thermo": "termometro"
+      },
+      "plot": {
+        "temp": "temperatura al soffione",
+        "mix": "cosa chiede la manopola",
+        "aria": "Grafico della temperatura al soffione in 60 secondi, con la fascia obiettivo dei 38 gradi."
+      },
+      "readout": {
+        "time": "tempo",
+        "streak": "nella fascia",
+        "crossings": "passaggi dai 38°"
+      },
+      "status": {
+        "ready": "Tocca la manopola per cominciare.",
+        "go": "Via! Portala a 38 °C…",
+        "hot": "Troppo calda! 🔥",
+        "cold": "Troppo fredda! 🧊",
+        "inband": "Nella fascia, tienila lì…",
+        "won": "Ce l'hai fatta a {t} s, dopo aver attraversato i 38° {n} volte. Bravo!",
+        "timeup": "Tempo scaduto! Hai attraversato i 38° {n} volte. Tranquillo, è proprio questo il punto.",
+        "wonOne": "Ce l'hai fatta a {t} s, attraversando i 38° una volta sola. Che fluidità!",
+        "wonZero": "Ce l'hai fatta a {t} s senza mai andare oltre. Wow!",
+        "timeupOne": "Tempo scaduto! Hai attraversato i 38° una volta, ma non li hai mai tenuti per 10 s."
+      },
+      "again": "Riprova"
+    },
+    "robots": {
+      "title": "Tre mani robot",
+      "choose": "Quale mano?",
+      "hand": {
+        "normal": "Mano normale",
+        "harder": "Mano energica",
+        "patient": "Mano paziente"
+      },
+      "intro": {
+        "normal": "Gira la manopola più in fretta quanto più l'acqua le sembra sbagliata.",
+        "harder": "Stessa idea, ma reagisce con il doppio del vigore.",
+        "patient": "Mette la manopola al 51% una volta, poi aspetta."
+      },
+      "result": {
+        "normal": "Alla fine ci arriva, dopo qualche bella oscillazione.",
+        "harder": "Non si stabilizza mai! Reagisce troppo a notizie vecchie, ogni volta.",
+        "patient": "Calma e rapida, ma solo perché sapeva la risposta in anticipo."
+      },
+      "view": {
+        "aria": "Doccia controllata da una mano robot. La manopola gira da sola.",
+        "knob": "Manopola della doccia (controllata dal robot)",
+        "cold": "F",
+        "hot": "C",
+        "pipe": "tubo (2,5 s di viaggio)",
+        "head": "soffione",
+        "thermo": "termometro"
+      },
+      "plot": {
+        "temp": "temperatura al soffione",
+        "mix": "cosa chiede la manopola",
+        "aria": "Grafico della temperatura della doccia per la mano robot scelta, con la mano precedente mostrata come un fantasma sbiadito."
+      }
+    },
+    "lag": {
+      "title": "È rotta, o solo in ritardo?",
+      "slider": "Sposta la curva della manopola più avanti di",
+      "sourceYours": "Questa è la tua prova di prima.",
+      "sourceRobot": "Questa è una prova d'esempio. (Gioca al gioco qui sopra e torna qui per usare la tua.)",
+      "plot": {
+        "temp": "temperatura al soffione",
+        "mix": "cosa chiede la manopola",
+        "aria": "Temperatura della miscela alla manopola e temperatura al soffione nel tempo; la curva della manopola si può spostare più avanti con il cursore."
+      },
+      "status": {
+        "mismatch": "Non coincidono ancora (scarto medio {e} °C). Continua a spostare.",
+        "match": "Si sovrappongono! Il soffione riceve quello che la manopola chiedeva circa {s} s fa."
+      }
+    }
+  }
+}

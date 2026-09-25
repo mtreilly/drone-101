@@ -1,0 +1,342 @@
+{
+  "kicker": "Capítulo 0",
+  "title": "El problema de la ducha",
+  "question": "¿Por qué no consigo que la ducha salga a 38 °C sin más?",
+  "sections": [
+    {
+      "id": "hook",
+      "title": "¡Quema! ¡Hiela! ¡Quema!",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Vale, confesión. Esta mañana giré el mando de la ducha, me **cocí**, lo giré de vuelta, me **congelé**, y así unas seis veces."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "¡Eso le pasa a todo el mundo! Las duchas de pisos viejos son lo peor."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Pero ¿*por qué* es difícil? Quieres un solo número, 38 grados. Tienes un solo mando. Debería ser fácil."
+        },
+        {
+          "t": "p",
+          "text": "Vamos a averiguarlo. Aquí abajo hay una ducha con una **tubería larga** entre el mando y la alcachofa, como una de verdad. El agua que mezclas en el mando tarda un par de segundos en subir por la tubería. Puedes ver cómo el color del agua avanza por ella."
+        },
+        {
+          "t": "p",
+          "text": "**Tu objetivo:** conseguir que el agua esté a {sp|38 °C} (la franja verde) y mantenerla ahí 10 segundos seguidos. Arrastra el {eff|mando naranja}, o haz clic en él y usa las flechas del teclado. El reloj empieza cuando lo tocas."
+        },
+        {
+          "t": "widget",
+          "id": "manual"
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "La tubería tiene un retardo de 2,5 segundos. Es más o menos lo que dan unos pocos metros de tubería."
+        },
+        {
+          "t": "p",
+          "text": "¿Qué tal te fue? Si fuiste de un lado a otro, por encima y por debajo de la franja verde, estás en buena compañía. Mira la {out|curva azul}: seguramente zigzaguea como una serpiente nerviosa."
+        }
+      ]
+    },
+    {
+      "id": "broken",
+      "title": "¿Está rota la ducha?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Creo que la ducha está rota. Pongo el mando en *templado*, ¡y sigue saliendo *caliente*!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Mmm. Dibujemos dos cosas: lo que el mando **pide** y lo que la alcachofa **te da**. Si está rota, no deberían parecerse en nada."
+        },
+        {
+          "t": "p",
+          "text": "La {eff|curva naranja punteada} es la temperatura que *pide* la posición de tu mando: la mezcla en la válvula. La {out|curva azul} es lo que llega de verdad. Desplaza la curva naranja hacia más tarde y mira si coinciden."
+        },
+        {
+          "t": "widget",
+          "id": "lag"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "¡Anda! Desplázala unos 3,5 segundos y son casi **la misma curva**. La ducha no está rota…"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "…¡solo va **con retraso**! Todo lo que sentía tenía unos 3,5 segundos de antigüedad."
+        },
+        {
+          "t": "p",
+          "text": "Esa es la primera pista. Cuando sientes \"demasiado caliente\", estás sintiendo la posición del mando de hace unos segundos. Para entonces *ya* lo has girado más hacia el calor, así que lo giras de vuelta, demasiado, y el ciclo vuelve a empezar."
+        },
+        {
+          "t": "note",
+          "text": "Los 2,5 s son la tubería. El segundo extra es el agua mezclándose y calentando el metal: suaviza los cambios bruscos, y eso se parece mucho a un segundo más de retraso."
+        }
+      ]
+    },
+    {
+      "id": "harder",
+      "title": "¿Serviría esforzarse más?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "¡Ya lo tengo: fui demasiado **suave**! Si giro el mando **más rápido** cada vez que está mal, lo arreglaré antes."
+        },
+        {
+          "t": "p",
+          "text": "Construimos tres manos robot para probar ideas sin mojarnos. La **mano normal** gira el mando un poco más rápido cuanto peor está el agua, como hace casi todo el mundo. La **mano enérgica** hace exactamente lo mismo, pero con el doble de brío."
+        },
+        {
+          "t": "predict",
+          "id": "ch0-harder",
+          "gate": true,
+          "q": "Comparada con la mano normal, ¿qué hará la mano **enérgica**?",
+          "options": [
+            {
+              "text": "Llegar antes a 38 °C y estabilizarse más rápido",
+              "sketch": "swing-better",
+              "why": "Eso es lo que nos dice la intuición: más esfuerzo, resultado más rápido."
+            },
+            {
+              "text": "Más o menos lo mismo, solo un poco más rápido",
+              "sketch": "overshoot",
+              "why": "Una apuesta prudente, pero el retardo hace que todo sea mucho más dramático."
+            },
+            {
+              "text": "Oscilar todavía más y no estabilizarse nunca",
+              "sketch": "swing-worse",
+              "correct": true,
+              "why": "Girar más rápido significa que, cuando el agua (con retraso) te dice que pares, ya has girado *todavía más*. Las oscilaciones crecen hasta que el mando llega a sus topes."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "robots"
+        },
+        {
+          "t": "p",
+          "text": "Prueba las tres. La mano **enérgica** se agita entre congelarte y escaldarte. La mano **paciente** pone el mando en torno al 51 % (la mezcla correcta, calculada de antemano) y simplemente *espera*. Gana de calle."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Así que el retardo por sí solo no es el problema. La mano paciente tiene el mismo retardo y le va bien. El problema es **reaccionar a noticias viejas con demasiadas ganas**."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "¿Entonces \"empujar más fuerte cuanto más lejos estás\" es el instinto *equivocado*? Esa es toda mi personalidad."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Pero la mano paciente hizo trampa. Sabía la respuesta de antemano. Si el termo se enfría, o alguien tira de la cadena, la posición correcta del mando cambia y la mano paciente ni se entera."
+        },
+        {
+          "t": "p",
+          "text": "Ese es el verdadero rompecabezas. Necesitamos algo que **reaccione** (para poder con las sorpresas) pero que no **sobrerreaccione** (para que no oscile). Guarda esa idea. Todo el curso va de eso."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Lo que sabemos hasta ahora",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Tener un **objetivo** (38 °C) y una forma de actuar (el mando) no basta. Importa **cómo** reaccionas.",
+            "Un **retardo** significa que siempre sientes información vieja. La ducha no está rota: va con retraso.",
+            "Reaccionar más fuerte a información vieja hace que las oscilaciones sean **peores**, no mejores.",
+            "Poner el mando una vez y esperar funciona, pero solo si nunca cambia nada."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch0-q1",
+              "q": "En t = 5 s giras de golpe el mando de frío a templado. ¿Más o menos cuándo **empieza** a subir la temperatura en la alcachofa?",
+              "options": [
+                {
+                  "text": "Enseguida, a los 5 s",
+                  "why": "El agua que acabas de mezclar sigue abajo del todo en la tubería. La alcachofa sigue recibiendo el agua fría vieja durante un rato."
+                },
+                {
+                  "text": "Hacia los 7,5 s",
+                  "correct": true,
+                  "why": "Exacto: 2,5 s después, cuando el agua nueva ha recorrido la tubería. Luego sube suavemente durante un segundo más o menos mientras se mezcla."
+                },
+                {
+                  "text": "Hacia los 15 s",
+                  "why": "Demasiado tarde: el retardo de nuestra tubería es de 2,5 s, no de 10 s."
+                }
+              ]
+            },
+            {
+              "id": "ch0-q2",
+              "q": "Pones el mando exactamente bien (51 %) y te vas. ¿Qué pasa?",
+              "options": [
+                {
+                  "text": "Se calienta y se queda en 38 °C sin oscilar",
+                  "correct": true,
+                  "why": "Sí. El retardo solo hace que todo llegue **tarde**. Las oscilaciones vienen de *reaccionar* a información atrasada."
+                },
+                {
+                  "text": "Oscila para siempre, por culpa del retardo",
+                  "why": "El retardo por sí solo no crea oscilaciones. Nadie está reaccionando, así que nada puede pasarse de largo."
+                },
+                {
+                  "text": "Nunca llega a 38 °C",
+                  "why": "Sí que llega: 2,5 s de retardo y luego un segundo de calentamiento suave."
+                }
+              ]
+            },
+            {
+              "id": "ch0-q3",
+              "q": "¿Qué gráfica de temperatura es la de alguien que **reacciona demasiado fuerte**?",
+              "options": [
+                {
+                  "text": "Oscilaciones que crecen",
+                  "sketch": "swing-worse",
+                  "correct": true,
+                  "why": "Sobrerreaccionar a información atrasada mete energía en las oscilaciones, como empujar un columpio justo en el momento equivocado."
+                },
+                {
+                  "text": "Oscilaciones que se encogen",
+                  "sketch": "swing-better",
+                  "why": "Si las oscilaciones se encogen, las reacciones son lo bastante suaves como para calmarse. Eso es alguien que reacciona con *suavidad*."
+                },
+                {
+                  "text": "Espera y luego sube suavemente",
+                  "sketch": "delay-then-rise",
+                  "why": "Esa es la mano paciente: ponerlo y esperar. Ninguna sobrerreacción."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Un dron diminuto se queda perfectamente quieto a 2 metros, con viento, sin tener cerebro. Tiene el mismo problema que nosotros. **¿Cómo lo resuelve?**"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "manual": {
+      "title": "Tu ducha",
+      "start": "Poner en marcha el reloj",
+      "help": "Teclado: Tab hasta el mando, luego flechas (giros pequeños), Re Pág/Av Pág (giros grandes), Inicio (todo frío), Fin (todo caliente).",
+      "view": {
+        "aria": "Ducha: un mando abajo a la izquierda mezcla agua fría y caliente, una tubería larga la lleva hasta la alcachofa y un termómetro muestra la temperatura en la alcachofa.",
+        "knob": "Mando de la ducha, de frío a caliente",
+        "cold": "F",
+        "hot": "C",
+        "pipe": "tubería (2,5 s de recorrido)",
+        "head": "alcachofa",
+        "thermo": "termómetro"
+      },
+      "plot": {
+        "temp": "temperatura en la alcachofa",
+        "mix": "lo que pide el mando",
+        "aria": "Gráfica de la temperatura en la alcachofa durante 60 segundos, con la franja objetivo de 38 grados."
+      },
+      "readout": {
+        "time": "tiempo",
+        "streak": "en la franja",
+        "crossings": "cruces de 38°"
+      },
+      "status": {
+        "ready": "Toca el mando para empezar.",
+        "go": "¡Vamos! Llévala a 38 °C…",
+        "hot": "¡Demasiado caliente! 🔥",
+        "cold": "¡Demasiado fría! 🧊",
+        "inband": "En la franja, aguanta…",
+        "won": "¡Lo lograste a los {t} s, tras cruzar los 38° {n} veces! Bien hecho.",
+        "timeup": "¡Se acabó el tiempo! Cruzaste los 38° {n} veces. Tranquilidad, de eso se trata.",
+        "wonOne": "¡Lo lograste a los {t} s, cruzando los 38° solo una vez! Qué fino.",
+        "wonZero": "¡Lo lograste a los {t} s sin pasarte ni una vez! Impresionante.",
+        "timeupOne": "¡Se acabó el tiempo! Cruzaste los 38° una vez, pero no aguantaste 10 s en la franja."
+      },
+      "again": "Otra vez"
+    },
+    "robots": {
+      "title": "Tres manos robot",
+      "choose": "¿Qué mano?",
+      "hand": {
+        "normal": "Mano normal",
+        "harder": "Mano enérgica",
+        "patient": "Mano paciente"
+      },
+      "intro": {
+        "normal": "Gira el mando más rápido cuanto peor está el agua.",
+        "harder": "La misma idea, pero reacciona con el doble de brío.",
+        "patient": "Pone el mando al 51 % una vez y espera."
+      },
+      "result": {
+        "normal": "Acaba llegando, tras unas cuantas oscilaciones grandes.",
+        "harder": "¡No se estabiliza nunca! Sobrerreacciona a noticias viejas una y otra vez.",
+        "patient": "Tranquila y rápida, pero solo porque sabía la respuesta de antemano."
+      },
+      "view": {
+        "aria": "Ducha controlada por una mano robot. El mando gira solo.",
+        "knob": "Mando de la ducha (controlado por el robot)",
+        "cold": "F",
+        "hot": "C",
+        "pipe": "tubería (2,5 s de recorrido)",
+        "head": "alcachofa",
+        "thermo": "termómetro"
+      },
+      "plot": {
+        "temp": "temperatura en la alcachofa",
+        "mix": "lo que pide el mando",
+        "aria": "Gráfica de la temperatura de la ducha con la mano robot elegida; la mano anterior aparece como un fantasma tenue."
+      }
+    },
+    "lag": {
+      "title": "¿Está rota o solo va con retraso?",
+      "slider": "Retrasar la curva del mando",
+      "sourceYours": "Este es tu propio intento de arriba.",
+      "sourceRobot": "Este es un intento de ejemplo. (Juega arriba y vuelve para usar el tuyo.)",
+      "plot": {
+        "temp": "temperatura en la alcachofa",
+        "mix": "lo que pide el mando",
+        "aria": "Temperatura de la mezcla en el mando y temperatura en la alcachofa a lo largo del tiempo; la curva del mando se puede retrasar con el control deslizante."
+      },
+      "status": {
+        "mismatch": "Aún no coinciden (diferencia media {e} °C). Sigue deslizando.",
+        "match": "¡Coinciden! La alcachofa recibe lo que el mando pidió hace unos {s} s."
+      }
+    }
+  }
+}

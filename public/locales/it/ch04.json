@@ -1,0 +1,367 @@
+{
+  "kicker": "Capitolo 4",
+  "title": "Perché gli esponenziali sono magici",
+  "question": "Esiste una curva la cui pendenza è semplicemente una copia di se stessa?",
+  "sections": [
+    {
+      "id": "copy",
+      "title": "Una curva che si copia da sola",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "L'ultima volta, la distanza del caffè dalla temperatura ambiente si riduceva a una velocità **proporzionale alla distanza stessa**. Distanza grande, riduzione veloce. Distanza piccola, riduzione lenta. Che tipo di curva fa così?"
+        },
+        {
+          "t": "p",
+          "text": "Cerchiamo una curva la cui pendenza, in ogni punto, sia un multiplo fisso della sua altezza. Buone candidate sono le curve \"che raddoppiano\": $2^t$, $3^t$ e compagnia. Ognuna si moltiplica per lo stesso fattore ogni secondo."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Ho visto $e^t$ nei libri. Ma $e$ non è solo un numero a caso che piace ai matematici? 2,718 e rotti, vabbè."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Invece di litigare, misuriamo. Mettiamo una tangente su ogni curva e dividiamo la pendenza per l'altezza."
+        },
+        {
+          "t": "widget",
+          "id": "bases"
+        },
+        {
+          "t": "p",
+          "text": "Trascina il cursore lungo una qualsiasi curva e il valore **pendenza ÷ altezza** non si sposta di un millimetro. Ogni esponenziale copia se stesso, moltiplicato per un numero fisso. Per la base 2 quel numero è circa 0,693, per la base 3 circa 1,099."
+        },
+        {
+          "t": "p",
+          "text": "E per una sola base il numero di scala è **1**, quindi la curva della pendenza si sovrappone esattamente alla curva stessa. Quella base è $e \\approx 2{,}718$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\,e^{t} = e^{t}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Quindi $e$ non è per niente a caso. È **il** numero la cui curva è la sua stessa pendenza. Ok, ritiro tutto."
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Il numero di scala per la base b si chiama ln b, il \"logaritmo naturale\". Non ci servirà più. Useremo solo e."
+        }
+      ]
+    },
+    {
+      "id": "stretch",
+      "title": "Acceleriamo: e^(at)",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Non tutti i sistemi reali cambiano allo stesso ritmo, quindi mettiamo una manopola nell'esponente: $e^{at}$. Il numero **a** allunga o comprime il tempo."
+        },
+        {
+          "t": "widget",
+          "id": "expA"
+        },
+        {
+          "t": "p",
+          "text": "Ora pendenza ÷ altezza è esattamente **a**, ovunque sulla curva. a positivo: cresce (e sempre più in fretta). a negativo: si riduce verso zero, come la distanza del caffè. a = 0: se ne sta lì ferma."
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\,e^{at} = a\\,e^{at}"
+        },
+        {
+          "t": "predict",
+          "id": "ch4-double",
+          "gate": true,
+          "q": "Prendi la pendenza di $e^{2t}$, e poi prendi la pendenza **di quella pendenza**. Cosa ottieni?",
+          "options": [
+            {
+              "text": "Di nuovo $e^{2t}$",
+              "why": "Questo succede per $e^{t}$ (a = 1). Qui a = 2, e ogni pendenza moltiplica per 2."
+            },
+            {
+              "text": "$4\\,e^{2t}$",
+              "correct": true,
+              "why": "La prima pendenza dà $2e^{2t}$. La pendenza di *quella* moltiplica di nuovo per 2: $4e^{2t}$. Prendere una pendenza moltiplica semplicemente per a, ogni volta."
+            },
+            {
+              "text": "$2t\\,e^{2t}$",
+              "why": "Un classico scivolone di algebra. La a scende come semplice moltiplicatore e la t non compare mai davanti."
+            }
+          ]
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}e^{at} = a\\,e^{at},\\qquad \\frac{d^2}{dt^2}e^{at} = a^2\\,e^{at}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Aspetta, questa è enorme. Per gli esponenziali, prendere una pendenza (analisi) diventa **moltiplicare per a** (semplice algebra)."
+        },
+        {
+          "t": "note",
+          "text": "Attacca un post-it qui. Nel Capitolo 7 questa idea cresce e diventa un trucco che trasforma l'analisi in algebra per *qualsiasi* segnale."
+        }
+      ]
+    },
+    {
+      "id": "guess",
+      "title": "Prova un esponenziale",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Questo ci dà una strategia per risolvere qualsiasi \"regola per la pendenza\": **ipotizza** che la risposta sia un esponenziale, sostituiscilo e guarda quale a rende vera la regola."
+        },
+        {
+          "t": "p",
+          "text": "La regola del caffè era $\\frac{dT}{dt} = -\\frac{T - 20}{\\tau}$ con τ = 10 min. La nostra ipotesi è $T = 20 + 70\\,e^{at}$ (70 è la distanza iniziale). Regola a finché la pendenza dell'ipotesi non coincide con quella che vuole la regola."
+        },
+        {
+          "t": "widget",
+          "id": "guess"
+        },
+        {
+          "t": "p",
+          "text": "L'algebra è d'accordo con il cursore. La pendenza dell'ipotesi è $a \\cdot 70e^{at}$. La regola vuole $-70e^{at}/\\tau$. Il termine $70e^{at}$ compare da entrambe le parti e si semplifica:"
+        },
+        {
+          "t": "math",
+          "tex": "a \\cdot 70e^{at} = -\\frac{70e^{at}}{\\tau} \\quad\\Longrightarrow\\quad a = -\\frac{1}{\\tau}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "E cade esattamente sui punti che abbiamo costruito a mano nel Capitolo 3. Provare un esponenziale funziona. L'equazione che fissa a si chiama **equazione caratteristica**."
+        }
+      ]
+    },
+    {
+      "id": "spring",
+      "title": "La molla rompe il nostro trucco",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Proviamolo su qualcosa che **rimbalza**. Una massa su una molla è praticamente il nostro drone con il controllo P: viene tirata indietro più forte quanto più è lontana dall'obiettivo."
+        },
+        {
+          "t": "p",
+          "text": "La molla tira indietro con una forza $-kx$. Forza = massa × accelerazione, e l'accelerazione è la pendenza della pendenza. Quindi la regola è:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\,\\frac{d^2x}{dt^2} = -k\\,x"
+        },
+        {
+          "t": "p",
+          "text": "Ipotizziamo $x = e^{at}$. La pendenza della pendenza è $a^2 e^{at}$, quindi $m a^2 e^{at} = -k e^{at}$. Semplifichiamo $e^{at}$:"
+        },
+        {
+          "t": "math",
+          "tex": "a^2 = -\\frac{k}{m}"
+        },
+        {
+          "t": "p",
+          "text": "Con k/m = 4, ci serve un numero il cui quadrato sia **−4**. Andiamo a caccia:"
+        },
+        {
+          "t": "widget",
+          "id": "square"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "I quadrati non sono mai negativi. La parabola blu non scende mai fino alla linea verde. Quindi una a così **non esiste**. Il nostro trucco fallisce: le molle proprio non si possono descrivere con gli esponenziali."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Però la molla è lì, che rimbalza tutta contenta. Un moto *ce l'ha*. Forse non è la molla a essere sbagliata, forse è la nostra idea di cosa conta come numero?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "…Mmh. Ammetto di aver detto \"nessun numero\" un po' in fretta. Ogni numero che *conosco* al quadrato dà qualcosa di positivo."
+        },
+        {
+          "t": "note",
+          "text": "Tieni d'occhio questa cosa. Theo aveva ragione? (Spoiler: no.)"
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Cosa sappiamo finora",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "La pendenza di ogni esponenziale è una copia di se stesso: pendenza ÷ altezza è costante.",
+            "$e \\approx 2{,}718$ è la base per cui quel rapporto vale esattamente 1. Con $e^{at}$ il rapporto è a.",
+            "Prendere la pendenza di $e^{at}$ significa solo **moltiplicare per a**. L'analisi diventa algebra.",
+            "**Prova un esponenziale**, sostituiscilo nella regola e ricava a. Per il caffè, a = −1/τ.",
+            "Per una molla l'ipotesi richiede $a^2 = -k/m$, e nessun numero ordinario lo fa. Per ora."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch4-q1",
+              "q": "Quale curva ha pendenza = −0,5 × altezza ovunque?",
+              "options": [
+                {
+                  "text": "Decadimento dolce",
+                  "sketch": "decaying-plain",
+                  "correct": true,
+                  "why": "È $e^{-0{,}5t}$: il rapporto negativo vuol dire che si riduce, e la riduzione rallenta man mano che diventa più piccola."
+                },
+                {
+                  "text": "Crescita esplosiva",
+                  "sketch": "growing-plain",
+                  "why": "Per crescere serve un rapporto pendenza ÷ altezza *positivo*."
+                },
+                {
+                  "text": "Oscillazione costante",
+                  "sketch": "steady-wiggle",
+                  "why": "La pendenza di un'oscillazione non è un multiplo fisso della sua altezza: sui picchi l'altezza è massima ma la pendenza è zero."
+                }
+              ]
+            },
+            {
+              "id": "ch4-q2",
+              "q": "Se $x = e^{-3t}$, quanto vale $x'' + 3x'$?",
+              "options": [
+                {
+                  "text": "0",
+                  "correct": true,
+                  "why": "$x' = -3e^{-3t}$ e $x'' = 9e^{-3t}$. Quindi $9e^{-3t} + 3(-3e^{-3t}) = 0$."
+                },
+                {
+                  "text": "$18e^{-3t}$",
+                  "why": "Controlla il segno di $x'$: le pendenze di $e^{-3t}$ portano un −3, quindi $3x' = -9e^{-3t}$."
+                },
+                {
+                  "text": "$-3e^{-3t}$",
+                  "why": "Quello è solo $x'$. Devi anche aggiungere il termine $x''$."
+                }
+              ]
+            },
+            {
+              "id": "ch4-q3",
+              "q": "Una vasca si svuota seguendo $h' = -h/20$ (tempo in secondi). Quanto valgono a e la costante di tempo?",
+              "options": [
+                {
+                  "text": "a = −1/20 al secondo, τ = 20 s",
+                  "correct": true,
+                  "why": "Ipotizza $h = Ce^{at}$: $a = -1/20$, e τ = −1/a = 20 s, il tempo per svuotare il 63%."
+                },
+                {
+                  "text": "a = −20 al secondo, τ = 1/20 s",
+                  "why": "Al contrario: la regola divide per 20, quindi è lenta (τ = 20 s), non velocissima."
+                },
+                {
+                  "text": "a = +1/20 al secondo, τ = 20 s",
+                  "why": "Una a positiva farebbe *salire* il livello dell'acqua. Il segno meno nella regola vuol dire che si svuota."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "note",
+          "text": "Conti onesti: il \"nessun numero al quadrato dà un negativo\" di Theo è un errore. Solo che non riusciamo ancora a vederlo. Nel prossimo capitolo avrà torto nel modo più bello possibile."
+        },
+        {
+          "t": "cliff",
+          "text": "Il drone e la molla **oscillano**. Gli esponenziali sanno solo crescere o calare. A meno che… un numero possa avere un quadrato negativo?"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "bases": {
+      "title": "Pendenza ÷ altezza per basi diverse",
+      "base": "Base b",
+      "xAxis": "t",
+      "yAxis": "altezza bᵗ",
+      "curve": "bᵗ",
+      "slopeCurve": "la sua pendenza",
+      "cursor": "Tangente a t =",
+      "showSlope": "Sovrapponi la curva della pendenza",
+      "readHeight": "altezza",
+      "readSlope": "pendenza",
+      "readRatio": "pendenza ÷ altezza",
+      "statusE": "Base e: pendenza ÷ altezza vale esattamente 1. La curva è la sua stessa pendenza!",
+      "statusOther": "Pendenza ÷ altezza vale {r} ovunque su questa curva. Costante, ma non 1.",
+      "aria": "Grafico di una curva esponenziale con una retta tangente al cursore e, a scelta, la sua curva della pendenza.",
+      "describe": "Base {b}, a t = {t}, la pendenza divisa per l'altezza vale {r}.",
+      "help": "Scegli una base, poi trascina sul grafico (o usa il cursore) per far scorrere la tangente lungo la curva."
+    },
+    "expA": {
+      "title": "Una manopola nell'esponente",
+      "xAxis": "tempo (s)",
+      "yAxis": "valore",
+      "curve": "eᵃᵗ",
+      "slopeCurve": "la sua pendenza",
+      "a": "a",
+      "cursor": "Tangente a t =",
+      "readRatio": "pendenza ÷ altezza",
+      "grow": "a > 0: cresce, sempre più in fretta.",
+      "shrink": "a < 0: si riduce verso zero, come la distanza del caffè.",
+      "flat": "a = 0: non cambia mai. Pendenza zero, per sempre.",
+      "aria": "Grafico di e elevato ad a t, della sua curva della pendenza e di una retta tangente.",
+      "describe": "a = {a}. La pendenza divisa per l'altezza vale {r} ovunque.",
+      "help": "Trascina sul grafico per spostare la tangente. La curva tratteggiata sbiadita è la tua a precedente."
+    },
+    "guess": {
+      "title": "Regola l'ipotesi",
+      "xAxis": "tempo (min)",
+      "yAxis": "temperatura del caffè (°C)",
+      "rule": "la regola, costruita a mano (Capitolo 3)",
+      "guess": "la nostra ipotesi 20 + 70·eᵃᵗ",
+      "room": "stanza 20 °C",
+      "a": "a",
+      "readGuess": "pendenza dell'ipotesi",
+      "readRule": "pendenza della regola",
+      "tooFast": "L'ipotesi si raffredda troppo in fretta: la sua pendenza è più ripida di quanto permetta la regola. Avvicina a allo zero.",
+      "tooSlow": "L'ipotesi si raffredda troppo lentamente. Rendi a più negativa.",
+      "match": "Coincidenza perfetta! a = −0,1 al minuto = −1/τ. L'ipotesi rispetta la regola ovunque.",
+      "aria": "Temperatura del caffè: la soluzione costruita a mano della regola di raffreddamento e un'ipotesi esponenziale il cui tasso a si imposta con il cursore.",
+      "probe": "pendenze confrontate a 5 min"
+    },
+    "square": {
+      "title": "A caccia di a con a² = −4",
+      "xAxis": "a",
+      "yAxis": "a²",
+      "square": "a²",
+      "need": "serve −k/m = −4",
+      "a": "Prova a =",
+      "status": "a = {a} dà a² = {sq}. Ancora {gap} di troppo. I quadrati non diventano mai negativi.",
+      "springCaption": "Nel frattempo, la molla vera (k/m = 4, senza smorzatore) rimbalza tutta contenta:",
+      "springAria": "Una massa su una molla che rimbalza su e giù.",
+      "aria": "Parabola di a al quadrato con una linea orizzontale a meno quattro che non raggiunge mai.",
+      "playSpring": "Fai partire la molla",
+      "pauseSpring": "Metti in pausa la molla"
+    }
+  }
+}

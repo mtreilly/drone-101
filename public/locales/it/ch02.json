@@ -1,0 +1,171 @@
+{
+  "kicker": "Capitolo 2",
+  "title": "Controllo proporzionale",
+  "question": "Quanto forte deve spingere il drone quando è troppo in basso?",
+  "sections": [
+    {
+      "id": "push",
+      "title": "Spingi più forte quanto più sei lontano",
+      "blocks": [
+        { "t": "say", "who": "june", "mood": "think", "text": "L'ultima volta, con il pacco, il drone si è assestato 25 cm più in basso. Voglio sapere perché." },
+        { "t": "say", "who": "theo", "mood": "think", "text": "La nostra regola aveva due parti: 4,9 N per tenere su il drone, più 8 N per ogni metro di errore. I 4,9 N erano una stima del peso. Appena il pacco ha cambiato il peso, la stima era sbagliata." },
+        { "t": "say", "who": "mika", "mood": "excited", "text": "E allora buttiamo via la stima! Niente 4,9. Lasciamo che **sia l'errore a fare tutto il lavoro**: spingi in proporzione a quanto sei lontano." },
+        { "t": "p", "text": "È il controllore più famoso che esista, il **controllo proporzionale** (\"controllo P\" per gli amici):" },
+        { "t": "math", "tex": "\\eff{T} = K_p \\, \\err{e} = K_p\\,(\\sp{r} - \\out{h})" },
+        { "t": "p", "text": "$K_p$ è il **guadagno**: quanti newton di spinta aggiungi per ogni metro di errore. Si misura in newton al metro (N/m). $K_p$ grande vuol dire un controllore impaziente, $K_p$ piccolo uno rilassato. È l'unica manopola che abbiamo in questo capitolo." },
+        { "t": "note", "aside": true, "text": "Facciamo ancora finta che i motori siano illimitati. Possono persino tirare un po' verso il basso se il drone è troppo alto. Sui limiti saremo onesti nel Capitolo 8." },
+        {
+          "t": "predict",
+          "id": "ch2-kp5",
+          "gate": true,
+          "q": "Prendi $K_p = 5$ N/m. Il drone parte da terra e punta ai 2 m. A che altezza **finisce** per restare sospeso?",
+          "options": [
+            { "text": "Esattamente a 2 m", "why": "A esattamente 2 m l'errore è zero, quindi la spinta sarebbe $5 \\times 0 = 0$ N, e il drone cadrebbe. Non può restare lì." },
+            { "text": "Circa 1 m", "correct": true, "why": "Per restare sospesa, la spinta deve uguagliare il peso (4,9 N). Con $K_p = 5$ serve un errore di $4{,}9 / 5 \\approx 0{,}98$ m, quindi resta sospeso a circa **1,02 m**." },
+            { "text": "Sopra i 2 m", "why": "Sopra i 2 m l'errore è negativo, quindi la spinta sarebbe negativa e scenderebbe. Stare troppo in alto non può essere un punto di riposo." }
+          ]
+        },
+        { "t": "widget", "id": "pcontrol" },
+        { "t": "p", "text": "Guarda la {out|linea blu punteggiata}: è l'altezza a cui il drone finisce sospeso, ed è sempre **sotto** l'{sp|obiettivo}. Lo scarto si chiama **errore a regime**, o semplicemente **abbassamento**." },
+        { "t": "say", "who": "theo", "mood": "happy", "text": "È un tiro alla fune. La gravità tira giù con 4,9 N, sempre. L'unico modo in cui il controllore può rispondere con 4,9 N è se resta **un po' di errore** da moltiplicare." },
+        { "t": "math", "tex": "\\eff{T} = \\text{peso} \\;\\Rightarrow\\; K_p\\,\\err{e} = 4{,}9 \\;\\Rightarrow\\; \\err{e}_{\\text{abbass.}} = \\frac{4{,}9}{K_p}\\ \\text{m}" },
+        { "t": "p", "text": "Ora porta $K_p$ giù a **2 N/m**. Il drone non si stacca nemmeno da terra! A terra l'errore è 2 m, quindi la spinta è solo $2 \\times 2 = 4$ N, meno dei 4,9 N di peso. La formula dice che dovrebbe abbassarsi di 2,45 m, cioè sottoterra." }
+      ]
+    },
+    {
+      "id": "more",
+      "title": "Alziamolo e basta!",
+      "blocks": [
+        { "t": "say", "who": "june", "mood": "excited", "text": "Soluzione facile: **più guadagno è sempre meglio**. $K_p$ più grande, abbassamento più piccolo. Al massimo!" },
+        { "t": "say", "who": "mika", "mood": "excited", "text": "Ci penso io. Potenza massima: $K_p = 60$!" },
+        { "t": "widget", "id": "mika-button", "wide": false },
+        { "t": "say", "who": "mika", "mood": "happy", "text": "Abbassamento ridotto a **8 cm**! Dopo qualche secondo è praticamente a 2 m. Vittoria!" },
+        { "t": "say", "who": "theo", "mood": "worried", "text": "Mika… guarda i primi due secondi. È schizzato su fino a circa **3,4 metri**, ben oltre l'obiettivo. E guarda la {eff|spinta}: 120 N al decollo, poi tira *giù*, poi di nuovo su. Quello non è stare sospesi, è rimbalzare." },
+        { "t": "say", "who": "mika", "mood": "worried", "text": "Oh. Ho guardato solo dove finiva. L'{err|area rossa dell'errore} all'inizio è enorme." },
+        { "t": "p", "text": "Ecco l'errore di Mika: giudicare un controllore solo da dove si assesta **alla fine**. **Come** ci arriva conta altrettanto. Prova qualche guadagno e guarda il fantasma sbiadito della prova precedente:" },
+        {
+          "t": "list",
+          "items": [
+            "**Guadagno basso** ($K_p$ piccolo): delicato, ma si abbassa parecchio. Scendi abbastanza e il drone non decolla mai.",
+            "**Guadagno alto** ($K_p$ grande): abbassamento piccolo, ma fa **sovraelongazione** (schizza oltre il punto in cui si assesterà) e oscilla prima di calmarsi."
+          ]
+        },
+        { "t": "say", "who": "june", "mood": "think", "text": "Perché spingere *più forte* dovrebbe farlo *ballare*?" },
+        { "t": "say", "who": "theo", "mood": "think", "text": "Una spinta grande lo fa partire veloce. Quando arriva all'altezza giusta sta ancora andando forte, e niente nella nostra regola dice \"rallenta, ci sei quasi\". Solo l'attrito dell'aria lo frena un pochino. Così tira dritto, viene rispinto indietro, tira dritto di nuovo…" },
+        { "t": "note", "text": "Nota onesta: con il nostro drone semplice, il controllo P oscilla ma non **esplode** mai davvero. Le oscillazioni prima o poi si spengono sempre. I droni veri hanno piccoli ritardi (i motori ci mettono un po' a prendere giri) che rendono un guadagno eccessivo davvero pericoloso. Ne parliamo nei Capitoli 10 e 11." }
+      ]
+    },
+    {
+      "id": "challenge",
+      "title": "Una sfida",
+      "blocks": [
+        { "t": "p", "text": "Cerchiamo il punto giusto. Il drone passa se si abbassa **meno di 20 cm** *e* ha una sovraelongazione **sotto il 30%** (la misuriamo come quanto schizza sopra l'altezza a cui alla fine si assesta). Trova un $K_p$ che faccia entrambe le cose." },
+        { "t": "widget", "id": "challenge" },
+        { "t": "say", "who": "mika", "mood": "worried", "text": "Le zone verdi non si sovrappongono mai! Per l'abbassamento serve $K_p$ sopra 24,5 circa, per la sovraelongazione sotto 3,9 circa. **Non c'è una risposta**." },
+        { "t": "say", "who": "theo", "mood": "think", "text": "Perché una sola manopola controlla entrambe le cose, e le tira in direzioni opposte. Non è che non abbiamo trovato il numero giusto. **Non esiste.** Ci serve un *tipo* di controllore migliore." },
+        { "t": "say", "who": "june", "mood": "think", "text": "Per progettarne uno migliore, dobbiamo parlare delle oscillazioni come si deve. \"Lento\", \"saltellante\", \"prima o poi si calma\"… sono sensazioni, non fisica." }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Cosa sappiamo finora",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "**Controllo proporzionale**: spinta = $K_p \\times$ errore. Una sola manopola, il guadagno $K_p$ (N/m).",
+            "Contro la gravità, il controllo P lascia sempre un **errore a regime** (abbassamento) di $4{,}9 / K_p$ m: deve restare un po' di errore per produrre la spinta che tiene su il drone.",
+            "Guadagno basso vuol dire grande abbassamento e risposta lenta. Guadagno alto vuol dire abbassamento piccolo, ma **sovraelongazione** e oscillazioni.",
+            "\"Più guadagno è sempre meglio\" è falso. Per il nostro drone, nessun $K_p$ dà insieme abbassamento piccolo e sovraelongazione piccola."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch2-q1",
+              "q": "Con $K_p = 10$ N/m (e senza spinta di hovering), quanto sotto i 2 m resterà sospeso il drone?",
+              "options": [
+                { "text": "0 m: raggiunge l'obiettivo", "why": "All'obiettivo l'errore è zero, quindi la spinta è zero. Il controllo P da solo non può tenerlo lì contro la gravità." },
+                { "text": "Circa 0,49 m", "correct": true, "why": "La spinta deve uguagliare i 4,9 N di peso: $10 \\times e = 4{,}9$ dà $e = 0{,}49$ m. Resta sospeso a circa 1,51 m." },
+                { "text": "Circa 4,9 m", "why": "Quello è il peso in newton, non l'abbassamento. Dividi per il guadagno: $4{,}9 / 10 = 0{,}49$ m." }
+              ]
+            },
+            {
+              "id": "ch2-q2",
+              "q": "Quale di queste risposte viene dal $K_p$ **più alto**? (La linea tratteggiata è l'obiettivo.)",
+              "options": [
+                { "text": "Bassa, con una piccola oscillazione", "sketch": "droop", "why": "Un grande abbassamento vuol dire un guadagno *piccolo*: serve tanto errore per fare abbastanza spinta." },
+                { "text": "Vicina all'obiettivo, con grandi oscillazioni", "sketch": "overshoot", "correct": true, "why": "Abbassamento piccolo e tanta sovraelongazione sono la firma di un guadagno alto." },
+                { "text": "Dolcemente ed esattamente sull'obiettivo", "sketch": "sluggish", "why": "Opzione trabocchetto: un controllore P puro che lotta contro la gravità non può **mai** finire esattamente sull'obiettivo, qualunque sia $K_p$. Manca qualcosa (Capitolo 9)." }
+              ]
+            },
+            {
+              "id": "ch2-q3",
+              "q": "Perché il drone con controllo P non riesce a restare sospeso esattamente a 2 m?",
+              "options": [
+                { "text": "Con errore zero la spinta è zero, quindi vincerebbe la gravità", "correct": true, "why": "Esatto. Per restare sospesi servono 4,9 N, e il controllo P produce spinta solo quando c'è errore." },
+                { "text": "Il sensore di altezza non è abbastanza preciso", "why": "In questo capitolo il sensore è perfetto, e il drone si abbassa lo stesso. È la regola di controllo, non la misura." },
+                { "text": "L'attrito dell'aria lo trattiene", "why": "L'attrito agisce solo mentre il drone si muove. Da fermo non c'è nessun attrito, e l'abbassamento c'è comunque." }
+              ]
+            },
+            {
+              "id": "ch2-q4",
+              "q": "Il drone prende un pacco e diventa **il doppio più pesante**. Con lo stesso $K_p$, l'abbassamento…",
+              "options": [
+                { "text": "raddoppia", "correct": true, "why": "Abbassamento = peso ÷ $K_p$. Il doppio del peso richiede il doppio dell'errore per tenerlo su." },
+                { "text": "si dimezza", "why": "Un drone più pesante ha bisogno di *più* spinta, quindi di *più* errore, non meno." },
+                { "text": "resta uguale", "why": "L'abbassamento è esattamente l'errore necessario a bilanciare il peso, quindi dipende direttamente dal peso." }
+              ]
+            }
+          ]
+        },
+        { "t": "map" },
+        { "t": "cliff", "text": "Lento. Oscillante. Va oltre. Si assesta. Continuiamo a descrivere **come le cose cambiano nel tempo** con parole vaghe. Ci serve un vero linguaggio del cambiamento." }
+      ]
+    }
+  ],
+  "widgets": {
+    "pcontrol": {
+      "title": "Controllo P: spinta = Kp × errore",
+      "slider": "Guadagno proporzionale Kp",
+      "sliderHint": "newton di spinta in più per ogni metro di errore",
+      "plot": {
+        "height": "altezza",
+        "thrust": "spinta",
+        "aria": "Altezza del drone in 10 secondi mentre decolla verso i 2 metri con controllo proporzionale, con l'errore ombreggiato in rosso e la prova precedente come fantasma sbiadito.",
+        "target": "obiettivo 2 m",
+        "hovers": "si assesta a {h} m"
+      },
+      "readout": { "final": "si assesta a", "droop": "abbassamento", "overshoot": "sovraelongazione", "peakThrust": "spinta massima" },
+      "status": {
+        "ground": "Non si stacca mai da terra: a terra la spinta è solo {T} N, meno dei {w} N di peso.",
+        "flies": "Si assesta a {h} m ({d} cm di abbassamento), dopo essere schizzato fino a {p} m ({o} % di sovraelongazione)."
+      }
+    },
+    "mika-button": { "label": "Imposta Kp = 60 N/m (idea di Mika)" },
+    "challenge": {
+      "title": "Trova un Kp con abbassamento < 20 cm e sovraelongazione < 30 %",
+      "slider": "Guadagno proporzionale Kp",
+      "kpAxis": "Kp (N/m)",
+      "droopAxis": "abbassamento (m)",
+      "overAxis": "sovraelongazione (%)",
+      "droopSeries": "abbassamento = 4,9 / Kp",
+      "overSeries": "sovraelongazione",
+      "droopAria": "Abbassamento in funzione del guadagno Kp: diminuisce al crescere di Kp. La zona promossa (abbassamento sotto i 20 cm) è Kp sopra 24,5.",
+      "overAria": "Sovraelongazione in funzione del guadagno Kp: cresce al crescere di Kp. La zona promossa (sovraelongazione sotto il 30 per cento) è Kp tra 2,45 e 3,9.",
+      "okZone": "promosso",
+      "droopLimit": "20 cm",
+      "overLimit": "30 %",
+      "noflight": "non decolla",
+      "readout": { "droop": "abbassamento", "overshoot": "sovraelongazione" },
+      "help": "Ogni curva mostra cosa farebbe il drone per ogni Kp. La fascia verde è dove quel singolo requisito è soddisfatto.",
+      "status": {
+        "neither": "Qui nessuno dei due requisiti è soddisfatto. Continua a esplorare.",
+        "droopOnly": "Abbassamento ok ✓ ma la sovraelongazione è troppo grande.",
+        "overOnly": "Sovraelongazione ok ✓ ma l'abbassamento è enorme.",
+        "impossible": "Hai trovato entrambe le zone verdi, e non si sovrappongono mai: l'abbassamento vuole Kp > {a}, la sovraelongazione vuole Kp < {b}. Nessun Kp singolo può passare."
+      }
+    }
+  }
+}

@@ -1,0 +1,439 @@
+{
+  "kicker": "Chapitre 3",
+  "title": "Le langage du changement",
+  "question": "Comment décrire *à quelle vitesse* quelque chose change ?",
+  "sections": [
+    {
+      "id": "slope",
+      "title": "La pente, c'est la vitesse",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "On n'arrête pas de dire « mou », « oscillant », « se stabilise ». June a raison : ce sont des impressions, pas des maths. Je veux une façon précise de dire *à quelle vitesse* le drone change."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Rejouons notre drone du chapitre 2 (Kp = 20 N/m) et regardons de près."
+        },
+        {
+          "t": "p",
+          "text": "La {out|courbe bleue} est la hauteur du drone au cours du temps. La vitesse, c'est **de combien la hauteur change par seconde**. Sur le graphique, c'est à quel point la courbe est *raide* à un instant donné. Pose une règle le long de la courbe pour qu'elle la touche juste en un point. Cette règle, c'est la **tangente**, et sa pente est la vitesse."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Facile : le drone va le plus vite tout en haut de la bosse, parce que c'est là qu'il est le plus haut !"
+        },
+        {
+          "t": "widget",
+          "id": "tangent"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Mets le curseur en haut de la bosse. La tangente est **plate**. La vitesse y est nulle !"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Ah. Le drone monte, perd sa vitesse vers le haut, s'arrête un instant au sommet, et redescend. **Haut** et **rapide**, ça n'a rien à voir."
+        },
+        {
+          "t": "p",
+          "text": "Le moment le plus rapide est en fait au milieu de la montée, là où la courbe est la plus raide. Et quand la courbe *descend*, la pente est négative : le drone tombe."
+        },
+        {
+          "t": "p",
+          "text": "Cette « pente à un instant » a un nom : la **dérivée**. On l'écrit comme un minuscule changement de hauteur divisé par le minuscule temps qu'il a fallu :"
+        },
+        {
+          "t": "math",
+          "tex": "\\text{vitesse} = \\frac{d\\out{h}}{dt} \\approx \\frac{\\text{variation de hauteur}}{\\text{variation de temps}}\\quad(\\text{sur un temps très court})"
+        },
+        {
+          "t": "note",
+          "text": "On écrit aussi $\\dot{h}$ (« h point ») pour la même chose. Même idée, moins d'encre."
+        }
+      ]
+    },
+    {
+      "id": "rule",
+      "title": "Une règle pour la vitesse",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Mon café refroidit vite au début, puis très lentement. Il n'atteint jamais tout à fait la température de la pièce."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Parce que la vitesse de refroidissement dépend de **la distance qu'il lui reste à parcourir**. Une tasse très chaude perd sa chaleur vite. Une tasse à peine tiède n'en perd presque pas."
+        },
+        {
+          "t": "p",
+          "text": "Écrivons ça comme une règle pour la pente. La température du café est {out|T}, la pièce est à {sp|20 °C} :"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d\\out{T}}{dt} = -\\frac{\\out{T} - \\sp{T_{\\text{pièce}}}}{\\tau}"
+        },
+        {
+          "t": "p",
+          "text": "Le signe moins dit « refroidis quand tu es plus chaud que la pièce ». Le nombre **τ** (tau, la *constante de temps*) dit à quel point la tasse est lente. Pour une tasse normale, τ ≈ 10 minutes."
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Minute honnêteté : les vraies tasses perdent aussi de la chaleur par la vapeur et le rayonnement. Cette règle simple (la loi de refroidissement de Newton) est assez proche pour être utile."
+        },
+        {
+          "t": "p",
+          "text": "Voici l'énigme : la règle nous donne seulement la pente **maintenant**. Peut-on en tirer toute la courbe ? Construisons-la à la main : on regarde la pente, on avance le long d'elle pendant un petit moment (Δt), on regarde la nouvelle pente, on avance encore…"
+        },
+        {
+          "t": "widget",
+          "id": "coffee"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Douze petits pas, c'est ennuyeux. Je vais faire des pas de **15 minutes** et ce sera plié en un rien de temps."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "…Attends. Le café est à **−15 °C** ?! Il a gelé dans une pièce chauffée ?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "La règle est bonne. Ce sont les *pas* le problème. Dans un pas géant, tu continues à utiliser la pente raide du **début** du pas, longtemps après qu'elle a cessé d'être vraie. Tu dépasses complètement la température de la pièce."
+        },
+        {
+          "t": "p",
+          "text": "On peut voir exactement de combien. Chaque pas multiplie l'écart avec la température de la pièce par le même nombre :"
+        },
+        {
+          "t": "math",
+          "tex": "\\text{écart}_{\\text{suivant}} = \\left(1 - \\frac{\\Delta t}{\\tau}\\right) \\cdot \\text{écart}"
+        },
+        {
+          "t": "list",
+          "items": [
+            "Δt plus petit que τ : le facteur est entre 0 et 1. L'écart diminue, pas de dépassement.",
+            "Δt entre τ et 2τ : le facteur est **négatif**. Le café passe sous la température de la pièce, puis au-dessus, en oscillant avec des oscillations qui rétrécissent.",
+            "Δt plus grand que 2τ : le facteur est inférieur à −1. Les oscillations **grandissent** à chaque pas. Un café absurde."
+          ]
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "C'est la douche ! Agir trop hardiment sur une vieille information, ça fait osciller."
+        },
+        {
+          "t": "note",
+          "text": "C'est pour ça que nos simulations font de tout petits pas malins (1 milliseconde, avec une méthode appelée RK4). Les oscillations que tu verras dans les chapitres suivants sont de la vraie physique, pas des accidents de taille de pas."
+        },
+        {
+          "t": "p",
+          "text": "Prends un Δt petit et affiche la courbe lisse. Les points construits à la main tombent pile dessus. Cette forme lisse s'appelle une **décroissance exponentielle**. Elle a droit à son propre chapitre juste après."
+        },
+        {
+          "t": "h3",
+          "text": "La constante de temps est une règle graduée"
+        },
+        {
+          "t": "predict",
+          "id": "ch3-two-tau",
+          "gate": true,
+          "q": "Après **une** constante de temps, le café a comblé 63 % de l'écart avec la température de la pièce. Après **deux** constantes de temps, quelle part de l'écart est comblée ?",
+          "options": [
+            {
+              "text": "100 % : le second τ comble les 37 % restants",
+              "why": "Tentant, mais le second τ ne termine pas le travail. Il comble 63 % de *ce qui reste*."
+            },
+            {
+              "text": "Environ 86 %",
+              "correct": true,
+              "why": "Chaque τ comble 63 % de l'écart restant : il reste 37 % après un τ, et 37 % de 37 % ≈ 14 % après deux. Donc 86 % est comblé."
+            },
+            {
+              "text": "126 %, deux fois 63 %",
+              "why": "Ça voudrait dire passer sous la température de la pièce. Le vrai café (lisse) ne fait jamais ça. Seuls les pas géants de June l'ont fait."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "ruler"
+        },
+        {
+          "t": "p",
+          "text": "Après 1τ : 63 %. Après 2τ : 86 %. Après 3τ : 95 %. On n'y arrive jamais *exactement*, mais après 4 ou 5 τ, personne ne voit la différence. Passe au **réservoir** : l'eau qui entre ralentit à mesure que le réservoir se remplit, donc la règle est la même (« le débit dépend de la distance au plein ») et la forme aussi."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Donc τ est une règle graduée intégrée. Donne-moi τ et je sais à quel point un truc est lent, que ce soit une tasse, un réservoir ou un drone."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Dérivée",
+              "def": "La pente d'une courbe à un instant : la vitesse à laquelle quelque chose change. S'écrit $\\frac{dh}{dt}$ ou $\\dot h$."
+            },
+            {
+              "term": "Système du premier ordre",
+              "def": "Quelque chose dont la vitesse de variation dépend de la distance qui le sépare de là où il va (café, réservoirs). Sa courbe est une exponentielle."
+            },
+            {
+              "term": "Constante de temps τ",
+              "def": "Le temps qu'il faut à un système du premier ordre pour parcourir 63 % de la distance restante."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "area",
+      "title": "À l'envers : additionner des aires",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "La pente transforme la hauteur en vitesse. Peut-on faire le chemin **inverse** ? Imagine que le capteur du drone ne nous donne que sa vitesse. Où est-il ?"
+        },
+        {
+          "t": "p",
+          "text": "Si tu voles à 2 m/s constants pendant 3 s, tu montes de 6 m : vitesse × temps. Sur un graphique vitesse-temps, c'est l'**aire d'un rectangle**. Quand la vitesse change sans arrêt, découpe le temps en fines bandes, traite chaque bande comme un rectangle, et additionne-les toutes."
+        },
+        {
+          "t": "p",
+          "text": "Balaie avec le curseur et regarde l'aire ombrée grandir. La {out|courbe bleue} du dessous, c'est simplement *l'aire jusqu'ici*. Là où la vitesse passe sous zéro (le drone tombe), l'aire compte comme **négative** et la hauteur diminue."
+        },
+        {
+          "t": "widget",
+          "id": "area"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "L'aire accumulée tombe pile sur la vraie hauteur. La pente t'emmène dans un sens, l'aire te ramène."
+        },
+        {
+          "t": "p",
+          "text": "Cette opération « accumuler l'aire » s'appelle l'**intégrale** :"
+        },
+        {
+          "t": "math",
+          "tex": "\\out{h}(t) = \\out{h}(0) + \\int_0^{t} \\text{vitesse}\\;dt"
+        },
+        {
+          "t": "note",
+          "text": "C'est tout ce qu'il nous faut d'intégrale pour l'instant. Elle reviendra deux fois : au chapitre 7 (une transformée qui mesure une aire) et au chapitre 9 (le « I » de PID accumule l'erreur passée)."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Ce qu'on sait pour l'instant",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "La **dérivée** est la pente d'une courbe à un instant : la vitesse à laquelle elle change. Haut et rapide, ce n'est pas pareil.",
+            "Une règle comme « refroidis d'autant plus vite que tu es chaud » fixe toute la courbe : une approche **exponentielle**.",
+            "La **constante de temps τ** est une règle graduée : 63 % du chemin après τ, 86 % après 2τ, 95 % après 3τ.",
+            "Construire des courbes avec des pas trop grands crée de faux dépassements et des oscillations, exactement comme la douche.",
+            "L'**intégrale** accumule l'aire et défait la dérivée."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch3-q1",
+              "q": "Le drone est tout en haut de son dépassement, à son **point le plus haut**. Quelle est sa vitesse verticale ?",
+              "options": [
+                {
+                  "text": "La plus grande de tout le vol",
+                  "why": "Hauteur et vitesse sont deux choses différentes. Au sommet, la courbe est plate un instant."
+                },
+                {
+                  "text": "Zéro",
+                  "correct": true,
+                  "why": "La tangente au sommet d'une bosse est plate : pente nulle. Le drone arrête de monter un instant avant de redescendre."
+                },
+                {
+                  "text": "Sa valeur la plus négative",
+                  "why": "La chute la plus rapide arrive un peu plus tard, là où la courbe descend le plus raide."
+                }
+              ]
+            },
+            {
+              "id": "ch3-q2",
+              "q": "Café à 90 °C, pièce à 20 °C, τ = 10 min. À peu près quelle est sa température après 10 minutes ?",
+              "options": [
+                {
+                  "text": "20 °C",
+                  "why": "C'est la température de la pièce. Il faut plusieurs constantes de temps pour s'en approcher, et il n'y arrive jamais tout à fait."
+                },
+                {
+                  "text": "Environ 46 °C",
+                  "correct": true,
+                  "why": "Après un τ, 63 % de l'écart de 70 degrés est comblé : 90 − 0,63 × 70 ≈ 46 °C."
+                },
+                {
+                  "text": "Environ 55 °C",
+                  "why": "C'est pile la moitié. Après un τ, il a comblé un peu plus de la moitié : 63 %."
+                }
+              ]
+            },
+            {
+              "id": "ch3-q3",
+              "q": "Un drone monte à 2 m/s pendant 3 s, puis sa vitesse diminue régulièrement jusqu'à 0 pendant les 2 s suivantes. De combien est-il monté ?",
+              "options": [
+                {
+                  "text": "6 m",
+                  "why": "Ça, c'est seulement le rectangle (les 3 premières secondes). La phase de ralentissement ajoute aussi un triangle."
+                },
+                {
+                  "text": "8 m",
+                  "correct": true,
+                  "why": "Rectangle 2 × 3 = 6 m plus triangle ½ × 2 × 2 = 2 m. Aire totale : 8 m."
+                },
+                {
+                  "text": "10 m",
+                  "why": "Ça traite les 2 dernières secondes comme s'il allait encore à pleine vitesse. La vitesse diminuait, donc c'est un triangle, pas un rectangle."
+                }
+              ]
+            },
+            {
+              "id": "ch3-q4",
+              "q": "Tu construis la courbe du café à la main avec des pas de Δt = 15 min, et τ = 10 min. Que se passe-t-il ?",
+              "options": [
+                {
+                  "text": "Une version un peu en escalier de la vraie courbe",
+                  "why": "C'est ce qui arrive avec des pas plus courts que τ. À 15 min, le pas dépasse."
+                },
+                {
+                  "text": "Elle passe sous la température de la pièce et oscille, avec des oscillations qui rétrécissent",
+                  "correct": true,
+                  "why": "Chaque pas multiplie l'écart par 1 − 15/10 = −0,5 : le signe s'inverse (dépassement) et la taille est divisée par deux (les oscillations rétrécissent)."
+                },
+                {
+                  "text": "Elle oscille de plus en plus fort",
+                  "why": "Pour ça, il faut Δt > 2τ = 20 min, où le facteur passe sous −1."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Theo : « La courbe du café avait une drôle de propriété : sa pente était toujours **proportionnelle à elle-même**. Existe-t-il une fonction spéciale comme ça ? »"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "tangent": {
+      "title": "Détective des pentes",
+      "height": "hauteur",
+      "target": "cible 2 m",
+      "peak": "point le plus haut",
+      "speed": "vitesse = pente",
+      "speedAxis": "vitesse (m/s)",
+      "cursor": "Curseur de temps",
+      "readSlope": "pente (vitesse)",
+      "readHeight": "hauteur",
+      "sweep": "Tout tracer",
+      "clear": "Recommencer",
+      "rising": "La tangente monte : le drone s'élève.",
+      "falling": "La tangente descend : le drone tombe (vitesse négative).",
+      "flat": "La tangente est plate : la vitesse est nulle ici !",
+      "help": "Fais glisser sur l'un ou l'autre graphique, ou utilise le curseur. Chaque endroit visité ajoute un point à la courbe de vitesse.",
+      "ariaTop": "Hauteur du drone sur 4 secondes avec une tangente au niveau du curseur de temps.",
+      "ariaBottom": "Courbe de vitesse, tracée point par point à mesure que le curseur visite chaque instant.",
+      "describe": "À {t} s, la hauteur est de {h} m et la pente de {v} m par seconde.",
+      "atStart": "Tout au début, le drone est immobile : pente nulle. Fais glisser vers la droite pour suivre la montée.",
+      "pause": "Pause"
+    },
+    "coffee": {
+      "title": "Construire la courbe du café à la main",
+      "timeAxis": "temps (min)",
+      "exact": "courbe lisse",
+      "hand": "notre courbe faite main",
+      "room": "pièce 20 °C",
+      "dt": "Taille du pas Δt",
+      "dtHint": "τ = 10 min pour cette tasse",
+      "step1": "Faire un pas",
+      "step10": "10 pas",
+      "stepAll": "Remplir jusqu'à 120 min",
+      "restart": "Recommencer",
+      "showExact": "Afficher la courbe lisse",
+      "aria": "Température du café construite pas à pas. Chaque pas suit la pente actuelle pendant une taille de pas. La ligne orange en tirets montre le prochain pas.",
+      "status": {
+        "start": "Le café démarre à 90 °C et refroidit de {r} °C par minute. Les tirets orange montrent où un pas va atterrir.",
+        "step": "Pas {n} : à {t} min, le café est à {T} °C et refroidit de {r} °C par minute.",
+        "frozen": "Attends… {T} °C ? Le café est devenu plus froid que la pièce !",
+        "growing": "Et les oscillations grandissent !",
+        "dipped": "(En chemin, il est passé sous la température de la pièce !)"
+      },
+      "help": "Chaque pas avance tout droit le long de la pente actuelle pendant Δt minutes. Les petits pas collent à la courbe lisse ; les pas géants dépassent."
+    },
+    "ruler": {
+      "title": "La règle de la constante de temps",
+      "which": "Quel système ?",
+      "coffee": "Café qui refroidit",
+      "tank": "Réservoir qui se remplit",
+      "timeAxis": "temps (min)",
+      "levelAxis": "niveau d'eau (m)",
+      "curve": "réponse",
+      "room": "pièce 20 °C",
+      "full": "plein 1,2 m",
+      "tau": "Constante de temps τ",
+      "read1": "valeur à 1τ",
+      "aria": "Courbe exponentielle avec des repères verticaux à une, deux et trois constantes de temps, étiquetés 63, 86 et 95 pour cent.",
+      "describe": "Constante de temps de {tau} minutes. Les repères à une, deux et trois constantes de temps montrent 63, 86 et 95 pour cent du chemin.",
+      "read2": "valeur à 2τ"
+    },
+    "area": {
+      "title": "Additionner des aires",
+      "speed": "vitesse",
+      "speedAxis": "vitesse (m/s)",
+      "trueHeight": "hauteur réelle (pour vérifier)",
+      "accHeight": "aire jusqu'ici",
+      "cursor": "Balayer jusqu'à",
+      "readArea": "aire jusqu'ici = hauteur gagnée",
+      "start": "Appuie sur lecture (ou fais glisser sur le graphique de vitesse) pour commencer à additionner les bandes.",
+      "positive": "Vitesse au-dessus de zéro : chaque bande ajoute de la hauteur.",
+      "negative": "Vitesse sous zéro : ces bandes comptent en négatif. La hauteur diminue.",
+      "ariaTop": "Vitesse du drone au cours du temps, avec l'aire sous la courbe ombrée jusqu'au curseur.",
+      "ariaBottom": "L'aire accumulée tracée au cours du temps, superposée à la courbe de hauteur réelle.",
+      "describe": "Jusqu'à {t} s, l'aire accumulée est de {a} mètres.",
+      "help": "Fais glisser sur le graphique de vitesse ou utilise le curseur. Les bandes au-dessus de zéro ajoutent de la hauteur, celles en dessous en retirent."
+    }
+  }
+}

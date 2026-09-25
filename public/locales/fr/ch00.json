@@ -1,0 +1,342 @@
+{
+  "kicker": "Chapitre 0",
+  "title": "Le problème de la douche",
+  "question": "Pourquoi je n'arrive pas à régler la douche sur 38 °C ?",
+  "sections": [
+    {
+      "id": "hook",
+      "title": "Chaud ! Froid ! Chaud !",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Bon, j'avoue. Ce matin, j'ai tourné le robinet de la douche, je me suis **ébouillanté**, je l'ai tourné dans l'autre sens, je me suis **gelé**, et j'ai fait ça genre six fois."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Tout le monde fait ça ! Les douches des vieux appartements, c'est les pires."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Mais *pourquoi* c'est difficile ? Tu veux un seul nombre, 38 degrés. Tu as un seul robinet. Ça devrait être facile."
+        },
+        {
+          "t": "p",
+          "text": "Voyons ça. Voici une douche avec un **long tuyau** entre le robinet et la pomme de douche, comme une vraie. L'eau que tu mélanges au robinet met quelques secondes à remonter le tuyau. Tu peux voir la couleur de l'eau avancer le long du tuyau."
+        },
+        {
+          "t": "p",
+          "text": "**Ta mission :** amener l'eau à {sp|38 °C} (la bande verte) et l'y garder 10 secondes d'affilée. Fais glisser le {eff|robinet orange}, ou clique dessus et utilise les flèches du clavier. Le chrono démarre dès que tu le touches."
+        },
+        {
+          "t": "widget",
+          "id": "manual"
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Le tuyau a un retard de 2,5 secondes. C'est à peu près ce que donnent quelques mètres de tuyau."
+        },
+        {
+          "t": "p",
+          "text": "Alors, ça s'est passé comment ? Si tu as fait des allers-retours, au-dessus puis en dessous de la bande verte, tu es en bonne compagnie. Regarde la {out|courbe bleue} : elle zigzague sûrement comme un serpent nerveux."
+        }
+      ]
+    },
+    {
+      "id": "broken",
+      "title": "La douche est-elle cassée ?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Je crois que la douche est cassée. Je mets le robinet sur *tiède*, et elle continue à devenir *brûlante* quand même !"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Hmm. Traçons deux choses : ce que le robinet **demande** et ce que la pomme **donne**. Si c'est cassé, les deux ne devraient pas du tout se ressembler."
+        },
+        {
+          "t": "p",
+          "text": "La {eff|courbe orange en pointillés} est la température que la position du robinet *demande* : le mélange au niveau de la vanne. La {out|courbe bleue} est ce qui arrive vraiment. Décale la courbe orange plus tard dans le temps et regarde si elles se superposent."
+        },
+        {
+          "t": "widget",
+          "id": "lag"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Oh ! Décale-la d'environ 3 secondes et demie, et c'est presque la **même courbe**. La douche n'est pas cassée…"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "…elle est juste **en retard** ! Tout ce que je sentais datait d'environ 3 secondes et demie."
+        },
+        {
+          "t": "p",
+          "text": "C'est le premier indice. Quand tu sens « trop chaud », tu sens en fait la position du robinet d'il y a quelques secondes. Entre-temps, tu l'as *déjà* tourné vers le chaud, alors tu le ramènes, trop loin, et le cycle recommence."
+        },
+        {
+          "t": "note",
+          "text": "Les 2,5 s, c'est le tuyau. La seconde en plus vient du mélange de l'eau et du métal qui chauffe : ça adoucit les changements brusques, ce qui ressemble beaucoup à une seconde de retard supplémentaire."
+        }
+      ]
+    },
+    {
+      "id": "harder",
+      "title": "Et si on forçait plus ?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "J'ai trouvé : j'étais trop **doux** ! Si je tourne le robinet **plus vite** dès que c'est faux, je corrigerai plus vite."
+        },
+        {
+          "t": "p",
+          "text": "On a construit trois mains robots pour tester des idées sans se mouiller. La **main normale** tourne le robinet un peu plus vite quand l'eau semble plus loin du bon réglage, comme le font la plupart des gens. La **main énergique** fait exactement pareil, deux fois plus vigoureusement."
+        },
+        {
+          "t": "predict",
+          "id": "ch0-harder",
+          "gate": true,
+          "q": "Par rapport à la main normale, que va faire la main **énergique** ?",
+          "options": [
+            {
+              "text": "Atteindre 38 °C plus tôt et se stabiliser plus vite",
+              "sketch": "swing-better",
+              "why": "C'est ce que dit notre instinct : plus d'effort, résultat plus rapide."
+            },
+            {
+              "text": "À peu près pareil, juste un peu plus vite",
+              "sketch": "overshoot",
+              "why": "Prudent, mais le retard rend les choses bien plus spectaculaires que ça."
+            },
+            {
+              "text": "Osciller encore plus fort et ne jamais se stabiliser",
+              "sketch": "swing-worse",
+              "correct": true,
+              "why": "Tourner plus vite veut dire qu'au moment où l'eau (en retard) te dit d'arrêter, tu as tourné *encore plus loin*. Les oscillations grandissent jusqu'à ce que le robinet arrive en butée."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "robots"
+        },
+        {
+          "t": "p",
+          "text": "Essaie les trois. La main **énergique** se débat entre glacial et brûlant. La main **patiente** met le robinet à environ 51 % (le bon mélange, calculé à l'avance) et se contente d'*attendre*. Elle gagne haut la main."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Donc le retard seul n'est pas le problème. La main patiente a le même retard et elle s'en sort très bien. Le problème, c'est de **réagir à de vieilles nouvelles, avec trop d'empressement**."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Donc « pousser plus fort quand on est plus loin », c'est le *mauvais* réflexe ? C'est toute ma personnalité, ça."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Mais la main patiente a triché. Elle connaissait la bonne réponse à l'avance. Si le ballon d'eau chaude refroidit, ou si quelqu'un tire la chasse, la bonne position du robinet change et la main patiente ne s'en apercevra pas."
+        },
+        {
+          "t": "p",
+          "text": "Voilà la vraie énigme. Il nous faut quelque chose qui **réagit** (pour gérer les surprises) mais qui ne **sur-réagit** pas (pour ne pas osciller). Garde cette idée en tête. Tout le cours tourne autour."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Ce qu'on sait pour l'instant",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Avoir un **objectif** (38 °C) et un moyen d'agir (le robinet) ne suffit pas. **La façon** de réagir compte.",
+            "Un **retard** veut dire qu'on ressent toujours une information périmée. La douche n'est pas cassée, elle est en retard.",
+            "Réagir plus fort à une information périmée rend les oscillations **pires**, pas meilleures.",
+            "Régler le robinet une fois et attendre, ça marche, mais seulement si rien ne change jamais."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch0-q1",
+              "q": "À t = 5 s, tu passes d'un coup le robinet de froid à tiède. À peu près quand la température à la pomme **commence**-t-elle à monter ?",
+              "options": [
+                {
+                  "text": "Immédiatement, à 5 s",
+                  "why": "L'eau que tu viens de mélanger est encore en bas du tuyau. La pomme continue de recevoir l'ancienne eau froide pendant un moment."
+                },
+                {
+                  "text": "Vers 7,5 s",
+                  "correct": true,
+                  "why": "Exact : 2,5 s plus tard, quand la nouvelle eau a parcouru le tuyau. Ensuite elle monte en douceur pendant environ une seconde, le temps de se mélanger."
+                },
+                {
+                  "text": "Vers 15 s",
+                  "why": "Trop tard : le retard de notre tuyau est de 2,5 s, pas 10 s."
+                }
+              ]
+            },
+            {
+              "id": "ch0-q2",
+              "q": "Tu règles le robinet exactement comme il faut (51 %) et tu t'en vas. Que se passe-t-il ?",
+              "options": [
+                {
+                  "text": "L'eau se réchauffe et se stabilise à 38 °C sans osciller",
+                  "correct": true,
+                  "why": "Oui. Le retard rend seulement les choses **tardives**. Les oscillations viennent du fait de *réagir* à une information en retard."
+                },
+                {
+                  "text": "Elle oscille indéfiniment, à cause du retard",
+                  "why": "Le retard à lui seul ne crée pas d'oscillations. Personne ne réagit, donc rien ne peut dépasser."
+                },
+                {
+                  "text": "Elle n'atteint jamais 38 °C",
+                  "why": "Elle y arrive : 2,5 s de retard, puis environ une seconde de réchauffement en douceur."
+                }
+              ]
+            },
+            {
+              "id": "ch0-q3",
+              "q": "Quelle courbe de température appartient à quelqu'un qui **réagit trop fort** ?",
+              "options": [
+                {
+                  "text": "Des oscillations qui grandissent",
+                  "sketch": "swing-worse",
+                  "correct": true,
+                  "why": "Sur-réagir à une information en retard injecte de l'énergie dans les oscillations, comme pousser une balançoire pile aux mauvais moments."
+                },
+                {
+                  "text": "Des oscillations qui rétrécissent",
+                  "sketch": "swing-better",
+                  "why": "Des oscillations qui rétrécissent veulent dire que les réactions sont assez douces pour se calmer. C'est quelqu'un qui réagit *en douceur*."
+                },
+                {
+                  "text": "Attendre, puis monter en douceur",
+                  "sketch": "delay-then-rise",
+                  "why": "C'est la main patiente : on règle et on attend. Aucune sur-réaction."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Un minuscule drone plane parfaitement immobile à 2 mètres, dans le vent, sans aucun cerveau. Il a le même problème que nous. **Comment le résout-il ?**"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "manual": {
+      "title": "Ta douche",
+      "start": "Lancer le chrono",
+      "help": "Clavier : Tab jusqu'au robinet, puis les flèches (petits mouvements), Page préc./suiv. (grands mouvements), Début (tout froid), Fin (tout chaud).",
+      "view": {
+        "aria": "Douche : un robinet en bas à gauche mélange eau froide et eau chaude, un long tuyau l'amène à la pomme de douche, et un thermomètre indique la température à la pomme.",
+        "knob": "Robinet de douche, du froid au chaud",
+        "cold": "F",
+        "hot": "C",
+        "pipe": "tuyau (2,5 s de trajet)",
+        "head": "pomme de douche",
+        "thermo": "thermomètre"
+      },
+      "plot": {
+        "temp": "température à la pomme",
+        "mix": "ce que demande le robinet",
+        "aria": "Courbe de la température à la pomme de douche sur 60 secondes, avec la bande cible à 38 degrés."
+      },
+      "readout": {
+        "time": "temps",
+        "streak": "dans la bande",
+        "crossings": "passages à 38°"
+      },
+      "status": {
+        "ready": "Touche le robinet pour commencer.",
+        "go": "C'est parti ! Amène-la à 38 °C…",
+        "hot": "Trop chaud ! 🔥",
+        "cold": "Trop froid ! 🧊",
+        "inband": "Dans la bande, tiens bon…",
+        "won": "Réussi à {t} s, après avoir franchi 38° {n} fois. Bravo !",
+        "timeup": "Temps écoulé ! Tu as franchi 38° {n} fois. Pas d'inquiétude, c'est tout l'intérêt.",
+        "wonOne": "Réussi à {t} s, en franchissant 38° une seule fois. Tout en douceur !",
+        "wonZero": "Réussi à {t} s sans jamais dépasser. Waouh !",
+        "timeupOne": "Temps écoulé ! Tu as franchi 38° une fois, mais sans tenir 10 s."
+      },
+      "again": "Réessayer"
+    },
+    "robots": {
+      "title": "Trois mains robots",
+      "choose": "Quelle main ?",
+      "hand": {
+        "normal": "Main normale",
+        "harder": "Main énergique",
+        "patient": "Main patiente"
+      },
+      "intro": {
+        "normal": "Tourne le robinet d'autant plus vite que l'eau semble mal réglée.",
+        "harder": "Même idée, mais réagit deux fois plus vigoureusement.",
+        "patient": "Met le robinet à 51 % une fois, puis attend."
+      },
+      "result": {
+        "normal": "Finit par y arriver, après quelques grandes oscillations.",
+        "harder": "Ne se stabilise jamais ! Elle sur-réagit à de vieilles nouvelles à chaque fois.",
+        "patient": "Calme et rapide, mais seulement parce qu'elle connaissait la réponse à l'avance."
+      },
+      "view": {
+        "aria": "Douche pilotée par une main robot. Le robinet tourne tout seul.",
+        "knob": "Robinet de douche (piloté par le robot)",
+        "cold": "F",
+        "hot": "C",
+        "pipe": "tuyau (2,5 s de trajet)",
+        "head": "pomme de douche",
+        "thermo": "thermomètre"
+      },
+      "plot": {
+        "temp": "température à la pomme",
+        "mix": "ce que demande le robinet",
+        "aria": "Courbe de la température de la douche pour la main robot choisie, avec la main précédente en fantôme pâle."
+      }
+    },
+    "lag": {
+      "title": "Cassée, ou juste en retard ?",
+      "slider": "Décaler la courbe du robinet de",
+      "sourceYours": "C'est ton propre essai, juste au-dessus.",
+      "sourceRobot": "C'est un essai d'exemple. (Joue au jeu plus haut et reviens pour utiliser le tien.)",
+      "plot": {
+        "temp": "température à la pomme",
+        "mix": "ce que demande le robinet",
+        "aria": "Température du mélange au robinet et température à la pomme au cours du temps ; la courbe du robinet peut être décalée plus tard avec le curseur."
+      },
+      "status": {
+        "mismatch": "Elles ne se superposent pas encore (écart moyen {e} °C). Continue à décaler.",
+        "match": "Elles se superposent ! La pomme reçoit ce que le robinet demandait il y a environ {s} s."
+      }
+    }
+  }
+}

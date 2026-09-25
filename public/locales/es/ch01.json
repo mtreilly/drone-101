@@ -1,0 +1,451 @@
+{
+  "kicker": "Capítulo 1",
+  "title": "Lazo abierto vs. lazo cerrado",
+  "question": "¿Podemos simplemente *decirle* al dron qué empuje usar?",
+  "sections": [
+    {
+      "id": "meet",
+      "title": "Os presento al dron",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "¡Me han prestado un dron! Su trabajo: llevar paquetitos y **quedarse flotando a exactamente 2 metros** para que alguien los pueda coger."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Es como la ducha, ¿no? Un número que queremos (2 m) y una cosa que podemos cambiar (la fuerza con la que empujan las hélices)."
+        },
+        {
+          "t": "p",
+          "text": "Estos son los datos. El dron pesa **0,5 kg**, así que la gravedad tira de él hacia abajo con $0.5 \\times 9.81 \\approx 4.9$ newtons. Las hélices empujan hacia arriba con un {eff|empuje} $\\eff{T}$ que elegimos nosotros. Cuando el dron se mueve, el aire lo frena un poco: más o menos **1 newton por cada metro por segundo** de velocidad."
+        },
+        {
+          "t": "math",
+          "tex": "\\underbrace{0.5\\,\\ddot{\\out{h}}}_{\\text{masa}\\times\\text{aceleración}} = \\eff{T} - \\underbrace{4.9}_{\\text{peso}} - \\underbrace{1.0\\,\\dot{\\out{h}}}_{\\text{rozamiento del aire}}"
+        },
+        {
+          "t": "p",
+          "text": "No te preocupes todavía por los puntitos encima de la $\\out{h}$. Significan \"lo rápido que cambia $\\out{h}$\" y los construiremos como es debido en el capítulo 3. Por ahora, la idea en palabras: **empuja más de 4,9 N y acelerarás hacia arriba; empuja menos y acelerarás hacia abajo.** Empuja exactamente 4,9 N y seguirás haciendo lo que ya estuvieras haciendo."
+        },
+        {
+          "t": "note",
+          "text": "Simplificaciones honestas: nuestro dron solo se mueve arriba y abajo, el rozamiento del aire sigue una regla recta y bonita, y durante los próximos capítulos los motores tienen potencia ilimitada (hasta pueden tirar un poco hacia abajo). Los drones de verdad son más complicados. Ya volveremos a añadir el lío."
+        }
+      ]
+    },
+    {
+      "id": "plan",
+      "title": "Dile simplemente lo que tiene que hacer",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Conocemos la física al detalle. Así que no necesitamos *mirar* nada. Podemos **calcular** un plan: empujar fuerte un rato para subir y luego empujar exactamente 4,9 N para quedarse flotando."
+        },
+        {
+          "t": "p",
+          "text": "Ese tipo de plan se llama **lazo abierto**: el plan decide el empuje y nadie comprueba lo que pasa de verdad. Pruébalo. Elige un empuje de subida y cuánto tiempo subir, y despega."
+        },
+        {
+          "t": "widget",
+          "id": "schedule"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Lo tengo calculado. Mientras sube, el dron enseguida se asienta en una velocidad constante de (empuje extra ÷ rozamiento). La altura a la que acabas es simplemente **(empuje extra ÷ rozamiento) × tiempo de subida**. Con 6 N eso da $(6 - 4.9)/1 \\approx 1.1$ m/s, así que hay que subir durante $2 \\div 1.1 \\approx 1.83$ segundos."
+        },
+        {
+          "t": "p",
+          "text": "Pulsa **Plan de Theo**. Aterriza justo en 2,00 m. Precioso."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "¡Theo, eres un crack! ¡Ya está! ¡Fin del capítulo!"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Vamos a ver qué pasa ahí fuera… hoy hace un poco de brisa."
+        },
+        {
+          "t": "p",
+          "text": "Ejecuta otra vez el plan de Theo y, mientras está flotando, pulsa **Ráfaga** (un empujón hacia abajo de 1 N durante un segundo)."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Ha bajado casi un metro… y se **queda** ahí abajo. ¡Mis números estaban bien!"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Tus números eran perfectos. Lo que pasa es que el viento no estaba en tu plan. Y el dron no tiene ni idea de que está en el sitio equivocado."
+        },
+        {
+          "t": "p",
+          "text": "Ese fue nuestro error: creímos que **\"si aciertas con los números, no necesitas realimentación\"**. El éxito con el aire en calma fue real, y aun así el plan dejó de servir en cuanto el mundo hizo algo inesperado. Después de la ráfaga, el empuje vuelve a ser exactamente 4,9 N, así que el dron se queda donde lo dejó la ráfaga."
+        }
+      ]
+    },
+    {
+      "id": "package",
+      "title": "La prueba del paquete",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Ahora el trabajo de verdad. Aquí abajo, el dron flota a 2 m con un empuje fijo de 4,9 N, que equilibra exactamente su peso. Alguien le engancha un **paquete de 0,2 kg**."
+        },
+        {
+          "t": "predict",
+          "id": "ch1-package",
+          "gate": true,
+          "q": "El paquete hace que el dron pese más, pero el empuje sigue en 4,9 N. ¿Qué pasa?",
+          "options": [
+            {
+              "text": "Baja un poco y luego se para",
+              "sketch": "sink-stop",
+              "why": "Parece que el dron debería encontrar un nuevo equilibrio. Pero con 4,9 N fijos pesa demasiado a *cualquier* altura: estar más abajo no le ayuda en nada."
+            },
+            {
+              "text": "Baja y sigue bajando hasta el suelo",
+              "sketch": "sink-crash",
+              "correct": true,
+              "why": "Los 2 N de peso extra nunca se compensan. El rozamiento evita que pase de unos **2 m/s**, pero sigue cayendo a esa velocidad hasta que choca contra el suelo."
+            },
+            {
+              "text": "Nada: 0,2 kg es demasiado poco para notarse",
+              "sketch": "flat",
+              "why": "Cualquier diferencia entre empuje y peso lo hace desviarse. 0,2 kg añaden unos 2 N, que es mucho comparado con el rozamiento."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "feedback"
+        },
+        {
+          "t": "p",
+          "text": "**Choque.** Nada en un plan en lazo abierto puede darse cuenta de que el dron está cayendo. Ahora cambia el modo a **Realimentación: mirar la altura**, reinicia y vuelve a probar el paquete y la ráfaga."
+        },
+        {
+          "t": "p",
+          "text": "En modo realimentación, el dron usa una regla sencilla: **empujar con el empuje de vuelo estacionario, más 8 N extra por cada metro que esté por debajo.**"
+        },
+        {
+          "t": "math",
+          "tex": "\\eff{T} = 4.9 + 8 \\times (\\sp{2} - \\out{h})"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Hala. La ráfaga lo baja menos de 20 cm y vuelve a subir enseguida. Con el paquete se hunde un poco, ¡pero no se estrella!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "No necesita saber *qué* ha pasado. Solo ve que está demasiado bajo y empuja más. Ese es el truco."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Pero mirad: con el paquete se queda en unos **1,75 m**, no en 2. ¿Por qué no vuelve del todo?"
+        },
+        {
+          "t": "note",
+          "text": "Guárdate la pregunta de June en el bolsillo. Es todo el capítulo 2."
+        }
+      ]
+    },
+    {
+      "id": "diagram",
+      "title": "Dibujándolo",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Los ingenieros dibujan estos sistemas con cajas y flechas, en lo que se llama **diagramas de bloques**. Cada caja hace algo; cada flecha lleva una señal. Nosotros dibujamos el nuestro en la pizarra, pieza a pieza."
+        },
+        {
+          "t": "widget",
+          "id": "whiteboard"
+        },
+        {
+          "t": "p",
+          "text": "La diferencia clave es esa flecha que vuelve desde la salida hasta el principio. Por eso al control por realimentación se le llama **lazo cerrado**: la información da la vuelta completa. Vuelve arriba a la prueba del paquete: el diagrama bajo el dron ilumina la parte que está trabajando en cada momento."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "{sp|Consigna} $\\sp{r}$",
+              "def": "Lo que queremos: 2 m de altura, agua a 38 °C."
+            },
+            {
+              "term": "{out|Salida} $\\out{h}$",
+              "def": "Lo que pasa de verdad: la altura real."
+            },
+            {
+              "term": "{err|Error} $\\err{e} = \\sp{r} - \\out{h}$",
+              "def": "Cuánto nos falta. Positivo significa demasiado bajo."
+            },
+            {
+              "term": "Controlador",
+              "def": "La regla que convierte el error en una acción. Por ahora: \"8 N extra por cada metro por debajo\"."
+            },
+            {
+              "term": "{eff|Esfuerzo de control} $\\eff{T}$",
+              "def": "Lo que hace de verdad el controlador: el empuje."
+            },
+            {
+              "term": "Planta",
+              "def": "Lo que se controla: el propio dron, con toda su física. (Una palabra rara, que viene de las antiguas \"plantas\" industriales.)"
+            },
+            {
+              "term": "Sensor",
+              "def": "Lo que mide la salida: el sensor de altura del dron, tu piel en la ducha."
+            },
+            {
+              "term": "{dis|Perturbación}",
+              "def": "Cualquier cosa que hace el mundo y que no habíamos planeado: ráfagas, paquetes, alguien que tira de la cadena."
+            },
+            {
+              "term": "Lazo abierto / lazo cerrado",
+              "def": "Actuar según un plan sin mirar / actuar según lo que mides."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cruise",
+      "title": "El mismo dibujo, otra máquina",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Aquí está el mismo diagrama para el **control de crucero** de un coche. La consigna es una velocidad, la planta es el coche y la perturbación es una cuesta. El controlador pisa más el acelerador cuando el coche va más despacio de lo que debería."
+        },
+        {
+          "t": "widget",
+          "id": "cruise"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Termostatos, control de crucero, la ducha, nuestro dron… ¡es **el mismo lazo** cada vez, con otras etiquetas!"
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Lo que sabemos hasta ahora",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "**Lazo abierto** significa seguir un plan sin mirar. Puede ser perfecto en calma y no servir de nada en cuanto pasa algo inesperado.",
+            "**Lazo cerrado (realimentación)** significa medir la salida, compararla con la consigna (el **error**) y actuar en consecuencia.",
+            "La realimentación se las apaña con perturbaciones de las que nunca ha oído hablar: ráfagas, paquetes, lo que sea.",
+            "Los diagramas de bloques muestran el lazo: consigna → error → controlador → planta → salida → sensor → y vuelta a empezar.",
+            "Nuestra regla de realimentación sencilla evitó el choque, pero con el paquete se quedó unos 25 cm por debajo. ¿Por qué?"
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch1-q1",
+              "q": "En la ducha del capítulo 0, ¿qué hace el papel de **sensor**?",
+              "options": [
+                {
+                  "text": "El mando",
+                  "why": "El mando es cómo *actúas*: fija el esfuerzo de control. No mide nada."
+                },
+                {
+                  "text": "Tu piel",
+                  "correct": true,
+                  "why": "Sí. Tu piel mide la salida (la temperatura del agua) y se la devuelve al controlador (tu cerebro)."
+                },
+                {
+                  "text": "La tubería",
+                  "why": "La tubería es parte de la **planta**, lo que se controla. Es de donde viene el retardo."
+                }
+              ]
+            },
+            {
+              "id": "ch1-q2",
+              "q": "¿Cuál de estos es un sistema en **lazo cerrado**?",
+              "options": [
+                {
+                  "text": "Una tostadora con temporizador",
+                  "why": "El temporizador no comprueba lo tostado que está el pan. Solo sigue el plan: lazo abierto."
+                },
+                {
+                  "text": "El termostato de casa",
+                  "correct": true,
+                  "why": "Exacto. Mide la temperatura de la habitación y enciende o apaga la calefacción según el error."
+                },
+                {
+                  "text": "Una lavadora con un programa fijo",
+                  "why": "Sigue su programa sin importar lo sucia que esté la ropa: lazo abierto."
+                }
+              ]
+            },
+            {
+              "id": "ch1-q3",
+              "q": "La consigna es 2 m y el dron está a 1,5 m. ¿Cuánto vale el error $\\err{e} = \\sp{r} - \\out{h}$ y qué debería hacer el controlador?",
+              "options": [
+                {
+                  "text": "+0,5 m: empujar más",
+                  "correct": true,
+                  "why": "Error positivo significa demasiado bajo, así que más empuje. Con nuestra regla eso da $4.9 + 8 \\times 0.5 = 8.9$ N."
+                },
+                {
+                  "text": "−0,5 m: empujar más",
+                  "why": "Fíjate en el orden: $\\sp{r} - \\out{h} = 2 - 1.5 = +0.5$. Elegimos este convenio de signos para que error positivo signifique \"demasiado bajo\"."
+                },
+                {
+                  "text": "3,5 m: empujar mucho más",
+                  "why": "El error es una *diferencia*, no una suma: $2 - 1.5 = 0.5$ m."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Nuestro lazo tiene un número misterioso: **8 newtons por metro**. ¿Por qué 8? ¿Por qué no 2, o 50? ¿Y por qué el dron se queda demasiado bajo?"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "schedule": {
+      "title": "Lazo abierto: programa un plan de empuje",
+      "slider": {
+        "thrust": "Empuje de subida",
+        "time": "Subir durante"
+      },
+      "launch": "Despegar",
+      "theo": "Plan de Theo",
+      "gust": "Ráfaga ↓",
+      "package": "Añadir paquete",
+      "disturb": "Dale una sorpresa:",
+      "plot": {
+        "height": "altura",
+        "thrust": "empuje",
+        "aria": "Altura del dron durante 20 segundos, con el objetivo de 2 metros.",
+        "target": "objetivo 2 m"
+      },
+      "readout": {
+        "height": "altura",
+        "speed": "velocidad",
+        "thrust": "empuje"
+      },
+      "status": {
+        "ready": "La fórmula de Theo predice que este plan acaba en {h} m. Pulsa Despegar.",
+        "perfect": "Acabó en {h} m. ¡Justo en el objetivo!",
+        "off": "Acabó en {h} m, {d} m demasiado {dir}.",
+        "high": "alto",
+        "low": "bajo",
+        "crash": "¡Se estrelló contra el suelo!"
+      },
+      "planHelp": "La línea naranja discontinua y tenue es tu plan. La continua es lo que hicieron de verdad los motores."
+    },
+    "feedback": {
+      "title": "Flotando a 2 m: ¿plan o realimentación?",
+      "mode": "Modo",
+      "open": "Lazo abierto: 4,9 N fijos",
+      "closed": "Realimentación: mirar la altura",
+      "gust": "Ráfaga ↓",
+      "package": "Paquete",
+      "disturb": "Perturbaciones:",
+      "plot": {
+        "height": "altura",
+        "thrust": "empuje",
+        "aria": "Altura del dron flotando durante los últimos 15 segundos, con el error sombreado entre el objetivo y la altura real."
+      },
+      "readout": {
+        "height": "altura",
+        "error": "error r − h",
+        "thrust": "empuje"
+      },
+      "status": {
+        "open": "Lazo abierto: empuje fijo en 4,9 N, pase lo que pase.",
+        "closed": "Realimentación: empuje = 4,9 N + 8 N por cada metro por debajo.",
+        "crash": "¡CATAPUM! Reinicia, cambia a realimentación y vuelve a probar.",
+        "predictRun": "El paquete se engancha en t = 1 s…"
+      },
+      "d": {
+        "setpoint": "objetivo r",
+        "error": "error e",
+        "controller": "controlador",
+        "schedule": "empuje\nfijo",
+        "thrust": "empuje T",
+        "plant": "dron",
+        "disturbance": "viento, paquete",
+        "output": "altura h",
+        "sensor": "sensor de altura",
+        "aria": "Diagrama de bloques del lazo de control del dron",
+        "description": "El objetivo menos la altura medida da el error; el controlador convierte el error en empuje; el empuje y las perturbaciones actúan sobre el dron; el sensor mide la altura del dron y se realimenta para restarla del objetivo. En modo lazo abierto solo se muestra el camino directo."
+      }
+    },
+    "whiteboard": {
+      "title": "Dibujando el lazo, pieza a pieza",
+      "back": "Atrás",
+      "next": "Siguiente",
+      "counter": "Paso {n} de {total}",
+      "step1": "Mika: \"Entra empuje, sale altura. El dron es una caja que convierte una cosa en la otra\". La llamamos planta.",
+      "step2": "Theo: \"Lazo abierto: elegimos el empuje según un plan, basándonos solo en el objetivo\".",
+      "step3": "June: \"Y el mundo también empuja al dron: viento, paquetes. Perturbaciones\".",
+      "step4": "Mika: \"Pues midamos la altura con un sensor…\"",
+      "step5": "Theo: \"…y restémosla del objetivo. Esa diferencia es el error, y el controlador actúa sobre él. ¡El lazo está cerrado!\"",
+      "d": {
+        "setpoint": "objetivo r",
+        "error": "error e",
+        "controller": "controlador",
+        "schedule": "plan de\nempuje",
+        "thrust": "empuje T",
+        "plant": "dron\n(planta)",
+        "disturbance": "viento, paquete",
+        "output": "altura h",
+        "sensor": "sensor",
+        "aria": "Diagrama de bloques dibujándose paso a paso",
+        "description": "Un diagrama de bloques construido en cinco pasos: la planta sola; un plan en lazo abierto que la alimenta; perturbaciones que actúan sobre ella; un sensor que mide la salida; y por último el error, el controlador y el sumador que cierran el lazo."
+      }
+    },
+    "cruise": {
+      "title": "Control de crucero: el mismo lazo",
+      "d": {
+        "setpoint": "velocidad objetivo",
+        "error": "error",
+        "controller": "control de\ncrucero",
+        "schedule": "",
+        "thrust": "pedal",
+        "plant": "coche",
+        "disturbance": "cuestas, viento",
+        "output": "velocidad",
+        "sensor": "velocímetro",
+        "aria": "Diagrama de bloques del control de crucero de un coche",
+        "description": "La velocidad objetivo menos la velocidad medida da el error de velocidad; el control de crucero lo convierte en pedal del acelerador; el pedal y las cuestas actúan sobre el coche; el velocímetro mide la velocidad y la realimenta."
+      }
+    }
+  }
+}

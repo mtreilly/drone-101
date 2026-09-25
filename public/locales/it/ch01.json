@@ -1,0 +1,451 @@
+{
+  "kicker": "Capitolo 1",
+  "title": "Anello aperto e anello chiuso",
+  "question": "Possiamo semplicemente *dire* al drone che spinta usare?",
+  "sections": [
+    {
+      "id": "meet",
+      "title": "Ecco il drone",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Mi sono fatta prestare un drone! Il suo lavoro: trasportare piccoli pacchi e **restare sospeso a esattamente 2 metri**, così qualcuno può prenderli."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "È come la doccia, no? Un numero che vogliamo (2 m), una cosa che possiamo cambiare (quanto spingono le eliche)."
+        },
+        {
+          "t": "p",
+          "text": "Ecco i fatti. Il drone pesa **0,5 kg**, quindi la gravità lo tira giù con $0{,}5 \\times 9{,}81 \\approx 4{,}9$ newton. Le eliche spingono in su con una {eff|spinta} $\\eff{T}$ che scegliamo noi. Quando il drone si muove, l'aria lo frena un po': circa **1 newton per ogni metro al secondo** di velocità."
+        },
+        {
+          "t": "math",
+          "tex": "\\underbrace{0{,}5\\,\\ddot{\\out{h}}}_{\\text{massa}\\times\\text{accelerazione}} = \\eff{T} - \\underbrace{4{,}9}_{\\text{peso}} - \\underbrace{1{,}0\\,\\dot{\\out{h}}}_{\\text{attrito dell'aria}}"
+        },
+        {
+          "t": "p",
+          "text": "Non preoccuparti ancora dei puntini sopra la $\\out{h}$. Vogliono dire \"quanto in fretta cambia $\\out{h}$\" e li costruiremo per bene nel Capitolo 3. Per ora, l'idea a parole: **spingi più di 4,9 N e acceleri verso l'alto; spingi meno e acceleri verso il basso.** Spingi esattamente 4,9 N e continui a fare quello che stavi già facendo."
+        },
+        {
+          "t": "note",
+          "text": "Semplificazioni oneste: il nostro drone si muove solo su e giù, l'attrito dell'aria segue una regola lineare e ordinata, e per i prossimi capitoli i motori hanno potenza illimitata (possono persino tirare un po' verso il basso). I droni veri sono più disordinati. Il disordine lo rimetteremo più avanti."
+        }
+      ]
+    },
+    {
+      "id": "plan",
+      "title": "Diciamogli e basta cosa fare",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Conosciamo la fisica alla perfezione. Quindi non ci serve *guardare* niente. Possiamo **calcolare** un piano: spingere forte per un po' per salire, poi spingere esattamente 4,9 N per restare sospesi."
+        },
+        {
+          "t": "p",
+          "text": "Un piano del genere si chiama **anello aperto**: il piano decide la spinta, e nessuno controlla cosa succede davvero. Provalo. Scegli una spinta di salita e per quanto salire, poi lancia."
+        },
+        {
+          "t": "widget",
+          "id": "schedule"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Ho fatto i conti. Mentre sale, il drone arriva presto a una velocità costante di (spinta in più ÷ attrito). L'altezza a cui arrivi è semplicemente **(spinta in più ÷ attrito) × tempo di salita**. Con 6 N fa $(6 - 4{,}9)/1 \\approx 1{,}1$ m/s, quindi sali per $2 \\div 1{,}1 \\approx 1{,}83$ secondi."
+        },
+        {
+          "t": "p",
+          "text": "Premi **Il piano di Theo**. Arriva a 2,00 m. Meraviglioso."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Theo, sei un mito! Abbiamo finito! Capitolo chiuso!"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Controlliamo solo cosa succede fuori… oggi c'è un po' di brezza."
+        },
+        {
+          "t": "p",
+          "text": "Rilancia il piano di Theo e, mentre è sospeso, premi **Raffica** (una spinta verso il basso di 1 N per un secondo)."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "È sceso di circa un metro… e **resta** laggiù. I miei numeri erano giusti!"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "I tuoi numeri erano perfetti. Solo che il vento non era nel tuo piano. E il drone non ha idea di essere nel posto sbagliato."
+        },
+        {
+          "t": "p",
+          "text": "Ecco il nostro errore: credevamo che **\"se i numeri sono giusti, la retroazione non serve\".** Il successo con l'aria ferma era vero, eppure il piano è diventato inutile nel momento in cui il mondo ha fatto qualcosa di inatteso. Dopo la raffica la spinta torna esattamente a 4,9 N, quindi il drone resta dove l'ha lasciato la raffica."
+        }
+      ]
+    },
+    {
+      "id": "package",
+      "title": "La prova del pacco",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Ora il lavoro vero. Qui sotto il drone è sospeso a 2 m con una spinta fissa di 4,9 N, che bilancia esattamente il suo peso. Qualcuno ci aggancia un **pacco da 0,2 kg**."
+        },
+        {
+          "t": "predict",
+          "id": "ch1-package",
+          "gate": true,
+          "q": "Il pacco rende il drone più pesante, ma la spinta resta a 4,9 N. Cosa succede?",
+          "options": [
+            {
+              "text": "Scende un po', poi si ferma",
+              "sketch": "sink-stop",
+              "why": "Sembra che il drone debba trovare un nuovo equilibrio. Ma con 4,9 N fissi è troppo pesante a *qualsiasi* altezza: stare più in basso non lo aiuta per niente."
+            },
+            {
+              "text": "Scende e continua a scendere, fino in fondo",
+              "sketch": "sink-crash",
+              "correct": true,
+              "why": "I 2 N di peso in più non vengono mai bilanciati. L'attrito gli impedisce di superare circa **2 m/s**, ma continua a cadere a quella velocità finché non tocca terra."
+            },
+            {
+              "text": "Niente: 0,2 kg sono troppo pochi per contare",
+              "sketch": "flat",
+              "why": "Qualsiasi differenza tra spinta e peso lo fa andare alla deriva. 0,2 kg aggiungono circa 2 N, che è tanto rispetto all'attrito."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "feedback"
+        },
+        {
+          "t": "p",
+          "text": "**Schianto.** Niente in un piano ad anello aperto può accorgersi che il drone sta cadendo. Ora passa alla modalità **Retroazione: guarda l'altezza**, azzera, e riprova il pacco e la raffica."
+        },
+        {
+          "t": "p",
+          "text": "In modalità retroazione il drone usa una regola semplice: **spingi con la spinta di hovering, più 8 N extra per ogni metro in cui è troppo basso.**"
+        },
+        {
+          "t": "math",
+          "tex": "\\eff{T} = 4{,}9 + 8 \\times (\\sp{2} - \\out{h})"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Wow. La raffica lo abbassa di meno di 20 cm, e lui risale subito. Il pacco lo fa scendere un po', ma non si schianta!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Non ha bisogno di sapere *cosa* è successo. Vede solo che è troppo basso e spinge di più. Il trucco è tutto lì."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Però guardate: con il pacco si assesta a circa **1,75 m**, non a 2. Perché non torna fino in cima?"
+        },
+        {
+          "t": "note",
+          "text": "Tieniti in tasca la domanda di June. È tutto il Capitolo 2."
+        }
+      ]
+    },
+    {
+      "id": "diagram",
+      "title": "Disegniamolo",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Gli ingegneri disegnano questi sistemi come scatole e frecce, chiamati **schemi a blocchi**. Ogni scatola fa qualcosa; ogni freccia trasporta un segnale. Noi abbiamo disegnato il nostro alla lavagna, un pezzo alla volta."
+        },
+        {
+          "t": "widget",
+          "id": "whiteboard"
+        },
+        {
+          "t": "p",
+          "text": "La differenza chiave è quella freccia che torna indietro dall'uscita all'inizio. Ecco perché il controllo in retroazione si chiama **anello chiuso**: l'informazione fa tutto il giro. Torna su alla prova del pacco: lo schema sotto il drone illumina la parte che sta lavorando in quel momento."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "{sp|Riferimento} $\\sp{r}$",
+              "def": "Quello che vogliamo: 2 m di altezza, 38 °C di acqua."
+            },
+            {
+              "term": "{out|Uscita} $\\out{h}$",
+              "def": "Quello che succede davvero: l'altezza reale."
+            },
+            {
+              "term": "{err|Errore} $\\err{e} = \\sp{r} - \\out{h}$",
+              "def": "Quanto siamo lontani. Positivo vuol dire troppo basso."
+            },
+            {
+              "term": "Controllore",
+              "def": "La regola che trasforma l'errore in un'azione. Finora: \"8 N in più per ogni metro troppo in basso\"."
+            },
+            {
+              "term": "{eff|Sforzo di controllo} $\\eff{T}$",
+              "def": "Quello che il controllore fa davvero: la spinta."
+            },
+            {
+              "term": "Impianto",
+              "def": "La cosa da controllare: il drone stesso, fisica compresa. (Una parola strana, che viene dagli impianti industriali di una volta.)"
+            },
+            {
+              "term": "Sensore",
+              "def": "Qualunque cosa misuri l'uscita: il sensore di altezza del drone, la tua pelle sotto la doccia."
+            },
+            {
+              "term": "{dis|Disturbo}",
+              "def": "Qualsiasi cosa faccia il mondo che non avevamo previsto: raffiche, pacchi, qualcuno che tira lo sciacquone."
+            },
+            {
+              "term": "Anello aperto / anello chiuso",
+              "def": "Agire seguendo un piano senza guardare / agire in base a quello che misuri."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cruise",
+      "title": "Stesso disegno, macchina diversa",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Ecco lo stesso schema per il **cruise control** di un'auto. Il riferimento è una velocità, l'impianto è l'auto, e il disturbo è una salita. Il controllore preme di più l'acceleratore quando l'auto va più piano di quanto dovrebbe."
+        },
+        {
+          "t": "widget",
+          "id": "cruise"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Termostati, cruise control, la doccia, il nostro drone… è **lo stesso anello** ogni volta, con etichette diverse!"
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Cosa sappiamo finora",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "**Anello aperto** vuol dire seguire un piano senza guardare. Può essere perfetto con condizioni tranquille e inutile appena succede qualcosa di inatteso.",
+            "**Anello chiuso (retroazione)** vuol dire misurare l'uscita, confrontarla con il riferimento (l'**errore**) e agire di conseguenza.",
+            "La retroazione gestisce disturbi di cui non ha mai sentito parlare: raffiche, pacchi, qualsiasi cosa.",
+            "Gli schemi a blocchi mostrano l'anello: riferimento → errore → controllore → impianto → uscita → sensore → e di nuovo da capo.",
+            "La nostra semplice regola di retroazione ha evitato lo schianto, ma con il pacco si è assestata circa 25 cm più in basso. Perché?"
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch1-q1",
+              "q": "Nella doccia del Capitolo 0, cosa fa la parte del **sensore**?",
+              "options": [
+                {
+                  "text": "La manopola",
+                  "why": "La manopola è il modo in cui *agisci*: imposta lo sforzo di controllo. Non misura niente."
+                },
+                {
+                  "text": "La tua pelle",
+                  "correct": true,
+                  "why": "Sì. La tua pelle misura l'uscita (la temperatura dell'acqua) e la rimanda al controllore (il tuo cervello)."
+                },
+                {
+                  "text": "Il tubo",
+                  "why": "Il tubo fa parte dell'**impianto**, la cosa da controllare. È da lì che viene il ritardo."
+                }
+              ]
+            },
+            {
+              "id": "ch1-q2",
+              "q": "Quale di questi è un sistema **ad anello chiuso**?",
+              "options": [
+                {
+                  "text": "Un tostapane con il timer",
+                  "why": "Il timer non controlla quanto è dorato il pane. Segue il piano e basta: anello aperto."
+                },
+                {
+                  "text": "Il termostato di casa",
+                  "correct": true,
+                  "why": "Giusto. Misura la temperatura della stanza e accende o spegne il riscaldamento in base all'errore."
+                },
+                {
+                  "text": "Una lavatrice con un programma fisso",
+                  "why": "Segue il suo programma a prescindere da quanto sono sporchi i vestiti: anello aperto."
+                }
+              ]
+            },
+            {
+              "id": "ch1-q3",
+              "q": "Il riferimento è 2 m e il drone è a 1,5 m. Quanto vale l'errore $\\err{e} = \\sp{r} - \\out{h}$, e cosa dovrebbe fare il controllore?",
+              "options": [
+                {
+                  "text": "+0,5 m: spingere di più",
+                  "correct": true,
+                  "why": "Errore positivo vuol dire troppo basso, quindi più spinta. Con la nostra regola fa $4{,}9 + 8 \\times 0{,}5 = 8{,}9$ N."
+                },
+                {
+                  "text": "−0,5 m: spingere di più",
+                  "why": "Controlla l'ordine: $\\sp{r} - \\out{h} = 2 - 1{,}5 = +0{,}5$. Scegliamo questa convenzione di segno così che errore positivo significhi \"troppo basso\"."
+                },
+                {
+                  "text": "3,5 m: spingere molto di più",
+                  "why": "L'errore è una *differenza*, non una somma: $2 - 1{,}5 = 0{,}5$ m."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Nel nostro anello c'è un numero misterioso: **8 newton per metro**. Perché 8? Perché non 2, o 50? E perché il drone si assesta troppo in basso?"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "schedule": {
+      "title": "Anello aperto: programma la spinta",
+      "slider": {
+        "thrust": "Spinta di salita",
+        "time": "Sali per"
+      },
+      "launch": "Lancia",
+      "theo": "Il piano di Theo",
+      "gust": "Raffica ↓",
+      "package": "Aggiungi pacco",
+      "disturb": "Fagli una sorpresa:",
+      "plot": {
+        "height": "altezza",
+        "thrust": "spinta",
+        "aria": "Altezza del drone in 20 secondi, con l'obiettivo di 2 metri.",
+        "target": "obiettivo 2 m"
+      },
+      "readout": {
+        "height": "altezza",
+        "speed": "velocità",
+        "thrust": "spinta"
+      },
+      "status": {
+        "ready": "Secondo la formula di Theo questo piano finisce a {h} m. Premi Lancia.",
+        "perfect": "Finito a {h} m. Centrato in pieno!",
+        "off": "Finito a {h} m, {d} m troppo {dir}.",
+        "high": "in alto",
+        "low": "in basso",
+        "crash": "Schiantato a terra!"
+      },
+      "planHelp": "La linea arancione tratteggiata sbiadita è il tuo piano. Quella continua è quello che i motori hanno fatto davvero."
+    },
+    "feedback": {
+      "title": "Sospeso a 2 m: piano o retroazione?",
+      "mode": "Modalità",
+      "open": "Anello aperto: 4,9 N fissi",
+      "closed": "Retroazione: guarda l'altezza",
+      "gust": "Raffica ↓",
+      "package": "Pacco",
+      "disturb": "Disturbi:",
+      "plot": {
+        "height": "altezza",
+        "thrust": "spinta",
+        "aria": "Altezza del drone sospeso negli ultimi 15 secondi, con l'errore ombreggiato tra l'obiettivo e l'altezza reale."
+      },
+      "readout": {
+        "height": "altezza",
+        "error": "errore r − h",
+        "thrust": "spinta"
+      },
+      "status": {
+        "open": "Anello aperto: spinta fissa a 4,9 N, qualunque cosa succeda.",
+        "closed": "Retroazione: spinta = 4,9 N + 8 N per ogni metro troppo in basso.",
+        "crash": "SCHIANTO! Azzera, passa alla retroazione e riprova.",
+        "predictRun": "Il pacco viene agganciato a t = 1 s…"
+      },
+      "d": {
+        "setpoint": "obiettivo r",
+        "error": "errore e",
+        "controller": "controllore",
+        "schedule": "spinta\nfissa",
+        "thrust": "spinta T",
+        "plant": "drone",
+        "disturbance": "vento, pacco",
+        "output": "altezza h",
+        "sensor": "sensore di altezza",
+        "aria": "Schema a blocchi dell'anello di controllo del drone",
+        "description": "L'obiettivo meno l'altezza misurata dà l'errore; il controllore trasforma l'errore in spinta; la spinta e i disturbi agiscono sul drone; l'altezza del drone viene misurata dal sensore e riportata indietro per essere sottratta all'obiettivo. In modalità anello aperto viene mostrato solo il percorso in avanti."
+      }
+    },
+    "whiteboard": {
+      "title": "Disegniamo l'anello, un pezzo alla volta",
+      "back": "Indietro",
+      "next": "Avanti",
+      "counter": "Passo {n} di {total}",
+      "step1": "Mika: \"Entra la spinta, esce l'altezza. Il drone è una scatola che trasforma l'una nell'altra.\" La chiamiamo impianto.",
+      "step2": "Theo: \"Anello aperto: scegliamo la spinta da un piano, basandoci solo sull'obiettivo.\"",
+      "step3": "June: \"E anche il mondo spinge sul drone: vento, pacchi. Disturbi.\"",
+      "step4": "Mika: \"Allora misuriamo l'altezza con un sensore…\"",
+      "step5": "Theo: \"…e sottraiamola all'obiettivo. Quella differenza è l'errore, e il controllore agisce su di essa. L'anello è chiuso!\"",
+      "d": {
+        "setpoint": "obiettivo r",
+        "error": "errore e",
+        "controller": "controllore",
+        "schedule": "piano\ndi spinta",
+        "thrust": "spinta T",
+        "plant": "drone\n(impianto)",
+        "disturbance": "vento, pacco",
+        "output": "altezza h",
+        "sensor": "sensore",
+        "aria": "Schema a blocchi disegnato passo dopo passo",
+        "description": "Uno schema a blocchi costruito in cinque passi: l'impianto da solo; un piano ad anello aperto che lo alimenta; i disturbi che agiscono su di esso; un sensore che misura l'uscita; e infine l'errore, il controllore e il nodo sommatore che chiudono l'anello."
+      }
+    },
+    "cruise": {
+      "title": "Cruise control: lo stesso anello",
+      "d": {
+        "setpoint": "velocità obiettivo",
+        "error": "errore",
+        "controller": "controllore\ndi velocità",
+        "schedule": "",
+        "thrust": "pedale",
+        "plant": "auto",
+        "disturbance": "salite, vento",
+        "output": "velocità",
+        "sensor": "tachimetro",
+        "aria": "Schema a blocchi del cruise control di un'auto",
+        "description": "La velocità obiettivo meno la velocità misurata dà l'errore di velocità; il controllore di velocità lo trasforma in pressione sull'acceleratore; il pedale e le salite agiscono sull'auto; il tachimetro misura la velocità e la riporta indietro."
+      }
+    }
+  }
+}

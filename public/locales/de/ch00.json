@@ -1,0 +1,342 @@
+{
+  "kicker": "Kapitel 0",
+  "title": "Das Duschproblem",
+  "question": "Warum kriege ich die Dusche nicht einfach auf 38 °C?",
+  "sections": [
+    {
+      "id": "hook",
+      "title": "Heiß! Kalt! Heiß!",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Okay, ich muss was gestehen. Heute Morgen hab ich am Duschknopf gedreht, wurde **gekocht**, hab zurückgedreht, wurde **schockgefrostet**. Und das ungefähr sechsmal."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Das macht jeder! Duschen in alten Wohnungen sind die schlimmsten."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Aber *warum* ist das so schwer? Du willst eine Zahl: 38 Grad. Du hast einen Knopf. Das sollte doch einfach sein."
+        },
+        {
+          "t": "p",
+          "text": "Finden wir es heraus. Unten siehst du eine Dusche mit einem **langen Rohr** zwischen Knopf und Duschkopf, wie in echt. Das Wasser, das du am Knopf mischst, braucht ein paar Sekunden durch das Rohr. Du kannst zusehen, wie die Farbe des Wassers hindurchkriecht."
+        },
+        {
+          "t": "p",
+          "text": "**Dein Ziel:** Bring das Wasser auf {sp|38 °C} (das grüne Band) und halte es dort 10 Sekunden am Stück. Zieh am {eff|orangen Knopf} oder klick ihn an und nimm die Pfeiltasten. Die Uhr startet, sobald du ihn berührst."
+        },
+        {
+          "t": "widget",
+          "id": "manual"
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Das Rohr hat 2,5 Sekunden Verzögerung. So viel bringen ein paar Meter Rohr ungefähr mit."
+        },
+        {
+          "t": "p",
+          "text": "Wie lief’s? Wenn du hin und her geschwungen bist, mal über, mal unter dem grünen Band, bist du in guter Gesellschaft. Schau dir die {out|blaue Kurve} an: Sie zickzackt wahrscheinlich wie eine nervöse Schlange."
+        }
+      ]
+    },
+    {
+      "id": "broken",
+      "title": "Ist die Dusche kaputt?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Ich glaube, die Dusche ist kaputt. Ich stell den Knopf auf *warm*, und sie wird trotzdem immer wieder *heiß*!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Hm. Zeichnen wir zwei Dinge auf: was der Knopf **verlangt** und was der Duschkopf **liefert**. Wenn sie kaputt ist, sollten die zwei gar nicht zusammenpassen."
+        },
+        {
+          "t": "p",
+          "text": "Die {eff|gepunktete orange Kurve} ist die Temperatur, die deine Knopfstellung *verlangt*: die Mischung am Ventil. Die {out|blaue Kurve} ist das, was wirklich ankommt. Schieb die orange Kurve zeitlich nach hinten und schau, ob sie übereinanderpassen."
+        },
+        {
+          "t": "widget",
+          "id": "lag"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Oh! Schieb sie um etwa 3½ Sekunden, und es ist fast **dieselbe Kurve**. Die Dusche ist gar nicht kaputt…"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "…sie ist nur **zu spät**! Alles, was ich gespürt hab, war etwa 3½ Sekunden alt."
+        },
+        {
+          "t": "p",
+          "text": "Das ist der erste Hinweis. Wenn du „zu heiß“ spürst, spürst du die Knopfstellung von vor ein paar Sekunden. Bis dahin hast du *schon* heißer gedreht. Also drehst du zurück, zu weit, und alles geht von vorne los."
+        },
+        {
+          "t": "note",
+          "text": "2,5 s kommen vom Rohr. Die zusätzliche Sekunde kommt daher, dass sich das Wasser mischt und das Metall aufwärmt: Das glättet plötzliche Änderungen, und das wirkt fast wie eine Sekunde mehr Verspätung."
+        }
+      ]
+    },
+    {
+      "id": "harder",
+      "title": "Hilft es, sich mehr anzustrengen?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Ich hab’s: Ich war zu **sanft**! Wenn ich den Knopf **schneller** drehe, sobald es falsch ist, krieg ich es schneller hin."
+        },
+        {
+          "t": "p",
+          "text": "Wir haben drei Roboterhände gebaut, um Ideen zu testen, ohne nass zu werden. Die **normale Hand** dreht den Knopf umso schneller, je falscher sich das Wasser anfühlt. So machen es die meisten Menschen. Die **eifrige Hand** macht genau dasselbe, nur doppelt so heftig."
+        },
+        {
+          "t": "predict",
+          "id": "ch0-harder",
+          "gate": true,
+          "q": "Was macht die **eifrige** Hand im Vergleich zur normalen?",
+          "options": [
+            {
+              "text": "Sie erreicht 38 °C früher und beruhigt sich schneller",
+              "sketch": "swing-better",
+              "why": "Das sagt uns das Bauchgefühl: mehr Einsatz, schnelleres Ergebnis."
+            },
+            {
+              "text": "Ungefähr dasselbe, nur etwas schneller",
+              "sketch": "overshoot",
+              "why": "Eine vernünftige Absicherung. Aber die Verzögerung macht alles viel dramatischer."
+            },
+            {
+              "text": "Sie schwingt noch stärker und kommt nie zur Ruhe",
+              "sketch": "swing-worse",
+              "correct": true,
+              "why": "Wer schneller dreht, hat *noch weiter* gedreht, bis das (verspätete) Wasser „Stopp“ sagt. Die Schwünge wachsen, bis der Knopf am Anschlag ist."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "robots"
+        },
+        {
+          "t": "p",
+          "text": "Probier alle drei aus. Die **eifrige** Hand schlägt zwischen eiskalt und kochend hin und her. Die **geduldige** Hand stellt den Knopf auf etwa 51 % (die richtige Mischung, vorher ausgerechnet) und *wartet* einfach. Sie gewinnt mühelos."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Die Verzögerung allein ist also nicht das Problem. Die geduldige Hand hat dieselbe Verzögerung und kommt gut klar. Das Problem ist, **zu eifrig auf alte Nachrichten zu reagieren**."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Also ist „stärker drücken, je weiter man daneben liegt“ der *falsche* Instinkt? Das ist meine ganze Persönlichkeit."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Aber die geduldige Hand hat geschummelt. Sie kannte die richtige Antwort vorher. Wenn der Boiler abkühlt oder jemand die Klospülung drückt, ändert sich die richtige Knopfstellung. Und die geduldige Hand merkt nichts."
+        },
+        {
+          "t": "p",
+          "text": "Das ist das eigentliche Rätsel. Wir brauchen etwas, das **reagiert** (damit es mit Überraschungen klarkommt), aber nicht **überreagiert** (damit es nicht schwingt). Merk dir den Gedanken. Um genau den geht es im ganzen Kurs."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Was wir bis jetzt wissen",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Ein **Ziel** (38 °C) und eine Möglichkeit zu handeln (der Knopf) reichen nicht. Es kommt darauf an, **wie** du reagierst.",
+            "Eine **Verzögerung** heißt: Du spürst immer alte Informationen. Die Dusche ist nicht kaputt, sie ist spät dran.",
+            "Stärker auf alte Informationen zu reagieren macht die Schwünge **schlimmer**, nicht besser.",
+            "Den Knopf einmal einstellen und warten klappt, aber nur, wenn sich nie etwas ändert."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch0-q1",
+              "q": "Bei t = 5 s drehst du den Knopf ruckartig von kalt auf warm. Wann ungefähr **beginnt** die Temperatur am Duschkopf zu steigen?",
+              "options": [
+                {
+                  "text": "Sofort, bei 5 s",
+                  "why": "Das frisch gemischte Wasser ist noch unten im Rohr. Der Duschkopf bekommt noch eine Weile das alte kalte Wasser."
+                },
+                {
+                  "text": "Bei etwa 7,5 s",
+                  "correct": true,
+                  "why": "Genau: 2,5 s später, wenn das neue Wasser durchs Rohr gelaufen ist. Danach steigt sie beim Mischen in etwa einer Sekunde sanft an."
+                },
+                {
+                  "text": "Bei etwa 15 s",
+                  "why": "Zu spät: Unser Rohr hat 2,5 s Verzögerung, nicht 10 s."
+                }
+              ]
+            },
+            {
+              "id": "ch0-q2",
+              "q": "Du stellst den Knopf genau richtig ein (51 %) und gehst weg. Was passiert?",
+              "options": [
+                {
+                  "text": "Es wird warm und pendelt sich ohne Schwingen bei 38 °C ein",
+                  "correct": true,
+                  "why": "Ja. Verzögerung macht alles nur **spät**. Das Schwingen kommt vom *Reagieren* auf verspätete Informationen."
+                },
+                {
+                  "text": "Es schwingt ewig, wegen der Verzögerung",
+                  "why": "Verzögerung allein erzeugt keine Schwünge. Niemand reagiert, also kann auch nichts überschießen."
+                },
+                {
+                  "text": "Es erreicht nie 38 °C",
+                  "why": "Es kommt an: 2,5 s Verzögerung, dann etwa eine Sekunde sanftes Aufwärmen."
+                }
+              ]
+            },
+            {
+              "id": "ch0-q3",
+              "q": "Welcher Temperaturverlauf gehört zu jemandem, der **zu stark reagiert**?",
+              "options": [
+                {
+                  "text": "Wachsende Schwünge",
+                  "sketch": "swing-worse",
+                  "correct": true,
+                  "why": "Wer auf verspätete Informationen überreagiert, pumpt Energie in die Schwünge. Wie beim Anschubsen einer Schaukel, genau im falschen Moment."
+                },
+                {
+                  "text": "Schwünge, die kleiner werden",
+                  "sketch": "swing-better",
+                  "why": "Kleiner werdende Schwünge heißen: Die Reaktionen sind sanft genug, um sich zu beruhigen. Das ist jemand, der *sanft* reagiert."
+                },
+                {
+                  "text": "Warten, dann sanft ansteigen",
+                  "sketch": "delay-then-rise",
+                  "why": "Das ist die geduldige Hand: einstellen und warten. Überhaupt keine Überreaktion."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Eine winzige Drohne schwebt ganz ruhig auf 2 Metern, im Wind, ganz ohne Gehirn. Sie hat dasselbe Problem wie wir. **Wie löst sie es?**"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "manual": {
+      "title": "Deine Dusche",
+      "start": "Uhr starten",
+      "help": "Tastatur: Mit Tab zum Knopf, dann Pfeiltasten (kleine Drehungen), Bild auf/ab (große Drehungen), Pos1 (ganz kalt), Ende (ganz heiß).",
+      "view": {
+        "aria": "Dusche: Ein Knopf unten links mischt kaltes und heißes Wasser, ein langes Rohr bringt es zum Duschkopf, und ein Thermometer zeigt die Temperatur am Duschkopf.",
+        "knob": "Duschknopf, von kalt bis heiß",
+        "cold": "K",
+        "hot": "H",
+        "pipe": "Rohr (2,5 s Laufzeit)",
+        "head": "Duschkopf",
+        "thermo": "Thermometer"
+      },
+      "plot": {
+        "temp": "Temperatur am Duschkopf",
+        "mix": "was der Knopf verlangt",
+        "aria": "Verlauf der Temperatur am Duschkopf über 60 Sekunden, mit dem Zielband um 38 Grad."
+      },
+      "readout": {
+        "time": "Zeit",
+        "streak": "im Band",
+        "crossings": "38° gekreuzt"
+      },
+      "status": {
+        "ready": "Berühr den Knopf, um zu starten.",
+        "go": "Los! Bring es auf 38 °C…",
+        "hot": "Zu heiß! 🔥",
+        "cold": "Zu kalt! 🧊",
+        "inband": "Im Band, halt es…",
+        "won": "Geschafft bei {t} s, nachdem du {n}-mal über 38° hinweg bist. Stark!",
+        "timeup": "Zeit um! Du bist {n}-mal über 38° hinweg. Keine Sorge, genau darum geht’s.",
+        "wonOne": "Geschafft bei {t} s, und nur ein einziges Mal über 38° hinweg. Sauber!",
+        "wonZero": "Geschafft bei {t} s, ganz ohne Überschwingen. Wow!",
+        "timeupOne": "Zeit um! Du bist einmal über 38° hinweg, hast es aber nie 10 s gehalten."
+      },
+      "again": "Nochmal versuchen"
+    },
+    "robots": {
+      "title": "Drei Roboterhände",
+      "choose": "Welche Hand?",
+      "hand": {
+        "normal": "Normale Hand",
+        "harder": "Eifrige Hand",
+        "patient": "Geduldige Hand"
+      },
+      "intro": {
+        "normal": "Dreht den Knopf umso schneller, je falscher sich das Wasser anfühlt.",
+        "harder": "Gleiche Idee, reagiert aber doppelt so heftig.",
+        "patient": "Stellt den Knopf einmal auf 51 % und wartet dann."
+      },
+      "result": {
+        "normal": "Kommt irgendwann an, nach ein paar großen Schwüngen.",
+        "harder": "Kommt nie zur Ruhe! Überreagiert jedes Mal auf alte Nachrichten.",
+        "patient": "Ruhig und schnell, aber nur, weil sie die Antwort vorher kannte."
+      },
+      "view": {
+        "aria": "Dusche, die von einer Roboterhand gesteuert wird. Der Knopf dreht sich von selbst.",
+        "knob": "Duschknopf (vom Roboter gesteuert)",
+        "cold": "K",
+        "hot": "H",
+        "pipe": "Rohr (2,5 s Laufzeit)",
+        "head": "Duschkopf",
+        "thermo": "Thermometer"
+      },
+      "plot": {
+        "temp": "Temperatur am Duschkopf",
+        "mix": "was der Knopf verlangt",
+        "aria": "Verlauf der Duschtemperatur für die gewählte Roboterhand, die vorherige Hand als blasser Geist."
+      }
+    },
+    "lag": {
+      "title": "Kaputt oder nur spät?",
+      "slider": "Knopfkurve nach hinten schieben um",
+      "sourceYours": "Das ist dein eigener Lauf von oben.",
+      "sourceRobot": "Das ist ein Beispiellauf. (Spiel oben das Spiel und komm zurück, um deinen eigenen zu nehmen.)",
+      "plot": {
+        "temp": "Temperatur am Duschkopf",
+        "mix": "was der Knopf verlangt",
+        "aria": "Mischtemperatur am Knopf und Temperatur am Duschkopf über die Zeit; die Knopfkurve lässt sich mit dem Schieberegler nach hinten verschieben."
+      },
+      "status": {
+        "mismatch": "Sie passen noch nicht (mittlere Lücke {e} °C). Weiterschieben.",
+        "match": "Sie passen übereinander! Der Duschkopf bekommt, was der Knopf vor etwa {s} s verlangt hat."
+      }
+    }
+  }
+}

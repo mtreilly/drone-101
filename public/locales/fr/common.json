@@ -1,0 +1,251 @@
+{
+  "app": {
+    "title": "Qui garde le drone en l'air ?",
+    "short": "Qui garde le drone en l'air ?",
+    "loading": "On taille les crayons…"
+  },
+  "nav": {
+    "skip": "Aller au contenu",
+    "chapters": "Chapitres",
+    "chapterN": "Chapitre {n} : {title}",
+    "menu": "Ouvrir le menu des chapitres",
+    "close": "Fermer",
+    "map": "Carte des idées",
+    "progress": "Chapitres terminés",
+    "prev": "Retour",
+    "next": "Suivant",
+    "home": "Page d'accueil",
+    "chapterNav": "Navigation entre chapitres",
+    "upNext": "À suivre",
+    "readingProgress": "Progression de lecture dans ce chapitre",
+    "tools": "Outils de la page"
+  },
+  "theme": {
+    "label": "Thème de couleurs : {mode} (cliquer pour changer)",
+    "auto": "comme le système",
+    "light": "papier",
+    "dark": "carnet de nuit"
+  },
+  "legend": {
+    "button": "Couleurs",
+    "title": "Ce que veulent dire les couleurs",
+    "setpoint": "Consigne / cible (vert, tirets)",
+    "output": "Ce qui se passe vraiment (bleu)",
+    "error": "Erreur : cible moins réel (rouge)",
+    "effort": "Commande : poussée, robinet (orange)",
+    "disturbance": "Perturbation : vent, colis, gravité (violet)",
+    "pole": "Pôle (×)",
+    "zero": "Zéro (○)",
+    "ghost": "Essai précédent (fantôme pâle)",
+    "guess": "Ta prédiction (crayon)"
+  },
+  "transport": {
+    "label": "Commandes de la simulation",
+    "play": "Lecture",
+    "pause": "Pause",
+    "reset": "Réinitialiser",
+    "step": "Pas à pas",
+    "speed": "Vitesse"
+  },
+  "splane": {
+    "re": "σ (rétrécit ← → grandit)",
+    "im": "ω (tourne)",
+    "stable": "se calme",
+    "unstable": "explose",
+    "pole": "Pôle",
+    "zero": "Zéro",
+    "point": "Point",
+    "draggable": "point déplaçable, utilise les flèches pour le bouger, Maj pour de plus grands pas"
+  },
+  "story": {
+    "predict": "Prédis d'abord !",
+    "predictRight": "Bien vu !",
+    "predictSurprise": "Surprise ! (C'est dans les surprises qu'on apprend.)",
+    "predictLocked": "Prédiction enregistrée. Voyons voir…",
+    "predictAgain": "Prédire à nouveau",
+    "check": "Teste-toi",
+    "quizRight": "Oui !",
+    "quizWrong": "Pas tout à fait, et voici pourquoi :",
+    "quizScore": "{n} sur {total} résolus.",
+    "quizDone": "Chapitre terminé ✓",
+    "recap": "Ce qu'on a compris",
+    "vocab": "Nouveaux mots",
+    "completeStamp": "Fini !",
+    "completeAnnounce": "Chapitre {n} terminé. Beau travail !"
+  },
+  "cast": {
+    "mika": "Mika",
+    "theo": "Theo",
+    "june": "June"
+  },
+  "home": {
+    "kicker": "Une aventure de la rétroaction en douze carnets",
+    "question": "Comment une machine fait-elle pour rester là où elle doit être ?",
+    "intro": [
+      "Tout a commencé sous la douche. L'un de nous a tourné le robinet, s'est ébouillanté, l'a tourné dans l'autre sens, s'est gelé, et a recommencé. Et là, on s'est demandé : un petit drone arrive à rester parfaitement immobile dans le vent, sans aucun cerveau. **Comment ?**",
+      "Voici nos carnets de recherche, avec toutes nos fausses pistes. On part de zéro : pas besoin de calcul différentiel. À la fin, tu sauras pourquoi la **transformée de Laplace** existe, ce que sont vraiment les **pôles**, et tu régleras un correcteur **PID** qui fera mieux que tes propres mains."
+    ],
+    "cast": {
+      "mika": "Pose les questions que tout le monde se pose en secret. Pousse tous les curseurs à fond « juste pour voir ».",
+      "theo": "N'accepte aucune astuce tant qu'il ne sait pas *pourquoi* elle marche. Imbattable pour trouver le bug.",
+      "june": "Construit des trucs. Demande toujours : « on peut l'essayer sur le drone ? »"
+    },
+    "start": "Commencer par la douche →",
+    "resume": "Reprendre au chapitre {n} →",
+    "contents": "Les carnets",
+    "done": "terminé",
+    "privacy": "Ta progression et tes prédictions sont enregistrées uniquement dans ce navigateur.",
+    "reset": "Effacer ma progression"
+  },
+  "chapters": {
+    "0": {
+      "title": "Le problème de la douche",
+      "short": "Douche",
+      "question": "Pourquoi je n'arrive pas à régler la douche sur 38 °C ?"
+    },
+    "1": {
+      "title": "Boucle ouverte ou boucle fermée",
+      "short": "Rétroaction",
+      "question": "Peut-on simplement *dire* au drone quelle poussée utiliser ?"
+    },
+    "2": {
+      "title": "La commande proportionnelle",
+      "short": "Commande P",
+      "question": "Avec quelle force le drone doit-il pousser quand il est trop bas ?"
+    },
+    "3": {
+      "title": "Le langage du changement",
+      "short": "Changement",
+      "question": "Comment décrire *à quelle vitesse* quelque chose change ?"
+    },
+    "4": {
+      "title": "Pourquoi les exponentielles sont magiques",
+      "short": "Exponentielles",
+      "question": "Existe-t-il une courbe dont la pente est une copie d'elle-même ?"
+    },
+    "5": {
+      "title": "Des nombres qui tournent",
+      "short": "Rotation",
+      "question": "Quel nombre au carré donne −1, et pourquoi ferait-il des vagues ?"
+    },
+    "6": {
+      "title": "La vraie personnalité du drone",
+      "short": "2e ordre",
+      "question": "Pourquoi le drone rebondit-il comme un ressort ?"
+    },
+    "7": {
+      "title": "La transformée de Laplace",
+      "short": "Laplace",
+      "question": "Peut-on transformer le calcul différentiel en algèbre ?"
+    },
+    "8": {
+      "title": "Fonctions de transfert, pôles et zéros",
+      "short": "Pôles",
+      "question": "Peut-on lire toute la personnalité d'un système dans une seule fraction ?"
+    },
+    "9": {
+      "title": "PID : on répare tout",
+      "short": "PID",
+      "question": "Comment supprimer l'affaissement *et* arrêter les oscillations ?"
+    },
+    "10": {
+      "title": "Retour à la douche",
+      "short": "Retard",
+      "question": "Pourquoi on oscillait, et à quelle distance du bord sommes-nous ?"
+    },
+    "11": {
+      "title": "Le défi du drone",
+      "short": "Finale",
+      "question": "Arriveras-*tu* à garder le drone à 2 m quoi qu'il arrive ?"
+    }
+  },
+  "map": {
+    "title": "La carte des idées",
+    "intro": "Toutes les idées qu'on a construites, et comment elles s'appuient les unes sur les autres. Elle grandit au fil de ta lecture. Clique sur une bulle pour revenir là où l'idée est née.",
+    "aria": "Carte des idées du cours : des idées reliées par des traits, regroupées par chapitre.",
+    "listIntro": "Idées débloquées jusqu'ici :",
+    "locked": "Pas encore découvert",
+    "nodes": {
+      "goal": "consigne",
+      "delay": "retard",
+      "openloop": "boucle ouverte",
+      "feedback": "rétroaction",
+      "blockdiagram": "schéma-bloc",
+      "error": "erreur",
+      "plant": "système",
+      "disturbance": "perturbation",
+      "kp": "commande P (Kp)",
+      "sserror": "erreur statique",
+      "overshoot": "dépassement",
+      "derivative": "dérivée = pente",
+      "firstorder": "système du premier ordre",
+      "tau": "constante de temps τ",
+      "integral": "intégrale = aire",
+      "exponential": "e^(at)",
+      "guess": "deviner une exponentielle",
+      "complex": "i = quart de tour",
+      "spin": "e^(iωt) tourne",
+      "spiral": "e^(st) fait des spirales",
+      "smap": "la carte de s",
+      "second": "système du 2e ordre",
+      "wnzeta": "ωn et ζ",
+      "sum": "somme de e^(st)",
+      "laplace": "sonde de Laplace",
+      "dtos": "d/dt → × s",
+      "table": "notre table",
+      "splane": "plan s",
+      "tf": "fonction de transfert",
+      "poles": "pôles",
+      "zeros": "zéros",
+      "stability": "stabilité",
+      "integralaction": "I : tuer l'affaissement",
+      "derivativeaction": "D : ajouter de l'amortissement",
+      "pid": "PID",
+      "noise": "bruit et à-coup",
+      "phaselag": "retard de phase",
+      "bode": "diagramme de Bode",
+      "margins": "marge de gain / de phase",
+      "robust": "robustesse",
+      "you": "TOI, automaticien·ne"
+    }
+  },
+  "units": {
+    "m": "m",
+    "s": "s",
+    "N": "N",
+    "C": "°C",
+    "kg": "kg"
+  },
+  "drone": {
+    "aria": "Vue de côté du drone au-dessus du sol. Une ligne verte en tirets marque la hauteur visée.",
+    "target": "cible",
+    "height": "hauteur",
+    "thrust": "poussée",
+    "wind": "vent",
+    "package": "colis",
+    "crash": "CRASH !",
+    "ground": "sol",
+    "describe": "Drone à {h} mètres, cible à {r} mètres, poussée de {T} newtons."
+  },
+  "plots": {
+    "time": "temps (s)",
+    "height": "hauteur (m)",
+    "thrust": "poussée (N)",
+    "temp": "température (°C)",
+    "knob": "robinet"
+  },
+  "footer": {
+    "label": "À propos de l'auteur",
+    "name": "Micheal Reilly",
+    "x": "X / Twitter",
+    "bluesky": "Bluesky",
+    "blog": "Blog",
+    "source": "Code source"
+  },
+  "lang": {
+    "button": "Langue : {name}",
+    "menu": "Choisir une langue",
+    "label": "Langue",
+    "switching": "Changement de langue…"
+  }
+}

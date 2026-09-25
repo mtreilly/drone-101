@@ -1,0 +1,451 @@
+{
+  "kicker": "Rozdział 1",
+  "title": "Układ otwarty kontra zamknięty",
+  "question": "Czy możemy po prostu *powiedzieć* dronowi, jakiego ciągu ma użyć?",
+  "sections": [
+    {
+      "id": "meet",
+      "title": "Poznajcie drona",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Pożyczyłam drona! Jego zadanie: nosić małe paczki i **wisieć dokładnie na wysokości 2 metrów**, żeby ktoś mógł je złapać."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "To jak z prysznicem, nie? Jedna liczba, której chcemy (2 m), i jedna rzecz, którą możemy zmieniać (jak mocno pchają śmigła)."
+        },
+        {
+          "t": "p",
+          "text": "Oto fakty. Dron waży **0,5 kg**, więc grawitacja ciągnie go w dół z siłą $0{,}5 \\times 9{,}81 \\approx 4{,}9$ niutona. Śmigła pchają w górę z {eff|ciągiem} $\\eff{T}$, który wybieramy. Kiedy dron się porusza, powietrze trochę się odpycha: mniej więcej **1 niuton na każdy metr na sekundę** prędkości."
+        },
+        {
+          "t": "math",
+          "tex": "\\underbrace{0{,}5\\,\\ddot{\\out{h}}}_{\\text{masa}\\times\\text{przyspieszenie}} = \\eff{T} - \\underbrace{4{,}9}_{\\text{ciężar}} - \\underbrace{1{,}0\\,\\dot{\\out{h}}}_{\\text{opór powietrza}}"
+        },
+        {
+          "t": "p",
+          "text": "Na razie nie przejmuj się kropkami nad $\\out{h}$. Oznaczają „jak szybko zmienia się $\\out{h}$”, a porządnie zbudujemy je w rozdziale 3. Na razie sama idea, słowami: **pchaj mocniej niż 4,9 N, a zaczniesz przyspieszać w górę; pchaj słabiej, a zaczniesz przyspieszać w dół.** Pchaj dokładnie 4,9 N, a będziesz dalej robić to, co już robisz."
+        },
+        {
+          "t": "note",
+          "text": "Uczciwe uproszczenia: nasz dron porusza się tylko w górę i w dół, opór powietrza to zgrabna liniowa reguła, a przez kilka najbliższych rozdziałów silniki mają nieograniczoną moc (potrafią nawet trochę ciągnąć w dół). Prawdziwe drony są bardziej skomplikowane. Ten bałagan dodamy później."
+        }
+      ]
+    },
+    {
+      "id": "plan",
+      "title": "Po prostu powiedz mu, co ma robić",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Znamy fizykę dokładnie. Więc nie musimy na nic *patrzeć*. Możemy **wyliczyć** plan: przez chwilę mocno pchać, żeby się wznieść, a potem pchać dokładnie 4,9 N, żeby wisieć."
+        },
+        {
+          "t": "p",
+          "text": "Taki plan nazywa się **układem otwartym**: plan decyduje o ciągu, a nikt nie sprawdza, co się naprawdę dzieje. Spróbuj. Wybierz ciąg wznoszenia i czas wznoszenia, a potem startuj."
+        },
+        {
+          "t": "widget",
+          "id": "schedule"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Wyliczyłem to. Podczas wznoszenia dron szybko osiąga stałą prędkość równą (nadwyżka ciągu ÷ opór). Wysokość, na której skończy, to po prostu **(nadwyżka ciągu ÷ opór) × czas wznoszenia**. Dla 6 N to $(6 - 4{,}9)/1 \\approx 1{,}1$ m/s, więc wznosimy się przez $2 \\div 1{,}1 \\approx 1{,}83$ sekundy."
+        },
+        {
+          "t": "p",
+          "text": "Naciśnij **Plan Thea**. Ląduje na 2,00 m. Pięknie."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Theo, to niesamowite! Skończone! Koniec rozdziału!"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Sprawdźmy tylko, co się dzieje na dworze… dziś trochę wieje."
+        },
+        {
+          "t": "p",
+          "text": "Uruchom plan Thea jeszcze raz, a gdy dron wisi, naciśnij **Podmuch** (pchnięcie w dół o sile 1 N przez jedną sekundę)."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Spadł o jakiś metr… i **zostaje** na dole. A moje obliczenia były dobre!"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Twoje obliczenia były idealne. Tylko wiatru nie było w twoim planie. A dron nie ma pojęcia, że jest w złym miejscu."
+        },
+        {
+          "t": "p",
+          "text": "To był nasz błąd: uwierzyliśmy, że **„jak dobrze policzysz, sprzężenie zwrotne nie jest potrzebne”**. Sukces w spokojnym powietrzu był prawdziwy, a mimo to plan stał się bezużyteczny w chwili, gdy świat zrobił coś niespodziewanego. Po podmuchu ciąg znów wynosi dokładnie 4,9 N, więc dron po prostu zostaje tam, gdzie zostawił go podmuch."
+        }
+      ]
+    },
+    {
+      "id": "package",
+      "title": "Test z paczką",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Teraz prawdziwe zadanie. Poniżej dron wisi na 2 m ze stałym ciągiem 4,9 N, który dokładnie równoważy jego ciężar. Ktoś przypina mu **paczkę 0,2 kg**."
+        },
+        {
+          "t": "predict",
+          "id": "ch1-package",
+          "gate": true,
+          "q": "Paczka sprawia, że dron jest cięższy, ale ciąg zostaje na 4,9 N. Co się stanie?",
+          "options": [
+            {
+              "text": "Opadnie trochę i się zatrzyma",
+              "sketch": "sink-stop",
+              "why": "Wydaje się, że dron powinien znaleźć nową równowagę. Ale przy stałych 4,9 N jest za ciężki na *każdej* wysokości: to, że jest niżej, nic mu nie pomaga."
+            },
+            {
+              "text": "Opada i opada, aż do samego dołu",
+              "sketch": "sink-crash",
+              "correct": true,
+              "why": "Dodatkowe 2 N ciężaru nigdy nie zostają zrównoważone. Opór powietrza nie pozwala mu przyspieszyć powyżej około **2 m/s**, ale z tą prędkością spada, aż uderzy w ziemię."
+            },
+            {
+              "text": "Nic: 0,2 kg to za mało, żeby miało znaczenie",
+              "sketch": "flat",
+              "why": "Każda różnica między ciągiem a ciężarem sprawia, że dron dryfuje. 0,2 kg dodaje około 2 N, a to dużo w porównaniu z oporem."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "feedback"
+        },
+        {
+          "t": "p",
+          "text": "**Katastrofa.** Nic w planie w układzie otwartym nie może zauważyć, że dron spada. Teraz przełącz tryb na **Sprzężenie zwrotne: patrz na wysokość**, zresetuj i spróbuj jeszcze raz z paczką i podmuchem."
+        },
+        {
+          "t": "p",
+          "text": "W trybie sprzężenia zwrotnego dron używa prostej reguły: **pchaj z ciągiem zawisu plus dodatkowe 8 N na każdy metr, o który jesteś za nisko.**"
+        },
+        {
+          "t": "math",
+          "tex": "\\eff{T} = 4{,}9 + 8 \\times (\\sp{2} - \\out{h})"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Łał. Podmuch spycha go w dół o mniej niż 20 cm, a on od razu wraca. Paczka sprawia, że trochę opada, ale się nie rozbija!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "On nie musi wiedzieć, *co* się stało. Po prostu widzi, że jest za nisko, i pcha mocniej. W tym cały trik."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Ale patrzcie: z paczką ustala się na około **1,75 m**, a nie na 2. Czemu nie wraca do końca?"
+        },
+        {
+          "t": "note",
+          "text": "Schowaj pytanie June do kieszeni. To cały rozdział 2."
+        }
+      ]
+    },
+    {
+      "id": "diagram",
+      "title": "Rysujemy to",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Inżynierowie rysują takie układy jako prostokąty i strzałki, zwane **schematami blokowymi**. Każdy blok coś robi; każda strzałka niesie sygnał. My narysowaliśmy nasz na tablicy, kawałek po kawałku."
+        },
+        {
+          "t": "widget",
+          "id": "whiteboard"
+        },
+        {
+          "t": "p",
+          "text": "Kluczowa różnica to ta jedna strzałka, która zawraca od wyjścia do początku. Dlatego sterowanie ze sprzężeniem zwrotnym nazywa się **układem zamkniętym**: informacja obiega całą pętlę. Przewiń z powrotem do testu z paczką: schemat pod dronem podświetla tę część, która akurat pracuje."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "{sp|Wartość zadana} $\\sp{r}$",
+              "def": "To, czego chcemy: 2 m wysokości, 38 °C wody."
+            },
+            {
+              "term": "{out|Wyjście} $\\out{h}$",
+              "def": "To, co dzieje się naprawdę: rzeczywista wysokość."
+            },
+            {
+              "term": "{err|Uchyb} $\\err{e} = \\sp{r} - \\out{h}$",
+              "def": "Jak bardzo chybiamy. Dodatni oznacza „za nisko”."
+            },
+            {
+              "term": "Regulator",
+              "def": "Reguła, która zamienia uchyb na działanie. Na razie: „8 N więcej na każdy metr za nisko”."
+            },
+            {
+              "term": "{eff|Sygnał sterujący} $\\eff{T}$",
+              "def": "To, co regulator faktycznie robi: ciąg."
+            },
+            {
+              "term": "Obiekt (sterowania)",
+              "def": "To, czym sterujemy: sam dron, razem z całą fizyką. (Po angielsku „plant”, dziwne słowo, od dawnych fabryk.)"
+            },
+            {
+              "term": "Czujnik",
+              "def": "Cokolwiek mierzy wyjście: czujnik wysokości drona, twoja skóra pod prysznicem."
+            },
+            {
+              "term": "{dis|Zakłócenie}",
+              "def": "Cokolwiek robi świat, czego nie planowaliśmy: podmuchy, paczki, ktoś spuszczający wodę w toalecie."
+            },
+            {
+              "term": "Układ otwarty / układ zamknięty",
+              "def": "Działanie według planu bez patrzenia / działanie na podstawie tego, co mierzysz."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cruise",
+      "title": "Ten sam obrazek, inna maszyna",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Oto ten sam schemat dla **tempomatu** w samochodzie. Wartość zadana to prędkość, obiekt to samochód, a zakłócenie to wzniesienie. Regulator mocniej wciska gaz, kiedy samochód jedzie wolniej, niż powinien."
+        },
+        {
+          "t": "widget",
+          "id": "cruise"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Termostaty, tempomat, prysznic, nasz dron… za każdym razem to **ta sama pętla**, tylko z innymi podpisami!"
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Co już wiemy",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "**Układ otwarty** to wykonywanie planu bez patrzenia. W spokojnych warunkach może być idealny, a bezużyteczny w chwili, gdy stanie się coś nieoczekiwanego.",
+            "**Układ zamknięty (sprzężenie zwrotne)** to mierzenie wyjścia, porównywanie go z wartością zadaną (to **uchyb**) i działanie na tej podstawie.",
+            "Sprzężenie zwrotne radzi sobie z zakłóceniami, o których nigdy nie słyszało: podmuchami, paczkami, czymkolwiek.",
+            "Schematy blokowe pokazują pętlę: wartość zadana → uchyb → regulator → obiekt → wyjście → czujnik → i z powrotem.",
+            "Nasza prosta reguła ze sprzężeniem zwrotnym zapobiegła katastrofie, ale z paczką dron ustalił się około 25 cm za nisko. Dlaczego?"
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch1-q1",
+              "q": "Co w prysznicu z rozdziału 0 pełni rolę **czujnika**?",
+              "options": [
+                {
+                  "text": "Kurek",
+                  "why": "Kurkiem *działasz*: ustawia sygnał sterujący. Niczego nie mierzy."
+                },
+                {
+                  "text": "Twoja skóra",
+                  "correct": true,
+                  "why": "Tak. Skóra mierzy wyjście (temperaturę wody) i przekazuje je z powrotem do regulatora (twojego mózgu)."
+                },
+                {
+                  "text": "Rura",
+                  "why": "Rura jest częścią **obiektu**, czyli tego, czym sterujemy. To z niej bierze się opóźnienie."
+                }
+              ]
+            },
+            {
+              "id": "ch1-q2",
+              "q": "Który z tych układów jest **układem zamkniętym**?",
+              "options": [
+                {
+                  "text": "Toster z minutnikiem",
+                  "why": "Minutnik nie sprawdza, jak bardzo przyrumieniony jest tost. Po prostu wykonuje plan: układ otwarty."
+                },
+                {
+                  "text": "Domowy termostat",
+                  "correct": true,
+                  "why": "Zgadza się. Mierzy temperaturę w pokoju i włącza lub wyłącza ogrzewanie na podstawie uchybu."
+                },
+                {
+                  "text": "Pralka wykonująca stały program",
+                  "why": "Wykonuje swój program niezależnie od tego, jak brudne są ubrania: układ otwarty."
+                }
+              ]
+            },
+            {
+              "id": "ch1-q3",
+              "q": "Wartość zadana to 2 m, a dron jest na 1,5 m. Ile wynosi uchyb $\\err{e} = \\sp{r} - \\out{h}$ i co powinien zrobić regulator?",
+              "options": [
+                {
+                  "text": "+0,5 m: pchać mocniej",
+                  "correct": true,
+                  "why": "Dodatni uchyb oznacza „za nisko”, więc więcej ciągu. Z naszą regułą to $4{,}9 + 8 \\times 0{,}5 = 8{,}9$ N."
+                },
+                {
+                  "text": "−0,5 m: pchać mocniej",
+                  "why": "Sprawdź kolejność: $\\sp{r} - \\out{h} = 2 - 1{,}5 = +0{,}5$. Wybieramy taką konwencję znaku, żeby dodatni uchyb oznaczał „za nisko”."
+                },
+                {
+                  "text": "3,5 m: pchać dużo mocniej",
+                  "why": "Uchyb to *różnica*, a nie suma: $2 - 1{,}5 = 0{,}5$ m."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "W naszej pętli siedzi tajemnicza liczba: **8 niutonów na metr**. Dlaczego 8? Czemu nie 2 albo 50? I dlaczego dron ustala się za nisko?"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "schedule": {
+      "title": "Układ otwarty: zaprogramuj harmonogram ciągu",
+      "slider": {
+        "thrust": "Ciąg wznoszenia",
+        "time": "Czas wznoszenia"
+      },
+      "launch": "Start",
+      "theo": "Plan Thea",
+      "gust": "Podmuch ↓",
+      "package": "Dodaj paczkę",
+      "disturb": "Zaskocz go:",
+      "plot": {
+        "height": "wysokość",
+        "thrust": "ciąg",
+        "aria": "Wysokość drona w ciągu 20 sekund, z celem na 2 metrach.",
+        "target": "cel 2 m"
+      },
+      "readout": {
+        "height": "wysokość",
+        "speed": "prędkość",
+        "thrust": "ciąg"
+      },
+      "status": {
+        "ready": "Według wzoru Thea ten plan skończy się na {h} m. Naciśnij Start.",
+        "perfect": "Koniec na {h} m. Idealnie w cel!",
+        "off": "Koniec na {h} m, o {d} m za {dir}.",
+        "high": "wysoko",
+        "low": "nisko",
+        "crash": "Rozbił się o ziemię!"
+      },
+      "planHelp": "Blada przerywana pomarańczowa linia to twój plan. Ciągła to to, co faktycznie zrobiły silniki."
+    },
+    "feedback": {
+      "title": "Zawis na 2 m: plan czy sprzężenie zwrotne?",
+      "mode": "Tryb",
+      "open": "Układ otwarty: stałe 4,9 N",
+      "closed": "Sprzężenie zwrotne: patrz na wysokość",
+      "gust": "Podmuch ↓",
+      "package": "Paczka",
+      "disturb": "Zakłócenia:",
+      "plot": {
+        "height": "wysokość",
+        "thrust": "ciąg",
+        "aria": "Wysokość wiszącego drona w ostatnich 15 sekundach, z zacieniowanym uchybem między celem a rzeczywistą wysokością."
+      },
+      "readout": {
+        "height": "wysokość",
+        "error": "uchyb r − h",
+        "thrust": "ciąg"
+      },
+      "status": {
+        "open": "Układ otwarty: ciąg stały, 4,9 N, cokolwiek się stanie.",
+        "closed": "Sprzężenie zwrotne: ciąg = 4,9 N + 8 N na każdy metr za nisko.",
+        "crash": "KATASTROFA! Zresetuj, przełącz na sprzężenie zwrotne i spróbuj ponownie.",
+        "predictRun": "Paczka zostaje przypięta w t = 1 s…"
+      },
+      "d": {
+        "setpoint": "cel r",
+        "error": "uchyb e",
+        "controller": "regulator",
+        "schedule": "stały\nciąg",
+        "thrust": "ciąg T",
+        "plant": "dron",
+        "disturbance": "wiatr, paczka",
+        "output": "wysokość h",
+        "sensor": "czujnik wysokości",
+        "aria": "Schemat blokowy pętli sterowania drona",
+        "description": "Cel minus zmierzona wysokość daje uchyb; regulator zamienia uchyb na ciąg; ciąg i zakłócenia działają na drona; wysokość drona jest mierzona przez czujnik i wraca, by zostać odjęta od celu. W trybie układu otwartego widać tylko tor w przód."
+      }
+    },
+    "whiteboard": {
+      "title": "Rysujemy pętlę, kawałek po kawałku",
+      "back": "Wstecz",
+      "next": "Dalej",
+      "counter": "Krok {n} z {total}",
+      "step1": "Mika: „Ciąg wchodzi, wysokość wychodzi. Dron to pudełko, które zamienia jedno w drugie”. Nazywamy je obiektem.",
+      "step2": "Theo: „Układ otwarty: wybieramy ciąg z planu, tylko na podstawie celu”.",
+      "step3": "June: „A świat też popycha drona: wiatr, paczki. Zakłócenia”.",
+      "step4": "Mika: „To zmierzmy wysokość czujnikiem…”",
+      "step5": "Theo: „…i odejmijmy ją od celu. Ta różnica to uchyb, a regulator na nią reaguje. Pętla jest zamknięta!”",
+      "d": {
+        "setpoint": "cel r",
+        "error": "uchyb e",
+        "controller": "regulator",
+        "schedule": "plan\nciągu",
+        "thrust": "ciąg T",
+        "plant": "dron\n(obiekt)",
+        "disturbance": "wiatr, paczka",
+        "output": "wysokość h",
+        "sensor": "czujnik",
+        "aria": "Schemat blokowy rysowany krok po kroku",
+        "description": "Schemat blokowy budowany w pięciu krokach: sam obiekt; zasilający go plan w układzie otwartym; działające na niego zakłócenia; czujnik mierzący wyjście; i wreszcie uchyb, regulator i węzeł sumacyjny, które zamykają pętlę."
+      }
+    },
+    "cruise": {
+      "title": "Tempomat: ta sama pętla",
+      "d": {
+        "setpoint": "zadana prędkość",
+        "error": "uchyb",
+        "controller": "regulator\ntempomatu",
+        "schedule": "",
+        "thrust": "pedał gazu",
+        "plant": "samochód",
+        "disturbance": "wzniesienia, wiatr",
+        "output": "prędkość",
+        "sensor": "prędkościomierz",
+        "aria": "Schemat blokowy tempomatu w samochodzie",
+        "description": "Zadana prędkość minus zmierzona prędkość daje uchyb prędkości; regulator tempomatu zamienia go na wciśnięcie pedału gazu; pedał i wzniesienia działają na samochód; prędkościomierz mierzy prędkość i przekazuje ją z powrotem."
+      }
+    }
+  }
+}

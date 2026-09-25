@@ -1,0 +1,171 @@
+{
+  "kicker": "Capítulo 2",
+  "title": "Control proporcional",
+  "question": "¿Con cuánta fuerza debe empujar el dron cuando está demasiado bajo?",
+  "sections": [
+    {
+      "id": "push",
+      "title": "Empuja más cuanto más lejos estés",
+      "blocks": [
+        { "t": "say", "who": "june", "mood": "think", "text": "La última vez, con el paquete, el dron se quedó 25 cm por debajo. Quiero saber por qué." },
+        { "t": "say", "who": "theo", "mood": "think", "text": "Nuestra regla tenía dos partes: 4,9 N para sostener el dron, más 8 N por cada metro de error. Los 4,9 N eran una suposición sobre el peso. En cuanto el paquete cambió el peso, la suposición dejó de valer." },
+        { "t": "say", "who": "mika", "mood": "excited", "text": "¡Pues quitemos la suposición! Nada de 4,9. Que **el error haga todo el trabajo**: empujar en proporción a lo lejos que estés." },
+        { "t": "p", "text": "Ese es el controlador más famoso que existe, el **control proporcional** (\"control P\" para abreviar):" },
+        { "t": "math", "tex": "\\eff{T} = K_p \\, \\err{e} = K_p\\,(\\sp{r} - \\out{h})" },
+        { "t": "p", "text": "$K_p$ es la **ganancia**: cuántos newtons de empuje añades por cada metro de error. Su unidad es el newton por metro (N/m). Una $K_p$ grande significa un controlador impaciente; una $K_p$ pequeña, uno relajado. Es el único mando que tenemos en este capítulo." },
+        { "t": "note", "aside": true, "text": "Seguimos fingiendo que los motores son ilimitados. Hasta pueden tirar un poco hacia abajo si el dron está demasiado alto. Seremos honestos con los límites en el capítulo 8." },
+        {
+          "t": "predict",
+          "id": "ch2-kp5",
+          "gate": true,
+          "q": "Toma $K_p = 5$ N/m. El dron sale del suelo y se dirige a 2 m. ¿A qué altura **acaba** flotando?",
+          "options": [
+            { "text": "Exactamente a 2 m", "why": "A exactamente 2 m el error es cero, así que el empuje sería $5 \\times 0 = 0$ N y el dron caería. No puede quedarse ahí." },
+            { "text": "A 1 m, más o menos", "correct": true, "why": "Para flotar, el empuje tiene que igualar el peso (4,9 N). Con $K_p = 5$ hace falta un error de $4.9 / 5 \\approx 0.98$ m, así que flota a unos **1,02 m**." },
+            { "text": "Por encima de 2 m", "why": "Por encima de 2 m el error es negativo, así que el empuje sería negativo y bajaría. Estar demasiado alto no puede ser un sitio de reposo." }
+          ]
+        },
+        { "t": "widget", "id": "pcontrol" },
+        { "t": "p", "text": "Mira la {out|línea azul punteada}: es donde el dron acaba flotando, y siempre está **por debajo** del {sp|objetivo}. Esa diferencia se llama **error en estado estacionario**, o simplemente la **caída**." },
+        { "t": "say", "who": "theo", "mood": "happy", "text": "Es un tira y afloja. La gravedad tira hacia abajo con 4,9 N, siempre. La única forma de que el controlador empuje de vuelta con 4,9 N es que **quede algo de error** que multiplicar." },
+        { "t": "math", "tex": "\\eff{T} = \\text{peso} \\;\\Rightarrow\\; K_p\\,\\err{e} = 4.9 \\;\\Rightarrow\\; \\err{e}_{\\text{caída}} = \\frac{4.9}{K_p}\\ \\text{m}" },
+        { "t": "p", "text": "Ahora baja $K_p$ hasta **2 N/m**. ¡El dron ni siquiera despega! En el suelo el error es de 2 m, así que el empuje es solo $2 \\times 2 = 4$ N, menos que los 4,9 N de peso. La fórmula dice que necesitaría caer 2,45 m, es decir, bajo tierra." }
+      ]
+    },
+    {
+      "id": "more",
+      "title": "¡Pues súbelo!",
+      "blocks": [
+        { "t": "say", "who": "june", "mood": "excited", "text": "Arreglo fácil: **más ganancia siempre es mejor**. $K_p$ más grande, caída más pequeña. ¡A tope!" },
+        { "t": "say", "who": "mika", "mood": "excited", "text": "Voy. Potencia máxima: ¡$K_p = 60$!" },
+        { "t": "widget", "id": "mika-button", "wide": false },
+        { "t": "say", "who": "mika", "mood": "happy", "text": "¡La caída baja a **8 cm**! A los pocos segundos está prácticamente en 2 m. ¡Victoria!" },
+        { "t": "say", "who": "theo", "mood": "worried", "text": "Mika… mira los dos primeros segundos. Se disparó hasta unos **3,4 metros**, muy por encima del objetivo. Y mira el {eff|empuje}: 120 N al despegar, luego tirando *hacia abajo*, luego otra vez hacia arriba. Eso no es flotar, es rebotar." },
+        { "t": "say", "who": "mika", "mood": "worried", "text": "Vaya. Solo miré dónde acababa. El {err|área roja de error} del principio es enorme." },
+        { "t": "p", "text": "Ese fue el error de Mika: juzgar un controlador solo por dónde se queda **al final**. **Cómo llega** importa igual. Prueba unas cuantas ganancias y fíjate en el fantasma tenue de tu intento anterior:" },
+        {
+          "t": "list",
+          "items": [
+            "**Ganancia baja** ($K_p$ pequeña): suave, pero cae mucho. Bájala lo suficiente y el dron no llega a despegar.",
+            "**Ganancia alta** ($K_p$ grande): poca caída, pero tiene **sobreimpulso** (se pasa de la altura en la que acabará) y oscila antes de estabilizarse."
+          ]
+        },
+        { "t": "say", "who": "june", "mood": "think", "text": "¿Por qué empujar *más fuerte* lo haría *tambalearse*?" },
+        { "t": "say", "who": "theo", "mood": "think", "text": "Un empujón grande lo pone en movimiento rápido. Cuando llega a la altura correcta todavía va deprisa, y nada en nuestra regla dice \"frena, que ya casi estás\". Solo el rozamiento del aire lo frena un poquito. Así que se pasa, lo empujan de vuelta, se vuelve a pasar…" },
+        { "t": "note", "text": "Nota honesta: con nuestro dron sencillo, el control P oscila pero nunca llega a **descontrolarse** de verdad. Las oscilaciones siempre acaban apagándose. Los drones reales tienen pequeños retardos (los motores tardan en acelerar) que hacen que demasiada ganancia sea peligrosa de verdad. Eso es en los capítulos 10 y 11." }
+      ]
+    },
+    {
+      "id": "challenge",
+      "title": "Un desafío",
+      "blocks": [
+        { "t": "p", "text": "Busquemos el punto justo. El dron aprueba si cae **menos de 20 cm** *y* tiene un sobreimpulso **menor del 30 %** (medimos el sobreimpulso como cuánto se pasa por encima de la altura en la que acaba quedándose). Encuentra una $K_p$ que cumpla las dos cosas." },
+        { "t": "widget", "id": "challenge" },
+        { "t": "say", "who": "mika", "mood": "worried", "text": "¡Las zonas verdes no se solapan nunca! La caída necesita $K_p$ por encima de unos 24,5; el sobreimpulso, por debajo de unos 3,9. **No hay solución**." },
+        { "t": "say", "who": "theo", "mood": "think", "text": "Porque un solo mando controla las dos cosas, y tira de ellas en direcciones opuestas. No es que no hayamos dado con el número correcto. **No existe.** Necesitamos un *tipo* de controlador mejor." },
+        { "t": "say", "who": "june", "mood": "think", "text": "Para diseñar uno mejor, tenemos que hablar de las oscilaciones como es debido. \"Lento\", \"saltarín\", \"acaba estabilizándose\"… eso son sensaciones, no física." }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Lo que sabemos hasta ahora",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "**Control proporcional**: empuje = $K_p \\times$ error. Un solo mando, la ganancia $K_p$ (N/m).",
+            "Contra la gravedad, el control P siempre deja un **error en estado estacionario** (caída) de $4.9 / K_p$ m: tiene que quedar algo de error para producir el empuje que sostiene el dron.",
+            "Ganancia baja significa mucha caída y una respuesta lenta. Ganancia alta significa poca caída, pero **sobreimpulso** y oscilaciones.",
+            "\"Más ganancia siempre es mejor\" es falso. Para nuestro dron, ninguna $K_p$ da a la vez poca caída y poco sobreimpulso."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch2-q1",
+              "q": "Con $K_p = 10$ N/m (y sin empuje de vuelo estacionario), ¿cuánto por debajo de 2 m flotará el dron?",
+              "options": [
+                { "text": "0 m: llega al objetivo", "why": "En el objetivo el error es cero, así que el empuje es cero. El control P solo no puede sostenerlo ahí contra la gravedad." },
+                { "text": "Unos 0,49 m", "correct": true, "why": "El empuje tiene que igualar los 4,9 N de peso: $10 \\times e = 4.9$ da $e = 0.49$ m. Flota a unos 1,51 m." },
+                { "text": "Unos 4,9 m", "why": "Eso es el peso en newtons, no la caída. Divide por la ganancia: $4.9 / 10 = 0.49$ m." }
+              ]
+            },
+            {
+              "id": "ch2-q2",
+              "q": "¿Cuál de estas respuestas viene de la $K_p$ **más alta**? (La línea discontinua es el objetivo.)",
+              "options": [
+                { "text": "Baja, con una pequeña oscilación", "sketch": "droop", "why": "Una caída grande significa una ganancia *pequeña*: hace falta mucho error para producir suficiente empuje." },
+                { "text": "Cerca del objetivo, con grandes oscilaciones", "sketch": "overshoot", "correct": true, "why": "Poca caída y mucho sobreimpulso son la firma de una ganancia alta." },
+                { "text": "Suave y exactamente en el objetivo", "sketch": "sluggish", "why": "Opción trampa: un controlador P puro luchando contra la gravedad **nunca** puede acabar exactamente en el objetivo, sea cual sea $K_p$. Falta algo (capítulo 9)." }
+              ]
+            },
+            {
+              "id": "ch2-q3",
+              "q": "¿Por qué el dron con control P no puede flotar exactamente a 2 m?",
+              "options": [
+                { "text": "Con error cero el empuje es cero, así que ganaría la gravedad", "correct": true, "why": "Exacto. Flotar requiere 4,9 N, y el control P solo produce empuje cuando hay error." },
+                { "text": "El sensor de altura no es lo bastante preciso", "why": "En este capítulo nuestro sensor es perfecto, y el dron sigue cayendo. Es la regla de control, no la medida." },
+                { "text": "El rozamiento del aire lo frena", "why": "El rozamiento solo actúa mientras el dron se mueve. Flotando quieto no hay rozamiento, y la caída sigue ahí." }
+              ]
+            },
+            {
+              "id": "ch2-q4",
+              "q": "El dron recoge un paquete y pasa a pesar **el doble**. Con la misma $K_p$, la caída…",
+              "options": [
+                { "text": "se duplica", "correct": true, "why": "Caída = peso ÷ $K_p$. El doble de peso necesita el doble de error para sostenerlo." },
+                { "text": "se reduce a la mitad", "why": "Un dron más pesado necesita *más* empuje, así que *más* error, no menos." },
+                { "text": "se queda igual", "why": "La caída es exactamente el error necesario para equilibrar el peso, así que depende directamente del peso." }
+              ]
+            }
+          ]
+        },
+        { "t": "map" },
+        { "t": "cliff", "text": "Lento. Oscilante. Se pasa. Se estabiliza. No paramos de describir **cómo cambian las cosas con el tiempo** con palabras difusas. Necesitamos un lenguaje de verdad para el cambio." }
+      ]
+    }
+  ],
+  "widgets": {
+    "pcontrol": {
+      "title": "Control P: empuje = Kp × error",
+      "slider": "Ganancia proporcional Kp",
+      "sliderHint": "newtons extra de empuje por metro de error",
+      "plot": {
+        "height": "altura",
+        "thrust": "empuje",
+        "aria": "Altura del dron durante 10 segundos mientras despega hacia 2 metros con control proporcional, con el error sombreado en rojo y el intento anterior como fantasma tenue.",
+        "target": "objetivo 2 m",
+        "hovers": "se queda en {h} m"
+      },
+      "readout": { "final": "se queda en", "droop": "caída", "overshoot": "sobreimpulso", "peakThrust": "empuje máximo" },
+      "status": {
+        "ground": "No despega nunca: en el suelo el empuje es solo de {T} N, menos que los {w} N de peso.",
+        "flies": "Se queda en {h} m ({d} cm de caída), tras dispararse hasta {p} m ({o} % de sobreimpulso)."
+      }
+    },
+    "mika-button": { "label": "Poner Kp = 60 N/m (idea de Mika)" },
+    "challenge": {
+      "title": "Encuentra una Kp con caída < 20 cm y sobreimpulso < 30 %",
+      "slider": "Ganancia proporcional Kp",
+      "kpAxis": "Kp (N/m)",
+      "droopAxis": "caída (m)",
+      "overAxis": "sobreimpulso (%)",
+      "droopSeries": "caída = 4,9 / Kp",
+      "overSeries": "sobreimpulso",
+      "droopAria": "Caída frente a la ganancia Kp: disminuye al crecer Kp. La zona de aprobado (caída menor de 20 cm) es Kp por encima de 24,5.",
+      "overAria": "Sobreimpulso frente a la ganancia Kp: aumenta al crecer Kp. La zona de aprobado (sobreimpulso menor del 30 por ciento) es Kp entre 2,45 y 3,9.",
+      "okZone": "aprueba",
+      "droopLimit": "20 cm",
+      "overLimit": "30 %",
+      "noflight": "no despega",
+      "readout": { "droop": "caída", "overshoot": "sobreimpulso" },
+      "help": "Cada curva muestra lo que haría el dron con cada Kp. La franja verde es donde se cumple ese requisito concreto.",
+      "status": {
+        "neither": "Aquí no se cumple ningún requisito. Sigue explorando.",
+        "droopOnly": "La caída aprueba ✓ pero el sobreimpulso es demasiado grande.",
+        "overOnly": "El sobreimpulso aprueba ✓ pero la caída es enorme.",
+        "impossible": "Has encontrado las dos zonas verdes y no se solapan nunca: la caída necesita Kp > {a}, el sobreimpulso necesita Kp < {b}. Ninguna Kp puede aprobar."
+      }
+    }
+  }
+}

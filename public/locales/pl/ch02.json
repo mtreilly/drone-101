@@ -1,0 +1,171 @@
+{
+  "kicker": "Rozdział 2",
+  "title": "Regulacja proporcjonalna",
+  "question": "Jak mocno dron powinien pchać, kiedy jest za nisko?",
+  "sections": [
+    {
+      "id": "push",
+      "title": "Pchaj tym mocniej, im dalej jesteś",
+      "blocks": [
+        { "t": "say", "who": "june", "mood": "think", "text": "Ostatnio dron z paczką ustalił się 25 cm za nisko. Chcę wiedzieć dlaczego." },
+        { "t": "say", "who": "theo", "mood": "think", "text": "Nasza reguła miała dwie części: 4,9 N, żeby utrzymać drona w górze, plus 8 N na każdy metr uchybu. Te 4,9 N to było zgadywanie ciężaru. Kiedy paczka zmieniła ciężar, zgadywanie przestało się zgadzać." },
+        { "t": "say", "who": "mika", "mood": "excited", "text": "To wyrzućmy zgadywanie! Żadnych 4,9. Niech **uchyb wykona całą robotę**: pchaj proporcjonalnie do tego, jak daleko jesteś od celu." },
+        { "t": "p", "text": "To najsłynniejszy regulator, jaki istnieje: **regulacja proporcjonalna** (w skrócie „regulator P”):" },
+        { "t": "math", "tex": "\\eff{T} = K_p \\, \\err{e} = K_p\\,(\\sp{r} - \\out{h})" },
+        { "t": "p", "text": "$K_p$ to **wzmocnienie**: ile niutonów ciągu dodajesz na każdy metr uchybu. Jego jednostka to niutony na metr (N/m). Duże $K_p$ to gorliwy regulator, małe $K_p$ to wyluzowany. To jedyne pokrętło, jakie dostajemy w tym rozdziale." },
+        { "t": "note", "aside": true, "text": "Dalej udajemy, że silniki są nieograniczone. Potrafią nawet trochę ciągnąć w dół, gdy dron jest za wysoko. Uczciwie o ograniczeniach powiemy w rozdziale 8." },
+        {
+          "t": "predict",
+          "id": "ch2-kp5",
+          "gate": true,
+          "q": "Weź $K_p = 5$ N/m. Dron startuje z ziemi i leci na 2 m. Gdzie **ostatecznie** zawiśnie?",
+          "options": [
+            { "text": "Dokładnie na 2 m", "why": "Dokładnie na 2 m uchyb wynosi zero, więc ciąg byłby równy $5 \\times 0 = 0$ N i dron by spadł. Nie może tam zostać." },
+            { "text": "Około 1 m", "correct": true, "why": "Żeby wisieć, ciąg musi być równy ciężarowi (4,9 N). Przy $K_p = 5$ potrzeba do tego uchybu $4{,}9 / 5 \\approx 0{,}98$ m, więc dron wisi na mniej więcej **1,02 m**." },
+            { "text": "Powyżej 2 m", "why": "Powyżej 2 m uchyb jest ujemny, więc ciąg byłby ujemny i dron by opadał. Bycie za wysoko nie może być miejscem spoczynku." }
+          ]
+        },
+        { "t": "widget", "id": "pcontrol" },
+        { "t": "p", "text": "Spójrz na {out|kropkowaną niebieską linię}: tam dron ostatecznie zawisa, i zawsze jest to **poniżej** {sp|celu}. Ta luka nazywa się **uchybem ustalonym**, albo po prostu **zwisem**." },
+        { "t": "say", "who": "theo", "mood": "happy", "text": "To przeciąganie liny. Grawitacja ciągnie w dół z siłą 4,9 N, zawsze. Regulator może odpowiedzieć siłą 4,9 N tylko wtedy, gdy zostaje **jakiś uchyb**, który można pomnożyć." },
+        { "t": "math", "tex": "\\eff{T} = \\text{ciężar} \\;\\Rightarrow\\; K_p\\,\\err{e} = 4{,}9 \\;\\Rightarrow\\; \\err{e}_{\\text{zwis}} = \\frac{4{,}9}{K_p}\\ \\text{m}" },
+        { "t": "p", "text": "Teraz zjedź z $K_p$ do **2 N/m**. Dron nawet nie odrywa się od ziemi! Na ziemi uchyb wynosi 2 m, więc ciąg to tylko $2 \\times 2 = 4$ N, mniej niż 4,9 N ciężaru. Ze wzoru wychodzi, że musiałby zwisać o 2,45 m, czyli pod ziemią." }
+      ]
+    },
+    {
+      "id": "more",
+      "title": "Po prostu podkręć!",
+      "blocks": [
+        { "t": "say", "who": "june", "mood": "excited", "text": "Łatwa poprawka: **więcej wzmocnienia to zawsze lepiej**. Większe $K_p$, mniejszy zwis. Podkręcaj!" },
+        { "t": "say", "who": "mika", "mood": "excited", "text": "Już się robi. Pełna moc: $K_p = 60$!" },
+        { "t": "widget", "id": "mika-button", "wide": false },
+        { "t": "say", "who": "mika", "mood": "happy", "text": "Zwis spadł do **8 cm**! Po kilku sekundach dron jest praktycznie na 2 m. Zwycięstwo!" },
+        { "t": "say", "who": "theo", "mood": "worried", "text": "Mika… spójrz na pierwsze dwie sekundy. Wystrzelił na jakieś **3,4 metra**, daleko ponad cel. I spójrz na {eff|ciąg}: 120 N na starcie, potem ciągnięcie *w dół*, potem znowu w górę. To nie jest wiszenie, to podskakiwanie." },
+        { "t": "say", "who": "mika", "mood": "worried", "text": "Oj. Patrzyłam tylko na to, gdzie skończył. {err|Czerwone pole uchybu} na początku jest ogromne." },
+        { "t": "p", "text": "To był błąd Miki: ocenianie regulatora tylko po tym, gdzie się **ostatecznie** ustala. To, jak tam **dochodzi**, ma równie duże znaczenie. Wypróbuj kilka wzmocnień i obserwuj bladego ducha poprzedniego przebiegu:" },
+        {
+          "t": "list",
+          "items": [
+            "**Małe wzmocnienie** (małe $K_p$): łagodnie, ale z dużym zwisem. Zjedź wystarczająco nisko, a dron w ogóle nie wystartuje.",
+            "**Duże wzmocnienie** (duże $K_p$): mały zwis, ale **przeregulowanie** (dron wystrzeliwuje ponad miejsce, w którym się ustali) i kołysanie, zanim się uspokoi."
+          ]
+        },
+        { "t": "say", "who": "june", "mood": "think", "text": "Czemu *mocniejsze* pchanie miałoby powodować *kołysanie*?" },
+        { "t": "say", "who": "theo", "mood": "think", "text": "Mocne pchnięcie szybko go rozpędza. Kiedy dociera na właściwą wysokość, wciąż leci szybko, a nic w naszej regule nie mówi „zwolnij, już prawie jesteś”. Hamuje go tylko delikatnie opór powietrza. Więc przelatuje dalej, zostaje zepchnięty z powrotem, znowu przelatuje…" },
+        { "t": "note", "text": "Uczciwa uwaga: w naszym prostym dronie regulator P powoduje kołysanie, ale nigdy tak naprawdę nie **wybucha**. Wahania zawsze w końcu wygasają. Prawdziwe drony mają małe opóźnienia (silniki potrzebują czasu, żeby się rozkręcić), przez które za duże wzmocnienie staje się naprawdę niebezpieczne. O tym w rozdziałach 10 i 11." }
+      ]
+    },
+    {
+      "id": "challenge",
+      "title": "Wyzwanie",
+      "blocks": [
+        { "t": "p", "text": "Znajdźmy złoty środek. Dron zalicza test, jeśli zwis jest **mniejszy niż 20 cm** *i* przeregulowanie jest **mniejsze niż 30%** (przeregulowanie mierzymy jako to, jak wysoko dron wystrzeliwuje ponad wysokość, na której ostatecznie się ustala). Znajdź $K_p$, które spełnia oba warunki." },
+        { "t": "widget", "id": "challenge" },
+        { "t": "say", "who": "mika", "mood": "worried", "text": "Zielone strefy nigdy na siebie nie zachodzą! Zwis wymaga $K_p$ powyżej około 24,5, przeregulowanie wymaga poniżej około 3,9. **Nie ma odpowiedzi**." },
+        { "t": "say", "who": "theo", "mood": "think", "text": "Bo jedno pokrętło steruje obiema rzeczami i ciągnie je w przeciwne strony. To nie tak, że jeszcze nie znaleźliśmy właściwej liczby. **Takiej liczby nie ma.** Potrzebujemy lepszego *rodzaju* regulatora." },
+        { "t": "say", "who": "june", "mood": "think", "text": "Żeby zaprojektować lepszy, musimy porządnie mówić o kołysaniu. „Ospały”, „skoczny”, „w końcu się uspokaja”… to są wrażenia, a nie fizyka." }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Co już wiemy",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "**Regulacja proporcjonalna**: ciąg = $K_p \\times$ uchyb. Jedno pokrętło, wzmocnienie $K_p$ (N/m).",
+            "W walce z grawitacją regulator P zawsze zostawia **uchyb ustalony** (zwis) równy $4{,}9 / K_p$ m: jakiś uchyb musi zostać, żeby wytworzyć ciąg, który utrzymuje drona w górze.",
+            "Małe wzmocnienie to duży zwis i ospała odpowiedź. Duże wzmocnienie to mały zwis, ale **przeregulowanie** i kołysanie.",
+            "„Więcej wzmocnienia to zawsze lepiej” to nieprawda. Dla naszego drona żadne pojedyncze $K_p$ nie daje jednocześnie małego zwisu i małego przeregulowania."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch2-q1",
+              "q": "Przy $K_p = 10$ N/m (i bez ciągu zawisu) jak daleko poniżej 2 m zawiśnie dron?",
+              "options": [
+                { "text": "0 m: dociera do celu", "why": "W celu uchyb wynosi zero, więc ciąg też wynosi zero. Sam regulator P nie utrzyma tam drona wbrew grawitacji." },
+                { "text": "Około 0,49 m", "correct": true, "why": "Ciąg musi być równy 4,9 N ciężaru: z $10 \\times e = 4{,}9$ wychodzi $e = 0{,}49$ m. Dron wisi na mniej więcej 1,51 m." },
+                { "text": "Około 4,9 m", "why": "To ciężar w niutonach, a nie zwis. Podziel przez wzmocnienie: $4{,}9 / 10 = 0{,}49$ m." }
+              ]
+            },
+            {
+              "id": "ch2-q2",
+              "q": "Która z tych odpowiedzi pochodzi od **największego** $K_p$? (Linia przerywana to cel.)",
+              "options": [
+                { "text": "Nisko, z lekkim kołysaniem", "sketch": "droop", "why": "Duży zwis oznacza *małe* wzmocnienie: potrzeba dużo uchybu, żeby wytworzyć wystarczający ciąg." },
+                { "text": "Blisko celu, z dużym kołysaniem", "sketch": "overshoot", "correct": true, "why": "Mały zwis i duże przeregulowanie to znak rozpoznawczy dużego wzmocnienia." },
+                { "text": "Płynnie i dokładnie w cel", "sketch": "sluggish", "why": "Podchwytliwa opcja: czysty regulator P walczący z grawitacją **nigdy** nie skończy dokładnie w celu, niezależnie od $K_p$. Czegoś brakuje (rozdział 9)." }
+              ]
+            },
+            {
+              "id": "ch2-q3",
+              "q": "Dlaczego dron z regulatorem P nie może wisieć dokładnie na 2 m?",
+              "options": [
+                { "text": "Przy zerowym uchybie ciąg wynosi zero, więc grawitacja by wygrała", "correct": true, "why": "Dokładnie. Wiszenie wymaga 4,9 N, a regulator P wytwarza ciąg tylko wtedy, gdy jest uchyb." },
+                { "text": "Czujnik wysokości nie jest wystarczająco dokładny", "why": "W tym rozdziale nasz czujnik jest idealny, a dron i tak zwisa. Winna jest reguła sterowania, a nie pomiar." },
+                { "text": "Opór powietrza go powstrzymuje", "why": "Opór działa tylko wtedy, gdy dron się porusza. Gdy wisi nieruchomo, oporu nie ma wcale, a zwis wciąż jest." }
+              ]
+            },
+            {
+              "id": "ch2-q4",
+              "q": "Dron podnosi paczkę i staje się **dwa razy cięższy**. Przy tym samym $K_p$ zwis…",
+              "options": [
+                { "text": "się podwaja", "correct": true, "why": "Zwis = ciężar ÷ $K_p$. Dwa razy większy ciężar wymaga dwa razy większego uchybu, żeby go utrzymać." },
+                { "text": "maleje o połowę", "why": "Cięższy dron potrzebuje *więcej* ciągu, więc *więcej* uchybu, a nie mniej." },
+                { "text": "zostaje taki sam", "why": "Zwis to dokładnie uchyb potrzebny do zrównoważenia ciężaru, więc zależy wprost od ciężaru." }
+              ]
+            }
+          ]
+        },
+        { "t": "map" },
+        { "t": "cliff", "text": "Ospały. Rozkołysany. Przestrzeliwuje. Uspokaja się. Ciągle opisujemy **jak rzeczy zmieniają się w czasie** mglistymi słowami. Potrzebujemy prawdziwego języka zmiany." }
+      ]
+    }
+  ],
+  "widgets": {
+    "pcontrol": {
+      "title": "Regulator P: ciąg = Kp × uchyb",
+      "slider": "Wzmocnienie proporcjonalne Kp",
+      "sliderHint": "dodatkowe niutony ciągu na metr uchybu",
+      "plot": {
+        "height": "wysokość",
+        "thrust": "ciąg",
+        "aria": "Wysokość drona w ciągu 10 sekund, gdy startuje w stronę 2 metrów z regulatorem proporcjonalnym; uchyb zacieniowany na czerwono, poprzedni przebieg jako blady duch.",
+        "target": "cel 2 m",
+        "hovers": "ustala się na {h} m"
+      },
+      "readout": { "final": "ustala się na", "droop": "zwis", "overshoot": "przeregulowanie", "peakThrust": "szczytowy ciąg" },
+      "status": {
+        "ground": "Nie odrywa się od ziemi: na ziemi ciąg to tylko {T} N, mniej niż {w} N ciężaru.",
+        "flies": "Ustala się na {h} m (zwis {d} cm), po wystrzeleniu do {p} m (przeregulowanie {o} %)."
+      }
+    },
+    "mika-button": { "label": "Ustaw Kp = 60 N/m (pomysł Miki)" },
+    "challenge": {
+      "title": "Znajdź Kp ze zwisem < 20 cm i przeregulowaniem < 30 %",
+      "slider": "Wzmocnienie proporcjonalne Kp",
+      "kpAxis": "Kp (N/m)",
+      "droopAxis": "zwis (m)",
+      "overAxis": "przeregulowanie (%)",
+      "droopSeries": "zwis = 4,9 / Kp",
+      "overSeries": "przeregulowanie",
+      "droopAria": "Zwis w zależności od wzmocnienia Kp: maleje, gdy Kp rośnie. Strefa zaliczenia (zwis poniżej 20 cm) to Kp powyżej 24,5.",
+      "overAria": "Przeregulowanie w zależności od wzmocnienia Kp: rośnie, gdy Kp rośnie. Strefa zaliczenia (przeregulowanie poniżej 30 procent) to Kp między 2,45 a 3,9.",
+      "okZone": "zalicza",
+      "droopLimit": "20 cm",
+      "overLimit": "30 %",
+      "noflight": "brak startu",
+      "readout": { "droop": "zwis", "overshoot": "przeregulowanie" },
+      "help": "Każda krzywa pokazuje, co dron zrobiłby przy każdym Kp. Zielony pas to miejsce, gdzie dany warunek jest spełniony.",
+      "status": {
+        "neither": "Tu nie jest spełniony żaden warunek. Szukaj dalej.",
+        "droopOnly": "Zwis zalicza ✓, ale przeregulowanie jest o wiele za duże.",
+        "overOnly": "Przeregulowanie zalicza ✓, ale zwis jest ogromny.",
+        "impossible": "Znaleziono obie zielone strefy i nigdy na siebie nie zachodzą: zwis wymaga Kp > {a}, przeregulowanie wymaga Kp < {b}. Żadne pojedyncze Kp nie zaliczy."
+      }
+    }
+  }
+}
