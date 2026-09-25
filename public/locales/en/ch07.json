@@ -1,6 +1,526 @@
 {
-  "kicker": "Chapter 7",
-  "title": "Coming soon",
-  "question": "…",
-  "sections": [{ "id": "s1", "title": "", "blocks": [{ "t": "p", "text": "This notebook is still being written." }] }]
+ "kicker": "Chapter 7",
+ "title": "The Laplace Transform",
+ "question": "Can we turn calculus into algebra?",
+ "sections": [
+  {
+   "id": "probe",
+   "title": "A probe for signals",
+   "blocks": [
+    {
+     "t": "say",
+     "who": "theo",
+     "mood": "worried",
+     "text": "Every time we solved something, we *guessed* $e^{st}$, plugged it in, and prayed. Now add gravity, a starting height, a controller… my notebook is on fire."
+    },
+    {
+     "t": "say",
+     "who": "june",
+     "mood": "think",
+     "text": "When I build stuff, the trick is always to turn a hard job into an easy one. Hard: calculus with slopes of slopes. Easy: plain algebra with $+$, $-$, $\\times$, $\\div$."
+    },
+    {
+     "t": "say",
+     "who": "mika",
+     "mood": "excited",
+     "text": "So we need a machine that eats a curve and spits out something where slopes turn into multiplication? Does that exist?"
+    },
+    {
+     "t": "p",
+     "text": "It does, and we can build it from things we already own. Here's the idea. Take any signal $f(t)$. Multiply it by a **probe**, the shrinking exponential $e^{-st}$ from Chapter 4. Then measure the **total area** under the product (Chapter 3's accumulated area)."
+    },
+    {
+     "t": "math",
+     "tex": "F(s) = \\int_0^\\infty \\out{f(t)}\\; e^{-st}\\,dt"
+    },
+    {
+     "t": "p",
+     "text": "That's it. A number $s$ goes in, an area comes out. Try different $s$ values and you get a whole new curve $F(s)$. That curve is the **Laplace transform** of $f$: a fingerprint of the signal."
+    },
+    {
+     "t": "predict",
+     "id": "ch7-step",
+     "gate": true,
+     "q": "Take the simplest signal, a step: $f(t) = 1$ forever. As we make $s$ **bigger**, what happens to the area under $1 \\cdot e^{-st}$?",
+     "options": [
+      {
+       "text": "It grows",
+       "why": "A bigger $s$ makes the probe die out *faster*, so there's less of it."
+      },
+      {
+       "text": "It shrinks",
+       "correct": true,
+       "why": "Right. A bigger $s$ squashes the probe faster, so there's less area. In fact the area is exactly $1/s$."
+      },
+      {
+       "text": "It stays the same",
+       "why": "The probe's shape depends on $s$: bigger $s$ means a quicker drop, so a smaller area."
+      }
+     ]
+    },
+    {
+     "t": "widget",
+     "id": "probe"
+    },
+    {
+     "t": "p",
+     "text": "Sweep $s$ and the dots trace out $1/s$ for the step. Try the other signals too. A growing signal $e^{0.5t}$ only has a finite area when the probe shrinks **faster** than the signal grows, that is when $s > 0.5$. Below that, the area runs off to infinity."
+    },
+    {
+     "t": "note",
+     "text": "We're only using real $s$ for now. Complex $s$ comes in a minute, and it's where the magic is.",
+     "aside": true
+    }
+   ]
+  },
+  {
+   "id": "explode",
+   "title": "The transform screams where the signal lives",
+   "blocks": [
+    {
+     "t": "p",
+     "text": "Let's look closer at $f(t) = e^{at}$. Probe it with $e^{-st}$ and the product is $e^{(a-s)t}$, a plain exponential. Its area is $\\frac{1}{s-a}$ (we'll derive that properly in the table below)."
+    },
+    {
+     "t": "widget",
+     "id": "explode"
+    },
+    {
+     "t": "say",
+     "who": "mika",
+     "mood": "surprised",
+     "text": "As $s$ gets close to $a$ the number goes **huge**! At $s = a$ the probe exactly cancels the growth, the product is flat forever, and the area is infinite."
+    },
+    {
+     "t": "say",
+     "who": "theo",
+     "mood": "excited",
+     "text": "So the transform **blows up exactly at the** $s$ **where the signal lives**. If you gave me only $F(s)$, I could find the signal's $a$ by looking for where it explodes."
+    },
+    {
+     "t": "p",
+     "text": "Now make $s$ complex, $s = \\sigma + i\\omega$, just like our spinning numbers from Chapter 5. Take a spinning signal $e^{2it}$. The probe $e^{-st}$ shrinks it (that's the $\\sigma$ part) **and spins it backwards** (that's the $\\omega$ part). Below, the product's little pieces of area are added up head-to-tail as arrows. Watch the running total."
+    },
+    {
+     "t": "widget",
+     "id": "unspin"
+    },
+    {
+     "t": "say",
+     "who": "june",
+     "mood": "excited",
+     "text": "When the probe spins at exactly 2, the signal stops spinning, all the pieces point the same way and the total shoots off. When they don't match, the arrows curl around and cancel out."
+    },
+    {
+     "t": "p",
+     "text": "Same lesson, one dimension up: the transform explodes at the complex $s$ where the signal lives. That's why from now on we'll draw every $s$ on a map with $\\sigma$ across and $\\omega$ up. Our \\\"map of $s$\\\" from Chapter 5 finally gets its grown-up name: the **s-plane**."
+    },
+    {
+     "t": "vocab",
+     "items": [
+      {
+       "term": "The s-plane",
+       "def": "The map of complex numbers $s = \\sigma + i\\omega$. Left means shrinking, right means growing, up and down means spinning. Every signal $e^{st}$ lives at one point on it, and its transform explodes there."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "rule",
+   "title": "Slopes become multiplication",
+   "blocks": [
+    {
+     "t": "p",
+     "text": "Here's the property that makes the whole thing worth it. What happens to the transform when we take the **slope** of the signal? Try it with $f = e^{at}$. Its slope is $a e^{at}$ (Chapter 4), so"
+    },
+    {
+     "t": "math",
+     "tex": "\\mathcal{L}\\{f'\\} = \\frac{a}{s-a} = \\frac{s}{s-a} - 1 = s\\,F(s) - f(0)"
+    },
+    {
+     "t": "p",
+     "text": "The slope turned into **multiplying by** $s$, minus the starting value $f(0)$. Calculus became algebra!"
+    },
+    {
+     "t": "say",
+     "who": "theo",
+     "mood": "think",
+     "text": "Hold on. That's a trick that works for $e^{at}$ because $e^{at}$ is special. Next you'll tell me it's a lookup rule we're supposed to memorise. I don't buy it for *any* curve."
+    },
+    {
+     "t": "say",
+     "who": "june",
+     "mood": "happy",
+     "text": "Then let's test it on the ugliest curve you can draw."
+    },
+    {
+     "t": "p",
+     "text": "Draw any signal you like on the left (or pick a preset). We compute its slope, then work out **both sides** of the rule with the area machine: the transform of the slope, and $s\\,F(s) - f(0)$. The two curves on the right are those two sides for every $s$."
+    },
+    {
+     "t": "widget",
+     "id": "derivRule"
+    },
+    {
+     "t": "say",
+     "who": "theo",
+     "mood": "surprised",
+     "text": "They match. Even for my wobbly scribble. Okay, it's not a trick. It works for every signal."
+    },
+    {
+     "t": "p",
+     "text": "*Why* does it work? Think about the area of $f'(t)\\,e^{-st}$. The slope adds up changes in $f$. Weighted by the probe, those changes total $s$ times the probed $f$, minus the value you started from. (The honest name for this is *integration by parts*, but the drawing proves it just as well.) Apply the rule twice and you get the second slope:"
+    },
+    {
+     "t": "math",
+     "tex": "\\mathcal{L}\\{f''\\} = s^2 F(s) - s\\,f(0) - f'(0)"
+    },
+    {
+     "t": "note",
+     "text": "The $f(0)$ terms remember where the signal **started**. Keep an eye on them. Someone will forget them soon."
+    }
+   ]
+  },
+  {
+   "id": "table",
+   "title": "Our own table",
+   "blocks": [
+    {
+     "t": "p",
+     "text": "Textbooks print a \\\"table of Laplace transforms\\\" as if it came from the sky. We're going to earn ours, one row at a time. Each row is just the probe-and-area machine applied to one signal, with a check that the formula agrees with the actual area."
+    },
+    {
+     "t": "widget",
+     "id": "table"
+    },
+    {
+     "t": "say",
+     "who": "mika",
+     "mood": "happy",
+     "text": "The sine row is my favourite. A sine is just two twin spinners, and each spinner's transform is the exponential row with $a = \\pm i\\omega$."
+    },
+    {
+     "t": "p",
+     "text": "And the last row needed no new work at all: multiplying by $e^{-\\sigma t}$ simply **shifts** $s$ to $s+\\sigma$. Four rows, all derived, all checked. Now let's use them."
+    }
+   ]
+  },
+  {
+   "id": "solve",
+   "title": "Solving the drone with algebra",
+   "blocks": [
+    {
+     "t": "p",
+     "text": "Here's the Chapter 2 drone under P control, but now it takes off from a **1 m ledge** instead of the ground. Gravity and the setpoint are both steps that switch on at $t = 0$:"
+    },
+    {
+     "t": "math",
+     "tex": "m\\,\\out{h}'' + c\\,\\out{h}' = \\eff{K_p}\\,(\\sp{2} - \\out{h}) - \\dis{m g}"
+    },
+    {
+     "t": "p",
+     "text": "**Step 1:** transform every term. A step of size $r$ becomes $r/s$, and slopes become multiplication by $s$:"
+    },
+    {
+     "t": "math",
+     "tex": "m\\big(s^2\\out{H} - s\\,h(0) - h'(0)\\big) + c\\big(s\\,\\out{H} - h(0)\\big) = \\eff{K_p}\\Big(\\frac{\\sp{2}}{s} - \\out{H}\\Big) - \\frac{\\dis{m g}}{s}"
+    },
+    {
+     "t": "p",
+     "text": "**Step 2:** it's algebra now. Collect $\\out{H}$ on one side:"
+    },
+    {
+     "t": "math",
+     "tex": "\\out{H}(s) = \\frac{m\\,h(0)\\,s^2 + \\big(m\\,h'(0) + c\\,h(0)\\big)s + (\\eff{K_p}\\,\\sp{2} - \\dis{m g})}{s\\,\\big(m s^2 + c s + \\eff{K_p}\\big)}"
+    },
+    {
+     "t": "p",
+     "text": "**Step 3:** split it into pieces that appear in our table (*partial fractions*: undoing the \\\"common denominator\\\" step from school):"
+    },
+    {
+     "t": "math",
+     "tex": "\\out{H}(s) = \\frac{A}{s} + \\frac{B s + C}{m s^2 + c s + \\eff{K_p}}"
+    },
+    {
+     "t": "p",
+     "text": "**Step 4:** look each piece up in the table we just derived: $A/s$ is a step, and the second piece is a decaying cosine plus a decaying sine. Read off $h(t)$."
+    },
+    {
+     "t": "say",
+     "who": "june",
+     "mood": "excited",
+     "text": "Let's check it against the simulation!"
+    },
+    {
+     "t": "widget",
+     "id": "solve"
+    },
+    {
+     "t": "say",
+     "who": "mika",
+     "mood": "worried",
+     "text": "Uh-oh. The formula starts at **zero**, but the drone starts on the ledge at 1 m. The algebra is lying?"
+    },
+    {
+     "t": "say",
+     "who": "theo",
+     "mood": "think",
+     "text": "The algebra's fine. *We* lied. In our first attempt we wrote $\\mathcal{L}\\{h'\\} = s\\,H$ and forgot the $-h(0)$ bits. That's exactly the piece that remembers the ledge."
+    },
+    {
+     "t": "p",
+     "text": "Flip the switch to put the starting-height terms back. The dashed formula and the blue simulation now sit exactly on top of each other: the maximum gap is millionths of a metre, just numerical rounding. Change $\\eff{K_p}$ or the ledge height and they still agree."
+    },
+    {
+     "t": "p",
+     "text": "Look at piece $A$: it's $\\sp{2} - \\dis{mg}/\\eff{K_p}$, the droop from Chapter 2, popping straight out of the algebra. No guessing needed."
+    },
+    {
+     "t": "note",
+     "text": "We're still pretending the motors have no thrust limit, so the linear maths is exact. Real limits arrive in Chapter 8."
+    }
+   ]
+  },
+  {
+   "id": "wrap",
+   "title": "What we know now",
+   "blocks": [
+    {
+     "t": "recap",
+     "items": [
+      "The Laplace transform is a **probe**: multiply by $e^{-st}$ and measure the total area. $F(s) = \\int_0^\\infty f(t)e^{-st}dt$.",
+      "It **explodes exactly where the signal lives**: $e^{at}$ gives $1/(s-a)$, which blows up at $s = a$. For complex $s$ the probe unspins spinning signals. We plot all of this on the **s-plane**.",
+      "Slopes become multiplication: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. It works for any signal, even a scribble.",
+      "We derived our own table: $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$, and the shifted version for decaying sines.",
+      "Transform, do algebra, split into table pieces, read off the answer. It matches the simulation exactly, **as long as you keep the starting values**."
+     ]
+    },
+    {
+     "t": "quiz",
+     "items": [
+      {
+       "id": "ch7-q1",
+       "q": "What is the Laplace transform of $3e^{-2t}$?",
+       "options": [
+        {
+         "text": "$\\dfrac{3}{s+2}$",
+         "correct": true,
+         "why": "The exponential row with $a = -2$ gives $1/(s+2)$, and the transform of 3 times a signal is 3 times its transform (areas scale)."
+        },
+        {
+         "text": "$\\dfrac{3}{s-2}$",
+         "why": "That's for $e^{+2t}$. The row is $1/(s-a)$ with $a = -2$, so $s - (-2) = s+2$."
+        },
+        {
+         "text": "$\\dfrac{1}{3(s+2)}$",
+         "why": "Multiplying the signal by 3 multiplies the area by 3; it doesn't divide it."
+        }
+       ]
+      },
+      {
+       "id": "ch7-q2",
+       "q": "$F(s) = \\dfrac{5}{s+4}$. Which signal is it?",
+       "options": [
+        {
+         "text": "$5e^{-4t}$: starts at 5 and decays",
+         "sketch": "decaying-plain",
+         "correct": true,
+         "why": "It explodes at $s = -4$, so the signal lives at $e^{-4t}$. The 5 on top is its size."
+        },
+        {
+         "text": "$5e^{4t}$: grows",
+         "sketch": "growing-plain",
+         "why": "A growing $e^{4t}$ would explode at $s = +4$. This one explodes at $s = -4$."
+        },
+        {
+         "text": "A wiggle",
+         "sketch": "decaying-wiggle",
+         "why": "Wiggles need a pair of complex explosion points (like $s^2+\\omega^2$ below). Here there's a single real one at $-4$."
+        }
+       ]
+      },
+      {
+       "id": "ch7-q3",
+       "q": "Solve $x' + 2x = 0$ with $x(0) = 1$ using the transform.",
+       "options": [
+        {
+         "text": "$X = \\frac{1}{s+2}$, so $x = e^{-2t}$",
+         "correct": true,
+         "why": "$sX - 1 + 2X = 0 \\Rightarrow X(s+2) = 1 \\Rightarrow X = 1/(s+2)$, which is the exponential row with $a=-2$."
+        },
+        {
+         "text": "$X = 0$, so $x = 0$",
+         "why": "That's what you get if you forget $-x(0)$, the same mistake as ours with the ledge. The starting value is what keeps it from being zero."
+        },
+        {
+         "text": "$X = \\frac{1}{s-2}$, so $x = e^{2t}$",
+         "why": "Sign slip: $X(s+2) = 1$, so the explosion is at $s=-2$ and the signal decays."
+        }
+       ]
+      },
+      {
+       "id": "ch7-q4",
+       "q": "Why does $\\dfrac{1}{s-a}$ blow up at $s = a$?",
+       "options": [
+        {
+         "text": "The probe exactly cancels the signal's growth, so the product is flat forever and its area is infinite",
+         "correct": true,
+         "why": "$e^{at}\\cdot e^{-at} = 1$ for all time, and the area under 1 from 0 to ∞ never stops growing."
+        },
+        {
+         "text": "Division by zero is just a quirk of the algebra",
+         "why": "The algebra reflects something real: the area really does grow without bound as $s \\to a$. Watch it happen in the explosion widget."
+        },
+        {
+         "text": "Because the signal is zero there",
+         "why": "The signal $e^{at}$ is never zero. The trouble is the probe no longer shrinks it at all."
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "t": "map"
+    },
+    {
+     "t": "cliff",
+     "text": "June: \\\"Every time we solved something, the answer was *(something)* ÷ *(a polynomial in s)*, and the drone's behaviour came from where the bottom is zero. What if that fraction **is** the drone?\\\""
+    }
+   ]
+  }
+ ],
+ "widgets": {
+  "probe": {
+   "title": "The probe",
+   "signal": "Signal",
+   "sig": {
+    "step": "step: 1",
+    "decay": "e^(−t)",
+    "grow": "e^(0.5t)",
+    "wiggle": "sin 2t"
+   },
+   "f": "signal f(t)",
+   "probe": "probe e^(−st)",
+   "product": "f(t)·e^(−st)",
+   "plotAria": "The signal, the probe and their product over time, with the area under the product shaded.",
+   "fAria": "Traced values of the total area F against s, one dot for each s you tried.",
+   "formula": "formula",
+   "traced": "your measurements",
+   "area": "area so far",
+   "total": "total area F(s)",
+   "s": "Probe rate $s$",
+   "sweep": "▶ Sweep the area again",
+   "showFormula": "Reveal the formula curve",
+   "help": "Move s and let go: the area is measured and a dot is added to the right-hand plot. After 5 dots you can reveal the formula.",
+   "finite": "At s = {s} the total area is {F}.",
+   "infinite": "Here the probe doesn't shrink faster than the signal. The area never settles: it's infinite.",
+   "describe": "Probe rate s = {s}; total area {A}."
+  },
+  "explode": {
+   "title": "Where does it blow up?",
+   "product": "e^(at)·e^(−st)",
+   "prodAria": "The product of e to the a t and the probe, with its area shaded.",
+   "fAria": "The transform 1 over s minus a, with a vertical line where it blows up.",
+   "noArea": "infinite area",
+   "lives": "signal lives at s = {a}",
+   "a": "Signal's rate $a$ in $e^{at}$",
+   "s": "Probe $s$",
+   "never": "s is at or below a: the product never shrinks, so the area is infinite.",
+   "close": "Getting close to a: the area is exploding!",
+   "calm": "Far from a: a nice finite area."
+  },
+  "unspin": {
+   "title": "A probe that unspins",
+   "re": "real part",
+   "im": "imaginary part",
+   "path": "running total of the area",
+   "plotAria": "The running total of the complex area drawn as a path in the plane, heading towards its final value.",
+   "limit": "final total",
+   "mag": "size of total |F|",
+   "spin": "leftover spin",
+   "sigma": "Probe shrink $\\sigma$",
+   "omega": "Probe spin $\\omega$ (signal spins at 2)",
+   "again": "▶ Replay",
+   "matched": "Spins matched! Every piece points the same way. The total is {m} and it heads to infinity as σ → 0.",
+   "spinning": "The pieces curl around and mostly cancel. The total stays small."
+  },
+  "derivRule": {
+   "title": "Does the rule survive a scribble?",
+   "f": "your signal f(t)",
+   "df": "its slope f′(t)",
+   "plotAria": "The drawn signal and its slope over 8 seconds.",
+   "sAria": "Both sides of the derivative rule plotted against s.",
+   "lhs": "area of f′·e^(−st)",
+   "rhs": "s·F(s) − f(0)",
+   "lhsShort": "transform of the slope",
+   "rhsShort": "s F(s) − f(0)",
+   "s": "Probe $s$",
+   "draw": "✎ Draw your own signal",
+   "preset": "Try another preset",
+   "help": "Press \"Draw your own\", then drag across the left plot from left to right. After 8 s the signal stays flat.",
+   "drawing": "Drag across the left plot from left to right…",
+   "tooShort": "Draw a bit further across (at least 3 seconds' worth).",
+   "drawn": "Got it! Both sides were recomputed from your drawing.",
+   "match": "At s = {s} both sides agree. The rule holds for your signal.",
+   "nomatch": "They differ a little here. Numerical rounding on a very sharp drawing.",
+   "describe": "Transform of the slope {l}, s F minus f of zero {r}."
+  },
+  "table": {
+   "title": "The table, derived",
+   "caption": "Laplace transform table derived in this chapter",
+   "colSignal": "signal f(t)",
+   "colF": "transform F(s)",
+   "derive": "Derive",
+   "show": "Show",
+   "unknown": "not derived yet",
+   "f": "signal",
+   "product": "signal × probe",
+   "plotAria": "The chosen table signal and its probed product with the area shaded.",
+   "numeric": "measured area",
+   "formulaVal": "formula",
+   "s": "Probe $s$",
+   "how": "How we got it",
+   "agree": "The measured area matches the formula.",
+   "twinCheck": "Its twin (cosine) checks out too: measured {n}, formula {f}.",
+   "describe": "Measured area {n}, formula {f}.",
+   "rows": {
+    "0": {
+     "f": "1\\ \\ (\\text{step})",
+     "F": "\\dfrac{1}{s}",
+     "steps": "\\text{the curve whose slope is } e^{-st} \\text{ is } -\\tfrac{1}{s}e^{-st}||\\int_0^\\infty e^{-st}\\,dt=\\Big[-\\tfrac{1}{s}e^{-st}\\Big]_0^\\infty = 0-\\big(-\\tfrac{1}{s}\\big)=\\frac{1}{s}\\qquad (s>0)"
+    },
+    "1": {
+     "f": "e^{at}",
+     "F": "\\dfrac{1}{s-a}",
+     "steps": "e^{at}\\,e^{-st}=e^{-(s-a)t}||\\text{it's the step row with } s \\text{ replaced by } s-a||\\int_0^\\infty e^{-(s-a)t}\\,dt=\\frac{1}{s-a}\\qquad(s>a;\\ \\text{here } a=-1)"
+    },
+    "2": {
+     "f": "\\sin\\omega t,\\ \\cos\\omega t",
+     "F": "\\dfrac{\\omega}{s^2+\\omega^2},\\ \\dfrac{s}{s^2+\\omega^2}",
+     "steps": "\\sin\\omega t=\\frac{e^{i\\omega t}-e^{-i\\omega t}}{2i}\\qquad\\text{(twin spinners)}||\\mathcal{L}\\{e^{\\pm i\\omega t}\\}=\\frac{1}{s\\mp i\\omega}\\qquad\\text{(exponential row, } a=\\pm i\\omega)||\\frac{1}{2i}\\Big(\\frac{1}{s-i\\omega}-\\frac{1}{s+i\\omega}\\Big)=\\frac{1}{2i}\\cdot\\frac{2i\\omega}{s^2+\\omega^2}=\\frac{\\omega}{s^2+\\omega^2}||\\cos\\omega t=\\frac{e^{i\\omega t}+e^{-i\\omega t}}{2}\\ \\Rightarrow\\ \\frac{s}{s^2+\\omega^2}\\qquad(\\text{here }\\omega=2)"
+    },
+    "3": {
+     "f": "e^{-\\sigma t}\\sin\\omega t,\\ e^{-\\sigma t}\\cos\\omega t",
+     "F": "\\dfrac{\\omega}{(s+\\sigma)^2+\\omega^2},\\ \\dfrac{s+\\sigma}{(s+\\sigma)^2+\\omega^2}",
+     "steps": "e^{-\\sigma t}\\sin\\omega t\\cdot e^{-st}=\\sin\\omega t\\cdot e^{-(s+\\sigma)t}||\\text{so take the sine row and replace } s \\text{ by } s+\\sigma||\\frac{\\omega}{(s+\\sigma)^2+\\omega^2}\\quad\\text{and}\\quad\\frac{s+\\sigma}{(s+\\sigma)^2+\\omega^2}\\qquad(\\text{here }\\sigma=0.5,\\ \\omega=2)"
+    }
+   }
+  },
+  "solve": {
+   "title": "Formula vs. simulation",
+   "sim": "RK4 simulation",
+   "formula": "our Laplace formula",
+   "target": "target",
+   "plotAria": "Drone height over time from the simulation and from the Laplace formula.",
+   "gap": "biggest gap",
+   "atZero": "at t = 0: sim / formula",
+   "kp": "Gain $K_p$",
+   "h0": "Starting height (ledge) $h(0)$",
+   "toggle": "Include the starting-height terms $-h(0)$",
+   "mismatch": "They disagree! The sim starts on the {h} m ledge, the formula starts at 0.",
+   "odd": "Still a gap. Check the numbers.",
+   "match": "Perfect match: formula and simulation agree to a millionth of a metre."
+  }
+ }
 }
