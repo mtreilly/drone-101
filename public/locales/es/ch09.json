@@ -183,7 +183,7 @@
         },
         {
           "t": "p",
-          "text": "Supón $e^{st}$ como siempre y sale el polinomio característico. Es una cúbica, así que hay **tres** polos:"
+          "text": "Volvamos a probar $e^{st}$. **Con I activo**, la ecuación es cúbica y tiene tres polos. Si $K_i=0$, no hay integrador: se cancela un factor común y el dron PD tiene dos polos."
         },
         {
           "t": "math",
@@ -199,6 +199,18 @@
         },
         {
           "t": "p",
+          "text": "Podemos ver por qué ese es el borde. Cuando una pareja oscilante llega al eje vertical, su parte real es cero; probemos $s=i\\omega$ en el polinomio cúbico. Las partes real y vertical deben valer cero por separado. Sale:"
+        },
+        {
+          "t": "math",
+          "tex": "\\omega^2=\\frac{K_p}{m},\\qquad K_i=(c+K_d)\\omega^2=\\frac{(c+K_d)K_p}{m}"
+        },
+        {
+          "t": "p",
+          "text": "Con $K_i$ positivo por debajo de este límite, los tres polos quedan a la izquierda; en el límite, el par puede seguir oscilando. Este es el cruce que explica el atajo de Routh–Hurwitz."
+        },
+        {
+          "t": "p",
           "text": "Con $K_p = 20$ y sin D: $K_i < (1)(20)/0.5 = 40$. Justo donde el dron de Mika se volvió loco. Añadir $K_d = 4$ mueve el borde hasta 200. No te fíes de nosotros; mueve los controles y mira los polos, el minimapa y la respuesta al escalón."
         },
         {
@@ -208,9 +220,9 @@
         {
           "t": "list",
           "items": [
-            "**El mando I** ($K_i$) saca un polo desde el origen y empuja los otros dos hacia la derecha. Si te pasas, cruzan la línea.",
-            "**El mando D** ($K_d$) tira de los polos hacia la izquierda: más amortiguamiento, respuesta más tranquila.",
-            "**El mando P** ($K_p$) sobre todo separa la pareja oscilante hacia arriba y hacia abajo: más rápido, pero más oscilante, a menos que D le siga el ritmo."
+            "**El mando I** ($K_i$) añade un tercer polo al lazo y puede empujar una pareja a la derecha. Si te pasas, cruza la línea.",
+            "**El mando D** ($K_d$) eleva el límite estable de ganancia I al añadir amortiguamiento. Las trayectorias pueden girar: más D no mueve todos los polos a la izquierda.",
+            "**El mando P** ($K_p$) sobre todo separa la pareja oscilante hacia arriba y abajo: más rápido, pero más oscilante si D no acompaña."
           ]
         }
       ]
@@ -320,20 +332,20 @@
             },
             {
               "id": "ch9-q2",
-              "q": "Aumentas $K_d$. ¿Hacia dónde tienden a moverse los polos?",
+              "q": "¿Qué garantiza aumentar $K_d$ en este modelo ideal con ganancias positivas?",
               "options": [
                 {
-                  "text": "A la izquierda: más amortiguamiento, respuesta más tranquila",
+                  "text": "Eleva el mayor $K_i$ que puede seguir siendo estable",
                   "correct": true,
-                  "why": "D se suma al coeficiente de amortiguamiento $(c + K_d)$, lo que aleja los polos del semiplano derecho."
+                  "why": "La condición de estabilidad tiene $c+K_d$ en el lado favorable. Algunos polos aún pueden volver hacia el eje."
                 },
                 {
-                  "text": "A la derecha: hacia la inestabilidad",
-                  "why": "Eso es lo que hace demasiada $K_i$. $K_d$ hace lo contrario, al menos en nuestro modelo sin retardos."
+                  "text": "Todos los polos se mueven a la izquierda",
+                  "why": "El polo real y la pareja oscilante pueden seguir caminos distintos. Más amortiguamiento no empuja todos los polos a la izquierda."
                 },
                 {
-                  "text": "No se mueven; D solo importa cuando hay ruido",
-                  "why": "$K_d$ aparece directamente en el polinomio característico, así que mueve los polos."
+                  "text": "Solo importa si el sensor tiene ruido",
+                  "why": "$K_d$ ya cambia el polinomio característico ideal y el límite de estabilidad."
                 }
               ]
             },

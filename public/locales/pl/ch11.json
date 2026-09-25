@@ -88,6 +88,10 @@
           "text": "Każda zmiana suwaka restartuje misję, a poprzedni lot zostaje jako duch. Mała płaszczyzna s pokazuje bieguny **nominalne** (idealny czujnik, bez paczki, bez ograniczeń), więc widzisz liniowy obrazek, podczas gdy obok toczy się prawdziwy, bałaganiarski lot. Zdobądź wszystkie sześć gwiazdek, żeby dostać złoto."
         },
         {
+          "t": "p",
+          "text": "Aby dostać gwiazdkę za dolot, **rzeczywista wysokość musi pozostać** w granicach ±5 cm od chwili dotarcia aż do podmuchu w 6 s; jednorazowe przecięcie 2 m się nie liczy. Gwiazdka za spokojne silniki używa **odchylenia standardowego** ciągu od 3 do 6 s: typowego odchylenia od średniej, wraz z późnym uspokajaniem i szumem czujnika."
+        },
+        {
           "t": "widget",
           "id": "mission"
         },
@@ -154,7 +158,7 @@
             "**Regulator P** pcha proporcjonalnie do uchybu, ale zostawia zwis i kołysze się, gdy jest silny (rozdz. 2).",
             "**Pochodne, wykładnicze i wirujące liczby** opisują, jak rzeczy się zmieniają: $e^{st}$, gdzie $s = \\sigma + i\\omega$, rośnie albo maleje *i* się kołysze (rozdz. 3–6).",
             "**Transformata Laplace'a** zamienia nachylenia w mnożenie przez $s$, więc analiza staje się algebrą (rozdz. 7).",
-            "**Bieguny transmitancji** to składniki $e^{st}$, z których zbudowany jest układ: lewa połowa się uspokaja, prawa wybucha (rozdz. 8).",
+            "**Nieskrócone bieguny** transmitancji wskazują naturalne ruchy widoczne od wybranego wejścia do wyjścia: po lewej zanikają, po prawej rosną (rozdz. 8).",
             "**PID**: I eliminuje zwis, D dodaje tłumienia, a każdy z nich przesuwa bieguny (rozdz. 9).",
             "**Opóźnienie** dodaje opóźnienia fazowego; **zapasy** mówią, jak daleko jesteś od krawędzi urwiska (rozdz. 10).",
             "Prawdziwy sprzęt dodaje ograniczenia, bezwładność i szum, więc dobre regulatory są nie tylko szybkie, ale i spokojne (rozdz. 11)."
@@ -280,12 +284,12 @@
       "instant": "Leć natychmiast",
       "checklist": "Lista kontrolna misji",
       "crit": {
-        "rise": "Osiągnij 2 m (± {bandCm} cm) w ciągu {rise} s",
+        "rise": "Do {rise} s osiągnąć 2 m (± {bandCm} cm) i utrzymać je do podmuchu",
         "overshoot": "Przeregulowanie przy starcie poniżej {overshoot} %",
-        "gust": "Zostań w granicach {gustCm} cm podczas podmuchu",
+        "gust": "Od podmuchu do zrzutu paczki utrzymać się w granicach {gustCm} cm",
         "recover": "Powrót do ± {bandCm} cm w mniej niż {recover} s po zrzucie",
         "ground": "Nigdy nie dotknij ziemi po starcie",
-        "calm": "Spokojne silniki w zawisie (drżenie poniżej {calm} N)"
+        "calm": "Odchylenie standardowe ciągu od 3 do 6 s poniżej {calm} N"
       },
       "touched": "dotknął!",
       "clear": "czysto",
@@ -305,7 +309,8 @@
       "poles": {
         "stable": "Bieguny nominalne: wszystkie w lewej połowie.",
         "unstable": "Jeden z biegunów nominalnych jest w prawej połowie: te nastawy nie wytrzymają!",
-        "off": "(Szybkie bieguny poza lewą krawędzią: {n}.)"
+        "off": "(Szybkie bieguny poza lewą krawędzią: {n}.)",
+        "marginal": "Bieguny nominalne: biegun leży na granicy stabilności."
       }
     }
   }

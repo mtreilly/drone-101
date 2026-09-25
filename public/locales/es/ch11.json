@@ -88,6 +88,10 @@
           "text": "Cada cambio de un control deslizante reinicia la misión, y el vuelo anterior se queda como fantasma. El pequeño plano s muestra los polos **nominales** (sensor perfecto, sin paquete, sin límites), para que veas el dibujo lineal mientras el vuelo real, con todo su lío, ocurre al lado. Consigue las seis estrellas para el oro."
         },
         {
+          "t": "p",
+          "text": "Para la estrella de llegada, la **altura real debe mantenerse** a ±5 cm desde la llegada hasta la ráfaga a los 6 s; cruzar 2 m una sola vez no cuenta. La estrella de motores tranquilos usa la **desviación estándar** del empuje entre 3 y 6 s: su variación típica alrededor del promedio, incluido el asentamiento tardío y el ruido del sensor."
+        },
+        {
           "t": "widget",
           "id": "mission"
         },
@@ -154,7 +158,7 @@
             "El **control P** empuja en proporción al error, pero deja una caída y oscila cuando es fuerte (cap. 2).",
             "**Derivadas, exponenciales y números que giran** describen cómo cambian las cosas: $e^{st}$ con $s = \\sigma + i\\omega$ crece o se encoge *y* oscila (cap. 3–6).",
             "La **transformada de Laplace** convierte las pendientes en multiplicar por $s$, así que el cálculo se vuelve álgebra (cap. 7).",
-            "Los **polos de una función de transferencia** son los términos $e^{st}$ de los que está hecho un sistema: la mitad izquierda se calma, la mitad derecha se dispara (cap. 8).",
+            "Los **polos sin cancelar** de una función de transferencia indican movimientos naturales visibles entre la entrada y la salida elegidas: los de la izquierda se atenúan, los de la derecha crecen (cap. 8).",
             "**PID**: I mata la caída, D añade amortiguamiento, y cada uno mueve los polos (cap. 9).",
             "El **retardo** añade desfase; los **márgenes** te dicen a qué distancia estás del borde del abismo (cap. 10).",
             "El hardware real añade límites, retrasos y ruido, así que los buenos controladores son tranquilos además de rápidos (cap. 11)."
@@ -280,12 +284,12 @@
       "instant": "Volar al instante",
       "checklist": "Lista de la misión",
       "crit": {
-        "rise": "Llegar a 2 m (± {bandCm} cm) en menos de {rise} s",
+        "rise": "Llegar a 2 m (± {bandCm} cm) antes de {rise} s y mantenerse hasta la ráfaga",
         "overshoot": "Sobreimpulso menor del {overshoot} % al despegar",
-        "gust": "No alejarse más de {gustCm} cm durante la ráfaga",
+        "gust": "Mantenerse a {gustCm} cm de la meta desde la ráfaga hasta soltar el paquete",
         "recover": "Volver a ± {bandCm} cm en menos de {recover} s tras la suelta",
         "ground": "No tocar nunca el suelo después de despegar",
-        "calm": "Motores tranquilos en vuelo estacionario (temblor menor de {calm} N)"
+        "calm": "Desviación estándar del empuje inferior a {calm} N de 3 a 6 s"
       },
       "touched": "¡tocó!",
       "clear": "limpio",
@@ -305,7 +309,8 @@
       "poles": {
         "stable": "Polos nominales: todos en la mitad izquierda.",
         "unstable": "Un polo nominal está en la mitad derecha: ¡este ajuste no puede aguantar!",
-        "off": "({n} polo(s) rápido(s) fuera del borde izquierdo.)"
+        "off": "({n} polo(s) rápido(s) fuera del borde izquierdo.)",
+        "marginal": "Polos nominales: un polo está en el límite de estabilidad."
       }
     }
   }

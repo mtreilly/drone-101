@@ -11,15 +11,19 @@
           "t": "say",
           "who": "june",
           "mood": "think",
-          "text": "Spójrzcie, co wyszło nam w rozdziale 7. Zapomnijmy na chwilę o wysokości początkowej (niech dron startuje, wisząc spokojnie na 1 m). Wtedy odpowiedź była zawsze tym samym ułamkiem *razy* to, o co go poprosiliśmy."
+          "text": "Zaczynamy od drona zawieszonego na wysokości 1 m; podstawowy ciąg 4,9 N równoważy grawitację. Zarówno żądaną, jak i rzeczywistą zmianę wysokości mierzymy względem tej wartości. Tuż przed nowym poleceniem obie zmiany wynoszą zero. W przykładzie skoku wartość zadana skacze do 2 m w chwili $t=0$: żądana zmiana wynosi wtedy 1 m, a dron nadal jest na wysokości 1 m."
         },
         {
           "t": "math",
-          "tex": "\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\sp{R}(s)"
+          "tex": "\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\Delta\\sp{R}(s)"
         },
         {
           "t": "p",
-          "text": "$\\sp{R}(s)$ to transformata **wejścia**: o ile każemy wartości zadanej odsunąć się od 1 m (transformata każdego wejścia pochodzi prosto z naszej tabelki z rozdziału 7). $G(s)$ jest stałe: zależy tylko od drona i regulatora. Więc nadajemy mu nazwę: **transmitancja**, stosunek wyjścia do wejścia w świecie s, gdy wszystko startuje ze spoczynku."
+          "text": "$\\Delta\\sp{R}(s)$ to transformata **żądanego przesunięcia** od 1 m, a $\\Delta\\out{H}(s)$ to transformata **rzeczywistego przesunięcia** od 1 m. $G(s)$ zależy od drona i regulatora. To **transmitancja**: zmiana wyjścia podzielona przez zmianę wejścia, przy obu zmianach równych zeru na początku."
+        },
+        {
+          "t": "p",
+          "text": "Wykres nadal pokazuje wysokości nad ziemią. Dodaj początkowy metr do przesunięcia przewidzianego przez wzór, aby otrzymać niebieską wysokość na wykresie."
         },
         {
           "t": "say",
@@ -29,7 +33,7 @@
         },
         {
           "t": "p",
-          "text": "Wypróbuj trzy różne wejścia na tym samym dronie. Przepis nigdy się nie zmienia, zmienia się tylko $\\sp{R}(s)$."
+          "text": "Wypróbuj trzy różne wejścia na tym samym dronie. Przepis nigdy się nie zmienia, zmienia się tylko $\\Delta\\sp{R}(s)$."
         },
         {
           "t": "widget",
@@ -40,7 +44,7 @@
           "items": [
             {
               "term": "Transmitancja $G(s)$",
-              "def": "Wyjście ÷ wejście, oba przetransformowane, przy układzie startującym ze spoczynku. To ułamek dwóch wielomianów od $s$ i zawiera wszystko o tym, jak układ reaguje."
+              "def": "Transformata zmiany wyjścia ÷ transformata zmiany wejścia, przy tym samym stanie spoczynku na początku. Dla tego liniowego drona to iloraz wielomianów zmiennej $s$."
             }
           ]
         }
@@ -52,7 +56,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Gdzie $G(s)$ **wybucha**? Tam, gdzie jego mianownik jest zerem. Rozdział 7 powiedział nam, że transformata wybucha dokładnie w tym $s$, w którym mieszka sygnał. Więc miejsca zerowe mianownika to składniki $e^{st}$, z których zbudowany jest układ. To dokładnie te same dwie kropki, które znaleźliśmy w rozdziale 6. Dostają specjalną nazwę: **bieguny**, rysowane jako ×."
+          "text": "Gdzie $G(s)$ **rośnie bez ograniczeń**? W miejscach zerowych mianownika, po skróceniu wspólnych czynników. Te punkty to **bieguny**, oznaczane ×. Ten dron ma dwa, odpowiadające dwóm naturalnym ruchom $e^{st}$ z rozdziału 6."
         },
         {
           "t": "math",
@@ -127,7 +131,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Licznik ułamka też może być zerem. Te miejsca nazywają się **zerami** i rysuje się je jako ○. Nie zmieniają tego, *które* składniki $e^{st}$ się pojawiają (to zadanie biegunów), ale zmieniają to, **ile** każdego z nich dostajesz."
+          "text": "Licznik też może być zerem. Takie punkty to **zera**, oznaczane ○. Zwykle zmieniają **udział** ruchu każdego bieguna widoczny na wyjściu. Jeśli zero leży dokładnie na biegunie, wspólny czynnik się skraca i ten biegun znika z tej transmitancji od wejścia do wyjścia. Ruch wewnętrzny może jednak pozostać ukryty dla tego konkretnego wejścia i wyjścia."
         },
         {
           "t": "p",

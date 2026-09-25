@@ -16,14 +16,14 @@ describe('Chapter 11 mission', () => {
   });
 
   // June's preset (kept in sync with JUNE_TUNE in widgets.ts)
-  const june = pid(25, 15, 10, { dTau: 0.005 });
+  const june = pid(30, 15, 10, { dTau: 0.005 });
 
   it("June's high-Kd tune chatters and overshoots with the noisy sensor", () => {
     const r = evaluate(runMission(june));
     expect(r.pass.calm).toBe(false);
     expect(r.pass.overshoot).toBe(false);
     // the fix suggested in the text: longer filter, Kd down to about 6
-    expect(evaluate(runMission(pid(25, 15, 6, { dTau: 0.04 }))).stars).toBe(6);
+    expect(evaluate(runMission(pid(30, 15, 6, { dTau: 0.04 }))).stars).toBe(6);
   });
 
   it('…yet with a perfect sensor it earns all six stars ("flawless in calm air")', async () => {
@@ -37,6 +37,18 @@ describe('Chapter 11 mission', () => {
     expect(missionPoles(pid(20, 400, 0, { dTau: 0.04 })).some((p) => p.re > 0)).toBe(true);
     // no-lag, no-filter limit reproduces the Chapter 9 cubic's pole count (plus motor)
     expect(missionPoles(pid(20, 10, 4, { dTau: 0 })).length).toBe(4);
+    const pd = missionPoles(pid(20, 0, 4, { dTau: 0.04 }));
+    expect(pd).toHaveLength(4);
+    expect(pd.every((p) => p.re < 0)).toBe(true);
+  });
+
+  it('requires the take-off height to stay in band before the gust', () => {
+    const tr = runMission(pid(20, 15, 5, { dTau: 0.04 }));
+    const excursion = tr.t.findIndex((t) => t >= 4);
+    tr.h[excursion] = 1.8;
+    const result = evaluate(tr);
+    expect(result.pass.rise).toBe(false);
+    expect(result.rise).toBeGreaterThan(4);
   });
 });
 

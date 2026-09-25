@@ -11,15 +11,19 @@
           "t": "say",
           "who": "june",
           "mood": "think",
-          "text": "Schaut euch an, was in Kapitel 7 rauskam. Vergesst mal kurz die Starthöhe (die Drohne schwebt am Anfang ruhig auf 1 m). Dann war die Antwort immer derselbe Bruch *mal* das, worum wir sie gebeten haben."
+          "text": "Wir beginnen mit der Drohne im Schwebeflug auf 1 m; ein Grundschub von 4,9 N gleicht die Schwerkraft aus. Die gewünschte und die tatsächliche Höhenänderung messen wir relativ zu diesem Ausgangswert. Unmittelbar vor einem neuen Befehl sind beide Änderungen null. Beim Sprungbeispiel steigt der Sollwert bei $t=0$ auf 2 m: Die gewünschte Änderung ist nun 1 m, während die Drohne noch auf 1 m steht."
         },
         {
           "t": "math",
-          "tex": "\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\sp{R}(s)"
+          "tex": "\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\Delta\\sp{R}(s)"
         },
         {
           "t": "p",
-          "text": "$\\sp{R}(s)$ ist die Transformation des **Eingangs**: wie weit sich der Sollwert von 1 m wegbewegen soll (die Transformation jedes Eingangs kommt direkt aus unserer Tabelle aus Kapitel 7). $G(s)$ ist fest: Es hängt nur von der Drohne und vom Regler ab. Also geben wir ihm einen Namen: die **Übertragungsfunktion**, das Verhältnis von Ausgang zu Eingang im s-Land, wenn alles in Ruhe startet."
+          "text": "$\\Delta\\sp{R}(s)$ ist die Transformation der **gewünschten Änderung** gegenüber 1 m; $\\Delta\\out{H}(s)$ die der **tatsächlichen Änderung**. $G(s)$ hängt von Drohne und Regler ab. Das ist die **Übertragungsfunktion**: Ausgangsänderung geteilt durch Eingangsänderung, wobei beide bei null beginnen."
+        },
+        {
+          "t": "p",
+          "text": "Im Diagramm stehen weiterhin Höhen über dem Boden. Addiere zur von der Formel vorhergesagten Änderung die Starthöhe von 1 m, dann erhältst du die blaue Höhe im Diagramm."
         },
         {
           "t": "say",
@@ -29,7 +33,7 @@
         },
         {
           "t": "p",
-          "text": "Probier drei verschiedene Eingänge an derselben Drohne aus. Das Rezept ändert sich nie, nur $\\sp{R}(s)$."
+          "text": "Probier drei verschiedene Eingänge an derselben Drohne aus. Das Rezept ändert sich nie, nur $\\Delta\\sp{R}(s)$."
         },
         {
           "t": "widget",
@@ -40,7 +44,7 @@
           "items": [
             {
               "term": "Übertragungsfunktion $G(s)$",
-              "def": "Ausgang ÷ Eingang, beide transformiert, wenn das System in Ruhe startet. Sie ist ein Bruch aus zwei Polynomen in $s$ und enthält alles darüber, wie das System reagiert."
+              "def": "Transformierte Ausgangsänderung ÷ transformierte Eingangsänderung, ausgehend vom selben Ruhezustand. Für diese lineare Drohne ist sie ein Quotient aus Polynomen in $s$."
             }
           ]
         }
@@ -52,7 +56,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Wo **explodiert** $G(s)$? Dort, wo sein Nenner null ist. Kapitel 7 hat uns gezeigt, dass eine Transformation genau bei dem $s$ explodiert, wo ein Signal wohnt. Die Nullstellen des Nenners sind also die $e^{st}$-Terme, aus denen das System besteht. Es sind genau die zwei Punkte, die wir in Kapitel 6 gefunden haben. Sie bekommen einen besonderen Namen: **Pole**, gezeichnet als ×."
+          "text": "Wo wird $G(s)$ **unendlich groß**? An Nullstellen des Nenners, nachdem gemeinsame Faktoren gekürzt wurden. Diese Punkte heißen **Pole** und werden als × gezeichnet. Diese Drohne hat zwei, passend zu den zwei natürlichen $e^{st}$-Bewegungen aus Kapitel 6."
         },
         {
           "t": "math",
@@ -127,7 +131,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Auch der Zähler des Bruchs kann null werden. Diese Stellen heißen **Nullstellen**, gezeichnet als ○. Sie ändern nicht, *welche* $e^{st}$-Terme vorkommen (das ist der Job der Pole), aber sie ändern, **wie viel** du von jedem bekommst."
+          "text": "Auch der Zähler kann null werden. Diese Punkte heißen **Nullstellen**, gezeichnet als ○. Meist ändern sie, **wie stark** die Bewegung jedes Pols am Ausgang erscheint. Liegt eine Nullstelle genau auf einem Pol, kürzt sich der gemeinsame Faktor und dieser Pol verschwindet aus dieser Eingangs-Ausgangs-Übertragungsfunktion. Eine innere Bewegung kann für genau diesen Eingang und Ausgang trotzdem verborgen bleiben."
         },
         {
           "t": "p",

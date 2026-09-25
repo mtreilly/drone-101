@@ -67,6 +67,10 @@
           "text": "Sweep $s$ and the dots trace out $1/s$ for the step. Try the other signals too. A growing signal $e^{0.5t}$ only has a finite area when the probe shrinks **faster** than the signal grows, that is when $s > 0.5$. Below that, the area runs off to infinity."
         },
         {
+          "t": "p",
+          "text": "The total area must settle to a finite value. If the probe fades too slowly, the area keeps growing and that choice of s has no finite answer. With complex s, its left-right part controls the fading; its up-down part controls the unspinning."
+        },
+        {
           "t": "note",
           "text": "We're only using real $s$ for now. Complex $s$ comes in a minute, and it's where the magic is.",
           "aside": true
@@ -166,11 +170,19 @@
           "t": "say",
           "who": "theo",
           "mood": "surprised",
-          "text": "They match. Even for my wobbly scribble. Okay, it's not a trick. It works for every signal."
+          "text": "They match, even for my wobbly scribble. So this is a general rule for smooth signals whose weighted areas settle; the drawing gives us a numerical check."
         },
         {
           "t": "p",
-          "text": "*Why* does it work? Think about the area of $f'(t)\\,e^{-st}$. The slope adds up changes in $f$. Weighted by the probe, those changes total $s$ times the probed $f$, minus the value you started from. (The honest name for this is *integration by parts*, but the drawing proves it just as well.) Apply the rule twice and you get the second slope:"
+          "text": "Here is the missing algebra. Moving the slope from $f$ onto the shrinking probe is called **integration by parts**. If the weighted signal fades away at the far end, the only edge left is its starting value:"
+        },
+        {
+          "t": "math",
+          "tex": "\\int_0^\\infty f'(t)e^{-st}\\,dt = \\big[f(t)e^{-st}\\big]_0^\\infty + s\\!\\int_0^\\infty f(t)e^{-st}\\,dt = -f(0)+sF(s)"
+        },
+        {
+          "t": "p",
+          "text": "Apply the same rule once more to $f'$ and the second-slope formula follows:"
         },
         {
           "t": "math",
@@ -212,7 +224,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Here's the Chapter 2 drone under P control, but now it takes off from a **1 m ledge** instead of the ground. Gravity and the setpoint are both steps that switch on at $t = 0$:"
+          "text": "Here is the Chapter 2 drone under P control, starting on a **1 m ledge**. At $t=0$ we release it and ask for 2 m. In the calculation from that instant onward, the new setpoint and constant gravity force each transform like a step:"
         },
         {
           "t": "math",
@@ -241,6 +253,18 @@
         {
           "t": "math",
           "tex": "\\out{H}(s) = \\frac{A}{s} + \\frac{B s + C}{m s^2 + c s + \\eff{K_p}}"
+        },
+        {
+          "t": "p",
+          "text": "How do we find $A$, $B$, and $C$? Multiply both sides by the shared denominator, then compare the constant, $s$, and $s^2$ terms:"
+        },
+        {
+          "t": "math",
+          "tex": "N(s)=A(ms^2+cs+K_p)+s(Bs+C)"
+        },
+        {
+          "t": "p",
+          "text": "The constant terms give $A = 2 - mg/K_p$; the other two give $B$ and $C$. No new physics appears here: we have simply undone a common denominator to reach pieces our table can take back to time. The starting height still has to be carried through."
         },
         {
           "t": "p",
@@ -291,7 +315,7 @@
           "items": [
             "The Laplace transform is a **probe**: multiply by $e^{-st}$ and measure the total area. $F(s) = \\int_0^\\infty f(t)e^{-st}dt$.",
             "It **explodes exactly where the signal lives**: $e^{at}$ gives $1/(s-a)$, which blows up at $s = a$. For complex $s$ the probe unspins spinning signals. We plot all of this on the **s-plane**.",
-            "Slopes become multiplication: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. It works for any signal, even a scribble.",
+            "Slopes become multiplication: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. For smooth signals with a convergent transform, the starting value matters.",
             "We derived our own table: $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$, and the shifted version for decaying sines.",
             "Transform, do algebra, split into table pieces, read off the answer. It matches the simulation exactly, **as long as you keep the starting values**."
           ]

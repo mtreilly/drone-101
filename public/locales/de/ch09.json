@@ -183,7 +183,7 @@
         },
         {
           "t": "p",
-          "text": "Rate wie immer $e^{st}$, und das charakteristische Polynom springt heraus. Es ist kubisch, also gibt es **drei** Pole:"
+          "text": "Versuchen wir wieder $e^{st}$. **Mit aktivem I-Anteil** ist die Gleichung kubisch und hat drei Pole. Bei $K_i=0$ gibt es keinen Integrator: Ein gemeinsamer Faktor kürzt sich heraus und die PD-Drohne hat zwei Pole."
         },
         {
           "t": "math",
@@ -199,6 +199,18 @@
         },
         {
           "t": "p",
+          "text": "Wir können sehen, warum das die Grenze ist. Wenn ein schwingendes Paar die senkrechte Achse erreicht, ist sein Realteil null: Setzen wir $s=i\\omega$ in das kubische Polynom ein. Der reale und der senkrechte Teil müssen jeweils null werden. Daraus folgt:"
+        },
+        {
+          "t": "math",
+          "tex": "\\omega^2=\\frac{K_p}{m},\\qquad K_i=(c+K_d)\\omega^2=\\frac{(c+K_d)K_p}{m}"
+        },
+        {
+          "t": "p",
+          "text": "Für positives $K_i$ unterhalb dieser Grenze bleiben alle drei Pole links; an der Grenze kann das Paar weiter schwingen. Dieser Übergang steckt hinter der Routh–Hurwitz-Abkürzung."
+        },
+        {
+          "t": "p",
           "text": "Mit $K_p = 20$ und ohne D: $K_i < (1)(20)/0{,}5 = 40$. Genau da ist Mikas Drohne durchgedreht. Mit $K_d = 4$ wandert die Kante raus auf 200. Glaub uns nicht einfach: Beweg die Schieberegler und schau auf die Pole, die Mini-Karte und die Sprungantwort."
         },
         {
@@ -208,9 +220,9 @@
         {
           "t": "list",
           "items": [
-            "**Der I-Knopf** ($K_i$) zieht einen Pol aus dem Ursprung heraus und schiebt die anderen zwei nach rechts. Zu viel, und sie überqueren die Linie.",
-            "**Der D-Knopf** ($K_d$) zieht Pole nach links: mehr Dämpfung, ruhigere Antwort.",
-            "**Der P-Knopf** ($K_p$) spreizt vor allem das wackelige Paar nach oben und unten: schneller, aber wackeliger, außer D hält mit."
+            "**Der I-Knopf** ($K_i$) bringt einen dritten Pol in den Kreis und kann ein Paar nach rechts schieben. Bei zu viel I überquert es die Linie.",
+            "**Der D-Knopf** ($K_d$) hebt durch zusätzliche Dämpfung die Stabilitätsgrenze für I an. Polbahnen können umkehren: Mehr D verschiebt nicht jeden Pol nach links.",
+            "**Der P-Knopf** ($K_p$) spreizt vor allem das schwingende Paar nach oben und unten: schneller, aber auch schwingender, wenn D nicht mithält."
           ]
         }
       ]
@@ -320,20 +332,20 @@
             },
             {
               "id": "ch9-q2",
-              "q": "Du erhöhst $K_d$. In welche Richtung wandern die Pole meistens?",
+              "q": "Was garantiert ein größeres $K_d$ in diesem idealen Modell mit positiven Verstärkungen?",
               "options": [
                 {
-                  "text": "Nach links: mehr Dämpfung, ruhigere Antwort",
+                  "text": "Die größte stabile Einstellung von $K_i$ steigt",
                   "correct": true,
-                  "why": "D kommt zum Dämpfungskoeffizienten $(c + K_d)$ dazu, und das zieht die Pole von der rechten Halbebene weg."
+                  "why": "In der Stabilitätsbedingung steht $c+K_d$ auf der günstigen Seite. Einzelne Pole können trotzdem zur Achse zurückkehren."
                 },
                 {
-                  "text": "Nach rechts: Richtung Instabilität",
-                  "why": "Das macht zu viel $K_i$. $K_d$ macht das Gegenteil, zumindest in unserem Modell ohne Verzögerungen."
+                  "text": "Jeder Pol wandert nach links",
+                  "why": "Der reelle Pol und das schwingende Paar können verschiedene Bahnen nehmen. Mehr Dämpfung schiebt nicht jeden Pol nach links."
                 },
                 {
-                  "text": "Gar nicht; D spielt nur bei Rauschen eine Rolle",
-                  "why": "$K_d$ steht direkt im charakteristischen Polynom, also verschiebt es die Pole."
+                  "text": "Es zählt nur bei einem verrauschten Sensor",
+                  "why": "$K_d$ verändert bereits das ideale charakteristische Polynom und die Stabilitätsgrenze."
                 }
               ]
             },

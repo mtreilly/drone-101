@@ -88,6 +88,10 @@
           "text": "Ogni modifica a un cursore fa ripartire la missione, e il volo precedente resta come fantasma. Il piccolo piano s mostra i poli **nominali** (sensore perfetto, niente pacco, niente limiti), così puoi vedere il quadro lineare mentre accanto succede il volo vero, disordinato. Conquista tutte e sei le stelle per l'oro."
         },
         {
+          "t": "p",
+          "text": "Per la stella dell’arrivo, l’**altezza reale deve restare** entro ±5 cm dall’arrivo fino alla raffica a 6 s; attraversare 2 m una sola volta non basta. La stella dei motori calmi usa la **deviazione standard** della spinta tra 3 e 6 s: la variazione tipica rispetto alla media, compresi l’assestamento tardivo e il rumore del sensore."
+        },
+        {
           "t": "widget",
           "id": "mission"
         },
@@ -154,7 +158,7 @@
             "Il **controllo P** spinge in proporzione all'errore, ma lascia un abbassamento e oscilla quando è forte (Cap. 2).",
             "**Derivate, esponenziali e numeri che girano** descrivono come cambiano le cose: $e^{st}$ con $s = \\sigma + i\\omega$ cresce o cala *e* oscilla (Cap. 3–6).",
             "La **trasformata di Laplace** trasforma le pendenze in moltiplicazioni per $s$, così l'analisi diventa algebra (Cap. 7).",
-            "I **poli di una funzione di trasferimento** sono i termini $e^{st}$ di cui è fatto un sistema: la metà sinistra si calma, la metà destra esplode (Cap. 8).",
+            "I **poli non cancellati** di una funzione di trasferimento indicano i moti naturali visibili tra ingresso e uscita scelti: quelli a sinistra si smorzano, quelli a destra crescono (cap. 8).",
             "**PID**: la I elimina l'abbassamento, la D aggiunge smorzamento, e ognuna sposta i poli (Cap. 9).",
             "Il **ritardo** aggiunge ritardo di fase; i **margini** ti dicono quanto sei lontano dal bordo del precipizio (Cap. 10).",
             "L'hardware vero aggiunge limiti, ritardi e rumore, quindi i buoni controllori sono calmi oltre che rapidi (Cap. 11)."
@@ -280,12 +284,12 @@
       "instant": "Vola all'istante",
       "checklist": "Checklist della missione",
       "crit": {
-        "rise": "Arriva a 2 m (± {bandCm} cm) entro {rise} s",
+        "rise": "Raggiungere 2 m (± {bandCm} cm) entro {rise} s e restarci fino alla raffica",
         "overshoot": "Sovraelongazione sotto il {overshoot} % al decollo",
-        "gust": "Resta entro {gustCm} cm durante la raffica",
+        "gust": "Restare entro {gustCm} cm dalla meta dalla raffica fino allo sgancio",
         "recover": "Di nuovo entro ± {bandCm} cm meno di {recover} s dopo lo sgancio",
         "ground": "Non toccare mai terra dopo il decollo",
-        "calm": "Motori calmi in hovering (tremolio sotto {calm} N)"
+        "calm": "Deviazione standard della spinta sotto {calm} N da 3 a 6 s"
       },
       "touched": "toccato!",
       "clear": "pulito",
@@ -305,7 +309,8 @@
       "poles": {
         "stable": "Poli nominali: tutti nella metà sinistra.",
         "unstable": "Un polo nominale è nella metà destra: questa taratura non può reggere!",
-        "off": "({n} polo/i veloce/i oltre il bordo sinistro.)"
+        "off": "({n} polo/i veloce/i oltre il bordo sinistro.)",
+        "marginal": "Poli nominali: un polo è sul confine di stabilità."
       }
     }
   }

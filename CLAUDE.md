@@ -18,9 +18,10 @@ for layout and `control-course-plan.md` for the pedagogical outline and physical
 
 ## Non-negotiables
 
-1. **Correct maths and physics.** Simulations use RK4 (`src/sim/`), analytic checks live next to
+1. **Correct maths and physics.** The drone uses RK4; the shower uses an exact update for its
+   first-order thermal lag (`src/sim/`). Analytic checks live next to
    them, and every number stated in a chapter's text or quiz is verified by a test in that chapter
-   (`src/chapters/chNN/*.test.ts`). If you change a number, change the test and all six languages.
+   (`src/chapters/chNN/*.test.ts`). If you change a number, change the test and every supported locale.
 2. **Colour language, everywhere:** setpoint green (dashed), output blue, error red, control effort
    orange, disturbance purple, poles black ×, zeros open ○, previous run = faint ghost. KaTeX macros
    `\sp{} \out{} \err{} \eff{} \dis{}` keep equations in step with plots.
@@ -33,18 +34,51 @@ for layout and `control-course-plan.md` for the pedagogical outline and physical
 - **No hard-coded visible strings.** All text lives in `public/locales/{lang}/{namespace}.json`
   (`common.json` + one `chNN.json` per chapter). Widgets read `ctx.t('…')` (their
   `widgets.<id>` subtree), shared chrome uses `tc('…')`.
-- Languages: **en (source), fr, es, it, de, pl** — listed in `src/core/languages.ts` (endonyms,
+- Current languages: **en (source), fr, es, it, de, pl**. Planned additions: **pt-BR, ja, zh-CN,
+  ar** (Modern Standard Arabic). List supported locales in `src/core/languages.ts` (endonyms,
   never flags). Files load lazily per language *and* per chapter; the next chapter is prefetched.
   A missing file falls back to English at runtime, but must never ship that way.
-- **Every change to English text must be mirrored in all five translations in the same commit.**
+- **Every change to English text must be mirrored in every supported translation in the same commit.**
   `src/core/locales.test.ts` enforces identical structure, control fields (`t`, `who`, `mood`,
   `id`, `sketch`, `correct`, `gate`, …), maths, `{placeholders}` and colour markers. It must pass.
 - Keep each language's glossary consistent (feedback, setpoint, plant, overshoot, droop, pole,
   s-plane — "map of s" before chapter 7 — etc.). Match the voice: playful, short sentences,
-  informal address. Prose uses the language's number format (decimal comma outside English);
-  inside maths write decimal commas as `{,}` (`tex()` also protects `1,5` automatically).
+  natural address for that language. Format prose numbers according to the locale, not a blanket
+  "decimal comma outside English" rule; inside maths write decimal commas as `{,}` (`tex()` also
+  protects `1,5` automatically).
 - Numbers in widgets always go through `fmt()` (locale-aware); never `toFixed()` for visible text.
 - `<html lang/dir>` follows the language (hyphenation and screen-reader pronunciation depend on it).
+
+### Translation sources and term verification
+
+Translate the **concept**, then choose the local term. For each important term, record its English
+definition, target-language choice, rejected alternatives, supporting sources, first chapter, and
+any note needed for student-friendly wording. Check ambiguous terms such as *plant*, *setpoint*,
+*overshoot*, *pole*, *zero*, *gain*, *droop*, *phase margin*, *feedback*, and *control effort* against
+a control-engineering teaching source in the target language. A general dictionary can confirm
+spelling or usage; it cannot settle the engineering meaning. Aviation authorities are for aircraft
+names, not control theory. Sources support original prose; do not copy their explanations.
+
+| Locale | Control/measurement terminology | Aviation terminology | Language and layout |
+| --- | --- | --- | --- |
+| `en` | [MIT Feedback Control Systems notes](https://ocw.mit.edu/courses/16-30-feedback-control-systems-fall-2010/pages/lecture-notes/); [NIST SI guide](https://www.nist.gov/publications/guide-use-international-system-units-si) for units | [FAA UAS definition](https://www.faa.gov/faq/what-unmanned-aircraft-system-uas) | [Microsoft English writing guide](https://learn.microsoft.com/en-us/style-guide/welcome/) for clear UI/documentation prose |
+| `fr` | [ENAC automatic-control course](https://recherche.enac.fr/~thierry.miquel/wp-content/uploads/2021/01/poly-iessa-2020-TempsContinu.pdf); [FranceTerme](https://www.culture.fr/franceterme) where an entry covers the concept | [French civil-aviation drone glossary](https://www.ecologie.gouv.fr/sites/default/files/documents/Guide_categorie_Ouverte.pdf) | [Académie française dictionary](https://www.dictionnaire-academie.fr/) for spelling and usage |
+| `es` | [UPM control notes](https://www.robolabo.etsit.upm.es/asignaturas/seco/apuntes/2015-2019/introSECO.pdf) | [AESA UAS/drone material](https://www.seguridadaerea.gob.es/es/ambitos/drones/operaciones-uas-drones) | [RAE/ASALE Diccionario panhispánico de dudas](https://www.rae.es/dpd/) for cross-regional usage and orthography; avoid accidental Spain-only colloquialisms |
+| `it` | [Politecnico di Milano Automatica material](https://rocco.faculty.polimi.it/FDA/auto.html) | [ENAC UAS material](https://www.enac.gov.it/sicurezza-aerea/droni/operatori-di-droni-uas) | [Treccani Vocabolario](https://www.treccani.it/vocabolario/) and [Accademia della Crusca language advice](https://accademiadellacrusca.it/it/consulenza) |
+| `de` | [TU Dresden system-theory notes](https://dmz2.itml.et.tu-dresden.de/itml/teachings/courses/systemtheorie/systemtheorie/systh_heft.pdf) | [German air-navigation drone material](https://www.dfs.de/homepage/de/drohnenflug/verkehrsmanagement-fuer-drohnen/) | [official German spelling rules](https://www.rechtschreibrat.com/regeln-und-woerterverzeichnis/) and [Duden](https://www.duden.de/woerterbuch) for usage |
+| `pl` | [Warsaw University of Technology control exercises](https://ztmir.meil.pw.edu.pl/web/content/download/9138/44768/file/Praca%20domowa%20PAS2_seria1_2022.pdf); [AGH control lab](https://home.agh.edu.pl/~tst/cw/ZK.pdf) | [Polish Civil Aviation Authority drone material](https://ulc.gov.pl/drony/informacje-ogolne) | [Polish Language Council spelling/punctuation rules](https://rjp.pan.pl/zasady-pisowni-i-interpunkcji-polskiej-2/) and [PAN dictionary](https://wsjp.pl/) for usage; apply the rules effective from 2026 |
+| `pt-BR` | [USP control notes](https://sites.poli.usp.br/d/PME2472/LR.pdf); [Inmetro metrology vocabulary](https://www.gov.br/inmetro/pt-br/centrais-de-conteudo/publicacoes/documentos-tecnicos-em-metrologia/vim_2012.pdf) | [ANAC drone material](https://www.gov.br/anac/pt-br/assuntos/drones/projetos-autorizados) | [Brazilian Academy of Letters VOLP](https://www.academia.org.br/nossa-lingua/busca-no-vocabul%C3%A1rio) for spelling; use Brazilian, not European, Portuguese |
+| `ja` | [Osaka Metropolitan University control lectures](https://www.ct.omu.ac.jp/pect-lab/lecture/control_engineering_1/); [IEEJ electrical terminology](https://www.iee.jp/jec/) where relevant | [MLIT unmanned-aircraft material](https://www.mlit.go.jp/koku/koku_tk10_000003.html) | [W3C Japanese layout requirements](https://www.w3.org/TR/jlreq/) for punctuation and line breaks |
+| `zh-CN` | [national science terminology database](https://www.termonline.cn/about); [Southeast University control syllabus](https://ee.seu.edu.cn/2015/1214/c13622a137753/page.htm) | [CAAC unmanned-aircraft terminology](https://www.caac.gov.cn/XXGK/XXGK/FLFG/202401/t20240115_222642.html); use for names, not operational advice | [GB/T 15834 punctuation](https://openstd.samr.gov.cn/bzgk/std/newGbInfo?hcno=22EA6D162E4110E752259661E1A0D0A8); [W3C Chinese layout requirements](https://www.w3.org/International/clreq/); use simplified characters and mainland usage |
+| `ar` | [ALECSO Arabterm/unified dictionaries](https://arabization.codict.ma/pub/dictionaries) for candidates; corroborate with Arabic-language engineering teaching material, e.g. [Benha University](https://feng.bu.edu.eg/images/PDF/bylaws21-ar.pdf) | [ICAO Arabic aviation material](https://www.icao.int/ar/news/icao-enhances-global-aviation-safety-and-security-framework) | [W3C Arabic layout requirements](https://www.w3.org/TR/alreq/) for RTL, numbers, and mixed-script text; write accessible Modern Standard Arabic, not a regional dialect |
+
+For all locales, [Microsoft localization style guides](https://learn.microsoft.com/en-us/globalization/reference/microsoft-style-guides) help with UI conventions, and [Unicode CLDR](https://cldr.unicode.org/index/charts) helps check number formats. Neither replaces control-engineering sources. Prefer a native-language control course when an official terminology bank and normal classroom usage disagree; document the choice. Have a native speaker with control/engineering knowledge review the glossary, chapter prose, graph labels, and every quiz answer and explanation. Machine translation and bilingual dictionaries may suggest candidates, but are not final verification.
+
+When adding a locale, verify locale-file structure, maths, placeholders, colour markers, numerical
+claims and quiz semantics. Check fonts for script coverage and readable canvas labels. Test narrow
+screens and screen readers. For `ar`, test RTL layout and isolation of LTR formulas, units, symbols
+and chart axes; agree on numeral style with an Arabic reviewer rather than assuming one style for
+all Arabic readers. For `ja` and `zh-CN`, inspect line breaks, punctuation, and CJK glyph coverage.
 
 ## Accessibility: checked, not assumed
 
@@ -100,7 +134,7 @@ through its own picture and crashes on the grass. Rules for adding this to other
    before anything the model can see happens (landing, crash).
 3. **The event must teach.** Choose the model's response for the chapter's idea: in Chapter 1 the
    stall and crash show that an open-loop plan can't notice a ceiling either. Explain it in the
-   widget's status line (a new string in all six languages). Nothing in the prose may be
+   widget's status line (a new string in every supported locale). Nothing in the prose may be
    contradicted by the new outcome.
 4. **Page geometry comes from `src/ui/page-physics.ts`:** `pageSolids()` (what counts as solid:
    `SOLID_SELECTOR` (text, bubbles, prediction cards and their options, other cards, pictures)

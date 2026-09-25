@@ -183,7 +183,7 @@
         },
         {
           "t": "p",
-          "text": "Devinons $e^{st}$ comme d'habitude, et le polynôme caractéristique apparaît. C'est un polynôme du troisième degré, donc il y a **trois** pôles :"
+          "text": "Essayons encore $e^{st}$. **Avec I actif**, l’équation est cubique et possède trois pôles. Si $K_i=0$, il n’y a pas d’intégrateur : un facteur commun se simplifie et le drone PD a deux pôles."
         },
         {
           "t": "math",
@@ -199,6 +199,18 @@
         },
         {
           "t": "p",
+          "text": "On peut voir pourquoi c’est la limite. Au moment où une paire oscillante atteint l’axe vertical, sa partie réelle vaut zéro : essayons $s=i\\omega$ dans le polynôme cubique. Les parties réelle et verticale doivent chacune s’annuler. On obtient :"
+        },
+        {
+          "t": "math",
+          "tex": "\\omega^2=\\frac{K_p}{m},\\qquad K_i=(c+K_d)\\omega^2=\\frac{(c+K_d)K_p}{m}"
+        },
+        {
+          "t": "p",
+          "text": "Pour un $K_i$ positif sous cette limite, les trois pôles restent à gauche ; sur la limite, la paire peut continuer à osciller. C’est le franchissement derrière le raccourci de Routh–Hurwitz."
+        },
+        {
+          "t": "p",
           "text": "Avec $K_p = 20$ et sans D : $K_i < (1)(20)/0{,}5 = 40$. C'est exactement là que le drone de Mika est devenu fou. Ajouter $K_d = 4$ repousse le bord jusqu'à 200. Ne nous crois pas sur parole : bouge les curseurs et regarde les pôles, la mini-carte et la réponse indicielle."
         },
         {
@@ -208,9 +220,9 @@
         {
           "t": "list",
           "items": [
-            "**Le bouton I** ($K_i$) éloigne un pôle de l'origine, et pousse les deux autres vers la droite. Trop, et ils franchissent la ligne.",
-            "**Le bouton D** ($K_d$) tire les pôles vers la gauche : plus d'amortissement, une réponse plus calme.",
-            "**Le bouton P** ($K_p$) écarte surtout la paire oscillante vers le haut et le bas : plus rapide, mais plus oscillant, sauf si D suit."
+            "**Le bouton I** ($K_i$) ajoute un troisième pôle à la boucle et peut pousser une paire vers la droite. Trop de I, et elle franchit la ligne.",
+            "**Le bouton D** ($K_d$) relève la limite de stabilité du gain I en ajoutant de l’amortissement. Les trajectoires peuvent tourner : plus de D ne déplace pas tous les pôles à gauche.",
+            "**Le bouton P** ($K_p$) écarte surtout la paire oscillante vers le haut et le bas : plus rapide, mais plus oscillante si D ne suit pas."
           ]
         }
       ]
@@ -320,20 +332,20 @@
             },
             {
               "id": "ch9-q2",
-              "q": "Tu augmentes $K_d$. Dans quelle direction les pôles ont-ils tendance à bouger ?",
+              "q": "Que garantit une hausse de $K_d$ dans ce modèle idéal à gains positifs ?",
               "options": [
                 {
-                  "text": "Vers la gauche : plus d'amortissement, réponse plus calme",
+                  "text": "Elle relève le plus grand $K_i$ qui reste stable",
                   "correct": true,
-                  "why": "D s'ajoute au coefficient d'amortissement $(c + K_d)$, ce qui éloigne les pôles du demi-plan droit."
+                  "why": "La condition de stabilité contient $c+K_d$ du côté favorable. Certains pôles peuvent malgré tout revenir vers l’axe."
                 },
                 {
-                  "text": "Vers la droite : vers l'instabilité",
-                  "why": "Ça, c'est ce que fait un $K_i$ trop grand. $K_d$ fait l'inverse, du moins dans notre modèle sans retards."
+                  "text": "Tous les pôles se déplacent à gauche",
+                  "why": "Le pôle réel et la paire oscillante peuvent suivre des chemins différents. Plus d’amortissement ne pousse pas tous les pôles à gauche."
                 },
                 {
-                  "text": "Ils ne bougent pas ; D ne compte que quand il y a du bruit",
-                  "why": "$K_d$ apparaît directement dans le polynôme caractéristique, donc il déplace les pôles."
+                  "text": "Elle ne compte que si le capteur est bruité",
+                  "why": "$K_d$ change déjà le polynôme caractéristique idéal et la limite de stabilité."
                 }
               ]
             },

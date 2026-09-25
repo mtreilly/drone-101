@@ -33,11 +33,13 @@ describe('Chapter 10 numbers', () => {
     expect(comfortTime(runShower(handPolicy(0.008), 60))).toBeNaN();
   });
 
-  it('recommended PI (kp 0.01, ki 0.006): PM ≈ 58°, GM ≈ 2.1, comfortable by ≈7.8 s', () => {
+  it('recommended PI (kp 0.01, ki 0.006): PM ≈ 58°, GM ≈ 2.1, comfortable by ≈9.4 s', () => {
     const m = loopMargins(piLoop(0.01, 0.006), 2.5);
     expect(m.pm).toBeCloseTo(58.3, 0);
     expect(m.gm).toBeCloseTo(2.12, 1);
-    expect(comfortTime(runShower(piPolicy(0.01, 0.006), 40))).toBeCloseTo(7.8, 0);
+    const trace = runShower(piPolicy(0.01, 0.006), 40);
+    expect(trace.u[1]).toBeGreaterThan(0.23); // initial P action plus a little I
+    expect(comfortTime(trace)).toBeCloseTo(9.4, 1);
   });
 
   it("June's aggressive PI (0.05, 0.05) is unstable", () => {

@@ -67,6 +67,10 @@
           "text": "Przesuwaj $s$, a kropki wyrysują $1/s$ dla skoku. Wypróbuj też inne sygnały. Rosnący sygnał $e^{0{,}5t}$ ma skończone pole tylko wtedy, gdy sonda maleje **szybciej**, niż sygnał rośnie, czyli gdy $s > 0{,}5$. Poniżej tej wartości pole ucieka do nieskończoności."
         },
         {
+          "t": "p",
+          "text": "Całkowite pole musi ustalić się na skończonej wartości. Jeśli sonda zanika zbyt wolno, pole nadal rośnie i taki wybór s nie daje skończonej odpowiedzi. Dla zespolonego s część pozioma steruje zanikaniem, a pionowa odkręcaniem obrotu."
+        },
+        {
           "t": "note",
           "text": "Na razie używamy tylko rzeczywistych $s$. Zespolone $s$ pojawią się za chwilę i to tam dzieje się magia.",
           "aside": true
@@ -166,11 +170,19 @@
           "t": "say",
           "who": "theo",
           "mood": "surprised",
-          "text": "Zgadzają się. Nawet dla moich chwiejnych bazgrołów. Dobra, to nie trik. Działa dla każdego sygnału."
+          "text": "Zgadzają się, nawet dla moich chwiejnych bazgrołów. To ogólna reguła dla gładkich sygnałów, których ważone pola się ustalają; rysunek daje nam sprawdzenie numeryczne."
         },
         {
           "t": "p",
-          "text": "*Dlaczego* to działa? Pomyśl o polu pod $f'(t)\\,e^{-st}$. Nachylenie sumuje zmiany $f$. Zważone sondą, te zmiany dają w sumie $s$ razy zbadane sondą $f$, minus wartość, od której zaczęliśmy. (Uczciwa nazwa to *całkowanie przez części*, ale rysunek dowodzi tego równie dobrze.) Zastosuj regułę dwa razy, a dostaniesz drugie nachylenie:"
+          "text": "Oto brakujący rachunek. Przeniesienie nachylenia z $f$ na zanikającą sondę nazywa się **całkowaniem przez części**. Jeśli ważony sygnał zanika na dalekim końcu, na brzegu pozostaje tylko wartość początkowa:"
+        },
+        {
+          "t": "math",
+          "tex": "\\int_0^\\infty f'(t)e^{-st}\\,dt = \\big[f(t)e^{-st}\\big]_0^\\infty + s\\!\\int_0^\\infty f(t)e^{-st}\\,dt = -f(0)+sF(s)"
+        },
+        {
+          "t": "p",
+          "text": "Zastosuj tę samą regułę jeszcze raz do $f'$, a otrzymasz wzór na drugie nachylenie:"
         },
         {
           "t": "math",
@@ -212,7 +224,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Oto dron z rozdziału 2 z regulatorem P, tyle że teraz startuje z **półki na wysokości 1 m**, a nie z ziemi. Grawitacja i wartość zadana to skoki, które włączają się w $t = 0$:"
+          "text": "Oto dron z rozdziału 2 ze sterowaniem P, początkowo na **półce o wysokości 1 m**. W chwili $t=0$ puszczamy go i żądamy 2 m. W obliczeniu od tej chwili nowa wartość zadana i stała siła grawitacji transformują się jak skoki:"
         },
         {
           "t": "math",
@@ -241,6 +253,18 @@
         {
           "t": "math",
           "tex": "\\out{H}(s) = \\frac{A}{s} + \\frac{B s + C}{m s^2 + c s + \\eff{K_p}}"
+        },
+        {
+          "t": "p",
+          "text": "Jak znaleźć $A$, $B$ i $C$? Pomnóż obie strony przez wspólny mianownik, a potem porównaj wyrazy stałe oraz te przy $s$ i $s^2$:"
+        },
+        {
+          "t": "math",
+          "tex": "N(s)=A(ms^2+cs+K_p)+s(Bs+C)"
+        },
+        {
+          "t": "p",
+          "text": "Wyrazy stałe dają $A = 2 - mg/K_p$; dwa pozostałe wyznaczają $B$ i $C$. Nie pojawia się tu nowa fizyka: rozbiliśmy tylko wspólny mianownik na części, które nasza tabela może przenieść z powrotem do czasu. Nadal trzeba uwzględnić wysokość początkową."
         },
         {
           "t": "p",
@@ -291,7 +315,7 @@
           "items": [
             "Transformata Laplace'a to **sonda**: pomnóż przez $e^{-st}$ i zmierz całkowite pole. $F(s) = \\int_0^\\infty f(t)e^{-st}dt$.",
             "**Wybucha dokładnie tam, gdzie mieszka sygnał**: $e^{at}$ daje $1/(s-a)$, co wybucha przy $s = a$. Dla zespolonych $s$ sonda odkręca wirujące sygnały. Wszystko to rysujemy na **płaszczyźnie s**.",
-            "Nachylenia stają się mnożeniem: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. Działa dla każdego sygnału, nawet dla bazgrołów.",
+            "Nachylenia stają się mnożeniem: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. Dla gładkich sygnałów o zbieżnej transformacie wartość początkowa ma znaczenie.",
             "Wyprowadziliśmy własną tabelkę: $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$ i przesuniętą wersję dla gasnących sinusów.",
             "Transformuj, zrób algebrę, rozbij na kawałki z tabelki, odczytaj odpowiedź. Zgadza się z symulacją dokładnie, **pod warunkiem, że zachowasz wartości początkowe**."
           ]

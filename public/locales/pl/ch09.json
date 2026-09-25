@@ -183,7 +183,7 @@
         },
         {
           "t": "p",
-          "text": "Zgadnij jak zwykle $e^{st}$, a wyskoczy wielomian charakterystyczny. To wielomian trzeciego stopnia, więc są **trzy** bieguny:"
+          "text": "Spróbujmy znów $e^{st}$. **Gdy człon I jest aktywny**, równanie jest sześcienne i ma trzy bieguny. Przy $K_i=0$ nie ma całkowania: wspólny czynnik się skraca, a dron PD ma dwa bieguny."
         },
         {
           "t": "math",
@@ -199,6 +199,18 @@
         },
         {
           "t": "p",
+          "text": "Możemy zobaczyć, skąd bierze się ta granica. Kiedy para oscylujących biegunów dochodzi do osi pionowej, jej część rzeczywista jest zerem; wstawmy $s=i\\omega$ do wielomianu sześciennego. Część rzeczywista i pionowa muszą osobno dawać zero. Otrzymujemy:"
+        },
+        {
+          "t": "math",
+          "tex": "\\omega^2=\\frac{K_p}{m},\\qquad K_i=(c+K_d)\\omega^2=\\frac{(c+K_d)K_p}{m}"
+        },
+        {
+          "t": "p",
+          "text": "Dla dodatniego $K_i$ poniżej tej granicy wszystkie trzy bieguny pozostają po lewej; na granicy para może dalej drgać. To przejście stoi za skrótem Routha–Hurwitza."
+        },
+        {
+          "t": "p",
           "text": "Przy $K_p = 20$ i bez D: $K_i < (1)(20)/0{,}5 = 40$. Dokładnie tam dron Miki oszalał. Dodanie $K_d = 4$ przesuwa krawędź do 200. Nie wierz nam na słowo; przesuwaj suwaki i obserwuj bieguny, minimapę i odpowiedź skokową."
         },
         {
@@ -208,9 +220,9 @@
         {
           "t": "list",
           "items": [
-            "**Pokrętło I** ($K_i$) wyciąga jeden biegun od początku układu, a pozostałe dwa spycha w prawo. Za dużo, a przekroczą linię.",
-            "**Pokrętło D** ($K_d$) ciągnie bieguny w lewo: więcej tłumienia, spokojniejsza odpowiedź.",
-            "**Pokrętło P** ($K_p$) głównie rozsuwa rozkołysaną parę w górę i w dół: szybciej, ale bardziej rozkołysany układ, chyba że D dotrzymuje kroku."
+            "**Pokrętło I** ($K_i$) dodaje do pętli trzeci biegun i może pchać parę w prawo. Przy zbyt dużym I para przekracza granicę.",
+            "**Pokrętło D** ($K_d$) przez dodatkowe tłumienie podnosi granicę stabilnego wzmocnienia I. Tory biegunów mogą zawracać: większe D nie przesuwa każdego bieguna w lewo.",
+            "**Pokrętło P** ($K_p$) głównie rozsuwa oscylującą parę w górę i w dół: szybciej, ale bardziej chwiejnie, jeśli D nie nadąża."
           ]
         }
       ]
@@ -320,20 +332,20 @@
             },
             {
               "id": "ch9-q2",
-              "q": "Zwiększasz $K_d$. W którą stronę zwykle przesuwają się bieguny?",
+              "q": "Co gwarantuje zwiększenie $K_d$ w tym idealnym modelu z dodatnimi wzmocnieniami?",
               "options": [
                 {
-                  "text": "W lewo: więcej tłumienia, spokojniejsza odpowiedź",
+                  "text": "Podnosi największe $K_i$, przy którym układ pozostaje stabilny",
                   "correct": true,
-                  "why": "D dodaje się do współczynnika tłumienia $(c + K_d)$, co odciąga bieguny od prawej półpłaszczyzny."
+                  "why": "W warunku stabilności $c+K_d$ stoi po korzystnej stronie. Niektóre bieguny mimo to mogą wrócić ku osi."
                 },
                 {
-                  "text": "W prawo: w stronę niestabilności",
-                  "why": "Tak działa za duże $K_i$. $K_d$ robi coś przeciwnego, przynajmniej w naszym modelu bez opóźnień."
+                  "text": "Każdy biegun przesuwa się w lewo",
+                  "why": "Biegun rzeczywisty i para oscylująca mogą iść różnymi torami. Większe tłumienie nie pcha każdego bieguna w lewo."
                 },
                 {
-                  "text": "Nie przesuwają się; D ma znaczenie tylko przy szumie",
-                  "why": "$K_d$ występuje wprost w wielomianie charakterystycznym, więc przesuwa bieguny."
+                  "text": "Ma znaczenie tylko przy zaszumionym czujniku",
+                  "why": "$K_d$ zmienia już idealny wielomian charakterystyczny i granicę stabilności."
                 }
               ]
             },

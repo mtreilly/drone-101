@@ -11,15 +11,19 @@
           "t": "say",
           "who": "june",
           "mood": "think",
-          "text": "Regardez ce qu'on a obtenu au chapitre 7. Oublions la hauteur de départ un instant (le drone démarre en vol stationnaire, calme, à 1 m). Alors la réponse était toujours la même fraction, *multipliée* par ce qu'on lui demandait de faire."
+          "text": "Démarrons avec le drone en vol stationnaire à 1 m, sa poussée de base de 4,9 N compensant la gravité. Mesurons le changement demandé et le changement de hauteur réel depuis cette référence. Juste avant une nouvelle consigne, les deux changements valent zéro. Dans l’exemple de l’échelon, la consigne saute à 2 m à $t=0$ : son changement vaut alors 1 m tandis que le drone est encore à 1 m."
         },
         {
           "t": "math",
-          "tex": "\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\sp{R}(s)"
+          "tex": "\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\Delta\\sp{R}(s)"
         },
         {
           "t": "p",
-          "text": "$\\sp{R}(s)$ est la transformée de l'**entrée** : de combien on demande à la consigne de s'éloigner de 1 m (la transformée de chaque entrée sort tout droit de notre table du chapitre 7). $G(s)$, elle, est fixe : elle ne dépend que du drone et du correcteur. Alors on lui donne un nom : la **fonction de transfert**, le rapport sortie sur entrée au pays des s, quand tout part du repos."
+          "text": "$\\Delta\\sp{R}(s)$ est la transformée du **déplacement demandé** depuis 1 m ; $\\Delta\\out{H}(s)$ celle du **déplacement réel** depuis 1 m. $G(s)$ dépend du drone et du correcteur. C’est la **fonction de transfert** : déplacement de sortie divisé par déplacement d’entrée, les deux partant de zéro."
+        },
+        {
+          "t": "p",
+          "text": "Le graphique montre toujours les hauteurs au-dessus du sol. Ajoute la hauteur initiale de 1 m au déplacement prévu par la formule pour retrouver la hauteur bleue sur le graphique."
         },
         {
           "t": "say",
@@ -29,7 +33,7 @@
         },
         {
           "t": "p",
-          "text": "Essaie trois entrées différentes sur le même drone. La recette ne change jamais, seul $\\sp{R}(s)$ change."
+          "text": "Essaie trois entrées différentes sur le même drone. La recette ne change jamais, seul $\\Delta\\sp{R}(s)$ change."
         },
         {
           "t": "widget",
@@ -40,7 +44,7 @@
           "items": [
             {
               "term": "Fonction de transfert $G(s)$",
-              "def": "Sortie ÷ entrée, toutes deux transformées, avec le système parti du repos. C'est une fraction de deux polynômes en $s$, et elle contient tout ce qu'il faut savoir sur la façon dont le système réagit."
+              "def": "Déplacement de sortie transformé ÷ déplacement d’entrée transformé, en partant du même état de repos. Pour ce drone linéaire, c’est un rapport de polynômes en $s$."
             }
           ]
         }
@@ -52,7 +56,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Où est-ce que $G(s)$ **explose** ? Là où son dénominateur s'annule. Le chapitre 7 nous a appris qu'une transformée explose exactement au $s$ où vit un signal. Donc les zéros du dénominateur sont les termes $e^{st}$ dont le système est fait. Ce sont exactement les deux points qu'on a trouvés au chapitre 6. Ils reçoivent un nom spécial : les **pôles**, dessinés par des ×."
+          "text": "Où est-ce que $G(s)$ **explose** ? Là où son dénominateur s’annule, après avoir supprimé tout facteur commun. Ce sont les **pôles**, dessinés par ×. Ce drone en a deux, correspondant aux deux mouvements naturels $e^{st}$ du chapitre 6."
         },
         {
           "t": "math",
@@ -127,7 +131,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Le numérateur de la fraction peut aussi s'annuler. Ces endroits s'appellent des **zéros**, dessinés par des ○. Ils ne changent pas *quels* termes $e^{st}$ apparaissent (ça, c'est le boulot des pôles), mais ils changent **combien** de chacun on obtient."
+          "text": "Le numérateur peut aussi s’annuler. Ces points sont des **zéros**, dessinés par ○. En général, ils changent **la part** du mouvement de chaque pôle visible en sortie. Si un zéro tombe exactement sur un pôle, le facteur commun se simplifie et ce pôle disparaît de cette fonction de transfert entrée-sortie. Un mouvement interne peut pourtant rester caché pour cette entrée et cette sortie particulières."
         },
         {
           "t": "p",

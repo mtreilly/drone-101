@@ -88,6 +88,10 @@
           "text": "Chaque changement de curseur relance la mission, et le vol précédent reste affiché en fantôme. Le petit plan s montre les pôles **nominaux** (capteur parfait, pas de colis, pas de limites), pour que tu voies l'image linéaire pendant que le vrai vol, bien plus désordonné, se déroule à côté. Gagne les six étoiles pour l'or."
         },
         {
+          "t": "p",
+          "text": "Pour l’étoile d’arrivée, la **hauteur réelle doit rester** à ±5 cm de la cible depuis l’arrivée jusqu’à la rafale à 6 s ; traverser 2 m une seule fois ne suffit pas. L’étoile des moteurs calmes utilise l’**écart-type** de la poussée entre 3 et 6 s : son écart typique autour de sa moyenne, y compris la fin de stabilisation et le bruit du capteur."
+        },
+        {
           "t": "widget",
           "id": "mission"
         },
@@ -154,7 +158,7 @@
             "La **commande P** pousse proportionnellement à l'erreur, mais laisse un affaissement et oscille quand elle est forte (chap. 2).",
             "Les **dérivées, exponentielles et nombres qui tournent** décrivent comment les choses changent : $e^{st}$ avec $s = \\sigma + i\\omega$ grandit ou rétrécit *et* oscille (chap. 3–6).",
             "La **transformée de Laplace** transforme les pentes en multiplications par $s$, donc le calcul différentiel devient de l'algèbre (chap. 7).",
-            "Les **pôles d'une fonction de transfert** sont les termes $e^{st}$ dont un système est fait : moitié gauche, ça se calme ; moitié droite, ça explose (chap. 8).",
+            "Les **pôles non simplifiés** d’une fonction de transfert indiquent les mouvements naturels visibles entre l’entrée et la sortie choisies : ceux de gauche s’atténuent, ceux de droite grandissent (ch. 8).",
             "**PID** : I tue l'affaissement, D ajoute de l'amortissement, et chacun déplace les pôles (chap. 9).",
             "Le **retard** ajoute du retard de phase ; les **marges** disent à quelle distance du bord de la falaise on est (chap. 10).",
             "Le vrai matériel ajoute des limites, du retard et du bruit, donc un bon correcteur est calme autant que rapide (chap. 11)."
@@ -280,12 +284,12 @@
       "instant": "Voler instantanément",
       "checklist": "Liste de contrôle de la mission",
       "crit": {
-        "rise": "Atteindre 2 m (± {bandCm} cm) en moins de {rise} s",
+        "rise": "Atteindre 2 m (± {bandCm} cm) avant {rise} s et y rester jusqu’à la rafale",
         "overshoot": "Dépassement sous {overshoot} % au décollage",
-        "gust": "Rester à moins de {gustCm} cm pendant la rafale",
+        "gust": "Rester à moins de {gustCm} cm de la cible de la rafale jusqu’au largage",
         "recover": "Revenir à ± {bandCm} cm moins de {recover} s après le largage",
         "ground": "Ne jamais toucher le sol après le décollage",
-        "calm": "Moteurs calmes en vol stationnaire (tremblement sous {calm} N)"
+        "calm": "Écart-type de la poussée sous {calm} N de 3 à 6 s"
       },
       "touched": "touché !",
       "clear": "OK",
@@ -305,7 +309,8 @@
       "poles": {
         "stable": "Pôles nominaux : tous dans la moitié gauche.",
         "unstable": "Un pôle nominal est dans la moitié droite : ce réglage ne peut pas tenir !",
-        "off": "({n} pôle(s) rapide(s) hors du bord gauche.)"
+        "off": "({n} pôle(s) rapide(s) hors du bord gauche.)",
+        "marginal": "Pôles nominaux : un pôle est sur la limite de stabilité."
       }
     }
   }

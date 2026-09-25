@@ -24,6 +24,10 @@
           "text": "Primero, una confesión sobre la \"mano normal\" del capítulo 0. Giraba el mando a una **velocidad** proporcional a lo mal que se sentía el agua: velocidad del mando $= k\\cdot\\err{e}$, con $k = 0.8\\,\\%$ del mando por segundo y por °C. Una velocidad proporcional al error significa que la *posición* del mando es el montón de error pasado. Eso es un **controlador I**, con $K_i = k$."
         },
         {
+          "t": "note",
+          "text": "En los cálculos, el mando va de 0 a 1: el 0,8 % de su recorrido son 0,008 unidades de mando. La fórmula del lazo de abajo usa 0,008; los deslizadores muestran 0,8 %. Conserva las unidades junto al número."
+        },
+        {
           "t": "say",
           "who": "mika",
           "mood": "surprised",
@@ -92,7 +96,7 @@
         },
         {
           "t": "p",
-          "text": "El retraso de la mezcla encoge las oscilaciones rápidas (la ganancia cae), mientras que la tubería sigue acumulando desfase, sin límite. Dibujadas frente a la velocidad de oscilación en ejes logarítmicos, esta pareja de curvas se llama **diagrama de Bode**. Acabamos de dibujar uno a mano. La fórmula sale directamente de $G(s)$ con $s = i\\omega$, el eje vertical del plano s:"
+          "text": "La mezcla reduce las oscilaciones rápidas, mientras que la tubería sigue añadiendo desfase. Las curvas de ganancia y fase frente a la velocidad de oscilación forman un **diagrama de Bode**. Aquí la entrada es la **temperatura del agua mezclada**, así que las oscilaciones lentas tienen ganancia 1. Si la entrada fuera la fracción del mando, la ganancia sería 45 veces mayor. Para esta gráfica temperatura a temperatura, ponemos $s=i\\omega$ en la respuesta normalizada de la ducha:"
         },
         {
           "t": "math",
@@ -124,7 +128,11 @@
           "t": "say",
           "who": "june",
           "mood": "excited",
-          "text": "O sea que hay una velocidad de oscilación especial, donde la fase llega a −180°. La pregunta es solo: a esa velocidad, ¿la ganancia del lazo es mayor o menor que 1?"
+          "text": "En este lazo sencillo de ducha, la fase cruza −180° a una velocidad de oscilación relevante. Busca esa velocidad en la gráfica de fase y lee la ganancia del lazo a la misma velocidad en la gráfica de ganancia. ¿Está por debajo o por encima de 1?"
+        },
+        {
+          "t": "p",
+          "text": "Por ejemplo, cerca de 0,457 rad/s, la mano que acumula se retrasa 90°, la mezcla añade unos 25° y la tubería unos 65°: en total, 180°. La mano normal devuelve una oscilación de solo unas 0,72 veces el tamaño original. Podría ser unas 1 ÷ 0,72 ≈ 1,4 veces más enérgica antes de llegar al borde."
         },
         {
           "t": "vocab",
@@ -141,7 +149,7 @@
         },
         {
           "t": "p",
-          "text": "Para nuestra ducha, la fase de $L$ llega a −180° en $\\omega \\approx 0.457$ rad/s, un periodo de oscilación de unos **13,8 s**. La mano normal ($k = 0.8$) tiene un margen de ganancia de solo **1,4**, más o menos, y un margen de fase de unos 22°. ¡Muy cerca del borde! La mano enérgica duplica la ganancia: 1,4 ÷ 2 = 0,7, **por el abismo abajo**. Justo por eso no se estabilizaba nunca."
+          "text": "Para nuestra ducha, la fase de $L$ llega a −180° en $\\omega \\approx 0.457$ rad/s, un periodo de oscilación de unos **13,8 s**. La mano normal ($k = 0{,}008$) tiene un margen de ganancia de solo **1,4**, más o menos, y un margen de fase de unos 22°. ¡Muy cerca del borde! La mano enérgica duplica la ganancia: 1,4 ÷ 2 = 0,7, **por el abismo abajo**. Justo por eso no se estabilizaba nunca."
         },
         {
           "t": "predict",
@@ -200,7 +208,11 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Ahora vamos a ganarles a nuestras propias manos. El robot usa un controlador PI: una parte I (como la mano) más una parte P, que reacciona a la *tendencia* de la temperatura y añade adelanto de fase. Apunta a un **margen de fase por encima de 45°** y a estar **a gusto (en la franja 10 s seguidos) en menos de 12 s**."
+          "text": "Ahora ganemos a nuestras propias manos. El robot usa PI: **P responde al error de temperatura actual** e **I recuerda el error acumulado**. Juntos permiten que el mando reaccione pronto mientras I encuentra el ajuste duradero. Frente a I solo, P puede añadir adelanto de fase. Busca un **margen de fase superior a 45°** y **10 segundos en la franja cómoda, comenzando antes de 12 s**."
+        },
+        {
+          "t": "note",
+          "text": "El código del robot escribe PI como **velocidad** del mando: I sigue moviéndolo mientras haya error y P responde a un *cambio* del error. Al arrancar, P también da un primer movimiento según el error actual. Esto coincide con la regla en posición, salvo cuando el mando llega a un tope."
         },
         {
           "t": "say",
@@ -225,8 +237,12 @@
           "text": "El dron aguantaba ganancias grandes porque casi no tenía retraso. Aquí, **robusto** significa suave: deja margen para el retardo. Prueba con $K_p \\approx 1$ y $K_i \\approx 0.6$."
         },
         {
+          "t": "note",
+          "text": "Estos números del deslizador son porcentajes del recorrido completo del mando: P ≈ 1 % por °C de error actual e I ≈ 0,6 % por °C-segundo de error acumulado. Las ecuaciones del lazo usan fracciones del recorrido: divide entre 100 los números mostrados."
+        },
+        {
           "t": "p",
-          "text": "Un PI con buen margen se pone a gusto en menos de 8 segundos, sin oscilar. Eso le gana a la mano normal (que se pasó casi un minuto oscilando antes de calmarse) y a la mayoría de los humanos. Pero no puede ganarle a la física: nada puede reaccionar a un agua que aún no ha llegado. Los ingenieros sí tienen un truco para retardos largos, el **predictor de Smith**, que ejecuta una pequeña simulación de la tubería dentro del controlador. Pero eso es historia para otro cuaderno."
+          "text": "Un PI con buen margen se pone a gusto en unos 9,4 segundos, sin grandes oscilaciones repetidas. Eso le gana a la mano normal (que se pasó casi un minuto oscilando antes de calmarse) y a la mayoría de los humanos. Pero no puede ganarle a la física: nada puede reaccionar a un agua que aún no ha llegado. Los ingenieros sí tienen un truco para retardos largos, el **predictor de Smith**, que ejecuta una pequeña simulación de la tubería dentro del controlador. Pero eso es historia para otro cuaderno."
         },
         {
           "t": "note",
@@ -243,7 +259,7 @@
           "items": [
             "Un retardo $L$ desfasa una oscilación en $\\omega L$: nada para las oscilaciones lentas, mucho para las rápidas.",
             "Meter ondas senoidales y medir ganancia y fase da la **respuesta en frecuencia**; dibujada, es un **diagrama de Bode**, y no es más que $G(i\\omega)$.",
-            "Una oscilación empieza donde la fase del lazo llega a −180° con una ganancia de al menos 1.",
+            "En este lazo sencillo de ducha, una oscilación sostenida empieza cuando la fase del lazo llega a −180° con ganancia 1; con más ganancia, las oscilaciones crecen hasta que intervienen los límites.",
             "Los **márgenes de ganancia y de fase** miden la distancia a ese abismo. Más retardo significa menos margen, así que necesitas un control más suave.",
             "Nuestras oscilaciones del capítulo 0 eran un controlador (nosotros) con demasiado poco margen."
           ]

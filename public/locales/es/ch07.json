@@ -67,6 +67,10 @@
           "text": "Barre $s$ y los puntos dibujan $1/s$ para el escalón. Prueba también las otras señales. Una señal creciente $e^{0.5t}$ solo tiene un área finita cuando la sonda se encoge **más rápido** de lo que crece la señal, es decir, cuando $s > 0.5$. Por debajo de eso, el área se va al infinito."
         },
         {
+          "t": "p",
+          "text": "El área total tiene que estabilizarse en un valor finito. Si la sonda decae demasiado despacio, el área sigue creciendo y esa elección de s no da una respuesta finita. Con una s compleja, la parte horizontal controla el decaimiento y la vertical controla el giro inverso."
+        },
+        {
           "t": "note",
           "text": "De momento solo usamos $s$ reales. Las $s$ complejas llegan en un minuto, y ahí está la magia.",
           "aside": true
@@ -166,11 +170,19 @@
           "t": "say",
           "who": "theo",
           "mood": "surprised",
-          "text": "Coinciden. Incluso con mi garabato tembloroso. Vale, no es un truco. Funciona para cualquier señal."
+          "text": "Coinciden, incluso con mi garabato tembloroso. Así que es una regla general para señales suaves cuyas áreas ponderadas se estabilizan; el dibujo nos da una comprobación numérica."
         },
         {
           "t": "p",
-          "text": "¿*Por qué* funciona? Piensa en el área de $f'(t)\\,e^{-st}$. La pendiente va sumando los cambios de $f$. Ponderados por la sonda, esos cambios suman $s$ veces la $f$ sondada, menos el valor desde el que empezaste. (El nombre honesto de esto es *integración por partes*, pero el dibujo lo demuestra igual de bien.) Aplica la regla dos veces y obtienes la segunda pendiente:"
+          "text": "Aquí está el cálculo que faltaba. Pasar la pendiente de $f$ a la sonda decreciente se llama **integración por partes**. Si la señal ponderada se desvanece al final, solo queda su valor inicial en el borde:"
+        },
+        {
+          "t": "math",
+          "tex": "\\int_0^\\infty f'(t)e^{-st}\\,dt = \\big[f(t)e^{-st}\\big]_0^\\infty + s\\!\\int_0^\\infty f(t)e^{-st}\\,dt = -f(0)+sF(s)"
+        },
+        {
+          "t": "p",
+          "text": "Aplica la misma regla una vez más a $f'$ y sale la fórmula para la segunda pendiente:"
         },
         {
           "t": "math",
@@ -212,7 +224,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Este es el dron del capítulo 2 con control P, pero ahora despega desde una **repisa de 1 m** en vez de desde el suelo. La gravedad y la consigna son escalones que se activan en $t = 0$:"
+          "text": "Aquí está el dron del capítulo 2 con control P, que empieza en una **plataforma de 1 m**. En $t=0$ lo soltamos y pedimos 2 m. En el cálculo desde ese instante, la nueva consigna y la fuerza constante de gravedad se transforman como escalones:"
         },
         {
           "t": "math",
@@ -241,6 +253,18 @@
         {
           "t": "math",
           "tex": "\\out{H}(s) = \\frac{A}{s} + \\frac{B s + C}{m s^2 + c s + \\eff{K_p}}"
+        },
+        {
+          "t": "p",
+          "text": "¿Cómo encontramos $A$, $B$ y $C$? Multiplica ambos lados por el denominador común y compara los términos constantes, en $s$ y en $s^2$:"
+        },
+        {
+          "t": "math",
+          "tex": "N(s)=A(ms^2+cs+K_p)+s(Bs+C)"
+        },
+        {
+          "t": "p",
+          "text": "Los términos constantes dan $A = 2 - mg/K_p$; los otros dos dan $B$ y $C$. No aparece nueva física: solo deshicimos un denominador común para obtener piezas que nuestra tabla devuelve al tiempo. Hay que conservar la altura inicial."
         },
         {
           "t": "p",
@@ -291,7 +315,7 @@
           "items": [
             "La transformada de Laplace es una **sonda**: multiplica por $e^{-st}$ y mide el área total. $F(s) = \\int_0^\\infty f(t)e^{-st}dt$.",
             "**Explota justo donde vive la señal**: $e^{at}$ da $1/(s-a)$, que se dispara en $s = a$. Con $s$ complejas, la sonda deshace el giro de las señales que giran. Todo esto lo dibujamos en el **plano s**.",
-            "Las pendientes se convierten en multiplicaciones: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. Funciona para cualquier señal, incluso un garabato.",
+            "Las pendientes se convierten en multiplicaciones: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. Para señales suaves cuya transformada converge, importa el valor inicial.",
             "Dedujimos nuestra propia tabla: $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$ y la versión desplazada para senos amortiguados.",
             "Transforma, haz álgebra, parte en trozos de la tabla y lee la respuesta. Coincide exactamente con la simulación, **siempre que conserves los valores iniciales**."
           ]
