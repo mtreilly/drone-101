@@ -1,5 +1,9 @@
 import { type C, c } from '../../math/complex';
+import { h, s as svgEl } from '../../core/dom';
 import { fmt } from '../../core/i18n';
+import { ICON } from '../../ui/controls';
+import type { SPlane } from '../../ui/s-plane';
+import './ch06.css';
 
 /** Calls `fn` once at the start of each slider interaction (pointer press or a fresh key press). Used to snapshot ghosts. */
 export function onInteractStart(el: HTMLElement, fn: () => void): void {
@@ -55,9 +59,46 @@ export function settling(xs: number[], ys: number[], target: number, size: numbe
   return 0;
 }
 
-/** Readout labels are upper-cased by the shared CSS, which mangles Greek letters; keep them as written. */
-export function keepCase(el: HTMLElement): HTMLElement {
-  const l = el.querySelector<HTMLElement>('.readout-label');
-  if (l) l.style.textTransform = 'none';
-  return el;
+/** Small hand-lettered caption above a panel or view. */
+export const caption = (text: string): HTMLElement => h('p', { class: 'w-cap' }, text);
+
+/** Button with a leading icon (ICON.play etc.) and a text label. */
+export function iconButton(icon: keyof typeof ICON, label: string, extraClass = ''): HTMLButtonElement {
+  const b = h('button', { class: `btn small ${extraClass}`.trim(), type: 'button' });
+  setIconLabel(b, icon, label);
+  return b;
+}
+
+export function setIconLabel(b: HTMLButtonElement, icon: keyof typeof ICON, label: string): void {
+  b.innerHTML = `${ICON[icon]}<span>${label.replace(/[&<>]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[ch]!)}</span>`;
+}
+
+/** A row of equations that sit side by side on wide screens and stack on narrow ones. */
+export function eqRow(...blocks: HTMLElement[]): HTMLElement {
+  return h('div', { class: 'eq-row' }, blocks);
+}
+
+/**
+ * Keeps a display point inside the visible map. Returns the clamped value and whether it
+ * had to be pulled in (the maths still uses the true value).
+ */
+export function clampToPlane(plane: SPlane, re: number, im: number): { re: number; im: number; off: boolean } {
+  const { reMin, reMax, imMax } = plane.o;
+  const pad = (reMax - reMin) * 0.02;
+  const cr = Math.min(reMax - pad, Math.max(reMin + pad, re));
+  const ci = Math.min(imMax - pad, Math.max(-imMax + pad, im));
+  return { re: cr, im: ci, off: cr !== re || ci !== im };
+}
+
+/** A text label in a plane's decoration layer, positioned in s-coordinates with a pixel offset. */
+export function planeLabel(plane: SPlane, cls = 'pt-note'): (text: string, re: number, im: number, dx?: number, dy?: number, anchor?: string) => void {
+  const el = svgEl('text', { class: cls });
+  plane.deco.append(el);
+  return (text, re, im, dx = 0, dy = 0, anchor = 'middle') => {
+    el.textContent = text;
+    el.setAttribute('x', String(plane.sx(re) + dx));
+    el.setAttribute('y', String(plane.sy(im) + dy));
+    el.setAttribute('text-anchor', anchor);
+    el.style.display = text ? '' : 'none';
+  };
 }

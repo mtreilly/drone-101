@@ -10,7 +10,7 @@ import { color, withAlpha } from '../../ui/colors';
 import { readout, segmented, slider, toggle } from '../../ui/controls';
 import { Loop } from '../../ui/loop';
 import { Plot } from '../../ui/plot';
-import { keepCase, onInteractStart, sample } from '../ch06/helpers';
+import { onInteractStart, sample } from '../ch06/helpers';
 import { DRAW_T, dampedCos, derivativeRule, fromFunction, fromPoints, solveDrone, unspinIntegral, unspinLimit } from './tools';
 
 type Sig = { f: (t: number) => number; F: (s: number) => number; a: number; yMin: number; yMax: number };
@@ -110,7 +110,6 @@ const probe: WidgetFactory = (host, ctx) => {
   const trace = { xs: [] as number[], ys: [] as number[] };
   const rArea = readout(t('area'));
   const rTotal = readout(t('total'));
-  keepCase(rTotal.el);
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
   const product = () => {
     const sig = SIGNALS[key];
@@ -245,7 +244,6 @@ const explode: WidgetFactory = (host, ctx) => {
     label: t('fAria'),
   });
   const rF = readout('F(s)');
-  keepCase(rF.el);
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
   const eq = h('div', { class: 'math-block' });
   const update = () => {
@@ -318,7 +316,6 @@ const unspin: WidgetFactory = (host, ctx) => {
     rMag.set(fmt(mag, 2));
     const rel = W0 - om;
     rSpin.set(`${fmt(rel, 2)} rad/s`);
-    keepCase(rSpin.el);
     status.textContent = Math.abs(rel) < 0.05 ? t('matched', { m: fmt(mag, 1) }) : t('spinning');
     plot.describe(status.textContent);
   };
@@ -381,8 +378,6 @@ const derivRule: WidgetFactory = (host, ctx) => {
   });
   const rL = readout(t('lhsShort'));
   const rR = readout(t('rhsShort'));
-  keepCase(rL.el);
-  keepCase(rR.el);
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
   const update = () => {
     fp.set('f', d.xs, d.f);

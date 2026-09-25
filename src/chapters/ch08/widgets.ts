@@ -9,7 +9,7 @@ import { DroneView } from '../../ui/drone-view';
 import { Loop } from '../../ui/loop';
 import { Plot } from '../../ui/plot';
 import { SPlane, formatS } from '../../ui/s-plane';
-import { keepCase, sample } from '../ch06/helpers';
+import { sample } from '../ch06/helpers';
 import './ch08.css';
 import { gainsFromPoles, noZeroResponse, overshootOf, settleOf, stepFromPoles, zeroResponse, zetaOf } from './poles';
 
@@ -181,8 +181,7 @@ const playground: WidgetFactory = (host, ctx) => {
   const rOs = readout(t('overshoot'));
   const rKp = readout('Kp', 'eff');
   const rKd = readout('Kd', 'eff');
-  [rKp, rKd, rTs].forEach((r) => keepCase(r.el));
-  rbox.append(h('div', { class: 'readouts stack' }, rP.el, rTs.el, rOs.el, rKp.el, rKd.el));
+    rbox.append(h('div', { class: 'readouts stack' }, rP.el, rTs.el, rOs.el, rKp.el, rKd.el));
   const plot = new Plot(right, {
     x: { label: tc('plots.time'), min: 0, max: T1 },
     y: { label: tc('plots.height'), min: -0.5, max: 4 },

@@ -12,7 +12,20 @@ import { MsdView } from '../../ui/msd-view';
 import { Plot } from '../../ui/plot';
 import { SPlane } from '../../ui/s-plane';
 import './ch06.css';
-import { fmtC, keepCase, onInteractStart, regime, sample, secondOrderRoots, settling } from './helpers';
+import {
+  caption,
+  clampToPlane,
+  eqRow,
+  fmtC,
+  iconButton,
+  onInteractStart,
+  planeLabel,
+  regime,
+  sample,
+  secondOrderRoots,
+  setIconLabel,
+  settling,
+} from './helpers';
 
 const { m, c } = DRONE;
 const RUN = 6;
@@ -21,21 +34,37 @@ const RUN = 6;
 const twins: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
   let kp = 20;
-  const mkSims = () => ({
-    msd: new MassSpringDamper(m, c, kp, () => 0, -1, 0),
-    drone: new DroneSim(defaultDroneConfig({ pid: { ...P_ONLY(kp), ff: HOVER_THRUST }, h0: 1 })),
-  });
-  let sims = mkSims();
-  const grid = h('div', { class: 'w-grid three' });
+  type Trace = { t: number[]; drone: number[]; thrust: number[]; spring: number[] };
+  /** Whole 6 s run for both systems, so a slider drag redraws instantly. */
+  const compute = (): Trace => {
+    const msd = new MassSpringDamper(m, c, kp, () => 0, -1, 0);
+    const drone = new DroneSim(defaultDroneConfig({ pid: { ...P_ONLY(kp), ff: HOVER_THRUST }, h0: 1 }));
+    const tr: Trace = { t: [0], drone: [drone.h - 2], thrust: [drone.thrust], spring: [msd.pos] };
+    for (let i = 1; i <= RUN * 1000; i++) {
+      msd.step();
+      drone.step();
+      if (i % 10 === 0) {
+        tr.t.push(drone.t);
+        tr.drone.push(drone.h - 2);
+        tr.thrust.push(drone.thrust);
+        tr.spring.push(msd.pos);
+      }
+    }
+    return tr;
+  };
+  let tr = compute();
+  const grid = h('div', { class: 'twins-grid' });
   const a = h('div');
   const b = h('div');
-  const pl = h('div');
+  const pl = h('div', { class: 'twins-plot' });
   grid.append(a, b, pl);
   host.append(h('p', { class: 'w-title' }, t('title')), grid);
-  a.append(h('p', { class: 'w-help', style: { textAlign: 'center' } }, t('spring')));
+  a.append(caption(t('spring')));
   const msdView = new MsdView(a, t('msdAria'), 60);
-  b.append(h('p', { class: 'w-help', style: { textAlign: 'center' } }, t('drone')));
-  const droneView = new DroneView(b, { hMax: 3, width: 220 });
+  msdView.el.style.maxWidth = '200px';
+  b.append(caption(t('drone')));
+  const droneView = new DroneView(b, { hMax: 3, width: 230 });
+  pl.append(caption(t('together')));
   const plot = new Plot(pl, {
     x: { label: tc('plots.time'), min: 0, max: RUN },
     y: { label: t('plotY'), min: -1.3, max: 1.3 },
@@ -43,55 +72,48 @@ const twins: WidgetFactory = (host, ctx) => {
       { id: 'drone', color: 'out', label: t('drone'), ghost: true, width: 3.4 },
       { id: 'spring', color: 'ink', label: t('spring'), dash: [5, 5], width: 1.8 },
     ],
-    height: 260,
+    height: 250,
     label: t('plotAria'),
   });
   plot.setLines([{ kind: 'h', at: 0, color: 'sp', label: t('target') }]);
-  const eq = h('div', { class: 'math-block' });
-  const zetaEq = h('div', { class: 'math-block' });
+  const eqSpring = h('div', { class: 'math-block' });
+  const eqDrone = h('div', { class: 'math-block' });
+  const zetaEq = h('div', { class: 'math-block', style: { marginTop: '0' } });
   const rZ = readout('ζ');
   const rW = readout('ωn');
   const rR = readout(t('personality'));
   const syncEq = () => {
     const z = c / (2 * Math.sqrt(m * kp));
-    eq.innerHTML = tex(
-      `\\underbrace{m\\ddot{x} + c\\dot{x} + \\eff{k}\\,x = 0}_{\\text{${t('spring')}}} \\qquad \\underbrace{m\\ddot{\\out{h}} + c\\dot{\\out{h}} + \\eff{K_p}(\\out{h} - \\sp{2}) = 0}_{\\text{${t('drone')}}}`,
-      true,
-    );
+    eqSpring.innerHTML = tex(`\\underbrace{m\\ddot{x} + c\\dot{x} + \\eff{k}\\,x = 0}_{\\text{${t('spring')}}}`, true);
+    eqDrone.innerHTML = tex(`\\underbrace{m\\ddot{\\out{h}} + c\\dot{\\out{h}} + \\eff{K_p}(\\out{h} - \\sp{2}) = 0}_{\\text{${t('drone')}}}`, true);
     zetaEq.innerHTML = tex(`\\zeta = \\frac{c}{2\\sqrt{m\\,\\eff{K_p}}} = \\frac{${fmt(c, 1)}}{2\\sqrt{${fmt(m, 1)}\\cdot \\eff{${fmt(kp, 0)}}}} = ${fmt(z, 3)}`, true);
     rZ.set(fmt(z, 3));
     rW.set(`${fmt(Math.sqrt(kp / m), 2)} rad/s`);
     rR.set(t(`regime.${regime(z)}`));
   };
+  let playT = 0;
+  /** Shows both systems at time `tt`; the curves are drawn up to the same moment. */
+  const show = (tt: number) => {
+    const n = Math.min(tr.t.length - 1, Math.round(tt / 0.01));
+    msdView.update(tr.spring[n], 0);
+    droneView.update({ h: tr.drone[n] + 2, r: 2, thrust: tr.thrust[n] });
+    plot.set('drone', tr.t.slice(0, n + 1), tr.drone.slice(0, n + 1));
+    plot.set('spring', tr.t.slice(0, n + 1), tr.spring.slice(0, n + 1));
+    plot.describe(t('describe', { d: fmt(tr.drone[n], 2), s: fmt(tr.spring[n], 2) }));
+  };
+  const loop = new Loop((dt) => {
+    playT = Math.min(RUN, playT + dt);
+    show(playT);
+    if (playT >= RUN) loop.pause();
+  }, host);
   const reset = () => {
     loop.pause();
-    sims = mkSims();
-    plot.clear();
-    draw();
-    if (Loop.autoplay) loop.play();
+    playT = 0;
+    if (Loop.autoplay) {
+      show(0);
+      loop.play();
+    } else show(RUN);
   };
-  const draw = () => {
-    msdView.update(sims.msd.pos, 0);
-    droneView.update({ h: sims.drone.h, r: 2, thrust: sims.drone.thrust });
-  };
-  let acc = 0;
-  const tick = (dt: number) => {
-    const n = Math.round(dt / 0.001);
-    for (let i = 0; i < n; i++) {
-      sims.msd.step();
-      sims.drone.step();
-    }
-    acc += dt;
-    if (acc > 0.02) {
-      acc = 0;
-      plot.push('drone', sims.drone.t, sims.drone.h - 2);
-      plot.push('spring', sims.msd.t, sims.msd.pos);
-      plot.describe(t('describe', { d: fmt(sims.drone.h - 2, 2), s: fmt(sims.msd.pos, 2) }));
-    }
-    draw();
-    if (sims.drone.t >= RUN) loop.pause();
-  };
-  const loop = new Loop(tick, host);
   const sl = slider({
     label: t('kp'),
     min: 2,
@@ -102,13 +124,29 @@ const twins: WidgetFactory = (host, ctx) => {
     color: 'eff',
     onInput: (v) => {
       kp = v;
+      tr = compute();
       syncEq();
-      reset();
+      // while dragging, show the whole new run at once; release replays it
+      loop.pause();
+      playT = RUN;
+      show(RUN);
     },
   });
-  pl.append(h('div', { class: 'readouts' }, keepCase(rZ.el), keepCase(rW.el), rR.el));
-  host.append(eq, zetaEq, h('div', { class: 'w-controls' }, sl.el), transport({ loop, onReset: reset, onStep: () => tick(0.1) }));
-  host.append(h('p', { class: 'w-help' }, t('help')));
+  onInteractStart(sl.input, () => plot.clear(true));
+  // replay after a pointer drag; keyboard steps stay still (no motion on key presses)
+  let byPointer = false;
+  sl.input.addEventListener('pointerdown', () => (byPointer = true));
+  sl.input.addEventListener('keydown', () => (byPointer = false));
+  sl.input.addEventListener('change', () => {
+    if (byPointer) reset();
+  });
+  host.append(
+    eqRow(eqSpring, eqDrone),
+    zetaEq,
+    h('div', { class: 'w-controls' }, sl.el),
+    h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rZ.el, rW.el, rR.el), transport({ loop, onReset: reset, onStep: () => ((playT = Math.min(RUN, playT + 0.1)), show(playT)) })),
+    h('p', { class: 'w-help' }, t('help')),
+  );
   syncEq();
   reset();
   return () => loop.destroy();
@@ -121,32 +159,41 @@ const personality: WidgetFactory = (host, ctx) => {
   let zeta = 0.3;
   const T1 = 10;
   host.append(h('p', { class: 'w-title' }, t('title')));
-  const grid = h('div', { class: 'w-grid side-r' });
-  const left = h('div');
-  const right = h('div');
-  grid.append(left, right);
-  host.append(grid);
-  const plot = new Plot(left, {
+  const top = h('div', { class: 'w-grid side-r' });
+  const plotCell = h('div');
+  const planeCell = h('div');
+  top.append(plotCell, planeCell);
+  const bottom = h('div', { class: 'w-grid side-r' });
+  const ctrlCell = h('div');
+  const springCell = h('div', { class: 'spring-cell' });
+  bottom.append(ctrlCell, springCell);
+  host.append(top, bottom);
+  const plot = new Plot(plotCell, {
     x: { label: tc('plots.time'), min: 0, max: T1 },
     y: { label: tc('plots.height'), min: 0, max: 2 },
     series: [{ id: 'y', color: 'out', label: t('response'), ghost: true }],
-    height: 250,
+    height: 320,
     label: t('plotAria'),
   });
   plot.setLines([{ kind: 'h', at: 1, color: 'sp', label: t('target') }]);
-  const plane = new SPlane(right, { reMin: -10, reMax: 2, imMax: 6, label: t('planeAria'), reLabel: tc('splane.re'), imLabel: tc('splane.im') });
+  planeCell.append(caption(t('planeCap')));
+  const plane = new SPlane(planeCell, { reMin: -10, reMax: 2, imMax: 6, label: t('planeAria'), reLabel: t('re'), imLabel: t('im'), maxWidth: 360 });
+  plane.svg.style.overflow = 'hidden';
   const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
   circle.setAttribute('class', 'guide');
-  const circleLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  circleLabel.setAttribute('class', 'guide-label');
-  plane.deco.append(circle, circleLabel);
-  const msd = new MsdView(right, t('msdAria'), 50);
-  msd.el.style.maxWidth = '150px';
-  const panels = h('div', { class: 'w-grid three' });
+  plane.deco.append(circle);
+  const circleLabel = planeLabel(plane, 'pt-note muted');
+  const offLabel = planeLabel(plane, 'pt-note');
+  springCell.append(caption(t('springCap')));
+  const msd = new MsdView(springCell, t('msdAria'), 50);
+  msd.el.style.maxWidth = '140px';
+  const play = iconButton('play', t('playSpring'));
+  springCell.append(play);
+  const panels = h('div', { class: 'w-grid three', style: { marginTop: '18px' } });
   const panelZ = [0.2, 1, 2.5];
   const panelPlots = panelZ.map((z, i) => {
     const box = h('div', { class: 'panel', dataset: { regime: ['under', 'critical', 'over'][i] } });
-    box.append(h('p', { class: 'w-help', style: { textAlign: 'center', margin: 0 } }, t(`panel.${i}`, { z: fmt(z, 1) })));
+    box.append(caption(t(`panel.${i}`, { z: fmt(z, 1) })));
     panels.append(box);
     const p = new Plot(box, {
       x: { label: tc('plots.time'), min: 0, max: T1 },
@@ -162,6 +209,7 @@ const personality: WidgetFactory = (host, ctx) => {
   const rOS = readout(t('overshoot'));
   const rTs = readout(t('settle'));
   const rRoots = readout(t('roots'));
+  rRoots.el.style.flex = '2 1 9.5rem';
   const rReg = readout(t('personality'));
   let resp = sample(() => 0, T1);
   let playT = 0;
@@ -172,20 +220,30 @@ const personality: WidgetFactory = (host, ctx) => {
     msd.update(resp.ys[i] - 1, 0);
     plot.setCursor(playT);
   }, host);
+  loop.onChange((on) => {
+    setIconLabel(play, on ? 'pause' : 'play', on ? t('stopSpring') : t('playSpring'));
+    if (!on) plot.setCursor(null);
+  });
+  play.addEventListener('click', () => loop.toggle());
   const update = () => {
     const k = m * wn * wn;
     const cc = 2 * zeta * wn * m;
-    const f = secondOrderSolution(m, cc, k, k, 0, 0);
-    resp = sample(f, T1, 500);
+    resp = sample(secondOrderSolution(m, cc, k, k, 0, 0), T1, 500);
     plot.set('y', resp.xs, resp.ys);
     const roots = secondOrderRoots(wn, zeta);
-    plane.set(roots.map((r, i) => ({ id: `r${i}`, re: r.re, im: r.im, kind: 'point' as const, color: 'output' })));
+    let off = '';
+    plane.set(
+      roots.map((r, i) => {
+        const p = clampToPlane(plane, r.re, r.im);
+        if (p.off) off = t('offMap', { v: fmtC(r, 1) });
+        return { id: `r${i}`, re: p.re, im: p.im, kind: 'point' as const, color: 'output' };
+      }),
+    );
+    offLabel(off, plane.o.reMin, 0, 6, -12, 'start');
     circle.setAttribute('cx', String(plane.sx(0)));
     circle.setAttribute('cy', String(plane.sy(0)));
     circle.setAttribute('r', String(plane.sx(wn) - plane.sx(0)));
-    circleLabel.setAttribute('x', String(plane.sx(0) + 6));
-    circleLabel.setAttribute('y', String(plane.sy(-wn) + 16));
-    circleLabel.textContent = t('radius', { w: fmt(wn, 1) });
+    circleLabel(t('radius', { w: fmt(wn, 1) }), 0, -Math.min(wn, plane.o.imMax * 0.92), -6, 18, 'end');
     panelZ.forEach((z, i) => {
       const d = sample(secondOrderSolution(m, 2 * z * wn * m, k, k, 0, 0), T1, 300);
       panelPlots[i].p.set('y', d.xs, d.ys);
@@ -194,22 +252,17 @@ const personality: WidgetFactory = (host, ctx) => {
     const ts = settling(resp.xs, resp.ys, 1, 1);
     rOS.set(`${fmt(zeta < 1 ? overshootFormula(zeta) : 0, 1)} %`);
     rTs.set(Number.isNaN(ts) ? t('never') : `${fmt(ts, 2)} s`);
-    rRoots.set(roots[0].im !== 0 ? `${fmt(roots[0].re, 2)} ± ${fmt(roots[0].im, 2)}i` : `${fmtC(roots[0])}, ${fmtC(roots[1])}`);
+    const rootsText = roots[0].im !== 0 ? `${fmt(roots[0].re, 2)} ± ${fmt(Math.abs(roots[0].im), 2)}i` : `${fmtC(roots[0])}, ${fmtC(roots[1])}`;
+    rRoots.set(rootsText);
     rReg.set(t(`regime.${regime(zeta)}`));
-    plot.describe(t('describe', { z: fmt(zeta, 2), w: fmt(wn, 1), r: rRoots.el.querySelector('.readout-val')!.textContent ?? '' }));
+    plot.describe(t('describe', { z: fmt(zeta, 2), w: fmt(wn, 1), r: rootsText }));
   };
-  const sw = slider({ label: t('wn'), min: 0.5, max: 8, step: 0.1, value: wn, unit: 'rad/s', onInput: (v) => ((wn = v), update()) });
+  const sw = slider({ label: t('wn'), min: 0.5, max: 6, step: 0.1, value: wn, unit: 'rad/s', onInput: (v) => ((wn = v), update()) });
   const sz = slider({ label: t('zeta'), min: 0, max: 3, step: 0.01, value: zeta, onInput: (v) => ((zeta = v), update()) });
   onInteractStart(sw.input, () => plot.clear(true));
   onInteractStart(sz.input, () => plot.clear(true));
-  left.append(h('div', { class: 'readouts' }, rOS.el, rTs.el, rRoots.el, rReg.el), h('div', { class: 'w-controls' }, sw.el, sz.el));
+  ctrlCell.append(h('div', { class: 'w-controls', style: { marginTop: '4px' } }, sw.el, sz.el), h('div', { class: 'readouts', style: { marginTop: '14px' } }, rOS.el, rTs.el, rRoots.el, rReg.el));
   host.append(panels);
-  const play = h('button', { class: 'btn small', type: 'button' });
-  const syncPlay = () => (play.textContent = loop.playing ? t('stopSpring') : t('playSpring'));
-  play.addEventListener('click', () => loop.toggle());
-  loop.onChange(syncPlay);
-  syncPlay();
-  right.append(play);
   update();
   if (Loop.autoplay) loop.play();
   return () => loop.destroy();
@@ -237,19 +290,23 @@ const race: WidgetFactory = (host, ctx) => {
     label: t('plotAria'),
   });
   plot.setLines([{ kind: 'h', at: 1, color: 'sp' }]);
-  const views = h('div', { class: 'w-grid two' });
+  const views = h('div', { class: 'pair-grid', style: { marginTop: '12px' } });
   const va = h('div');
   const vb = h('div');
   views.append(va, vb);
-  va.append(h('p', { class: 'w-help', style: { textAlign: 'center', margin: 0 } }, t('ref')));
-  const labelB = h('p', { class: 'w-help', style: { textAlign: 'center', margin: 0 } });
+  va.append(caption(t('ref')));
+  const labelB = caption('');
   vb.append(labelB);
   const msdA = new MsdView(va, t('msdAria'), 60);
   const msdB = new MsdView(vb, t('msdAria'), 60);
-  const plane = new SPlane(right, { reMin: -18, reMax: 2, imMax: 5, label: t('planeAria') });
+  msdA.el.style.maxWidth = msdB.el.style.maxWidth = '150px';
+  right.append(caption(t('planeCap')));
+  const plane = new SPlane(right, { reMin: -18, reMax: 2, imMax: 5, label: t('planeAria'), reLabel: t('re'), imLabel: t('im'), maxWidth: 420 });
+  const slowLabel = planeLabel(plane);
+  const fastLabel = planeLabel(plane);
   const rA = readout(t('settleRef'));
   const rB = readout(t('settleYours'));
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  const status = h('p', { class: 'w-status', 'aria-live': 'polite', style: { minHeight: '2.6em' } });
   let ref = sample(secondOrderSolution(m, 2 * wn * m, m * wn * wn, m * wn * wn, 0, 0), T1, 600);
   let yours = ref;
   let playT = 0;
@@ -261,6 +318,10 @@ const race: WidgetFactory = (host, ctx) => {
     plot.setCursor(playT);
     if (playT >= T1) loop.pause();
   }, host);
+  const showEnd = () => {
+    msdA.update(ref.ys[600] - 1, 0);
+    msdB.update(yours.ys[600] - 1, 0);
+  };
   const update = () => {
     plot.clear(true);
     const k = m * wn * wn;
@@ -271,22 +332,28 @@ const race: WidgetFactory = (host, ctx) => {
     labelB.textContent = t('yoursZ', { z: fmt(zeta, 0) });
     const roots = secondOrderRoots(wn, zeta);
     plane.set(
-      roots.map((r, i) => ({
-        id: `r${i}`,
-        re: r.re,
-        im: r.im,
-        kind: 'point' as const,
-        color: 'output',
-        label: zeta > 1 ? (i === 0 ? t('slow') : t('fast')) : undefined,
-      })),
+      roots.map((r, i) => {
+        const p = clampToPlane(plane, r.re, r.im);
+        return { id: `r${i}`, re: p.re, im: p.im, kind: 'point' as const, color: 'output' };
+      }),
     );
+    if (zeta > 1) {
+      // roots[0] is the slow one (closer to 0)
+      slowLabel(t('slow'), roots[0].re, 0, -8, -12, 'end');
+      const fast = clampToPlane(plane, roots[1].re, 0);
+      fastLabel(fast.off ? t('fastOff', { v: fmt(roots[1].re, 1) }) : t('fast'), fast.re, 0, fast.off ? -4 : 0, -14, fast.off ? 'start' : 'middle');
+    } else {
+      slowLabel(t('double'), roots[0].re, 0, 0, -14);
+      fastLabel('', 0, 0);
+    }
     const sa = settling(ref.xs, ref.ys, 1, 1);
     const sb = settling(yours.xs, yours.ys, 1, 1);
     rA.set(`${fmt(sa, 2)} s`);
-    rB.set(Number.isNaN(sb) ? t('never') : `${fmt(sb, 2)} s`, sb > sa || Number.isNaN(sb) ? 'bad' : 'good');
+    rB.set(Number.isNaN(sb) ? t('never') : `${fmt(sb, 2)} s`, zeta === 1 ? '' : sb > sa || Number.isNaN(sb) ? 'bad' : 'good');
     status.textContent = zeta === 1 ? t('same') : t('slower', { k: fmt((Number.isNaN(sb) ? T1 : sb) / sa, 1) });
     playT = 0;
     if (Loop.autoplay) loop.play();
+    else showEnd();
   };
   const seg = segmented(
     t('choose'),
@@ -297,15 +364,14 @@ const race: WidgetFactory = (host, ctx) => {
       update();
     },
   );
-  left.append(views);
-  right.append(h('div', { class: 'readouts' }, rA.el, rB.el), status);
-  host.append(seg.el, grid);
-  const replay = h('button', { class: 'btn small', type: 'button' }, t('replay'));
+  const replay = iconButton('play', t('replay'));
   replay.addEventListener('click', () => {
     playT = 0;
     loop.play();
   });
-  host.append(replay);
+  left.append(views);
+  right.append(h('div', { class: 'readouts', style: { marginTop: '12px' } }, rA.el, rB.el), status, replay);
+  host.append(seg.el, h('div', { style: { height: '12px' } }), grid);
   update();
   return () => loop.destroy();
 };
