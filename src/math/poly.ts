@@ -73,7 +73,7 @@ function tidy(z: C[]): C[] {
 
 /** Multiplies polynomials (highest power first). */
 export function polymul(a: readonly number[], b: readonly number[]): number[] {
-  const out = new Array(a.length + b.length - 1).fill(0);
+  const out: number[] = Array.from({ length: a.length + b.length - 1 }, () => 0);
   a.forEach((x, i) => b.forEach((y, j) => (out[i + j] += x * y)));
   return out;
 }
@@ -82,7 +82,7 @@ export function polymul(a: readonly number[], b: readonly number[]): number[] {
 export function fromRoots(rs: readonly C[]): number[] {
   let p: C[] = [c(1)];
   for (const r of rs) {
-    const next: C[] = new Array(p.length + 1).fill(null).map(() => c(0));
+    const next: C[] = Array.from({ length: p.length + 1 }, () => c(0));
     p.forEach((k, i) => {
       next[i] = add(next[i], k);
       next[i + 1] = sub(next[i + 1], mul(k, r));

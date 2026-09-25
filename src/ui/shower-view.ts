@@ -106,7 +106,7 @@ export class ShowerView {
     host.append(this.el);
     if (o.onKnob) this.makeInteractive(L.knob);
     this.setKnob(0);
-    this.update({ u: 0, pipe: new Array(N).fill(15), temp: 15 });
+    this.update({ u: 0, pipe: Array.from({ length: N }, () => 15), temp: 15 });
   }
 
   setEnabled(on: boolean): void {
