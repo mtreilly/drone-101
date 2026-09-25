@@ -1,6 +1,171 @@
 {
   "kicker": "Chapter 2",
-  "title": "Coming soon",
-  "question": "…",
-  "sections": [{ "id": "s1", "title": "", "blocks": [{ "t": "p", "text": "This notebook is still being written." }] }]
+  "title": "Proportional Control",
+  "question": "How hard should the drone push when it's too low?",
+  "sections": [
+    {
+      "id": "push",
+      "title": "Push harder the further away you are",
+      "blocks": [
+        { "t": "say", "who": "june", "mood": "think", "text": "Last time, the drone settled 25 cm low with the package on. I want to know why." },
+        { "t": "say", "who": "theo", "mood": "think", "text": "Our rule had two parts: 4.9 N to hold the drone up, plus 8 N for every metre of error. The 4.9 N was a guess about the weight. Once the package changed the weight, the guess was wrong." },
+        { "t": "say", "who": "mika", "mood": "excited", "text": "So let's drop the guess! No 4.9. Let the **error do all the work**: push in proportion to how far off you are." },
+        { "t": "p", "text": "That's the most famous controller there is, **proportional control** (\"P control\" for short):" },
+        { "t": "math", "tex": "\\eff{T} = K_p \\, \\err{e} = K_p\\,(\\sp{r} - \\out{h})" },
+        { "t": "p", "text": "$K_p$ is the **gain**: how many newtons of thrust you add for every metre of error. Its unit is newtons per metre (N/m). Big $K_p$ means an eager controller, small $K_p$ a relaxed one. That's the only knob we get in this chapter." },
+        { "t": "note", "aside": true, "text": "Still pretending the motors are unlimited. They can even pull down a bit if the drone is too high. We'll get honest about limits in Chapter 8." },
+        {
+          "t": "predict",
+          "id": "ch2-kp5",
+          "gate": true,
+          "q": "Take $K_p = 5$ N/m. The drone starts on the ground and heads for 2 m. Where does it **end up** hovering?",
+          "options": [
+            { "text": "Exactly at 2 m", "why": "At exactly 2 m the error is zero, so the thrust would be $5 \\times 0 = 0$ N, and the drone would fall. It can't stay there." },
+            { "text": "About 1 m", "correct": true, "why": "To hover, the thrust must equal the weight (4.9 N). With $K_p = 5$ that needs an error of $4.9 / 5 \\approx 0.98$ m, so it hovers at about **1.02 m**." },
+            { "text": "Above 2 m", "why": "Above 2 m the error is negative, so thrust would be negative and it would sink. Being too high can't be a resting place." }
+          ]
+        },
+        { "t": "widget", "id": "pcontrol" },
+        { "t": "p", "text": "Look at the {out|dotted blue line}: that's where the drone ends up hovering, and it's always **below** the {sp|target}. The gap is called the **steady-state error**, or just the **droop**." },
+        { "t": "say", "who": "theo", "mood": "happy", "text": "It's a tug of war. Gravity pulls down with 4.9 N, always. The only way the controller can push back with 4.9 N is if there's **some error left over** to multiply." },
+        { "t": "math", "tex": "\\eff{T} = \\text{weight} \\;\\Rightarrow\\; K_p\\,\\err{e} = 4.9 \\;\\Rightarrow\\; \\err{e}_{\\text{droop}} = \\frac{4.9}{K_p}\\ \\text{m}" },
+        { "t": "p", "text": "Now slide $K_p$ down to **2 N/m**. The drone doesn't even leave the ground! On the ground the error is 2 m, so the thrust is only $2 \\times 2 = 4$ N, less than the 4.9 N weight. The formula says it would need to droop 2.45 m, which is underground." }
+      ]
+    },
+    {
+      "id": "more",
+      "title": "Just turn it up!",
+      "blocks": [
+        { "t": "say", "who": "june", "mood": "excited", "text": "Easy fix: **more gain is always better**. Bigger $K_p$, smaller droop. Crank it!" },
+        { "t": "say", "who": "mika", "mood": "excited", "text": "On it. Maximum power: $K_p = 60$!" },
+        { "t": "widget", "id": "mika-button", "wide": false },
+        { "t": "say", "who": "mika", "mood": "happy", "text": "Droop down to **8 cm**! After a few seconds it's basically at 2 m. Victory!" },
+        { "t": "say", "who": "theo", "mood": "worried", "text": "Mika… look at the first two seconds. It shot up to about **3.4 metres**. My ceiling is 2.5. And look at the {eff|thrust}: 120 N at launch, then pulling *down*, then up again. That's not hovering, that's bouncing." },
+        { "t": "say", "who": "mika", "mood": "worried", "text": "Oh. I only looked at where it ended up. The {err|red error area} at the start is huge." },
+        { "t": "p", "text": "That was Mika's mistake: judging a controller only by where it **finally** settles. How it **gets** there matters just as much. Try a few gains and watch the faint ghost of your previous run:" },
+        {
+          "t": "list",
+          "items": [
+            "**Low $K_p$**: gentle, but it droops a lot. Push it low enough and the drone never takes off.",
+            "**High $K_p$**: small droop, but it **overshoots** (shoots past where it will settle) and wiggles before settling."
+          ]
+        },
+        { "t": "say", "who": "june", "mood": "think", "text": "Why would pushing *harder* make it *wobble*?" },
+        { "t": "say", "who": "theo", "mood": "think", "text": "A big push gets it moving fast. When it reaches the right height it's still going quickly, and nothing in our rule says \"slow down, you're nearly there\". Only the air drag gently brakes it. So it sails past, gets pushed back, sails past again…" },
+        { "t": "note", "text": "Honest note: with our simple drone, P control wiggles but never truly **explodes**. The swings always die out eventually. Real drones have small delays (motors take time to spin up) that make too much gain genuinely dangerous. That's Chapters 9 and 10." }
+      ]
+    },
+    {
+      "id": "challenge",
+      "title": "A challenge",
+      "blocks": [
+        { "t": "p", "text": "Let's find the sweet spot. The drone passes if it droops **less than 20 cm** *and* overshoots **less than 30%** (we measure overshoot as how far it shoots above the height it finally settles at). Find a $K_p$ that does both." },
+        { "t": "widget", "id": "challenge" },
+        { "t": "say", "who": "mika", "mood": "worried", "text": "The green zones never overlap! Droop needs $K_p$ above about 24.5, overshoot needs it below about 3.9. There's **no answer**." },
+        { "t": "say", "who": "theo", "mood": "think", "text": "Because one knob controls both, and it pulls them in opposite directions. It's not that we haven't found the right number. **There isn't one.** We need a better *kind* of controller." },
+        { "t": "say", "who": "june", "mood": "think", "text": "To design a better one, we need to talk about the wiggles properly. \"Sluggish\", \"bouncy\", \"settles eventually\"… those are vibes, not physics." }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "What we know so far",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "**Proportional control**: thrust = $K_p \\times$ error. One knob, the gain $K_p$ (N/m).",
+            "Against gravity, P control always leaves a **steady-state error** (droop) of $4.9 / K_p$ m: some error must remain to produce the thrust that holds the drone up.",
+            "Low gain means big droop and a sluggish response. High gain means small droop, but **overshoot** and wiggling.",
+            "\"More gain is always better\" is false. For our drone, no single $K_p$ gives both small droop and small overshoot."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch2-q1",
+              "q": "With $K_p = 10$ N/m (and no hover thrust), how far below 2 m will the drone hover?",
+              "options": [
+                { "text": "0 m: it reaches the target", "why": "At the target the error is zero, so the thrust is zero. P control alone can't hold it there against gravity." },
+                { "text": "About 0.49 m", "correct": true, "why": "Thrust must equal the 4.9 N weight: $10 \\times e = 4.9$ gives $e = 0.49$ m. It hovers at about 1.51 m." },
+                { "text": "About 4.9 m", "why": "That's the weight in newtons, not the droop. Divide by the gain: $4.9 / 10 = 0.49$ m." }
+              ]
+            },
+            {
+              "id": "ch2-q2",
+              "q": "Which of these responses came from the **highest** $K_p$? (The dashed line is the target.)",
+              "options": [
+                { "text": "Low, with a little wiggle", "sketch": "droop", "why": "A big droop means a *small* gain: lots of error is needed to make enough thrust." },
+                { "text": "Close to the target, with big wiggles", "sketch": "overshoot", "correct": true, "why": "Small droop and lots of overshoot are the signature of a high gain." },
+                { "text": "Smoothly and exactly onto the target", "sketch": "sluggish", "why": "Trick option: a pure P controller fighting gravity can **never** end exactly on the target, whatever $K_p$ is. Something is missing (Chapter 9)." }
+              ]
+            },
+            {
+              "id": "ch2-q3",
+              "q": "Why can't the P-controlled drone hover exactly at 2 m?",
+              "options": [
+                { "text": "At zero error the thrust is zero, so gravity would win", "correct": true, "why": "Exactly. Hovering needs 4.9 N, and P control only produces thrust when there's error." },
+                { "text": "The height sensor isn't accurate enough", "why": "Our sensor is perfect in this chapter, and the drone still droops. It's the control rule, not the measurement." },
+                { "text": "Air drag holds it back", "why": "Drag only acts while the drone is moving. Hovering still, there's no drag at all, and the droop is still there." }
+              ]
+            },
+            {
+              "id": "ch2-q4",
+              "q": "The drone picks up a package and becomes **twice as heavy**. With the same $K_p$, the droop…",
+              "options": [
+                { "text": "doubles", "correct": true, "why": "Droop = weight ÷ $K_p$. Twice the weight needs twice the error to hold it up." },
+                { "text": "halves", "why": "A heavier drone needs *more* thrust, so *more* error, not less." },
+                { "text": "stays the same", "why": "The droop is exactly the error needed to balance the weight, so it depends directly on the weight." }
+              ]
+            }
+          ]
+        },
+        { "t": "map" },
+        { "t": "cliff", "text": "Sluggish. Wiggly. Overshoots. Settles. We keep describing **how things change over time** with fuzzy words. We need a real language for change." }
+      ]
+    }
+  ],
+  "widgets": {
+    "pcontrol": {
+      "title": "P control: thrust = Kp × error",
+      "slider": "Proportional gain Kp",
+      "sliderHint": "extra newtons of thrust per metre of error",
+      "plot": {
+        "height": "height",
+        "thrust": "thrust",
+        "aria": "Height of the drone over 10 seconds as it takes off towards 2 metres under proportional control, with the error shaded red and the previous run as a faint ghost.",
+        "target": "target 2 m",
+        "hovers": "settles at {h} m"
+      },
+      "readout": { "final": "settles at", "droop": "droop", "overshoot": "overshoot", "peakThrust": "peak thrust" },
+      "status": {
+        "ground": "Never leaves the ground: on the ground the thrust is only {T} N, less than the {w} N weight.",
+        "flies": "Settles at {h} m ({d} cm droop), after shooting up to {p} m ({o} % overshoot)."
+      }
+    },
+    "mika-button": { "label": "Set Kp = 60 N/m (Mika's idea)" },
+    "challenge": {
+      "title": "Find a Kp with droop < 20 cm and overshoot < 30 %",
+      "slider": "Proportional gain Kp",
+      "kpAxis": "Kp (N/m)",
+      "droopAxis": "droop (m)",
+      "overAxis": "overshoot (%)",
+      "droopSeries": "droop = 4.9 / Kp",
+      "overSeries": "overshoot",
+      "droopAria": "Droop against the gain Kp: it falls as Kp grows. The pass zone (droop under 20 cm) is Kp above 24.5.",
+      "overAria": "Overshoot against the gain Kp: it rises as Kp grows. The pass zone (overshoot under 30 percent) is Kp between 2.45 and 3.9.",
+      "okZone": "passes",
+      "droopLimit": "20 cm",
+      "overLimit": "30 %",
+      "noflight": "no lift-off",
+      "readout": { "droop": "droop", "overshoot": "overshoot" },
+      "help": "Each curve shows what the drone would do at every Kp. The green band is where that one requirement passes.",
+      "status": {
+        "neither": "Neither requirement passes here. Keep exploring.",
+        "droopOnly": "Droop passes ✓ but overshoot is way too big.",
+        "overOnly": "Overshoot passes ✓ but the droop is huge.",
+        "impossible": "You've found both green zones, and they never overlap: droop needs Kp > {a}, overshoot needs Kp < {b}. No single Kp can pass."
+      }
+    }
+  }
 }

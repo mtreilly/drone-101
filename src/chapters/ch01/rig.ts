@@ -15,7 +15,7 @@ export function droneRig(
   const right = h('div');
   grid.append(left, right);
   host.append(grid);
-  const view = new DroneView(left, { hMax: o.hMax, width: 260 });
+  const view = new DroneView(left, { hMax: o.hMax, width: 230 });
   const hPlot = new Plot(right, {
     x: { label: tc('plots.time'), min: 0, max: o.tMax },
     y: { label: tc('plots.height'), min: 0, max: o.hMax },
@@ -73,7 +73,10 @@ export interface LoopLabels {
 
 /** The feedback-loop block diagram (open-loop parts: 'sp-open', 'ctrl-open'). */
 export function loopDiagram(host: HTMLElement, L: LoopLabels): BlockDiagram {
-  return new BlockDiagram(host, {
+  // on phones the diagram keeps a readable size and scrolls sideways
+  const scroller = h('div', { style: { overflowX: 'auto' }, tabindex: '0', role: 'region', 'aria-label': L.aria });
+  host.append(scroller);
+  const d = new BlockDiagram(scroller, {
     width: 760,
     height: 240,
     label: L.aria,
@@ -96,6 +99,8 @@ export function loopDiagram(host: HTMLElement, L: LoopLabels): BlockDiagram {
       { id: 'sensor', x: 470, y: 200, w: 128, h: 46, label: L.sensor },
     ],
   });
+  d.el.style.minWidth = '540px';
+  return d;
 }
 
 export const OPEN_PARTS = ['sp-open', 'ctrl-open', 'thrust', 'plant', 'dist', 'out'];
