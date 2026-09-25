@@ -88,7 +88,7 @@ function buildShell(): DocumentFragment {
       legendBtn.focus();
     }
   });
-  const mapBtn = h('a', { class: 'icon-btn', href: '#/map', html: `${ICONS.map}<span class="btn-label">${tc('nav.map')}</span>` });
+  const mapBtn = h('a', { class: 'icon-btn hide-narrow', href: '#/map', html: `${ICONS.map}<span class="btn-label">${tc('nav.map')}</span>` });
   mapBtn.setAttribute('aria-label', tc('nav.map'));
   const themeBtn = h('button', { class: 'icon-btn', type: 'button' });
   const syncTheme = () => {

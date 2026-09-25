@@ -91,6 +91,8 @@ export class Plot {
   private onSketch: ((pts: { x: number; y: number }[]) => void) | null = null;
   private w = 300;
   private hgt: number;
+  /** requested height; narrow screens get a slightly shorter plot so controls stay in view */
+  private baseH: number;
   private dirty = true;
   private axesDirty = true;
   private raf = 0;
@@ -100,7 +102,8 @@ export class Plot {
   overlay: ((ctx: CanvasRenderingContext2D, px: (x: number) => number, py: (y: number) => number) => void) | null = null;
 
   constructor(host: HTMLElement, public opts: PlotOptions) {
-    this.hgt = opts.height ?? 220;
+    this.baseH = opts.height ?? 220;
+    this.hgt = this.baseH;
     this.canvas = h('canvas', { role: 'img', 'aria-label': opts.label });
     this.axesLayer = document.createElement('canvas');
     this.ctx = this.canvas.getContext('2d')!;
@@ -149,6 +152,7 @@ export class Plot {
     const w = Math.max(200, Math.floor(this.el.clientWidth));
     if (w === this.w && this.canvas.width) return;
     this.w = w;
+    this.hgt = w < 480 ? Math.max(140, Math.round(this.baseH * 0.78)) : this.baseH;
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     for (const c of [this.canvas, this.axesLayer]) {
       c.width = Math.round(w * dpr);
@@ -160,7 +164,7 @@ export class Plot {
   }
 
   setHeight(px: number): void {
-    this.hgt = px;
+    this.baseH = px;
     this.w = 0;
     this.resize();
   }
