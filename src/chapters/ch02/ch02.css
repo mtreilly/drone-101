@@ -1,0 +1,19 @@
+/* Mika's button lives inside the story, not in a card of its own */
+[data-widget='mika-button'] > .widget-frame {
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+[data-widget='mika-button'] {
+  margin: 1.2em 0;
+}
+[data-widget='challenge'] .w-controls > .readouts {
+  flex: 1 1 220px;
+  justify-content: flex-end;
+}
+@media (max-width: 520px) {
+  [data-widget='challenge'] .w-controls > .readouts {
+    justify-content: stretch;
+  }
+}

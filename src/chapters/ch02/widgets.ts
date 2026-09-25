@@ -1,4 +1,4 @@
-import { h } from '../../core/dom';
+import { h, prefersReducedMotion } from '../../core/dom';
 import { fmt } from '../../core/i18n';
 import { HOVER_THRUST } from '../../sim/drone-model';
 import type { WidgetFactory } from '../../story/types';
@@ -6,6 +6,7 @@ import { readout, slider, transport } from '../../ui/controls';
 import { Loop } from '../../ui/loop';
 import { Plot } from '../../ui/plot';
 import { droneRig } from '../ch01/rig';
+import './ch02.css';
 import { LIFTOFF_KP, RUN, TARGET, challengeBounds, droopOf, overshootOf, runP, type PRun } from './model';
 
 /** Kp slider + drone taking off under pure proportional control (recorded run, played back in real time). */
@@ -30,7 +31,7 @@ const pcontrol: WidgetFactory = (host, ctx) => {
   const rOver = readout(t('readout.overshoot'));
   const rPeakT = readout(t('readout.peakThrust'), 'eff');
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
-  rig.right.append(h('div', { class: 'readouts' }, rFinal.el, rDroop.el, rOver.el, rPeakT.el), status);
+  rig.right.append(h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rFinal.el, rDroop.el, rOver.el, rPeakT.el)));
 
   const showMetrics = () => {
     const peakT = Math.max(...run.T);
@@ -109,7 +110,8 @@ const pcontrol: WidgetFactory = (host, ctx) => {
   });
   host.append(
     h('div', { class: 'w-controls' }, sl.el),
-    h('div', { style: { marginTop: '10px' } }, transport({ loop, onReset: () => restart(false), onStep: () => ((playT = Math.min(RUN, playT + 0.1)), drawUpTo(playT)) })),
+    h('div', { class: 'w-controls' }, transport({ loop, onReset: () => restart(false), onStep: () => ((playT = Math.min(RUN, playT + 0.1)), drawUpTo(playT)) })),
+    status,
   );
   const off = ctx.bus.on('predict:ch2-kp5', () => {
     sl.value = 5;
@@ -135,7 +137,9 @@ const mikaButton: WidgetFactory = (host, ctx) => {
   const b = h('button', { class: 'btn small', type: 'button' }, ctx.t('label'));
   b.addEventListener('click', () => {
     ctx.bus.emit('ch2:kp', 60);
-    document.querySelector('[data-widget="pcontrol"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.querySelector('[data-widget="pcontrol"]')?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'center' });
+    // hand keyboard users over to the slider they just changed
+    document.querySelector<HTMLInputElement>('[data-widget="pcontrol"] input[type="range"]')?.focus({ preventScroll: true });
   });
   host.append(h('div', { class: 'w-row', style: { justifyContent: 'center' } }, b));
 };
