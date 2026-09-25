@@ -9,6 +9,10 @@ import './core/home.css';
 import './story/story.css';
 import './ui/ui.css';
 import { startApp } from './core/app';
+import { inject } from '@vercel/analytics';
+
+// Initialize Vercel Web Analytics
+inject();
 
 startApp(document.getElementById('app')!).catch((err) => {
   console.error(err);
