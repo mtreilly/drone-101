@@ -13,7 +13,7 @@ import { TracePlayer } from './trace-player';
 /** controls row, then HUD (readouts left, transport right), then status and help */
 function layout(host: HTMLElement, player: TracePlayer | null, parts: { controls: HTMLElement[]; readouts: HTMLElement[]; status: HTMLElement; help?: HTMLElement; extra?: HTMLElement[] }): void {
   host.classList.add('pid-widget');
-  host.append(h('div', { class: 'w-controls' }, parts.controls));
+  host.append(h('div', { class: `w-controls${parts.controls.length > 2 ? ' compact' : ''}` }, parts.controls));
   if (parts.extra) host.append(...parts.extra);
   host.append(h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, parts.readouts), player ? player.transportEl : null), parts.status);
   if (parts.help) host.append(parts.help);
@@ -183,7 +183,7 @@ const poles: WidgetFactory = (host, ctx) => {
   const sKi = slider({ label: t('ki'), min: 0, max: 200, step: 2, value: ki, unit: 'N/(m·s)', color: 'eff', onInput: (v) => { ki = v; update(); } });
   const sKd = slider({ label: t('kd'), min: 0, max: 10, step: 0.25, value: kd, unit: 'N·s/m', color: 'eff', onInput: (v) => { kd = v; update(); } });
   host.classList.add('pid-widget');
-  host.append(h('div', { class: 'w-controls' }, sKp.el, sKi.el, sKd.el), status, h('p', { class: 'w-help' }, t('help')));
+  host.append(h('div', { class: 'w-controls compact' }, sKp.el, sKi.el, sKd.el), status, h('p', { class: 'w-help' }, t('help')));
   update();
 };
 

@@ -351,7 +351,7 @@ const mission: WidgetFactory = (host, ctx) => {
     }
   });
   host.append(
-    h('div', { class: 'w-controls' }, sKp.el, sKi.el, sKd.el, sTf.el),
+    h('div', { class: 'w-controls compact' }, sKp.el, sKi.el, sKd.el, sTf.el),
     h('div', { class: 'w-row' }, tg.el, instantBtn, juneBtn),
     h('div', { class: 'w-hud' }, starsEl, controls),
     h('div', { class: 'mission-bottom' }, h('div', { class: 'mission-card' }, h('p', { class: 'w-title' }, t('checklist')), list, bestEl), poleBox),

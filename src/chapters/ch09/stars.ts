@@ -8,12 +8,14 @@ export function starRow(total: number, label: (n: number) => string): { el: HTML
   const stars = Array.from({ length: total }, () => h('span', { class: 'star', 'aria-hidden': 'true' }, '☆'));
   const el = h('span', { class: 'star-row', role: 'img' }, stars);
   let prev: boolean[] = [];
+  let prevN = -1;
   return {
     el,
     set(earned) {
       const n = earned.filter(Boolean).length;
       // live-region friendly: nothing changes unless the score does
-      if (prev.length && n === prev.filter(Boolean).length && earned.length === prev.length) return;
+      if (n === prevN) return;
+      prevN = n;
       // earned stars fill from the left so the row reads as a score
       stars.forEach((st, i) => {
         const on = i < n;
