@@ -1,0 +1,129 @@
+import { margins, type Margins } from '../../math/bode';
+import { SHOWER, ShowerSim, type ShowerParams, type ShowerPolicy } from '../../sim/shower-model';
+
+/** °C at the head per unit of knob, in steady state */
+export const KNOB_GAIN = SHOWER.hot - SHOWER.cold;
+
+export const withDelay = (delay: number): ShowerParams => ({ ...SHOWER, delay });
+
+/**
+ * The Chapter 0 "hand" turns the knob at a speed proportional to the error:
+ * du/dt = k·e — an integral controller. Open loop: L(s) = 45k·e^(−Ls) / (s(τs + 1)).
+ */
+export const handLoop = (k: number): { num: number[]; den: number[] } => ({ num: [KNOB_GAIN * k], den: [SHOWER.tau, 1, 0] });
+
+/** PI controller C(s) = kp + ki/s around the shower: L(s) = 45(kp·s + ki)·e^(−Ls) / (s(τs + 1)). */
+export const piLoop = (kp: number, ki: number): { num: number[]; den: number[] } => ({ num: [KNOB_GAIN * kp, KNOB_GAIN * ki], den: [SHOWER.tau, 1, 0] });
+
+export const loopMargins = (l: { num: number[]; den: number[] }, delay: number): Margins => margins(l.num, l.den, delay, 1e-3, 1e2);
+
+export const handPolicy = (k: number): ShowerPolicy => ({ kind: 'rate', rate: (_t, felt) => k * (SHOWER.target - felt) });
+
+/**
+ * PI in "velocity form": the knob *speed* is ki·e + kp·(de/dt). It is exactly kp·e + ki∫e,
+ * and because it moves the knob rather than storing a pile, it can't wind up at the knob's ends.
+ */
+export function piPolicy(kp: number, ki: number, dt = 0.005): ShowerPolicy {
+  let prev = Number.NaN;
+  return {
+    kind: 'rate',
+    rate: (_t, felt) => {
+      const dT = Number.isNaN(prev) ? 0 : (felt - prev) / dt;
+      prev = felt;
+      return -kp * dT + ki * (SHOWER.target - felt);
+    },
+  };
+}
+
+export interface ShowerTrace {
+  t: number[];
+  T: number[];
+  u: number[];
+}
+
+export function runShower(policy: ShowerPolicy, T: number, delay = SHOWER.delay, every = 20): ShowerTrace {
+  const sim = new ShowerSim(withDelay(delay), policy, 0);
+  const tr: ShowerTrace = { t: [0], T: [sim.temp], u: [sim.u] };
+  sim.advance(T, () => {
+    tr.t.push(sim.t);
+    tr.T.push(sim.temp);
+    tr.u.push(sim.u);
+  }, every);
+  return tr;
+}
+
+/** Start of the first 10-second stay inside 38 ± 1 °C (NaN if it never happens). */
+export function comfortTime(tr: ShowerTrace, hold = 10): number {
+  let start = Number.NaN;
+  for (let i = 0; i < tr.t.length; i++) {
+    const inBand = Math.abs(tr.T[i] - SHOWER.target) <= SHOWER.band;
+    if (inBand && Number.isNaN(start)) start = tr.t[i];
+    if (!inBand) start = Number.NaN;
+    if (!Number.isNaN(start) && tr.t[i] - start >= hold) return start;
+  }
+  return Number.NaN;
+}
+
+/** Average swing period from crossings of 38 °C (NaN if fewer than 3 crossings). */
+export function swingPeriod(tr: ShowerTrace): number {
+  const cross: number[] = [];
+  let prev = 0;
+  for (let i = 0; i < tr.t.length; i++) {
+    const s = Math.sign(tr.T[i] - SHOWER.target);
+    if (s !== 0 && prev !== 0 && s !== prev) cross.push(tr.t[i]);
+    if (s !== 0) prev = s;
+  }
+  if (cross.length < 3) return Number.NaN;
+  const halves = cross.slice(1).map((c, i) => c - cross[i]);
+  return (2 * halves.reduce((a, b) => a + b, 0)) / halves.length;
+}
+
+export interface SineMeasurement {
+  w: number;
+  /** output swing ÷ input swing (both in °C) */
+  gain: number;
+  /** output phase relative to input, degrees in (−360, 0] */
+  phase: number;
+  trace: ShowerTrace;
+  /** mixed-water (input) temperature */
+  mix: number[];
+}
+
+/**
+ * Wiggles the knob sinusoidally (±0.15 around half-open), waits for the start-up to die out,
+ * then fits a sine at the same frequency to the output (least squares over whole cycles).
+ */
+export function measureSine(w: number, delay = SHOWER.delay): SineMeasurement {
+  const u0 = 0.5;
+  const a = 0.15;
+  const period = (2 * Math.PI) / w;
+  const settle = Math.max(15, 2 * period);
+  const cycles = Math.max(2, Math.ceil(10 / period));
+  const T = settle + cycles * period;
+  const tr = runShower({ kind: 'position', position: (t) => u0 + a * Math.sin(w * t) }, T, delay, 4);
+  let sc = 0;
+  let cc = 0;
+  let n = 0;
+  const mean = SHOWER.cold + KNOB_GAIN * u0;
+  for (let i = 0; i < tr.t.length; i++) {
+    if (tr.t[i] < settle) continue;
+    const y = tr.T[i] - mean;
+    sc += y * Math.sin(w * tr.t[i]);
+    cc += y * Math.cos(w * tr.t[i]);
+    n++;
+  }
+  const B = (2 * sc) / n; // sin component
+  const A = (2 * cc) / n; // cos component
+  const amp = Math.hypot(A, B);
+  let phase = (Math.atan2(A, B) * 180) / Math.PI;
+  while (phase > 0) phase -= 360;
+  return { w, gain: amp / (a * KNOB_GAIN), phase, trace: tr, mix: tr.u.map((u) => SHOWER.cold + KNOB_GAIN * u) };
+}
+
+/** Unwraps a measured phase to the branch closest to a reference (e.g. the previous dot). */
+export function unwrapNear(phase: number, ref: number): number {
+  let p = phase;
+  while (p - ref > 180) p -= 360;
+  while (p - ref < -180) p += 360;
+  return p;
+}
