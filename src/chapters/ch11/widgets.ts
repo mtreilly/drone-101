@@ -9,7 +9,9 @@ import { DroneView } from '../../ui/drone-view';
 import { Loop } from '../../ui/loop';
 import { Plot } from '../../ui/plot';
 import { SPlane } from '../../ui/s-plane';
+import '../ch09/ch09.css';
 import { pid, type Trace } from '../ch09/pid-tools';
+import { starRow } from '../ch09/stars';
 import { CRITERIA, LIMITS, MISSION, evaluate, missionConfig, missionPoles, runMission, type MissionResult } from './mission';
 
 export const BEST_KEY = 'ch11.best';
@@ -33,15 +35,39 @@ const mission: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
   const g = { kp: 10, ki: 0, kd: 1, dTau: 0.02, dOnMeasurement: true };
   const gains = (): PID => pid(g.kp, g.ki, g.kd, { dTau: g.dTau, dOnMeasurement: g.dOnMeasurement });
+  host.classList.add('pid-widget', 'mission-widget');
   host.append(h('p', { class: 'w-title' }, t('title')));
+
+  // at-a-glance strip: what's happening, how far along, and how the checklist is going
+  const phaseEl = h('span', { class: 'mission-phase' });
+  const phaseLive = h('span', { class: 'visually-hidden', 'aria-live': 'polite' });
+  const fill = h('span', { class: 'mission-fill' });
+  const pct = (x: number) => `${(100 * x) / MISSION.duration}%`;
+  const track = h(
+    'span',
+    { class: 'mission-track', 'aria-hidden': 'true' },
+    h('span', { class: 'mission-gust', style: { left: pct(MISSION.gust.start), width: pct(MISSION.gust.end - MISSION.gust.start) } }),
+    h('span', { class: 'mission-drop', style: { left: pct(MISSION.dropAt) } }),
+    fill,
+  );
+  const minis = new Map<string, HTMLElement>();
+  const miniRow = h(
+    'span',
+    { class: 'mission-minis', 'aria-hidden': 'true' },
+    CRITERIA.map((id) => {
+      const m = h('span', { class: 'mini', 'data-state': 'pending', title: t(`crit.${id}`, { ...LIMITS, gustCm: LIMITS.gust * 100, bandCm: LIMITS.band * 100 }) }, '○');
+      minis.set(id, m);
+      return m;
+    }),
+  );
+  host.append(h('div', { class: 'mission-strip' }, phaseEl, track, miniRow, phaseLive));
+
   const grid = h('div', { class: 'w-grid side' });
   const left = h('div');
   const right = h('div');
   grid.append(left, right);
   host.append(grid);
   const view = new DroneView(left, { hMax: 3, width: 240, showSensor: true });
-  const clock = h('p', { class: 'w-status', 'aria-live': 'off' });
-  left.append(clock);
   const hPlot = new Plot(right, {
     x: { label: tc('plots.time'), min: 0, max: MISSION.duration },
     y: { label: tc('plots.height'), min: 0, max: 3 },
@@ -74,6 +100,9 @@ const mission: WidgetFactory = (host, ctx) => {
   let tr = emptyTrace();
   let acc = 0;
   let finished = false;
+  let lastPhase = '';
+  /** next plot clear keeps the current run as the ghost */
+  let fresh = true;
   const record = () => {
     tr.t.push(sim.t);
     tr.h.push(sim.h);
@@ -84,6 +113,8 @@ const mission: WidgetFactory = (host, ctx) => {
     tr.pkg.push(sim.cfg.extraMass(sim.t));
     tr.measured.push(sim.measured);
   };
+  const phaseKey = (now: number, done: boolean) =>
+    done ? 'done' : now < MISSION.gust.start ? 'takeoff' : now < MISSION.gust.end ? 'gust' : now < MISSION.dropAt ? 'hover' : 'drop';
   const draw = () => {
     hPlot.set('h', tr.t, tr.h);
     hPlot.set('r', tr.t, tr.r);
@@ -92,7 +123,14 @@ const mission: WidgetFactory = (host, ctx) => {
     const i = tr.t.length - 1;
     if (i >= 0) view.update({ h: tr.h[i], r: MISSION.setpoint, thrust: tr.thrust[i], wind: tr.wind[i], pkg: tr.pkg[i], crashed: tr.crashed, measured: tr.measured[i] });
     const now = tr.t[i] ?? 0;
-    clock.textContent = now < MISSION.gust.start ? t('phase.takeoff', { s: fmt(now, 1) }) : now < MISSION.gust.end ? t('phase.gust', { s: fmt(now, 1) }) : now < MISSION.dropAt ? t('phase.hover', { s: fmt(now, 1) }) : now < MISSION.duration - 0.01 ? t('phase.drop', { s: fmt(now, 1) }) : t('phase.done');
+    const key = phaseKey(now, now >= MISSION.duration - 0.01);
+    phaseEl.textContent = t(`phase.${key}`, { s: fmt(now, 1) });
+    phaseEl.dataset.phase = key;
+    if (key !== lastPhase) {
+      lastPhase = key;
+      phaseLive.textContent = t(`phase.${key}`, { s: fmt(now, 0) });
+    }
+    fill.style.transform = `scaleX(${Math.min(1, now / MISSION.duration)})`;
   };
   const loop = new Loop((dt) => {
     if (finished) return;
@@ -105,7 +143,7 @@ const mission: WidgetFactory = (host, ctx) => {
     tr.crashed = sim.crashed;
     draw();
     if (sim.t >= MISSION.duration - 1e-9) finish();
-    else showResult(evaluate(tr), false);
+    else showResult(evaluate(tr), false, true);
   }, host);
 
   // checklist
@@ -116,7 +154,10 @@ const mission: WidgetFactory = (host, ctx) => {
     items.set(id, li);
     list.append(li);
   }
-  const starsEl = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  const starsEl = h('p', { class: 'w-status score-line', 'aria-live': 'polite' });
+  const row = starRow(6, (n) => t('stars', { n }));
+  const starsText = h('span');
+  starsEl.append(row.el, starsText);
   const bestEl = h('p', { class: 'w-help' });
   const values = (r: MissionResult): Record<string, string> => ({
     rise: Number.isFinite(r.rise) ? `${fmt(r.rise, 2)} s` : '—',
@@ -126,7 +167,19 @@ const mission: WidgetFactory = (host, ctx) => {
     ground: r.ground ? t('touched') : t('clear'),
     calm: Number.isFinite(r.calm) ? `± ${fmt(r.calm, 2)} N` : '—',
   });
-  function showResult(r: MissionResult, final: boolean): void {
+  const MARK: Record<string, string> = { pass: '★', fail: '✗', pending: '○' };
+  const setState = (el: HTMLElement, mark: HTMLElement, state: string, animate: boolean) => {
+    if (el.dataset.state === state) return;
+    el.dataset.state = state;
+    mark.textContent = MARK[state];
+    mark.classList.remove('pop');
+    if (animate && state !== 'pending') {
+      void mark.offsetWidth;
+      mark.classList.add('pop');
+    }
+  };
+  /** @param animate pop marks as they are decided (live flights only) */
+  function showResult(r: MissionResult, final: boolean, animate: boolean, save = final): void {
     const v = values(r);
     const now = tr.t[tr.t.length - 1] ?? 0;
     const decided: Record<string, boolean> = {
@@ -140,20 +193,25 @@ const mission: WidgetFactory = (host, ctx) => {
     for (const id of CRITERIA) {
       const li = items.get(id)!;
       const state = decided[id] || final ? (r.pass[id] ? 'pass' : 'fail') : 'pending';
-      li.dataset.state = state;
-      li.querySelector('.mark')!.textContent = state === 'pass' ? '★' : state === 'fail' ? '✗' : '○';
+      setState(li, li.querySelector<HTMLElement>('.mark')!, state, animate);
+      const mini = minis.get(id)!;
+      setState(mini, mini, state, animate);
       li.querySelector('.crit-val')!.textContent = state === 'pending' ? '' : v[id];
     }
     if (final) {
-      starsEl.textContent = `${'★'.repeat(r.stars)}${'☆'.repeat(6 - r.stars)}  ${r.stars === 6 ? t('gold') : t('stars', { n: r.stars })}`;
-      starsEl.className = `w-status${r.stars === 6 ? ' good' : ''}`;
-      const best = progress.load<Best>(BEST_KEY);
-      if (!best || r.stars > best.stars) progress.save(BEST_KEY, { stars: r.stars, ...g });
-      if (r.stars === 6) ctx.bus.emit('mission:gold');
-      showBest();
+      row.set(CRITERIA.map((id) => r.pass[id]));
+      starsText.textContent = r.stars === 6 ? t('gold') : t('stars', { n: r.stars });
+      starsEl.className = `w-status score-line${r.stars === 6 ? ' good' : ''}`;
+      if (save) {
+        const best = progress.load<Best>(BEST_KEY);
+        if (!best || r.stars > best.stars) progress.save(BEST_KEY, { stars: r.stars, ...g });
+        if (r.stars === 6) ctx.bus.emit('mission:gold');
+        showBest();
+      }
     } else {
-      starsEl.textContent = t('flying');
-      starsEl.className = 'w-status';
+      row.set([]);
+      if (starsText.textContent !== t('flying')) starsText.textContent = t('flying');
+      starsEl.className = 'w-status score-line';
     }
   }
   const showBest = () => {
@@ -166,43 +224,53 @@ const mission: WidgetFactory = (host, ctx) => {
     loop.pause();
     tr.crashed = sim.crashed;
     draw();
-    showResult(evaluate(tr), true);
+    showResult(evaluate(tr), true, true);
   }
 
+  const resetMarks = () => {
+    for (const id of CRITERIA) {
+      const li = items.get(id)!;
+      setState(li, li.querySelector<HTMLElement>('.mark')!, 'pending', false);
+      li.querySelector('.crit-val')!.textContent = '';
+      setState(minis.get(id)!, minis.get(id)!, 'pending', false);
+    }
+  };
   const restart = (autoplay = Loop.autoplay) => {
     loop.pause();
-    hPlot.clear();
-    tPlot.clear();
+    hPlot.clear(fresh);
+    tPlot.clear(fresh);
+    fresh = false;
     sim = new DroneSim(missionConfig(gains()));
     tr = emptyTrace();
     acc = 0;
     finished = false;
     record();
     draw();
-    for (const li of items.values()) {
-      li.dataset.state = 'pending';
-      li.querySelector('.mark')!.textContent = '○';
-      li.querySelector('.crit-val')!.textContent = '';
-    }
-    starsEl.textContent = t('ready');
+    resetMarks();
+    row.set([]);
+    starsText.textContent = t('ready');
     updatePoles();
     if (autoplay) loop.play();
   };
-  const instant = () => {
+  /** whole mission at once: used by "Fly instantly", slider drags, keyboard steps, reduced motion */
+  const instant = (save = true) => {
     loop.pause();
-    hPlot.clear();
-    tPlot.clear();
+    hPlot.clear(fresh);
+    tPlot.clear(fresh);
+    fresh = false;
     tr = runMission(gains());
     sim = new DroneSim(missionConfig(gains()));
     finished = true;
     draw();
-    showResult(evaluate(tr), true);
+    resetMarks();
+    updatePoles();
+    showResult(evaluate(tr), true, false, save);
   };
 
   // nominal poles
   const pRange = { reMin: -40, reMax: 5, imMax: 25 };
   const poleBox = h('div', { class: 'mission-poles' });
-  const sp = new SPlane(poleBox, { ...pRange, label: t('splane'), regions: true, maxWidth: 240 });
+  const sp = new SPlane(poleBox, { ...pRange, label: t('splane'), regions: true, maxWidth: 340, reLabel: 'σ', imLabel: 'ω' });
   const poleNote = h('p', { class: 'w-help' });
   poleBox.append(poleNote);
   function updatePoles(): void {
@@ -221,12 +289,27 @@ const mission: WidgetFactory = (host, ctx) => {
     poleNote.textContent = `${unstable ? t('poles.unstable') : t('poles.stable')}${off ? ` ${t('poles.off', { n: off })}` : ''}`;
   }
 
-  const onChange = () => restart();
-  const sKp = slider({ label: '$K_p$', min: 0, max: 50, step: 1, value: g.kp, unit: 'N/m', color: 'out', onInput: (v) => { g.kp = v; onChange(); } });
-  const sKi = slider({ label: '$K_i$', min: 0, max: 50, step: 1, value: g.ki, unit: 'N/(m·s)', color: 'err', onInput: (v) => { g.ki = v; onChange(); } });
-  const sKd = slider({ label: '$K_d$', min: 0, max: 12, step: 0.5, value: g.kd, unit: 'N·s/m', color: 'eff', onInput: (v) => { g.kd = v; onChange(); } });
-  const sTf = slider({ label: t('filter'), min: 0.005, max: 0.2, step: 0.005, value: g.dTau, unit: 's', digits: 3, color: 'eff', onInput: (v) => { g.dTau = v; onChange(); } });
-  const tg = toggle(t('dMeas'), g.dOnMeasurement, (v) => { g.dOnMeasurement = v; onChange(); });
+  // dragging previews the whole mission instantly; letting go of a pointer drag flies it live
+  let pointer = false;
+  const onDrag = () => instant(false);
+  const sKp = slider({ label: '$K_p$', min: 0, max: 50, step: 1, value: g.kp, unit: 'N/m', color: 'eff', onInput: (v) => { g.kp = v; onDrag(); } });
+  const sKi = slider({ label: '$K_i$', min: 0, max: 50, step: 1, value: g.ki, unit: 'N/(m·s)', color: 'eff', onInput: (v) => { g.ki = v; onDrag(); } });
+  const sKd = slider({ label: '$K_d$', min: 0, max: 12, step: 0.5, value: g.kd, unit: 'N·s/m', color: 'eff', onInput: (v) => { g.kd = v; onDrag(); } });
+  const sTf = slider({ label: t('filter'), min: 0.005, max: 0.2, step: 0.005, value: g.dTau, unit: 's', digits: 3, color: 'eff', onInput: (v) => { g.dTau = v; onDrag(); } });
+  for (const sl of [sKp, sKi, sKd, sTf]) {
+    sl.input.addEventListener('pointerdown', () => (pointer = true));
+    sl.input.addEventListener('change', () => {
+      fresh = true;
+      if (pointer && Loop.autoplay) restart(true);
+      else instant(true);
+      pointer = false;
+    });
+  }
+  const tg = toggle(t('dMeas'), g.dOnMeasurement, (v) => {
+    g.dOnMeasurement = v;
+    fresh = true;
+    restart();
+  });
   const setAll = (p: Omit<Best, 'stars'>) => {
     Object.assign(g, p);
     sKp.value = p.kp;
@@ -234,32 +317,49 @@ const mission: WidgetFactory = (host, ctx) => {
     sKd.value = p.kd;
     sTf.value = p.dTau;
     tg.input.checked = p.dOnMeasurement;
+    fresh = true;
     restart();
   };
   const juneBtn = h('button', { class: 'btn small', type: 'button' }, t('presetJune'));
   juneBtn.addEventListener('click', () => setAll({ ...JUNE_TUNE }));
   const instantBtn = h('button', { class: 'btn small', type: 'button' }, t('instant'));
-  instantBtn.addEventListener('click', instant);
-  right.append(transport({ loop, onReset: () => restart(true), onStep: () => {
-    if (finished) return;
-    for (let k = 0; k < 100; k++) {
-      sim.step();
-      acc++;
-      if (acc % 10 === 0) record();
+  instantBtn.addEventListener('click', () => {
+    fresh = true;
+    instant(true);
+  });
+  const controls = transport({
+    loop,
+    onReset: () => {
+      fresh = true;
+      restart(true);
+    },
+    onStep: () => {
+      if (finished) return;
+      for (let k = 0; k < 100; k++) {
+        sim.step();
+        acc++;
+        if (acc % 10 === 0) record();
+      }
+      draw();
+    },
+  });
+  // pressing play on a finished mission flies it again
+  loop.onChange((playing) => {
+    if (playing && finished) {
+      fresh = true;
+      restart(true);
     }
-    draw();
-  } }));
+  });
   host.append(
     h('div', { class: 'w-controls' }, sKp.el, sKi.el, sKd.el, sTf.el),
     h('div', { class: 'w-row' }, tg.el, instantBtn, juneBtn),
-    h('div', { class: 'mission-bottom' }, h('div', { class: 'mission-card' }, h('p', { class: 'w-title' }, t('checklist')), list, starsEl, bestEl), poleBox),
+    h('div', { class: 'w-hud' }, starsEl, controls),
+    h('div', { class: 'mission-bottom' }, h('div', { class: 'mission-card' }, h('p', { class: 'w-title' }, t('checklist')), list, bestEl), poleBox),
   );
   showBest();
   restart(false);
-  if (Loop.autoplay) {
-    // start when the learner reaches it, not while offscreen
-    loop.play();
-  } else instant();
+  if (Loop.autoplay) loop.play();
+  else instant(false);
   return () => loop.destroy();
 };
 

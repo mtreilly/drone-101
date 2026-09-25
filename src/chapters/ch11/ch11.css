@@ -1,13 +1,203 @@
-/* Finale mission checklist */
-.checklist { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
-.checklist li { display: grid; grid-template-columns: 1.6rem 1fr auto; gap: 8px; align-items: baseline; padding: 4px 8px; border-radius: 8px; border: 1.5px dashed var(--paper-3); }
-.checklist li[data-state='pass'] { border-style: solid; border-color: var(--c-good); }
-.checklist li[data-state='fail'] { border-color: var(--c-bad); }
-.checklist .mark { font-weight: 700; text-align: center; }
-.checklist li[data-state='pass'] .mark { color: var(--c-good); }
-.checklist li[data-state='fail'] .mark { color: var(--c-bad); }
-.checklist .crit-val { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
-.mission-card { margin-top: 12px; }
-.mission-bottom { display: grid; gap: 14px; margin-top: 12px; }
-@media (min-width: 768px) { .mission-bottom { grid-template-columns: minmax(0, 1.6fr) minmax(200px, 0.8fr); align-items: start; } }
-.mission-poles .w-help { text-align: center; }
+/* Finale: at-a-glance mission strip */
+.mission-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'phase minis'
+    'track track';
+  gap: 6px 14px;
+  align-items: center;
+  margin: 2px 0 12px;
+  padding: 10px 14px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  border: 1.5px solid var(--paper-3);
+}
+.mission-phase {
+  grid-area: phase;
+  font-family: var(--font-hand);
+  font-size: 1.2rem;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  min-height: 1.2em;
+}
+.mission-phase[data-phase='gust'],
+.mission-phase[data-phase='drop'] {
+  color: var(--c-disturb);
+}
+.mission-phase[data-phase='done'] {
+  color: var(--c-good);
+}
+.mission-track {
+  grid-area: track;
+  position: relative;
+  display: block;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--paper-3);
+  overflow: hidden;
+}
+.mission-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--c-output);
+  transform-origin: left center;
+  transform: scaleX(0);
+  opacity: 0.75;
+}
+.mission-gust {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: color-mix(in srgb, var(--c-disturb) 35%, transparent);
+  z-index: 1;
+}
+.mission-drop {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  margin-left: -1px;
+  background: var(--c-disturb);
+  z-index: 1;
+}
+.mission-minis {
+  grid-area: minis;
+  display: inline-flex;
+  gap: 4px;
+  font-size: 1.15rem;
+  line-height: 1;
+}
+.mini {
+  display: inline-grid;
+  place-items: center;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 50%;
+  color: var(--ink-3);
+  border: 1.5px dashed var(--paper-3);
+}
+.mini[data-state='pass'] {
+  color: var(--star, #a87800);
+  border: 1.5px solid currentColor;
+}
+.mini[data-state='fail'] {
+  color: var(--c-bad);
+  border: 1.5px solid currentColor;
+}
+
+/* checklist */
+.mission-widget {
+  --star: #a87800;
+}
+:root[data-theme='dark'] .mission-widget {
+  --star: #f2c14e;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .mission-widget {
+    --star: #f2c14e;
+  }
+}
+.checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+.checklist li {
+  display: grid;
+  grid-template-columns: 1.6rem minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  border: 1.5px dashed var(--paper-3);
+  transition:
+    border-color 200ms ease,
+    background-color 200ms ease;
+}
+.checklist li[data-state='pass'] {
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--c-good) 70%, transparent);
+}
+.checklist li[data-state='fail'] {
+  border-color: var(--c-bad);
+  background: color-mix(in srgb, var(--c-bad) 5%, transparent);
+}
+.checklist .mark {
+  display: inline-block;
+  text-align: center;
+  font-size: 1.15rem;
+  line-height: 1;
+  color: var(--ink-3);
+}
+.checklist li[data-state='pass'] .mark {
+  color: var(--star);
+}
+.checklist li[data-state='fail'] .mark {
+  color: var(--c-bad);
+}
+.checklist .crit-val {
+  font-family: var(--font-hand);
+  font-size: 1.15rem;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .checklist .mark.pop,
+  .mini.pop {
+    animation: star-pop 420ms var(--ease-out);
+  }
+}
+.mission-card {
+  margin-top: 4px;
+}
+.mission-card > .w-title {
+  font-size: 1.35rem;
+}
+.mission-bottom {
+  display: grid;
+  gap: 18px;
+  margin-top: 14px;
+}
+@media (min-width: 768px) {
+  .mission-bottom {
+    grid-template-columns: minmax(0, 1.5fr) minmax(240px, 1fr);
+    align-items: start;
+  }
+}
+.mission-poles .w-help {
+  text-align: center;
+  margin-top: 6px;
+}
+.mission-widget .w-hud .w-status {
+  margin: 0;
+  flex: 1 1 16rem;
+  justify-content: flex-start;
+  text-align: left;
+}
+@media (max-width: 520px) {
+  .checklist li {
+    grid-template-columns: 1.4rem minmax(0, 1fr);
+  }
+  .checklist .crit-val {
+    grid-column: 2;
+  }
+  .mission-widget .w-hud .w-status {
+    justify-content: center;
+    text-align: center;
+  }
+}
+@media (max-width: 520px) {
+  .mission-strip {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'phase'
+      'track'
+      'minis';
+  }
+  .mission-minis {
+    justify-content: space-between;
+  }
+}
