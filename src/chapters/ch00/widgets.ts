@@ -266,6 +266,23 @@ const lag: WidgetFactory = (host, ctx) => {
   });
   const mixOf = (u: number) => SHOWER.cold + (SHOWER.hot - SHOWER.cold) * u;
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  const dtData = data.t[1] - data.t[0];
+  /** RMS gap between the shifted knob-mix curve and the temperature curve */
+  const gap = (shift: number): number => {
+    let sum = 0;
+    let n = 0;
+    for (let i = 0; i < data.t.length; i++) {
+      const j = Math.round((data.t[i] - shift) / dtData);
+      if (j < 0) continue;
+      if (j >= data.u.length) break;
+      const d = mixOf(data.u[j]) - data.T[i];
+      sum += d * d;
+      n++;
+    }
+    return Math.sqrt(sum / Math.max(1, n));
+  };
+  let best = 0;
+  for (let sh = 0; sh <= 6; sh += 0.1) if (gap(sh) < gap(best)) best = sh;
   const draw = (shift: number) => {
     plot.set(
       'mix',
@@ -273,21 +290,9 @@ const lag: WidgetFactory = (host, ctx) => {
       data.u.map(mixOf),
     );
     plot.set('T', data.t, data.T);
-    // mismatch: RMS difference between shifted knob-mix and temperature
-    let sum = 0;
-    let n = 0;
-    for (let i = 0; i < data.t.length; i++) {
-      const tt = data.t[i] - shift;
-      if (tt < 0) continue;
-      const j = Math.round((tt / (data.t[1] - data.t[0])) | 0);
-      if (j >= data.u.length) break;
-      const d = mixOf(data.u[j]) - data.T[i];
-      sum += d * d;
-      n++;
-    }
-    const rms = Math.sqrt(sum / Math.max(1, n));
-    status.textContent = rms < 3 ? t('status.match', { s: fmt(shift, 1) }) : t('status.mismatch', { e: fmt(rms, 1) });
-    status.className = `w-status${rms < 3 ? ' good' : ''}`;
+    const matched = Math.abs(shift - best) <= 0.35;
+    status.textContent = matched ? t('status.match', { s: fmt(shift, 1) }) : t('status.mismatch', { e: fmt(gap(shift), 1) });
+    status.className = `w-status${matched ? ' good' : ''}`;
   };
   const sl = slider({ label: t('slider'), min: 0, max: 6, step: 0.1, value: 0, unit: 's', color: 'eff', onInput: draw });
   host.prepend(h('p', { class: 'w-title' }, t('title')));
