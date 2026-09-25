@@ -14,6 +14,8 @@ const macros = {
 };
 
 export function tex(src: string, display = false): string {
+  // decimal commas (fr/es/it/de/pl formatting) must be {,} in TeX or they typeset as "1, 00"
+  src = src.replace(/(\d),(?=\d)/g, '$1{,}');
   return katex.renderToString(src, {
     displayMode: display,
     throwOnError: false,
