@@ -10,7 +10,7 @@
         { "t": "say", "who": "june", "mood": "worried", "text": "I put our drone PID on the shower. It swung hot, cold, hot… exactly like Mika in Chapter 0. The drone never did that!" },
         { "t": "say", "who": "theo", "mood": "think", "text": "The drone has no big delay. The shower has 2.5 seconds of pipe. Let's finally work out what a delay *does*." },
         { "t": "p", "text": "First, a confession about Chapter 0's \"normal hand\". It turned the knob at a **speed** proportional to how wrong the water felt: knob speed $= k\\cdot\\err{e}$, with $k = 0.8\\,\\%$ of the knob per second per °C. A speed proportional to the error means the knob *position* is the pile of past error. That's an **I controller**, with $K_i = k$." },
-        { "t": "say", "who": "mika", "mood": "surprised", "text": "Wait, so in Chapter 0 I was a PID controller? Well, an I controller. A bad one." }
+        { "t": "say", "who": "mika", "mood": "surprised", "text": "Wait, so in Chapter 0 I was a PID controller? Well, an I controller. An over-eager one." }
       ]
     },
     {
@@ -84,12 +84,12 @@
       "id": "design",
       "title": "Design a robot shower",
       "blocks": [
-        { "t": "p", "text": "Now let's beat our own hands. The robot uses a PI controller: an I part (like the hand) plus a P part, which reacts to the *trend* of the temperature and adds phase lead. Aim for a **phase margin above 45°** and **comfortable (in the band for good) within 12 s**." },
+        { "t": "p", "text": "Now let's beat our own hands. The robot uses a PI controller: an I part (like the hand) plus a P part, which reacts to the *trend* of the temperature and adds phase lead. Aim for a **phase margin above 45°** and **comfortable (in the band for 10 s straight) within 12 s**." },
         { "t": "say", "who": "june", "mood": "excited", "text": "Easy. I'll use big gains, like on the drone: fast and snappy." },
         { "t": "widget", "id": "designer" },
         { "t": "say", "who": "june", "mood": "worried", "text": "…it swings exactly like we did. Big gains pushed the −180° speed past the point where the loop gain is 1. No phase margin at all." },
         { "t": "say", "who": "theo", "mood": "happy", "text": "The drone could take big gains because it had almost no lag. Here, **robust** means gentle: leave margin for the delay. Try about $K_p \\approx 1$ and $K_i \\approx 0.6$." },
-        { "t": "p", "text": "A well-margined PI gets comfortable in under 8 seconds, with no swinging. That beats the normal hand (which was *still* swinging after a minute) and most humans. It can't beat physics, though: nothing can react to water that hasn't arrived yet. Engineers do have a trick for long delays, a **Smith predictor**, which runs a little simulation of the pipe inside the controller. That's a story for another notebook." },
+        { "t": "p", "text": "A well-margined PI gets comfortable in under 8 seconds, with no swinging. That beats the normal hand (which spent most of a minute swinging before it calmed down) and most humans. It can't beat physics, though: nothing can react to water that hasn't arrived yet. Engineers do have a trick for long delays, a **Smith predictor**, which runs a little simulation of the pipe inside the controller. That's a story for another notebook." },
         { "t": "note", "text": "Robustness is the real lesson. Your model of the shower is never perfect: the pipe might be longer, the heater weaker. Margins are the insurance that your controller still works when the world isn't quite what you assumed." }
       ]
     },

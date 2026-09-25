@@ -7,7 +7,7 @@
       "id": "slope",
       "title": "Slope is speed",
       "blocks": [
-        { "t": "say", "who": "theo", "mood": "think", "text": "We keep saying \"sluggish\", \"wiggly\", \"settles\". Those are vibes, not maths. I want a precise way to say *how fast* the drone is changing." },
+        { "t": "say", "who": "theo", "mood": "think", "text": "We keep saying \"sluggish\", \"wiggly\", \"settles\". June's right: those are vibes, not maths. I want a precise way to say *how fast* the drone is changing." },
         { "t": "say", "who": "june", "mood": "happy", "text": "Let's replay our drone from Chapter 2 (Kp = 20 N/m) and look closely." },
         { "t": "p", "text": "The {out|blue curve} is the drone's height over time. Speed is **how much the height changes per second**. On the graph, that's how *steep* the curve is at a given moment. Lay a ruler along the curve so it just touches it at one point. That ruler is the **tangent line**, and its slope is the speed." },
         { "t": "say", "who": "mika", "mood": "excited", "text": "Easy: the drone is going fastest at the very top of the bump, because that's where it's highest!" },
@@ -52,7 +52,7 @@
           "gate": true,
           "q": "After **one** time constant, the coffee has closed 63% of the gap to room temperature. After **two** time constants, how much of the gap is closed?",
           "options": [
-            { "text": "100%, since 63% + 37% is next", "why": "Tempting, but the second τ doesn't finish the job. It closes 63% of *what's left*." },
+            { "text": "100%: the second τ closes the other 37%", "why": "Tempting, but the second τ doesn't finish the job. It closes 63% of *what's left*." },
             { "text": "About 86%", "correct": true, "why": "Each τ closes 63% of the remaining gap: 37% remains after one τ, and 37% of 37% ≈ 14% remains after two. So 86% is closed." },
             { "text": "126%, twice 63%", "why": "That would mean overshooting below room temperature. The real (smooth) coffee never does that. Only June's giant steps did." }
           ]

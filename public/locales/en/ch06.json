@@ -7,7 +7,7 @@
       "id": "spring",
       "title": "The controller is a spring",
       "blocks": [
-        { "t": "say", "who": "mika", "mood": "think", "text": "Remember the bouncy drone from Chapter 2? The more we cranked $\\eff{K_p}$, the more it boinged. It looked exactly like a weight on a spring." },
+        { "t": "say", "who": "mika", "mood": "think", "text": "June asked where our drone lives on the map. Clue: remember the bouncy drone from Chapter 2? The more we cranked $\\eff{K_p}$, the more it boinged. It looked exactly like a weight on a spring." },
         { "t": "say", "who": "theo", "mood": "think", "text": "\"Looked like\" isn't proof. Let's put them side by side and write down both equations." },
         { "t": "p", "text": "On the left: a mass of 0.5 kg hanging on a spring with a damper (a little oil-filled piston that resists motion). On the right: our drone, same mass, same drag, under proportional control." },
         { "t": "note", "text": "To keep gravity from distracting us, we give the drone its hover thrust (4.9 N) for free here, so it doesn't droop. We'll earn that honestly in Chapter 9." },
@@ -29,7 +29,7 @@
             { "term": "Damping ratio $\\zeta = \\dfrac{c}{2\\sqrt{m k}}$", "def": "How quickly the swinging dies out. It's a pure number: 0 means it swings forever, 1 is the exact border between wobbling and not." }
           ]
         },
-        { "t": "p", "text": "Now remember Chapter 5. When we guessed $e^{st}$ for a spring, we got $m s^2 + c s + k = 0$. Its two solutions are two points on our map of $s$. Divide by $m$ and it becomes" },
+        { "t": "p", "text": "Now remember the spring from Chapters 4 and 5, where guessing an exponential gave us two values of $s$. Add a damper and the same guess gives $m s^2 + c s + k = 0$. Its two solutions are two points on our map of $s$. Divide by $m$ and it becomes" },
         { "t": "math", "tex": "s^2 + 2\\zeta\\omega_n\\, s + \\omega_n^2 = 0 \\quad\\Longrightarrow\\quad s = -\\zeta\\omega_n \\pm \\omega_n\\sqrt{\\zeta^2 - 1}" },
         { "t": "p", "text": "Play with the two knobs. Watch the {out|blue dots} on the map: they're the two values of $s$, and the motion is always a mix of $e^{s_1 t}$ and $e^{s_2 t}$." },
         { "t": "widget", "id": "personality" },
@@ -74,7 +74,7 @@
       "blocks": [
         { "t": "p", "text": "Now Chapter 2 finally makes sense. For our drone, the spring constant *is* the gain:" },
         { "t": "math", "tex": "\\omega_n = \\sqrt{\\frac{\\eff{K_p}}{m}}, \\qquad \\zeta = \\frac{c}{2\\sqrt{m\\,\\eff{K_p}}}" },
-        { "t": "p", "text": "$\\eff{K_p}$ sits in the *bottom* of the damping formula. Turning up the gain makes the drone faster (bigger $\\omega_n$), but **less damped**. With $\\eff{K_p} = 20$ N/m: $\\zeta = 1/(2\\sqrt{0.5 \\times 20}) \\approx 0.16$. Very bouncy, just as we saw." },
+        { "t": "p", "text": "$\\eff{K_p}$ sits in the *bottom* of the damping formula. Turning up the gain makes the drone faster (bigger $\\omega_n$), but **less damped**. With $\\eff{K_p} = 20$ N/m: $\\zeta = 1/(2\\sqrt{0.5 \\times 20}) \\approx 0.16$. Very bouncy, just as we saw. On the map, its two $s$ values sit far up and only a little left of the vertical axis. That's where our drone lives." },
         { "t": "say", "who": "theo", "mood": "worried", "text": "And we can't get more damping without turning $\\eff{K_p}$ way down, which brings back the droop. We need a way to add damping *on purpose*." },
         { "t": "note", "text": "Try it in the first widget: slide $K_p$ and watch ζ fall as the swings get wilder." }
       ]
