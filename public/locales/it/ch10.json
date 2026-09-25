@@ -1,0 +1,461 @@
+{
+  "kicker": "Capitolo 10",
+  "title": "Ritorno alla doccia",
+  "question": "Perché oscillavamo, e quanto siamo vicini al limite?",
+  "sections": [
+    {
+      "id": "again",
+      "title": "La doccia, con occhi nuovi",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Ho messo il PID del nostro drone sulla doccia. È andata caldo, freddo, caldo… esattamente come Mika nel Capitolo 0. Il drone non l'ha mai fatto!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Il drone non ha grandi ritardi. La doccia ha 2,5 secondi di tubo. Cerchiamo finalmente di capire cosa *fa* un ritardo."
+        },
+        {
+          "t": "p",
+          "text": "Prima, una confessione sulla \"mano normale\" del Capitolo 0. Girava la manopola a una **velocità** proporzionale a quanto le sembrava sbagliata l'acqua: velocità della manopola $= k\\cdot\\err{e}$, con $k = 0{,}8\\,\\%$ della manopola al secondo per °C. Una velocità proporzionale all'errore vuol dire che la *posizione* della manopola è la pila dell'errore passato. È un **controllore I**, con $K_i = k$."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Aspetta, quindi nel Capitolo 0 ero un controllore PID? Vabbè, un controllore I. Uno troppo zelante."
+        }
+      ]
+    },
+    {
+      "id": "lag",
+      "title": "Il ritardo è uno sfasamento nell'oscillazione",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "neutral",
+          "text": "Continuo a pensare che un ritardo renda solo tutto *più lento*. Non dovrebbe poter rendere instabile niente."
+        },
+        {
+          "t": "p",
+          "text": "Mettiamo alla prova l'affermazione di Theo ragionando per **onde**. Muovi la manopola avanti e indietro come un'onda sinusoidale. L'acqua che arriva al soffione è la stessa onda, in ritardo di 2,5 s. Quanto è in ritardo, *rispetto a un'oscillazione*?"
+        },
+        {
+          "t": "widget",
+          "id": "phase"
+        },
+        {
+          "t": "p",
+          "text": "Il ritardo è sempre di 2,5 secondi, ma lo sfasamento nell'**oscillazione** dipende da quanto in fretta oscilli. Misuriamo lo sfasamento come un angolo: un'oscillazione intera è 360°, quindi"
+        },
+        {
+          "t": "math",
+          "tex": "\\text{sfasamento} = 360^\\circ \\times \\frac{L}{T_{\\text{oscillazione}}} = \\omega L \\;\\text{(in radianti)}"
+        },
+        {
+          "t": "p",
+          "text": "Per un'oscillazione lenta di 30 secondi, 2,5 s sono solo 30°: una spintarella. Per un'oscillazione di 5 secondi sono 180°: l'acqua arriva **esattamente capovolta**, calda quando la manopola dice fredda. Un ritardo è innocuo per i cambiamenti lenti e traditore per quelli veloci."
+        },
+        {
+          "t": "note",
+          "text": "È la freccia che gira del Capitolo 5: un ritardo $L$ ruota all'indietro la freccia $e^{i\\omega t}$ dell'angolo $\\omega L$. Ecco perché la funzione di trasferimento di un ritardo puro è $e^{-Ls}$."
+        }
+      ]
+    },
+    {
+      "id": "bode",
+      "title": "Misurare la doccia un'oscillazione alla volta",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Tutta la doccia (tubo *e* miscelazione) deve fare qualcosa di simile. Ecco il piano: fai oscillare la manopola a una certa velocità, aspetta che le cose prendano un ritmo stabile, e misura due numeri:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Guadagno:** quanto è grande l'oscillazione della temperatura, rispetto all'oscillazione della miscela che abbiamo chiesto.",
+            "**Fase:** quanto è in ritardo, come angolo."
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Ogni misura aggiunge un punto su due grafici. Misura almeno cinque velocità, lente e veloci."
+        },
+        {
+          "t": "widget",
+          "id": "bode"
+        },
+        {
+          "t": "p",
+          "text": "Il ritardo della miscelazione rimpicciolisce le oscillazioni veloci (il guadagno crolla), mentre il tubo continua ad accumulare ritardo di fase, senza limiti. Disegnata in funzione della velocità di oscillazione su assi logaritmici, questa coppia di curve si chiama **diagramma di Bode**. Ne abbiamo appena disegnato uno a mano. La formula viene dritta da $G(s)$ con $s = i\\omega$, l'asse verticale del piano s:"
+        },
+        {
+          "t": "math",
+          "tex": "G(i\\omega) = \\frac{e^{-i\\omega L}}{1 + i\\omega\\tau}, \\qquad |G| = \\frac{1}{\\sqrt{1+\\omega^2\\tau^2}}, \\qquad \\angle G = -\\arctan(\\omega\\tau) - \\omega L"
+        },
+        {
+          "t": "note",
+          "text": "Un aiutino onesto: una singola misura non distingue uno sfasamento di 90° da uno di 450° (le onde sembrano uguali). Contiamo i cicli interi in più seguendo la curva dal lento al veloce, come seguire una cresta lungo il tubo."
+        }
+      ]
+    },
+    {
+      "id": "margins",
+      "title": "Quanto siamo vicini al precipizio?",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Ora chiudiamo l'anello: mano → manopola → tubo → pelle → mano. Segui un'oscillazione per tutto il giro. Per la mano del Capitolo 0, il giro dell'anello è"
+        },
+        {
+          "t": "math",
+          "tex": "L(s) = \\underbrace{\\frac{k}{s}}_{\\text{mano}}\\cdot\\underbrace{\\frac{45\\,e^{-2{,}5s}}{s+1}}_{\\text{doccia}}"
+        },
+        {
+          "t": "p",
+          "text": "La retroazione sottrae (errore = obiettivo − temperatura), il che capovolge l'onda una volta. Se il giro dell'anello la ritarda *anche* di esattamente 180°, i due capovolgimenti si annullano, e ogni correzione arriva **perfettamente a tempo** con l'oscillazione, come spingere un'altalena proprio al momento giusto. Se in più l'anello non rimpicciolisce l'onda (guadagno ≥ 1), l'oscillazione cresce da sola."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Quindi c'è una velocità di oscillazione speciale, dove la fase arriva a −180°. La domanda è solo: a quella velocità, il guadagno d'anello è più grande o più piccolo di 1?"
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Margine di guadagno",
+              "def": "Per quante volte potresti moltiplicare il guadagno del controllore prima che il guadagno d'anello arrivi a 1 alla velocità dei −180°. Sotto 1 = oltre il precipizio."
+            },
+            {
+              "term": "Margine di fase",
+              "def": "Alla velocità in cui il guadagno d'anello vale esattamente 1, quanto ritardo *in più* servirebbe per arrivare a −180°. Più è, più sei al sicuro; 45°–60° è un obiettivo comune."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Per la nostra doccia, la fase di $L$ arriva a −180° a $\\omega \\approx 0{,}457$ rad/s, un periodo di oscillazione di circa **13,8 s**. La mano normale ($k = 0{,}8$) ha un margine di guadagno di appena **1,4** circa, e un margine di fase di circa 22°. Vicino al bordo! La mano energica raddoppia il guadagno: 1,4 ÷ 2 = 0,7, **oltre il precipizio**. Ecco esattamente perché non si assestava mai."
+        },
+        {
+          "t": "predict",
+          "id": "ch10-delay",
+          "gate": true,
+          "q": "Supponiamo che il tubo fosse lungo il doppio (un ritardo di 5 s). Cosa succede al guadagno della mano più grande che resta stabile?",
+          "options": [
+            {
+              "text": "**Sale**: puoi reagire più forte, perché hai più tempo",
+              "why": "Più tempo per reagire suona bene, ma stai reagendo a notizie *più vecchie*. Lo sfasamento cresce a ogni velocità."
+            },
+            {
+              "text": "**Scende**: devi reagire con più delicatezza",
+              "correct": true,
+              "why": "La fase arriva a −180° a un'oscillazione più lenta, e a basse velocità la pila della mano ($k/s$) è grande. Lì il guadagno d'anello è più grande, quindi $k$ deve ridursi: da circa 1,12 a 0,60 %/(°C·s)."
+            },
+            {
+              "text": "Resta uguale: il ritardo cambia i tempi, non il guadagno",
+              "why": "È vero che un ritardo non cambia l'ampiezza di un'onda, ma cambia *quale* velocità arriva a −180°, e lì il guadagno è diverso."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "margins"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Va bene, ritiro tutto. Un ritardo non rende solo le cose più lente: si mangia il margine di fase, e il margine di fase è l'unica cosa tra te e un'oscillazione."
+        }
+      ]
+    },
+    {
+      "id": "replay",
+      "title": "La tua doccia del Capitolo 0, spiegata",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Ecco la tua prova del Capitolo 0. Se le tue oscillazioni erano vicine al bordo, il loro periodo dovrebbe essere vicino a quello che prevede l'anello. C'è un colpo di scena: le persone non sono tutte lo stesso tipo di controllore."
+        },
+        {
+          "t": "widget",
+          "id": "replay"
+        },
+        {
+          "t": "p",
+          "text": "Una **mano a velocità** (gira la manopola finché l'acqua sembra sbagliata) è un controllore I: il suo bordo è a oscillazioni di 13,8 s. Una **mano a posizione** (\"è troppo calda, metti la manopola *qui*\") si comporta come un controllore P: $L(s) = 45K\\,e^{-2{,}5s}/(s+1)$, la cui fase arriva a −180° a $\\omega \\approx 0{,}95$ rad/s, oscillazioni di **6,6 s**, per qualsiasi $K$ sopra circa 0,031 di manopola per °C. La maggior parte delle persone è un misto. (La mano robot normale oscilla un po' più lenta di 13,8 s, circa 15,5 s, perché sta appena dentro il bordo; le oscillazioni della mano energica, circa 11,6 s, sono schiacciate dalla manopola che arriva a fine corsa.)"
+        }
+      ]
+    },
+    {
+      "id": "design",
+      "title": "Progetta una doccia robot",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Ora battiamo le nostre mani. Il robot usa un controllore PI: una parte I (come la mano) più una parte P, che reagisce alla *tendenza* della temperatura e aggiunge anticipo di fase. Punta a un **margine di fase sopra i 45°** e a stare **comodo (nella fascia per 10 s di fila) entro 12 s**."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Facile. Uso guadagni grandi, come sul drone: veloce e scattante."
+        },
+        {
+          "t": "widget",
+          "id": "designer"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "…oscilla esattamente come facevamo noi. I guadagni grandi hanno spinto la velocità dei −180° oltre il punto in cui il guadagno d'anello vale 1. Nessun margine di fase."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Il drone reggeva guadagni grandi perché non aveva quasi nessun ritardo. Qui, **robusto** vuol dire delicato: lascia margine per il ritardo. Prova circa $K_p \\approx 1$ e $K_i \\approx 0{,}6$."
+        },
+        {
+          "t": "p",
+          "text": "Un PI con buoni margini diventa comodo in meno di 8 secondi, senza oscillare. Batte la mano normale (che ha passato quasi un minuto a oscillare prima di calmarsi) e la maggior parte degli umani. Però non può battere la fisica: niente può reagire ad acqua che non è ancora arrivata. Gli ingegneri hanno un trucco per i ritardi lunghi, il **predittore di Smith**, che fa girare una piccola simulazione del tubo dentro il controllore. Ma questa è una storia per un altro quaderno."
+        },
+        {
+          "t": "note",
+          "text": "La vera lezione è la robustezza. Il tuo modello della doccia non è mai perfetto: il tubo potrebbe essere più lungo, lo scaldabagno più debole. I margini sono l'assicurazione che il tuo controllore funzioni ancora quando il mondo non è proprio come l'avevi immaginato."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Cosa abbiamo capito adesso",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Un ritardo $L$ sfasa un'oscillazione di $\\omega L$: niente per le oscillazioni lente, tanto per quelle veloci.",
+            "Mandare dentro onde sinusoidali e misurare guadagno e fase dà la **risposta in frequenza**; disegnata, è un **diagramma di Bode**, ed è semplicemente $G(i\\omega)$.",
+            "Un'oscillazione parte dove la fase dell'anello arriva a −180° con un guadagno di almeno 1.",
+            "Il **margine di guadagno e di fase** misurano la distanza da quel precipizio. Un ritardo più lungo vuol dire meno margine, quindi serve un controllo più delicato.",
+            "Le nostre oscillazioni del Capitolo 0 erano un controllore (noi) con troppo poco margine."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch10-q1",
+              "q": "Un ritardo di 2 s, e un'oscillazione con un periodo di 8 s. Quanto ritardo di fase aggiunge il ritardo?",
+              "options": [
+                {
+                  "text": "90°",
+                  "correct": true,
+                  "why": "2 s sono un quarto di 8 s, e un quarto di 360° è 90°."
+                },
+                {
+                  "text": "45°",
+                  "why": "Quello sarebbe un ritardo di 1 s. 2 s sono un quarto del periodo, non un ottavo."
+                },
+                {
+                  "text": "180°",
+                  "why": "Servirebbe un ritardo di metà periodo, 4 s."
+                }
+              ]
+            },
+            {
+              "id": "ch10-q2",
+              "q": "Alla velocità in cui la fase dell'anello è −180°, il guadagno d'anello è 0,5. Qual è il margine di guadagno?",
+              "options": [
+                {
+                  "text": "× 2",
+                  "correct": true,
+                  "why": "Potresti raddoppiare il guadagno prima che il guadagno d'anello a −180° arrivi a 1."
+                },
+                {
+                  "text": "× 0,5",
+                  "why": "Quello è il guadagno d'anello stesso. Il margine è quanto manca a 1: 1 ÷ 0,5 = 2."
+                },
+                {
+                  "text": "180°",
+                  "why": "Il margine di guadagno è un fattore, non un angolo. La versione ad angolo è il margine di fase."
+                }
+              ]
+            },
+            {
+              "id": "ch10-q3",
+              "q": "Perché un tubo più lungo costringe a un controllore più delicato?",
+              "options": [
+                {
+                  "text": "Il ritardo in più arriva a −180° a un'oscillazione più lenta, dove il guadagno d'anello è più grande, quindi il guadagno deve scendere",
+                  "correct": true,
+                  "why": "Esatto. Per una mano che integra, le oscillazioni lente ricevono la spinta più grande, quindi il precipizio si avvicina."
+                },
+                {
+                  "text": "In un tubo più lungo l'acqua si raffredda",
+                  "why": "Abbiamo supposto che non ci siano perdite di calore. L'effetto riguarda solo i tempi."
+                },
+                {
+                  "text": "Non è vero: puoi reagire più forte perché hai più tempo",
+                  "why": "Non hai più tempo. Hai informazioni più vecchie. È la trappola del Capitolo 0."
+                }
+              ]
+            },
+            {
+              "id": "ch10-q4",
+              "q": "La mano normale ha un margine di guadagno di circa 1,4. Cosa succede se reagisci 1,5 volte più forte?",
+              "options": [
+                {
+                  "text": "Le oscillazioni crescono invece di spegnersi",
+                  "correct": true,
+                  "why": "1,5 è più del margine di 1,4, quindi il guadagno d'anello a −180° supera 1: oltre il precipizio."
+                },
+                {
+                  "text": "Si assesta più in fretta",
+                  "why": "Più guadagno aiuterebbe solo se ci fosse margine in abbondanza. Con 1,4, non c'è."
+                },
+                {
+                  "text": "Non cambia niente",
+                  "why": "Il guadagno è proprio quello che misura il margine di guadagno, quindi conta eccome."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Ora abbiamo tutti gli attrezzi: retroazione, PID, poli, margini. È ora della prova vera: vento, un pacco che si sgancia e un sensore rumoroso. **Riesci a tenere il drone a 2 m?**"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "phase": {
+      "title": "Lo stesso ritardo di 2,5 s, oscillazioni diverse",
+      "y": "oscillazione",
+      "in": "cosa chiede la manopola",
+      "out": "cosa arriva, 2,5 s dopo",
+      "aria": "Due onde sinusoidali: l'ingresso e la stessa onda in ritardo di 2,5 secondi.",
+      "slider": "Periodo dell'oscillazione",
+      "lag": "ritardo di fase",
+      "status": {
+        "small": "Uno sfasamento minimo: per le oscillazioni lente il ritardo conta pochissimo.",
+        "middle": "Uno sfasamento di {d}°: l'acqua è visibilmente fuori tempo.",
+        "flipped": "Capovolta! Il caldo arriva proprio quando la manopola dice freddo.",
+        "full": "Più di un'oscillazione intera indietro: sembra di nuovo a tempo, ma è in ritardo di un ciclo intero."
+      },
+      "describe": "Periodo dell'oscillazione {p} secondi; il ritardo di 2,5 secondi la sfasa di {d} gradi."
+    },
+    "bode": {
+      "title": "Costruisci un diagramma di Bode, un'oscillazione alla volta",
+      "mix": "miscela che abbiamo chiesto",
+      "head": "temperatura al soffione",
+      "timeAria": "L'ultima misura: la temperatura della miscela che oscilla e la temperatura al soffione.",
+      "w": "velocità di oscillazione ω (rad/s)",
+      "gain": "guadagno",
+      "phase": "fase (°)",
+      "formula": "formula",
+      "measured": "le tue misure",
+      "gainAria": "Guadagno misurato in funzione della velocità di oscillazione, assi logaritmici.",
+      "phaseAria": "Ritardo di fase misurato in funzione della velocità di oscillazione.",
+      "flip": "−180°: capovolta",
+      "slider": "Velocità di oscillazione",
+      "period": "periodo",
+      "measure": "Misura",
+      "sweep": "Misura 8 velocità",
+      "clear": "Cancella",
+      "showFormula": "Mostra la curva della formula (servono 5 punti)",
+      "status": {
+        "start": "Scegli una velocità di oscillazione e premi Misura.",
+        "measured": "A ω = {w} rad/s (un'oscillazione di {p} s): guadagno {g}, fase {ph}°.",
+        "formula": "La formula passa proprio attraverso i tuoi punti."
+      },
+      "describe": "{n} misure sul grafico."
+    },
+    "margins": {
+      "title": "La mano e il bordo del precipizio",
+      "w": "velocità di oscillazione ω (rad/s)",
+      "gain": "guadagno d'anello |L|",
+      "phase": "fase d'anello (°)",
+      "loop": "anello mano + doccia",
+      "gainAria": "Diagramma di Bode del guadagno dell'anello mano più doccia, con la linea del guadagno unitario.",
+      "phaseAria": "Diagramma di Bode della fase dell'anello, con la linea dei −180 gradi.",
+      "timeAria": "Temperatura in 60 secondi con questa mano.",
+      "temp": "temperatura al soffione",
+      "one": "guadagno = 1",
+      "cliff": "−180°: il precipizio",
+      "at180": "guadagno a −180°",
+      "atCross": "margine di fase",
+      "gm": "margine di guadagno",
+      "pm": "margine di fase",
+      "crit": "bordo (k massimo)",
+      "k": "Velocità della mano k",
+      "delay": "Ritardo del tubo",
+      "status": {
+        "safe": "Ampiamente al sicuro: tanto margine.",
+        "edge": "Vicino al bordo (margine di fase {p}°): aspettati oscillazioni lunghe e pigre.",
+        "over": "Oltre il precipizio: le oscillazioni crescono finché la manopola arriva a fine corsa."
+      },
+      "describe": "Margine di guadagno {gm}, margine di fase {pm} gradi."
+    },
+    "replay": {
+      "title": "Le tue oscillazioni del Capitolo 0",
+      "yours": "Questa è la tua prova del Capitolo 0.",
+      "robot": "Non hai ancora giocato al gioco del Capitolo 0, quindi questa è la mano robot normale. (Giocaci e torna qui!)",
+      "aria": "Temperatura della prova della doccia del Capitolo 0, con la miscela richiesta dalla manopola.",
+      "temp": "temperatura al soffione",
+      "mix": "cosa chiedeva la manopola",
+      "periodYours": "il periodo delle tue oscillazioni",
+      "periodRobot": "periodo delle oscillazioni del robot",
+      "predSpeed": "bordo: mano a velocità",
+      "predPos": "bordo: mano a posizione",
+      "verdict": {
+        "calm": "Non abbastanza oscillazioni da misurare: sei stato paziente (o fortunato)!",
+        "speed": "Oscillazioni ogni {p} s: ti sei comportato come una mano a velocità, un controllore I vicino al suo bordo.",
+        "position": "Oscillazioni ogni {p} s: ti sei comportato come una mano a posizione, un controllore P vicino al suo bordo.",
+        "robot": "La mano robot oscilla ogni {p} s: una mano a velocità (un controllore I) appena dentro il suo bordo, come previsto."
+      }
+    },
+    "designer": {
+      "title": "Doccia robot: controllore PI",
+      "aria": "Temperatura in 40 secondi con il controllore PI del robot, con il progetto precedente come fantasma.",
+      "temp": "temperatura al soffione",
+      "mix": "cosa chiede la manopola",
+      "view": {
+        "aria": "Doccia controllata dal robot. La manopola gira da sola.",
+        "knob": "Manopola della doccia (controllata dal robot)",
+        "pipe": "tubo (2,5 s di viaggio)",
+        "head": "soffione",
+        "thermo": "termometro"
+      },
+      "kp": "Guadagno P $K_p$",
+      "ki": "Guadagno I $K_i$",
+      "presetHand": "La mano normale",
+      "presetJune": "I guadagni da drone di June",
+      "goal": "Obiettivo: margine di fase sopra i 45° e comodo (nella fascia per 10 s di fila) entro 12 s.",
+      "pm": "margine di fase",
+      "gm": "margine di guadagno",
+      "comfort": "comodo dopo",
+      "yours": "tu (Capitolo 0)",
+      "never": "mai",
+      "notPlayed": "non giocato",
+      "status": {
+        "unstable": "Oltre il precipizio: nessun margine, oscillazioni infinite.",
+        "edge": "Stabile ma troppo vicino al bordo: più margine, per favore.",
+        "slow": "Sicuro, ma lento. Riesci a stare comodo prima?",
+        "win": "Robusto e rapido! Questo robot batte le tue mani del Capitolo 0.",
+        "winButYou": "Robusto e rapido! (Nel Capitolo 0 sei stato più veloce tu. Notevole! Ma il robot non si stanca mai.)"
+      }
+    }
+  }
+}

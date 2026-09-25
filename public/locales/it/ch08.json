@@ -1,0 +1,390 @@
+{
+  "kicker": "Capitolo 8",
+  "title": "Funzioni di trasferimento, poli e zeri",
+  "question": "Possiamo leggere l'intera personalità di un sistema da una sola frazione?",
+  "sections": [
+    {
+      "id": "recipe",
+      "title": "La ricetta del sistema",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Guardate cosa abbiamo ottenuto nel Capitolo 7. Dimentichiamo per un attimo l'altezza di partenza (facciamo partire il drone già sospeso, tranquillo, a 1 m). Allora la risposta era sempre la stessa frazione *per* quello che gli chiedevamo di fare."
+        },
+        {
+          "t": "math",
+          "tex": "\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\sp{R}(s)"
+        },
+        {
+          "t": "p",
+          "text": "$\\sp{R}(s)$ è la trasformata dell'**ingresso**: di quanto chiediamo al riferimento di spostarsi da 1 m (la trasformata di ogni ingresso viene dritta dalla tabella del Capitolo 7). $G(s)$ è fissa: dipende solo dal drone e dal controllore. Quindi le diamo un nome: la **funzione di trasferimento**, il rapporto uscita/ingresso nel mondo di s, con tutto che parte da fermo."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Quindi $G(s)$ è come la **ricetta** del drone. Ci metti dentro qualsiasi ingrediente e ti dice cosa esce!"
+        },
+        {
+          "t": "p",
+          "text": "Prova tre ingressi diversi sullo stesso drone. La ricetta non cambia mai, cambia solo $\\sp{R}(s)$."
+        },
+        {
+          "t": "widget",
+          "id": "recipe"
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Funzione di trasferimento $G(s)$",
+              "def": "Uscita ÷ ingresso, tutti e due trasformati, con il sistema che parte da fermo. È una frazione di due polinomi in $s$, e contiene tutto su come risponde il sistema."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "poles",
+      "title": "I poli: dove il sistema vuole vivere",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Dove **esplode** $G(s)$? Dove il suo denominatore è zero. Il Capitolo 7 ci ha detto che una trasformata esplode esattamente nella $s$ dove vive un segnale. Quindi gli zeri del denominatore sono i termini $e^{st}$ di cui è fatto il sistema. Sono proprio gli stessi due puntini che abbiamo trovato nel Capitolo 6. Hanno un nome speciale: **poli**, disegnati come ×."
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} & m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p} = 0 \\\\ \\Longrightarrow\\quad & s = p,\\ \\bar p \\qquad \\text{(i poli)} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Ora rovesciamo la cosa. Invece di scegliere i guadagni e trovare i poli, **trasciniamo i poli** e vediamo che drone otteniamo. (Dietro le quinte calcoliamo il controllore che li mette lì. Serve una manopola nuova $\\eff{K_d}$, una spinta contro la velocità, che conosceremo per bene nel Capitolo 9.)"
+        },
+        {
+          "t": "predict",
+          "id": "ch8-rhp",
+          "gate": true,
+          "q": "Cosa fa il drone se trasciniamo i poli nella **metà destra** del piano s?",
+          "options": [
+            {
+              "text": "Atterra dolcemente",
+              "sketch": "sluggish",
+              "why": "Per atterrare serve che tutto si calmi, e i poli nella metà destra fanno l'opposto."
+            },
+            {
+              "text": "Resta sospeso, ballando un po'",
+              "sketch": "steady-wiggle",
+              "why": "Ballare in modo costante è quello che ottieni esattamente **sull'**asse verticale. Appena oltre, le cose crescono."
+            },
+            {
+              "text": "Oscilla sempre più forte finché non si schianta o vola via",
+              "sketch": "growing-wiggle",
+              "correct": true,
+              "why": "Nella metà destra, $e^{st}$ ha $\\sigma > 0$: una spirale che si allarga. Le oscillazioni crescono a ogni ciclo."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "playground"
+        },
+        {
+          "t": "p",
+          "text": "Giocaci. Saltano fuori alcune regole, e sono tutte i Capitoli 5 e 6 travestiti:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Metà sinistra = si calma, metà destra = esplode.** La parte reale $\\sigma$ è il tasso con cui si restringe o cresce.",
+            "**Più a sinistra = più rapido.** Assestarsi richiede circa $4/|\\sigma|$ secondi (le linee verticali tratteggiate).",
+            "**Più in alto = più oscillante.** L'altezza $\\omega$ è la velocità dell'oscillazione; un'oscillazione dura $2\\pi/\\omega$ secondi.",
+            "**L'angolo fissa la sovraelongazione.** I poli vicini all'asse reale vanno oltre pochissimo, quelli vicini all'asse verticale moltissimo (i raggi tratteggiati)."
+          ]
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Volevo **un solo** polo in alto e uno in basso. Non me lo lascia fare! Quello di sotto continua a copiare quello di sopra."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Ti ricordi le trottole gemelle del Capitolo 5? Un drone reale ha un moto reale, quindi ogni $e^{st}$ che gira ha bisogno della sua gemella allo specchio per annullare le parti immaginarie. I poli complessi arrivano **sempre** in coppie allo specchio."
+        },
+        {
+          "t": "note",
+          "text": "Il nostro drone partiva da $-1 \\pm 6{,}24i$: è il drone con $K_p = 20$ del Capitolo 2. Molto in alto (molto oscillante) e vicino all'asse (lento ad assestarsi). Ora puoi *vedere* perché rimbalzava."
+        }
+      ]
+    },
+    {
+      "id": "zeros",
+      "title": "Gli zeri: un'occhiata veloce",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Anche il numeratore della frazione può essere zero. Quei punti si chiamano **zeri**, disegnati come ○. Non cambiano *quali* termini $e^{st}$ compaiono (quello è il lavoro dei poli), ma cambiano **quanto** ne ottieni di ciascuno."
+        },
+        {
+          "t": "p",
+          "text": "Ecco un sistema con poli fissi in $-2 \\pm 3i$ e uno zero che puoi far scorrere. (Questa forma la ottieni esattamente da un controllore che reagisce a quanto in fretta cambia l'*errore*: un assaggio del Capitolo 9.)"
+        },
+        {
+          "t": "widget",
+          "id": "zero"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Stessi poli, ma quando lo zero si avvicina all'origine la risposta schizza su molto più in fretta e va più oltre!"
+        },
+        {
+          "t": "p",
+          "text": "Uno zero vicino all'origine fa reagire il sistema con forza ai **cambiamenti** dell'ingresso. La sovraelongazione cresce, anche se i poli non si sono mossi. Da lontano, lo zero conta pochissimo. Per ora sugli zeri non ci serve altro."
+        }
+      ]
+    },
+    {
+      "id": "limits",
+      "title": "Più a sinistra è sempre meglio?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Facile: trasciniamo i poli *molto* a sinistra. Si assesta in un lampo. Il drone migliore di sempre!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Però, che spinta serve? Finora abbiamo fatto finta che i motori potessero spingere forte quanto vuole la matematica."
+        },
+        {
+          "t": "p",
+          "text": "È ora di essere onesti. I nostri motori possono spingere tra **0 N** e **20 N** (circa quattro volte il peso del drone). Qui sotto, i poli si spostano a sinistra lungo una linea a 45°. Le curve tratteggiate sono la matematica con motori immaginari e illimitati; quelle continue sono i motori veri."
+        },
+        {
+          "t": "widget",
+          "id": "limit"
+        },
+        {
+          "t": "p",
+          "text": "Oltre un certo punto la matematica pretende 50, 60, 70 newton che i motori semplicemente non hanno. La {eff|spinta arancione} si appiattisce contro i limiti, il drone vero smette di seguire la bella previsione lineare, e va oltre *di più* di quanto farebbe con poli più tranquilli."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Quindi \"più a sinistra\" è meglio solo finché non finisci il motore. Piazzare i poli è un compromesso, non una gara."
+        },
+        {
+          "t": "note",
+          "text": "D'ora in poi il limite di 20 N resta acceso."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Cosa sappiamo adesso",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "La **funzione di trasferimento** $G(s)$ = uscita ÷ ingresso nel mondo di s. È la ricetta del sistema: $\\out{H} = G\\cdot\\sp{R}$.",
+            "I **poli** (×) sono dove $G(s)$ esplode: i termini $e^{st}$ di cui è fatto il sistema.",
+            "Metà sinistra = stabile, metà destra = esplode, più a sinistra = più rapido (≈ 4/|σ| s), più in alto = più oscillante, angolo = sovraelongazione.",
+            "I poli complessi arrivano sempre in coppie allo specchio.",
+            "Gli **zeri** (○) cambiano quanto ottieni di ciascun termine. Vicini all'origine aggiungono uno scatto.",
+            "I poli molto a sinistra richiedono una spinta che i motori non hanno."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch8-q1",
+              "q": "Quale coppia di poli si assesta **più in fretta**?",
+              "options": [
+                {
+                  "text": "$-1 \\pm 2i$",
+                  "why": "Assestamento ≈ $4/1 = 4$ s. L'altezza (2) influisce solo sull'oscillazione, non sull'assestamento."
+                },
+                {
+                  "text": "$-4 \\pm 2i$",
+                  "correct": true,
+                  "why": "La più a sinistra: assestamento ≈ $4/4 = 1$ s."
+                },
+                {
+                  "text": "$-0{,}5 \\pm 5i$",
+                  "why": "Molto in alto vuol dire tante oscillazioni rapide, ma è vicina all'asse, quindi si spengono lentamente (≈ 8 s)."
+                }
+              ]
+            },
+            {
+              "id": "ch8-q2",
+              "q": "$G(s) = \\dfrac{3}{s^2 + 2s + 10}$. Dove sono i poli, e com'è la risposta?",
+              "options": [
+                {
+                  "text": "$-1 \\pm 3i$: stabile, e oscilla",
+                  "correct": true,
+                  "why": "$s = \\frac{-2 \\pm \\sqrt{4 - 40}}{2} = -1 \\pm 3i$. Metà sinistra vuol dire stabile, parte immaginaria vuol dire oscillazioni."
+                },
+                {
+                  "text": "$+1 \\pm 3i$: instabile",
+                  "why": "Errore di segno. Per $s^2 + bs + c$ la parte reale è $-b/2 = -1$, che sta nella metà sinistra."
+                },
+                {
+                  "text": "$-2$ e $-10$: niente oscillazioni",
+                  "why": "Quelli sono solo coefficienti del polinomio. I poli sono le sue radici: $-1 \\pm 3i$."
+                }
+              ]
+            },
+            {
+              "id": "ch8-q3",
+              "q": "Vuoi **meno sovraelongazione** ma lo **stesso tempo di assestamento**. Come sposti i poli?",
+              "options": [
+                {
+                  "text": "Dritti verso l'asse reale (tieni σ, riduci ω)",
+                  "correct": true,
+                  "why": "Stessa distanza dall'asse vuol dire stesso tempo di assestamento. Un angolo più piccolo rispetto all'asse reale vuol dire più smorzamento, quindi meno sovraelongazione."
+                },
+                {
+                  "text": "Dritti in su (ω più grande)",
+                  "why": "Così l'angolo si sposta verso l'asse verticale: *più* sovraelongazione e oscillazioni più rapide."
+                },
+                {
+                  "text": "Verso destra",
+                  "why": "Così si assesta più lentamente, e oltre l'asse diventa instabile."
+                }
+              ]
+            },
+            {
+              "id": "ch8-q4",
+              "q": "Poli in $+0{,}5 \\pm 2i$. Cosa vedi?",
+              "options": [
+                {
+                  "text": "Oscillazioni che crescono a ogni ciclo",
+                  "sketch": "growing-wiggle",
+                  "correct": true,
+                  "why": "$\\sigma = +0{,}5 > 0$ vuol dire crescita, $\\omega = 2$ vuol dire rotazione: un'oscillazione che cresce."
+                },
+                {
+                  "text": "Oscillazioni che si riducono",
+                  "sketch": "decaying-wiggle",
+                  "why": "Per ridursi serve $\\sigma < 0$ (metà sinistra). Questi poli sono a destra."
+                },
+                {
+                  "text": "Oscillazioni costanti per sempre",
+                  "sketch": "steady-wiggle",
+                  "why": "Quello è esattamente sull'asse ($\\sigma = 0$). A $+0{,}5$ cresce."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Theo: \"I poli sono bellissimi. Ma un momento: per tutto il capitolo abbiamo barato regalando al drone la sua spinta di hovering. Senza, la gravità lo fa ancora **abbassare**. La nostra mappa va bene. È il nostro *controllore* che va sistemato.\""
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "recipe": {
+      "title": "Una ricetta, tre ingressi",
+      "choose": "Cosa chiediamo?",
+      "in": {
+        "step": "un gradino in su",
+        "pulse": "un gradino dolce",
+        "wave": "un'onda"
+      },
+      "input": "riferimento (ingresso)",
+      "output": "altezza (uscita)",
+      "plotAria": "Riferimento e altezza del drone nel tempo per l'ingresso scelto.",
+      "same": "resta uguale",
+      "changes": "cambia",
+      "describe": {
+        "step": "Il riferimento salta da 1 a 2 metri e il drone lo segue con una sovraelongazione saltellante.",
+        "pulse": "Il riferimento scivola da 1 a 2 metri; il drone lo segue con un rimbalzo più piccolo.",
+        "wave": "Il riferimento ondeggia su e giù; il drone segue l'onda."
+      },
+      "droneCap": "il drone che lo segue"
+    },
+    "playground": {
+      "title": "Il parco giochi dei poli",
+      "planeAria": "Il piano s con una coppia di poli trascinabili. La metà sinistra si calma, la metà destra esplode. Usa le frecce per spostare il polo selezionato.",
+      "pole": "p",
+      "poles": "poli",
+      "settle": "si assesta (≈4/σ)",
+      "overshoot": "sovraelongazione",
+      "response": "altezza dopo un gradino di 1 m",
+      "target": "obiettivo",
+      "plotAria": "Risposta al gradino del drone per i poli scelti, con la risposta precedente mostrata come fantasma.",
+      "settles": "si assesta",
+      "over": "sovraelongazione",
+      "raysLegend": "raggi tratteggiati: sovraelongazione %",
+      "never": "mai",
+      "wiggle": "un'oscillazione ≈ {T} s",
+      "verdict": {
+        "stable": "Metà sinistra: si calma.",
+        "unstable": "Metà destra: esplode!",
+        "marginal": "Proprio sull'asse: oscilla per sempre."
+      },
+      "challenge": "Mini-sfida: sovraelongazione sotto il 10% e assestato entro 2 s",
+      "chalOk": "Sfida superata! Sovraelongazione {o}%, assestato in {s} s.",
+      "chalNo": "Non ancora: sovraelongazione {o}%, si assesta in {s} s. Punta alla zona evidenziata.",
+      "help": "Trascina una delle due × (o raggiungila con Tab e usa le frecce, Maiusc per passi grandi). Il drone ripete ogni volta la sua risposta al gradino.",
+      "describe": "Poli in {p}. Coefficiente di smorzamento {z}. Si assesta in circa {s} secondi, sovraelongazione circa {o} per cento.",
+      "re": "σ",
+      "im": "ω"
+    },
+    "zero": {
+      "title": "Fai scorrere lo zero",
+      "planeAria": "Il piano s con due poli fissi in meno 2 più o meno 3 i e uno zero trascinabile sull'asse reale.",
+      "zero": "zero",
+      "y": "uscita",
+      "noZero": "senza zero (stessi poli)",
+      "withZero": "con lo zero",
+      "plotAria": "Risposte al gradino con e senza lo zero.",
+      "osNo": "sovraelongazione senza zero",
+      "osYes": "sovraelongazione con zero",
+      "zeroAt": "zero in",
+      "near": "Vicino all'origine: un grande scatto iniziale e sovraelongazione in più.",
+      "mid": "Uno scatto in più moderato.",
+      "far": "Lontano: lo zero non cambia quasi niente.",
+      "describe": "Zero in {z}, sovraelongazione {o} per cento.",
+      "re": "σ",
+      "im": "ω",
+      "help": "Trascina il ○ lungo l'asse (o raggiungilo con Tab e usa ← →). I poli × restano fermi."
+    },
+    "limit": {
+      "title": "I motori veri hanno dei limiti",
+      "ideal": "motori illimitati (matematica)",
+      "real": "drone vero",
+      "idealT": "spinta che vuole la matematica",
+      "realT": "spinta che otteniamo",
+      "hAria": "Altezza dopo un gradino con motori illimitati e con motori veri.",
+      "tAria": "Spinta nel tempo, con i limiti dei motori a 0 e 20 newton.",
+      "max": "massimo dei motori 20 N",
+      "min": "i motori non possono tirare giù",
+      "peak": "spinta massima che vuole la matematica",
+      "tsIdeal": "si assesta (matematica)",
+      "tsReal": "si assesta (reale)",
+      "notYet": "non entro 3 s",
+      "sigma": "Posizione dei poli (verso sinistra lungo i 45°)",
+      "toggle": "Motori veri: 0–20 N",
+      "capped": "La matematica vuole {p} N, ma i motori arrivano al massimo a 20 N. La realtà smette di seguire il disegno lineare.",
+      "fantasy": "I motori immaginari forniscono tranquillamente {p} N. Riaccendi i limiti.",
+      "fine": "Dentro il range dei motori: matematica e realtà concordano."
+    }
+  }
+}

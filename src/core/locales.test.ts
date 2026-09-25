@@ -19,7 +19,9 @@ const mathOf = (s: string): string[] =>
       .replace(/\{,\}/g, '.')
       .replace(/\s+/g, ''),
   );
-const placeholders = (s: string): string[] => (s.match(/\{\w+\}/g) ?? []).sort();
+// placeholders live in prose; maths ($…$) may contain \text{word}, which is not a placeholder
+const placeholders = (s: string): string[] =>
+  (s.replace(/\$[^$]+\$/g, '').replace(/\\text\{[^{}]*\}/g, '').match(/\{\w+\}/g) ?? []).sort();
 const colours = (s: string): string[] => (s.match(/\{(sp|out|err|eff|dis)\|/g) ?? []).sort();
 const texOf = (s: string): string =>
   s

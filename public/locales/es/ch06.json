@@ -1,0 +1,392 @@
+{
+  "kicker": "Capítulo 6",
+  "title": "La verdadera personalidad del dron",
+  "question": "¿Por qué el dron rebota como un muelle?",
+  "sections": [
+    {
+      "id": "spring",
+      "title": "El controlador es un muelle",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "June preguntó dónde vive nuestro dron en el mapa. Pista: ¿te acuerdas del dron saltarín del capítulo 2? Cuanto más subíamos $\\eff{K_p}$, más botaba. Parecía exactamente un peso colgado de un muelle."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "\"Parecía\" no es una prueba. Pongámoslos uno al lado del otro y escribamos las dos ecuaciones."
+        },
+        {
+          "t": "p",
+          "text": "A la izquierda: una masa de 0,5 kg colgada de un muelle con un amortiguador (un pistoncito lleno de aceite que se resiste al movimiento). A la derecha: nuestro dron, misma masa, mismo rozamiento, con control proporcional."
+        },
+        {
+          "t": "note",
+          "text": "Para que la gravedad no nos distraiga, aquí le regalamos al dron su empuje de vuelo estacionario (4,9 N), así que no cae. Nos lo ganaremos honradamente en el capítulo 9."
+        },
+        {
+          "t": "widget",
+          "id": "twins"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Las curvas están **una encima de la otra**. No parecidas. *Idénticas.*"
+        },
+        {
+          "t": "p",
+          "text": "Mira las dos ecuaciones. El muelle empuja de vuelta con una fuerza $\\eff{k}\\,x$: cuanto más estirado, más fuerte tira. Nuestro controlador empuja con $\\eff{K_p}(\\sp{2} - \\out{h})$: cuanto más lejos del objetivo, más fuerte empuja. **La misma regla.** El controlador *es* un muelle: uno invisible, que tira del dron hacia los 2 m."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Así que un controlador P es un muelle virtual, y el rozamiento del aire $c$ es un amortiguador virtual. Todo lo que aprendamos sobre muelles nos sale gratis."
+        }
+      ]
+    },
+    {
+      "id": "knobs",
+      "title": "Dos mandos de personalidad",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Todo sistema masa-muelle-amortiguador, y por tanto todo dron con control P, se describe con solo **dos números**:"
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Frecuencia natural $\\omega_n = \\sqrt{k/m}$",
+              "def": "Lo rápido que *quiere* oscilar, en radianes por segundo. Un muelle más rígido ($\\eff{k}$ más grande) o una masa más ligera significan una oscilación más rápida."
+            },
+            {
+              "term": "Coeficiente de amortiguamiento $\\zeta = \\dfrac{c}{2\\sqrt{m k}}$",
+              "def": "Lo rápido que se apaga la oscilación. Es un número puro: 0 significa que oscila para siempre, y 1 es la frontera exacta entre tambalearse y no hacerlo."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Recuerda el muelle de los capítulos 4 y 5, donde probar con una exponencial nos dio dos valores de $s$. Añade un amortiguador y la misma suposición da $m s^2 + c s + k = 0$. Sus dos soluciones son dos puntos en nuestro mapa de $s$. Divide entre $m$ y queda"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} & s^2 + 2\\zeta\\omega_n\\, s + \\omega_n^2 = 0 \\\\ \\Longrightarrow\\quad & s = -\\zeta\\omega_n \\pm \\omega_n\\sqrt{\\zeta^2 - 1} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Juega con los dos mandos. Fíjate en los {out|puntos azules} del mapa: son los dos valores de $s$, y el movimiento siempre es una mezcla de $e^{s_1 t}$ y $e^{s_2 t}$."
+        },
+        {
+          "t": "widget",
+          "id": "personality"
+        },
+        {
+          "t": "vocab",
+          "title": "Tres personalidades",
+          "items": [
+            {
+              "term": "Subamortiguado ($\\zeta < 1$)",
+              "def": "Los dos valores de $s$ son una pareja reflejada fuera del eje real, sobre un círculo de radio $\\omega_n$. La respuesta tiene sobreimpulso y oscila mientras se estabiliza."
+            },
+            {
+              "term": "Amortiguamiento crítico ($\\zeta = 1$)",
+              "def": "La pareja se encuentra sobre el eje real. La respuesta más rápida sin sobreimpulso."
+            },
+            {
+              "term": "Sobreamortiguado ($\\zeta > 1$)",
+              "def": "La pareja se separa a lo largo del eje real: uno se va a la izquierda y el otro se arrastra hacia el cero. Sin sobreimpulso, pero lento."
+            }
+          ]
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "¡O sea que las espirales del capítulo 5 eran la personalidad del dron desde el principio! Girar = oscilar, encogerse = estabilizarse."
+        }
+      ]
+    },
+    {
+      "id": "damping",
+      "title": "¿Más amortiguamiento siempre es mejor?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Fácil. Las oscilaciones son malas y el amortiguamiento las mata. Así que pongo $\\zeta = 5$ por si acaso. El dron más seguro de la historia."
+        },
+        {
+          "t": "predict",
+          "id": "ch6-damping",
+          "gate": true,
+          "q": "Mismo muelle, misma $\\omega_n$. Subimos el amortiguamiento de $\\zeta = 1$ a $\\zeta = 3$. ¿Llega al objetivo **más rápido** o **más despacio**?",
+          "options": [
+            {
+              "text": "Más rápido: más amortiguamiento, menos movimiento desperdiciado",
+              "sketch": "smooth",
+              "why": "Es verdad que no hay sobreimpulso. Pero el amortiguador espeso también se resiste al movimiento *hacia* el objetivo."
+            },
+            {
+              "text": "Más o menos igual",
+              "sketch": "overshoot",
+              "why": "Pasado $\\zeta = 1$ ya no queda nada que calmar, y el amortiguamiento extra solo lo frena todo."
+            },
+            {
+              "text": "Más despacio: se arrastra",
+              "sketch": "sluggish",
+              "correct": true,
+              "why": "Exacto. El amortiguador se resiste a **todo** movimiento, incluido el que quieres. Con $\\zeta = 3$ tarda unas cuatro veces más."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "race"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Mi dron \"seguro\" tarda una eternidad. Es como moverse en miel."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "¡Mirad el mapa! Un punto se ha ido corriendo a la izquierda, rapidísimo. Pero el otro está muy cerquita del cero."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Y $e^{st}$ con $s$ cerca de cero se apaga **muy** despacio. El rápido desaparece en un pestañeo. El lento es el que manda."
+        },
+        {
+          "t": "p",
+          "text": "Esa es una regla que vamos a seguir usando: **el valor de** $s$ **más cercano al eje vertical decide cuánto esperas.** Poco amortiguamiento significa tambaleos; demasiado, esperas. Un $\\zeta$ entre 0,7 y 1 es el punto justo al que apunta la mayoría de los ingenieros."
+        }
+      ]
+    },
+    {
+      "id": "drone",
+      "title": "De vuelta al dron",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Ahora el capítulo 2 por fin tiene sentido. Para nuestro dron, la constante del muelle *es* la ganancia:"
+        },
+        {
+          "t": "math",
+          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{K_p}}{m}}, \\qquad \\zeta = \\frac{c}{2\\sqrt{m\\,\\eff{K_p}}}"
+        },
+        {
+          "t": "p",
+          "text": "$\\eff{K_p}$ está *abajo* en la fórmula del amortiguamiento. Subir la ganancia hace el dron más rápido ($\\omega_n$ más grande), pero **menos amortiguado**. Con $\\eff{K_p} = 20$ N/m: $\\zeta = 1/(2\\sqrt{0.5 \\times 20}) \\approx 0.16$. Muy saltarín, tal como vimos. En el mapa, sus dos valores de $s$ están muy arriba y solo un poco a la izquierda del eje vertical. Ahí vive nuestro dron."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Y no podemos conseguir más amortiguamiento sin bajar muchísimo $\\eff{K_p}$, lo que nos devuelve la caída. Necesitamos una forma de añadir amortiguamiento *a propósito*."
+        },
+        {
+          "t": "note",
+          "text": "Pruébalo en el primer widget: mueve $K_p$ y mira cómo baja ζ mientras las oscilaciones se vuelven más locas."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Lo que sabemos ahora",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Un dron con control P obedece **exactamente** la misma ecuación que una masa colgada de un muelle: el controlador es un muelle virtual.",
+            "Dos números resumen su personalidad: $\\omega_n$ (lo rápido) y $\\zeta$ (lo saltarín).",
+            "El movimiento es una mezcla de dos términos $e^{st}$. Los dos valores de $s$ están sobre un círculo de radio $\\omega_n$ cuando está subamortiguado, y se separan a lo largo del eje real cuando está sobreamortiguado.",
+            "Más amortiguamiento no siempre es mejor: pasado $\\zeta = 1$, el valor lento de $s$ se arrastra hacia el cero y todo se ralentiza.",
+            "Para el dron, más $K_p$ significa menos amortiguamiento. Por eso se tambaleaba más."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch6-q1",
+              "q": "Los dos valores de $s$ de un sistema son $-1 \\pm 4i$. ¿Qué respuesta es?",
+              "options": [
+                {
+                  "text": "Se pasa y oscila",
+                  "sketch": "overshoot",
+                  "correct": true,
+                  "why": "Una parte imaginaria (±4) significa giro, o sea, oscilación. Una parte real negativa (−1) significa que las oscilaciones se encogen."
+                },
+                {
+                  "text": "Sube suavemente, sin sobreimpulso",
+                  "sketch": "smooth",
+                  "why": "Las subidas suaves vienen de valores de $s$ sobre el eje real (sin giro). Estos tienen una parte imaginaria de ±4."
+                },
+                {
+                  "text": "Sube arrastrándose despacio",
+                  "sketch": "sluggish",
+                  "why": "Arrastrarse viene de una $s$ real muy cerca de cero. Estos valores giran, así que la respuesta oscila."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q2",
+              "q": "Nuestro dron ($m = 0.5$ kg, $c = 1$ N·s/m) con $K_p = 20$ N/m está…",
+              "options": [
+                {
+                  "text": "Subamortiguado, $\\zeta \\approx 0.16$",
+                  "correct": true,
+                  "why": "$\\zeta = 1/(2\\sqrt{0.5\\cdot 20}) = 1/(2\\sqrt{10}) \\approx 0.158$. Muy por debajo de 1, así que saltarín."
+                },
+                {
+                  "text": "Con amortiguamiento crítico, $\\zeta = 1$",
+                  "why": "Para eso haría falta $c = 2\\sqrt{m K_p} \\approx 6.3$ N·s/m, más de seis veces el rozamiento que tenemos."
+                },
+                {
+                  "text": "Sobreamortiguado, $\\zeta > 1$",
+                  "why": "Para sobreamortiguar hace falta mucho amortiguamiento en comparación con la rigidez. Nuestra ganancia es alta y nuestro rozamiento, pequeño: justo lo contrario."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q3",
+              "q": "Usando solo control P, ¿qué $K_p$ haría que el dron tuviera amortiguamiento crítico ($\\zeta = 1$)?",
+              "options": [
+                {
+                  "text": "$K_p = 0.5$ N/m",
+                  "correct": true,
+                  "why": "Iguala $c/(2\\sqrt{m K_p}) = 1$ y sale $K_p = c^2/(4m) = 0.5$ N/m. Pero con un muelle tan débil el dron tendría que estar 9,8 m *por debajo* del objetivo solo para sostenerse, así que nunca despega. El control P solo no nos da las dos cosas."
+                },
+                {
+                  "text": "$K_p = 20$ N/m",
+                  "why": "Ese es nuestro valor saltarín de siempre, con $\\zeta \\approx 0.16$. Más ganancia significa *menos* amortiguamiento."
+                },
+                {
+                  "text": "$K_p = 200$ N/m",
+                  "why": "Más ganancia baja $\\zeta$ todavía más (hasta unos 0,05). La ganancia está en el denominador."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q4",
+              "q": "Un sistema sobreamortiguado tiene valores de $s$ $-0.2$ y $-10$. ¿Cuál decide cuánto esperas?",
+              "options": [
+                {
+                  "text": "$-0.2$",
+                  "correct": true,
+                  "why": "$e^{-0.2t}$ tarda unos 20 s en bajar al 2 %, mientras que $e^{-10t}$ desaparece en 0,4 s. El más cercano al eje vertical es el que manda."
+                },
+                {
+                  "text": "$-10$",
+                  "why": "$e^{-10t}$ se desvanece en una fracción de segundo. Es la parte rápida, que acaba antes de que te des cuenta."
+                },
+                {
+                  "text": "Los dos por igual",
+                  "why": "Se apagan a velocidades muy distintas, así que el lento domina lo que ves."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Theo: \"Hemos llegado a estos valores de $s$ *a base de suposiciones*. Añade gravedad, viento, paquetes y un controlador más listo, y suponer se pone feo. ¿Existe una máquina que convierta este cálculo en **álgebra pura y simple**?\""
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "twins": {
+      "title": "Muelle vs. dron",
+      "spring": "masa colgada de un muelle",
+      "drone": "dron con control P",
+      "msdAria": "Una masa colgada de un muelle y un amortiguador, rebotando alrededor de su posición de reposo.",
+      "plotY": "distancia al objetivo (m)",
+      "plotAria": "Distancia al objetivo a lo largo del tiempo para el dron y para el muelle. Las dos curvas quedan una encima de la otra.",
+      "target": "objetivo / reposo",
+      "kp": "Rigidez: muelle $k$ = ganancia del dron $K_p$",
+      "personality": "personalidad",
+      "help": "Los dos empiezan 1 m por debajo de su objetivo y se sueltan. El control deslizante pone la rigidez del muelle y la ganancia del dron al mismo número.",
+      "describe": "El dron está a {d} m del objetivo; la masa del muelle, a {s} m del reposo.",
+      "regime": {
+        "under": "subamortiguado",
+        "critical": "amortiguamiento crítico",
+        "over": "sobreamortiguado"
+      },
+      "together": "los dos, en una gráfica"
+    },
+    "personality": {
+      "title": "Dos mandos, dos puntos, una personalidad",
+      "response": "respuesta a un escalón de 1 m",
+      "target": "objetivo",
+      "plotAria": "Respuesta al escalón de un sistema de segundo orden para la frecuencia natural y el coeficiente de amortiguamiento elegidos.",
+      "planeAria": "El mapa de s, con los dos valores de s del sistema y un círculo discontinuo de radio omega n.",
+      "msdAria": "Una masa colgada de un muelle que reproduce la respuesta al escalón.",
+      "panelAria": "Pequeña respuesta al escalón con coeficiente de amortiguamiento {z}.",
+      "panel": {
+        "0": "subamortiguado (ζ = {z})",
+        "1": "crítico (ζ = {z})",
+        "2": "sobreamortiguado (ζ = {z})"
+      },
+      "radius": "radio ωn = {w}",
+      "wn": "Frecuencia natural $\\omega_n$",
+      "zeta": "Coeficiente de amortiguamiento $\\zeta$",
+      "overshoot": "sobreimpulso",
+      "settle": "se estabiliza (2 %)",
+      "roots": "los dos valores de s",
+      "personality": "personalidad",
+      "never": "nunca",
+      "playSpring": "Reproducir en el muelle",
+      "stopSpring": "Pausar el muelle",
+      "describe": "Coeficiente de amortiguamiento {z}, frecuencia natural {w} radianes por segundo, valores de s {r}.",
+      "regime": {
+        "under": "subamortiguado",
+        "critical": "amortiguamiento crítico",
+        "over": "sobreamortiguado"
+      },
+      "planeCap": "los dos valores de s",
+      "springCap": "míralo en un muelle",
+      "re": "σ",
+      "im": "ω",
+      "offMap": "{v} está fuera del mapa ←"
+    },
+    "race": {
+      "title": "La carrera del amortiguamiento",
+      "choose": "Tu amortiguamiento",
+      "ref": "ζ = 1 (crítico)",
+      "yours": "tu ζ",
+      "yoursZ": "ζ = {z}",
+      "msdAria": "Una masa colgada de un muelle que se mueve hacia su posición de reposo.",
+      "plotAria": "Respuestas al escalón con amortiguamiento crítico y con el coeficiente de amortiguamiento elegido.",
+      "planeAria": "Los dos valores de s para el coeficiente de amortiguamiento elegido.",
+      "settleRef": "ζ = 1 se estabiliza",
+      "settleYours": "tu ζ se estabiliza",
+      "slow": "el lento",
+      "fast": "el rápido",
+      "never": "no en 12 s",
+      "same": "Esta es la propia referencia: la respuesta más rápida sin sobreimpulso.",
+      "slower": "Tu amortiguamiento extra lo ha hecho unas {k} veces más lento.",
+      "replay": "Otra carrera",
+      "planeCap": "los dos valores de s",
+      "re": "σ",
+      "im": "ω",
+      "fastOff": "← el rápido en {v} (fuera del mapa)",
+      "double": "los dos aquí"
+    }
+  }
+}

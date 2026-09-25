@@ -1,0 +1,430 @@
+{
+  "kicker": "Capítulo 5",
+  "title": "Números que giran",
+  "question": "¿Qué clase de número podría dar −1 al elevarlo al cuadrado, y por qué iba a oscilar?",
+  "sections": [
+    {
+      "id": "arrows",
+      "title": "Los números son flechas",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "La última vez, el muelle necesitaba un número con $a^2 = -4$. Theo dijo que no existe. Pero ¿qué *pinta* tendría uno así?"
+        },
+        {
+          "t": "p",
+          "text": "Imagina cada número como una **flecha** que sale del 0 a lo largo de la recta numérica. Multiplicar por 2 estira la flecha. Multiplicar por ½ la encoge. Y multiplicar por −1 le da la vuelta para que apunte al otro lado. Eso es **media vuelta**."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "¡Uy! Si ×(−1) es media vuelta… ¿qué es *la mitad* de media vuelta? ¡**Un cuarto** de vuelta! La flecha apuntaría hacia arriba, fuera de la recta numérica."
+        },
+        {
+          "t": "p",
+          "text": "Démosle un nombre al cuarto de vuelta: **i**. Hazlo dos veces y habrás dado media vuelta, que es ×(−1). Así que $i \\cdot i = -1$. ¡Ahí está nuestro número que da negativo al elevarlo al cuadrado!"
+        },
+        {
+          "t": "widget",
+          "id": "rotate"
+        },
+        {
+          "t": "math",
+          "tex": "i^2 = -1 \\qquad\\text{(dos cuartos de vuelta = media vuelta)}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Un momento. Esos son los \"números imaginarios\". Todo el mundo sabe que son inventados. No pueden describir un muelle real, físico."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "No son imaginarios, ¡son **de lado**! Es solo una flecha en 2D. Girar a la izquierda es tan real como andar hacia delante."
+        },
+        {
+          "t": "p",
+          "text": "Un número como $3 + 2i$ significa simplemente \"3 pasos a lo largo, 2 pasos de lado\". Todo el plano de flechas es el escenario de lo que viene a continuación."
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "El nombre \"imaginario\" nació como un insulto, hace siglos, y se quedó. Que no te engañe."
+        }
+      ]
+    },
+    {
+      "id": "spin",
+      "title": "Un número que gira",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Ahora imagina un punto que da vueltas a un círculo a velocidad constante, ω radianes por segundo. ¿Hacia dónde apunta su **velocidad**? Siempre a lo largo del círculo, que está **un cuarto de vuelta** por delante de la flecha que va al punto."
+        },
+        {
+          "t": "p",
+          "text": "Un cuarto de vuelta es ×i, y la rapidez es ω por el radio. Así que la velocidad es la posición girada un cuarto de vuelta, por ω: **velocidad = iω × posición**."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Espera. \"La pendiente es un número fijo por sí misma\" es exactamente la propiedad **exponencial** del capítulo 4. ¡Con a = iω!"
+        },
+        {
+          "t": "p",
+          "text": "Así que $e^{i\\omega t}$ no da ningún miedo. Es un punto que **gira** alrededor del círculo de radio 1, ω radianes cada segundo. Obsérvalo, y observa su **sombra** sobre el eje real:"
+        },
+        {
+          "t": "widget",
+          "id": "spinner"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\,e^{i\\omega t} = i\\omega\\,e^{i\\omega t}\\qquad \\text{sombra sobre el eje real} = \\cos(\\omega t)"
+        },
+        {
+          "t": "p",
+          "text": "La sombra se desliza de un lado a otro como una **onda coseno** perfecta. Una flecha que gira, vista de perfil, es una oscilación. Ahí es donde se escondía la oscilación."
+        },
+        {
+          "t": "note",
+          "text": "Escrito entero, el girador es $e^{i\\omega t} = \\cos\\omega t + i\\sin\\omega t$: la parte a lo largo es un coseno y la parte de lado, un seno. Esto se conoce como fórmula de Euler."
+        }
+      ]
+    },
+    {
+      "id": "twins",
+      "title": "De vuelta al muelle (y un error nuevo)",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "El muelle necesitaba $a^2 = -k/m = -4$. Prueba $a = 2i$: $(2i)^2 = 4\\,i^2 = -4$. ✓ Y $a = -2i$ también funciona."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Vale, me equivoqué. El truco de probar con una exponencial sobrevive. El muelle es $e^{2it}$, un girador que da dos vueltas cada… 2π segundos."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "¿Entonces la posición del muelle es $e^{2it}$? ¿Ahora mismo está en… $0.4 + 0.9i$ metros?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Un muelle no puede estar a 0,9 metros *de lado*. Solo se mueve arriba y abajo."
+        },
+        {
+          "t": "p",
+          "text": "Mika se olvidó de la otra respuesta. Encontramos **dos** soluciones, $e^{2it}$ y $e^{-2it}$: un girador y su **gemelo reflejado**, que gira en sentido contrario. Súmalos:"
+        },
+        {
+          "t": "widget",
+          "id": "twins"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "¡Las partes de lado se cancelan a la perfección! La suma solo se desliza por la recta real, de un lado a otro."
+        },
+        {
+          "t": "math",
+          "tex": "x(t) = \\tfrac12\\left(e^{i\\omega t} + e^{-i\\omega t}\\right) = \\cos(\\omega t),\\qquad \\omega = \\sqrt{k/m}"
+        },
+        {
+          "t": "p",
+          "text": "Esa es la regla para cualquier cosa real: los giradores siempre vienen en **parejas reflejadas**, así que sus partes de lado se cancelan y lo que queda es una oscilación real que podemos medir."
+        }
+      ]
+    },
+    {
+      "id": "map",
+      "title": "El mapa de s",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "El capítulo 4 nos dio exponenciales que **crecen o se encogen**. Ahora tenemos giradores que **oscilan**. Juntémoslos: $e^{st}$ con $s = \\sigma + i\\omega$."
+        },
+        {
+          "t": "math",
+          "tex": "e^{st} = e^{(\\sigma + i\\omega)t} = \\underbrace{e^{\\sigma t}}_{\\text{crecer/encoger}}\\cdot\\underbrace{e^{i\\omega t}}_{\\text{girar}}"
+        },
+        {
+          "t": "p",
+          "text": "Así que cada número s es una receta: **σ** (la parte a lo largo) dice lo rápido que crece o se encoge, y **ω** (la parte de lado) dice lo rápido que gira. Juntos dibujan una **espiral**, y la sombra de la espiral es la señal que veríamos."
+        },
+        {
+          "t": "predict",
+          "id": "ch5-shadow",
+          "gate": true,
+          "q": "Pon s en $-0.5 + 3i$. ¿Qué pinta tiene la sombra de $e^{st}$?",
+          "options": [
+            {
+              "text": "Una oscilación que crece",
+              "sketch": "growing-wiggle",
+              "why": "Para crecer hace falta σ > 0. Aquí σ = −0,5 es negativo."
+            },
+            {
+              "text": "Una oscilación que se apaga",
+              "sketch": "decaying-wiggle",
+              "correct": true,
+              "why": "ω = 3 la hace girar (una oscilación cada 2 s, más o menos), y σ = −0,5 la encoge por un factor $e^{-0.5} \\approx 0.61$ cada segundo."
+            },
+            {
+              "text": "Un decaimiento suave, sin oscilación",
+              "sketch": "decaying-plain",
+              "why": "Eso es lo que saldría con ω = 0 (s sobre el eje horizontal). Aquí ω = 3, así que gira."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "smap"
+        },
+        {
+          "t": "p",
+          "text": "Date una vuelta por el mapa arrastrando s (o con las flechas del teclado):"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Mitad izquierda** (σ < 0): la espiral se encoge y la oscilación se apaga.",
+            "**Mitad derecha** (σ > 0): la espiral crece y la oscilación se dispara.",
+            "**Sobre la línea vertical** (σ = 0): un círculo perfecto, una oscilación que dura para siempre.",
+            "**Sobre la línea horizontal** (ω = 0): nada de giro, solo las exponenciales normales del capítulo 4.",
+            "**Más arriba**: giro más rápido, oscilaciones más rápidas. **Más a la izquierda**: se apaga más rápido."
+          ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "O sea que un solo punto en este mapa es toda una personalidad: lo rápido que oscila y si se calma o se dispara."
+        },
+        {
+          "t": "note",
+          "text": "Este mapa va a convertirse en nuestro dibujo más importante. Recibe su nombre oficial en el capítulo 7."
+        }
+      ]
+    },
+    {
+      "id": "fourier",
+      "title": "Un pequeño desvío: todo está hecho de giradores",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Una última sorpresa. Toma giradores de distintas velocidades (1, 3, 5, 7… veces más rápidos), encoge cada uno en su justa medida y suma sus sombras. Con suficientes puedes construir casi *cualquier* forma, incluso una onda cuadrada con esquinas afiladas."
+        },
+        {
+          "t": "widget",
+          "id": "fourier"
+        },
+        {
+          "t": "p",
+          "text": "Un tal **Fourier** se dio cuenta de esto hace 200 años: cualquier señal se puede construir con estas piezas que giran. No necesitaremos los detalles, pero reconforta. Los giradores son los átomos de los que están hechas las señales."
+        },
+        {
+          "t": "note",
+          "text": "Rincón de la honestidad: justo al lado de cada salto, la suma siempre se pasa en torno a un 9 % del salto, por muchas piezas que añadas. El pico se estrecha, pero nunca desaparece."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Lo que sabemos hasta ahora",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Los números son flechas. Multiplicar las gira y las estira. **i** es un cuarto de vuelta, así que $i^2 = -1$.",
+            "$e^{i\\omega t}$ es un punto que gira alrededor de un círculo. Su sombra es una onda coseno.",
+            "Las oscilaciones reales vienen de **giradores gemelos reflejados** cuyas partes de lado se cancelan.",
+            "$e^{st}$ con $s = \\sigma + i\\omega$ gira *y* crece o se encoge: una espiral. Su sombra es una oscilación que crece o se apaga.",
+            "El **mapa de s**: a la izquierda se calma, a la derecha se dispara, más arriba significa oscilaciones más rápidas."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch5-q1",
+              "q": "¿Qué da multiplicar la flecha 3 por i, dos veces?",
+              "options": [
+                {
+                  "text": "−3",
+                  "correct": true,
+                  "why": "Dos cuartos de vuelta son media vuelta: 3 → 3i → −3."
+                },
+                {
+                  "text": "3i",
+                  "why": "Eso es tras *un* cuarto de vuelta. Hazlo una vez más."
+                },
+                {
+                  "text": "9",
+                  "why": "Multiplicar por i gira la flecha. No cambia su longitud."
+                }
+              ]
+            },
+            {
+              "id": "ch5-q2",
+              "q": "Pon s justo sobre la línea vertical, en $s = 2i$. ¿Cuál es la sombra de $e^{st}$?",
+              "options": [
+                {
+                  "text": "Una oscilación que dura para siempre",
+                  "sketch": "steady-wiggle",
+                  "correct": true,
+                  "why": "σ = 0 significa que ni crece ni se encoge: un círculo perfecto, y su sombra es un coseno constante."
+                },
+                {
+                  "text": "Una oscilación que se apaga",
+                  "sketch": "decaying-wiggle",
+                  "why": "Para apagarse hace falta σ < 0 (a la izquierda de la línea vertical)."
+                },
+                {
+                  "text": "Crecimiento explosivo",
+                  "sketch": "growing-plain",
+                  "why": "Crecer sin oscilar es la mitad derecha de la línea *horizontal*: σ > 0, ω = 0."
+                }
+              ]
+            },
+            {
+              "id": "ch5-q3",
+              "q": "Una cuerda de guitarra suena con una nota clara y se va apagando despacio. ¿Dónde vive en el mapa de s?",
+              "options": [
+                {
+                  "text": "Justo a la izquierda de la línea vertical, bastante por encima de la horizontal",
+                  "correct": true,
+                  "why": "Apagarse despacio significa σ ligeramente negativo, y una nota clara significa una ω grande (muchas oscilaciones por segundo)."
+                },
+                {
+                  "text": "En la mitad derecha",
+                  "why": "La mitad derecha *crece*. Una cuerda que sonara cada vez más fuerte sola sería alarmante."
+                },
+                {
+                  "text": "Sobre la línea horizontal, muy a la izquierda",
+                  "why": "Sin ω no hay oscilación (ni nota), y muy a la izquierda significa que se apaga al instante. Eso es un golpe sordo."
+                }
+              ]
+            },
+            {
+              "id": "ch5-q4",
+              "q": "¿Por qué los giradores de una oscilación real, física, siempre vienen en parejas reflejadas?",
+              "options": [
+                {
+                  "text": "Para que sus partes de lado se cancelen y la suma sea un número real",
+                  "correct": true,
+                  "why": "Un girador y su gemelo tienen partes de lado iguales y opuestas. Al sumarlos solo sobrevive la parte a lo largo (una oscilación real)."
+                },
+                {
+                  "text": "Porque $i^2 = -1$",
+                  "why": "Es cierto, pero eso explica por qué *existen* los giradores, no por qué van en parejas."
+                },
+                {
+                  "text": "Porque un muelle tiene dos extremos",
+                  "why": "Bonito, pero no. Un solo péndulo oscilando también tiene giradores gemelos."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "June: \"Entonces, **¿en qué parte de este mapa vive nuestro dron?**\""
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "rotate": {
+      "title": "Multiplicar gira flechas",
+      "re": "a lo largo (real)",
+      "im": "de lado (i)",
+      "start": "Empieza con la flecha 3. ¡Prueba los botones!",
+      "tooBig": "Eso se saldría de la página. Prueba otro botón.",
+      "explain": {
+        "two": "×2 estira la flecha al doble de longitud. Misma dirección.",
+        "half": "×½ la encoge a la mitad. Misma dirección.",
+        "neg": "×(−1) es media vuelta: la flecha se da la vuelta y apunta al otro lado.",
+        "i": "×i es un cuarto de vuelta, en sentido antihorario. ¡Hazlo dos veces y compáralo con ×(−1)!"
+      },
+      "aria": "Un plano con una flecha desde el origen. Los botones multiplican la flecha por 2, un medio, menos uno o i, girándola o estirándola.",
+      "trail": "Las flechas hasta ahora"
+    },
+    "spinner": {
+      "title": "El girador y su sombra",
+      "re": "a lo largo",
+      "im": "de lado",
+      "position": "posición",
+      "velocity": "velocidad",
+      "shadow": "sombra sobre el eje real",
+      "shadowAxis": "sombra",
+      "omega": "Velocidad de giro ω",
+      "help": "La flecha de velocidad (dibujada más corta para que quepa) siempre apunta un cuarto de vuelta por delante de la flecha de posición. El punto azul sobre el eje real es la sombra.",
+      "aria": "Un punto que gira alrededor de un círculo, con su flecha de posición, una flecha de velocidad un cuarto de vuelta por delante y su sombra sobre el eje real.",
+      "plotAria": "La sombra del girador a lo largo del tiempo: una onda coseno."
+    },
+    "twins": {
+      "title": "Un girador y su gemelo reflejado",
+      "re": "a lo largo",
+      "im": "de lado",
+      "sum": "suma",
+      "spinnerLabel": "girador",
+      "twinLabel": "gemelo",
+      "toggle": "Añadir el gemelo reflejado",
+      "axis": "valor",
+      "realPart": "parte a lo largo de la suma",
+      "sidePart": "parte de lado de la suma",
+      "alone": "Un girador solo: la suma se escapa de lado (curva discontinua).",
+      "withTwin": "Al añadir su gemelo, punta con cola, las partes de lado se cancelan. La suma se queda en la recta real: 2·cos(ωt).",
+      "aria": "Dos flechas que giran en sentidos opuestos, sumadas punta con cola. Su suma está marcada con un anillo.",
+      "plotAria": "Las partes a lo largo y de lado de la suma a lo largo del tiempo."
+    },
+    "smap": {
+      "title": "El mapa de s",
+      "re": "σ: encoge ← → crece",
+      "im": "ω: gira",
+      "reShort": "a lo largo",
+      "imShort": "de lado",
+      "time": "tiempo →",
+      "shadow": "sombra de e^(st)",
+      "shadowAxis": "sombra",
+      "mirror": "Mostrar el gemelo reflejado",
+      "readS": "s",
+      "readTurns": "vueltas",
+      "readSize": "cambio de tamaño",
+      "spins": "Da {n} vueltas por segundo",
+      "noSpin": "No gira nada",
+      "grows": "y crece.",
+      "shrinks": "y se encoge.",
+      "steady": "y mantiene el tamaño.",
+      "help": "Arrastra el punto s por el mapa (o selecciónalo y usa las flechas). A la derecha: la espiral e^(st) en 3D, con el tiempo avanzando hacia la derecha. Su sombra azul se dibuja debajo.",
+      "mapAria": "El mapa de s: arrastra el punto para elegir sigma y omega.",
+      "spiralAria": "Espiral tridimensional de e elevado a s por t, con el tiempo avanzando hacia la derecha, y su sombra en la pared del fondo.",
+      "plotAria": "Sombra de e elevado a s por t a lo largo del tiempo."
+    },
+    "fourier": {
+      "title": "Construir una onda cuadrada con giradores",
+      "axis": "valor",
+      "target": "onda cuadrada",
+      "sum": "suma de sombras de giradores",
+      "pieces": "Número de giradores",
+      "status": "{n} giradores sumados. El más rápido gira {f} veces más rápido que el primero.",
+      "aria": "Una onda cuadrada y la suma de un número elegido de sombras de giradores que la aproxima.",
+      "statusOne": "Un solo girador: una oscilación normal, nada cuadrada todavía."
+    }
+  }
+}

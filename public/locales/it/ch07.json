@@ -1,0 +1,535 @@
+{
+  "kicker": "Capitolo 7",
+  "title": "La trasformata di Laplace",
+  "question": "Possiamo trasformare l'analisi in algebra?",
+  "sections": [
+    {
+      "id": "probe",
+      "title": "Una sonda per i segnali",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Ogni volta che abbiamo risolto qualcosa, abbiamo *tirato a indovinare* $e^{st}$, l'abbiamo sostituito e abbiamo pregato. Ora aggiungi la gravità, un'altezza di partenza, un controllore… il mio quaderno sta andando a fuoco."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Quando costruisco cose, il trucco è sempre trasformare un lavoro difficile in uno facile. Difficile: analisi con pendenze di pendenze. Facile: semplice algebra con $+$, $-$, $\\times$, $\\div$."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Quindi ci serve una macchina che mangi una curva e sputi fuori qualcosa in cui le pendenze diventano moltiplicazioni? Esiste?"
+        },
+        {
+          "t": "p",
+          "text": "Esiste, e possiamo costruirla con cose che abbiamo già. L'idea è questa. Prendi un segnale qualsiasi $f(t)$. Moltiplicalo per una **sonda**, l'esponenziale che si restringe $e^{-st}$ del Capitolo 4. Poi misura l'**area totale** sotto il prodotto (l'area accumulata del Capitolo 3)."
+        },
+        {
+          "t": "math",
+          "tex": "F(s) = \\int_0^\\infty \\out{f(t)}\\; e^{-st}\\,dt"
+        },
+        {
+          "t": "p",
+          "text": "Tutto qui. Entra un numero $s$, esce un'area. Prova valori di $s$ diversi e ottieni una curva tutta nuova $F(s)$. Quella curva è la **trasformata di Laplace** di $f$: un'impronta digitale del segnale."
+        },
+        {
+          "t": "predict",
+          "id": "ch7-step",
+          "gate": true,
+          "q": "Prendi il segnale più semplice, un gradino: $f(t) = 1$ per sempre. Se rendiamo $s$ **più grande**, cosa succede all'area sotto $1 \\cdot e^{-st}$?",
+          "options": [
+            {
+              "text": "Cresce",
+              "why": "Una $s$ più grande fa spegnere la sonda *più in fretta*, quindi ce n'è di meno."
+            },
+            {
+              "text": "Si riduce",
+              "correct": true,
+              "why": "Esatto. Una $s$ più grande schiaccia la sonda più in fretta, quindi c'è meno area. Anzi, l'area vale esattamente $1/s$."
+            },
+            {
+              "text": "Resta uguale",
+              "why": "La forma della sonda dipende da $s$: $s$ più grande vuol dire una discesa più rapida, quindi un'area più piccola."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "probe"
+        },
+        {
+          "t": "p",
+          "text": "Fai scorrere $s$ e i punti disegnano $1/s$ per il gradino. Prova anche gli altri segnali. Un segnale che cresce $e^{0{,}5t}$ ha un'area finita solo quando la sonda si restringe **più in fretta** di quanto cresca il segnale, cioè quando $s > 0{,}5$. Sotto quel valore, l'area scappa all'infinito."
+        },
+        {
+          "t": "note",
+          "text": "Per ora usiamo solo $s$ reali. Le $s$ complesse arrivano tra un minuto, ed è lì che sta la magia.",
+          "aside": true
+        }
+      ]
+    },
+    {
+      "id": "explode",
+      "title": "La trasformata urla dove vive il segnale",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Guardiamo più da vicino $f(t) = e^{at}$. Sondalo con $e^{-st}$ e il prodotto è $e^{(a-s)t}$, un semplice esponenziale. La sua area è $\\frac{1}{s-a}$ (lo ricaveremo per bene nella tabella qui sotto)."
+        },
+        {
+          "t": "widget",
+          "id": "explode"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Quando $s$ si avvicina ad $a$ il numero diventa **enorme**! Con $s = a$ la sonda annulla esattamente la crescita, il prodotto resta piatto per sempre, e l'area è infinita."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Quindi la trasformata **esplode esattamente nella** $s$ **dove vive il segnale**. Se mi dessi solo $F(s)$, potrei trovare la $a$ del segnale cercando dove esplode."
+        },
+        {
+          "t": "p",
+          "text": "Ora rendiamo $s$ complessa, $s = \\sigma + i\\omega$, proprio come i numeri che girano del Capitolo 5. Prendi un segnale che gira $e^{2it}$. La sonda $e^{-st}$ lo restringe (quella è la parte $\\sigma$) **e lo fa girare all'indietro** (quella è la parte $\\omega$). Qui sotto, i pezzettini di area del prodotto vengono sommati in coda come frecce. Guarda il totale che si accumula."
+        },
+        {
+          "t": "widget",
+          "id": "unspin"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Quando la sonda gira esattamente a 2, il segnale smette di girare, tutti i pezzi puntano nella stessa direzione e il totale schizza via. Quando non coincidono, le frecce si arricciano e si annullano."
+        },
+        {
+          "t": "p",
+          "text": "Stessa lezione, una dimensione in più: la trasformata esplode nella $s$ complessa dove vive il segnale. Ecco perché d'ora in poi disegneremo ogni $s$ su una mappa con $\\sigma$ in orizzontale e $\\omega$ in verticale. La nostra \"mappa di $s$\" del Capitolo 5 riceve finalmente il suo nome da adulta: il **piano s**."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Il piano s",
+              "def": "La mappa dei numeri complessi $s = \\sigma + i\\omega$. A sinistra vuol dire restringersi, a destra crescere, su e giù girare. Ogni segnale $e^{st}$ vive in un punto di questa mappa, e lì la sua trasformata esplode."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rule",
+      "title": "Le pendenze diventano moltiplicazioni",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Ecco la proprietà che rende tutto questo utile. Cosa succede alla trasformata quando prendiamo la **pendenza** del segnale? Proviamo con $f = e^{at}$. La sua pendenza è $a e^{at}$ (Capitolo 4), quindi"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\mathcal{L}\\{f'\\} &= \\frac{a}{s-a} = \\frac{s}{s-a} - 1 \\\\ &= s\\,F(s) - f(0) \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "La pendenza è diventata **moltiplicare per** $s$, meno il valore di partenza $f(0)$. L'analisi è diventata algebra!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Un attimo. È un trucco che funziona per $e^{at}$ perché $e^{at}$ è speciale. Tra poco mi dirai che è una regola da tabella da imparare a memoria. Non ci credo che valga per *qualsiasi* curva."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Allora proviamola sulla curva più brutta che riesci a disegnare."
+        },
+        {
+          "t": "p",
+          "text": "Disegna un segnale qualsiasi a sinistra (o scegline uno pronto). Calcoliamo la sua pendenza, poi ricaviamo **entrambi i lati** della regola con la macchina delle aree: la trasformata della pendenza, e $s\\,F(s) - f(0)$. Le due curve a destra sono quei due lati per ogni $s$."
+        },
+        {
+          "t": "widget",
+          "id": "derivRule"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Coincidono. Persino per il mio scarabocchio traballante. Va bene, non è un trucco. Funziona per ogni segnale."
+        },
+        {
+          "t": "p",
+          "text": "*Perché* funziona? Pensa all'area di $f'(t)\\,e^{-st}$. La pendenza somma i cambiamenti di $f$. Pesati dalla sonda, quei cambiamenti fanno in totale $s$ volte la $f$ sondata, meno il valore da cui sei partito. (Il nome onesto è *integrazione per parti*, ma il disegno lo dimostra altrettanto bene.) Applica la regola due volte e ottieni la seconda pendenza:"
+        },
+        {
+          "t": "math",
+          "tex": "\\mathcal{L}\\{f''\\} = s^2 F(s) - s\\,f(0) - f'(0)"
+        },
+        {
+          "t": "note",
+          "text": "I termini $f(0)$ ricordano da dove è **partito** il segnale. Tienili d'occhio. Tra poco qualcuno se li dimenticherà."
+        }
+      ]
+    },
+    {
+      "id": "table",
+      "title": "La nostra tabella",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "I libri stampano una \"tavola delle trasformate di Laplace\" come se fosse caduta dal cielo. Noi la nostra ce la guadagniamo, una riga alla volta. Ogni riga è solo la macchina sonda-e-area applicata a un segnale, con un controllo che la formula coincida con l'area vera."
+        },
+        {
+          "t": "widget",
+          "id": "table"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "La riga del seno è la mia preferita. Un seno è solo due trottole gemelle, e la trasformata di ogni trottola è la riga dell'esponenziale con $a = \\pm i\\omega$."
+        },
+        {
+          "t": "p",
+          "text": "E l'ultima riga non ha richiesto nessun lavoro nuovo: moltiplicare per $e^{-\\sigma t}$ semplicemente **sposta** $s$ in $s+\\sigma$. Quattro righe, tutte ricavate, tutte controllate. Ora usiamole."
+        }
+      ]
+    },
+    {
+      "id": "solve",
+      "title": "Risolvere il drone con l'algebra",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Ecco il drone del Capitolo 2 con controllo P, ma ora decolla da una **mensola a 1 m** invece che da terra. La gravità e il riferimento sono entrambi gradini che si accendono a $t = 0$:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\,\\out{h}'' + c\\,\\out{h}' = \\eff{K_p}\\,(\\sp{2} - \\out{h}) - \\dis{m g}"
+        },
+        {
+          "t": "p",
+          "text": "**Passo 1:** trasforma ogni termine. Un gradino di ampiezza $r$ diventa $r/s$, e le pendenze diventano moltiplicazioni per $s$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} & m\\big(s^2\\out{H} - s\\,h(0) - h'(0)\\big) \\\\ &\\quad + c\\big(s\\,\\out{H} - h(0)\\big) \\\\ &= \\eff{K_p}\\Big(\\frac{\\sp{2}}{s} - \\out{H}\\Big) - \\frac{\\dis{m g}}{s} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "**Passo 2:** ora è algebra. Raccogli $\\out{H}$ da una parte:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\out{H}(s) &= \\frac{N(s)}{s\\,\\big(m s^2 + c s + \\eff{K_p}\\big)} \\\\[6pt] N(s) &= m\\,h(0)\\,s^2 \\\\ &\\quad + \\big(m\\,h'(0) + c\\,h(0)\\big)\\,s \\\\ &\\quad + (\\eff{K_p}\\,\\sp{2} - \\dis{m g}) \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "**Passo 3:** spezzalo in pezzi che compaiono nella nostra tabella (*fratti semplici*: l'operazione inversa del \"denominatore comune\" di scuola):"
+        },
+        {
+          "t": "math",
+          "tex": "\\out{H}(s) = \\frac{A}{s} + \\frac{B s + C}{m s^2 + c s + \\eff{K_p}}"
+        },
+        {
+          "t": "p",
+          "text": "**Passo 4:** cerca ogni pezzo nella tabella che abbiamo appena ricavato: $A/s$ è un gradino, e il secondo pezzo è un coseno smorzato più un seno smorzato. Leggi $h(t)$."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Confrontiamolo con la simulazione!"
+        },
+        {
+          "t": "widget",
+          "id": "solve"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Oh-oh. La formula parte da **zero**, ma il drone parte dalla mensola a 1 m. L'algebra mente?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "L'algebra va benissimo. Abbiamo mentito *noi*. Quando abbiamo scritto il Passo 1 nel verificatore, abbiamo messo $\\mathcal{L}\\{h'\\} = s\\,H$ e abbiamo buttato via i pezzi $-h(0)$. È proprio il pezzo che si ricorda della mensola."
+        },
+        {
+          "t": "p",
+          "text": "Attiva l'interruttore per rimettere i termini dell'altezza di partenza. Ora la formula tratteggiata e la simulazione blu sono esattamente una sopra l'altra: lo scarto massimo è di milionesimi di metro, solo arrotondamenti numerici. Cambia $\\eff{K_p}$ o l'altezza della mensola e continuano a coincidere."
+        },
+        {
+          "t": "p",
+          "text": "Guarda il pezzo $A$: vale $\\sp{2} - \\dis{mg}/\\eff{K_p}$, l'abbassamento del Capitolo 2, che salta fuori direttamente dall'algebra. Niente tentativi."
+        },
+        {
+          "t": "note",
+          "text": "Facciamo ancora finta che i motori non abbiano limiti di spinta, così la matematica lineare è esatta. I limiti veri arrivano nel Capitolo 8."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Cosa sappiamo adesso",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "La trasformata di Laplace è una **sonda**: moltiplica per $e^{-st}$ e misura l'area totale. $F(s) = \\int_0^\\infty f(t)e^{-st}dt$.",
+            "**Esplode esattamente dove vive il segnale**: $e^{at}$ dà $1/(s-a)$, che esplode in $s = a$. Per $s$ complesse la sonda ferma la rotazione dei segnali che girano. Disegniamo tutto questo sul **piano s**.",
+            "Le pendenze diventano moltiplicazioni: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. Funziona per qualsiasi segnale, persino uno scarabocchio.",
+            "Abbiamo ricavato la nostra tabella: $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$, e la versione spostata per i seni smorzati.",
+            "Trasforma, fai l'algebra, spezza in pezzi della tabella, leggi la risposta. Coincide esattamente con la simulazione, **purché tu tenga i valori di partenza**."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch7-q1",
+              "q": "Qual è la trasformata di Laplace di $3e^{-2t}$?",
+              "options": [
+                {
+                  "text": "$\\dfrac{3}{s+2}$",
+                  "correct": true,
+                  "why": "La riga dell'esponenziale con $a = -2$ dà $1/(s+2)$, e la trasformata di 3 volte un segnale è 3 volte la sua trasformata (le aree si scalano)."
+                },
+                {
+                  "text": "$\\dfrac{3}{s-2}$",
+                  "why": "Quella è per $e^{+2t}$. La riga è $1/(s-a)$ con $a = -2$, quindi $s - (-2) = s+2$."
+                },
+                {
+                  "text": "$\\dfrac{1}{3(s+2)}$",
+                  "why": "Moltiplicare il segnale per 3 moltiplica l'area per 3; non la divide."
+                }
+              ]
+            },
+            {
+              "id": "ch7-q2",
+              "q": "$F(s) = \\dfrac{5}{s+4}$. Quale segnale è?",
+              "options": [
+                {
+                  "text": "$5e^{-4t}$: parte da 5 e decade",
+                  "sketch": "decaying-plain",
+                  "correct": true,
+                  "why": "Esplode in $s = -4$, quindi il segnale vive in $e^{-4t}$. Il 5 sopra è la sua ampiezza."
+                },
+                {
+                  "text": "$5e^{4t}$: cresce",
+                  "sketch": "growing-plain",
+                  "why": "Un $e^{4t}$ che cresce esploderebbe in $s = +4$. Questo esplode in $s = -4$."
+                },
+                {
+                  "text": "Un'oscillazione",
+                  "sketch": "decaying-wiggle",
+                  "why": "Le oscillazioni hanno bisogno di una coppia di punti di esplosione complessi (come $s^2+\\omega^2$ al denominatore). Qui ce n'è uno solo, reale, in $-4$."
+                }
+              ]
+            },
+            {
+              "id": "ch7-q3",
+              "q": "Risolvi $x' + 2x = 0$ con $x(0) = 1$ usando la trasformata.",
+              "options": [
+                {
+                  "text": "$X = \\frac{1}{s+2}$, quindi $x = e^{-2t}$",
+                  "correct": true,
+                  "why": "$sX - 1 + 2X = 0 \\Rightarrow X(s+2) = 1 \\Rightarrow X = 1/(s+2)$, che è la riga dell'esponenziale con $a=-2$."
+                },
+                {
+                  "text": "$X = 0$, quindi $x = 0$",
+                  "why": "È quello che ottieni se dimentichi $-x(0)$, lo stesso errore che abbiamo fatto noi con la mensola. È il valore di partenza a impedire che sia zero."
+                },
+                {
+                  "text": "$X = \\frac{1}{s-2}$, quindi $x = e^{2t}$",
+                  "why": "Errore di segno: $X(s+2) = 1$, quindi l'esplosione è in $s=-2$ e il segnale decade."
+                }
+              ]
+            },
+            {
+              "id": "ch7-q4",
+              "q": "Perché $\\dfrac{1}{s-a}$ esplode in $s = a$?",
+              "options": [
+                {
+                  "text": "La sonda annulla esattamente la crescita del segnale, quindi il prodotto resta piatto per sempre e la sua area è infinita",
+                  "correct": true,
+                  "why": "$e^{at}\\cdot e^{-at} = 1$ per sempre, e l'area sotto 1 da 0 a ∞ non smette mai di crescere."
+                },
+                {
+                  "text": "La divisione per zero è solo una stranezza dell'algebra",
+                  "why": "L'algebra riflette qualcosa di reale: l'area cresce davvero senza limiti quando $s \\to a$. Guardalo succedere nel widget dell'esplosione."
+                },
+                {
+                  "text": "Perché lì il segnale è zero",
+                  "why": "Il segnale $e^{at}$ non è mai zero. Il problema è che la sonda non lo restringe più per niente."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "June: \"Ogni volta che abbiamo risolto qualcosa, la risposta era *(qualcosa)* ÷ *(un polinomio in s)*, e il comportamento del drone veniva da dove si annulla il denominatore. E se quella frazione **fosse** il drone?\""
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "probe": {
+      "title": "La sonda",
+      "signal": "Segnale",
+      "sig": {
+        "step": "$\\text{gradino } 1$",
+        "decay": "$e^{-t}$",
+        "grow": "$e^{0{,}5t}$",
+        "wiggle": "$\\sin 2t$"
+      },
+      "f": "segnale f(t)",
+      "probe": "sonda e^(−st)",
+      "product": "f(t)·e^(−st)",
+      "plotAria": "Il segnale, la sonda e il loro prodotto nel tempo, con l'area sotto il prodotto ombreggiata.",
+      "fAria": "Valori tracciati dell'area totale F in funzione di s, un punto per ogni s che hai provato.",
+      "formula": "formula",
+      "traced": "le tue misure",
+      "area": "area fin qui",
+      "total": "area totale F(s)",
+      "s": "Tasso della sonda $s$",
+      "sweep": "Rimisura l'area",
+      "showFormula": "Mostra la curva della formula",
+      "help": "Sposta s e lascia andare: l'area viene misurata e un punto si aggiunge al grafico di destra. Dopo 5 punti puoi svelare la formula.",
+      "finite": "Con s = {s} l'area totale è {F}.",
+      "infinite": "Qui la sonda non si restringe più in fretta del segnale. L'area non si stabilizza mai: è infinita.",
+      "describe": "Tasso della sonda s = {s}; area totale {A}."
+    },
+    "explode": {
+      "title": "Dove esplode?",
+      "product": "e^(at)·e^(−st)",
+      "prodAria": "Il prodotto di e elevato ad a t per la sonda, con la sua area ombreggiata.",
+      "fAria": "La trasformata 1 su s meno a, con una linea verticale dove esplode.",
+      "noArea": "area infinita",
+      "lives": "il segnale vive in s = {a}",
+      "a": "Tasso del segnale $a$ in $e^{at}$",
+      "s": "Sonda $s$",
+      "never": "s è uguale o minore di a: il prodotto non si restringe mai, quindi l'area è infinita.",
+      "close": "Ci stiamo avvicinando ad a: l'area sta esplodendo!",
+      "calm": "Lontano da a: un'area finita e tranquilla."
+    },
+    "unspin": {
+      "title": "Una sonda che ferma la rotazione",
+      "re": "parte reale",
+      "im": "parte immaginaria",
+      "path": "totale progressivo dell'area",
+      "plotAria": "Il totale progressivo dell'area complessa disegnato come un percorso nel piano, diretto verso il suo valore finale.",
+      "limit": "totale finale",
+      "mag": "ampiezza del totale |F|",
+      "spin": "rotazione residua",
+      "sigma": "Restringimento della sonda $\\sigma$",
+      "omega": "Rotazione della sonda $\\omega$ (il segnale gira a 2)",
+      "again": "Rivedi",
+      "matched": "Rotazioni allineate! Ogni pezzo punta nella stessa direzione. Il totale è {m} e va all'infinito quando σ → 0.",
+      "spinning": "I pezzi si arricciano e per lo più si annullano. Il totale resta piccolo."
+    },
+    "derivRule": {
+      "title": "La regola sopravvive a uno scarabocchio?",
+      "f": "il tuo segnale f(t)",
+      "df": "la sua pendenza f′(t)",
+      "plotAria": "Il segnale disegnato e la sua pendenza in 8 secondi.",
+      "sAria": "Entrambi i lati della regola della derivata in funzione di s.",
+      "lhs": "area di f′·e^(−st)",
+      "rhs": "s·F(s) − f(0)",
+      "lhsShort": "trasformata della pendenza",
+      "rhsShort": "s F(s) − f(0)",
+      "s": "Sonda $s$",
+      "draw": "Disegna il tuo segnale",
+      "preset": "Prova un altro segnale pronto",
+      "help": "Scegli un segnale, oppure premi \"Disegna il tuo segnale\" e trascina sul grafico di sinistra da sinistra a destra. Dopo 8 s il segnale resta piatto.",
+      "drawing": "Trascina sul grafico di sinistra da sinistra a destra…",
+      "tooShort": "Disegna un po' più in là (almeno 3 secondi).",
+      "drawn": "Fatto! Entrambi i lati sono stati ricalcolati dal tuo disegno. Trascina di nuovo per sostituirlo.",
+      "match": "Con s = {s} i due lati coincidono. La regola vale per il tuo segnale.",
+      "nomatch": "Qui differiscono un pochino. Arrotondamenti numerici su un disegno molto spigoloso.",
+      "describe": "Trasformata della pendenza {l}, s F meno f di zero {r}.",
+      "stopDraw": "Smetti di disegnare",
+      "presetLabel": "Oppure scegli un segnale",
+      "presets": {
+        "0": "tremolio",
+        "1": "salto",
+        "2": "decadimento"
+      },
+      "rhsBrace": "quello che prevede la regola"
+    },
+    "table": {
+      "title": "La tabella, ricavata",
+      "caption": "Tabella delle trasformate di Laplace ricavata in questo capitolo",
+      "colSignal": "segnale f(t)",
+      "colF": "trasformata F(s)",
+      "derive": "Ricava",
+      "show": "Mostra",
+      "unknown": "non ancora ricavata",
+      "f": "segnale",
+      "product": "segnale × sonda",
+      "plotAria": "Il segnale scelto dalla tabella e il suo prodotto con la sonda, con l'area ombreggiata.",
+      "numeric": "area misurata",
+      "formulaVal": "formula",
+      "s": "Sonda $s$",
+      "how": "Come ci siamo arrivati",
+      "agree": "L'area misurata coincide con la formula.",
+      "twinCheck": "Anche il suo gemello (coseno) torna: misurato {n}, formula {f}.",
+      "describe": "Area misurata {n}, formula {f}.",
+      "rows": {
+        "0": {
+          "f": "1\\ \\ (\\text{gradino})",
+          "F": "\\dfrac{1}{s}",
+          "steps": "\\text{la curva la cui pendenza è } e^{-st} \\text{ è } -\\tfrac{1}{s}e^{-st}||\\begin{aligned} \\int_0^\\infty e^{-st}\\,dt &=\\Big[-\\tfrac{1}{s}e^{-st}\\Big]_0^\\infty \\\\ &= 0-\\big(-\\tfrac{1}{s}\\big)=\\frac{1}{s}\\quad (s>0) \\end{aligned}"
+        },
+        "1": {
+          "f": "e^{at}",
+          "F": "\\dfrac{1}{s-a}",
+          "steps": "e^{at}\\,e^{-st}=e^{-(s-a)t}||\\text{è la riga del gradino con } s \\text{ sostituito da } s-a||\\begin{gathered} \\int_0^\\infty e^{-(s-a)t}\\,dt=\\frac{1}{s-a} \\\\ (s>a;\\ \\text{qui } a=-1) \\end{gathered}"
+        },
+        "2": {
+          "f": "\\sin\\omega t,\\ \\cos\\omega t",
+          "F": "\\dfrac{\\omega}{s^2+\\omega^2},\\ \\dfrac{s}{s^2+\\omega^2}",
+          "steps": "\\begin{gathered} \\sin\\omega t=\\frac{e^{i\\omega t}-e^{-i\\omega t}}{2i} \\\\ \\text{(trottole gemelle)} \\end{gathered}||\\begin{gathered} \\mathcal{L}\\{e^{\\pm i\\omega t}\\}=\\frac{1}{s\\mp i\\omega} \\\\ \\text{(riga dell'esponenziale, } a=\\pm i\\omega) \\end{gathered}||\\begin{aligned} &\\frac{1}{2i}\\Big(\\frac{1}{s-i\\omega}-\\frac{1}{s+i\\omega}\\Big) \\\\ &=\\frac{1}{2i}\\cdot\\frac{2i\\omega}{s^2+\\omega^2}=\\frac{\\omega}{s^2+\\omega^2} \\end{aligned}||\\begin{gathered} \\cos\\omega t=\\frac{e^{i\\omega t}+e^{-i\\omega t}}{2}\\ \\Rightarrow\\ \\frac{s}{s^2+\\omega^2} \\\\ (\\text{qui }\\omega=2) \\end{gathered}"
+        },
+        "3": {
+          "f": "e^{-\\sigma t}\\sin\\omega t,\\ e^{-\\sigma t}\\cos\\omega t",
+          "F": "\\dfrac{\\omega}{(s+\\sigma)^2+\\omega^2},\\ \\dfrac{s+\\sigma}{(s+\\sigma)^2+\\omega^2}",
+          "steps": "e^{-\\sigma t}\\sin\\omega t\\cdot e^{-st}=\\sin\\omega t\\cdot e^{-(s+\\sigma)t}||\\text{quindi prendi la riga del seno e sostituisci } s \\text{ con } s+\\sigma||\\begin{gathered} \\frac{\\omega}{(s+\\sigma)^2+\\omega^2}\\quad\\text{ e }\\quad\\frac{s+\\sigma}{(s+\\sigma)^2+\\omega^2} \\\\ (\\text{qui }\\sigma=0{,}5,\\ \\omega=2) \\end{gathered}"
+        }
+      },
+      "colCheck": "Controllata con l'area misurata"
+    },
+    "solve": {
+      "title": "Formula contro simulazione",
+      "sim": "simulazione RK4",
+      "formula": "la nostra formula di Laplace",
+      "target": "obiettivo",
+      "plotAria": "Altezza del drone nel tempo secondo la simulazione e secondo la formula di Laplace.",
+      "gap": "scarto massimo",
+      "atZero": "a t = 0: sim / formula",
+      "kp": "Guadagno $K_p$",
+      "h0": "Altezza di partenza (mensola) $h(0)$",
+      "toggle": "Includi i termini dell'altezza di partenza $-h(0)$",
+      "mismatch": "Non coincidono! La simulazione parte dalla mensola a {h} m, la formula parte da 0.",
+      "odd": "C'è ancora uno scarto. Controlla i numeri.",
+      "match": "Coincidenza perfetta: formula e simulazione concordano al milionesimo di metro."
+    }
+  }
+}

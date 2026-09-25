@@ -1,0 +1,311 @@
+{
+  "kicker": "Capitolo 11",
+  "title": "La sfida del drone",
+  "question": "Riesci *tu* a tenere il drone a 2 m qualunque cosa succeda?",
+  "sections": [
+    {
+      "id": "briefing",
+      "title": "Briefing della missione",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Ok. Drone vero, consegna vera. Decolla con un pacco, resiste a una raffica, sgancia il pacco e tiene i 2 m per tutto il tempo. Venti secondi."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "E non possiamo toccare niente mentre vola?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "È proprio questo il punto. Il controllore deve farcela da solo. Noi scegliamo solo tre numeri. Anzi, quattro."
+        },
+        {
+          "t": "p",
+          "text": "La missione, secondo per secondo:"
+        },
+        {
+          "t": "list",
+          "ordered": true,
+          "items": [
+            "**0 s:** decollo da terra con un {dis|pacco} da 0,2 kg (0,7 kg in tutto).",
+            "**6–9 s:** una {dis|raffica} verso il basso spinge con 1,5 N.",
+            "**12 s:** il {dis|pacco si sgancia}. All'improvviso il drone è 0,2 kg più leggero.",
+            "**20 s:** missione finita."
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Per il gran finale il nostro modello di drone diventa un po' più onesto. Ognuna di queste è una cosa con cui i droni veri devono convivere:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Ritardo dei motori:** le eliche ci mettono circa 0,05 s ad accelerare o rallentare. La spinta che chiedi arriva un attimo dopo.",
+            "**Un sensore rumoroso:** ogni lettura dell'altezza sbaglia di circa 2 cm, a caso, mille volte al secondo.",
+            "**Motori limitati:** da 0 a 20 N, mai negativa.",
+            "**La D è filtrata:** visto che la velocità vera non si conosce, la D usa la pendenza della lettura filtrata del sensore, con la costante di tempo $\\tau_f$ che scegli tu."
+          ]
+        },
+        {
+          "t": "note",
+          "text": "Ignoriamo ancora l'inclinazione, il vento laterale, le batterie che calano e cento altre cose. Però l'anello di quota di un drone vero somiglia parecchio a questo."
+        },
+        {
+          "t": "predict",
+          "id": "ch11-drop",
+          "gate": true,
+          "q": "Quando il pacco si sgancia a 12 s, quale termine fa il grosso del lavoro per riportare il drone esattamente a 2 m?",
+          "options": [
+            {
+              "text": "P: reagisce subito all'errore",
+              "why": "P reagisce per primo, ma da solo si assesterebbe con un abbassamento *diverso*, perché la spinta di hovering è cambiata."
+            },
+            {
+              "text": "I: la pila deve trovare la nuova spinta di hovering",
+              "correct": true,
+              "why": "Ora al drone servono circa 4,9 N invece di 6,9 N. Solo l'integrale può andare a caccia di una nuova spinta costante e finire comunque con errore zero."
+            },
+            {
+              "text": "D: ferma il salto",
+              "why": "La D smorza il salto, il che è utile, ma tace appena il drone è fermo, quindi non può tenere il nuovo equilibrio."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mission",
+      "title": "Fai volare la missione",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Ogni modifica a un cursore fa ripartire la missione, e il volo precedente resta come fantasma. Il piccolo piano s mostra i poli **nominali** (sensore perfetto, niente pacco, niente limiti), così puoi vedere il quadro lineare mentre accanto succede il volo vero, disordinato. Conquista tutte e sei le stelle per l'oro."
+        },
+        {
+          "t": "widget",
+          "id": "mission"
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Bloccato? I vincitori del parco giochi del Capitolo 9 sono un buon punto di partenza. Poi allunga $\\tau_f$ finché i motori non smettono di vibrare."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Ho tarato il controllore perfetto nella mia testa: $K_d$ enorme, il filtro più piccolo possibile così la D reagisce all'istante. Con l'aria ferma è impeccabile! Guardate…"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "…perché i motori urlano? La linea arancione è tutta pelosa, e ora va pure oltre!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Capitolo 9, avvertimento 2. Un $K_d$ grande per un filtro minuscolo trasforma ogni 2 cm di tremolio del sensore in un picco di spinta. E i picchi vengono tagliati a 0 N molto più spesso che a 20 N, quindi aggiungono una spinta extra sbilanciata: ecco la sovraelongazione. Era impeccabile solo perché la tua aria ferma immaginaria veniva con un sensore perfetto."
+        },
+        {
+          "t": "p",
+          "text": "Prova la **taratura ad aria ferma di June** e guarda la stella \"motori calmi\" che fallisce. Poi allunga il filtro a circa 0,04 s e abbassa $K_d$ a circa 6. Rinunci a un pelo di velocità e ottieni motori calmi. Quel compromesso, velocità contro rumore e contro robustezza, *è* l'ingegneria del controllo."
+        }
+      ]
+    },
+    {
+      "id": "reflect",
+      "title": "Guardandoci indietro",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "All'inizio pensavo che \"spingere di più\" sistemasse tutto. È il contrario, vero? La maggior parte dei guai veniva dallo spingere troppo su informazioni vecchie o rumorose. Sono contento di aver fatto tutte le domande stupide. Nessuna lo era."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Finalmente credo nella trasformata di Laplace. Non è una tabella da consultare: è una sonda che chiede a un segnale \"quanto $e^{st}$ c'è in te?\" E siccome le pendenze diventano moltiplicazioni per $s$, l'analisi diventa algebra. I poli sono dove la risposta esplode: gli $e^{st}$ di cui è fatto il sistema."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "E io ho imparato che \"di più\" non vuol dire \"meglio\": più guadagno, più smorzamento, più $K_i$, più velocità. C'è sempre un precipizio, e i progetti buoni ne restano a distanza di sicurezza. E poi: provalo sempre sul drone."
+        },
+        {
+          "t": "p",
+          "text": "Ecco tutto quello che abbiamo costruito, dalla doccia al gran finale. Ogni bolla riporta al punto in cui è nata."
+        },
+        {
+          "t": "recap",
+          "title": "Tutto il viaggio, in un respiro",
+          "items": [
+            "**Retroazione**: misura cosa è successo, confrontalo con l'obiettivo, agisci sull'errore (Cap. 0–1).",
+            "Il **controllo P** spinge in proporzione all'errore, ma lascia un abbassamento e oscilla quando è forte (Cap. 2).",
+            "**Derivate, esponenziali e numeri che girano** descrivono come cambiano le cose: $e^{st}$ con $s = \\sigma + i\\omega$ cresce o cala *e* oscilla (Cap. 3–6).",
+            "La **trasformata di Laplace** trasforma le pendenze in moltiplicazioni per $s$, così l'analisi diventa algebra (Cap. 7).",
+            "I **poli di una funzione di trasferimento** sono i termini $e^{st}$ di cui è fatto un sistema: la metà sinistra si calma, la metà destra esplode (Cap. 8).",
+            "**PID**: la I elimina l'abbassamento, la D aggiunge smorzamento, e ognuna sposta i poli (Cap. 9).",
+            "Il **ritardo** aggiunge ritardo di fase; i **margini** ti dicono quanto sei lontano dal bordo del precipizio (Cap. 10).",
+            "L'hardware vero aggiunge limiti, ritardi e rumore, quindi i buoni controllori sono calmi oltre che rapidi (Cap. 11)."
+          ]
+        },
+        {
+          "t": "map"
+        }
+      ]
+    },
+    {
+      "id": "final-check",
+      "title": "Spiegalo a un amico",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "La prova migliore di aver capito è saper spiegare. Prima di ogni risposta, prova a dire ad alta voce la *tua* versione. Poi scegli la spiegazione che le somiglia di più."
+        },
+        {
+          "t": "quiz",
+          "title": "Verifica finale",
+          "items": [
+            {
+              "id": "ch11-q1",
+              "q": "Un amico ti chiede: \"Ma perché esiste la trasformata di Laplace?\"",
+              "options": [
+                {
+                  "text": "Trasforma le pendenze in moltiplicazioni per $s$, così le equazioni sul cambiamento diventano algebra, e i poli della risposta mostrano di quali comportamenti $e^{st}$ è fatto il sistema",
+                  "correct": true,
+                  "why": "Questo è il cuore: dall'analisi all'algebra, più una mappa (il piano s) che mostra la personalità a colpo d'occhio."
+                },
+                {
+                  "text": "È una tabella di formule che gli ingegneri imparano a memoria per trovare le risposte",
+                  "why": "La tabella è un *risultato*. Abbiamo ricavato ogni riga sondando i segnali con $e^{-st}$ e misurando l'area."
+                },
+                {
+                  "text": "Converte i segnali in frequenze sonore",
+                  "why": "Quella è più vicina alla trasformata di Fourier, che usa solo la parte che gira ($s = i\\omega$). Laplace permette anche crescita e decadimento ($\\sigma$)."
+                }
+              ]
+            },
+            {
+              "id": "ch11-q2",
+              "q": "\"Cos'è davvero un polo?\"",
+              "options": [
+                {
+                  "text": "Un valore di $s$ in cui la funzione di trasferimento esplode: uno dei moti $e^{st}$ che il sistema fa naturalmente, con la parte reale che dice crescita/decadimento e la parte immaginaria che dice oscillazione",
+                  "correct": true,
+                  "why": "Metà sinistra = si spegne, metà destra = esplode, altezza = velocità di oscillazione. Tutta la personalità su una sola mappa."
+                },
+                {
+                  "text": "Un pezzo fisico del drone, come un motore",
+                  "why": "I poli appartengono a *tutto l'anello*: cambia un guadagno e si spostano, anche se nessun pezzo del drone è cambiato."
+                },
+                {
+                  "text": "Il punto in cui il sistema diventa instabile",
+                  "why": "Ogni sistema ha dei poli, anche quelli stabili. L'instabilità è quando un polo sta nel semipiano destro."
+                }
+              ]
+            },
+            {
+              "id": "ch11-q3",
+              "q": "\"Perché sotto la doccia continuavo ad andare oltre?\"",
+              "options": [
+                {
+                  "text": "Reagivi a informazioni in ritardo con troppo guadagno: la fase dell'anello arrivava a −180° quando il guadagno era ancora sopra 1, quindi ogni correzione pompava l'oscillazione",
+                  "correct": true,
+                  "why": "Esatto. La cura era meno guadagno, o più margine di fase, non più impegno."
+                },
+                {
+                  "text": "La doccia era difettosa",
+                  "why": "La manopola e il soffione coincidevano perfettamente una volta spostati del ritardo (Capitolo 0). Non rotta: in ritardo."
+                },
+                {
+                  "text": "Non reagivi abbastanza in fretta",
+                  "why": "Reagire *più forte* peggiorava le cose, come hanno mostrato le mani robot. Il problema è la fretta su notizie vecchie."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "next",
+      "title": "Dove andare adesso",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Ora sai più teoria del controllo di quanta ne incontri la maggior parte delle persone in tutta la vita. Ecco dove prosegue la strada, ognuna un quaderno nuovo:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Luogo delle radici:** invece di trascinare i poli, trascina il *guadagno* e guarda i poli tracciare percorsi sul piano s.",
+            "**Controllo nello spazio degli stati:** tanti sensori, tanti motori, tutti insieme: inclinazione, rotazione e posizione di un drone vero, contemporaneamente.",
+            "**Controllo digitale:** i controllori veri girano su computer che campionano ogni pochi millisecondi. Il piano s ha un cugino, il piano z.",
+            "**Filtri di Kalman:** combattere il rumore con astuzia, mescolando la previsione di un modello con la misura del sensore.",
+            "**Predittori di Smith e controllo predittivo basato su modello:** controllori che si portano dentro una piccola simulazione, per vedere oltre i ritardi.",
+            "**Controllo non lineare e robusto:** cosa fare quando il mondo non è lineare, e come dimostrare di avere ancora margine."
+          ]
+        },
+        {
+          "t": "cliff",
+          "text": "La prossima volta che una doccia ti fa ballare tra l'ustione e il gelo, saprai esattamente cosa sta succedendo. E saprai che non è colpa tua. **È il margine di fase.**"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "mission": {
+      "title": "Controllo missione",
+      "measured": "lettura del sensore",
+      "hAria": "Altezza durante i 20 secondi di missione con la fascia obiettivo; i momenti della raffica e dello sgancio del pacco sono segnati.",
+      "tAria": "Spinta durante la missione con il limite dei motori di 20 N.",
+      "gust": "raffica",
+      "drop": "sgancio",
+      "max": "20 N max",
+      "splane": "Poli nominali ad anello chiuso del drone con ritardo dei motori e derivata filtrata.",
+      "filter": "Filtro della D $\\tau_f$",
+      "dMeas": "D dalla misura (niente calcio)",
+      "presetJune": "La taratura ad aria ferma di June",
+      "instant": "Vola all'istante",
+      "checklist": "Checklist della missione",
+      "crit": {
+        "rise": "Arriva a 2 m (± {bandCm} cm) entro {rise} s",
+        "overshoot": "Sovraelongazione sotto il {overshoot} % al decollo",
+        "gust": "Resta entro {gustCm} cm durante la raffica",
+        "recover": "Di nuovo entro ± {bandCm} cm meno di {recover} s dopo lo sgancio",
+        "ground": "Non toccare mai terra dopo il decollo",
+        "calm": "Motori calmi in hovering (tremolio sotto {calm} N)"
+      },
+      "touched": "toccato!",
+      "clear": "pulito",
+      "ready": "Pronto. Regola i guadagni, poi premi Avvia (o Vola all'istante).",
+      "flying": "In volo…",
+      "gold": "ORO! Tutte e sei le stelle. Sei un ingegnere del controllo.",
+      "stars": "{n} stelle su 6. Continua a tarare!",
+      "best": "Il tuo record finora: {n} stelle (Kp {kp}, Ki {ki}, Kd {kd}, τf {tf} s).",
+      "phase": {
+        "takeoff": "{s} s: decollo con il pacco",
+        "gust": "{s} s: raffica che spinge giù!",
+        "hover": "{s} s: in hovering, pacco a bordo",
+        "drop": "{s} s: pacco sganciato!",
+        "done": "Missione completata."
+      },
+      "poles": {
+        "stable": "Poli nominali: tutti nella metà sinistra.",
+        "unstable": "Un polo nominale è nella metà destra: questa taratura non può reggere!",
+        "off": "({n} polo/i veloce/i oltre il bordo sinistro.)"
+      }
+    }
+  }
+}

@@ -1,0 +1,487 @@
+{
+  "kicker": "Capitolo 9",
+  "title": "PID: aggiustiamo tutto",
+  "question": "Come eliminiamo l'abbassamento *e* fermiamo l'oscillazione?",
+  "sections": [
+    {
+      "id": "stuck",
+      "title": "L'abbassamento che non vuole morire",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Vi ricordate il Capitolo 2? Il nostro controllore P lasciava il drone **appeso sotto i 2 m**, e nessun $K_p$ riusciva a sistemarlo. È ora di scoprire cosa ci riesce."
+        },
+        {
+          "t": "p",
+          "text": "Per tenere su il drone, i motori devono spingere $mg \\approx 4{,}9$ N, per sempre. Un controllore P spinge solo quando c'è un errore: $\\eff{T} = K_p\\,\\err{e}$. Quindi per spingere 4,9 N *ha bisogno* di un errore $\\err{e} = mg/K_p$. L'abbassamento non è un difetto della nostra taratura. È il prezzo che P fa pagare per tenere su qualsiasi cosa."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Quindi ci serve una parte del controllore che possa spingere 4,9 N **con errore zero**. Qualcosa con una memoria."
+        },
+        {
+          "t": "note",
+          "text": "Dal Capitolo 8 i motori sono veri: possono spingere tra 0 e 20 N, non di più, e non possono tirare giù. Le curve arancioni della spinta si appiattiranno quando toccano un limite."
+        }
+      ]
+    },
+    {
+      "id": "integral",
+      "title": "I: una pila di errore passato",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "L'idea è questa. Tieni un totale progressivo dell'errore, l'**area sotto la curva dell'errore**, esattamente l'\"area che si accumula\" del [Capitolo 3](#/ch/3). Spingi in proporzione a quella pila:"
+        },
+        {
+          "t": "math",
+          "tex": "\\eff{T_I} = K_i \\int_0^t \\err{e}(\\tau)\\,d\\tau"
+        },
+        {
+          "t": "p",
+          "text": "Finché il drone è sotto i 2 m, l'errore è positivo e la pila continua a crescere, quindi la spinta continua a crescere. La pila smette di crescere solo quando l'errore è **esattamente zero**. A quel punto semplicemente *resta lì*, tenendo tutta la spinta che ha accumulato. Ecco la memoria che voleva June."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Oh, che furbata. Il drone non può assestarsi *da nessuna parte* se non a 2 m, perché ovunque altro la pila starebbe ancora cambiando."
+        },
+        {
+          "t": "predict",
+          "id": "ch9-bigki",
+          "gate": true,
+          "q": "Mika vuole eliminare l'abbassamento *in fretta*, quindi pensa di alzare $K_i$ a manetta. Cosa succederà?",
+          "options": [
+            {
+              "text": "L'abbassamento sparisce in fretta e in modo pulito",
+              "sketch": "smooth",
+              "why": "È la speranza. Ma la pila ha un'inerzia: quando l'errore arriva a zero, ha accumulato *troppa* spinta."
+            },
+            {
+              "text": "L'abbassamento sparisce, ma il drone oscilla di più, e se esageri si scuote fino a sfasciarsi",
+              "sketch": "growing-wiggle",
+              "correct": true,
+              "why": "La pila ricorda il passato, quindi continua a spingere dopo che il drone è arrivato: sovraelongazione. Con un $K_i$ troppo grande ogni sovraelongazione è più grande della precedente."
+            },
+            {
+              "text": "Non cambia niente, perché $K_i$ conta solo alla fine",
+              "sketch": "droop",
+              "why": "La pila comincia a crescere dal primo istante in cui c'è un errore, quindi $K_i$ modella tutto il volo."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Trascina $K_i$ e guarda tre cose: l'{err|area ombreggiata in rosso} (l'errore che si accumula), la parte integrale della spinta {eff|arancione tratteggiata} che sale fino alla {dis|linea viola della gravità}, e il valore dell'abbassamento. $K_p$ è fisso a 20 N/m."
+        },
+        {
+          "t": "widget",
+          "id": "integral"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Alziamolo! $K_i = 50$! Sterminiamolo!"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "…perché non si ferma? I rimbalzi sono cresciuti e cresciuti, e ora fa lo yo-yo su e giù di mezzo metro, per sempre!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "A 50 hai superato una specie di bordo. Ho provato qualche valore: sotto circa 40 si assesta, sopra no. La pila è *sempre un po' indietro*: continua a spingere in su dopo che il drone ha superato i 2 m."
+        },
+        {
+          "t": "p",
+          "text": "Ecco l'errore di Mika, ed è comunissimo: l'integrale sistema l'abbassamento, ma aggiunge **ritardo**, e il ritardo fa oscillare le cose (ce l'ha insegnato la doccia). Ci serve qualcosa che spinga contro la *velocità*."
+        }
+      ]
+    },
+    {
+      "id": "derivative",
+      "title": "D: un ammortizzatore virtuale",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Nel Capitolo 6 era lo smorzatore a calmare la molla. E se il controllore **facesse finta** di essere uno smorzatore?"
+        },
+        {
+          "t": "p",
+          "text": "Uno smorzatore spinge contro la velocità. Quindi aggiungiamo un termine che spinge contro quanto in fretta si muove il drone:"
+        },
+        {
+          "t": "math",
+          "tex": "\\eff{T_D} = -K_d\\,\\frac{d\\out{h}}{dt}"
+        },
+        {
+          "t": "p",
+          "text": "Guarda l'equazione del drone: l'attrito dà già $-c\\,\\dot h$. Il termine D aggiunge $-K_d\\,\\dot h$ in più, quindi il drone si comporta come se il suo attrito fosse $c + K_d$. Stiamo aggiungendo resistenza dell'aria **via software**."
+        },
+        {
+          "t": "note",
+          "text": "A rigore, la D di PID è la pendenza dell'*errore*, $K_d\\,\\dot e$. Quando il riferimento è fermo, $\\dot e = -\\dot h$, la stessa cosa. Tra un attimo vedremo perché la differenza conta."
+        },
+        {
+          "t": "widget",
+          "id": "damper"
+        },
+        {
+          "t": "p",
+          "text": "Attiva il **grande guadagno I di Mika** e poi aggiungi smorzamento. Basta $K_d = 0{,}5$ N·s/m per riportarlo alla stabilità (sposta il bordo fino a $K_i = 60$): lo yo-yo infinito diventa un rimbalzo che si spegne. Però va ancora oltre di circa un quarto, per quanta D tu aggiunga. Quella pila enorme semplicemente ricorda troppo. Ora spegni il $K_i$ di Mika (torna a 10) e prova $K_d \\approx 3$–5: calma. **I e D si compensano**: D ti compra spazio per la I, ma non spazio infinito."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Quindi la D **prevede il futuro**! Vede dove sta andando il drone e ci arriva prima."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Non proprio. Conosce solo la pendenza *adesso*. È come indovinare dove atterrerà una palla supponendo che continui dritta. Di solito un'ipotesi decente, ma non è magia. Aspetta di darle in pasto un sensore ballerino."
+        }
+      ]
+    },
+    {
+      "id": "poles",
+      "title": "Cosa fa ogni manopola ai poli",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "È ora di usare la mappa del Capitolo 8. Scriviamo tutto l'anello, con $\\err{e} = \\sp{r} - \\out{h}$:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\ddot{\\out h} + c\\dot{\\out h} = \\underbrace{K_p\\,\\err e + K_i\\!\\int\\!\\err e\\,dt - K_d\\,\\dot{\\out h}}_{\\eff{T}} - \\dis{mg}"
+        },
+        {
+          "t": "p",
+          "text": "L'integrale è scomodo, quindi prendiamo la pendenza di entrambi i lati. La gravità è costante, quindi la sua pendenza è **zero**: sparisce e basta. Con un riferimento fisso, $\\dot{\\err e} = -\\dot{\\out h}$ e la pendenza di $\\int \\err e$ è semplicemente $\\err e$:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\dddot{\\out h} + (c + K_d)\\,\\ddot{\\out h} + K_p\\,\\dot{\\out h} + K_i\\,\\out h = K_i\\,\\sp r"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "La gravità è *sparita* dall'equazione. Ecco l'ammazza-abbassamento in forma algebrica: all'altezza finale di $mg$ non importa proprio niente."
+        },
+        {
+          "t": "p",
+          "text": "Proviamo $e^{st}$ come al solito e salta fuori il polinomio caratteristico. È una cubica, quindi ci sono **tre** poli:"
+        },
+        {
+          "t": "math",
+          "tex": "m s^3 + (c + K_d)\\,s^2 + K_p\\,s + K_i = 0"
+        },
+        {
+          "t": "p",
+          "text": "Per una cubica con tutti i coefficienti positivi $a_3 s^3 + a_2 s^2 + a_1 s + a_0$, c'è un test classico (il criterio di **Routh–Hurwitz**) che dice che tutti e tre i poli stanno nella metà sinistra esattamente quando $a_2 a_1 > a_3 a_0$. Per il nostro drone, quello è il bordo del precipizio:"
+        },
+        {
+          "t": "math",
+          "tex": "(c + K_d)\\,K_p > m\\,K_i \\quad\\Longleftrightarrow\\quad K_i < \\frac{(c+K_d)\\,K_p}{m}"
+        },
+        {
+          "t": "p",
+          "text": "Con $K_p = 20$ e senza D: $K_i < (1)(20)/0{,}5 = 40$. È esattamente dove il drone di Mika è impazzito. Aggiungere $K_d = 4$ sposta il bordo fino a 200. Non fidarti di noi: muovi i cursori e guarda i poli, la minimappa e la risposta al gradino."
+        },
+        {
+          "t": "widget",
+          "id": "poles"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**La manopola I** ($K_i$) tira fuori un polo dall'origine, e spinge gli altri due verso destra. Se esageri attraversano la linea.",
+            "**La manopola D** ($K_d$) tira i poli verso sinistra: più smorzamento, risposta più calma.",
+            "**La manopola P** ($K_p$) soprattutto allarga su e giù la coppia oscillante: più rapido, ma più oscillante, a meno che la D non tenga il passo."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "playground",
+      "title": "Il parco giochi della taratura",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Ora si fa sul serio: decollo da terra fino a 2 m con i motori veri (0–20 N). Conquista tutte e quattro le stelle. Ogni volta che cambi un guadagno, l'ultimo volo resta come un fantasma sbiadito."
+        },
+        {
+          "t": "widget",
+          "id": "playground"
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Bloccato? Parti con $K_d$ intorno a 4, poi alza $K_i$ finché l'abbassamento non sparisce, poi ritocca $K_p$."
+        },
+        {
+          "t": "note",
+          "text": "**Saturazione dell'integratore (windup):** mentre i motori sono inchiodati a 20 N, la pila dell'errore continua a crescere anche se la spinta in più non può arrivare. Più tardi, tutta quella spinta accumulata esce come sovraelongazione. L'\"anti-windup\" semplicemente mette in pausa la pila mentre i motori sono al massimo. Attivalo e confronta."
+        }
+      ]
+    },
+    {
+      "id": "warnings",
+      "title": "Due avvertimenti sulla D",
+      "blocks": [
+        {
+          "t": "h3",
+          "text": "Avvertimento 1: il calcio derivativo"
+        },
+        {
+          "t": "p",
+          "text": "Il drone è sospeso a 1 m. A $t = 1$ s spostiamo il riferimento a 2 m. Se la D usa la pendenza dell'*errore*, allora l'errore **salta** di un metro in un istante. La sua pendenza è enorme, e così la spinta."
+        },
+        {
+          "t": "widget",
+          "id": "kick"
+        },
+        {
+          "t": "p",
+          "text": "Prendere invece la pendenza dell'**altezza misurata** risolve il problema: il drone non può teletrasportarsi, quindi la sua altezza non ha salti. Stesso smorzamento, niente calcio. Quasi tutti i PID veri fanno così."
+        },
+        {
+          "t": "h3",
+          "text": "Avvertimento 2: il rumore"
+        },
+        {
+          "t": "p",
+          "text": "I sensori di altezza veri tremolano di un paio di centimetri. Un paio di centimetri di tremolio, mille volte al secondo, ha una **pendenza enorme**. La D lo amplifica dritto nei motori. La soluzione è smussare la misura prima di prenderne la pendenza (un filtro con costante di tempo $\\tau_f$), al prezzo di reagire un po' più tardi."
+        },
+        {
+          "t": "widget",
+          "id": "noise"
+        },
+        {
+          "t": "note",
+          "text": "Hai notato il drone che **deriva verso l'alto** con il filtro corto? La spinta che vibra viene tagliata a 0 N molto più spesso che a 20 N (per restare sospesi bastano 4,9 N), quindi la media tagliata risulta *sopra* il peso. Rumore più limiti possono persino spostare la media. L'hardware vero è pieno di sorprese così."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Ok, la D *non* prevede il futuro. Prevede com'era il rumore un millisecondo fa."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Cosa abbiamo aggiustato",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "**P** spinge in proporzione all'errore, ma deve lasciare un abbassamento per tenere su il drone.",
+            "**I** accumula l'errore passato; l'unico punto di riposo è errore zero, quindi elimina l'abbassamento. Aggiunge ritardo, quindi se esageri le cose oscillano.",
+            "**D** spinge contro la velocità: uno smorzatore virtuale che si aggiunge all'attrito $c$.",
+            "L'anello chiuso è $m s^3 + (c + K_d)s^2 + K_p s + K_i$; è stabile esattamente quando $(c+K_d)K_p > mK_i$.",
+            "Prendi la D dalla misura (niente calcio) e filtrala (meno rumore)."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch9-q1",
+              "q": "Quale termine elimina l'abbassamento a regime dovuto alla gravità?",
+              "options": [
+                {
+                  "text": "Il termine integrale",
+                  "correct": true,
+                  "why": "La sua pila di errore continua a cambiare finché l'errore non è esattamente zero, e poi tiene da sola i 4,9 N necessari."
+                },
+                {
+                  "text": "Il termine derivativo",
+                  "why": "La D reagisce alla velocità. Quando il drone è sospeso fermo, la velocità è zero e la D non contribuisce niente, quindi non può tenere su nulla."
+                },
+                {
+                  "text": "Un guadagno proporzionale più grande",
+                  "why": "Un $K_p$ più grande riduce l'abbassamento ($mg/K_p$) ma mai fino a zero, e rende il drone più oscillante."
+                }
+              ]
+            },
+            {
+              "id": "ch9-q2",
+              "q": "Aumenti $K_d$. In che direzione tendono a spostarsi i poli?",
+              "options": [
+                {
+                  "text": "A sinistra: più smorzamento, risposta più calma",
+                  "correct": true,
+                  "why": "La D si aggiunge al coefficiente di smorzamento $(c + K_d)$, che allontana i poli dal semipiano destro."
+                },
+                {
+                  "text": "A destra: verso l'instabilità",
+                  "why": "Quello lo fa un $K_i$ eccessivo. $K_d$ fa l'opposto, almeno nel nostro modello senza ritardi."
+                },
+                {
+                  "text": "Non si spostano; la D conta solo quando c'è rumore",
+                  "why": "$K_d$ compare proprio nel polinomio caratteristico, quindi sposta i poli."
+                }
+              ]
+            },
+            {
+              "id": "ch9-q3",
+              "q": "Con $K_p = 10$ N/m e $K_d = 1$ N·s/m (drone: $m = 0{,}5$ kg, $c = 1$ N·s/m), qual è il $K_i$ più grande prima dell'instabilità?",
+              "options": [
+                {
+                  "text": "20 N/(m·s)",
+                  "why": "Controlla la formula: $(c + K_d)K_p/m = (1+1)\\cdot 10 / 0{,}5$. Forse hai dimenticato di dividere per $m$."
+                },
+                {
+                  "text": "40 N/(m·s)",
+                  "correct": true,
+                  "why": "$(1 + 1)\\cdot 10 / 0{,}5 = 40$. Oltre quel valore, due poli passano nel semipiano destro."
+                },
+                {
+                  "text": "80 N/(m·s)",
+                  "why": "Troppo alto. Ricorda che l'attrito $c$ e $K_d$ si sommano prima: $(1+1) = 2$, non 4."
+                }
+              ]
+            },
+            {
+              "id": "ch9-q4",
+              "q": "Perché prendere la derivata della **misura** invece che dell'errore?",
+              "options": [
+                {
+                  "text": "Quando il riferimento salta, salta anche l'errore, e la sua pendenza è enorme: un picco di spinta",
+                  "correct": true,
+                  "why": "L'altezza non può saltare, quindi la sua pendenza resta ragionevole. Stesso smorzamento, niente calcio."
+                },
+                {
+                  "text": "Perché la misura è meno rumorosa dell'errore",
+                  "why": "Hanno esattamente lo stesso rumore; l'errore è riferimento meno misura."
+                },
+                {
+                  "text": "Rende il controllore più aggressivo",
+                  "why": "È l'opposto: elimina il picco aggressivo ai cambi di riferimento."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "June ha provato il nostro PID da drone sulla doccia… e ha oscillato esattamente come noi nel Capitolo 0. **Cos'ha di speciale il ritardo?**"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "integral": {
+      "title": "La pila dell'errore",
+      "slider": "Guadagno integrale $K_i$",
+      "gravity": "peso mg",
+      "iterm": "spinta integrale Ki·∫e",
+      "readout": {
+        "droop": "abbassamento a 12 s",
+        "pile": "spinta integrale"
+      },
+      "status": {
+        "none": "Niente integrale: il drone si abbassa, proprio come nel Capitolo 2.",
+        "slow": "L'abbassamento si sta riducendo, ma lentamente. La pila ha bisogno di tempo per crescere.",
+        "gone": "Abbassamento sparito! Ora la pila regge tutto il peso.",
+        "unstable": "Oltre il bordo (Ki > {lim}): i rimbalzi crescono finché i motori toccano i limiti, e non si assesta mai."
+      },
+      "describe": "Guadagno integrale {ki}. Abbassamento dopo 12 secondi: {droop} centimetri."
+    },
+    "damper": {
+      "title": "Aggiungere uno smorzatore virtuale",
+      "slider": "Guadagno derivativo $K_d$",
+      "bigKi": "Il grande $K_i$ di Mika = 50",
+      "readout": {
+        "damping": "smorzamento totale c + Kd",
+        "overshoot": "sovraelongazione"
+      },
+      "status": {
+        "unstable": "Ancora instabile: serve più smorzamento.",
+        "bouncy": "Stabile, ma saltellante. Aggiungi Kd.",
+        "calm": "Calmo! Lo smorzatore assorbe il rimbalzo."
+      }
+    },
+    "poles": {
+      "title": "Tre manopole, tre poli",
+      "splane": "Piano s con i tre poli ad anello chiuso del drone con controllo PID",
+      "kp": "$K_p$",
+      "ki": "$K_i$",
+      "kd": "$K_d$",
+      "offmap": "fuori dalla mappa",
+      "map": {
+        "x": "Kd (N·s/m)",
+        "y": "Ki (N/(m·s))",
+        "edge": "bordo del precipizio Ki = (c+Kd)Kp/m",
+        "you": "tu",
+        "aria": "Mappa di Ki in funzione di Kd con la linea del confine di stabilità; sotto la linea è stabile."
+      },
+      "stepAria": "Risposta al gradino da 1,5 m a 2 m per i guadagni attuali",
+      "status": {
+        "stable": "Stabile: Ki deve restare sotto {lim}. Il polo più lento sta in σ = {s}.",
+        "unstable": "Instabile! Ki è oltre il bordo ({lim}). Due poli sono passati nella metà destra."
+      },
+      "help": "La risposta al gradino fa partire il drone sospeso a 1,5 m e chiede 2 m a t = 1 s. I poli fuori dall'inquadratura sono fissati al suo bordo.",
+      "reShort": "σ",
+      "imShort": "ω"
+    },
+    "playground": {
+      "title": "Parco giochi della taratura: decollo fino a 2 m",
+      "kp": "$K_p$",
+      "ki": "$K_i$",
+      "kd": "$K_d$",
+      "antiWindup": "Anti-windup",
+      "targets": "Stelle per: sovraelongazione sotto il {os} %, assestamento (entro il 2 %) sotto i {ts} s, niente abbassamento (sotto 1 cm), e motori inchiodati a un limite per meno di {sat} s.",
+      "readout": {
+        "overshoot": "sovraelongazione",
+        "settling": "tempo di assestamento",
+        "sse": "abbassamento",
+        "saturated": "motori inchiodati"
+      },
+      "never": "mai",
+      "allStars": "Tutte e quattro le stelle! Questa sì che è una taratura.",
+      "someStars": "{n} stelle su 4.",
+      "starsAria": "{n} stelle su 4 conquistate"
+    },
+    "kick": {
+      "title": "Salto del riferimento: 1 m → 2 m",
+      "mode": "Prendi la derivata di…",
+      "onError": "l'errore",
+      "onMeasurement": "l'altezza misurata",
+      "peak": "spinta massima",
+      "status": {
+        "error": "L'errore salta, la sua pendenza è enorme, e i motori sbattono a 20 N: un calcio derivativo.",
+        "measurement": "L'altezza non può saltare, quindi niente calcio: una salita dolce."
+      }
+    },
+    "noise": {
+      "title": "Un sensore di altezza ballerino",
+      "toggle": "Rumore del sensore (±2 cm)",
+      "filter": "Filtro della derivata $\\tau_f$",
+      "measured": "lettura del sensore",
+      "jitter": "tremolio della spinta",
+      "status": {
+        "off": "Un sensore perfetto: motori tranquilli.",
+        "chatter": "I motori vibrano! La D sta amplificando il rumore. Prova un filtro più lungo.",
+        "calm": "Molto più calmo. (Il piccolo tremolio rimasto viene dal termine P, che lascia passare il rumore così com'è.) Il prezzo: ora la D reagisce un po' più tardi."
+      }
+    }
+  }
+}

@@ -1,0 +1,392 @@
+{
+  "kicker": "Capitolo 6",
+  "title": "La vera personalità del drone",
+  "question": "Perché il drone rimbalza come una molla?",
+  "sections": [
+    {
+      "id": "spring",
+      "title": "Il controllore è una molla",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "June ha chiesto dove vive il nostro drone sulla mappa. Indizio: vi ricordate il drone saltellante del Capitolo 2? Più alzavamo $\\eff{K_p}$, più faceva boing. Sembrava proprio un peso appeso a una molla."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "\"Sembrava\" non è una prova. Mettiamoli uno accanto all'altro e scriviamo tutte e due le equazioni."
+        },
+        {
+          "t": "p",
+          "text": "A sinistra: una massa di 0,5 kg appesa a una molla con uno smorzatore (un pistoncino pieno d'olio che si oppone al movimento). A destra: il nostro drone, stessa massa, stesso attrito, con controllo proporzionale."
+        },
+        {
+          "t": "note",
+          "text": "Per non farci distrarre dalla gravità, qui regaliamo al drone la sua spinta di hovering (4,9 N), così non si abbassa. Ce la guadagneremo onestamente nel Capitolo 9."
+        },
+        {
+          "t": "widget",
+          "id": "twins"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Le curve sono **una sopra l'altra**. Non simili. *Identiche.*"
+        },
+        {
+          "t": "p",
+          "text": "Guarda le due equazioni. La molla spinge indietro con una forza $\\eff{k}\\,x$: più è allungata, più tira forte. Il nostro controllore spinge con $\\eff{K_p}(\\sp{2} - \\out{h})$: più è lontano dall'obiettivo, più spinge forte. **Stessa regola.** Il controllore *è* una molla: una molla invisibile, che tira il drone verso i 2 m."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Quindi un controllore P è una molla virtuale, e l'attrito dell'aria $c$ è uno smorzatore virtuale. Tutto quello che impariamo sulle molle ce lo ritroviamo gratis."
+        }
+      ]
+    },
+    {
+      "id": "knobs",
+      "title": "Due manopole della personalità",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Ogni sistema massa-molla-smorzatore, e quindi ogni drone con controllo P, è descritto da soli **due numeri**:"
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Pulsazione naturale $\\omega_n = \\sqrt{k/m}$",
+              "def": "Quanto in fretta *vuole* oscillare, in radianti al secondo. Una molla più rigida ($\\eff{k}$ più grande) o una massa più leggera vogliono dire un'oscillazione più rapida."
+            },
+            {
+              "term": "Coefficiente di smorzamento $\\zeta = \\dfrac{c}{2\\sqrt{m k}}$",
+              "def": "Quanto in fretta si spegne l'oscillazione. È un numero puro: 0 vuol dire che oscilla per sempre, 1 è il confine esatto tra ballare e non ballare."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Ora ripensa alla molla dei Capitoli 4 e 5, dove provare un esponenziale ci ha dato due valori di $s$. Aggiungi uno smorzatore e la stessa ipotesi dà $m s^2 + c s + k = 0$. Le sue due soluzioni sono due punti sulla nostra mappa di $s$. Dividi per $m$ e diventa"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} & s^2 + 2\\zeta\\omega_n\\, s + \\omega_n^2 = 0 \\\\ \\Longrightarrow\\quad & s = -\\zeta\\omega_n \\pm \\omega_n\\sqrt{\\zeta^2 - 1} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Gioca con le due manopole. Guarda i {out|puntini blu} sulla mappa: sono i due valori di $s$, e il moto è sempre un miscuglio di $e^{s_1 t}$ ed $e^{s_2 t}$."
+        },
+        {
+          "t": "widget",
+          "id": "personality"
+        },
+        {
+          "t": "vocab",
+          "title": "Tre personalità",
+          "items": [
+            {
+              "term": "Sottosmorzato ($\\zeta < 1$)",
+              "def": "I due valori di $s$ sono una coppia speculare fuori dall'asse reale, su un cerchio di raggio $\\omega_n$. La risposta va oltre e oscilla mentre si assesta."
+            },
+            {
+              "term": "Smorzamento critico ($\\zeta = 1$)",
+              "def": "La coppia si incontra sull'asse reale. La risposta più rapida senza sovraelongazione."
+            },
+            {
+              "term": "Sovrasmorzato ($\\zeta > 1$)",
+              "def": "La coppia si separa lungo l'asse reale: uno va a sinistra, l'altro si avvicina piano piano allo zero. Niente sovraelongazione, ma lento."
+            }
+          ]
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Quindi le spirali del Capitolo 5 erano la personalità del drone fin dall'inizio. Girare = oscillare, stringersi = assestarsi!"
+        }
+      ]
+    },
+    {
+      "id": "damping",
+      "title": "Più smorzamento è sempre meglio?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Facile. Le oscillazioni sono brutte e lo smorzamento le uccide. Quindi metto $\\zeta = 5$ per sicurezza. Il drone più sicuro di sempre."
+        },
+        {
+          "t": "predict",
+          "id": "ch6-damping",
+          "gate": true,
+          "q": "Stessa molla, stessa $\\omega_n$. Alziamo lo smorzamento da $\\zeta = 1$ a $\\zeta = 3$. Raggiunge l'obiettivo **più in fretta** o **più lentamente**?",
+          "options": [
+            {
+              "text": "Più in fretta: più smorzamento, meno movimento sprecato",
+              "sketch": "smooth",
+              "why": "È vero che non c'è sovraelongazione. Ma lo smorzatore denso si oppone anche al movimento *verso* l'obiettivo."
+            },
+            {
+              "text": "Più o meno uguale",
+              "sketch": "overshoot",
+              "why": "Oltre $\\zeta = 1$ non resta niente da calmare, e lo smorzamento in più rallenta e basta."
+            },
+            {
+              "text": "Più lentamente: striscia",
+              "sketch": "sluggish",
+              "correct": true,
+              "why": "Esatto. Lo smorzatore si oppone a **tutto** il movimento, anche a quello che vuoi. Con $\\zeta = 3$ ci mette circa quattro volte tanto."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "race"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Il mio drone \"sicuro\" ci mette una vita. È come muoversi nel miele."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Guarda la mappa! Un puntino è scappato a sinistra, velocissimo. Ma l'altro è lì, vicinissimo allo zero."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "E $e^{st}$ con $s$ vicino a zero si spegne **molto** lentamente. Quello veloce sparisce in un lampo. Quello lento comanda."
+        },
+        {
+          "t": "p",
+          "text": "Questa è una regola che useremo ancora: **il valore di** $s$ **più vicino all'asse verticale decide quanto aspetti.** Troppo poco smorzamento vuol dire oscillazioni, troppo vuol dire attese. $\\zeta$ tra 0,7 e 1 è il punto giusto a cui mira la maggior parte degli ingegneri."
+        }
+      ]
+    },
+    {
+      "id": "drone",
+      "title": "Torniamo al drone",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Ora il Capitolo 2 ha finalmente senso. Per il nostro drone, la costante della molla *è* il guadagno:"
+        },
+        {
+          "t": "math",
+          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{K_p}}{m}}, \\qquad \\zeta = \\frac{c}{2\\sqrt{m\\,\\eff{K_p}}}"
+        },
+        {
+          "t": "p",
+          "text": "$\\eff{K_p}$ sta al *denominatore* della formula dello smorzamento. Alzare il guadagno rende il drone più rapido ($\\omega_n$ più grande), ma **meno smorzato**. Con $\\eff{K_p} = 20$ N/m: $\\zeta = 1/(2\\sqrt{0{,}5 \\times 20}) \\approx 0{,}16$. Molto saltellante, proprio come abbiamo visto. Sulla mappa, i suoi due valori di $s$ stanno molto in alto e solo un po' a sinistra dell'asse verticale. È lì che vive il nostro drone."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "E non possiamo avere più smorzamento senza abbassare parecchio $\\eff{K_p}$, che fa tornare l'abbassamento. Ci serve un modo per aggiungere smorzamento *apposta*."
+        },
+        {
+          "t": "note",
+          "text": "Provalo nel primo widget: sposta $K_p$ e guarda ζ scendere mentre le oscillazioni diventano più sfrenate."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Cosa sappiamo adesso",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Un drone con controllo P segue **esattamente** la stessa equazione di una massa su una molla: il controllore è una molla virtuale.",
+            "Due numeri ne catturano la personalità: $\\omega_n$ (quanto è rapido) e $\\zeta$ (quanto è saltellante).",
+            "Il moto è un miscuglio di due termini $e^{st}$. I due valori di $s$ stanno su un cerchio di raggio $\\omega_n$ quando è sottosmorzato, e si separano lungo l'asse reale quando è sovrasmorzato.",
+            "Più smorzamento non è sempre meglio: oltre $\\zeta = 1$ il valore di $s$ lento si avvicina allo zero e tutto rallenta.",
+            "Per il drone, più $K_p$ vuol dire meno smorzamento. Ecco perché ballava di più."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch6-q1",
+              "q": "I due valori di $s$ di un sistema sono $-1 \\pm 4i$. Qual è la sua risposta?",
+              "options": [
+                {
+                  "text": "Va oltre e oscilla",
+                  "sketch": "overshoot",
+                  "correct": true,
+                  "why": "Una parte immaginaria (±4) vuol dire rotazione, quindi oscillazione. Una parte reale negativa (−1) vuol dire che le oscillazioni si riducono."
+                },
+                {
+                  "text": "Sale dolcemente, senza sovraelongazione",
+                  "sketch": "smooth",
+                  "why": "Le salite dolci vengono da valori di $s$ sull'asse reale (niente rotazione). Questi hanno parte immaginaria ±4."
+                },
+                {
+                  "text": "Sale strisciando lentamente",
+                  "sketch": "sluggish",
+                  "why": "Lo strisciare viene da una $s$ reale molto vicina a zero. Questi valori girano, quindi la risposta oscilla."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q2",
+              "q": "Il nostro drone ($m = 0{,}5$ kg, $c = 1$ N·s/m) con $K_p = 20$ N/m è…",
+              "options": [
+                {
+                  "text": "Sottosmorzato, $\\zeta \\approx 0{,}16$",
+                  "correct": true,
+                  "why": "$\\zeta = 1/(2\\sqrt{0{,}5\\cdot 20}) = 1/(2\\sqrt{10}) \\approx 0{,}158$. Ben sotto 1, quindi saltellante."
+                },
+                {
+                  "text": "Con smorzamento critico, $\\zeta = 1$",
+                  "why": "Servirebbe $c = 2\\sqrt{m K_p} \\approx 6{,}3$ N·s/m, più di sei volte l'attrito che abbiamo."
+                },
+                {
+                  "text": "Sovrasmorzato, $\\zeta > 1$",
+                  "why": "Per essere sovrasmorzato serve tanto smorzamento rispetto alla rigidezza. Il nostro guadagno è alto e l'attrito piccolo: l'opposto."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q3",
+              "q": "Usando solo il controllo P, quale $K_p$ renderebbe il drone a smorzamento critico ($\\zeta = 1$)?",
+              "options": [
+                {
+                  "text": "$K_p = 0{,}5$ N/m",
+                  "correct": true,
+                  "why": "Poni $c/(2\\sqrt{m K_p}) = 1$ e ottieni $K_p = c^2/(4m) = 0{,}5$ N/m. Ma con una molla così debole il drone dovrebbe stare 9,8 m *sotto* l'obiettivo solo per reggersi, quindi non decolla mai. Il controllo P da solo non ci dà entrambe le cose."
+                },
+                {
+                  "text": "$K_p = 20$ N/m",
+                  "why": "È il nostro valore saltellante di default, con $\\zeta \\approx 0{,}16$. Più guadagno vuol dire *meno* smorzamento."
+                },
+                {
+                  "text": "$K_p = 200$ N/m",
+                  "why": "Più guadagno abbassa $\\zeta$ ancora di più (a circa 0,05). Il guadagno sta al denominatore."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q4",
+              "q": "Un sistema sovrasmorzato ha valori di $s$ pari a $-0{,}2$ e $-10$. Quale dei due decide quanto aspetti?",
+              "options": [
+                {
+                  "text": "$-0{,}2$",
+                  "correct": true,
+                  "why": "$e^{-0{,}2t}$ ci mette circa 20 s a scendere al 2%, mentre $e^{-10t}$ sparisce in 0,4 s. Comanda quello più vicino all'asse verticale."
+                },
+                {
+                  "text": "$-10$",
+                  "why": "$e^{-10t}$ svanisce in una frazione di secondo. È la parte veloce, finita prima che te ne accorga."
+                },
+                {
+                  "text": "Tutti e due allo stesso modo",
+                  "why": "Si spengono a velocità molto diverse, quindi quello lento domina quello che vedi."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Theo: \"Siamo arrivati a questi valori di $s$ *tirando a indovinare*. Aggiungi gravità, vento, pacchi e un controllore più furbo, e indovinare diventa un incubo. Esiste una macchina che trasformi quest'analisi in **semplice algebra**?\""
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "twins": {
+      "title": "Molla contro drone",
+      "spring": "massa su una molla",
+      "drone": "drone con controllo P",
+      "msdAria": "Una massa appesa a una molla e a uno smorzatore, che rimbalza attorno alla posizione di riposo.",
+      "plotY": "distanza dall'obiettivo (m)",
+      "plotAria": "Distanza dall'obiettivo nel tempo per il drone e per la molla. Le due curve sono una sopra l'altra.",
+      "target": "obiettivo / riposo",
+      "kp": "Rigidezza: molla $k$ = guadagno del drone $K_p$",
+      "personality": "personalità",
+      "help": "Entrambi partono 1 m sotto il loro obiettivo e vengono lasciati andare. Il cursore imposta la rigidezza della molla e il guadagno del drone allo stesso numero.",
+      "describe": "Il drone è a {d} m dall'obiettivo, la massa della molla a {s} m dal riposo.",
+      "regime": {
+        "under": "sottosmorzato",
+        "critical": "smorzamento critico",
+        "over": "sovrasmorzato"
+      },
+      "together": "tutti e due, in un solo grafico"
+    },
+    "personality": {
+      "title": "Due manopole, due puntini, una personalità",
+      "response": "risposta a un gradino di 1 m",
+      "target": "obiettivo",
+      "plotAria": "Risposta al gradino di un sistema del secondo ordine per la pulsazione naturale e il coefficiente di smorzamento scelti.",
+      "planeAria": "La mappa di s, con i due valori di s del sistema e un cerchio tratteggiato di raggio omega n.",
+      "msdAria": "Una massa su una molla che ripete la risposta al gradino.",
+      "panelAria": "Piccola risposta al gradino con coefficiente di smorzamento {z}.",
+      "panel": {
+        "0": "sottosmorzato (ζ = {z})",
+        "1": "critico (ζ = {z})",
+        "2": "sovrasmorzato (ζ = {z})"
+      },
+      "radius": "raggio ωn = {w}",
+      "wn": "Pulsazione naturale $\\omega_n$",
+      "zeta": "Coefficiente di smorzamento $\\zeta$",
+      "overshoot": "sovraelongazione",
+      "settle": "si assesta (2%)",
+      "roots": "i due valori di s",
+      "personality": "personalità",
+      "never": "mai",
+      "playSpring": "Rivedi sulla molla",
+      "stopSpring": "Metti in pausa la molla",
+      "describe": "Coefficiente di smorzamento {z}, pulsazione naturale {w} radianti al secondo, valori di s {r}.",
+      "regime": {
+        "under": "sottosmorzato",
+        "critical": "smorzamento critico",
+        "over": "sovrasmorzato"
+      },
+      "planeCap": "i due valori di s",
+      "springCap": "guardalo su una molla",
+      "re": "σ",
+      "im": "ω",
+      "offMap": "{v} è fuori dalla mappa ←"
+    },
+    "race": {
+      "title": "La gara dello smorzamento",
+      "choose": "Il tuo smorzamento",
+      "ref": "ζ = 1 (critico)",
+      "yours": "la tua ζ",
+      "yoursZ": "ζ = {z}",
+      "msdAria": "Una massa su una molla che si muove verso la posizione di riposo.",
+      "plotAria": "Risposte al gradino con smorzamento critico e con il coefficiente di smorzamento scelto.",
+      "planeAria": "I due valori di s per il coefficiente di smorzamento scelto.",
+      "settleRef": "ζ = 1 si assesta",
+      "settleYours": "la tua ζ si assesta",
+      "slow": "quello lento",
+      "fast": "quello veloce",
+      "never": "non entro 12 s",
+      "same": "Questo è proprio il riferimento: la risposta più rapida senza sovraelongazione.",
+      "slower": "Il tuo smorzamento in più l'ha reso circa {k}× più lento.",
+      "replay": "Rifai la gara",
+      "planeCap": "i due valori di s",
+      "re": "σ",
+      "im": "ω",
+      "fastOff": "← quello veloce a {v} (fuori dalla mappa)",
+      "double": "tutti e due qui"
+    }
+  }
+}
