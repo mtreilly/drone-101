@@ -7,10 +7,28 @@
       "id": "briefing",
       "title": "Mission briefing",
       "blocks": [
-        { "t": "say", "who": "june", "mood": "excited", "text": "Okay. Real drone, real delivery. It takes off with a package, rides out a gust, drops the package, and holds 2 m the whole time. Twenty seconds." },
-        { "t": "say", "who": "mika", "mood": "worried", "text": "And we're not allowed to touch anything while it flies?" },
-        { "t": "say", "who": "theo", "mood": "happy", "text": "That's the whole point. The controller has to do it alone. We just pick three numbers. Well, four." },
-        { "t": "p", "text": "The mission, second by second:" },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Okay. Real drone, real delivery. It takes off with a package, rides out a gust, drops the package, and holds 2 m the whole time. Twenty seconds."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "And we're not allowed to touch anything while it flies?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "That's the whole point. The controller has to do it alone. We just pick three numbers. Well, four."
+        },
+        {
+          "t": "p",
+          "text": "The mission, second by second:"
+        },
         {
           "t": "list",
           "ordered": true,
@@ -21,7 +39,10 @@
             "**20 s:** mission over."
           ]
         },
-        { "t": "p", "text": "Our drone model gets a little more honest for the finale. Each of these is something real drones have to live with:" },
+        {
+          "t": "p",
+          "text": "Our drone model gets a little more honest for the finale. Each of these is something real drones have to live with:"
+        },
         {
           "t": "list",
           "items": [
@@ -31,16 +52,29 @@
             "**D is filtered:** since the true speed isn't known, D uses the slope of the filtered sensor reading, with the time constant $\\tau_f$ you choose."
           ]
         },
-        { "t": "note", "text": "We still ignore tilting, sideways wind, batteries sagging and a hundred other things. A real drone's altitude loop looks a lot like this one, though." },
+        {
+          "t": "note",
+          "text": "We still ignore tilting, sideways wind, batteries sagging and a hundred other things. A real drone's altitude loop looks a lot like this one, though."
+        },
         {
           "t": "predict",
           "id": "ch11-drop",
           "gate": true,
           "q": "When the package drops at 12 s, which term does the heavy lifting to get the drone back to exactly 2 m?",
           "options": [
-            { "text": "P: it reacts to the error right away", "why": "P reacts first, but P alone would just settle at a *different* droop, because the hover thrust changed." },
-            { "text": "I: the pile has to find the new hover thrust", "correct": true, "why": "The drone now needs about 4.9 N instead of 6.9 N. Only the integral can hunt down a new constant push and still end with zero error." },
-            { "text": "D: it stops the jump", "why": "D damps the jump, which is useful, but it goes quiet once the drone is still, so it can't hold the new equilibrium." }
+            {
+              "text": "P: it reacts to the error right away",
+              "why": "P reacts first, but P alone would just settle at a *different* droop, because the hover thrust changed."
+            },
+            {
+              "text": "I: the pile has to find the new hover thrust",
+              "correct": true,
+              "why": "The drone now needs about 4.9 N instead of 6.9 N. Only the integral can hunt down a new constant push and still end with zero error."
+            },
+            {
+              "text": "D: it stops the jump",
+              "why": "D damps the jump, which is useful, but it goes quiet once the drone is still, so it can't hold the new equilibrium."
+            }
           ]
         }
       ]
@@ -49,31 +83,96 @@
       "id": "mission",
       "title": "Fly the mission",
       "blocks": [
-        { "t": "p", "text": "Each change of a slider restarts the mission, and the previous flight stays as a ghost. The small s-plane shows the **nominal** poles (a perfect sensor, no package, no limits), so you can see the linear picture while the real, messy flight happens next to it. Earn all six stars for gold." },
-        { "t": "widget", "id": "mission" },
-        { "t": "note", "aside": true, "text": "Stuck? Chapter 9's playground winners are a good start. Then lengthen $\\tau_f$ until the motors stop chattering." },
-        { "t": "say", "who": "june", "mood": "excited", "text": "I tuned the perfect controller in my head: huge $K_d$, the tiniest filter so D reacts instantly. It's flawless in calm air! Watch…" },
-        { "t": "say", "who": "june", "mood": "surprised", "text": "…why are the motors screaming? The orange line is all fuzz, and now it overshoots too!" },
-        { "t": "say", "who": "theo", "mood": "think", "text": "Chapter 9, warning 2. Big $K_d$ times a tiny filter turns every 2 cm of sensor jitter into a thrust spike. And the spikes get clipped at 0 N far more often than at 20 N, so they add a lopsided extra push: that's the overshoot. It was only flawless because your imaginary calm air came with a perfect sensor." },
-        { "t": "p", "text": "Try **June's calm-air tune** and watch the \"motors calm\" star fail. Then lengthen the filter to about 0.04 s and bring $K_d$ down to about 6. You give up a hair of speed and get calm motors. That trade, speed against noise and against robustness, *is* control engineering." }
+        {
+          "t": "p",
+          "text": "Each change of a slider restarts the mission, and the previous flight stays as a ghost. The small s-plane shows the **nominal** poles (a perfect sensor, no package, no limits), so you can see the linear picture while the real, messy flight happens next to it. Earn all six stars for gold."
+        },
+        {
+          "t": "widget",
+          "id": "mission"
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Stuck? Chapter 9's playground winners are a good start. Then lengthen $\\tau_f$ until the motors stop chattering."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "I tuned the perfect controller in my head: huge $K_d$, the tiniest filter so D reacts instantly. It's flawless in calm air! Watch…"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "…why are the motors screaming? The orange line is all fuzz, and now it overshoots too!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Chapter 9, warning 2. Big $K_d$ times a tiny filter turns every 2 cm of sensor jitter into a thrust spike. And the spikes get clipped at 0 N far more often than at 20 N, so they add a lopsided extra push: that's the overshoot. It was only flawless because your imaginary calm air came with a perfect sensor."
+        },
+        {
+          "t": "p",
+          "text": "Try **June's calm-air tune** and watch the \"motors calm\" star fail. Then lengthen the filter to about 0.04 s and bring $K_d$ down to about 6. You give up a hair of speed and get calm motors. That trade, speed against noise and against robustness, *is* control engineering."
+        }
       ]
     },
     {
       "id": "reflect",
       "title": "Looking back",
       "blocks": [
-        { "t": "say", "who": "mika", "mood": "happy", "text": "I started out thinking \"push harder\" fixes everything. It's the opposite, isn't it? Most of the trouble came from pushing too hard on old or noisy information. I'm glad I asked all the dumb questions. None of them were dumb." },
-        { "t": "say", "who": "theo", "mood": "happy", "text": "I finally believe the Laplace transform. It's not a lookup table: it's a probe that asks a signal \"how much of $e^{st}$ are you?\" And because slopes turn into multiplying by $s$, the calculus turns into algebra. The poles are where the answer blows up: the $e^{st}$ the system is built from." },
-        { "t": "say", "who": "june", "mood": "excited", "text": "And I learned \"more\" isn't \"better\": more gain, more damping, more $K_i$, more speed. There's always a cliff, and the good designs keep a margin from it. Also: always try it on the drone." },
-        { "t": "p", "text": "Here's everything we built, from the shower to the finale. Every bubble links back to where it was born." },
-        { "t": "map" }
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "I started out thinking \"push harder\" fixes everything. It's the opposite, isn't it? Most of the trouble came from pushing too hard on old or noisy information. I'm glad I asked all the dumb questions. None of them were dumb."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "I finally believe the Laplace transform. It's not a lookup table: it's a probe that asks a signal \"how much of $e^{st}$ are you?\" And because slopes turn into multiplying by $s$, the calculus turns into algebra. The poles are where the answer blows up: the $e^{st}$ the system is built from."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "And I learned \"more\" isn't \"better\": more gain, more damping, more $K_i$, more speed. There's always a cliff, and the good designs keep a margin from it. Also: always try it on the drone."
+        },
+        {
+          "t": "p",
+          "text": "Here's everything we built, from the shower to the finale. Every bubble links back to where it was born."
+        },
+        {
+          "t": "recap",
+          "title": "The whole journey, in one breath",
+          "items": [
+            "**Feedback**: measure what happened, compare with the goal, act on the error (Ch 0–1).",
+            "**P control** pushes in proportion to the error, but leaves a droop and wiggles when it's strong (Ch 2).",
+            "**Derivatives, exponentials and spinning numbers** describe how things change: $e^{st}$ with $s = \\sigma + i\\omega$ grows or shrinks *and* wiggles (Ch 3–6).",
+            "The **Laplace transform** turns slopes into multiplication by $s$, so calculus becomes algebra (Ch 7).",
+            "A **transfer function's poles** are the $e^{st}$ terms a system is made of: left half calms down, right half blows up (Ch 8).",
+            "**PID**: I kills the droop, D adds damping, and each one moves the poles (Ch 9).",
+            "**Delay** adds phase lag; **margins** tell you how far you are from the cliff edge (Ch 10).",
+            "Real hardware adds limits, lag and noise, so good controllers are calm as well as fast (Ch 11)."
+          ]
+        },
+        {
+          "t": "map"
+        }
       ]
     },
     {
       "id": "final-check",
       "title": "Explain it to a friend",
       "blocks": [
-        { "t": "p", "text": "The best test of understanding is explaining. Before each answer, try saying *your* version out loud. Then pick the explanation that best matches it." },
+        {
+          "t": "p",
+          "text": "The best test of understanding is explaining. Before each answer, try saying *your* version out loud. Then pick the explanation that best matches it."
+        },
         {
           "t": "quiz",
           "title": "Final check",
@@ -82,27 +181,57 @@
               "id": "ch11-q1",
               "q": "A friend asks: \"Why does the Laplace transform even exist?\"",
               "options": [
-                { "text": "It turns slopes into multiplication by $s$, so equations about change become algebra, and the answer's poles show which $e^{st}$ behaviours the system is made of", "correct": true, "why": "That's the heart of it: calculus to algebra, plus a map (the s-plane) that shows the personality at a glance." },
-                { "text": "It's a table of formulas engineers memorise to look up answers", "why": "The table is a *result*. We derived every row by probing signals with $e^{-st}$ and measuring the area." },
-                { "text": "It converts signals into sound frequencies", "why": "That's closer to the Fourier transform, which only uses the spinning part ($s = i\\omega$). Laplace also allows growth and decay ($\\sigma$)." }
+                {
+                  "text": "It turns slopes into multiplication by $s$, so equations about change become algebra, and the answer's poles show which $e^{st}$ behaviours the system is made of",
+                  "correct": true,
+                  "why": "That's the heart of it: calculus to algebra, plus a map (the s-plane) that shows the personality at a glance."
+                },
+                {
+                  "text": "It's a table of formulas engineers memorise to look up answers",
+                  "why": "The table is a *result*. We derived every row by probing signals with $e^{-st}$ and measuring the area."
+                },
+                {
+                  "text": "It converts signals into sound frequencies",
+                  "why": "That's closer to the Fourier transform, which only uses the spinning part ($s = i\\omega$). Laplace also allows growth and decay ($\\sigma$)."
+                }
               ]
             },
             {
               "id": "ch11-q2",
               "q": "\"What is a pole, really?\"",
               "options": [
-                { "text": "A value of $s$ where the transfer function blows up: one of the $e^{st}$ motions the system naturally makes, with its real part telling growth/decay and its imaginary part telling wiggle", "correct": true, "why": "Left half = dies out, right half = explodes, height = wiggle speed. The whole personality on one map." },
-                { "text": "A physical part of the drone, like a motor", "why": "Poles belong to the *whole loop*: change a gain and they move, even though no part of the drone changed." },
-                { "text": "The point where the system becomes unstable", "why": "Every system has poles, stable ones too. Instability is when a pole sits in the right half-plane." }
+                {
+                  "text": "A value of $s$ where the transfer function blows up: one of the $e^{st}$ motions the system naturally makes, with its real part telling growth/decay and its imaginary part telling wiggle",
+                  "correct": true,
+                  "why": "Left half = dies out, right half = explodes, height = wiggle speed. The whole personality on one map."
+                },
+                {
+                  "text": "A physical part of the drone, like a motor",
+                  "why": "Poles belong to the *whole loop*: change a gain and they move, even though no part of the drone changed."
+                },
+                {
+                  "text": "The point where the system becomes unstable",
+                  "why": "Every system has poles, stable ones too. Instability is when a pole sits in the right half-plane."
+                }
               ]
             },
             {
               "id": "ch11-q3",
               "q": "\"Why did I keep overshooting in the shower?\"",
               "options": [
-                { "text": "You reacted to delayed information with too much gain: the loop's phase reached −180° while its gain was still above 1, so each correction pumped the swing", "correct": true, "why": "Exactly. The cure was less gain, or more phase margin, not more effort." },
-                { "text": "The shower was faulty", "why": "The knob and the head matched perfectly once we shifted by the delay (Chapter 0). Not broken: late." },
-                { "text": "You weren't reacting fast enough", "why": "Reacting *harder* made it worse, as the robot hands showed. Speed on old news is the problem." }
+                {
+                  "text": "You reacted to delayed information with too much gain: the loop's phase reached −180° while its gain was still above 1, so each correction pumped the swing",
+                  "correct": true,
+                  "why": "Exactly. The cure was less gain, or more phase margin, not more effort."
+                },
+                {
+                  "text": "The shower was faulty",
+                  "why": "The knob and the head matched perfectly once we shifted by the delay (Chapter 0). Not broken: late."
+                },
+                {
+                  "text": "You weren't reacting fast enough",
+                  "why": "Reacting *harder* made it worse, as the robot hands showed. Speed on old news is the problem."
+                }
               ]
             }
           ]
@@ -113,7 +242,10 @@
       "id": "next",
       "title": "Where to go next",
       "blocks": [
-        { "t": "p", "text": "You now know more control theory than most people ever meet. Here's where the road goes on, each one a new notebook:" },
+        {
+          "t": "p",
+          "text": "You now know more control theory than most people ever meet. Here's where the road goes on, each one a new notebook:"
+        },
         {
           "t": "list",
           "items": [
@@ -125,7 +257,10 @@
             "**Nonlinear and robust control:** what to do when the world isn't linear, and how to prove you still have margin."
           ]
         },
-        { "t": "cliff", "text": "Next time a shower makes you dance between scalding and freezing, you'll know exactly what's happening. And you'll know it's not your fault. **It's the phase margin.**" }
+        {
+          "t": "cliff",
+          "text": "Next time a shower makes you dance between scalding and freezing, you'll know exactly what's happening. And you'll know it's not your fault. **It's the phase margin.**"
+        }
       ]
     }
   ],

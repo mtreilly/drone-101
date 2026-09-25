@@ -23,10 +23,10 @@ const integral: WidgetFactory = (host, ctx) => {
     ...playerLabels(ctx),
     duration: 12,
     gravityLabel: t('gravity'),
-    extra: [{ id: 'iterm', color: 'err', label: t('iterm'), dash: [3, 3], values: (tr) => tr.integral.map((v) => ki * v) }],
+    extra: [{ id: 'iterm', color: 'eff', label: t('iterm'), dash: [3, 3], values: (tr) => tr.integral.map((v) => ki * v) }],
   });
   const rDroop = readout(t('readout.droop'), 'err');
-  const rPile = readout(t('readout.pile'), 'err');
+  const rPile = readout(t('readout.pile'), 'eff');
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
   const run = () => {
     const tr = runDrone(takeoff(pid(KP, ki, 0)), 12);
@@ -40,7 +40,7 @@ const integral: WidgetFactory = (host, ctx) => {
     status.className = `w-status${ki >= lim ? ' bad' : Math.abs(droop) < 0.01 ? ' good' : ''}`;
     player.hPlot.describe(t('describe', { ki: fmt(ki, 0), droop: fmt(droop * 100, 1) }));
   };
-  const sl = slider({ label: t('slider'), min: 0, max: 60, step: 1, value: ki, unit: 'N/(m·s)', color: 'err', onInput: (v) => { ki = v; run(); } });
+  const sl = slider({ label: t('slider'), min: 0, max: 60, step: 1, value: ki, unit: 'N/(m·s)', color: 'eff', onInput: (v) => { ki = v; run(); } });
   host.append(h('div', { class: 'w-controls' }, sl.el), h('div', { class: 'readouts' }, rDroop.el, rPile.el), status);
   run();
   return () => player.destroy();
@@ -164,7 +164,7 @@ const poles: WidgetFactory = (host, ctx) => {
     step.describe(status.textContent);
   };
   const sKp = slider({ label: t('kp'), min: 2, max: 40, step: 1, value: kp, unit: 'N/m', color: 'out', onInput: (v) => { kp = v; update(); } });
-  const sKi = slider({ label: t('ki'), min: 0, max: 200, step: 2, value: ki, unit: 'N/(m·s)', color: 'err', onInput: (v) => { ki = v; update(); } });
+  const sKi = slider({ label: t('ki'), min: 0, max: 200, step: 2, value: ki, unit: 'N/(m·s)', color: 'eff', onInput: (v) => { ki = v; update(); } });
   const sKd = slider({ label: t('kd'), min: 0, max: 10, step: 0.25, value: kd, unit: 'N·s/m', color: 'eff', onInput: (v) => { kd = v; update(); } });
   host.append(h('div', { class: 'w-controls' }, sKp.el, sKi.el, sKd.el), status, h('p', { class: 'w-help' }, t('help')));
   update();
@@ -200,7 +200,7 @@ const playground: WidgetFactory = (host, ctx) => {
     player.load(show);
   };
   const sKp = slider({ label: t('kp'), min: 0, max: 40, step: 1, value: kp, unit: 'N/m', color: 'out', onInput: (v) => { kp = v; run(); } });
-  const sKi = slider({ label: t('ki'), min: 0, max: 60, step: 1, value: ki, unit: 'N/(m·s)', color: 'err', onInput: (v) => { ki = v; run(); } });
+  const sKi = slider({ label: t('ki'), min: 0, max: 60, step: 1, value: ki, unit: 'N/(m·s)', color: 'eff', onInput: (v) => { ki = v; run(); } });
   const sKd = slider({ label: t('kd'), min: 0, max: 10, step: 0.5, value: kd, unit: 'N·s/m', color: 'eff', onInput: (v) => { kd = v; run(); } });
   const tg = toggle(t('antiWindup'), aw, (v) => { aw = v; run(); });
   host.append(

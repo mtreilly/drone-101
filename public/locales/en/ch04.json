@@ -7,113 +7,294 @@
       "id": "copy",
       "title": "A curve that copies itself",
       "blocks": [
-        { "t": "say", "who": "theo", "mood": "think", "text": "Last time, the coffee's gap to room temperature shrank at a rate **proportional to the gap itself**. Big gap, fast shrinking. Small gap, slow shrinking. What kind of curve does that?" },
-        { "t": "p", "text": "Let's hunt for a curve whose slope, at every point, is a fixed multiple of its height. Good candidates are the \"doubling\" curves: $2^t$, $3^t$ and friends. Each one multiplies itself by the same factor every second." },
-        { "t": "say", "who": "mika", "mood": "happy", "text": "I've seen $e^t$ in textbooks. Isn't $e$ just some random number mathematicians like? 2.718-something, whatever." },
-        { "t": "say", "who": "june", "mood": "excited", "text": "Let's measure instead of arguing. Put a tangent on each curve and divide its slope by its height." },
-        { "t": "widget", "id": "bases" },
-        { "t": "p", "text": "Drag the cursor along any one curve and the **slope ÷ height** readout doesn't budge. Every exponential copies itself, scaled by a fixed number. For base 2 that number is about 0.693, for base 3 about 1.099." },
-        { "t": "p", "text": "And for exactly one base the scaling number is **1**, so the slope curve lies right on top of the curve itself. That base is $e \\approx 2.718$:" },
-        { "t": "math", "tex": "\\frac{d}{dt}\\,e^{t} = e^{t}" },
-        { "t": "say", "who": "mika", "mood": "surprised", "text": "So $e$ isn't random at all. It's **the** number whose curve is its own slope. Okay, I take it back." },
-        { "t": "note", "aside": true, "text": "The scaling number for base b is called ln b, the \"natural log\". We won't need it again. We'll just use e." }
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Last time, the coffee's gap to room temperature shrank at a rate **proportional to the gap itself**. Big gap, fast shrinking. Small gap, slow shrinking. What kind of curve does that?"
+        },
+        {
+          "t": "p",
+          "text": "Let's hunt for a curve whose slope, at every point, is a fixed multiple of its height. Good candidates are the \"doubling\" curves: $2^t$, $3^t$ and friends. Each one multiplies itself by the same factor every second."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "I've seen $e^t$ in textbooks. Isn't $e$ just some random number mathematicians like? 2.718-something, whatever."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Let's measure instead of arguing. Put a tangent on each curve and divide its slope by its height."
+        },
+        {
+          "t": "widget",
+          "id": "bases"
+        },
+        {
+          "t": "p",
+          "text": "Drag the cursor along any one curve and the **slope ÷ height** readout doesn't budge. Every exponential copies itself, scaled by a fixed number. For base 2 that number is about 0.693, for base 3 about 1.099."
+        },
+        {
+          "t": "p",
+          "text": "And for exactly one base the scaling number is **1**, so the slope curve lies right on top of the curve itself. That base is $e \\approx 2.718$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\,e^{t} = e^{t}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "So $e$ isn't random at all. It's **the** number whose curve is its own slope. Okay, I take it back."
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "The scaling number for base b is called ln b, the \"natural log\". We won't need it again. We'll just use e."
+        }
       ]
     },
     {
       "id": "stretch",
       "title": "Speeding it up: e^(at)",
       "blocks": [
-        { "t": "p", "text": "Real systems don't all change at the same pace, so let's put a knob in the exponent: $e^{at}$. The number **a** stretches or squeezes time." },
-        { "t": "widget", "id": "expA" },
-        { "t": "p", "text": "Now slope ÷ height is exactly **a**, everywhere on the curve. Positive a: it grows (and grows faster and faster). Negative a: it shrinks towards zero, like the coffee's gap. a = 0: it just sits there." },
-        { "t": "math", "tex": "\\frac{d}{dt}\\,e^{at} = a\\,e^{at}" },
+        {
+          "t": "p",
+          "text": "Real systems don't all change at the same pace, so let's put a knob in the exponent: $e^{at}$. The number **a** stretches or squeezes time."
+        },
+        {
+          "t": "widget",
+          "id": "expA"
+        },
+        {
+          "t": "p",
+          "text": "Now slope ÷ height is exactly **a**, everywhere on the curve. Positive a: it grows (and grows faster and faster). Negative a: it shrinks towards zero, like the coffee's gap. a = 0: it just sits there."
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\,e^{at} = a\\,e^{at}"
+        },
         {
           "t": "predict",
           "id": "ch4-double",
           "gate": true,
           "q": "Take the slope of $e^{2t}$, and then take the slope **of that slope**. What do you get?",
           "options": [
-            { "text": "$e^{2t}$ again", "why": "That's what happens for $e^{t}$ (a = 1). Here a = 2, and each slope multiplies by 2." },
-            { "text": "$4\\,e^{2t}$", "correct": true, "why": "The first slope gives $2e^{2t}$. The slope of *that* multiplies by 2 again: $4e^{2t}$. Taking a slope just multiplies by a, every time." },
-            { "text": "$2t\\,e^{2t}$", "why": "A common algebra slip. The a comes down as a plain multiplier and t never appears in front." }
+            {
+              "text": "$e^{2t}$ again",
+              "why": "That's what happens for $e^{t}$ (a = 1). Here a = 2, and each slope multiplies by 2."
+            },
+            {
+              "text": "$4\\,e^{2t}$",
+              "correct": true,
+              "why": "The first slope gives $2e^{2t}$. The slope of *that* multiplies by 2 again: $4e^{2t}$. Taking a slope just multiplies by a, every time."
+            },
+            {
+              "text": "$2t\\,e^{2t}$",
+              "why": "A common algebra slip. The a comes down as a plain multiplier and t never appears in front."
+            }
           ]
         },
-        { "t": "math", "tex": "\\frac{d}{dt}e^{at} = a\\,e^{at},\\qquad \\frac{d^2}{dt^2}e^{at} = a^2\\,e^{at}" },
-        { "t": "say", "who": "theo", "mood": "excited", "text": "Wait, that's huge. For exponentials, taking a slope (calculus) turns into **multiplying by a** (just algebra)." },
-        { "t": "note", "text": "Put a sticky note on that. In Chapter 7 this idea grows up into a trick that turns calculus into algebra for *every* signal." }
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}e^{at} = a\\,e^{at},\\qquad \\frac{d^2}{dt^2}e^{at} = a^2\\,e^{at}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Wait, that's huge. For exponentials, taking a slope (calculus) turns into **multiplying by a** (just algebra)."
+        },
+        {
+          "t": "note",
+          "text": "Put a sticky note on that. In Chapter 7 this idea grows up into a trick that turns calculus into algebra for *every* signal."
+        }
       ]
     },
     {
       "id": "guess",
       "title": "Guess an exponential",
       "blocks": [
-        { "t": "p", "text": "This gives us a strategy for solving any \"rule for the slope\": **guess** that the answer is an exponential, plug it in, and see which a makes the rule true." },
-        { "t": "p", "text": "The coffee rule was $\\frac{dT}{dt} = -\\frac{T - 20}{\\tau}$ with τ = 10 min. Our guess is $T = 20 + 70\\,e^{at}$ (70 is the starting gap). Tune a until the guess's slope agrees with what the rule demands." },
-        { "t": "widget", "id": "guess" },
-        { "t": "p", "text": "The algebra agrees with the slider. The slope of the guess is $a \\cdot 70e^{at}$. The rule wants $-70e^{at}/\\tau$. The $70e^{at}$ appears on both sides and cancels:" },
-        { "t": "math", "tex": "a \\cdot 70e^{at} = -\\frac{70e^{at}}{\\tau} \\quad\\Longrightarrow\\quad a = -\\frac{1}{\\tau}" },
-        { "t": "say", "who": "theo", "mood": "happy", "text": "And it lands exactly on the dots we built by hand in Chapter 3. Guess-an-exponential works. The equation that pins down a is called the **characteristic equation**." }
+        {
+          "t": "p",
+          "text": "This gives us a strategy for solving any \"rule for the slope\": **guess** that the answer is an exponential, plug it in, and see which a makes the rule true."
+        },
+        {
+          "t": "p",
+          "text": "The coffee rule was $\\frac{dT}{dt} = -\\frac{T - 20}{\\tau}$ with τ = 10 min. Our guess is $T = 20 + 70\\,e^{at}$ (70 is the starting gap). Tune a until the guess's slope agrees with what the rule demands."
+        },
+        {
+          "t": "widget",
+          "id": "guess"
+        },
+        {
+          "t": "p",
+          "text": "The algebra agrees with the slider. The slope of the guess is $a \\cdot 70e^{at}$. The rule wants $-70e^{at}/\\tau$. The $70e^{at}$ appears on both sides and cancels:"
+        },
+        {
+          "t": "math",
+          "tex": "a \\cdot 70e^{at} = -\\frac{70e^{at}}{\\tau} \\quad\\Longrightarrow\\quad a = -\\frac{1}{\\tau}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "And it lands exactly on the dots we built by hand in Chapter 3. Guess-an-exponential works. The equation that pins down a is called the **characteristic equation**."
+        }
       ]
     },
     {
       "id": "spring",
       "title": "The spring breaks our trick",
       "blocks": [
-        { "t": "say", "who": "june", "mood": "excited", "text": "Let's try it on something that **bounces**. A mass on a spring is basically our drone under P control: pulled back harder the further it is from the target." },
-        { "t": "p", "text": "The spring pulls back with force $-kx$. Force = mass × acceleration, and acceleration is the slope of the slope. So the rule is:" },
-        { "t": "math", "tex": "m\\,\\frac{d^2x}{dt^2} = -k\\,x" },
-        { "t": "p", "text": "Guess $x = e^{at}$. The slope of the slope is $a^2 e^{at}$, so $m a^2 e^{at} = -k e^{at}$. Cancel $e^{at}$:" },
-        { "t": "math", "tex": "a^2 = -\\frac{k}{m}" },
-        { "t": "p", "text": "With k/m = 4, we need a number whose square is **−4**. Hunt for one:" },
-        { "t": "widget", "id": "square" },
-        { "t": "say", "who": "theo", "mood": "worried", "text": "Squares are never negative. The blue parabola never gets down to the green line. So there's **no** such a. Our trick fails: springs just can't be described with exponentials." },
-        { "t": "say", "who": "mika", "mood": "think", "text": "But the spring is right there, bouncing happily. It *has* a motion. Maybe it's not the spring that's wrong, maybe it's our idea of what counts as a number?" },
-        { "t": "say", "who": "theo", "mood": "think", "text": "…Hmm. I'll admit I said \"no number\" a bit fast. Every number I *know about* squares to something positive." },
-        { "t": "note", "text": "Keep an eye on this. Was Theo right? (Spoiler: he wasn't.)" }
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Let's try it on something that **bounces**. A mass on a spring is basically our drone under P control: pulled back harder the further it is from the target."
+        },
+        {
+          "t": "p",
+          "text": "The spring pulls back with force $-kx$. Force = mass × acceleration, and acceleration is the slope of the slope. So the rule is:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\,\\frac{d^2x}{dt^2} = -k\\,x"
+        },
+        {
+          "t": "p",
+          "text": "Guess $x = e^{at}$. The slope of the slope is $a^2 e^{at}$, so $m a^2 e^{at} = -k e^{at}$. Cancel $e^{at}$:"
+        },
+        {
+          "t": "math",
+          "tex": "a^2 = -\\frac{k}{m}"
+        },
+        {
+          "t": "p",
+          "text": "With k/m = 4, we need a number whose square is **−4**. Hunt for one:"
+        },
+        {
+          "t": "widget",
+          "id": "square"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Squares are never negative. The blue parabola never gets down to the green line. So there's **no** such a. Our trick fails: springs just can't be described with exponentials."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "But the spring is right there, bouncing happily. It *has* a motion. Maybe it's not the spring that's wrong, maybe it's our idea of what counts as a number?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "…Hmm. I'll admit I said \"no number\" a bit fast. Every number I *know about* squares to something positive."
+        },
+        {
+          "t": "note",
+          "text": "Keep an eye on this. Was Theo right? (Spoiler: he wasn't.)"
+        }
       ]
     },
     {
       "id": "wrap",
       "title": "What we know so far",
       "blocks": [
-        { "t": "recap", "items": [
-          "Every exponential's slope is a copy of itself: slope ÷ height is constant.",
-          "$e \\approx 2.718$ is the base where that ratio is exactly 1. With $e^{at}$ the ratio is a.",
-          "Taking a slope of $e^{at}$ just **multiplies by a**. Calculus becomes algebra.",
-          "**Guess an exponential**, plug it into the rule, and solve for a. For the coffee, a = −1/τ.",
-          "For a spring the guess demands $a^2 = -k/m$, and no ordinary number does that. Yet."
-        ] },
-        { "t": "quiz", "items": [
-          {
-            "id": "ch4-q1",
-            "q": "Which curve has slope = −0.5 × height everywhere?",
-            "options": [
-              { "text": "Smooth decay", "sketch": "decaying-plain", "correct": true, "why": "That's $e^{-0.5t}$: the negative ratio means it shrinks, and the shrinking slows down as it gets smaller." },
-              { "text": "Explosive growth", "sketch": "growing-plain", "why": "Growth needs a *positive* slope ÷ height." },
-              { "text": "Steady wiggle", "sketch": "steady-wiggle", "why": "A wiggle's slope isn't a fixed multiple of its height: at the peaks the height is biggest but the slope is zero." }
-            ]
-          },
-          {
-            "id": "ch4-q2",
-            "q": "If $x = e^{-3t}$, what is $x'' + 3x'$?",
-            "options": [
-              { "text": "0", "correct": true, "why": "$x' = -3e^{-3t}$ and $x'' = 9e^{-3t}$. So $9e^{-3t} + 3(-3e^{-3t}) = 0$." },
-              { "text": "$18e^{-3t}$", "why": "Check the sign of $x'$: slopes of $e^{-3t}$ come with −3, so $3x' = -9e^{-3t}$." },
-              { "text": "$-3e^{-3t}$", "why": "That's just $x'$. You also need to add the $x''$ term." }
-            ]
-          },
-          {
-            "id": "ch4-q3",
-            "q": "A tank empties following $h' = -h/20$ (time in seconds). What are a and the time constant?",
-            "options": [
-              { "text": "a = −1/20 per second, τ = 20 s", "correct": true, "why": "Guess $h = Ce^{at}$: $a = -1/20$, and τ = −1/a = 20 s, the time to drain 63%." },
-              { "text": "a = −20 per second, τ = 1/20 s", "why": "Upside down: the rule divides by 20, so it's slow (τ = 20 s), not super fast." },
-              { "text": "a = +1/20 per second, τ = 20 s", "why": "A positive a would make the water level *grow*. The minus sign in the rule means draining." }
-            ]
-          }
-        ] },
-        { "t": "map" },
-        { "t": "cliff", "text": "The drone and the spring **wiggle**. Exponentials only grow or shrink. Unless… a number could square to a negative?" }
+        {
+          "t": "recap",
+          "items": [
+            "Every exponential's slope is a copy of itself: slope ÷ height is constant.",
+            "$e \\approx 2.718$ is the base where that ratio is exactly 1. With $e^{at}$ the ratio is a.",
+            "Taking a slope of $e^{at}$ just **multiplies by a**. Calculus becomes algebra.",
+            "**Guess an exponential**, plug it into the rule, and solve for a. For the coffee, a = −1/τ.",
+            "For a spring the guess demands $a^2 = -k/m$, and no ordinary number does that. Yet."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch4-q1",
+              "q": "Which curve has slope = −0.5 × height everywhere?",
+              "options": [
+                {
+                  "text": "Smooth decay",
+                  "sketch": "decaying-plain",
+                  "correct": true,
+                  "why": "That's $e^{-0.5t}$: the negative ratio means it shrinks, and the shrinking slows down as it gets smaller."
+                },
+                {
+                  "text": "Explosive growth",
+                  "sketch": "growing-plain",
+                  "why": "Growth needs a *positive* slope ÷ height."
+                },
+                {
+                  "text": "Steady wiggle",
+                  "sketch": "steady-wiggle",
+                  "why": "A wiggle's slope isn't a fixed multiple of its height: at the peaks the height is biggest but the slope is zero."
+                }
+              ]
+            },
+            {
+              "id": "ch4-q2",
+              "q": "If $x = e^{-3t}$, what is $x'' + 3x'$?",
+              "options": [
+                {
+                  "text": "0",
+                  "correct": true,
+                  "why": "$x' = -3e^{-3t}$ and $x'' = 9e^{-3t}$. So $9e^{-3t} + 3(-3e^{-3t}) = 0$."
+                },
+                {
+                  "text": "$18e^{-3t}$",
+                  "why": "Check the sign of $x'$: slopes of $e^{-3t}$ come with −3, so $3x' = -9e^{-3t}$."
+                },
+                {
+                  "text": "$-3e^{-3t}$",
+                  "why": "That's just $x'$. You also need to add the $x''$ term."
+                }
+              ]
+            },
+            {
+              "id": "ch4-q3",
+              "q": "A tank empties following $h' = -h/20$ (time in seconds). What are a and the time constant?",
+              "options": [
+                {
+                  "text": "a = −1/20 per second, τ = 20 s",
+                  "correct": true,
+                  "why": "Guess $h = Ce^{at}$: $a = -1/20$, and τ = −1/a = 20 s, the time to drain 63%."
+                },
+                {
+                  "text": "a = −20 per second, τ = 1/20 s",
+                  "why": "Upside down: the rule divides by 20, so it's slow (τ = 20 s), not super fast."
+                },
+                {
+                  "text": "a = +1/20 per second, τ = 20 s",
+                  "why": "A positive a would make the water level *grow*. The minus sign in the rule means draining."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "note",
+          "text": "Honest bookkeeping: Theo's \"no number squares to a negative\" is a mistake. It's just one we can't see yet. Next chapter, he gets to be wrong in the best possible way."
+        },
+        {
+          "t": "cliff",
+          "text": "The drone and the spring **wiggle**. Exponentials only grow or shrink. Unless… a number could square to a negative?"
+        }
       ]
     }
   ],
