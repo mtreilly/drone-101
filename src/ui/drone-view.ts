@@ -84,7 +84,7 @@ export class DroneView {
       body.append(prop);
     }
     this.thrustArrow = s('path', { fill: 'none', stroke: 'var(--c-effort)', 'stroke-width': 3.5, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
-    this.thrustLabel = s('text', { 'font-size': 16, fill: 'var(--c-effort)', 'font-weight': 700, x: cx + 8 });
+    this.thrustLabel = s('text', { 'font-size': 16, fill: 'var(--c-effort)', x: cx - 9, 'text-anchor': 'end' });
     this.pkgG = s('g', { class: 'package' });
     this.pkgG.append(
       s('line', { x1: cx, x2: cx, y1: 10, y2: 26, stroke: ink, 'stroke-width': 1.5 }),
