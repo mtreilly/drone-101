@@ -4,6 +4,9 @@ const KEY = 'feedback-adventure:theme';
 const listeners = new Set<() => void>();
 
 export function getTheme(): ThemeChoice {
+  // ?theme=light|dark forces a theme for this visit (used by the accessibility test suite)
+  const forced = typeof location !== 'undefined' ? new URLSearchParams(location.search).get('theme') : null;
+  if (forced === 'light' || forced === 'dark') return forced;
   try {
     const v = localStorage.getItem(KEY);
     return v === 'light' || v === 'dark' ? v : 'auto';

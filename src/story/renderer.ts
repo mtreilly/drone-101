@@ -44,7 +44,8 @@ export function renderChapter(env: RenderEnv): HTMLElement {
         const open = () => {
           gated.hidden = false;
         };
-        if (progress.get().predictions[id] !== undefined) open();
+        // ?reveal opens every gate (lets automated accessibility checks see gated widgets)
+        if (progress.get().predictions[id] !== undefined || new URLSearchParams(location.search).has('reveal')) open();
         env.cleanups.push(env.bus.on(`predict:${id}`, open));
         target = gated;
       }
