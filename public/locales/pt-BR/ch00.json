@@ -1,0 +1,342 @@
+{
+  "kicker": "Capítulo 0",
+  "title": "O Problema do Chuveiro",
+  "question": "Por que não consigo simplesmente deixar o chuveiro a 38 °C?",
+  "sections": [
+    {
+      "id": "hook",
+      "title": "Quente! Frio! Quente!",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Tá, confissão. Hoje de manhã eu girei a manopla do chuveiro, me **queimei**, girei de volta, congelei, e fiz isso umas seis vezes."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Todo mundo faz isso! Chuveiro de apartamento antigo é o pior."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Mas *por que* é difícil? Você quer um número, 38 graus. Você tem uma manopla. Isso deveria ser fácil."
+        },
+        {
+          "t": "p",
+          "text": "Vamos descobrir. Abaixo está um chuveiro com um **cano longo** entre a manopla e o chuveiro, como um de verdade. A água que você mistura na manopla leva alguns segundos para subir pelo cano. Você pode ver a cor da água se arrastando por ele."
+        },
+        {
+          "t": "p",
+          "text": "**Seu objetivo:** deixar a água a {sp|38 °C} (a faixa verde) e mantê-la lá por 10 segundos seguidos. Arraste a {eff|manopla laranja}, ou clique nela e use as setas do teclado. O cronômetro começa quando você tocar nela."
+        },
+        {
+          "t": "widget",
+          "id": "manual"
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "O cano tem um atraso de 2,5 segundos. É mais ou menos o que você tem com alguns metros de cano."
+        },
+        {
+          "t": "p",
+          "text": "Como foi? Se você ficou oscilando para cima e para baixo, acima e abaixo da faixa verde, você não está sozinho. Olhe a {out|curva azul}: provavelmente ela faz zigue-zague como uma cobra nervosa."
+        }
+      ]
+    },
+    {
+      "id": "broken",
+      "title": "O chuveiro está quebrado?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Acho que o chuveiro está quebrado. Eu coloco a manopla no *morno*, e mesmo assim ela continua indo para o *quente*!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Hmm. Vamos traçar duas coisas: o que a manopla **pede** e o que o chuveiro **entrega para você**. Se estiver quebrado, elas não deveriam coincidir de jeito nenhum."
+        },
+        {
+          "t": "p",
+          "text": "A {eff|curva laranja pontilhada} é a temperatura que a posição da manopla *pede*: a mistura na válvula. A {out|curva azul} é o que realmente chega. Desloque a curva laranja mais para frente no tempo e veja se elas se alinham."
+        },
+        {
+          "t": "widget",
+          "id": "lag"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Ah! Com giros suaves, deslocar a curva laranja cerca de 3½ segundos faz as oscilações amplas quase se alinharem. Giros bruscos não coincidem exatamente."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "…a água está **atrasada e suavizada**! Um movimento da manopla não é simplesmente copiado 3½ segundos depois."
+        },
+        {
+          "t": "p",
+          "text": "Essa é a primeira pista. Quando você sente \"quente demais\", está sentindo a posição da manopla de alguns segundos atrás. Nessa altura, você *já* girou para mais quente, então gira de volta, além do ponto, e o ciclo recomeça."
+        },
+        {
+          "t": "note",
+          "text": "O cano contribui com um atraso real de 2,5 s: um giro repentino não pode afetar o chuveiro antes disso. A mistura acrescenta uma resposta gradual que leva aproximadamente mais um segundo. Para oscilações amplas e suaves, essa suavização parece um atraso extra."
+        }
+      ]
+    },
+    {
+      "id": "harder",
+      "title": "Tentar com mais força ajudaria?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Já sei: eu estava sendo **suave** demais! Se eu girar a manopla **mais rápido** sempre que estiver errado, vou corrigir mais rápido."
+        },
+        {
+          "t": "p",
+          "text": "Construímos três mãos robóticas para testar ideias sem nos molhar. A **mão normal** gira a manopla um pouco mais rápido quanto mais errada a água parece estar, como a maioria das pessoas faz. A **mão mais forte** faz exatamente a mesma coisa, com o dobro do vigor."
+        },
+        {
+          "t": "predict",
+          "id": "ch0-harder",
+          "gate": true,
+          "q": "Em comparação com a mão normal, o que a mão **mais forte** vai fazer?",
+          "options": [
+            {
+              "text": "Chegar a 38 °C mais cedo e estabilizar mais rápido",
+              "sketch": "swing-better",
+              "why": "É o que nosso instinto diz: mais esforço, resultado mais rápido."
+            },
+            {
+              "text": "Mais ou menos o mesmo, só um pouco mais rápido",
+              "sketch": "overshoot",
+              "why": "É uma suposição razoável, mas o atraso torna as coisas muito mais dramáticas do que isso."
+            },
+            {
+              "text": "Girar ainda mais forte e nunca estabilizar",
+              "sketch": "swing-worse",
+              "correct": true,
+              "why": "Girar mais rápido significa que, quando a água (atrasada) te diz para parar, você já girou *ainda mais*. Os giros aumentam até a manopla bater nos limites."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "robots"
+        },
+        {
+          "t": "p",
+          "text": "Experimente as três. A mão **mais forte** oscila entre congelante e escaldante. A mão **paciente** coloca a manopla em cerca de 51% (a mistura certa, calculada de antemão) e simplesmente *espera*. Ela ganha facilmente."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Então o atraso sozinho não é o problema. A mão paciente tem o mesmo atraso e se sai bem. O problema é **reagir a informações antigas, com muita ansiedade**."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Então \"empurrar mais forte quando está mais longe\" é o instinto *errado*? Essa é toda a minha personalidade."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Mas a mão paciente trapaceou. Ela sabia a resposta certa de antemão. Se o tanque de água quente esfriar, ou alguém der descarga, a posição certa da manopla muda e a mão paciente não vai perceber."
+        },
+        {
+          "t": "p",
+          "text": "Esse é o verdadeiro enigma. Precisamos de algo que **reaja** (para lidar com surpresas) mas que não **reaja demais** (para não oscilar). Guarde essa ideia. O curso inteiro é sobre isso."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "O que sabemos até agora",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Ter um **objetivo** (38 °C) e uma forma de agir (a manopla) não é suficiente. **Como** você reage importa.",
+            "Um **atraso** significa que você sempre sente informação velha. O chuveiro não está quebrado, ele está atrasado.",
+            "Reagir com mais força a informação velha torna as oscilações **piores**, não melhores.",
+            "Ajustar a manopla uma vez e esperar funciona, mas só se nada nunca mudar."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch0-q1",
+              "q": "Em t = 5 s você gira a manopla de frio para quente. Mais ou menos quando a temperatura na saída **começa** a subir?",
+              "options": [
+                {
+                  "text": "Imediatamente, aos 5 s",
+                  "why": "A água que você acabou de misturar ainda está no fundo do cano. A saída continua recebendo a água fria antiga por um tempo."
+                },
+                {
+                  "text": "Por volta de 7,5 s",
+                  "correct": true,
+                  "why": "Isso: 2,5 s depois, quando a água nova percorreu o cano. Depois disso ela sobe suavemente ao longo de cerca de um segundo enquanto se mistura."
+                },
+                {
+                  "text": "Por volta de 15 s",
+                  "why": "Tarde demais: o atraso do nosso cano é de 2,5 s, não de 10 s."
+                }
+              ]
+            },
+            {
+              "id": "ch0-q2",
+              "q": "Você ajusta a manopla exatamente certo (51%) e vai embora. O que acontece?",
+              "options": [
+                {
+                  "text": "Esquenta e se estabiliza em 38 °C sem oscilar",
+                  "correct": true,
+                  "why": "Sim. O atraso só faz a resposta chegar **mais tarde**. A oscilação vem de *reagir* a informações atrasadas."
+                },
+                {
+                  "text": "Ele oscila para sempre, por causa do atraso",
+                  "why": "O atraso por si só não cria oscilações. Ninguém está reagindo, então nada pode ultrapassar o alvo."
+                },
+                {
+                  "text": "Ele nunca chega a 38 °C",
+                  "why": "Ele chega lá: 2,5 s de atraso, depois cerca de um segundo de aquecimento suave."
+                }
+              ]
+            },
+            {
+              "id": "ch0-q3",
+              "q": "Qual gráfico de temperatura pertence a alguém que **reage com força demais**?",
+              "options": [
+                {
+                  "text": "Oscilações que crescem",
+                  "sketch": "swing-worse",
+                  "correct": true,
+                  "why": "Reagir demais a informações atrasadas bombeia energia para as oscilações, como empurrar um balanço exatamente nos momentos errados."
+                },
+                {
+                  "text": "Oscilações que diminuem",
+                  "sketch": "swing-better",
+                  "why": "Oscilações que diminuem significam que as reações são suaves o bastante para se acalmar. Essa pessoa reage *com suavidade*."
+                },
+                {
+                  "text": "Espere, depois suba suavemente",
+                  "sketch": "delay-then-rise",
+                  "why": "Essa é a mão paciente: ajuste e espere. Nenhuma reação exagerada."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Um pequeno drone paira perfeitamente imóvel a 2 metros, no vento, sem nenhum cérebro. Ele tem o mesmo problema que nós. **Como ele resolve isso?**"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "manual": {
+      "title": "Seu chuveiro",
+      "start": "Inicie o cronômetro",
+      "help": "Teclado: Tab até a manopla, depois setas (giros pequenos), Page Up/Down (giros grandes), Home (tudo frio), End (tudo quente).",
+      "view": {
+        "aria": "Chuveiro: uma manopla no canto inferior esquerdo mistura água fria e quente, um cano longo a leva até o chuveiro, e um termômetro mostra a temperatura na saída.",
+        "knob": "Manopla do chuveiro, de frio a quente",
+        "cold": "C",
+        "hot": "H",
+        "pipe": "cano (2,5 s de percurso)",
+        "head": "chuveiro",
+        "thermo": "termômetro"
+      },
+      "plot": {
+        "temp": "temperatura na saída",
+        "mix": "o que a manopla pede",
+        "aria": "Gráfico da temperatura na saída do chuveiro ao longo de 60 segundos, com a faixa alvo de 38 graus."
+      },
+      "readout": {
+        "time": "tempo",
+        "streak": "na faixa",
+        "crossings": "cruzou 38°"
+      },
+      "status": {
+        "ready": "Toque na manopla para começar.",
+        "go": "Vai! Chegue aos 38 °C…",
+        "hot": "Quente demais! 🔥",
+        "cold": "Frio demais! 🧊",
+        "inband": "Na faixa, segure…",
+        "won": "Você conseguiu em {t} s, depois de cruzar 38° {n} vezes. Mandou bem!",
+        "timeup": "Acabou o tempo! Você cruzou 38° {n} vezes. Não se preocupe, é exatamente essa a ideia.",
+        "wonOne": "Você conseguiu em {t} s, depois de passar por 38° só uma vez. Suave!",
+        "wonZero": "Você conseguiu em {t} s sem nunca ultrapassar o alvo. Uau!",
+        "timeupOne": "O tempo acabou! Você passou por 38° uma vez, mas nunca se manteve lá por 10 s."
+      },
+      "again": "Tente de novo"
+    },
+    "robots": {
+      "title": "Três mãos robóticas",
+      "choose": "Qual mão?",
+      "hand": {
+        "normal": "Mão normal",
+        "harder": "Mão mais difícil",
+        "patient": "Mão paciente"
+      },
+      "intro": {
+        "normal": "Gira a manopla mais rápido quanto mais errada a água parece estar.",
+        "harder": "Mesma ideia, mas reage com o dobro do vigor.",
+        "patient": "Ajusta a manopla para 51% uma vez, depois espera."
+      },
+      "result": {
+        "normal": "Chega lá eventualmente, depois de alguns grandes balanços.",
+        "harder": "Nunca se estabiliza! Ele reage demais a informações antigas toda vez.",
+        "patient": "Calmo e rápido, mas só porque já sabia a resposta de antemão."
+      },
+      "view": {
+        "aria": "Chuveiro controlado por uma mão robótica. A manopla gira sozinha.",
+        "knob": "Manopla do chuveiro (controlada por robô)",
+        "cold": "C",
+        "hot": "H",
+        "pipe": "cano (2,5 s de percurso)",
+        "head": "cabeça do chuveiro",
+        "thermo": "termômetro"
+      },
+      "plot": {
+        "temp": "temperatura na cabeça",
+        "mix": "o que a manopla pede",
+        "aria": "Gráfico da temperatura do chuveiro para a mão do robô selecionada, com a mão anterior mostrada como um traço tênue."
+      }
+    },
+    "lag": {
+      "title": "Está quebrado, ou só atrasado?",
+      "slider": "Desloque a curva da manopla mais para frente em",
+      "sourceYours": "Esta é a sua própria execução de cima.",
+      "sourceRobot": "Esta é uma execução de exemplo. (Jogue o jogo acima e volte para usar a sua própria.)",
+      "plot": {
+        "temp": "temperatura na saída do chuveiro",
+        "mix": "o que a manopla pede",
+        "aria": "Temperatura da mistura da manopla e temperatura da saída do chuveiro ao longo do tempo; a curva da manopla pode ser deslocada mais para frente com o controle deslizante."
+      },
+      "status": {
+        "mismatch": "Elas ainda não coincidem (diferença média de {e} °C). Continue deslizando.",
+        "match": "Elas se alinham! A saída do chuveiro recebe o que a manopla pediu cerca de {s} s atrás."
+      }
+    }
+  }
+}

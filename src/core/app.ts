@@ -141,7 +141,7 @@ function tool(icon: string, label: string, attrs: Record<string, unknown> = {}, 
 
 function buildLanguageMenu(): { btn: HTMLElement; pop: HTMLElement } {
   const current = languageOf(getLang());
-  const btn = tool(`${ICONS.globe}<span class="tool-code" aria-hidden="true">${current.code.toUpperCase()}</span>`, tc('lang.button', { name: current.name }), {
+  const btn = tool(`${ICONS.globe}<span class="tool-code" aria-hidden="true">${current.code.split('-')[0].toUpperCase()}</span>`, tc('lang.button', { name: current.name }), {
     id: 'lang-btn',
     class: 'tool tool-lang',
     'aria-haspopup': 'menu',
@@ -154,8 +154,8 @@ function buildLanguageMenu(): { btn: HTMLElement; pop: HTMLElement } {
     const active = l.code === current.code;
     const item = h(
       'button',
-      { type: 'button', role: 'menuitemradio', 'aria-checked': String(active), lang: l.code, class: 'menu-item', tabindex: '-1' },
-      h('span', { class: 'menu-code', 'aria-hidden': 'true' }, l.code.toUpperCase()),
+      { type: 'button', role: 'menuitemradio', 'aria-checked': String(active), lang: l.code, dir: l.dir, class: 'menu-item', tabindex: '-1' },
+      h('span', { class: 'menu-code', 'aria-hidden': 'true' }, l.code.split('-')[0].toUpperCase()),
       h('span', { class: 'menu-name' }, l.name),
     );
     item.insertAdjacentHTML('beforeend', ICONS.check);
@@ -224,7 +224,8 @@ function buildShell(): DocumentFragment {
     drawer.hidden = false;
     scrim.hidden = false;
     menuBtn.setAttribute('aria-expanded', 'true');
-    (drawer.querySelector('a[aria-current]') as HTMLElement | null)?.focus() ?? (drawer.querySelector('a') as HTMLElement | null)?.focus();
+    const firstLink = drawer.querySelector<HTMLElement>('a[aria-current]') ?? drawer.querySelector<HTMLElement>('a');
+    firstLink?.focus();
   });
   scrim.addEventListener('click', closeDrawer);
   drawer.addEventListener('keydown', (e) => {
@@ -371,8 +372,10 @@ async function showChapter(n: number, sectionId?: string, keepScroll = false): P
   const bus = createBus();
   const page = renderChapter({ chapter: n, ns: entry.ns, content: content as ChapterContent, widgets: mod.widgets, bus, cleanups });
   const navEl = h('nav', { class: 'chapter-nav', 'aria-label': tc('nav.chapterNav') });
-  if (n > 0) navEl.append(h('a', { class: 'btn', href: `#/ch/${n - 1}` }, `← ${tc(`chapters.${n - 1}.short`)}`));
-  else navEl.append(h('a', { class: 'btn', href: '#/' }, `← ${tc('nav.home')}`));
+  const rtl = languageOf(getLang()).dir === 'rtl';
+  const backArrow = rtl ? '→' : '←';
+  if (n > 0) navEl.append(h('a', { class: 'btn', href: `#/ch/${n - 1}` }, `${backArrow} ${tc(`chapters.${n - 1}.short`)}`));
+  else navEl.append(h('a', { class: 'btn', href: '#/' }, `${backArrow} ${tc('nav.home')}`));
   const nextHref = n < CHAPTER_COUNT - 1 ? `#/ch/${n + 1}` : '#/map';
   const nextTitle = n < CHAPTER_COUNT - 1 ? tc(`chapters.${n + 1}.title`) : tc('map.title');
   const nextQ = n < CHAPTER_COUNT - 1 ? tc(`chapters.${n + 1}.question`) : tc('map.intro');
@@ -383,12 +386,13 @@ async function showChapter(n: number, sectionId?: string, keepScroll = false): P
       h('span', { class: 'up-next-kicker' }, tc('nav.upNext')),
       h('span', { class: 'up-next-title' }, nextTitle),
       setRich(h('span', { class: 'up-next-q' }), nextQ),
-      h('span', { class: 'up-next-arrow', 'aria-hidden': 'true' }, '→'),
+      h('span', { class: 'up-next-arrow', 'aria-hidden': 'true' }, rtl ? '←' : '→'),
     ),
   );
   page.append(navEl);
   main.replaceChildren(page);
   document.title = `${(content as ChapterContent).title} · ${tc('app.short')}`;
+  setPageDescription(tc(`chapters.${n}.question`));
   progress.visit(n);
   updateNav();
   // warm the next chapter (text + code) while the reader is busy with this one
@@ -421,6 +425,7 @@ async function showChapter(n: number, sectionId?: string, keepScroll = false): P
 
 function showHome(): void {
   document.title = tc('app.title');
+  setPageDescription(tc('home.question'));
   const cast = (['mika', 'theo', 'june'] as Who[]).map((w) =>
     h('div', { class: 'cast-card' }, avatar(w, 'happy'), h('strong', null, tc(`cast.${w}`)), setRich(h('p'), tc(`home.cast.${w}`))),
   );
@@ -467,6 +472,7 @@ function showHome(): void {
 
 function showMap(): void {
   document.title = `${tc('nav.map')} · ${tc('app.short')}`;
+  setPageDescription(tc('map.intro'));
   const visited = progress.get().visited;
   const upTo = visited.length ? Math.max(...visited) : -1;
   main.replaceChildren(
@@ -478,6 +484,10 @@ function showMap(): void {
     ),
   );
   window.scrollTo(0, 0);
+}
+
+function setPageDescription(text: string): void {
+  document.querySelector('meta[name="description"]')?.setAttribute('content', text.replace(/[*_`]/g, ''));
 }
 
 /** A small hovering drone over its dashed 2 m target: the course in one doodle. */

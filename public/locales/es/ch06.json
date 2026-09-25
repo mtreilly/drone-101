@@ -1,17 +1,17 @@
 {
   "kicker": "Capítulo 6",
   "title": "La verdadera personalidad del dron",
-  "question": "¿Por qué el dron rebota como un muelle?",
+  "question": "¿Por qué el dron rebota como un resorte?",
   "sections": [
     {
       "id": "spring",
-      "title": "El controlador es un muelle",
+      "title": "El controlador es un resorte",
       "blocks": [
         {
           "t": "say",
           "who": "mika",
           "mood": "think",
-          "text": "June preguntó dónde vive nuestro dron en el mapa. Pista: ¿te acuerdas del dron saltarín del capítulo 2? Cuanto más subíamos $\\eff{K_p}$, más botaba. Parecía exactamente un peso colgado de un muelle."
+          "text": "June preguntó dónde vive nuestro dron en el mapa. Pista: ¿te acuerdas del dron saltarín del capítulo 2? Cuanto más subíamos $\\eff{K_p}$, más botaba. Parecía exactamente un peso colgado de un resorte."
         },
         {
           "t": "say",
@@ -21,7 +21,7 @@
         },
         {
           "t": "p",
-          "text": "A la izquierda: una masa de 0,5 kg colgada de un muelle con un amortiguador (un pistoncito lleno de aceite que se resiste al movimiento). A la derecha: nuestro dron, misma masa, mismo rozamiento, con control proporcional."
+          "text": "A la izquierda: una masa de 0,5 kg colgada de un resorte con un amortiguador (un pistoncito lleno de aceite que se resiste al movimiento). A la derecha: nuestro dron, misma masa, mismo rozamiento, con control proporcional."
         },
         {
           "t": "note",
@@ -39,13 +39,13 @@
         },
         {
           "t": "p",
-          "text": "Mira las dos ecuaciones. El muelle empuja de vuelta con una fuerza $\\eff{k}\\,x$: cuanto más estirado, más fuerte tira. Nuestro controlador empuja con $\\eff{K_p}(\\sp{2} - \\out{h})$: cuanto más lejos del objetivo, más fuerte empuja. **La misma regla.** El controlador *es* un muelle: uno invisible, que tira del dron hacia los 2 m."
+          "text": "Mira las dos ecuaciones. El resorte empuja de vuelta con una fuerza $\\eff{k}\\,x$: cuanto más estirado, más fuerte tira. Nuestro controlador empuja con $\\eff{K_p}(\\sp{2} - \\out{h})$: cuanto más lejos del objetivo, más fuerte empuja. **La misma regla.** El controlador *es* un resorte: uno invisible, que tira del dron hacia los 2 m."
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "happy",
-          "text": "Así que un controlador P es un muelle virtual, y el rozamiento del aire $c$ es un amortiguador virtual. Todo lo que aprendamos sobre muelles nos sale gratis."
+          "text": "Así que un controlador P es un resorte virtual, y el rozamiento del aire $c$ es un amortiguador virtual. Todo lo que aprendamos sobre resortes nos sale gratis."
         }
       ]
     },
@@ -55,14 +55,14 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Todo sistema masa-muelle-amortiguador, y por tanto todo dron con control P, se describe con solo **dos números**:"
+          "text": "Todo sistema masa-resorte-amortiguador, y por tanto todo dron con control P, se describe con solo **dos números**:"
         },
         {
           "t": "vocab",
           "items": [
             {
               "term": "Frecuencia natural $\\omega_n = \\sqrt{k/m}$",
-              "def": "Lo rápido que *quiere* oscilar, en radianes por segundo. Un muelle más rígido ($\\eff{k}$ más grande) o una masa más ligera significan una oscilación más rápida."
+              "def": "Lo rápido que *quiere* oscilar, en radianes por segundo. Un resorte más rígido ($\\eff{k}$ más grande) o una masa más ligera significan una oscilación más rápida."
             },
             {
               "term": "Coeficiente de amortiguamiento $\\zeta = \\dfrac{c}{2\\sqrt{m k}}$",
@@ -72,7 +72,7 @@
         },
         {
           "t": "p",
-          "text": "Recuerda el muelle de los capítulos 4 y 5, donde probar con una exponencial nos dio dos valores de $s$. Añade un amortiguador y la misma suposición da $m s^2 + c s + k = 0$. Sus dos soluciones son dos puntos en nuestro mapa de $s$. Divide entre $m$ y queda"
+          "text": "Recuerda el resorte de los capítulos 4 y 5, donde probar con una exponencial nos dio dos valores de $s$. Añade un amortiguador y la misma suposición da $m s^2 + c s + k = 0$. Sus dos soluciones son dos puntos en nuestro mapa de $s$. Divide entre $m$ y queda"
         },
         {
           "t": "math",
@@ -130,7 +130,7 @@
           "t": "predict",
           "id": "ch6-damping",
           "gate": true,
-          "q": "Mismo muelle, misma $\\omega_n$. Subimos el amortiguamiento de $\\zeta = 1$ a $\\zeta = 3$. ¿Llega al objetivo **más rápido** o **más despacio**?",
+          "q": "Mismo resorte, misma $\\omega_n$. Subimos el amortiguamiento de $\\zeta = 1$ a $\\zeta = 3$. ¿Llega al objetivo **más rápido** o **más despacio**?",
           "options": [
             {
               "text": "Más rápido: más amortiguamiento, menos movimiento desperdiciado",
@@ -164,7 +164,7 @@
           "t": "say",
           "who": "mika",
           "mood": "think",
-          "text": "¡Mirad el mapa! Un punto se ha ido corriendo a la izquierda, rapidísimo. Pero el otro está muy cerquita del cero."
+          "text": "¡Fíjate en el mapa! Un punto se ha ido corriendo a la izquierda, rapidísimo. Pero el otro está muy cerquita del cero."
         },
         {
           "t": "say",
@@ -184,7 +184,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Ahora el capítulo 2 por fin tiene sentido. Para nuestro dron, la constante del muelle *es* la ganancia:"
+          "text": "Ahora el capítulo 2 por fin tiene sentido. Para nuestro dron, la constante del resorte *es* la ganancia:"
         },
         {
           "t": "math",
@@ -213,7 +213,7 @@
         {
           "t": "recap",
           "items": [
-            "Un dron con control P obedece **exactamente** la misma ecuación que una masa colgada de un muelle: el controlador es un muelle virtual.",
+            "Un dron con control P obedece **exactamente** la misma ecuación que una masa colgada de un resorte: el controlador es un resorte virtual.",
             "Dos números resumen su personalidad: $\\omega_n$ (lo rápido) y $\\zeta$ (lo saltarín).",
             "El movimiento es una mezcla de dos términos $e^{st}$. Los dos valores de $s$ están sobre un círculo de radio $\\omega_n$ cuando está subamortiguado, y se separan a lo largo del eje real cuando está sobreamortiguado.",
             "Más amortiguamiento no siempre es mejor: pasado $\\zeta = 1$, el valor lento de $s$ se arrastra hacia el cero y todo se ralentiza.",
@@ -271,7 +271,7 @@
                 {
                   "text": "$K_p = 0.5$ N/m",
                   "correct": true,
-                  "why": "Iguala $c/(2\\sqrt{m K_p}) = 1$ y sale $K_p = c^2/(4m) = 0.5$ N/m. Pero con un muelle tan débil el dron tendría que estar 9,8 m *por debajo* del objetivo solo para sostenerse, así que nunca despega. El control P solo no nos da las dos cosas."
+                  "why": "Iguala $c/(2\\sqrt{m K_p}) = 1$ y sale $K_p = c^2/(4m) = 0.5$ N/m. Pero con un resorte tan débil el dron tendría que estar 9,8 m *por debajo* del objetivo solo para sostenerse, así que nunca despega. El control P solo no nos da las dos cosas."
                 },
                 {
                   "text": "$K_p = 20$ N/m",
@@ -317,16 +317,16 @@
   "widgets": {
     "twins": {
       "title": "Muelle vs. dron",
-      "spring": "masa colgada de un muelle",
+      "spring": "masa colgada de un resorte",
       "drone": "dron con control P",
-      "msdAria": "Una masa colgada de un muelle y un amortiguador, rebotando alrededor de su posición de reposo.",
+      "msdAria": "Una masa colgada de un resorte y un amortiguador, rebotando alrededor de su posición de reposo.",
       "plotY": "distancia al objetivo (m)",
-      "plotAria": "Distancia al objetivo a lo largo del tiempo para el dron y para el muelle. Las dos curvas quedan una encima de la otra.",
+      "plotAria": "Distancia al objetivo a lo largo del tiempo para el dron y para el resorte. Las dos curvas quedan una encima de la otra.",
       "target": "objetivo / reposo",
-      "kp": "Rigidez: muelle $k$ = ganancia del dron $K_p$",
+      "kp": "Rigidez: resorte $k$ = ganancia del dron $K_p$",
       "personality": "personalidad",
-      "help": "Los dos empiezan 1 m por debajo de su objetivo y se sueltan. El control deslizante pone la rigidez del muelle y la ganancia del dron al mismo número.",
-      "describe": "El dron está a {d} m del objetivo; la masa del muelle, a {s} m del reposo.",
+      "help": "Los dos empiezan 1 m por debajo de su objetivo y se sueltan. El control deslizante pone la rigidez del resorte y la ganancia del dron al mismo número.",
+      "describe": "El dron está a {d} m del objetivo; la masa del resorte, a {s} m del reposo.",
       "regime": {
         "under": "subamortiguado",
         "critical": "amortiguamiento crítico",
@@ -340,7 +340,7 @@
       "target": "objetivo",
       "plotAria": "Respuesta al escalón de un sistema de segundo orden para la frecuencia natural y el coeficiente de amortiguamiento elegidos.",
       "planeAria": "El mapa de s, con los dos valores de s del sistema y un círculo discontinuo de radio omega n.",
-      "msdAria": "Una masa colgada de un muelle que reproduce la respuesta al escalón.",
+      "msdAria": "Una masa colgada de un resorte que reproduce la respuesta al escalón.",
       "panelAria": "Pequeña respuesta al escalón con coeficiente de amortiguamiento {z}.",
       "panel": {
         "0": "subamortiguado (ζ = {z})",
@@ -355,8 +355,8 @@
       "roots": "los dos valores de s",
       "personality": "personalidad",
       "never": "nunca",
-      "playSpring": "Reproducir en el muelle",
-      "stopSpring": "Pausar el muelle",
+      "playSpring": "Reproducir en el resorte",
+      "stopSpring": "Pausar el resorte",
       "describe": "Coeficiente de amortiguamiento {z}, frecuencia natural {w} radianes por segundo, valores de s {r}.",
       "regime": {
         "under": "subamortiguado",
@@ -364,7 +364,7 @@
         "over": "sobreamortiguado"
       },
       "planeCap": "los dos valores de s",
-      "springCap": "míralo en un muelle",
+      "springCap": "míralo en un resorte",
       "re": "σ",
       "im": "ω",
       "offMap": "{v} está fuera del mapa ←"
@@ -375,7 +375,7 @@
       "ref": "ζ = 1 (crítico)",
       "yours": "tu ζ",
       "yoursZ": "ζ = {z}",
-      "msdAria": "Una masa colgada de un muelle que se mueve hacia su posición de reposo.",
+      "msdAria": "Una masa colgada de un resorte que se mueve hacia su posición de reposo.",
       "plotAria": "Respuestas al escalón con amortiguamiento crítico y con el coeficiente de amortiguamiento elegido.",
       "planeAria": "Los dos valores de s para el coeficiente de amortiguamiento elegido.",
       "settleRef": "ζ = 1 se estabiliza",

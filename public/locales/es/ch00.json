@@ -27,7 +27,7 @@
         },
         {
           "t": "p",
-          "text": "Vamos a averiguarlo. Aquí abajo hay una ducha con una **tubería larga** entre el mando y la alcachofa, como una de verdad. El agua que mezclas en el mando tarda un par de segundos en subir por la tubería. Puedes ver cómo el color del agua avanza por ella."
+          "text": "Vamos a averiguarlo. Aquí abajo hay una ducha con una **tubería larga** entre el mando y el cabezal de la ducha, como una de verdad. El agua que mezclas en el mando tarda un par de segundos en subir por la tubería. Puedes ver cómo el color del agua avanza por ella."
         },
         {
           "t": "p",
@@ -62,7 +62,7 @@
           "t": "say",
           "who": "theo",
           "mood": "think",
-          "text": "Mmm. Dibujemos dos cosas: lo que el mando **pide** y lo que la alcachofa **te da**. Si está rota, no deberían parecerse en nada."
+          "text": "Mmm. Dibujemos dos cosas: lo que el mando **pide** y lo que el cabezal **te da**. Si está rota, no deberían parecerse en nada."
         },
         {
           "t": "p",
@@ -90,7 +90,7 @@
         },
         {
           "t": "note",
-          "text": "La tubería aporta un retardo real de 2,5 s: un giro brusco no puede afectar a la alcachofa antes. La mezcla responde después gradualmente durante un segundo más, aproximadamente. Para oscilaciones amplias y suaves, ese suavizado parece un retraso adicional."
+          "text": "La tubería aporta un retardo real de 2,5 s: un giro brusco no puede afectar al cabezal antes. La mezcla responde después gradualmente durante un segundo más, aproximadamente. Para oscilaciones amplias y suaves, ese suavizado parece un retraso adicional."
         }
       ]
     },
@@ -106,7 +106,7 @@
         },
         {
           "t": "p",
-          "text": "Construimos tres manos robot para probar ideas sin mojarnos. La **mano normal** gira el mando un poco más rápido cuanto peor está el agua, como hace casi todo el mundo. La **mano enérgica** hace exactamente lo mismo, pero con el doble de brío."
+          "text": "Construimos tres manos robóticas para probar ideas sin mojarnos. La **mano normal** gira el mando un poco más rápido cuanto peor está el agua, como hace casi todo el mundo. La **mano enérgica** hace exactamente lo mismo, pero con el doble de brío."
         },
         {
           "t": "predict",
@@ -138,7 +138,7 @@
         },
         {
           "t": "p",
-          "text": "Prueba las tres. La mano **enérgica** se agita entre congelarte y escaldarte. La mano **paciente** pone el mando en torno al 51 % (la mezcla correcta, calculada de antemano) y simplemente *espera*. Gana de calle."
+          "text": "Prueba las tres. La mano **enérgica** se agita entre congelarte y escaldarte. La mano **paciente** pone el mando en torno al 51 % (la mezcla correcta, calculada de antemano) y simplemente *espera*. Gana sin problemas."
         },
         {
           "t": "say",
@@ -156,7 +156,7 @@
           "t": "say",
           "who": "june",
           "mood": "think",
-          "text": "Pero la mano paciente hizo trampa. Sabía la respuesta de antemano. Si el termo se enfría, o alguien tira de la cadena, la posición correcta del mando cambia y la mano paciente ni se entera."
+          "text": "Pero la mano paciente hizo trampa. Sabía la respuesta de antemano. Si el calentador de agua se enfría, o alguien tira de la cadena, la posición correcta del mando cambia y la mano paciente no se da cuenta."
         },
         {
           "t": "p",
@@ -182,11 +182,11 @@
           "items": [
             {
               "id": "ch0-q1",
-              "q": "En t = 5 s giras de golpe el mando de frío a templado. ¿Más o menos cuándo **empieza** a subir la temperatura en la alcachofa?",
+              "q": "En t = 5 s giras de golpe el mando de frío a templado. ¿Más o menos cuándo **empieza** a subir la temperatura en el cabezal?",
               "options": [
                 {
                   "text": "Enseguida, a los 5 s",
-                  "why": "El agua que acabas de mezclar sigue abajo del todo en la tubería. La alcachofa sigue recibiendo el agua fría vieja durante un rato."
+                  "why": "El agua que acabas de mezclar sigue abajo del todo en la tubería. El cabezal sigue recibiendo el agua fría vieja durante un rato."
                 },
                 {
                   "text": "Hacia los 7,5 s",
@@ -258,18 +258,18 @@
       "start": "Poner en marcha el reloj",
       "help": "Teclado: Tab hasta el mando, luego flechas (giros pequeños), Re Pág/Av Pág (giros grandes), Inicio (todo frío), Fin (todo caliente).",
       "view": {
-        "aria": "Ducha: un mando abajo a la izquierda mezcla agua fría y caliente, una tubería larga la lleva hasta la alcachofa y un termómetro muestra la temperatura en la alcachofa.",
+        "aria": "Ducha: un mando abajo a la izquierda mezcla agua fría y caliente, una tubería larga la lleva hasta el cabezal y un termómetro muestra la temperatura en el cabezal.",
         "knob": "Mando de la ducha, de frío a caliente",
         "cold": "F",
         "hot": "C",
         "pipe": "tubería (2,5 s de recorrido)",
-        "head": "alcachofa",
+        "head": "cabezal",
         "thermo": "termómetro"
       },
       "plot": {
-        "temp": "temperatura en la alcachofa",
+        "temp": "temperatura en el cabezal",
         "mix": "lo que pide el mando",
-        "aria": "Gráfica de la temperatura en la alcachofa durante 60 segundos, con la franja objetivo de 38 grados."
+        "aria": "Gráfica de la temperatura en el cabezal durante 60 segundos, con la franja objetivo de 38 grados."
       },
       "readout": {
         "time": "tiempo",
@@ -291,7 +291,7 @@
       "again": "Otra vez"
     },
     "robots": {
-      "title": "Tres manos robot",
+      "title": "Tres manos robóticas",
       "choose": "¿Qué mano?",
       "hand": {
         "normal": "Mano normal",
@@ -309,18 +309,18 @@
         "patient": "Tranquila y rápida, pero solo porque sabía la respuesta de antemano."
       },
       "view": {
-        "aria": "Ducha controlada por una mano robot. El mando gira solo.",
+        "aria": "Ducha controlada por una mano robótica. El mando gira solo.",
         "knob": "Mando de la ducha (controlado por el robot)",
         "cold": "F",
         "hot": "C",
         "pipe": "tubería (2,5 s de recorrido)",
-        "head": "alcachofa",
+        "head": "cabezal",
         "thermo": "termómetro"
       },
       "plot": {
-        "temp": "temperatura en la alcachofa",
+        "temp": "temperatura en el cabezal",
         "mix": "lo que pide el mando",
-        "aria": "Gráfica de la temperatura de la ducha con la mano robot elegida; la mano anterior aparece como un fantasma tenue."
+        "aria": "Gráfica de la temperatura de la ducha con la mano robótica elegida; la mano anterior aparece como un fantasma tenue."
       }
     },
     "lag": {
@@ -329,13 +329,13 @@
       "sourceYours": "Este es tu propio intento de arriba.",
       "sourceRobot": "Este es un intento de ejemplo. (Juega arriba y vuelve para usar el tuyo.)",
       "plot": {
-        "temp": "temperatura en la alcachofa",
+        "temp": "temperatura en el cabezal",
         "mix": "lo que pide el mando",
-        "aria": "Temperatura de la mezcla en el mando y temperatura en la alcachofa a lo largo del tiempo; la curva del mando se puede retrasar con el control deslizante."
+        "aria": "Temperatura de la mezcla en el mando y temperatura en el cabezal a lo largo del tiempo; la curva del mando se puede retrasar con el control deslizante."
       },
       "status": {
         "mismatch": "Aún no coinciden (diferencia media {e} °C). Sigue deslizando.",
-        "match": "¡Coinciden! La alcachofa recibe lo que el mando pidió hace unos {s} s."
+        "match": "¡Coinciden! El cabezal recibe lo que el mando pidió hace unos {s} s."
       }
     }
   }

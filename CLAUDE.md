@@ -34,8 +34,8 @@ for layout and `control-course-plan.md` for the pedagogical outline and physical
 - **No hard-coded visible strings.** All text lives in `public/locales/{lang}/{namespace}.json`
   (`common.json` + one `chNN.json` per chapter). Widgets read `ctx.t('…')` (their
   `widgets.<id>` subtree), shared chrome uses `tc('…')`.
-- Current languages: **en (source), fr, es, it, de, pl**. Planned additions: **pt-BR, ja, zh-CN,
-  ar** (Modern Standard Arabic). List supported locales in `src/core/languages.ts` (endonyms,
+- Current languages: **en (source), fr, es, it, de, pl, pt-BR, ja, zh-CN, ar** (Modern Standard
+  Arabic). List supported locales in `src/core/languages.ts` (endonyms,
   never flags). Files load lazily per language *and* per chapter; the next chapter is prefetched.
   A missing file falls back to English at runtime, but must never ship that way.
 - **Every change to English text must be mirrored in every supported translation in the same commit.**
@@ -87,7 +87,7 @@ all Arabic readers. For `ja` and `zh-CN`, inspect line breaks, punctuation, and 
 - **Run the axe-core CLI suite before committing UI changes:**
   - `pnpm a11y --quick` — English, light theme, every page
   - `pnpm a11y` — every page in every language (+ English dark)
-  - `pnpm a11y --full` — every language × both themes (168 pages)
+  - `pnpm a11y --full` — every language × both themes (280 pages)
 
   It builds, serves the site and runs `@axe-core/cli` with `?reveal` (opens prediction gates so
   hidden widgets are tested) and `?theme=` / `?lang=`. It needs Chrome plus a matching
@@ -106,8 +106,10 @@ all Arabic readers. For `ja` and `zh-CN`, inspect line breaks, punctuation, and 
 - Use the easing tokens (`--ease-out`, `--ease-in-out`, `--ease-std`); keep UI transitions under
   ~300 ms; press feedback is `scale(0.96)`; never animate from `scale(0)`; transition named
   properties only; entrances use the `translate` property so they compose with layout transforms.
-- Friendly text uses **Patrick Hand**; **Caveat** only for large display headings; body text is
-  Atkinson Hyperlegible. Canvas text must redraw after `document.fonts.ready`.
+- Friendly Latin-script text uses **Patrick Hand**; **Caveat** only for large display headings;
+  Latin body text is Atkinson Hyperlegible. Japanese, Simplified Chinese and Arabic use their
+  matching Noto Sans fonts, including canvas labels via `src/core/font.ts`. Canvas text must
+  redraw after `document.fonts.ready`.
 - Widgets share one anatomy: title → visual(s) → sliders (`.w-controls`) → readouts + transport
   (`.w-hud`) → status (reserves its height) → help. Labels never collide; stacked plots share a left
   edge; nothing clips at 375 px.

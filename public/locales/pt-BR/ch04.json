@@ -1,0 +1,367 @@
+{
+  "kicker": "Capítulo 4",
+  "title": "Por que as exponenciais são mágicas",
+  "question": "Existe uma curva cuja inclinação é uma cópia de si mesma?",
+  "sections": [
+    {
+      "id": "copy",
+      "title": "Uma curva que se copia",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Da última vez, a diferença entre o café e a temperatura ambiente diminuiu a uma taxa **proporcional à própria diferença**. Diferença grande, encolhimento rápido. Diferença pequena, encolhimento lento. Que tipo de curva faz isso?"
+        },
+        {
+          "t": "p",
+          "text": "Vamos caçar uma curva cuja inclinação, em cada ponto, seja um múltiplo fixo de sua altura. Bons candidatos são as curvas de \"dobrar\": $2^t$, $3^t$ e companhia. Cada uma se multiplica pelo mesmo fator a cada segundo."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Já vi $e^t$ nos livros didáticos. $e$ não é só um número aleatório que os matemáticos gostam? 2,718 e alguma coisa, tanto faz."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Vamos medir em vez de discutir. Coloque uma tangente em cada curva e divida sua inclinação por sua altura."
+        },
+        {
+          "t": "widget",
+          "id": "bases"
+        },
+        {
+          "t": "p",
+          "text": "Arraste o cursor ao longo de qualquer curva e a leitura de **inclinação ÷ altura** não se altera. Toda exponencial se copia, escalada por um número fixo. Para a base 2, esse número é cerca de 0,693; para a base 3, cerca de 1,099."
+        },
+        {
+          "t": "p",
+          "text": "E para exatamente uma base o número de escala é **1**, então a curva da inclinação fica bem em cima da própria curva. Essa base é $e \\approx 2.718$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\,e^{t} = e^{t}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Então $e$ não é aleatório de jeito nenhum. É **o** número cuja curva é sua própria inclinação. Ok, retiro o que disse."
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "O número de escala para a base b é chamado de ln b, o \"logaritmo natural\". Não vamos precisar dele de novo. Vamos usar apenas e."
+        }
+      ]
+    },
+    {
+      "id": "stretch",
+      "title": "Acelerando: e^(at)",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Sistemas reais não mudam todos no mesmo ritmo, então vamos colocar um botão no expoente: $e^{at}$. O número **a** estica ou comprime o tempo."
+        },
+        {
+          "t": "widget",
+          "id": "expA"
+        },
+        {
+          "t": "p",
+          "text": "Agora a inclinação ÷ altura é exatamente **a**, em todos os pontos da curva. a positivo: ela cresce (e cresce cada vez mais rápido). a negativo: ela diminui em direção a zero, como a diferença do café. a = 0: ela simplesmente fica parada."
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\,e^{at} = a\\,e^{at}"
+        },
+        {
+          "t": "predict",
+          "id": "ch4-double",
+          "gate": true,
+          "q": "Pegue a inclinação de $e^{2t}$ e depois pegue a inclinação **dessa inclinação**. O que você obtém?",
+          "options": [
+            {
+              "text": "$e^{2t}$ de novo",
+              "why": "É o que acontece para $e^{t}$ (a = 1). Aqui a = 2, e cada inclinação multiplica por 2."
+            },
+            {
+              "text": "$4\\,e^{2t}$",
+              "correct": true,
+              "why": "A primeira inclinação dá $2e^{2t}$. A inclinação *disso* multiplica por 2 de novo: $4e^{2t}$. Calcular uma inclinação apenas multiplica por a, todas as vezes."
+            },
+            {
+              "text": "$2t\\,e^{2t}$",
+              "why": "Um deslize comum de álgebra. O a desce como um multiplicador simples e o t nunca aparece na frente."
+            }
+          ]
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}e^{at} = a\\,e^{at},\\qquad \\frac{d^2}{dt^2}e^{at} = a^2\\,e^{at}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Espere, isso é enorme. Para exponenciais, calcular uma inclinação (cálculo) se transforma em **multiplicar por a** (apenas álgebra)."
+        },
+        {
+          "t": "note",
+          "text": "Coloque um post-it nisso. No Capítulo 7, essa ideia cresce e vira um truque que transforma cálculo em álgebra para *todo* sinal."
+        }
+      ]
+    },
+    {
+      "id": "guess",
+      "title": "Adivinhe uma exponencial",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Para uma **regra de mudança linear com coeficientes fixos**, como a nossa regra do café, podemos tentar uma exponencial: substitua e veja qual valor de a faz a regra ser verdadeira. Outros tipos de regras podem precisar de outras formas."
+        },
+        {
+          "t": "p",
+          "text": "A regra do café era $\\frac{dT}{dt} = -\\frac{T - 20}{\\tau}$ com τ = 10 min. Nossa suposição é $T = 20 + 70\\,e^{at}$ (70 é a diferença inicial). Ajuste a até que a inclinação da suposição concorde com o que a regra exige."
+        },
+        {
+          "t": "widget",
+          "id": "guess"
+        },
+        {
+          "t": "p",
+          "text": "A álgebra concorda com o controle deslizante. A inclinação da suposição é $a \\cdot 70e^{at}$. A regra quer $-70e^{at}/\\tau$. O $70e^{at}$ aparece em ambos os lados e se cancela:"
+        },
+        {
+          "t": "math",
+          "tex": "a \\cdot 70e^{at} = -\\frac{70e^{at}}{\\tau} \\quad\\Longrightarrow\\quad a = -\\frac{1}{\\tau}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "E cai exatamente nos pontos que construímos à mão no Capítulo 3. Adivinhe-uma-exponencial funciona. A equação que determina a é chamada de **equação característica**."
+        }
+      ]
+    },
+    {
+      "id": "spring",
+      "title": "A mola quebra nosso truque",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Vamos tentar em algo que **quica**. Uma massa numa mola é basicamente nosso drone sob controle P: puxada de volta com mais força quanto mais longe estiver do alvo."
+        },
+        {
+          "t": "p",
+          "text": "A mola puxa de volta com força $-kx$. Força = massa × aceleração, e aceleração é a inclinação da inclinação. Então a regra é:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\,\\frac{d^2x}{dt^2} = -k\\,x"
+        },
+        {
+          "t": "p",
+          "text": "Adivinhe $x = e^{at}$. A inclinação da inclinação é $a^2 e^{at}$, então $m a^2 e^{at} = -k e^{at}$. Cancele $e^{at}$:"
+        },
+        {
+          "t": "math",
+          "tex": "a^2 = -\\frac{k}{m}"
+        },
+        {
+          "t": "p",
+          "text": "Com k/m = 4, precisamos de um número cujo quadrado seja **−4**. Procure um:"
+        },
+        {
+          "t": "widget",
+          "id": "square"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Quadrados nunca são negativos. A parábola azul nunca chega à linha verde. Então **não** existe tal a. Nosso truque falha: molas simplesmente não podem ser descritas com exponenciais."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Mas a mola está bem ali, quicando alegremente. Ela *tem* um movimento. Talvez não seja a mola que está errada, talvez seja nossa ideia do que conta como um número?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "…Hmm. Vou admitir que falei \"nenhum número\" um pouco rápido demais. Todo número que eu *conheço* elevado ao quadrado dá algo positivo."
+        },
+        {
+          "t": "note",
+          "text": "Fique de olho nisso. O Theo estava certo? (Spoiler: não estava.)"
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "O que sabemos até agora",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "A inclinação de toda exponencial é uma cópia de si mesma: inclinação ÷ altura é constante.",
+            "$e \\approx 2.718$ é a base em que essa razão é exatamente 1. Com $e^{at}$ a razão é a.",
+            "Tomar a inclinação de $e^{at}$ apenas **multiplica por a**. O cálculo vira álgebra.",
+            "**Chute uma exponencial**, substitua na regra e resolva para a. Para o café, a = −1/τ.",
+            "Para uma mola, o chute exige $a^2 = -k/m$, e nenhum número comum faz isso. Ainda."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch4-q1",
+              "q": "Qual curva tem inclinação = −0,5 × altura em todo lugar?",
+              "options": [
+                {
+                  "text": "Decaimento suave",
+                  "sketch": "decaying-plain",
+                  "correct": true,
+                  "why": "Essa é $e^{-0.5t}$: a razão negativa significa que ela encolhe, e o encolhimento desacelera conforme fica menor."
+                },
+                {
+                  "text": "Crescimento explosivo",
+                  "sketch": "growing-plain",
+                  "why": "O crescimento precisa de uma inclinação *positiva* ÷ altura."
+                },
+                {
+                  "text": "Oscilação constante",
+                  "sketch": "steady-wiggle",
+                  "why": "A inclinação de uma oscilação não é um múltiplo fixo da sua altura: nos picos a altura é máxima, mas a inclinação é zero."
+                }
+              ]
+            },
+            {
+              "id": "ch4-q2",
+              "q": "Se $x = e^{-3t}$, quanto é $x'' + 3x'$?",
+              "options": [
+                {
+                  "text": "0",
+                  "correct": true,
+                  "why": "$x' = -3e^{-3t}$ e $x'' = 9e^{-3t}$. Então $9e^{-3t} + 3(-3e^{-3t}) = 0$."
+                },
+                {
+                  "text": "$18e^{-3t}$",
+                  "why": "Verifique o sinal de $x'$: as inclinações de $e^{-3t}$ vêm com −3, então $3x' = -9e^{-3t}$."
+                },
+                {
+                  "text": "$-3e^{-3t}$",
+                  "why": "Isso é só $x'$. Você também precisa somar o termo $x''$."
+                }
+              ]
+            },
+            {
+              "id": "ch4-q3",
+              "q": "Um tanque esvazia seguindo $h' = -h/20$ (tempo em segundos). Quais são a e a constante de tempo?",
+              "options": [
+                {
+                  "text": "a = −1/20 por segundo, τ = 20 s",
+                  "correct": true,
+                  "why": "Adivinhe $h = Ce^{at}$: $a = -1/20$, e τ = −1/a = 20 s, o tempo para drenar 63%."
+                },
+                {
+                  "text": "a = −20 por segundo, τ = 1/20 s",
+                  "why": "De cabeça para baixo: a regra divide por 20, então é lento (τ = 20 s), não super rápido."
+                },
+                {
+                  "text": "a = +1/20 por segundo, τ = 20 s",
+                  "why": "Um a positivo faria o nível da água *crescer*. O sinal de menos na regra significa escoamento."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "note",
+          "text": "Registro honesto: o \"nenhum número ao quadrado dá negativo\" do Theo é um erro. É só um que ainda não conseguimos ver. No próximo capítulo, ele vai poder estar errado da melhor maneira possível."
+        },
+        {
+          "t": "cliff",
+          "text": "O drone e a mola **oscilam**. Exponenciais só crescem ou diminuem. A menos que… um número possa elevar ao quadrado e dar negativo?"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "bases": {
+      "title": "Inclinação ÷ altura para diferentes bases",
+      "base": "Base b",
+      "xAxis": "t",
+      "yAxis": "altura bᵗ",
+      "curve": "bᵗ",
+      "slopeCurve": "sua inclinação",
+      "cursor": "Tangente em t =",
+      "showSlope": "Sobrepor a curva de inclinação",
+      "readHeight": "altura",
+      "readSlope": "inclinação",
+      "readRatio": "inclinação ÷ altura",
+      "statusE": "Base e: inclinação ÷ altura é exatamente 1. A curva é sua própria inclinação!",
+      "statusOther": "Inclinação ÷ altura é {r} em toda esta curva. Constante, mas não 1.",
+      "aria": "Gráfico de uma curva exponencial com uma reta tangente no cursor e, opcionalmente, sua curva de inclinação.",
+      "describe": "Base {b}, em t = {t}, inclinação dividida pela altura é {r}.",
+      "help": "Escolha uma base e depois arraste no gráfico (ou use o controle deslizante) para deslizar a tangente ao longo da curva."
+    },
+    "expA": {
+      "title": "Coloque um botão no expoente",
+      "xAxis": "tempo (s)",
+      "yAxis": "valor",
+      "curve": "eᵃᵗ",
+      "slopeCurve": "sua inclinação",
+      "a": "a",
+      "cursor": "Tangente em t =",
+      "readRatio": "inclinação ÷ altura",
+      "grow": "a > 0: ela cresce, cada vez mais rápido.",
+      "shrink": "a < 0: ela diminui em direção a zero, como a diferença do café.",
+      "flat": "a = 0: ela nunca muda. Inclinação zero, para sempre.",
+      "aria": "Gráfico de e elevado a a t, sua curva de inclinação e uma reta tangente.",
+      "describe": "a = {a}. A inclinação dividida pela altura é {r} em todos os pontos.",
+      "help": "Arraste no gráfico para mover a tangente. A curva tracejada clara é o seu a anterior."
+    },
+    "guess": {
+      "title": "Ajuste o palpite",
+      "xAxis": "tempo (min)",
+      "yAxis": "temperatura do café (°C)",
+      "rule": "a regra, construída à mão (Capítulo 3)",
+      "guess": "nosso palpite 20 + 70·eᵃᵗ",
+      "room": "ambiente 20 °C",
+      "a": "a",
+      "readGuess": "inclinação do palpite",
+      "readRule": "inclinação da regra",
+      "tooFast": "O palpite esfria rápido demais: sua inclinação é mais íngreme do que a regra permite. Aproxime a de zero.",
+      "tooSlow": "O palpite esfria devagar demais. Torne a mais negativo.",
+      "match": "Combinação perfeita! a = −0,1 por minuto = −1/τ. A suposição obedece à regra em todos os pontos.",
+      "aria": "Temperatura do café: a solução construída à mão da regra de resfriamento e uma suposição exponencial cuja taxa a é definida pelo controle deslizante.",
+      "probe": "inclinações comparadas em 5 min"
+    },
+    "square": {
+      "title": "Caçando a com a² = −4",
+      "xAxis": "a",
+      "yAxis": "a²",
+      "square": "a²",
+      "need": "precisa de −k/m = −4",
+      "a": "Tente a =",
+      "status": "a = {a} dá a² = {sq}. Ainda {gap} grande demais. Quadrados nunca ficam negativos.",
+      "springCaption": "Enquanto isso, a mola real (k/m = 4, sem amortecedor) quica alegremente:",
+      "springAria": "Uma massa em uma mola quicando para cima e para baixo.",
+      "aria": "Parábola de um quadrado com uma linha horizontal em menos quatro que ela nunca alcança.",
+      "playSpring": "Reproduzir a mola",
+      "pauseSpring": "Pausar a mola"
+    }
+  }
+}

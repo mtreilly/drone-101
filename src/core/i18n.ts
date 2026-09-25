@@ -1,4 +1,4 @@
-import { DEFAULT_LANG, isSupported, languageOf } from './languages';
+import { DEFAULT_LANG, isSupported, languageOf, matchLanguage } from './languages';
 
 /**
  * Minimal i18n: every visible string lives in /public/locales/{lang}/{namespace}.json.
@@ -22,16 +22,16 @@ export const getLang = (): string => lang;
 function detectLang(): string {
   if (typeof window === 'undefined') return DEFAULT_LANG;
   const fromUrl = new URLSearchParams(location.search).get('lang');
-  if (fromUrl && isSupported(fromUrl)) return fromUrl;
+  if (fromUrl && matchLanguage(fromUrl)) return matchLanguage(fromUrl)!;
   try {
     const saved = localStorage.getItem(STORE_KEY);
-    if (saved && isSupported(saved)) return saved;
+    if (saved && matchLanguage(saved)) return matchLanguage(saved)!;
   } catch {
     /* storage blocked */
   }
   for (const pref of navigator.languages ?? [navigator.language]) {
-    const base = pref.toLowerCase().split('-')[0];
-    if (isSupported(base)) return base;
+    const match = matchLanguage(pref);
+    if (match) return match;
   }
   return DEFAULT_LANG;
 }
@@ -137,7 +137,7 @@ export function raw<V = unknown>(ns: string, key: string): V | undefined {
   return find(ns, key) as V | undefined;
 }
 
-/** Locale-aware number formatting (decimal comma in fr/es/it/de/pl, true minus sign). */
+/** Locale-aware number formatting and a true minus sign. */
 export function fmt(n: number, digits = 2): string {
   if (!Number.isFinite(n)) return n > 0 ? '∞' : n < 0 ? '−∞' : '—';
   return new Intl.NumberFormat(lang, {

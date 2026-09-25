@@ -46,7 +46,7 @@
           "t": "predict",
           "id": "ch2-kp5",
           "gate": true,
-          "q": "Prenons $K_p = 5$ N/m. Le drone part du sol et vise 2 m. Où **finit**-il par planer ?",
+          "q": "Prenons $K_p = 5$ N/m. Le drone part du sol et vise 2 m. À quelle hauteur **finit**-il par se stabiliser ?",
           "options": [
             {
               "text": "Exactement à 2 m",
@@ -55,7 +55,7 @@
             {
               "text": "Vers 1 m",
               "correct": true,
-              "why": "Pour planer, la poussée doit égaler le poids (4,9 N). Avec $K_p = 5$, il faut une erreur de $4{,}9 / 5 \\approx 0{,}98$ m, donc il plane vers **1,02 m**."
+              "why": "Pour rester en vol stationnaire, la poussée doit égaler le poids (4,9 N). Avec $K_p = 5$, il faut une erreur de $4{,}9 / 5 \\approx 0{,}98$ m, donc il se stabilise vers **1,02 m**."
             },
             {
               "text": "Au-dessus de 2 m",
@@ -69,7 +69,7 @@
         },
         {
           "t": "p",
-          "text": "Regarde la {out|ligne bleue en pointillés} : c'est là que le drone finit par planer, et c'est toujours **en dessous** de la {sp|cible}. L'écart s'appelle l'**erreur statique**, ou tout simplement l'**affaissement**."
+          "text": "Regarde la {out|ligne bleue en pointillés} : c'est là que le drone finit par se stabiliser, et c'est toujours **en dessous** de la {sp|cible}. L'écart s'appelle l'**erreur statique**, ou tout simplement l'**affaissement**."
         },
         {
           "t": "say",
@@ -118,7 +118,7 @@
           "t": "say",
           "who": "theo",
           "mood": "worried",
-          "text": "Mika… regarde les deux premières secondes. Il est monté jusqu'à environ **3,4 mètres**, bien au-delà de la cible. Et regarde la {eff|poussée} : 120 N au décollage, puis elle tire *vers le bas*, puis de nouveau vers le haut. Ce n'est pas planer, ça, c'est rebondir."
+          "text": "Mika… regarde les deux premières secondes. Il est monté jusqu'à environ **3,4 mètres**, bien au-delà de la cible. Et regarde la {eff|poussée} : 120 N au décollage, puis elle tire *vers le bas*, puis de nouveau vers le haut. Ce n'est pas du vol stationnaire, ça, c'est rebondir."
         },
         {
           "t": "say",
@@ -205,7 +205,7 @@
           "items": [
             {
               "id": "ch2-q1",
-              "q": "Avec $K_p = 10$ N/m (et sans poussée de vol stationnaire), à quelle distance sous les 2 m le drone va-t-il planer ?",
+              "q": "Avec $K_p = 10$ N/m (et sans poussée de vol stationnaire), à quelle distance sous les 2 m le drone va-t-il se stabiliser ?",
               "options": [
                 {
                   "text": "0 m : il atteint la cible",
@@ -214,7 +214,7 @@
                 {
                   "text": "Environ 0,49 m",
                   "correct": true,
-                  "why": "La poussée doit égaler les 4,9 N du poids : $10 \\times e = 4{,}9$ donne $e = 0{,}49$ m. Il plane vers 1,51 m."
+                  "why": "La poussée doit égaler les 4,9 N du poids : $10 \\times e = 4{,}9$ donne $e = 0{,}49$ m. Il se stabilise vers 1,51 m."
                 },
                 {
                   "text": "Environ 4,9 m",
@@ -246,7 +246,7 @@
             },
             {
               "id": "ch2-q3",
-              "q": "Pourquoi le drone en commande P ne peut-il pas planer exactement à 2 m ?",
+              "q": "Pourquoi le drone en commande P ne peut-il pas se stabiliser exactement à 2 m ?",
               "options": [
                 {
                   "text": "À erreur nulle, la poussée est nulle, donc la gravité gagnerait",

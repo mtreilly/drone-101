@@ -29,6 +29,25 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+html:lang(ja) body,
+html:lang(zh-CN) body,
+html:lang(ar) body {
+  line-height: 1.75;
+}
+
+html:lang(ja) h1,
+html:lang(ja) h2,
+html:lang(ja) h3,
+html:lang(zh-CN) h1,
+html:lang(zh-CN) h2,
+html:lang(zh-CN) h3,
+html:lang(ar) h1,
+html:lang(ar) h2,
+html:lang(ar) h3 {
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+
 a {
   color: var(--c-output);
   text-underline-offset: 3px;
@@ -201,17 +220,21 @@ strong {
   background: var(--c-good);
   transition: width 0.4s;
 }
+html[dir='rtl'] .read-progress span {
+  transform-origin: right center;
+}
 
 .drawer {
   position: fixed;
-  inset: 0 0 0 auto;
+  inset-block: 0;
+  inset-inline-end: 0;
   width: min(22rem, 90vw);
   background: var(--card);
   box-shadow: var(--shadow);
   z-index: 80;
   padding: 16px;
   overflow: auto;
-  border-left: 1.5px solid var(--paper-3);
+  border-inline-start: 1.5px solid var(--paper-3);
 }
 .drawer[hidden] {
   display: none;
@@ -240,7 +263,7 @@ strong {
   font-weight: 700;
 }
 .drawer .done-mark {
-  margin-left: auto;
+  margin-inline-start: auto;
   color: var(--c-good);
 }
 .scrim {
@@ -255,7 +278,7 @@ strong {
 
 .legend-pop {
   position: absolute;
-  right: var(--gutter);
+  inset-inline-end: var(--gutter);
   top: 58px;
   background: var(--card);
   border: 1.5px solid var(--paper-3);
@@ -419,7 +442,7 @@ strong {
 /* language menu */
 .menu-pop {
   position: absolute;
-  right: var(--gutter);
+  inset-inline-end: var(--gutter);
   top: 56px;
   z-index: 60;
   min-width: 13rem;
@@ -429,6 +452,9 @@ strong {
   border-radius: 14px;
   box-shadow: var(--shadow);
   transform-origin: top right;
+}
+html[dir='rtl'] .menu-pop {
+  transform-origin: top left;
 }
 .menu-pop:not([hidden]) {
   animation: pop-in 170ms var(--ease-out);
@@ -480,6 +506,15 @@ strong {
 }
 .menu-name {
   flex: 1;
+}
+.menu-item:lang(ja) .menu-name {
+  font-family: 'Noto Sans JP', sans-serif;
+}
+.menu-item:lang(zh-CN) .menu-name {
+  font-family: 'Noto Sans SC', sans-serif;
+}
+.menu-item:lang(ar) .menu-name {
+  font-family: 'Noto Sans Arabic', sans-serif;
 }
 .menu-check {
   width: 18px;
@@ -539,10 +574,11 @@ strong {
   position: relative;
   flex: 1 1 18rem;
   max-width: 26rem;
-  margin-left: auto;
+  margin-inline-start: auto;
   display: grid;
   gap: 2px;
-  padding: 14px 48px 14px 18px;
+  padding-block: 14px;
+  padding-inline: 18px 48px;
   border: 2px solid var(--ink);
   border-radius: 14px;
   background: var(--card);
@@ -583,7 +619,7 @@ strong {
 }
 .up-next-arrow {
   position: absolute;
-  right: 18px;
+  inset-inline-end: 18px;
   top: 50%;
   margin-top: -0.7em;
   font-size: 1.5rem;
@@ -611,7 +647,7 @@ strong {
     display: inline-flex;
   }
   .toolbar {
-    margin-left: auto;
+    margin-inline-start: auto;
   }
   .btn-label {
     display: none;
@@ -632,8 +668,11 @@ main {
 }
 .wide {
   width: min(var(--wide), calc(100vw - 2 * var(--gutter)));
-  margin-left: 50%;
+  margin-inline-start: 50%;
   transform: translateX(-50%);
+}
+html[dir='rtl'] .wide {
+  transform: translateX(calc(50% - min(21rem, 50vw - var(--gutter))));
 }
 
 .chapter-head {
@@ -915,6 +954,17 @@ h3,
 .toc-body strong {
   overflow-wrap: break-word;
   hyphens: auto;
+}
+html:lang(ja) :is(h1, h2, h3, .w-title, .card-title, .up-next-title, .bubble, .btn, .option, .readout-label, .slider-label, .toc-body strong),
+html:lang(zh-CN) :is(h1, h2, h3, .w-title, .card-title, .up-next-title, .bubble, .btn, .option, .readout-label, .slider-label, .toc-body strong) {
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+  line-break: strict;
+}
+html:lang(ja) :is(h1, h2, h3, .w-title),
+html:lang(zh-CN) :is(h1, h2, h3, .w-title) {
+  text-wrap: balance;
 }
 @media (max-width: 520px) {
   p,

@@ -1,0 +1,434 @@
+{
+  "kicker": "Capítulo 5",
+  "title": "Números Giratórios",
+  "question": "Que tipo de número poderia elevar ao quadrado e dar −1, e por que ele iria oscilar?",
+  "sections": [
+    {
+      "id": "arrows",
+      "title": "Números são flechas",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Da última vez, a mola precisou de um número com $a^2 = -4$. Theo disse que tal número não existe. Mas como ele seria *de verdade*?"
+        },
+        {
+          "t": "p",
+          "text": "Imagine cada número como uma **flecha** a partir do 0 ao longo da reta numérica. Multiplicar por 2 estica a flecha. Multiplicar por ½ a encolhe. E multiplicar por −1 a inverte para apontar no sentido contrário. Isso é uma **meia volta**."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Ooh. Se ×(−1) é meia volta… o que é *metade* de uma meia volta? Um quarto de volta! A flecha apontaria direto para cima, fora da reta numérica."
+        },
+        {
+          "t": "p",
+          "text": "Vamos dar um nome ao quarto de volta: **i**. Faça duas vezes e você terá meia volta, que é ×(−1). Então $i \\cdot i = -1$. Aí está o nosso número que ao quadrado dá negativo!"
+        },
+        {
+          "t": "widget",
+          "id": "rotate"
+        },
+        {
+          "t": "math",
+          "tex": "i^2 = -1 \\qquad\\text{(dois quartos de volta = meia volta)}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Calma aí. Esses são os \"números imaginários\". Todo mundo sabe que são inventados. Eles não podem descrever uma mola real e física."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Eles não são imaginários, são **laterais**! É só uma flecha 2-D. Virar à esquerda é tão real quanto andar para frente."
+        },
+        {
+          "t": "p",
+          "text": "Um número como $3 + 2i$ significa apenas \"3 passos para frente, 2 passos para o lado\". Todo o plano de flechas é o palco para tudo o que vem a seguir."
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "O nome \"imaginário\" começou como um insulto, séculos atrás, e pegou. Não se deixe enganar."
+        }
+      ]
+    },
+    {
+      "id": "spin",
+      "title": "Um número que gira",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Um **radiano** é uma forma de medir um ângulo. Uma volta completa é $2\\pi$ radianos, então um girador a 2 radianos por segundo dá uma volta completa em cerca de 3,14 segundos. O símbolo ω nos diz essa velocidade de giro."
+        },
+        {
+          "t": "p",
+          "text": "Agora imagine um ponto percorrendo um círculo a uma velocidade constante, ω radianos por segundo. Para onde aponta sua **velocidade**? Sempre ao longo do círculo, que está um **quarto de volta** à frente da seta que aponta para o ponto."
+        },
+        {
+          "t": "p",
+          "text": "Um quarto de volta é ×i, e a velocidade é ω vezes o raio. Então a velocidade é a posição girada um quarto de volta, vezes ω: **velocidade = iω × posição**."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Espere. \"A inclinação é um número fixo vezes ela mesma\" é exatamente a propriedade da **exponencial** do Capítulo 4! Com a = iω."
+        },
+        {
+          "t": "p",
+          "text": "Então $e^{i\\omega t}$ não é nada assustador. É um ponto **girando** em torno do círculo de raio 1, ω radianos a cada segundo. Observe-o, e observe sua **sombra** no eixo real:"
+        },
+        {
+          "t": "widget",
+          "id": "spinner"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\,e^{i\\omega t} = i\\omega\\,e^{i\\omega t}\\qquad \\text{sombra no eixo real} = \\cos(\\omega t)"
+        },
+        {
+          "t": "p",
+          "text": "A sombra desliza para frente e para trás como uma **onda cosseno** perfeita. Uma seta girando, vista de lado, é uma oscilação. É aí que a oscilação estava se escondendo."
+        },
+        {
+          "t": "note",
+          "text": "Escrito por extenso, o girador é $e^{i\\omega t} = \\cos\\omega t + i\\sin\\omega t$: a parte ao longo é um cosseno, a parte lateral um seno. As pessoas chamam isso de fórmula de Euler."
+        }
+      ]
+    },
+    {
+      "id": "twins",
+      "title": "De volta à mola (e um novo erro)",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "A mola precisava de $a^2 = -k/m = -4$. Tente $a = 2i$: $(2i)^2 = 4\\,i^2 = -4$. ✓ E $a = -2i$ também funciona."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Certo, eu estava errado. O truque de chutar uma exponencial sobrevive. A mola é $e^{2it}$, um girador dando duas voltas a cada… 2π segundos."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Então a posição da mola é $e^{2it}$? Agora mesmo ela está em… $0.4 + 0.9i$ metros?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Uma mola não pode ficar 0,9 metros *de lado*. Ela só se move para cima e para baixo."
+        },
+        {
+          "t": "p",
+          "text": "Mika esqueceu a outra resposta. Encontramos **duas** soluções, $e^{2it}$ e $e^{-2it}$: um girador e seu **gêmeo espelhado** girando no sentido contrário. Some-os:"
+        },
+        {
+          "t": "widget",
+          "id": "twins"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "As partes laterais se cancelam perfeitamente! A soma apenas desliza ao longo da reta real, para frente e para trás."
+        },
+        {
+          "t": "math",
+          "tex": "x(t) = \\tfrac12\\left(e^{i\\omega t} + e^{-i\\omega t}\\right) = \\cos(\\omega t),\\qquad \\omega = \\sqrt{k/m}"
+        },
+        {
+          "t": "p",
+          "text": "Essa é a regra para qualquer coisa real: os giradores sempre vêm em **pares espelhados**, então suas partes laterais se cancelam e o que sobra é uma oscilação real que podemos medir."
+        }
+      ]
+    },
+    {
+      "id": "map",
+      "title": "O mapa de s",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "O Capítulo 4 nos deu exponenciais que **crescem ou diminuem**. Agora temos giradores que **oscilam**. Junte-os: $e^{st}$ com $s = \\sigma + i\\omega$."
+        },
+        {
+          "t": "math",
+          "tex": "e^{st} = e^{(\\sigma + i\\omega)t} = \\underbrace{e^{\\sigma t}}_{\\text{crescer/encolher}}\\cdot\\underbrace{e^{i\\omega t}}_{\\text{girar}}"
+        },
+        {
+          "t": "p",
+          "text": "Então cada número s é uma receita: **σ** (a parte ao longo) diz quão rápido crescer ou diminuir, **ω** (a parte lateral) diz quão rápido girar. Juntos, eles desenham uma **espiral**, e a sombra da espiral é o sinal que veríamos."
+        },
+        {
+          "t": "predict",
+          "id": "ch5-shadow",
+          "gate": true,
+          "q": "Coloque s em $-0.5 + 3i$. Como é a sombra de $e^{st}$?",
+          "options": [
+            {
+              "text": "Uma oscilação que cresce",
+              "sketch": "growing-wiggle",
+              "why": "O crescimento precisa de σ > 0. Aqui σ = −0,5 é negativo."
+            },
+            {
+              "text": "Uma oscilação que morre",
+              "sketch": "decaying-wiggle",
+              "correct": true,
+              "why": "ω = 3 faz girar (oscila a cada 2 s aproximadamente), e σ = −0,5 a encolhe por um fator $e^{-0.5} \\approx 0.61$ a cada segundo."
+            },
+            {
+              "text": "Um decaimento suave, sem oscilação",
+              "sketch": "decaying-plain",
+              "why": "Isso é o que você obteria com ω = 0 (s no eixo horizontal). Aqui ω = 3, então ele gira."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "smap"
+        },
+        {
+          "t": "p",
+          "text": "Faça um tour pelo mapa arrastando s (ou usando as teclas de seta):"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Metade esquerda** (σ < 0): a espiral encolhe, a oscilação morre.",
+            "**Metade direita** (σ > 0): a espiral cresce, a oscilação explode.",
+            "**Na linha vertical** (σ = 0): um círculo perfeito, uma oscilação que continua para sempre.",
+            "**Na linha horizontal** (ω = 0): nenhum giro, apenas as exponenciais simples do Capítulo 4.",
+            "**Mais para cima**: giro mais rápido, oscilações mais rápidas. **Mais para a esquerda**: desaparecimento mais rápido."
+          ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Então um único ponto neste mapa é toda uma personalidade: quão rápido ele oscila e se ele se acalma ou explode."
+        },
+        {
+          "t": "note",
+          "text": "Este mapa vai se tornar nossa imagem mais importante. Ele ganha seu nome oficial no Capítulo 7."
+        }
+      ]
+    },
+    {
+      "id": "fourier",
+      "title": "Um rápido desvio: tudo é feito de giradores",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Uma última surpresa. Pegue giradores de velocidades diferentes (1, 3, 5, 7… vezes mais rápido), encolha cada um na medida certa e some suas sombras. Com o suficiente deles, você pode construir quase *qualquer* forma, até mesmo uma onda quadrada com cantos afiados."
+        },
+        {
+          "t": "widget",
+          "id": "fourier"
+        },
+        {
+          "t": "p",
+          "text": "**Fourier** mostrou como muitos sinais periódicos podem ser montados a partir de peças giratórias. Uma onda quadrada é um exemplo: mais peças tornam suas partes planas e bordas afiadas mais nítidas. Essa é uma forma poderosa de descrever sinais, com condições e limites que podemos explorar mais adiante."
+        },
+        {
+          "t": "note",
+          "text": "Caixa da honestidade: bem ao lado de cada salto, a soma sempre ultrapassa o alvo em cerca de 9% do salto, não importa quantas peças você adicione. A saliência fica mais estreita, mas nunca desaparece."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "O que sabemos até agora",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Números são flechas. Multiplicar gira e estica elas. **i** é um quarto de volta, então $i^2 = -1$.",
+            "$e^{i\\omega t}$ é um ponto girando em torno de um círculo. Sua sombra é uma onda cosseno.",
+            "Ondulações reais vêm de **giradores espelhados gêmeos** cujas partes laterais se cancelam.",
+            "$e^{st}$ com $s = \\sigma + i\\omega$ gira *e* cresce ou encolhe: uma espiral. Sua sombra é uma ondulação que cresce ou morre.",
+            "O **mapa de s**: à esquerda acalma, à direita explode, para cima significa ondulações mais rápidas."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch5-q1",
+              "q": "Quanto dá multiplicar a flecha 3 por i, duas vezes?",
+              "options": [
+                {
+                  "text": "−3",
+                  "correct": true,
+                  "why": "Dois quartos de volta são meia volta: 3 → 3i → −3."
+                },
+                {
+                  "text": "3i",
+                  "why": "Isso é depois de *um* quarto de volta. Faça mais uma vez."
+                },
+                {
+                  "text": "9",
+                  "why": "Multiplicar por i gira a seta. Não muda o comprimento dela."
+                }
+              ]
+            },
+            {
+              "id": "ch5-q2",
+              "q": "Coloque s exatamente na linha vertical, em $s = 2i$. Qual é a sombra de $e^{st}$?",
+              "options": [
+                {
+                  "text": "Uma oscilação que continua para sempre",
+                  "sketch": "steady-wiggle",
+                  "correct": true,
+                  "why": "σ = 0 significa que não cresce nem diminui: um círculo perfeito, e sua sombra é um cosseno constante."
+                },
+                {
+                  "text": "Uma oscilação que vai morrendo",
+                  "sketch": "decaying-wiggle",
+                  "why": "Morrer aos poucos exige σ < 0 (à esquerda da linha vertical)."
+                },
+                {
+                  "text": "Crescimento explosivo",
+                  "sketch": "growing-plain",
+                  "why": "Crescer sem oscilar é a metade direita da linha *horizontal*: σ > 0, ω = 0."
+                }
+              ]
+            },
+            {
+              "id": "ch5-q3",
+              "q": "Uma corda de violão soa com uma nota clara e vai sumindo devagar. Onde, no mapa do plano s, ela mora?",
+              "options": [
+                {
+                  "text": "Um pouco à esquerda da linha vertical, bem acima da linha horizontal",
+                  "correct": true,
+                  "why": "Desvanecimento lento significa σ levemente negativo, e um tom claro significa um ω grande (muitas oscilações por segundo)."
+                },
+                {
+                  "text": "Na metade direita",
+                  "why": "A metade direita *cresce*. Uma corda que ficasse mais alta sozinha seria alarmante."
+                },
+                {
+                  "text": "Na linha horizontal, bem à esquerda",
+                  "why": "Sem ω não há oscilação (nenhuma nota), e bem à esquerda significa que morre instantaneamente. Isso é um baque."
+                }
+              ]
+            },
+            {
+              "id": "ch5-q4",
+              "q": "Por que os giradores de uma oscilação real e física sempre vêm em pares espelhados?",
+              "options": [
+                {
+                  "text": "Então as partes laterais deles se cancelam e a soma é um número real",
+                  "correct": true,
+                  "why": "Um girador e seu gêmeo têm partes laterais iguais e opostas. Somados, só a parte ao longo (uma oscilação real) sobrevive."
+                },
+                {
+                  "text": "Porque $i^2 = -1$",
+                  "why": "Isso é verdade, mas é por isso que os giradores *existem*, não por que eles se emparelham."
+                },
+                {
+                  "text": "Porque uma mola tem duas extremidades",
+                  "why": "Fofo, mas não. Um único pêndulo balançando também tem giradores gêmeos."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "June: \"Então **onde neste mapa mora o nosso drone?**\""
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "rotate": {
+      "title": "Multiplicar gira as setas",
+      "re": "ao longo (real)",
+      "im": "para o lado (i)",
+      "start": "Comece com a seta 3. Experimente os botões!",
+      "tooBig": "Isso sairia da página. Tente outro botão.",
+      "explain": {
+        "two": "×2 estica a seta para o dobro do comprimento. Mesma direção.",
+        "half": "×½ encolhe a seta para metade do comprimento. Mesma direção.",
+        "neg": "×(−1) é meia volta: a seta vira e aponta para o outro lado.",
+        "i": "×i é um quarto de volta, no sentido anti-horário. Faça duas vezes e compare com ×(−1)!"
+      },
+      "aria": "Um plano com uma seta a partir da origem. Os botões multiplicam a seta por 2, um meio, menos um ou i, girando ou esticando-a.",
+      "trail": "As setas até agora"
+    },
+    "spinner": {
+      "title": "O girador e sua sombra",
+      "re": "ao longo",
+      "im": "de lado",
+      "position": "posição",
+      "velocity": "velocidade",
+      "shadow": "sombra no eixo real",
+      "shadowAxis": "sombra",
+      "omega": "Velocidade de giro ω",
+      "help": "A seta de velocidade (desenhada mais curta para caber) sempre aponta um quarto de volta à frente da seta de posição. O ponto azul no eixo real é a sombra.",
+      "aria": "Um ponto girando em torno de um círculo, com sua seta de posição, uma seta de velocidade um quarto de volta à frente e sua sombra no eixo real.",
+      "plotAria": "A sombra do girador ao longo do tempo: uma onda cosseno."
+    },
+    "twins": {
+      "title": "Um girador e seu gêmeo espelhado",
+      "re": "ao longo",
+      "im": "lateral",
+      "sum": "soma",
+      "spinnerLabel": "rotador",
+      "twinLabel": "gêmeo",
+      "toggle": "Adicione o gêmeo espelhado",
+      "axis": "valor",
+      "realPart": "parte ao longo da soma",
+      "sidePart": "parte lateral da soma",
+      "alone": "Um rotador sozinho: a soma desvia para o lado (curva tracejada).",
+      "withTwin": "Com seu gêmeo adicionado ponta com cauda, as partes laterais se cancelam. A soma permanece na reta real: 2·cos(ωt).",
+      "aria": "Duas setas girando em direções opostas, adicionadas ponta com cauda. A soma delas é marcada com um anel.",
+      "plotAria": "As partes ao longo e de lado da soma ao longo do tempo."
+    },
+    "smap": {
+      "title": "O mapa de s",
+      "re": "σ: encolher ← → crescer",
+      "im": "ω: girar",
+      "reShort": "ao longo",
+      "imShort": "de lado",
+      "time": "tempo →",
+      "shadow": "sombra de e^(st)",
+      "shadowAxis": "sombra",
+      "mirror": "Mostrar o gêmeo espelhado",
+      "readS": "s",
+      "readTurns": "gira",
+      "readSize": "mudança de tamanho",
+      "spins": "Gira {n} vezes por segundo,",
+      "noSpin": "Não gira nada,",
+      "grows": "e cresce.",
+      "shrinks": "e encolhe.",
+      "steady": "e mantém o mesmo tamanho.",
+      "help": "Arraste o ponto s no mapa (ou focalize-o e use as teclas de seta). À direita: a espiral e^(st) em 3-D, com o tempo correndo para a direita. Sua sombra azul é traçada embaixo.",
+      "mapAria": "O mapa de s: arraste o ponto para escolher sigma e ômega.",
+      "spiralAria": "Espiral tridimensional de e elevado a s t, com o tempo correndo para a direita, e sua sombra na parede do fundo.",
+      "plotAria": "Sombra de e elevado a s t ao longo do tempo."
+    },
+    "fourier": {
+      "title": "Construindo uma onda quadrada a partir de giradores",
+      "axis": "valor",
+      "target": "onda quadrada",
+      "sum": "soma das sombras dos giradores",
+      "pieces": "Número de giradores",
+      "status": "{n} giradores adicionados. O mais rápido gira {f}× mais rápido que o primeiro.",
+      "aria": "Uma onda quadrada e a soma das sombras de um número escolhido de giradores que a aproximam.",
+      "statusOne": "Apenas um girador: uma oscilação simples, nada de quadrado nela ainda."
+    }
+  }
+}

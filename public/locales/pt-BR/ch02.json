@@ -1,0 +1,350 @@
+{
+  "kicker": "Capítulo 2",
+  "title": "Controle Proporcional",
+  "question": "Com que força o drone deve empurrar quando está muito baixo?",
+  "sections": [
+    {
+      "id": "push",
+      "title": "Empurre com mais força quanto mais longe você estiver",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Da última vez, o drone estabilizou 25 cm abaixo com o pacote. Quero saber por quê."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Nossa regra tinha duas partes: 4,9 N para sustentar o drone, mais 8 N para cada metro de erro. Os 4,9 N eram um chute sobre o peso. Quando o pacote mudou o peso, o chute ficou errado."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Então vamos abandonar o chute! Nada de 4,9. Deixe o **erro fazer todo o trabalho**: empurre proporcionalmente ao quão longe você está."
+        },
+        {
+          "t": "p",
+          "text": "Esse é o controlador mais famoso que existe, o **controle proporcional** (\"controle P\" para abreviar):"
+        },
+        {
+          "t": "math",
+          "tex": "\\eff{T} = K_p \\, \\err{e} = K_p\\,(\\sp{r} - \\out{h})"
+        },
+        {
+          "t": "p",
+          "text": "$K_p$ é o **ganho**: quantos newtons de empuxo você adiciona para cada metro de erro. Sua unidade é newtons por metro (N/m). $K_p$ grande significa um controlador ávido, $K_p$ pequeno um controlador relaxado. Essa é a única manopla que temos neste capítulo."
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Ainda fingindo que os motores são ilimitados. Eles podem até puxar um pouco para baixo se o drone estiver muito alto. Vamos ser honestos sobre os limites no Capítulo 8."
+        },
+        {
+          "t": "predict",
+          "id": "ch2-kp5",
+          "gate": true,
+          "q": "Pegue $K_p = 5$ N/m. O drone começa no chão e vai em direção a 2 m. Onde ele **acaba** pairando?",
+          "options": [
+            {
+              "text": "Exatamente a 2 m",
+              "why": "Exatamente a 2 m o erro é zero, então o empuxo seria $5 \\times 0 = 0$ N, e o drone cairia. Ele não consegue ficar lá."
+            },
+            {
+              "text": "Cerca de 1 m",
+              "correct": true,
+              "why": "Para pairar, o empuxo deve ser igual ao peso (4,9 N). Com $K_p = 5$ isso exige um erro de $4.9 / 5 \\approx 0.98$ m, então ele paira a cerca de **1,02 m**."
+            },
+            {
+              "text": "Acima de 2 m",
+              "why": "Acima de 2 m o erro é negativo, então o empuxo seria negativo e ele afundaria. Estar alto demais não pode ser um ponto de repouso."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "pcontrol"
+        },
+        {
+          "t": "p",
+          "text": "Olhe para a {out|linha azul pontilhada}: é onde o drone acaba pairando, e está sempre **abaixo** do {sp|alvo}. Essa diferença é chamada de **erro em regime permanente**, ou simplesmente **desvio residual**."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "É um cabo de guerra. A gravidade puxa para baixo com 4,9 N, sempre. A única maneira de o controlador empurrar de volta com 4,9 N é se houver **algum erro restante** para multiplicar."
+        },
+        {
+          "t": "math",
+          "tex": "\\eff{T} = \\text{peso} \\;\\Rightarrow\\; K_p\\,\\err{e} = 4.9 \\;\\Rightarrow\\; \\err{e}_{\\text{desvio residual}} = \\frac{4.9}{K_p}\\ \\text{m}"
+        },
+        {
+          "t": "p",
+          "text": "Agora deslize $K_p$ para baixo até **2 N/m**. O drone nem sai do chão! No chão o erro é 2 m, então o empuxo é apenas $2 \\times 2 = 4$ N, menos que o peso de 4,9 N. A fórmula diz que precisaria cair 2,45 m, o que é subterrâneo."
+        }
+      ]
+    },
+    {
+      "id": "more",
+      "title": "É só aumentar!",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Solução fácil: **mais ganho é sempre melhor**. Maior $K_p$, menor queda. Aumente!"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Já vou. Potência máxima: $K_p = 60$!"
+        },
+        {
+          "t": "widget",
+          "id": "mika-button",
+          "wide": false
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Cai até **8 cm**! Depois de alguns segundos está basicamente a 2 m. Vitória!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Mika… olha os primeiros dois segundos. Ele disparou para cerca de **3,4 metros**, muito além do alvo. E olha o {eff|empuxo}: 120 N no lançamento, depois puxando *para baixo*, depois para cima de novo. Isso não é pairar, isso é quicar."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Ah. Eu só olhei onde ele acabou. A {err|área de erro vermelha} no começo é enorme."
+        },
+        {
+          "t": "p",
+          "text": "Esse foi o erro da Mika: julgar um controlador só por onde ele **finalmente** se estabiliza. Como ele **chega** lá importa tanto quanto. Teste alguns ganhos e observe o traço tênue da sua execução anterior:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Ganho baixo** ($K_p$ pequeno): suave, mas com muito desvio residual. Diminua o suficiente e o drone nunca decola.",
+            "**Ganho alto** ($K_p$ grande): pouco desvio residual, mas ele **ultrapassa o alvo** (passa além de onde vai se estabilizar) e oscila antes de estabilizar."
+          ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Por que empurrar com *mais força* faria ele *oscilar*?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Um empurrão forte faz ele se mover rápido. Quando atinge a altura certa, ainda está indo rápido, e nada na nossa regra diz \"devagar, você está quase lá\". Só o arrasto do ar o freia suavemente. Então ele passa direto, é empurrado de volta, passa direto de novo…"
+        },
+        {
+          "t": "note",
+          "text": "Nota honesta: com nosso drone simples, o controle P oscila, mas nunca **explode** de verdade. As oscilações sempre acabam diminuindo. Drones reais têm pequenos atrasos (os motores levam tempo para girar) que tornam um ganho alto genuinamente perigoso. Voltaremos a isso nos Capítulos 10 e 11."
+        }
+      ]
+    },
+    {
+      "id": "challenge",
+      "title": "Um desafio",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Vamos encontrar o ponto ideal. O drone passa se tiver um desvio residual **menor que 20 cm** *e* ultrapassar o alvo em **menos de 30%** (medimos a ultrapassagem como o quanto ele sobe acima da altura em que finalmente se estabiliza). Encontre um $K_p$ que faça as duas coisas."
+        },
+        {
+          "t": "widget",
+          "id": "challenge"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "As zonas verdes nunca se sobrepõem! O desvio residual precisa de $K_p$ acima de cerca de 24,5, a ultrapassagem precisa dele abaixo de cerca de 3,9. **Não há resposta**."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Porque um único botão controla os dois, e ele os puxa em direções opostas. Não é que não tenhamos encontrado o número certo. **Não existe um.** Precisamos de um *tipo* melhor de controlador."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Para projetar um controlador melhor, precisamos falar sobre as oscilações adequadamente. \"Lento\", \"saltitante\", \"eventualmente estabiliza\"… isso são impressões, não física."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "O que sabemos até agora",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "**Controle proporcional**: empuxo = $K_p \\times$ erro. Um botão, o ganho $K_p$ (N/m).",
+            "Contra a gravidade, o controle P sempre deixa um **erro em regime permanente** (desvio residual) de $4.9 / K_p$ m: algum erro precisa permanecer para produzir o empuxo que sustenta o drone.",
+            "Ganho baixo significa grande desvio residual e resposta lenta. Ganho alto significa pequeno desvio residual, mas **sobressinal** e oscilação.",
+            "\"Mais ganho é sempre melhor\" é falso. Para o nosso drone, nenhum $K_p$ fornece tanto pequeno desvio residual quanto pequeno sobressinal."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch2-q1",
+              "q": "Com $K_p = 10$ N/m (e sem empuxo de pairar), a que altura abaixo de 2 m o drone vai pairar?",
+              "options": [
+                {
+                  "text": "0 m: ele alcança o alvo",
+                  "why": "No alvo o erro é zero, então o empuxo é zero. O controle P sozinho não consegue mantê-lo lá contra a gravidade."
+                },
+                {
+                  "text": "Cerca de 0,49 m",
+                  "correct": true,
+                  "why": "O empuxo deve ser igual ao peso de 4,9 N: $10 \\times e = 4.9$ dá $e = 0.49$ m. Ele paira a cerca de 1,51 m."
+                },
+                {
+                  "text": "Cerca de 4,9 m",
+                  "why": "Isso é o peso em newtons, não o desvio residual. Divida pelo ganho: $4.9 / 10 = 0.49$ m."
+                }
+              ]
+            },
+            {
+              "id": "ch2-q2",
+              "q": "Qual dessas respostas veio do $K_p$ **mais alto**? (A linha tracejada é o alvo.)",
+              "options": [
+                {
+                  "text": "Baixo, com uma pequena oscilação",
+                  "sketch": "droop",
+                  "why": "Um desvio residual grande significa um ganho *pequeno*: é preciso muito erro para gerar empuxo suficiente."
+                },
+                {
+                  "text": "Perto do alvo, com grandes oscilações",
+                  "sketch": "overshoot",
+                  "correct": true,
+                  "why": "Desvio residual pequeno e muito sobressinal são a assinatura de um ganho alto."
+                },
+                {
+                  "text": "Suavemente e exatamente sobre o alvo",
+                  "sketch": "sluggish",
+                  "why": "Opção pegadinha: um controlador P puro lutando contra a gravidade **nunca** pode terminar exatamente sobre o alvo, qualquer que seja o $K_p$. Está faltando alguma coisa (Capítulo 9)."
+                }
+              ]
+            },
+            {
+              "id": "ch2-q3",
+              "q": "Por que o drone controlado por P não consegue pairar exatamente a 2 m?",
+              "options": [
+                {
+                  "text": "Com erro zero o empuxo é zero, então a gravidade venceria",
+                  "correct": true,
+                  "why": "Exatamente. Pairar exige 4,9 N, e o controle P só produz empuxo quando há erro."
+                },
+                {
+                  "text": "O sensor de altura não é preciso o suficiente",
+                  "why": "Nosso sensor é perfeito neste capítulo, e mesmo assim o drone apresenta desvio residual. É a regra de controle, não a medição."
+                },
+                {
+                  "text": "O arrasto do ar o segura",
+                  "why": "O arrasto só age enquanto o drone está se movendo. Pairando parado, não há arrasto algum, e a desvio residual continua lá."
+                }
+              ]
+            },
+            {
+              "id": "ch2-q4",
+              "q": "O drone pega um pacote e fica **duas vezes mais pesado**. Com o mesmo $K_p$, a desvio residual…",
+              "options": [
+                {
+                  "text": "dobra",
+                  "correct": true,
+                  "why": "Desvio residual = peso ÷ $K_p$. O dobro do peso precisa do dobro do erro para sustentá-lo."
+                },
+                {
+                  "text": "cai pela metade",
+                  "why": "Um drone mais pesado precisa de *mais* empuxo, então de *mais* erro, não menos."
+                },
+                {
+                  "text": "permanece a mesma",
+                  "why": "A desvio residual é exatamente o erro necessário para equilibrar o peso, então depende diretamente do peso."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Lento. Oscilante. Ultrapassa o alvo. Estabiliza. Continuamos descrevendo **como as coisas mudam ao longo do tempo** com palavras vagas. Precisamos de uma linguagem de verdade para a mudança."
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "pcontrol": {
+      "title": "Controle P: empuxo = Kp × erro",
+      "slider": "Ganho proporcional Kp",
+      "sliderHint": "newtons extras de empuxo por metro de erro",
+      "plot": {
+        "height": "altura",
+        "thrust": "empuxo",
+        "aria": "Altura do drone ao longo de 10 segundos enquanto decola em direção a 2 metros sob controle proporcional, com o erro sombreado em vermelho e a execução anterior como um traço tênue.",
+        "target": "alvo 2 m",
+        "hovers": "estabiliza em {h} m"
+      },
+      "readout": {
+        "final": "estabiliza em",
+        "droop": "desvio residual",
+        "overshoot": "ultrapassagem do alvo",
+        "peakThrust": "empuxo de pico"
+      },
+      "status": {
+        "ground": "Nunca sai do chão: no chão o empuxo é de apenas {T} N, menos que o peso de {w} N.",
+        "flies": "Estabiliza em {h} m ({d} cm de desvio residual), depois de subir até {p} m ({o} % de sobressinal)."
+      }
+    },
+    "mika-button": {
+      "label": "Defina Kp = 60 N/m (ideia da Mika)"
+    },
+    "challenge": {
+      "title": "Encontre um Kp com desvio residual < 20 cm e sobressinal < 30 %",
+      "slider": "Ganho proporcional Kp",
+      "kpAxis": "Kp (N/m)",
+      "droopAxis": "desvio residual (m)",
+      "overAxis": "sobressinal (%)",
+      "droopSeries": "desvio residual = 4,9 / Kp",
+      "overSeries": "sobressinal",
+      "droopAria": "Desvio residual em função do ganho Kp: ele cai conforme Kp cresce. A zona de aprovação (desvio residual abaixo de 20 cm) é Kp acima de 24,5.",
+      "overAria": "Sobressinal em função do ganho Kp: ele sobe conforme Kp cresce. A zona de aprovação (sobressinal abaixo de 30 por cento) é Kp entre 2,45 e 3,9.",
+      "okZone": "passa",
+      "droopLimit": "20 cm",
+      "overLimit": "30 %",
+      "noflight": "sem decolagem",
+      "readout": {
+        "droop": "desvio residual",
+        "overshoot": "ultrapassagem do alvo"
+      },
+      "help": "Cada curva mostra o que o drone faria em cada Kp. A faixa verde é onde aquele requisito é atendido.",
+      "status": {
+        "neither": "Nenhum requisito é atendido aqui. Continue explorando.",
+        "droopOnly": "O desvio residual passa ✓ mas a ultrapassagem do alvo é grande demais.",
+        "overOnly": "A ultrapassagem do alvo passa ✓ mas o desvio residual é enorme.",
+        "impossible": "Você encontrou as duas zonas verdes, e elas nunca se sobrepõem: o desvio residual exige Kp > {a}, a ultrapassagem do alvo exige Kp < {b}. Nenhum Kp único consegue atender."
+      }
+    }
+  }
+}

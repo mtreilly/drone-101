@@ -47,7 +47,7 @@
         },
         {
           "t": "p",
-          "text": "Pongamos a prueba lo que dice Theo pensando en **ondas**. Mueve el mando de un lado a otro como una onda senoidal. El agua que llega a la alcachofa es la misma onda, 2,5 s tarde. ¿Cómo de tarde es eso *comparado con una oscilación*?"
+          "text": "Primero aislemos el **retardo puro** de la tubería. Imagina una onda senoidal que va desde la entrada de la tubería hasta el cabezal sin suavizarse: la salida conserva la misma forma, pero llega 2,5 s tarde. ¿Cuánto representa ese retraso *respecto de una oscilación completa*?"
         },
         {
           "t": "widget",
@@ -55,15 +55,15 @@
         },
         {
           "t": "p",
-          "text": "El retardo siempre es de 2,5 segundos, pero el desfase en la **oscilación** depende de lo rápido que oscile. Medimos el desfase como un ángulo: una oscilación entera son 360°, así que"
+          "text": "El retardo de la tubería sigue siendo de 2,5 s, pero su **desfase** depende de la rapidez de la oscilación. Llamemos $\\phi$ a ese desfase. Si una oscilación dura $T$ segundos, su velocidad angular es $\\omega=2\\pi/T$ radianes por segundo. Con un retardo de $L$ segundos, podemos expresar el mismo desfase en grados o en radianes:"
         },
         {
           "t": "math",
-          "tex": "\\text{desfase} = 360^\\circ \\times \\frac{L}{T_{\\text{oscilación}}} = \\omega L \\;\\text{(en radianes)}"
+          "tex": "\\begin{aligned}\\phi_{\\mathrm{deg}} &= 360^\\circ\\frac{L}{T} \\\\ \\phi_{\\mathrm{rad}} &= \\omega L,\\qquad \\omega=\\frac{2\\pi}{T}\\end{aligned}"
         },
         {
           "t": "p",
-          "text": "Para una oscilación lenta de 30 segundos, 2,5 s son solo 30°: un empujoncito. Para una oscilación de 5 segundos son 180°: el agua llega **exactamente al revés**, caliente cuando el mando dice fría. Un retardo es inofensivo para los cambios lentos y traicionero para los rápidos."
+          "text": "Si una oscilación lenta dura 30 segundos, 2,5 s equivalen a solo 30°: un pequeño desplazamiento. Si dura 5 segundos, equivalen a 180°: en este modelo de retardo puro, cada cresta de la salida coincide con un valle de la entrada. La respuesta térmica de la ducha también suaviza las oscilaciones rápidas; la añadiremos ahora."
         },
         {
           "t": "note",
@@ -77,7 +77,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "La ducha entera (tubería *y* mezcla) debe de hacer algo parecido. Este es el plan: mover el mando a una velocidad, esperar a que todo se asiente en un ritmo constante y medir dos números:"
+          "text": "Añadamos ahora la respuesta térmica de la ducha al retardo de la tubería. La temperatura del agua tarda en estabilizarse, así que la ducha completa retrasa y suaviza los cambios del mando. El plan es mover el mando a un ritmo, esperar a que la oscilación se estabilice y medir dos números:"
         },
         {
           "t": "list",
@@ -96,7 +96,7 @@
         },
         {
           "t": "p",
-          "text": "La mezcla reduce las oscilaciones rápidas, mientras que la tubería sigue añadiendo desfase. Las curvas de ganancia y fase frente a la velocidad de oscilación forman un **diagrama de Bode**. Aquí la entrada es la **temperatura del agua mezclada**, así que las oscilaciones lentas tienen ganancia 1. Si la entrada fuera la fracción del mando, la ganancia sería 45 veces mayor. Para esta gráfica temperatura a temperatura, ponemos $s=i\\omega$ en la respuesta normalizada de la ducha:"
+          "text": "La respuesta térmica de la ducha atenúa las oscilaciones rápidas, mientras que la tubería sigue añadiendo desfase. Las curvas de ganancia y fase según la velocidad de oscilación forman un **diagrama de Bode**. Aquí la entrada es la **temperatura del agua mezclada**, así que las oscilaciones lentas tienen ganancia 1. Si usáramos como entrada la posición del mando entre 0 y 1, la ganancia sería 45 veces mayor. Para esta gráfica de temperatura a temperatura, sustituimos $s=i\\omega$ en la respuesta normalizada de la ducha:"
         },
         {
           "t": "math",
@@ -198,7 +198,7 @@
         },
         {
           "t": "p",
-          "text": "Una **mano de velocidad** (girar el mando mientras se nota mal) es un controlador I: su borde está en oscilaciones de 13,8 s. Una **mano de posición** (\"está demasiado caliente, pon el mando *aquí*\") actúa como un controlador P: $L(s) = 45K\\,e^{-2.5s}/(s+1)$, cuya fase llega a −180° en $\\omega \\approx 0.95$ rad/s, oscilaciones de **6,6 s**, para cualquier $K$ por encima de unos 0,031 de mando por °C. La mayoría de la gente es una mezcla. (La mano robot normal oscila algo más despacio que 13,8 s, unos 15,5 s, porque está justo dentro del borde; las oscilaciones de la mano enérgica, de unos 11,6 s, quedan aplastadas porque el mando llega a sus topes.)"
+          "text": "Una **mano de velocidad** (girar el mando mientras se nota mal) es un controlador I: su borde está en oscilaciones de 13,8 s. Una **mano de posición** (\"está demasiado caliente, pon el mando *aquí*\") actúa como un controlador P: $L(s) = 45K\\,e^{-2.5s}/(s+1)$, cuya fase llega a −180° en $\\omega \\approx 0.95$ rad/s, oscilaciones de **6,6 s**, para cualquier $K$ por encima de unos 0,031 de mando por °C. La mayoría de la gente es una mezcla. (La mano robótica normal oscila algo más despacio que 13,8 s, unos 15,5 s, porque está justo dentro del borde; las oscilaciones de la mano enérgica, de unos 11,6 s, quedan aplastadas porque el mando llega a sus topes.)"
         }
       ]
     },
@@ -375,8 +375,8 @@
     "bode": {
       "title": "Construye un diagrama de Bode, oscilación a oscilación",
       "mix": "mezcla que pedimos",
-      "head": "temperatura en la alcachofa",
-      "timeAria": "La última medida: la temperatura de la mezcla oscilando y la temperatura en la alcachofa.",
+      "head": "temperatura en el cabezal",
+      "timeAria": "La última medida: la temperatura de la mezcla oscilando y la temperatura en el cabezal.",
       "w": "velocidad de oscilación ω (rad/s)",
       "gain": "ganancia",
       "phase": "fase (°)",
@@ -407,7 +407,7 @@
       "gainAria": "Diagrama de Bode de ganancia del lazo mano más ducha, con la línea de ganancia uno.",
       "phaseAria": "Diagrama de Bode de fase del lazo, con la línea de −180 grados.",
       "timeAria": "Temperatura durante 60 segundos con esta mano.",
-      "temp": "temperatura en la alcachofa",
+      "temp": "temperatura en el cabezal",
       "one": "ganancia = 1",
       "cliff": "−180°: el abismo",
       "at180": "ganancia a −180°",
@@ -427,9 +427,9 @@
     "replay": {
       "title": "Tus oscilaciones del capítulo 0",
       "yours": "Este es tu propio intento del capítulo 0.",
-      "robot": "Aún no has jugado al juego del capítulo 0, así que esta es la mano robot normal. (¡Juega y vuelve!)",
+      "robot": "Aún no has jugado al juego del capítulo 0, así que esta es la mano robótica normal. (¡Juega y vuelve!)",
       "aria": "Temperatura del intento de la ducha del capítulo 0, con la mezcla que pedía el mando.",
-      "temp": "temperatura en la alcachofa",
+      "temp": "temperatura en el cabezal",
       "mix": "lo que pedía el mando",
       "periodYours": "tu periodo de oscilación",
       "periodRobot": "periodo de oscilación del robot",
@@ -439,19 +439,19 @@
         "calm": "No hay suficientes oscilaciones para medir: ¡fuiste paciente (o tuviste suerte)!",
         "speed": "Oscilaciones cada {p} s: te comportaste como una mano de velocidad, un controlador I cerca de su borde.",
         "position": "Oscilaciones cada {p} s: te comportaste como una mano de posición, un controlador P cerca de su borde.",
-        "robot": "La mano robot oscila cada {p} s: una mano de velocidad (un controlador I) justo dentro de su borde, como se predijo."
+        "robot": "La mano robótica oscila cada {p} s: una mano de velocidad (un controlador I) justo dentro de su borde, como se predijo."
       }
     },
     "designer": {
       "title": "Ducha robot: controlador PI",
       "aria": "Temperatura durante 40 segundos con el controlador PI del robot; el diseño anterior aparece como fantasma.",
-      "temp": "temperatura en la alcachofa",
+      "temp": "temperatura en el cabezal",
       "mix": "lo que pide el mando",
       "view": {
         "aria": "Ducha controlada por el robot. El mando gira solo.",
         "knob": "Mando de la ducha (controlado por el robot)",
         "pipe": "tubería (2,5 s de recorrido)",
-        "head": "alcachofa",
+        "head": "cabezal",
         "thermo": "termómetro"
       },
       "kp": "Ganancia P $K_p$",

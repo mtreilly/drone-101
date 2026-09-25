@@ -155,7 +155,8 @@ function mountWidget(id: string, caption: string | undefined, wide: boolean, env
   if (caption) fig.append(setRich(h('p', { class: 'widget-caption' }), caption));
   const factory = env.widgets[id];
   if (!factory) {
-    host.append(h('p', { class: 'widget-error' }, `Missing widget: ${id}`));
+    console.error(`Missing widget: ${id}`);
+    host.append(h('p', { class: 'widget-error' }, tc('app.interactiveUnavailable')));
     return fig;
   }
   // mount after insertion so layout-dependent widgets can measure themselves
@@ -171,7 +172,7 @@ function mountWidget(id: string, caption: string | undefined, wide: boolean, env
       if (cleanup) env.cleanups.push(cleanup);
     } catch (err) {
       console.error(err);
-      host.append(h('p', { class: 'widget-error' }, String(err)));
+      host.append(h('p', { class: 'widget-error' }, tc('app.interactiveUnavailable')));
     }
   });
   return fig;

@@ -15,7 +15,7 @@ import { existsSync } from 'node:fs';
 const args = new Set(process.argv.slice(2));
 const PORT = 4178;
 const BASE = `http://localhost:${PORT}/`;
-const LANGS = ['en', 'fr', 'es', 'it', 'de', 'pl'];
+const LANGS = ['en', 'fr', 'es', 'it', 'de', 'pl', 'pt-BR', 'ja', 'zh-CN', 'ar'];
 const ROUTES = ['#/', '#/map', ...Array.from({ length: 12 }, (_, i) => `#/ch/${i}`)];
 const TAGS = 'wcag2a,wcag2aa,wcag21a,wcag21aa,wcag22aa,best-practice';
 

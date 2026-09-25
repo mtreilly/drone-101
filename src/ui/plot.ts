@@ -1,5 +1,6 @@
 import rough from 'roughjs';
 import { h } from '../core/dom';
+import { canvasHandFont } from '../core/font';
 import { fmt } from '../core/i18n';
 import { onThemeChange } from '../core/theme';
 import { type ColorKey, color, withAlpha } from './colors';
@@ -348,7 +349,7 @@ export class Plot {
     // grid
     ctx.strokeStyle = withAlpha(ink3.startsWith('#') ? ink3 : '#7c746a', 0.18);
     ctx.lineWidth = 1;
-    ctx.font = '14px "Patrick Hand", cursive';
+    ctx.font = canvasHandFont(14);
     ctx.fillStyle = color('ink2');
     const xt = x.ticks ?? (x.log ? logTicks(x.min, x.max) : niceTicks(x.min, x.max, Math.max(3, Math.floor((x1 - x0) / 70))));
     const yt = y.ticks ?? (y.log ? logTicks(y.min, y.max) : niceTicks(y.min, y.max, Math.max(3, Math.floor((y0 - y1) / 40))));
@@ -381,7 +382,7 @@ export class Plot {
     rc.line(x0, y0 + 2, x0, y1 - 4, opts);
     // labels
     ctx.fillStyle = color('ink2');
-    ctx.font = '15px "Patrick Hand", cursive';
+    ctx.font = canvasHandFont(15);
     ctx.textAlign = 'right';
     ctx.textBaseline = 'bottom';
     ctx.fillText(x.label, x1, this.hgt - 4);
@@ -422,7 +423,7 @@ export class Plot {
       }
       if (b.label) {
         ctx.fillStyle = color('ink3');
-        ctx.font = '14px "Patrick Hand", cursive';
+        ctx.font = canvasHandFont(14);
         ctx.textAlign = 'left';
         ctx.textBaseline = 'bottom';
         if (b.kind === 'h') ctx.fillText(b.label, PAD.l + 4, this.py(b.to) - 1);
@@ -449,7 +450,7 @@ export class Plot {
       ctx.setLineDash([]);
       if (l.label) {
         ctx.fillStyle = color(l.color);
-        ctx.font = '15px "Patrick Hand", cursive';
+        ctx.font = canvasHandFont(15);
         ctx.textAlign = 'right';
         ctx.textBaseline = 'bottom';
         if (l.kind === 'h') ctx.fillText(l.label, this.w - PAD.r - 4, this.py(l.at) - 2);
@@ -503,7 +504,7 @@ export class Plot {
         else ctx.fill();
       }
       if (m.label) {
-        ctx.font = '15px "Patrick Hand", cursive';
+        ctx.font = canvasHandFont(15);
         ctx.textAlign = X > this.w - 90 ? 'right' : 'left';
         ctx.textBaseline = 'bottom';
         ctx.fillText(m.label, X + (X > this.w - 90 ? -8 : 8), Y - 6);

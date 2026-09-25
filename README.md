@@ -12,6 +12,7 @@ pnpm dev        # http://localhost:5173
 pnpm test       # simulation/maths checks (RK4 vs exact solutions, Laplace table, margins, …)
 pnpm lint
 pnpm build      # static site in dist/
+pnpm a11y       # accessibility checks across chapters and languages
 ```
 
 ## Layout
@@ -23,6 +24,10 @@ pnpm build      # static site in dist/
 | `src/ui/` | reusable widgets: plot, s-plane, sliders/transport, drone view, shower view, block diagram, mass-spring view |
 | `src/story/` | chapter renderer (dialogue, notes, predict cards, quizzes), characters, concept map |
 | `src/chapters/chNN/` | each chapter's interactives (+ tests verifying every number in its text) |
-| `public/locales/en/` | all visible text: `common.json` plus one namespace per chapter |
+| `public/locales/{lang}/` | visible text: `common.json` plus one namespace per chapter |
 
 See `control-course-plan.md` for the pedagogical outline and physical parameters.
+
+The course supports English, French, Spanish, Italian, German, Polish, Brazilian Portuguese,
+Japanese, Simplified Chinese, and Modern Standard Arabic. Use the language menu or `?lang=pt-BR`
+(with any supported language code) to choose a translation.

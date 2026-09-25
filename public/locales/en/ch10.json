@@ -47,7 +47,7 @@
         },
         {
           "t": "p",
-          "text": "Let's test Theo's claim by thinking in **waves**. Wiggle the knob back and forth like a sine wave. The water that arrives at the head is the same wave, 2.5 s late. How late is that, *compared with one wiggle*?"
+          "text": "Let's isolate the pipe's **pure delay** first. Imagine a sine wave at the pipe's input travelling to the showerhead with no smoothing: the output has the same shape, 2.5 s late. How late is that, *compared with one wiggle*?"
         },
         {
           "t": "widget",
@@ -55,15 +55,15 @@
         },
         {
           "t": "p",
-          "text": "The delay is always 2.5 seconds, but the lag in the **wiggle** depends on how fast you wiggle. We measure the lag as an angle: a whole wiggle is 360°, so"
+          "text": "The pipe delay stays at 2.5 s, but its **phase lag** depends on how fast the wave wiggles. Call the lag $\\phi$. If one wiggle takes $T$ seconds, its angular speed is $\\omega=2\\pi/T$ radians per second. A positive lag here means the output trails the input; on a phase plot, that appears as a negative angle. With a delay of $L$ seconds, we can express the same lag in degrees or radians:"
         },
         {
           "t": "math",
-          "tex": "\\text{lag} = 360^\\circ \\times \\frac{L}{T_{\\text{wiggle}}} = \\omega L \\;\\text{(in radians)}"
+          "tex": "\\begin{aligned}\\phi_{\\mathrm{deg}} &= 360^\\circ\\frac{L}{T} \\\\ \\phi_{\\mathrm{rad}} &= \\omega L,\\qquad \\omega=\\frac{2\\pi}{T}\\end{aligned}"
         },
         {
           "t": "p",
-          "text": "For a slow 30-second wiggle, 2.5 s is only 30°: a small nudge. For a 5-second wiggle it's 180°: the water arrives **exactly upside down**, hot when the knob says cold. A delay is harmless for slow changes and treacherous for fast ones."
+          "text": "For a slow 30-second wiggle, 2.5 s is only 30°: a small shift. For a 5-second wiggle it is 180°: in this pure-delay model, each output crest lines up with an input trough. The shower's thermal response also smooths fast wiggles; we'll add that next."
         },
         {
           "t": "note",
@@ -77,7 +77,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "The whole shower (pipe *and* mixing) must be doing something similar. Here's the plan: wiggle the knob at one speed, wait until things settle into a steady rhythm, and measure two numbers:"
+          "text": "Now add the shower's thermal response to the pipe delay. Changes in water temperature take time to settle, so the full shower both delays and smooths knob changes. Here's the plan: wiggle the knob at one speed, wait for a steady rhythm, and measure two numbers:"
         },
         {
           "t": "list",
@@ -96,7 +96,7 @@
         },
         {
           "t": "p",
-          "text": "Mixing shrinks fast wiggles, while the pipe keeps adding phase lag. These gain and phase curves against wiggle speed form a **Bode plot**. Here the input is the **temperature of the mixed water**, so slow wiggles have gain 1. If we used knob fraction as input, the gain would be 45 times larger. For this temperature-to-temperature plot, set $s=i\\omega$ in the normalized shower response:"
+          "text": "The shower's thermal lag shrinks fast wiggles, while the pipe keeps adding phase lag. These gain and phase curves against wiggle speed form a **Bode plot**. Here the input is the **temperature of the mixed water**, so slow wiggles have gain 1. If we used knob fraction as input, the gain would be 45 times larger. For this temperature-to-temperature plot, set $s=i\\omega$ in the normalized shower response:"
         },
         {
           "t": "math",
