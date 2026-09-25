@@ -20,4 +20,11 @@ describe('ceilingHit', () => {
     const low: Solid = { x: -50, y: 50, w: 200, h: 20 };
     expect(ceilingHit({ x: 0, y: 0, w: 40, h: 20 }, 100, 0, [para, low])).toBe(low);
   });
+
+  it('with a tolerance, arriving just short of the underside counts (a frame that lands just after the contact)', () => {
+    expect(ceilingHit({ x: 0, y: 41.5, w: 40, h: 20 }, 60, 41.5, [para])).toBeNull();
+    expect(ceilingHit({ x: 0, y: 41.5, w: 40, h: 20 }, 60, 41.5, [para], 3)).toBe(para);
+    // but not from further away
+    expect(ceilingHit({ x: 0, y: 44, w: 40, h: 20 }, 60, 44, [para], 3)).toBeNull();
+  });
 });

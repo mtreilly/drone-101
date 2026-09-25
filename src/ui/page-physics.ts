@@ -19,13 +19,17 @@ export interface Solid extends Box {
   el?: Element;
 }
 
-/** Nearest solid underside crossed while a box's top moves up from `y0` to `y1` (y1 < y0), if any. */
-export function ceilingHit(box: Box, y0: number, y1: number, solids: Solid[]): Solid | null {
+/**
+ * Nearest solid underside crossed while a box's top moves up from `y0` to `y1` (y1 < y0), if any.
+ * `tol` (px) also counts arriving within that distance of it: a sim stops at the contact for a
+ * single sample and a screen frame can land just after it, already dropping away.
+ */
+export function ceilingHit(box: Box, y0: number, y1: number, solids: Solid[], tol = 0): Solid | null {
   let hit: Solid | null = null;
   for (const sd of solids) {
     if (box.x >= sd.x + sd.w || box.x + box.w <= sd.x) continue;
     const bottom = sd.y + sd.h;
-    if (y0 >= bottom - 0.5 && y1 < bottom && (!hit || bottom > hit.y + hit.h)) hit = sd;
+    if (y0 >= bottom - 0.5 && y1 < bottom + tol && (!hit || bottom > hit.y + hit.h)) hit = sd;
   }
   return hit;
 }

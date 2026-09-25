@@ -243,7 +243,8 @@ export class DroneView {
     if (tb.hit || !rising || gy + ART.y >= 0) return;
     const now_ = this.box(gy);
     const before = this.box(prev);
-    const hit = ceilingHit(now_, before.y, now_.y, pageSolids(this.el, now_));
+    // 3 px: the sim reports a contact for one sample, and this frame may land just after it
+    const hit = ceilingHit(now_, before.y, now_.y, pageSolids(this.el, now_), 3);
     if (!hit) return;
     const speed = (before.y - now_.y) / dt;
     const side = Math.random() < 0.5 ? -1 : 1;
