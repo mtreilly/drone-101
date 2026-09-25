@@ -1,5 +1,42 @@
 .home-hero {
   padding-top: 3rem;
+  display: grid;
+  gap: 8px 24px;
+  align-items: center;
+}
+@media (min-width: 760px) {
+  .home-hero {
+    grid-template-columns: minmax(0, 1fr) 230px;
+  }
+  .home-hero .hero-art {
+    grid-row: 1 / span 3;
+    grid-column: 2;
+  }
+}
+.hero-art {
+  width: 230px;
+  max-width: 64vw;
+  justify-self: center;
+  color: var(--ink);
+}
+.hero-art .hero-drone {
+  transform-box: view-box;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-art .hero-drone {
+    animation: hover-bob 3.2s var(--ease-in-out) infinite alternate;
+  }
+  .hero-art .propeller {
+    animation: prop 0.14s linear infinite;
+  }
+}
+@keyframes hover-bob {
+  from {
+    translate: 0 -3px;
+  }
+  to {
+    translate: 0 4px;
+  }
 }
 .cast {
   display: grid;
@@ -12,9 +49,11 @@
   }
 }
 .cast-card {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  column-gap: 12px;
+  align-items: center;
+  align-content: start;
   background: var(--card);
   border: 1.5px solid var(--paper-3);
   border-radius: var(--radius);
@@ -30,8 +69,10 @@
   font-size: 1.25rem;
 }
 .cast-card p {
-  margin: 0;
+  margin: 6px 0 0;
   font-size: 0.95rem;
+  grid-column: 1 / -1;
+  text-wrap: pretty;
 }
 .toc {
   list-style: none;
@@ -51,8 +92,19 @@
   color: var(--ink);
   text-decoration: none;
 }
-.toc a:hover {
-  border-color: var(--ink);
+.toc a {
+  transition:
+    border-color 150ms ease,
+    transform 160ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .toc a:hover {
+    border-color: var(--ink);
+    transform: translateX(3px);
+  }
+}
+.toc a:active {
+  transform: scale(0.99);
 }
 .toc-num {
   font-family: var(--font-display);

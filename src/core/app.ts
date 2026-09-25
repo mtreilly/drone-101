@@ -1,5 +1,7 @@
 import { CHAPTERS, CHAPTER_COUNT } from '../chapters/registry';
 import { avatar, type Who } from '../story/characters';
+import rough from 'roughjs';
+import { s as svgEl } from './dom';
 import { conceptMap } from '../story/concept-map';
 import { renderChapter } from '../story/renderer';
 import { createBus, type ChapterContent } from '../story/types';
@@ -212,7 +214,7 @@ async function showChapter(n: number, sectionId?: string): Promise<void> {
 function showHome(): void {
   document.title = tc('app.title');
   const cast = (['mika', 'theo', 'june'] as Who[]).map((w) =>
-    h('div', { class: 'cast-card' }, avatar(w, 'happy'), h('div', null, h('strong', null, tc(`cast.${w}`)), setRich(h('p'), tc(`home.cast.${w}`)))),
+    h('div', { class: 'cast-card' }, avatar(w, 'happy'), h('strong', null, tc(`cast.${w}`)), setRich(h('p'), tc(`home.cast.${w}`))),
   );
   const done = progress.get().completed;
   const visited = progress.get().visited;
@@ -242,7 +244,7 @@ function showHome(): void {
   const page = h(
     'div',
     { class: 'page home' },
-    h('div', { class: 'home-hero' }, h('p', { class: 'kicker' }, tc('home.kicker')), h('h1', null, tc('app.title')), setRich(h('p', { class: 'driving-q' }), tc('home.question'))),
+    h('div', { class: 'home-hero' }, h('p', { class: 'kicker' }, tc('home.kicker')), h('h1', null, tc('app.title')), setRich(h('p', { class: 'driving-q' }), tc('home.question')), heroArt()),
     ...(raw<string[]>('common', 'home.intro') ?? []).map((p) => setRich(h('p'), p)),
     h('div', { class: 'cast' }, cast),
     h('p', null, h('a', { class: 'btn primary', href: `#/ch/${resume}` }, visited.length ? tc('home.resume', { n: resume }) : tc('home.start'))),
@@ -267,4 +269,37 @@ function showMap(): void {
     ),
   );
   window.scrollTo(0, 0);
+}
+
+/** A small hovering drone over its dashed 2 m target: the course in one doodle. */
+function heroArt(): SVGSVGElement {
+  const svg = svgEl('svg', { viewBox: '0 0 190 132', class: 'hero-art', 'aria-hidden': 'true' });
+  const rc = rough.svg(svg);
+  const ink = 'currentColor';
+  svg.append(
+    svgEl('line', { x1: 8, x2: 182, y1: 70, y2: 70, stroke: 'var(--c-setpoint)', 'stroke-width': 2, 'stroke-dasharray': '7 5' }),
+    svgEl('text', { x: 182, y: 64, 'text-anchor': 'end', 'font-family': 'var(--font-hand)', 'font-size': 15, fill: 'var(--c-setpoint)' }, '2 m'),
+    rc.line(4, 120, 186, 120, { stroke: ink, strokeWidth: 1.8, roughness: 1.3, seed: 4 }),
+    rc.rectangle(4, 122, 182, 10, { stroke: 'none', fill: 'var(--paper-3)', fillStyle: 'hachure', hachureGap: 6, hachureAngle: 60, seed: 5 }),
+    svgEl('path', { d: 'M20 34 q 10 -6 20 0 t 20 0 M28 46 q 8 -5 16 0 t 16 0', fill: 'none', stroke: 'var(--c-disturb)', 'stroke-width': 1.8, 'stroke-linecap': 'round', opacity: 0.8 }),
+  );
+  const drone = svgEl('g', { class: 'hero-drone' });
+  const cx = 95;
+  const y = 66;
+  drone.append(
+    svgEl('path', { d: `M${cx} ${y - 16} L${cx} ${y - 40} M${cx - 6} ${y - 32} L${cx} ${y - 40} L${cx + 6} ${y - 32}`, stroke: 'var(--c-effort)', 'stroke-width': 3, fill: 'none', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }),
+    rc.line(cx - 40, y, cx + 40, y, { stroke: ink, strokeWidth: 3, roughness: 0.6, seed: 5 }),
+    rc.rectangle(cx - 17, y - 9, 34, 16, { stroke: ink, strokeWidth: 2, fill: 'var(--card)', fillStyle: 'solid', seed: 6 }),
+    rc.line(cx - 12, y + 7, cx - 18, y + 15, { stroke: ink, strokeWidth: 2, seed: 9 }),
+    rc.line(cx + 12, y + 7, cx + 18, y + 15, { stroke: ink, strokeWidth: 2, seed: 10 }),
+    svgEl('circle', { cx: cx + 8, cy: y - 1, r: 3, fill: 'var(--c-output)' }),
+  );
+  for (const px of [cx - 40, cx + 40]) {
+    drone.append(rc.line(px, y, px, y - 7, { stroke: ink, strokeWidth: 2, seed: px }));
+    const prop = rc.ellipse(px, y - 9, 34, 6, { stroke: ink, strokeWidth: 1.4, fill: 'var(--paper-3)', fillStyle: 'solid', seed: px + 1 });
+    prop.classList.add('propeller');
+    drone.append(prop);
+  }
+  svg.append(drone);
+  return svg;
 }
