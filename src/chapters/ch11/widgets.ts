@@ -10,9 +10,9 @@ import { Loop } from '../../ui/loop';
 import { Plot } from '../../ui/plot';
 import { SPlane } from '../../ui/s-plane';
 import '../ch09/ch09.css';
-import { pid, type Trace } from '../ch09/pid-tools';
+import { pid } from '../ch09/pid-tools';
 import { starRow } from '../ch09/stars';
-import { CRITERIA, LIMITS, MISSION, evaluate, missionConfig, missionPoles, type MissionResult } from './mission';
+import { CRITERIA, LIMITS, MISSION, evaluate, missionConfig, missionPoles, type MissionResult, type MissionTrace } from './mission';
 import { flyMission, pageCeiling, withCeiling } from './page-hit';
 
 export const BEST_KEY = 'ch11.best';
@@ -29,7 +29,7 @@ interface Best {
   dOnMeasurement: boolean;
 }
 
-const emptyTrace = (): Trace => ({ t: [], h: [], thrust: [], integral: [], r: [], wind: [], pkg: [], measured: [], crashed: false });
+const emptyTrace = (): MissionTrace => ({ t: [], h: [], thrust: [], integral: [], r: [], wind: [], pkg: [], measured: [], crashed: false });
 
 /** The final mission sandbox. */
 const mission: WidgetFactory = (host, ctx) => {
@@ -149,6 +149,7 @@ const mission: WidgetFactory = (host, ctx) => {
       if (acc % 10 === 0) record();
     }
     tr.crashed = sim.crashed;
+    tr.stalledAt = sim.stalled ? sim.ceilingAt : null;
     draw();
     if (sim.t >= MISSION.duration - 1e-9) finish();
     else showResult(evaluate(tr), false, true);
@@ -232,6 +233,7 @@ const mission: WidgetFactory = (host, ctx) => {
     finished = true;
     loop.pause();
     tr.crashed = sim.crashed;
+    tr.stalledAt = sim.stalled ? sim.ceilingAt : null;
     draw();
     showResult(evaluate(tr), true, true);
   }

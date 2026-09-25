@@ -1,7 +1,7 @@
 import { DroneSim, type DroneConfig, type PID } from '../../sim/drone-model';
 import type { DroneView } from '../../ui/drone-view';
 import type { Trace } from '../ch09/pid-tools';
-import { MISSION, missionConfig } from './mission';
+import { MISSION, missionConfig, type MissionTrace } from './mission';
 
 /**
  * The page above the mission picture is a real ceiling. Only weak-Kp tunes (integral-driven swings, or
@@ -24,12 +24,13 @@ export function sample(sim: DroneSim, tr: Trace): void {
 }
 
 /** The whole mission under a ceiling (`null` = open sky), plus the finished sim (`ceilingAt` says whether it hit). */
-export function flyMission(p: PID, ceiling: number | null, seed = 7): { tr: Trace; sim: DroneSim } {
+export function flyMission(p: PID, ceiling: number | null, seed = 7): { tr: MissionTrace; sim: DroneSim } {
   const sim = new DroneSim(withCeiling(missionConfig(p, seed), ceiling));
-  const tr: Trace = { t: [], h: [], thrust: [], integral: [], r: [], wind: [], pkg: [], measured: [], crashed: false };
+  const tr: MissionTrace = { t: [], h: [], thrust: [], integral: [], r: [], wind: [], pkg: [], measured: [], crashed: false };
   sample(sim, tr);
   sim.advance(MISSION.duration, () => sample(sim, tr), 10);
   tr.crashed = sim.crashed;
+  if (sim.stalled) tr.stalledAt = sim.ceilingAt;
   return { tr, sim };
 }
 

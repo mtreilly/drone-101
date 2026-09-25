@@ -50,4 +50,40 @@ describe('Chapter 11 mission under the page', () => {
       expect(r.pass.ground).toBe(false);
     });
   }
+
+  it('a crash never earns "motors calm in hover": stalled or grounded thrust is steady, but it is not hovering', () => {
+    // every page-reaching tune in both layouts: the calm star needs the whole 3–6 s window airborne on running motors
+    let stalledInWindow = 0;
+    for (const kp of [0, 2, 5]) for (const ki of [10, 20, 50]) {
+      for (const h of [DESK, PHONE]) {
+        const { tr, sim } = flyMission(pid(kp, ki, 0, { dTau: 0.04 }), h);
+        if (sim.stalled && tr.stalledAt! < 6) {
+          stalledInWindow++;
+          expect(evaluate(tr).pass.calm).toBe(false);
+        }
+      }
+    }
+    expect(stalledInWindow).toBeGreaterThan(3);
+    // and a drone that never takes off does not earn it either
+    const grounded = runMission(pid(0, 0, 0));
+    expect(peak(grounded.h)).toBeLessThan(0.01);
+    expect(evaluate(grounded).pass.calm).toBe(false);
+  });
+
+  it('hitting the page never earns stars: with the page you score at most what open sky scores', () => {
+    let hits = 0;
+    for (const kp of [0, 1, 3, 5, 7]) for (const ki of [0, 10, 30, 50]) for (const kd of [0, 3, 12]) for (const tf of [0.005, 0.04]) {
+      const p = pid(kp, ki, kd, { dTau: tf });
+      const sky = evaluate(runMission(p));
+      for (const h of [DESK, PHONE]) {
+        const { tr, sim } = flyMission(p, h);
+        if (sim.ceilingAt === null) continue;
+        hits++;
+        const page = evaluate(tr);
+        expect(page.stars).toBeLessThanOrEqual(sky.stars);
+        expect(page.pass.ground).toBe(false);
+      }
+    }
+    expect(hits).toBeGreaterThan(20);
+  });
 });
