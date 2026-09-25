@@ -4,6 +4,7 @@ import type { DroneSim } from '../../sim/drone-model';
 import { BlockDiagram } from '../../ui/block-diagram';
 import { DroneView } from '../../ui/drone-view';
 import { Plot } from '../../ui/plot';
+import './ch01.css';
 
 /** Drone view on the left, height + thrust plots on the right. Shared by chapters 1 and 2. */
 export function droneRig(
@@ -74,7 +75,7 @@ export interface LoopLabels {
 /** The feedback-loop block diagram (open-loop parts: 'sp-open', 'ctrl-open'). */
 export function loopDiagram(host: HTMLElement, L: LoopLabels): BlockDiagram {
   // on phones the diagram keeps a readable size and scrolls sideways
-  const scroller = h('div', { style: { overflowX: 'auto' }, tabindex: '0', role: 'region', 'aria-label': L.aria });
+  const scroller = h('div', { class: 'diagram-scroll', tabindex: '0', role: 'region', 'aria-label': L.aria });
   host.append(scroller);
   const d = new BlockDiagram(scroller, {
     width: 760,
@@ -82,21 +83,21 @@ export function loopDiagram(host: HTMLElement, L: LoopLabels): BlockDiagram {
     label: L.aria,
     description: L.description,
     arrows: [
-      { id: 'sp', points: [[16, 100], [113, 100]], label: L.setpoint, labelAt: [62, 86], color: 'sp', sign: '+' },
-      { id: 'sp-open', points: [[16, 100], [208, 100]], label: L.setpoint, labelAt: [100, 86], color: 'sp' },
-      { id: 'err', points: [[145, 100], [208, 100]], label: L.error, labelAt: [178, 86], color: 'err' },
-      { id: 'thrust', points: [[330, 100], [406, 100]], label: L.thrust, labelAt: [368, 86], color: 'eff' },
-      { id: 'dist', points: [[470, 26], [470, 70]], label: L.disturbance, labelAt: [470, 18], color: 'dis' },
-      { id: 'out', points: [[534, 100], [744, 100]], label: L.output, labelAt: [690, 86], color: 'out' },
-      { id: 'fb1', points: [[640, 100], [640, 200], [534, 200]], color: 'out' },
-      { id: 'fb2', points: [[406, 200], [130, 200], [130, 117]], color: 'out', sign: '−' },
+      { id: 'sp', points: [[16, 100], [133, 100]], label: L.setpoint, labelAt: [72, 86], color: 'sp', sign: '+' },
+      { id: 'sp-open', points: [[16, 100], [253, 100]], label: L.setpoint, labelAt: [120, 86], color: 'sp' },
+      { id: 'err', points: [[165, 100], [253, 100]], label: L.error, labelAt: [209, 86], color: 'err' },
+      { id: 'thrust', points: [[385, 100], [453, 100]], label: L.thrust, labelAt: [419, 86], color: 'eff' },
+      { id: 'dist', points: [[518, 26], [518, 70]], label: L.disturbance, labelAt: [518, 18], color: 'dis' },
+      { id: 'out', points: [[583, 100], [744, 100]], label: L.output, labelAt: [700, 86], color: 'out' },
+      { id: 'fb1', points: [[660, 100], [660, 200], [583, 200]], color: 'out' },
+      { id: 'fb2', points: [[453, 200], [150, 200], [150, 117]], color: 'out', sign: '−' },
     ],
     blocks: [
-      { id: 'sum', x: 130, y: 100, kind: 'sum', label: 'Σ' },
-      { id: 'ctrl', x: 270, y: 100, w: 120, h: 56, label: L.controller },
-      { id: 'ctrl-open', x: 270, y: 100, w: 120, h: 56, label: L.schedule },
-      { id: 'plant', x: 470, y: 100, w: 128, h: 56, label: L.plant },
-      { id: 'sensor', x: 470, y: 200, w: 128, h: 46, label: L.sensor },
+      { id: 'sum', x: 150, y: 100, kind: 'sum', label: 'Σ' },
+      { id: 'ctrl', x: 319, y: 100, w: 132, h: 56, label: L.controller },
+      { id: 'ctrl-open', x: 319, y: 100, w: 132, h: 56, label: L.schedule },
+      { id: 'plant', x: 518, y: 100, w: 130, h: 56, label: L.plant },
+      { id: 'sensor', x: 518, y: 200, w: 130, h: 46, label: L.sensor },
     ],
   });
   d.el.style.minWidth = '540px';

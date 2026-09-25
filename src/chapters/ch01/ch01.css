@@ -1,0 +1,29 @@
+/* a part that has just been drawn (or just become busy) fades in, so the eye finds it */
+@media (prefers-reduced-motion: no-preference) {
+  .block-diagram .blk.lit {
+    animation: fade-in 420ms var(--ease-out);
+  }
+}
+.diagram-scroll {
+  overflow-x: auto;
+  border-radius: var(--radius-sm);
+}
+.diagram-scroll:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* phones: a compact drone so the plots and controls stay close to it */
+@media (max-width: 767px) {
+  [data-widget] .drone-wrap {
+    max-width: 190px !important;
+  }
+}
+
+/* whiteboard captions differ in length; reserve room so the buttons don't hop */
+.wb-caption {
+  min-height: 3.9em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -7,76 +7,225 @@
       "id": "meet",
       "title": "Meet the drone",
       "blocks": [
-        { "t": "say", "who": "june", "mood": "excited", "text": "I borrowed a drone! Its job: carry small packages and **hover at exactly 2 metres** so someone can grab them." },
-        { "t": "say", "who": "mika", "mood": "think", "text": "It's like the shower, right? One number we want (2 m), one thing we can change (how hard the propellers push)." },
-        { "t": "p", "text": "Here are the facts. The drone weighs **0.5 kg**, so gravity pulls it down with $0.5 \\times 9.81 \\approx 4.9$ newtons. The propellers push up with a {eff|thrust} $\\eff{T}$ that we choose. When the drone moves, air pushes back a little: about **1 newton for every metre per second** of speed." },
-        { "t": "math", "tex": "\\underbrace{0.5\\,\\ddot{\\out{h}}}_{\\text{mass}\\times\\text{acceleration}} = \\eff{T} - \\underbrace{4.9}_{\\text{weight}} - \\underbrace{1.0\\,\\dot{\\out{h}}}_{\\text{air drag}}" },
-        { "t": "p", "text": "Don't worry about the dots over the $\\out{h}$ yet. They mean \"how fast $\\out{h}$ is changing\" and we'll build them properly in Chapter 3. For now, the idea in words: **push harder than 4.9 N and you speed up going up; push less and you speed up going down.** Push exactly 4.9 N and you keep doing whatever you were already doing." },
-        { "t": "note", "text": "Honest simplifications: our drone only moves up and down, air drag is a neat straight-line rule, and for the next few chapters the motors have unlimited power (they can even pull down a little). Real drones are messier. We'll add the mess back later." }
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "I borrowed a drone! Its job: carry small packages and **hover at exactly 2 metres** so someone can grab them."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "It's like the shower, right? One number we want (2 m), one thing we can change (how hard the propellers push)."
+        },
+        {
+          "t": "p",
+          "text": "Here are the facts. The drone weighs **0.5 kg**, so gravity pulls it down with $0.5 \\times 9.81 \\approx 4.9$ newtons. The propellers push up with a {eff|thrust} $\\eff{T}$ that we choose. When the drone moves, air pushes back a little: about **1 newton for every metre per second** of speed."
+        },
+        {
+          "t": "math",
+          "tex": "\\underbrace{0.5\\,\\ddot{\\out{h}}}_{\\text{mass}\\times\\text{acceleration}} = \\eff{T} - \\underbrace{4.9}_{\\text{weight}} - \\underbrace{1.0\\,\\dot{\\out{h}}}_{\\text{air drag}}"
+        },
+        {
+          "t": "p",
+          "text": "Don't worry about the dots over the $\\out{h}$ yet. They mean \"how fast $\\out{h}$ is changing\" and we'll build them properly in Chapter 3. For now, the idea in words: **push harder than 4.9 N and you speed up going up; push less and you speed up going down.** Push exactly 4.9 N and you keep doing whatever you were already doing."
+        },
+        {
+          "t": "note",
+          "text": "Honest simplifications: our drone only moves up and down, air drag is a neat straight-line rule, and for the next few chapters the motors have unlimited power (they can even pull down a little). Real drones are messier. We'll add the mess back later."
+        }
       ]
     },
     {
       "id": "plan",
       "title": "Just tell it what to do",
       "blocks": [
-        { "t": "say", "who": "theo", "mood": "think", "text": "We know the physics exactly. So we don't need to *look* at anything. We can **calculate** a plan: push hard for a bit to climb, then push exactly 4.9 N to hover." },
-        { "t": "p", "text": "That kind of plan is called **open loop**: the plan decides the thrust, and nobody checks what actually happens. Try it. Choose a climb thrust and how long to climb, then launch." },
-        { "t": "widget", "id": "schedule" },
-        { "t": "say", "who": "theo", "mood": "happy", "text": "I worked it out. While climbing, the drone soon settles into a steady speed of (extra thrust ÷ drag). The height you end up at is just **(extra thrust ÷ drag) × climb time**. For 6 N that's $(6 - 4.9)/1 \\approx 1.1$ m/s, so climb for $2 \\div 1.1 \\approx 1.83$ seconds." },
-        { "t": "p", "text": "Press **Theo's plan**. It lands on 2.00 m. Beautiful." },
-        { "t": "say", "who": "mika", "mood": "excited", "text": "Theo, that's amazing! We're done! Chapter over!" },
-        { "t": "say", "who": "june", "mood": "think", "text": "Let's just check what happens outside… there's a bit of a breeze today." },
-        { "t": "p", "text": "Run Theo's plan again, and while it's hovering press **Gust** (a push downward of 1 N for one second)." },
-        { "t": "say", "who": "theo", "mood": "worried", "text": "It dropped about a metre… and it's **staying** down there. My numbers were right!" },
-        { "t": "say", "who": "june", "mood": "happy", "text": "Your numbers were perfect. The wind just wasn't in your plan. And the drone has no idea it's in the wrong place." },
-        { "t": "p", "text": "That was our mistake: we believed **\"if you get the numbers right, you don't need feedback.\"** The calm-air success was real, and the plan was still useless the moment the world did something it didn't expect. After the gust, the thrust is exactly 4.9 N again, so the drone just stays wherever the gust left it." }
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "We know the physics exactly. So we don't need to *look* at anything. We can **calculate** a plan: push hard for a bit to climb, then push exactly 4.9 N to hover."
+        },
+        {
+          "t": "p",
+          "text": "That kind of plan is called **open loop**: the plan decides the thrust, and nobody checks what actually happens. Try it. Choose a climb thrust and how long to climb, then launch."
+        },
+        {
+          "t": "widget",
+          "id": "schedule"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "I worked it out. While climbing, the drone soon settles into a steady speed of (extra thrust ÷ drag). The height you end up at is just **(extra thrust ÷ drag) × climb time**. For 6 N that's $(6 - 4.9)/1 \\approx 1.1$ m/s, so climb for $2 \\div 1.1 \\approx 1.83$ seconds."
+        },
+        {
+          "t": "p",
+          "text": "Press **Theo's plan**. It lands on 2.00 m. Beautiful."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Theo, that's amazing! We're done! Chapter over!"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Let's just check what happens outside… there's a bit of a breeze today."
+        },
+        {
+          "t": "p",
+          "text": "Run Theo's plan again, and while it's hovering press **Gust** (a push downward of 1 N for one second)."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "It dropped about a metre… and it's **staying** down there. My numbers were right!"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Your numbers were perfect. The wind just wasn't in your plan. And the drone has no idea it's in the wrong place."
+        },
+        {
+          "t": "p",
+          "text": "That was our mistake: we believed **\"if you get the numbers right, you don't need feedback.\"** The calm-air success was real, and the plan was still useless the moment the world did something it didn't expect. After the gust, the thrust is exactly 4.9 N again, so the drone just stays wherever the gust left it."
+        }
       ]
     },
     {
       "id": "package",
       "title": "The package test",
       "blocks": [
-        { "t": "p", "text": "Now the real job. Below, the drone is hovering at 2 m with a fixed 4.9 N of thrust, exactly balancing its weight. Someone clips on a **0.2 kg package**." },
+        {
+          "t": "p",
+          "text": "Now the real job. Below, the drone is hovering at 2 m with a fixed 4.9 N of thrust, exactly balancing its weight. Someone clips on a **0.2 kg package**."
+        },
         {
           "t": "predict",
           "id": "ch1-package",
           "gate": true,
           "q": "The package makes the drone heavier, but the thrust stays at 4.9 N. What happens?",
           "options": [
-            { "text": "It sinks a little, then stops", "sketch": "sink-stop", "why": "It feels like the drone should find a new balance. But at a steady 4.9 N it's too heavy at *every* height: nothing about being lower helps it." },
-            { "text": "It sinks and keeps sinking, all the way down", "sketch": "sink-crash", "correct": true, "why": "The extra 2 N of weight is never balanced. Drag stops it speeding up past about **2 m/s**, but it keeps falling at that speed until it hits the ground." },
-            { "text": "Nothing: 0.2 kg is too small to matter", "sketch": "flat", "why": "Any mismatch between thrust and weight makes it drift. 0.2 kg adds about 2 N, which is big compared with the drag." }
+            {
+              "text": "It sinks a little, then stops",
+              "sketch": "sink-stop",
+              "why": "It feels like the drone should find a new balance. But at a steady 4.9 N it's too heavy at *every* height: nothing about being lower helps it."
+            },
+            {
+              "text": "It sinks and keeps sinking, all the way down",
+              "sketch": "sink-crash",
+              "correct": true,
+              "why": "The extra 2 N of weight is never balanced. Drag stops it speeding up past about **2 m/s**, but it keeps falling at that speed until it hits the ground."
+            },
+            {
+              "text": "Nothing: 0.2 kg is too small to matter",
+              "sketch": "flat",
+              "why": "Any mismatch between thrust and weight makes it drift. 0.2 kg adds about 2 N, which is big compared with the drag."
+            }
           ]
         },
-        { "t": "widget", "id": "feedback" },
-        { "t": "p", "text": "**Crash.** Nothing in an open-loop plan can notice that the drone is falling. Now switch the mode to **Feedback: look at the height**, reset, and try the package and the gust again." },
-        { "t": "p", "text": "In feedback mode the drone uses a simple rule: **push with the hover thrust, plus an extra 8 N for every metre it is too low.**" },
-        { "t": "math", "tex": "\\eff{T} = 4.9 + 8 \\times (\\sp{2} - \\out{h})" },
-        { "t": "say", "who": "mika", "mood": "surprised", "text": "Whoa. The gust knocks it down less than 20 cm, and it climbs right back. The package makes it dip, but it doesn't crash!" },
-        { "t": "say", "who": "theo", "mood": "think", "text": "It doesn't need to know *what* happened. It just sees it's too low and pushes harder. That's the trick." },
-        { "t": "say", "who": "june", "mood": "think", "text": "But look: with the package it settles at about **1.75 m**, not 2. Why doesn't it go all the way back?" },
-        { "t": "note", "text": "Keep June's question in your pocket. It's the whole of Chapter 2." }
+        {
+          "t": "widget",
+          "id": "feedback"
+        },
+        {
+          "t": "p",
+          "text": "**Crash.** Nothing in an open-loop plan can notice that the drone is falling. Now switch the mode to **Feedback: look at the height**, reset, and try the package and the gust again."
+        },
+        {
+          "t": "p",
+          "text": "In feedback mode the drone uses a simple rule: **push with the hover thrust, plus an extra 8 N for every metre it is too low.**"
+        },
+        {
+          "t": "math",
+          "tex": "\\eff{T} = 4.9 + 8 \\times (\\sp{2} - \\out{h})"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Whoa. The gust knocks it down less than 20 cm, and it climbs right back. The package makes it dip, but it doesn't crash!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "It doesn't need to know *what* happened. It just sees it's too low and pushes harder. That's the trick."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "But look: with the package it settles at about **1.75 m**, not 2. Why doesn't it go all the way back?"
+        },
+        {
+          "t": "note",
+          "text": "Keep June's question in your pocket. It's the whole of Chapter 2."
+        }
       ]
     },
     {
       "id": "diagram",
       "title": "Drawing it",
       "blocks": [
-        { "t": "p", "text": "Engineers draw these systems as boxes and arrows called **block diagrams**. Each box does something; each arrow carries a signal. We drew ours on the whiteboard one piece at a time." },
-        { "t": "widget", "id": "whiteboard" },
-        { "t": "p", "text": "The key difference is that one arrow, looping back from the output to the start. That's why feedback control is called **closed loop**: information goes all the way round. Scroll back up to the package test: the diagram under the drone lights up whichever part is busy right now." },
+        {
+          "t": "p",
+          "text": "Engineers draw these systems as boxes and arrows called **block diagrams**. Each box does something; each arrow carries a signal. We drew ours on the whiteboard one piece at a time."
+        },
+        {
+          "t": "widget",
+          "id": "whiteboard"
+        },
+        {
+          "t": "p",
+          "text": "The key difference is that one arrow, looping back from the output to the start. That's why feedback control is called **closed loop**: information goes all the way round. Scroll back up to the package test: the diagram under the drone lights up whichever part is busy right now."
+        },
         {
           "t": "vocab",
           "items": [
-            { "term": "{sp|Setpoint} $\\sp{r}$", "def": "What we want: 2 m of height, 38 °C of water." },
-            { "term": "{out|Output} $\\out{h}$", "def": "What actually happens: the real height." },
-            { "term": "{err|Error} $\\err{e} = \\sp{r} - \\out{h}$", "def": "How far off we are. Positive means too low." },
-            { "term": "Controller", "def": "The rule that turns the error into an action. So far: \"8 N extra per metre too low.\"" },
-            { "term": "{eff|Control effort} $\\eff{T}$", "def": "What the controller actually does: the thrust." },
-            { "term": "Plant", "def": "The thing being controlled: the drone itself, physics and all. (An odd word, from old factory \"plants\".)" },
-            { "term": "Sensor", "def": "Whatever measures the output: the drone's height sensor, your skin in the shower." },
-            { "term": "{dis|Disturbance}", "def": "Anything the world does that we didn't plan for: gusts, packages, someone flushing a toilet." },
-            { "term": "Open loop / closed loop", "def": "Acting from a plan without looking / acting on what you measure." }
+            {
+              "term": "{sp|Setpoint} $\\sp{r}$",
+              "def": "What we want: 2 m of height, 38 °C of water."
+            },
+            {
+              "term": "{out|Output} $\\out{h}$",
+              "def": "What actually happens: the real height."
+            },
+            {
+              "term": "{err|Error} $\\err{e} = \\sp{r} - \\out{h}$",
+              "def": "How far off we are. Positive means too low."
+            },
+            {
+              "term": "Controller",
+              "def": "The rule that turns the error into an action. So far: \"8 N extra per metre too low.\""
+            },
+            {
+              "term": "{eff|Control effort} $\\eff{T}$",
+              "def": "What the controller actually does: the thrust."
+            },
+            {
+              "term": "Plant",
+              "def": "The thing being controlled: the drone itself, physics and all. (An odd word, from old factory \"plants\".)"
+            },
+            {
+              "term": "Sensor",
+              "def": "Whatever measures the output: the drone's height sensor, your skin in the shower."
+            },
+            {
+              "term": "{dis|Disturbance}",
+              "def": "Anything the world does that we didn't plan for: gusts, packages, someone flushing a toilet."
+            },
+            {
+              "term": "Open loop / closed loop",
+              "def": "Acting from a plan without looking / acting on what you measure."
+            }
           ]
         }
       ]
@@ -85,9 +234,20 @@
       "id": "cruise",
       "title": "Same picture, different machine",
       "blocks": [
-        { "t": "p", "text": "Here's the same diagram for a car's **cruise control**. The setpoint is a speed, the plant is the car, and the disturbance is a hill. The controller presses the accelerator harder when the car is slower than it should be." },
-        { "t": "widget", "id": "cruise" },
-        { "t": "say", "who": "june", "mood": "happy", "text": "Thermostats, cruise control, the shower, our drone… it's the **same loop** every time, with different labels!" }
+        {
+          "t": "p",
+          "text": "Here's the same diagram for a car's **cruise control**. The setpoint is a speed, the plant is the car, and the disturbance is a hill. The controller presses the accelerator harder when the car is slower than it should be."
+        },
+        {
+          "t": "widget",
+          "id": "cruise"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Thermostats, cruise control, the shower, our drone… it's the **same loop** every time, with different labels!"
+        }
       ]
     },
     {
@@ -111,47 +271,94 @@
               "id": "ch1-q1",
               "q": "In the shower from Chapter 0, what plays the role of the **sensor**?",
               "options": [
-                { "text": "The knob", "why": "The knob is how you *act*: it sets the control effort. It doesn't measure anything." },
-                { "text": "Your skin", "correct": true, "why": "Yes. Your skin measures the output (the water temperature) and feeds it back to the controller (your brain)." },
-                { "text": "The pipe", "why": "The pipe is part of the **plant**, the thing being controlled. It's where the delay comes from." }
+                {
+                  "text": "The knob",
+                  "why": "The knob is how you *act*: it sets the control effort. It doesn't measure anything."
+                },
+                {
+                  "text": "Your skin",
+                  "correct": true,
+                  "why": "Yes. Your skin measures the output (the water temperature) and feeds it back to the controller (your brain)."
+                },
+                {
+                  "text": "The pipe",
+                  "why": "The pipe is part of the **plant**, the thing being controlled. It's where the delay comes from."
+                }
               ]
             },
             {
               "id": "ch1-q2",
               "q": "Which of these is a **closed-loop** system?",
               "options": [
-                { "text": "A toaster on a timer", "why": "The timer doesn't check how brown the toast is. It just follows the plan: open loop." },
-                { "text": "A home thermostat", "correct": true, "why": "Right. It measures the room temperature and switches the heating on or off based on the error." },
-                { "text": "A washing machine running a fixed programme", "why": "It follows its programme regardless of how dirty the clothes are: open loop." }
+                {
+                  "text": "A toaster on a timer",
+                  "why": "The timer doesn't check how brown the toast is. It just follows the plan: open loop."
+                },
+                {
+                  "text": "A home thermostat",
+                  "correct": true,
+                  "why": "Right. It measures the room temperature and switches the heating on or off based on the error."
+                },
+                {
+                  "text": "A washing machine running a fixed programme",
+                  "why": "It follows its programme regardless of how dirty the clothes are: open loop."
+                }
               ]
             },
             {
               "id": "ch1-q3",
               "q": "The setpoint is 2 m and the drone is at 1.5 m. What is the error $\\err{e} = \\sp{r} - \\out{h}$, and what should the controller do?",
               "options": [
-                { "text": "+0.5 m: push harder", "correct": true, "why": "Positive error means too low, so more thrust. With our rule that's $4.9 + 8 \\times 0.5 = 8.9$ N." },
-                { "text": "−0.5 m: push harder", "why": "Check the order: $\\sp{r} - \\out{h} = 2 - 1.5 = +0.5$. We pick this sign convention so that positive error means \"too low\"." },
-                { "text": "3.5 m: push much harder", "why": "The error is a *difference*, not a sum: $2 - 1.5 = 0.5$ m." }
+                {
+                  "text": "+0.5 m: push harder",
+                  "correct": true,
+                  "why": "Positive error means too low, so more thrust. With our rule that's $4.9 + 8 \\times 0.5 = 8.9$ N."
+                },
+                {
+                  "text": "−0.5 m: push harder",
+                  "why": "Check the order: $\\sp{r} - \\out{h} = 2 - 1.5 = +0.5$. We pick this sign convention so that positive error means \"too low\"."
+                },
+                {
+                  "text": "3.5 m: push much harder",
+                  "why": "The error is a *difference*, not a sum: $2 - 1.5 = 0.5$ m."
+                }
               ]
             }
           ]
         },
-        { "t": "map" },
-        { "t": "cliff", "text": "Our loop has a mystery number in it: **8 newtons per metre**. Why 8? Why not 2, or 50? And why does the drone settle too low?" }
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Our loop has a mystery number in it: **8 newtons per metre**. Why 8? Why not 2, or 50? And why does the drone settle too low?"
+        }
       ]
     }
   ],
   "widgets": {
     "schedule": {
       "title": "Open loop: program a thrust schedule",
-      "slider": { "thrust": "Climb thrust", "time": "Climb for" },
+      "slider": {
+        "thrust": "Climb thrust",
+        "time": "Climb for"
+      },
       "launch": "Launch",
       "theo": "Theo's plan",
       "gust": "Gust ↓",
       "package": "Add package",
       "disturb": "Surprise it:",
-      "plot": { "height": "height", "thrust": "thrust", "aria": "Height of the drone over 20 seconds, with the 2 metre target.", "target": "target 2 m" },
-      "readout": { "height": "height", "speed": "speed", "thrust": "thrust" },
+      "plot": {
+        "height": "height",
+        "thrust": "thrust",
+        "aria": "Height of the drone over 20 seconds, with the 2 metre target.",
+        "target": "target 2 m"
+      },
+      "readout": {
+        "height": "height",
+        "speed": "speed",
+        "thrust": "thrust"
+      },
       "status": {
         "ready": "Theo's formula predicts this plan ends at {h} m. Press Launch.",
         "perfect": "Ended at {h} m. Right on target!",
@@ -159,7 +366,8 @@
         "high": "high",
         "low": "low",
         "crash": "Crashed into the ground!"
-      }
+      },
+      "planHelp": "The faint dashed orange line is your plan. The solid one is what the motors actually did."
     },
     "feedback": {
       "title": "Hovering at 2 m: plan or feedback?",
@@ -169,8 +377,16 @@
       "gust": "Gust ↓",
       "package": "Package",
       "disturb": "Disturbances:",
-      "plot": { "height": "height", "thrust": "thrust", "aria": "Height of the hovering drone over the last 15 seconds, with the error shaded between the target and the actual height." },
-      "readout": { "height": "height", "error": "error r − h", "thrust": "thrust" },
+      "plot": {
+        "height": "height",
+        "thrust": "thrust",
+        "aria": "Height of the hovering drone over the last 15 seconds, with the error shaded between the target and the actual height."
+      },
+      "readout": {
+        "height": "height",
+        "error": "error r − h",
+        "thrust": "thrust"
+      },
       "status": {
         "open": "Open loop: thrust fixed at 4.9 N, whatever happens.",
         "closed": "Feedback: thrust = 4.9 N + 8 N for every metre too low.",
@@ -219,7 +435,7 @@
       "title": "Cruise control: the same loop",
       "d": {
         "setpoint": "target speed",
-        "error": "speed error",
+        "error": "error",
         "controller": "cruise\ncontroller",
         "schedule": "",
         "thrust": "pedal",

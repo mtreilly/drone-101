@@ -1,4 +1,4 @@
-import { h } from '../../core/dom';
+import { h, prefersReducedMotion } from '../../core/dom';
 import { fmt } from '../../core/i18n';
 import { DRONE, DroneSim, HOVER_THRUST, defaultDroneConfig } from '../../sim/drone-model';
 import { CH1_PID, GUST_N, GUST_S, PACKAGE_KG, theoTime } from './model';
@@ -66,6 +66,21 @@ const schedule: WidgetFactory = (host, ctx) => {
     aria: t('plot.aria'),
   });
   rig.hPlot.setLines([{ kind: 'h', at: 2, color: 'sp', label: t('plot.target') }]);
+  // the programmed schedule, drawn faintly so you can see the plan before (and while) it runs
+  rig.tPlot.overlay = (c, px, py) => {
+    c.save();
+    c.strokeStyle = getComputedStyle(host).getPropertyValue('--c-effort');
+    c.globalAlpha = 0.45;
+    c.lineWidth = 2;
+    c.setLineDash([5, 4]);
+    c.beginPath();
+    c.moveTo(px(0), py(T1));
+    c.lineTo(px(t1), py(T1));
+    c.lineTo(px(t1), py(HOVER_THRUST));
+    c.lineTo(px(RUN), py(HOVER_THRUST));
+    c.stroke();
+    c.restore();
+  };
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
   const rH = readout(t('readout.height'), 'out');
   const rV = readout(t('readout.speed'));
@@ -110,6 +125,7 @@ const schedule: WidgetFactory = (host, ctx) => {
     status.className = 'w-status';
     sample();
     render();
+    rig.tPlot.invalidate();
   };
   const launch = () => {
     reset();
@@ -138,11 +154,18 @@ const schedule: WidgetFactory = (host, ctx) => {
     pressed(pkgBtn, dist.d.pkg);
     if (!loop.playing && sim.t < RUN && !sim.crashed) loop.play();
   });
-  rig.right.append(h('div', { class: 'readouts' }, rH.el, rV.el, rT.el), status);
+  rig.right.append(h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rH.el, rV.el, rT.el)));
   host.append(
     h('div', { class: 'w-controls' }, slT.el, slt.el),
-    h('div', { class: 'w-row', style: { marginTop: '10px' } }, launchBtn, theoBtn, h('span', { class: 'w-help' }, t('disturb')), gustBtn, pkgBtn),
-    h('div', { style: { marginTop: '10px' } }, transport({ loop, onReset: reset, onStep: () => (adv(0.1, sample), render()) })),
+    h(
+      'div',
+      { class: 'w-hud' },
+      h('div', { class: 'w-row' }, launchBtn, theoBtn),
+      h('div', { class: 'w-row', role: 'group', 'aria-label': t('disturb') }, h('span', { class: 'w-help' }, t('disturb')), gustBtn, pkgBtn),
+    ),
+    h('div', { class: 'w-controls' }, transport({ loop, onReset: reset, onStep: () => (adv(0.1, sample), render()) })),
+    status,
+    h('p', { class: 'w-help' }, t('planHelp')),
   );
   reset();
   return () => loop.destroy();
@@ -193,8 +216,7 @@ const feedback: WidgetFactory = (host, ctx) => {
     aria: t('plot.aria'),
     errorBand: true,
   });
-  const diagramHost = h('div', { style: { marginTop: '8px', maxWidth: '720px', marginInline: 'auto' } });
-  host.append(diagramHost);
+  const diagramHost = h('div', { style: { marginTop: '16px', maxWidth: '720px', marginInline: 'auto' } });
   const diagram = loopDiagram(diagramHost, labels(t));
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' }, t('status.open'));
   const rH = readout(t('readout.height'), 'out');
@@ -280,9 +302,17 @@ const feedback: WidgetFactory = (host, ctx) => {
     pressed(pkgBtn, dist.d.pkg);
     if (!loop.playing && !sim.crashed) loop.play();
   });
-  rig.right.append(h('div', { class: 'readouts' }, rH.el, rE.el, rT.el), status);
-  host.insertBefore(h('div', { class: 'w-row', style: { margin: '8px 0' } }, h('span', { class: 'w-help' }, t('disturb')), gustBtn, pkgBtn), diagramHost);
-  host.insertBefore(h('div', { style: { margin: '8px 0' } }, transport({ loop, onReset: reset, onStep: () => (adv(0.1, sample), render()) })), diagramHost);
+  rig.right.append(h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rH.el, rE.el, rT.el)));
+  host.append(
+    h(
+      'div',
+      { class: 'w-hud' },
+      transport({ loop, onReset: reset, onStep: () => (adv(0.1, sample), render()) }),
+      h('div', { class: 'w-row', role: 'group', 'aria-label': t('disturb') }, h('span', { class: 'w-help' }, t('disturb')), gustBtn, pkgBtn),
+    ),
+    status,
+    diagramHost,
+  );
   // predict-then-reveal: attach the package to the open-loop drone one second in
   const off = ctx.bus.on('predict:ch1-package', () => {
     mode = 'open';
@@ -301,6 +331,8 @@ const feedback: WidgetFactory = (host, ctx) => {
   });
   syncDiagram();
   reset();
+  // a calm hover to start with: the loop only really runs while the widget is on screen
+  if (Loop.autoplay) loop.play();
   return () => {
     off();
     loop.destroy();
@@ -323,14 +355,26 @@ const whiteboard: WidgetFactory = (host, ctx) => {
   const box = h('div', { style: { maxWidth: '760px', margin: '0 auto' } });
   host.append(box);
   const diagram = loopDiagram(box, labels(t));
-  const caption = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  const caption = h('p', { class: 'w-status wb-caption', 'aria-live': 'polite' });
   const counter = h('span', { class: 'w-help' });
   const back = h('button', { class: 'btn small', type: 'button' }, `← ${t('back')}`);
   const next = h('button', { class: 'btn primary small', type: 'button' }, `${t('next')} →`);
+  // on narrow screens the diagram scrolls sideways: bring the newly drawn piece into view
+  const revealNew = () => {
+    const scroller = box.querySelector<HTMLElement>('.diagram-scroll');
+    if (!scroller || scroller.scrollWidth <= scroller.clientWidth + 1) return;
+    const lit = [...scroller.querySelectorAll<SVGGElement>('.blk.lit')];
+    if (!lit.length) return;
+    const sr = scroller.getBoundingClientRect();
+    const left = Math.min(...lit.map((g) => g.getBoundingClientRect().left)) - sr.left + scroller.scrollLeft;
+    const right = Math.max(...lit.map((g) => g.getBoundingClientRect().right)) - sr.left + scroller.scrollLeft;
+    scroller.scrollTo({ left: (left + right) / 2 - scroller.clientWidth / 2, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+  };
   const show = () => {
     diagram.show(ALL_PARTS, false);
     diagram.show(steps[i], true);
     diagram.highlight(newParts[i]);
+    revealNew();
     caption.textContent = t(`step${i + 1}`);
     counter.textContent = t('counter', { n: i + 1, total: steps.length });
     back.disabled = i === 0;
@@ -344,7 +388,8 @@ const whiteboard: WidgetFactory = (host, ctx) => {
     i = Math.min(steps.length - 1, i + 1);
     show();
   });
-  host.append(caption, h('div', { class: 'w-row', style: { justifyContent: 'center' } }, back, counter, next));
+  host.append(caption, h('div', { class: 'w-row', style: { justifyContent: 'center', marginTop: '6px' } }, back, counter, next));
+  requestAnimationFrame(show);
   show();
 };
 
