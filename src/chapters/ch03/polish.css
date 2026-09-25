@@ -1,0 +1,94 @@
+/* Shared by chapters 3–5: small layout refinements for their widgets. */
+
+/* status lines whose text changes length keep a stable height, so nothing below jumps */
+.w-status.steady {
+  min-height: 2.9em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* plots you can scrub by dragging */
+canvas.scrub {
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+canvas.scrub.scrubbing {
+  cursor: grabbing;
+}
+
+/* a trail of values, e.g. 3 → 3i → −3 */
+.trail {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px 6px;
+  margin: 6px 0 0;
+  font-family: var(--font-hand);
+  font-size: 1.1rem;
+  color: var(--ink-2);
+  min-height: 1.8em;
+}
+.trail .chip {
+  padding: 1px 9px;
+  border-radius: 999px;
+  border: 1.5px solid var(--paper-3);
+  background: var(--paper);
+}
+.trail .chip:last-child {
+  border-color: var(--c-output);
+  color: var(--c-output);
+  animation: rise-in 260ms var(--ease-out) both;
+}
+.trail .sep {
+  color: var(--ink-3);
+}
+
+/* the map of s: map and spiral side by side on wide screens */
+.smap-grid {
+  display: grid;
+  gap: 16px;
+}
+@media (min-width: 768px) {
+  .smap-grid {
+    grid-template-columns: minmax(240px, 0.85fr) minmax(0, 1.5fr);
+    align-items: start;
+  }
+}
+.smap-grid .s-plane-wrap {
+  max-width: 360px;
+}
+
+/* when the learner's guess locks in */
+.readout.locked {
+  animation: lock-in 420ms var(--ease-out);
+}
+@keyframes lock-in {
+  0% {
+    scale: 1;
+  }
+  40% {
+    scale: 1.06;
+  }
+  100% {
+    scale: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .readout.locked {
+    animation: none;
+  }
+}
+
+/* map of s: its SVG is scaled down in a narrow column, so lift the small labels back up */
+.smap-grid .s-plane .tick {
+  font-size: 15px;
+}
+.smap-grid .s-plane .pt-label {
+  font-size: 24px;
+}
+.smap-grid .s-plane .axis-label {
+  font-size: 20px;
+}

@@ -7,131 +7,353 @@
       "id": "slope",
       "title": "Slope is speed",
       "blocks": [
-        { "t": "say", "who": "theo", "mood": "think", "text": "We keep saying \"sluggish\", \"wiggly\", \"settles\". June's right: those are vibes, not maths. I want a precise way to say *how fast* the drone is changing." },
-        { "t": "say", "who": "june", "mood": "happy", "text": "Let's replay our drone from Chapter 2 (Kp = 20 N/m) and look closely." },
-        { "t": "p", "text": "The {out|blue curve} is the drone's height over time. Speed is **how much the height changes per second**. On the graph, that's how *steep* the curve is at a given moment. Lay a ruler along the curve so it just touches it at one point. That ruler is the **tangent line**, and its slope is the speed." },
-        { "t": "say", "who": "mika", "mood": "excited", "text": "Easy: the drone is going fastest at the very top of the bump, because that's where it's highest!" },
-        { "t": "widget", "id": "tangent" },
-        { "t": "say", "who": "theo", "mood": "surprised", "text": "Put the cursor on the top of the bump. The tangent is **flat**. The speed is zero there!" },
-        { "t": "say", "who": "mika", "mood": "worried", "text": "Oh. The drone climbs, runs out of upward speed, stops for an instant at the top, and falls back. **High** and **fast** are totally different things." },
-        { "t": "p", "text": "The fastest moment is actually in the middle of the climb, where the curve is steepest. And when the curve goes *down*, the slope is negative: the drone is falling." },
-        { "t": "p", "text": "This \"slope at one instant\" gets a name: the **derivative**. We write it like a tiny change in height divided by the tiny time it took:" },
-        { "t": "math", "tex": "\\text{speed} = \\frac{d\\out{h}}{dt} \\approx \\frac{\\text{change in height}}{\\text{change in time}}\\quad(\\text{over a very short time})" },
-        { "t": "note", "text": "People also write $\\dot{h}$ (\"h-dot\") for the same thing. Same idea, less ink." }
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "We keep saying \"sluggish\", \"wiggly\", \"settles\". June's right: those are vibes, not maths. I want a precise way to say *how fast* the drone is changing."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Let's replay our drone from Chapter 2 (Kp = 20 N/m) and look closely."
+        },
+        {
+          "t": "p",
+          "text": "The {out|blue curve} is the drone's height over time. Speed is **how much the height changes per second**. On the graph, that's how *steep* the curve is at a given moment. Lay a ruler along the curve so it just touches it at one point. That ruler is the **tangent line**, and its slope is the speed."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Easy: the drone is going fastest at the very top of the bump, because that's where it's highest!"
+        },
+        {
+          "t": "widget",
+          "id": "tangent"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Put the cursor on the top of the bump. The tangent is **flat**. The speed is zero there!"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Oh. The drone climbs, runs out of upward speed, stops for an instant at the top, and falls back. **High** and **fast** are totally different things."
+        },
+        {
+          "t": "p",
+          "text": "The fastest moment is actually in the middle of the climb, where the curve is steepest. And when the curve goes *down*, the slope is negative: the drone is falling."
+        },
+        {
+          "t": "p",
+          "text": "This \"slope at one instant\" gets a name: the **derivative**. We write it like a tiny change in height divided by the tiny time it took:"
+        },
+        {
+          "t": "math",
+          "tex": "\\text{speed} = \\frac{d\\out{h}}{dt} \\approx \\frac{\\text{change in height}}{\\text{change in time}}\\quad(\\text{over a very short time})"
+        },
+        {
+          "t": "note",
+          "text": "People also write $\\dot{h}$ (\"h-dot\") for the same thing. Same idea, less ink."
+        }
       ]
     },
     {
       "id": "rule",
       "title": "A rule for the speed",
       "blocks": [
-        { "t": "say", "who": "june", "mood": "think", "text": "My coffee cools fast at first and then really slowly. It never quite gets to room temperature." },
-        { "t": "say", "who": "theo", "mood": "think", "text": "Because the speed of cooling depends on **how far it still has to go**. A very hot mug loses heat quickly. A barely-warm mug hardly loses any." },
-        { "t": "p", "text": "Let's write that down as a rule for the slope. The coffee temperature is {out|T}, the room is {sp|20 °C}:" },
-        { "t": "math", "tex": "\\frac{d\\out{T}}{dt} = -\\frac{\\out{T} - \\sp{T_{\\text{room}}}}{\\tau}" },
-        { "t": "p", "text": "The minus sign says \"cool down when hotter than the room\". The number **τ** (tau, the *time constant*) says how sluggish the mug is. For a normal mug, τ ≈ 10 minutes." },
-        { "t": "note", "aside": true, "text": "Honesty box: real mugs also lose heat by steam and radiation. This simple rule (Newton's law of cooling) is close enough to be useful." },
-        { "t": "p", "text": "Here's the puzzle: the rule only tells us the slope **right now**. Can we get the whole curve out of it? Let's build it by hand: look at the slope, walk along it for a little while (Δt), look at the new slope, walk again…" },
-        { "t": "widget", "id": "coffee" },
-        { "t": "say", "who": "june", "mood": "excited", "text": "Twelve little steps is boring. I'll take **15-minute** steps and be done in no time." },
-        { "t": "say", "who": "june", "mood": "surprised", "text": "…Wait. The coffee is at **−15 °C**?! It froze in a warm room?" },
-        { "t": "say", "who": "theo", "mood": "think", "text": "The rule is fine. The *steps* are the problem. In one giant step you keep using the steep slope from the **start** of the step, long after it stopped being true. You fly right past room temperature." },
-        { "t": "p", "text": "We can see exactly how much. Each step multiplies the gap to room temperature by the same number:" },
-        { "t": "math", "tex": "\\text{gap}_{\\text{next}} = \\left(1 - \\frac{\\Delta t}{\\tau}\\right) \\cdot \\text{gap}" },
-        { "t": "list", "items": [
-          "Δt smaller than τ: the factor is between 0 and 1. The gap shrinks, no overshoot.",
-          "Δt between τ and 2τ: the factor is **negative**. The coffee overshoots below the room, then above, swinging back and forth while the swings shrink.",
-          "Δt bigger than 2τ: the factor is less than −1. The swings **grow** every step. Nonsense coffee."
-        ] },
-        { "t": "say", "who": "mika", "mood": "surprised", "text": "That's the shower! Acting on old information too boldly makes you swing." },
-        { "t": "note", "text": "This is why our simulations take tiny, clever steps (1 millisecond, with a method called RK4). The swings you'll see in later chapters are real physics, not step-size accidents." },
-        { "t": "p", "text": "Make Δt small and switch on the smooth curve. The hand-built dots land right on it. That smooth shape is called **exponential decay**. It gets its own chapter next." },
-        { "t": "h3", "text": "The time constant is a ruler" },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "My coffee cools fast at first and then really slowly. It never quite gets to room temperature."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Because the speed of cooling depends on **how far it still has to go**. A very hot mug loses heat quickly. A barely-warm mug hardly loses any."
+        },
+        {
+          "t": "p",
+          "text": "Let's write that down as a rule for the slope. The coffee temperature is {out|T}, the room is {sp|20 °C}:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d\\out{T}}{dt} = -\\frac{\\out{T} - \\sp{T_{\\text{room}}}}{\\tau}"
+        },
+        {
+          "t": "p",
+          "text": "The minus sign says \"cool down when hotter than the room\". The number **τ** (tau, the *time constant*) says how sluggish the mug is. For a normal mug, τ ≈ 10 minutes."
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Honesty box: real mugs also lose heat by steam and radiation. This simple rule (Newton's law of cooling) is close enough to be useful."
+        },
+        {
+          "t": "p",
+          "text": "Here's the puzzle: the rule only tells us the slope **right now**. Can we get the whole curve out of it? Let's build it by hand: look at the slope, walk along it for a little while (Δt), look at the new slope, walk again…"
+        },
+        {
+          "t": "widget",
+          "id": "coffee"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Twelve little steps is boring. I'll take **15-minute** steps and be done in no time."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "…Wait. The coffee is at **−15 °C**?! It froze in a warm room?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "The rule is fine. The *steps* are the problem. In one giant step you keep using the steep slope from the **start** of the step, long after it stopped being true. You fly right past room temperature."
+        },
+        {
+          "t": "p",
+          "text": "We can see exactly how much. Each step multiplies the gap to room temperature by the same number:"
+        },
+        {
+          "t": "math",
+          "tex": "\\text{gap}_{\\text{next}} = \\left(1 - \\frac{\\Delta t}{\\tau}\\right) \\cdot \\text{gap}"
+        },
+        {
+          "t": "list",
+          "items": [
+            "Δt smaller than τ: the factor is between 0 and 1. The gap shrinks, no overshoot.",
+            "Δt between τ and 2τ: the factor is **negative**. The coffee overshoots below the room, then above, swinging back and forth while the swings shrink.",
+            "Δt bigger than 2τ: the factor is less than −1. The swings **grow** every step. Nonsense coffee."
+          ]
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "That's the shower! Acting on old information too boldly makes you swing."
+        },
+        {
+          "t": "note",
+          "text": "This is why our simulations take tiny, clever steps (1 millisecond, with a method called RK4). The swings you'll see in later chapters are real physics, not step-size accidents."
+        },
+        {
+          "t": "p",
+          "text": "Make Δt small and switch on the smooth curve. The hand-built dots land right on it. That smooth shape is called **exponential decay**. It gets its own chapter next."
+        },
+        {
+          "t": "h3",
+          "text": "The time constant is a ruler"
+        },
         {
           "t": "predict",
           "id": "ch3-two-tau",
           "gate": true,
           "q": "After **one** time constant, the coffee has closed 63% of the gap to room temperature. After **two** time constants, how much of the gap is closed?",
           "options": [
-            { "text": "100%: the second τ closes the other 37%", "why": "Tempting, but the second τ doesn't finish the job. It closes 63% of *what's left*." },
-            { "text": "About 86%", "correct": true, "why": "Each τ closes 63% of the remaining gap: 37% remains after one τ, and 37% of 37% ≈ 14% remains after two. So 86% is closed." },
-            { "text": "126%, twice 63%", "why": "That would mean overshooting below room temperature. The real (smooth) coffee never does that. Only June's giant steps did." }
+            {
+              "text": "100%: the second τ closes the other 37%",
+              "why": "Tempting, but the second τ doesn't finish the job. It closes 63% of *what's left*."
+            },
+            {
+              "text": "About 86%",
+              "correct": true,
+              "why": "Each τ closes 63% of the remaining gap: 37% remains after one τ, and 37% of 37% ≈ 14% remains after two. So 86% is closed."
+            },
+            {
+              "text": "126%, twice 63%",
+              "why": "That would mean overshooting below room temperature. The real (smooth) coffee never does that. Only June's giant steps did."
+            }
           ]
         },
-        { "t": "widget", "id": "ruler" },
-        { "t": "p", "text": "After 1τ: 63%. After 2τ: 86%. After 3τ: 95%. It never gets *exactly* there, but after about 4–5 τ nobody can tell. Switch to the **tank**: water flowing in slows down as the tank fills, so the rule is the same (\"rate depends on how far from full\") and so is the shape." },
-        { "t": "say", "who": "june", "mood": "happy", "text": "So τ is a built-in ruler. Tell me τ and I know how sluggish a thing is, whether it's a mug, a tank or a drone." },
-        { "t": "vocab", "items": [
-          { "term": "Derivative", "def": "The slope of a curve at one instant: how fast something changes. Written $\\frac{dh}{dt}$ or $\\dot h$." },
-          { "term": "First-order system", "def": "Something whose rate of change depends on how far it is from where it's heading (coffee, tanks). Its curve is an exponential." },
-          { "term": "Time constant τ", "def": "How long a first-order system takes to cover 63% of the remaining distance." }
-        ] }
+        {
+          "t": "widget",
+          "id": "ruler"
+        },
+        {
+          "t": "p",
+          "text": "After 1τ: 63%. After 2τ: 86%. After 3τ: 95%. It never gets *exactly* there, but after about 4–5 τ nobody can tell. Switch to the **tank**: water flowing in slows down as the tank fills, so the rule is the same (\"rate depends on how far from full\") and so is the shape."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "So τ is a built-in ruler. Tell me τ and I know how sluggish a thing is, whether it's a mug, a tank or a drone."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Derivative",
+              "def": "The slope of a curve at one instant: how fast something changes. Written $\\frac{dh}{dt}$ or $\\dot h$."
+            },
+            {
+              "term": "First-order system",
+              "def": "Something whose rate of change depends on how far it is from where it's heading (coffee, tanks). Its curve is an exponential."
+            },
+            {
+              "term": "Time constant τ",
+              "def": "How long a first-order system takes to cover 63% of the remaining distance."
+            }
+          ]
+        }
       ]
     },
     {
       "id": "area",
       "title": "Going backwards: adding up area",
       "blocks": [
-        { "t": "say", "who": "theo", "mood": "think", "text": "Slope turns height into speed. Can we go **backwards**? Suppose the drone's sensor only tells us its speed. Where is it?" },
-        { "t": "p", "text": "If you fly at a constant 2 m/s for 3 s, you rise 6 m: speed × time. On a speed-vs-time graph that's the **area of a rectangle**. When the speed keeps changing, slice time into thin strips, treat each strip as a rectangle, and add them all up." },
-        { "t": "p", "text": "Sweep the cursor and watch the shaded area grow. The {out|blue curve} below is simply *the area so far*. Where the speed dips below zero (the drone falls), the area counts as **negative** and the height goes down." },
-        { "t": "widget", "id": "area" },
-        { "t": "say", "who": "mika", "mood": "happy", "text": "The accumulated area lands exactly on the real height. Slope takes you one way, area brings you back." },
-        { "t": "p", "text": "This \"accumulate the area\" operation is called the **integral**:" },
-        { "t": "math", "tex": "\\out{h}(t) = \\out{h}(0) + \\int_0^{t} \\text{speed}\\;dt" },
-        { "t": "note", "text": "That's all the integral we need for now. It comes back twice: in Chapter 7 (a transform that measures an area) and Chapter 9 (the \"I\" in PID piles up past error)." }
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Slope turns height into speed. Can we go **backwards**? Suppose the drone's sensor only tells us its speed. Where is it?"
+        },
+        {
+          "t": "p",
+          "text": "If you fly at a constant 2 m/s for 3 s, you rise 6 m: speed × time. On a speed-vs-time graph that's the **area of a rectangle**. When the speed keeps changing, slice time into thin strips, treat each strip as a rectangle, and add them all up."
+        },
+        {
+          "t": "p",
+          "text": "Sweep the cursor and watch the shaded area grow. The {out|blue curve} below is simply *the area so far*. Where the speed dips below zero (the drone falls), the area counts as **negative** and the height goes down."
+        },
+        {
+          "t": "widget",
+          "id": "area"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "The accumulated area lands exactly on the real height. Slope takes you one way, area brings you back."
+        },
+        {
+          "t": "p",
+          "text": "This \"accumulate the area\" operation is called the **integral**:"
+        },
+        {
+          "t": "math",
+          "tex": "\\out{h}(t) = \\out{h}(0) + \\int_0^{t} \\text{speed}\\;dt"
+        },
+        {
+          "t": "note",
+          "text": "That's all the integral we need for now. It comes back twice: in Chapter 7 (a transform that measures an area) and Chapter 9 (the \"I\" in PID piles up past error)."
+        }
       ]
     },
     {
       "id": "wrap",
       "title": "What we know so far",
       "blocks": [
-        { "t": "recap", "items": [
-          "The **derivative** is the slope of a curve at one instant: how fast it's changing. High and fast are different things.",
-          "A rule like \"cool faster the hotter you are\" pins down the whole curve: an **exponential** approach.",
-          "The **time constant τ** is a ruler: 63% of the way after τ, 86% after 2τ, 95% after 3τ.",
-          "Building curves with steps that are too big creates fake overshoot and swings, just like the shower.",
-          "The **integral** accumulates area and undoes the derivative."
-        ] },
-        { "t": "quiz", "items": [
-          {
-            "id": "ch3-q1",
-            "q": "The drone is at the very **highest point** of its overshoot. What is its vertical speed?",
-            "options": [
-              { "text": "The biggest it ever gets", "why": "Height and speed are different things. At the top the curve is momentarily flat." },
-              { "text": "Zero", "correct": true, "why": "The tangent at the top of a bump is flat: slope zero. The drone stops rising for an instant before falling back." },
-              { "text": "Its most negative value", "why": "The fastest fall comes a bit later, where the curve drops most steeply." }
-            ]
-          },
-          {
-            "id": "ch3-q2",
-            "q": "Coffee at 90 °C, room at 20 °C, τ = 10 min. Roughly how hot is it after 10 minutes?",
-            "options": [
-              { "text": "20 °C", "why": "That's room temperature. It takes several time constants to get close, and it never quite arrives." },
-              { "text": "About 46 °C", "correct": true, "why": "After one τ, 63% of the 70-degree gap is closed: 90 − 0.63 × 70 ≈ 46 °C." },
-              { "text": "About 55 °C", "why": "That's exactly halfway. After one τ it's closed a bit more than half: 63%." }
-            ]
-          },
-          {
-            "id": "ch3-q3",
-            "q": "A drone rises at 2 m/s for 3 s, then its speed drops steadily to 0 over the next 2 s. How much height did it gain?",
-            "options": [
-              { "text": "6 m", "why": "That's only the rectangle (first 3 s). The slowing-down part adds a triangle too." },
-              { "text": "8 m", "correct": true, "why": "Rectangle 2 × 3 = 6 m plus triangle ½ × 2 × 2 = 2 m. Total area 8 m." },
-              { "text": "10 m", "why": "That treats the last 2 s as if it were still at full speed. The speed was dropping, so it's a triangle, not a rectangle." }
-            ]
-          },
-          {
-            "id": "ch3-q4",
-            "q": "You build the coffee curve by hand with steps of Δt = 15 min, and τ = 10 min. What happens?",
-            "options": [
-              { "text": "A slightly jagged version of the real curve", "why": "That's what happens with steps shorter than τ. At 15 min the step overshoots." },
-              { "text": "It overshoots below room temperature and swings, with shrinking swings", "correct": true, "why": "Each step multiplies the gap by 1 − 15/10 = −0.5: the sign flips (overshoot) and the size halves (the swings shrink)." },
-              { "text": "It swings wider and wider", "why": "That needs Δt > 2τ = 20 min, where the factor goes below −1." }
-            ]
-          }
-        ] },
-        { "t": "map" },
-        { "t": "cliff", "text": "Theo: \"The coffee curve had a funny property: its slope was always **proportional to itself**. Is there a special function like that?\"" }
+        {
+          "t": "recap",
+          "items": [
+            "The **derivative** is the slope of a curve at one instant: how fast it's changing. High and fast are different things.",
+            "A rule like \"cool faster the hotter you are\" pins down the whole curve: an **exponential** approach.",
+            "The **time constant τ** is a ruler: 63% of the way after τ, 86% after 2τ, 95% after 3τ.",
+            "Building curves with steps that are too big creates fake overshoot and swings, just like the shower.",
+            "The **integral** accumulates area and undoes the derivative."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch3-q1",
+              "q": "The drone is at the very **highest point** of its overshoot. What is its vertical speed?",
+              "options": [
+                {
+                  "text": "The biggest it ever gets",
+                  "why": "Height and speed are different things. At the top the curve is momentarily flat."
+                },
+                {
+                  "text": "Zero",
+                  "correct": true,
+                  "why": "The tangent at the top of a bump is flat: slope zero. The drone stops rising for an instant before falling back."
+                },
+                {
+                  "text": "Its most negative value",
+                  "why": "The fastest fall comes a bit later, where the curve drops most steeply."
+                }
+              ]
+            },
+            {
+              "id": "ch3-q2",
+              "q": "Coffee at 90 °C, room at 20 °C, τ = 10 min. Roughly how hot is it after 10 minutes?",
+              "options": [
+                {
+                  "text": "20 °C",
+                  "why": "That's room temperature. It takes several time constants to get close, and it never quite arrives."
+                },
+                {
+                  "text": "About 46 °C",
+                  "correct": true,
+                  "why": "After one τ, 63% of the 70-degree gap is closed: 90 − 0.63 × 70 ≈ 46 °C."
+                },
+                {
+                  "text": "About 55 °C",
+                  "why": "That's exactly halfway. After one τ it's closed a bit more than half: 63%."
+                }
+              ]
+            },
+            {
+              "id": "ch3-q3",
+              "q": "A drone rises at 2 m/s for 3 s, then its speed drops steadily to 0 over the next 2 s. How much height did it gain?",
+              "options": [
+                {
+                  "text": "6 m",
+                  "why": "That's only the rectangle (first 3 s). The slowing-down part adds a triangle too."
+                },
+                {
+                  "text": "8 m",
+                  "correct": true,
+                  "why": "Rectangle 2 × 3 = 6 m plus triangle ½ × 2 × 2 = 2 m. Total area 8 m."
+                },
+                {
+                  "text": "10 m",
+                  "why": "That treats the last 2 s as if it were still at full speed. The speed was dropping, so it's a triangle, not a rectangle."
+                }
+              ]
+            },
+            {
+              "id": "ch3-q4",
+              "q": "You build the coffee curve by hand with steps of Δt = 15 min, and τ = 10 min. What happens?",
+              "options": [
+                {
+                  "text": "A slightly jagged version of the real curve",
+                  "why": "That's what happens with steps shorter than τ. At 15 min the step overshoots."
+                },
+                {
+                  "text": "It overshoots below room temperature and swings, with shrinking swings",
+                  "correct": true,
+                  "why": "Each step multiplies the gap by 1 − 15/10 = −0.5: the sign flips (overshoot) and the size halves (the swings shrink)."
+                },
+                {
+                  "text": "It swings wider and wider",
+                  "why": "That needs Δt > 2τ = 20 min, where the factor goes below −1."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Theo: \"The coffee curve had a funny property: its slope was always **proportional to itself**. Is there a special function like that?\""
+        }
       ]
     }
   ],
@@ -152,9 +374,11 @@
       "falling": "Tangent tilts down: the drone is falling (negative speed).",
       "flat": "Tangent is flat: the speed is zero right here!",
       "help": "Drag on either plot or use the slider. Each place you visit adds a point to the speed curve.",
-      "ariaTop": "Drone height over 6 seconds with a tangent line at the time cursor.",
+      "ariaTop": "Drone height over 4 seconds with a tangent line at the time cursor.",
       "ariaBottom": "Speed curve, drawn point by point as the cursor visits each time.",
-      "describe": "At {t} s the height is {h} m and the slope is {v} m per second."
+      "describe": "At {t} s the height is {h} m and the slope is {v} m per second.",
+      "atStart": "At the very start the drone sits still: slope zero. Drag right to follow the climb.",
+      "pause": "Pause"
     },
     "coffee": {
       "title": "Build the coffee curve by hand",
@@ -176,7 +400,8 @@
         "frozen": "Wait… {T} °C? The coffee got colder than the room!",
         "growing": "And the swings are getting bigger!",
         "dipped": "(On the way it dipped below room temperature!)"
-      }
+      },
+      "help": "Each step walks straight along the current slope for Δt minutes. Small steps hug the smooth curve; giant steps overshoot."
     },
     "ruler": {
       "title": "The time-constant ruler",
@@ -189,10 +414,10 @@
       "room": "room 20 °C",
       "full": "full 1.2 m",
       "tau": "Time constant τ",
-      "readTau": "τ",
       "read1": "value at 1τ",
       "aria": "Exponential curve with vertical marks at one, two and three time constants, labelled 63, 86 and 95 percent.",
-      "describe": "Time constant {tau} minutes. Marks at one, two and three time constants show 63, 86 and 95 percent of the way."
+      "describe": "Time constant {tau} minutes. Marks at one, two and three time constants show 63, 86 and 95 percent of the way.",
+      "read2": "value at 2τ"
     },
     "area": {
       "title": "Adding up area",
@@ -202,12 +427,13 @@
       "accHeight": "area so far",
       "cursor": "Sweep up to",
       "readArea": "area so far = height gained",
-      "start": "Press play (or drag) to start adding up strips.",
+      "start": "Press play (or drag the speed plot) to start adding up strips.",
       "positive": "Speed above zero: each strip adds height.",
       "negative": "Speed below zero: these strips count as negative. The height goes down.",
       "ariaTop": "Drone speed over time with the area under the curve shaded up to the cursor.",
       "ariaBottom": "The accumulated area plotted over time, on top of the real height curve.",
-      "describe": "Up to {t} s the accumulated area is {a} metres."
+      "describe": "Up to {t} s the accumulated area is {a} metres.",
+      "help": "Drag on the speed plot or use the slider. Strips above zero add height, strips below zero take it away."
     }
   }
 }

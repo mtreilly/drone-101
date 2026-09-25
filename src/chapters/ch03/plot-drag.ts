@@ -1,32 +1,59 @@
 import type { Plot } from '../../ui/plot';
+import './polish.css';
 
 /**
- * Lets the learner drag a time cursor directly on a (linear-x) plot.
- * Calls `onX` with the data x under the pointer. Keyboard users use the paired slider.
+ * Lets the learner scrub a time cursor by dragging anywhere on a (linear-x) plot.
+ * Horizontal drags scrub; vertical swipes still scroll the page on touch screens.
+ * Updates are coalesced to one per animation frame. Keyboard users use the paired slider.
  */
 export function dragX(plot: Plot, onX: (x: number) => void): void {
   const canvas = plot.el.querySelector('canvas');
   if (!canvas) return;
-  canvas.style.cursor = 'ew-resize';
-  canvas.style.touchAction = 'none';
-  const toX = (ev: PointerEvent) => {
+  canvas.classList.add('scrub');
+  canvas.style.touchAction = 'pan-y';
+  const toX = (clientX: number) => {
     const r = canvas.getBoundingClientRect();
     const { min, max } = plot.opts.x;
     const a = plot.px(min);
     const b = plot.px(max);
-    const f = (ev.clientX - r.left - a) / (b - a);
+    const f = (clientX - r.left - a) / (b - a);
     return Math.min(max, Math.max(min, min + f * (max - min)));
   };
-  let dragging = false;
+  let pointer: number | null = null;
+  let pending: number | null = null;
+  let raf = 0;
+  const flush = () => {
+    raf = 0;
+    if (pending !== null) onX(toX(pending));
+    pending = null;
+  };
+  const queue = (clientX: number) => {
+    pending = clientX;
+    if (!raf) raf = requestAnimationFrame(flush);
+  };
   canvas.addEventListener('pointerdown', (ev) => {
-    dragging = true;
-    canvas.setPointerCapture(ev.pointerId);
-    onX(toX(ev));
+    if (pointer !== null || ev.button > 0) return; // ignore extra fingers mid-drag
+    pointer = ev.pointerId;
+    try {
+      canvas.setPointerCapture(ev.pointerId);
+    } catch {
+      /* synthetic or already-released pointer */
+    }
+    canvas.classList.add('scrubbing');
+    onX(toX(ev.clientX));
   });
   canvas.addEventListener('pointermove', (ev) => {
-    if (dragging) onX(toX(ev));
+    if (ev.pointerId === pointer) queue(ev.clientX);
   });
-  const end = () => (dragging = false);
+  const end = (ev: PointerEvent) => {
+    if (ev.pointerId !== pointer) return;
+    pointer = null;
+    canvas.classList.remove('scrubbing');
+    if (raf) {
+      cancelAnimationFrame(raf);
+      flush();
+    }
+  };
   canvas.addEventListener('pointerup', end);
   canvas.addEventListener('pointercancel', end);
 }

@@ -45,7 +45,7 @@ const tangent: WidgetFactory = (host, ctx) => {
   let cursor = 0;
   const rSlope = readout(t('readSlope'));
   const rHeight = readout(t('readHeight'), 'out');
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  const status = h('p', { class: 'w-status steady', 'aria-live': 'polite' });
 
   const drawTraced = () => {
     bottom.set(
@@ -82,8 +82,8 @@ const tangent: WidgetFactory = (host, ctx) => {
     drawTraced();
     rSlope.set(`${fmt(v, 2)} m/s`);
     rHeight.set(`${fmt(hh, 2)} m`);
-    const msg = Math.abs(v) < 0.3 && i > 20 ? t('flat') : v > 0 ? t('rising') : t('falling');
-    status.textContent = msg;
+    const msg = Math.abs(v) < 0.3 ? (i > 20 ? t('flat') : t('atStart')) : v > 0 ? t('rising') : t('falling');
+    if (status.textContent !== msg) status.textContent = msg;
     if (!fromSlider) sl.value = run.t[i];
     top.describe(t('describe', { t: fmt(run.t[i], 2), h: fmt(hh, 2), v: fmt(v, 2) }));
   };
@@ -95,9 +95,10 @@ const tangent: WidgetFactory = (host, ctx) => {
     setCursor(nx);
     if (nx >= T) loop.pause();
   }, host);
-  const sweep = h('button', { class: 'btn small', type: 'button' }, t('sweep'));
+  const sweep = h('button', { class: 'btn small primary', type: 'button' }, t('sweep'));
+  loop.onChange((playing) => (sweep.textContent = playing ? t('pause') : t('sweep')));
   sweep.addEventListener('click', () => {
-    if (cursor >= T - 0.01) setCursor(0);
+    if (!loop.playing && cursor >= T - 0.01) setCursor(0);
     loop.toggle();
   });
   const clear = h('button', { class: 'btn small', type: 'button' }, t('clear'));
@@ -110,7 +111,7 @@ const tangent: WidgetFactory = (host, ctx) => {
   host.prepend(h('p', { class: 'w-title' }, t('title')));
   host.append(
     h('div', { class: 'w-controls' }, sl.el),
-    h('div', { class: 'w-row' }, h('div', { class: 'readouts' }, rHeight.el, rSlope.el), sweep, clear),
+    h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rHeight.el, rSlope.el), h('div', { class: 'w-row' }, sweep, clear)),
     status,
     h('p', { class: 'w-help' }, t('help')),
   );
@@ -137,7 +138,11 @@ const coffee: WidgetFactory = (host, ctx) => {
   });
   plot.setLines([{ kind: 'h', at: COFFEE.room, color: 'sp', label: t('room') }]);
   let showExact = false;
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  const status = h('p', { class: 'w-status steady', 'aria-live': 'polite' });
+  const b1 = h('button', { class: 'btn primary small', type: 'button' }, t('step1'));
+  const b10 = h('button', { class: 'btn small', type: 'button' }, t('step10'));
+  const bAll = h('button', { class: 'btn small', type: 'button' }, t('stepAll'));
+  const bR = h('button', { class: 'btn small', type: 'button' }, t('restart'));
   const draw = () => {
     plot.set(
       'hand',
@@ -181,8 +186,10 @@ const coffee: WidgetFactory = (host, ctx) => {
       cls = 'w-status bad';
     }
     status.textContent = msg;
-    status.className = cls;
+    status.className = `${cls} steady`;
     plot.describe(msg);
+    const full = cur.t + dt > 120 + 1e-9;
+    [b1, b10, bAll].forEach((b) => (b.disabled = full));
   };
   const step = (k = 1) => {
     for (let i = 0; i < k; i++) {
@@ -211,10 +218,6 @@ const coffee: WidgetFactory = (host, ctx) => {
       restart();
     },
   });
-  const b1 = h('button', { class: 'btn primary small', type: 'button' }, t('step1'));
-  const b10 = h('button', { class: 'btn small', type: 'button' }, t('step10'));
-  const bAll = h('button', { class: 'btn small', type: 'button' }, t('stepAll'));
-  const bR = h('button', { class: 'btn small', type: 'button' }, t('restart'));
   b1.addEventListener('click', () => step(1));
   b10.addEventListener('click', () => step(10));
   bAll.addEventListener('click', () => step(1000));
@@ -224,7 +227,7 @@ const coffee: WidgetFactory = (host, ctx) => {
     draw();
   });
   host.prepend(h('p', { class: 'w-title' }, t('title')));
-  host.append(h('div', { class: 'w-controls' }, sl.el, tg.el), h('div', { class: 'w-row' }, b1, b10, bAll, bR), status);
+  host.append(h('div', { class: 'w-controls' }, sl.el, tg.el), h('div', { class: 'w-row', style: { marginTop: '14px' } }, b1, b10, bAll, bR), status, h('p', { class: 'w-help' }, t('help')));
   draw();
 };
 
@@ -240,8 +243,8 @@ const ruler: WidgetFactory = (host, ctx) => {
     height: 240,
     label: t('aria'),
   });
-  const rT = readout(t('readTau'));
   const r63 = readout(t('read1'), 'out');
+  const r86 = readout(t('read2'), 'out');
   const draw = () => {
     const coffeeMode = kind === 'coffee';
     const f = coffeeMode ? (x: number) => coffeeExact(x, tau) : (x: number) => tankExact(x, tau);
@@ -256,8 +259,9 @@ const ruler: WidgetFactory = (host, ctx) => {
     ]);
     const pct = [63, 86, 95];
     plot.setMarkers([1, 2, 3].filter((k) => k * tau <= 60).map((k) => ({ x: k * tau, y: f(k * tau), color: 'out', label: `${pct[k - 1]}%` })));
-    rT.set(`${fmt(tau, 1)} min`);
-    r63.set(`${fmt(f(tau), coffeeMode ? 1 : 2)} ${coffeeMode ? '°C' : 'm'}`);
+    const unit = coffeeMode ? '°C' : 'm';
+    r63.set(`${fmt(f(tau), coffeeMode ? 1 : 2)} ${unit}`);
+    r86.set(`${fmt(f(2 * tau), coffeeMode ? 1 : 2)} ${unit}`);
     plot.describe(t('describe', { tau: fmt(tau, 1) }));
   };
   const seg = segmented(
@@ -290,7 +294,7 @@ const ruler: WidgetFactory = (host, ctx) => {
     draw();
   });
   host.prepend(h('p', { class: 'w-title' }, t('title')), seg.el);
-  host.append(h('div', { class: 'w-controls' }, sl.el), h('div', { class: 'readouts' }, rT.el, r63.el));
+  host.append(h('div', { class: 'w-controls' }, sl.el), h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, r63.el, r86.el)));
   draw();
 };
 
@@ -323,7 +327,7 @@ const area: WidgetFactory = (host, ctx) => {
   bottom.set('true', run.t, run.h);
   let cursor = 0;
   const rA = readout(t('readArea'), 'out');
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  const status = h('p', { class: 'w-status steady', 'aria-live': 'polite' });
   const setCursor = (x: number, fromSlider = false) => {
     cursor = x;
     const i = nearest(run.t, x);
@@ -343,7 +347,8 @@ const area: WidgetFactory = (host, ctx) => {
     bottom.set('acc', run.t.slice(0, i + 1), acc.slice(0, i + 1));
     bottom.setCursor(run.t[i]);
     rA.set(`${fmt(acc[i], 2)} m`);
-    status.textContent = run.v[i] < 0 ? t('negative') : i > 0 ? t('positive') : t('start');
+    const msg = run.v[i] < 0 ? t('negative') : i > 0 ? t('positive') : t('start');
+    if (status.textContent !== msg) status.textContent = msg;
     if (!fromSlider) sl.value = run.t[i];
     bottom.describe(t('describe', { t: fmt(run.t[i], 2), a: fmt(acc[i], 2) }));
   };
@@ -357,8 +362,9 @@ const area: WidgetFactory = (host, ctx) => {
   host.prepend(h('p', { class: 'w-title' }, t('title')));
   host.append(
     h('div', { class: 'w-controls' }, sl.el),
-    h('div', { class: 'w-row' }, transport({ loop, onReset: () => (loop.pause(), setCursor(0)), onStep: () => setCursor(Math.min(T, cursor + 0.1)) }), rA.el),
+    h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rA.el), transport({ loop, onReset: () => (loop.pause(), setCursor(0)), onStep: () => setCursor(Math.min(T, cursor + 0.1)) })),
     status,
+    h('p', { class: 'w-help' }, t('help')),
   );
   setCursor(0);
   return () => loop.destroy();
