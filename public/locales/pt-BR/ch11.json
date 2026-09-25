@@ -1,0 +1,316 @@
+{
+  "kicker": "Capítulo 11",
+  "title": "O Desafio do Drone",
+  "question": "Você consegue manter o drone a 2 m durante tudo?",
+  "sections": [
+    {
+      "id": "briefing",
+      "title": "Briefing da missão",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Certo. Drone de verdade, entrega de verdade. Ele decola com um pacote, enfrenta uma rajada, solta o pacote e se mantém a 2 m o tempo todo. Vinte segundos."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "E não podemos tocar em nada enquanto ele voa?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "É exatamente esse o ponto. O controlador tem que fazer isso sozinho. Nós só escolhemos três números. Bem, quatro."
+        },
+        {
+          "t": "p",
+          "text": "A missão, segundo a segundo:"
+        },
+        {
+          "t": "list",
+          "ordered": true,
+          "items": [
+            "**0 s:** decola do chão carregando um {dis|pacote} de 0,2 kg (0,7 kg no total).",
+            "**6–9 s:** uma {dis|rajada} descendente empurra com 1,5 N.",
+            "**12 s:** o {dis|pacote cai}. De repente, o drone está 0,2 kg mais leve.",
+            "**20 s:** fim da missão."
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Nosso modelo de drone fica um pouco mais honesto para o final. Cada um destes é algo com que drones reais precisam conviver:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Atraso do motor:** as hélices levam cerca de 0,05 s para acelerar ou desacelerar. O empuxo que você pede chega um instante depois.",
+            "**Um sensor ruidoso:** cada leitura de altura erra cerca de 2 cm, aleatoriamente, mil vezes por segundo.",
+            "**Motores limitados:** 0 a 20 N, nunca negativo.",
+            "**O D é filtrado:** como a velocidade real não é conhecida, o D usa a inclinação da leitura filtrada do sensor, com a constante de tempo $\\tau_f$ que você escolher."
+          ]
+        },
+        {
+          "t": "note",
+          "text": "Ainda ignoramos inclinação, vento lateral, baterias enfraquecendo e uma centena de outras coisas. Mesmo assim, a malha de altitude de um drone real se parece bastante com esta."
+        },
+        {
+          "t": "predict",
+          "id": "ch11-drop",
+          "gate": true,
+          "q": "Quando o pacote cai aos 12 s, qual termo faz o trabalho pesado para trazer o drone de volta exatamente a 2 m?",
+          "options": [
+            {
+              "text": "P: ele reage ao erro imediatamente",
+              "why": "O P reage primeiro, mas o P sozinho apenas se estabilizaria em um *desvio residual* diferente, porque o empuxo de pairar mudou."
+            },
+            {
+              "text": "I: a pilha precisa encontrar o novo empuxo de pairar",
+              "correct": true,
+              "why": "O drone agora precisa de cerca de 4,9 N em vez de 6,9 N. Só o integral consegue caçar um novo empurrão constante e ainda terminar com erro zero."
+            },
+            {
+              "text": "D: ele impede o salto",
+              "why": "D amortece o salto, o que é útil, mas fica quieto quando o drone está parado, então não consegue manter o novo equilíbrio."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mission",
+      "title": "Voe a missão",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Cada mudança de um controle deslizante reinicia a missão, e o voo anterior permanece como um fantasma. O pequeno plano s mostra os polos **nominais** (um sensor perfeito, sem pacote, sem limites), para que você possa ver o quadro linear enquanto o voo real e bagunçado acontece ao lado. Ganhe todas as seis estrelas para o ouro."
+        },
+        {
+          "t": "p",
+          "text": "A estrela de chegada significa que a **altura real permanece** dentro de ±5 cm desde sua chegada até a rajada em 6 s; apenas cruzar 2 m uma vez não conta. A estrela de motores calmos usa o **desvio padrão** do empuxo de 3 a 6 s: sua variação típica em torno de sua média, incluindo acomodação tardia e ruído do sensor."
+        },
+        {
+          "t": "widget",
+          "id": "mission"
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Travado? Os vencedores do playground do Capítulo 9 são um bom começo. Então alongue $\\tau_f$ até que os motores parem de vibrar."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Eu ajustei o controlador perfeito na minha cabeça: $K_d$ enorme, o filtro minúsculo para que D reaja instantaneamente. É impecável em ar calmo! Veja…"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "…por que os motores estão gritando? A linha laranja está toda borrada, e agora também ultrapassa o alvo!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Capítulo 9, aviso 2. $K_d$ grande vezes um filtro minúsculo transforma cada 2 cm de oscilação do sensor em um pico de empuxo. E os picos são cortados em 0 N com muito mais frequência do que em 20 N, então eles adicionam um empurrão extra desequilibrado: é isso que causa a ultrapassagem do alvo. Só era impecável porque seu ar calmo imaginário vinha com um sensor perfeito."
+        },
+        {
+          "t": "p",
+          "text": "Experimente o **ajuste de ar calmo da June** e veja a estrela \"motores calmos\" falhar. Então alongue o filtro para cerca de 0,04 s e reduza $K_d$ para cerca de 6. Você abre mão de um pouco de velocidade e ganha motores calmos. Essa troca, velocidade contra ruído e contra robustez, *é* a engenharia de controle."
+        }
+      ]
+    },
+    {
+      "id": "reflect",
+      "title": "Olhando para trás",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Comecei pensando que \"empurrar mais forte\" conserta tudo. É o contrário, não é? A maior parte do problema veio de empurrar demais com informação velha ou ruidosa. Fico feliz por ter feito todas as perguntas bobas. Nenhuma delas era boba."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Finalmente acredito na transformada de Laplace. Não é uma tabela de consulta: é uma sonda que pergunta a um sinal \"quanto de $e^{st}$ você é?\" E porque inclinações se tornam multiplicação por $s$, o cálculo se transforma em álgebra. Os polos são onde a resposta explode: o $e^{st}$ a partir do qual o sistema é construído."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "E eu aprendi que \"mais\" não é \"melhor\": mais ganho, mais amortecimento, mais $K_i$, mais velocidade. Sempre existe um precipício, e os bons projetos mantêm uma margem dele. Além disso: sempre teste no drone."
+        },
+        {
+          "t": "p",
+          "text": "Aqui está tudo o que construímos, do chuveiro ao final. Cada bolha leva de volta ao lugar onde nasceu."
+        },
+        {
+          "t": "recap",
+          "title": "A jornada inteira, em um só fôlego",
+          "items": [
+            "**Realimentação**: medir o que aconteceu, comparar com o objetivo, agir sobre o erro (Cap 0–1).",
+            "O **controle P** empurra em proporção ao erro, mas deixa um desvio residual e oscila quando é forte (Cap 2).",
+            "**Derivadas, exponenciais e números girantes** descrevem como as coisas mudam: $e^{st}$ com $s = \\sigma + i\\omega$ cresce ou diminui *e* oscila (Cap 3–6).",
+            "A **transformada de Laplace** transforma inclinações em multiplicação por $s$, então o cálculo vira álgebra (Cap 7).",
+            "Os **polos não cancelados** de uma função de transferência marcam movimentos naturais visíveis da entrada escolhida até a saída: movimentos no semiplano esquerdo desaparecem, movimentos no semiplano direito crescem (Cap 8).",
+            "**PID**: o I elimina o desvio residual, o D adiciona amortecimento, e cada um move os polos (Cap 9).",
+            "O **atraso** adiciona defasagem de fase; as **margens** dizem o quão longe você está da beira do precipício (Cap 10).",
+            "O hardware real adiciona limites, atraso e ruído, então bons controladores são calmos além de rápidos (Cap 11)."
+          ]
+        },
+        {
+          "t": "map"
+        }
+      ]
+    },
+    {
+      "id": "final-check",
+      "title": "Explique para um amigo",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "O melhor teste de compreensão é explicar. Antes de cada resposta, tente dizer *sua* versão em voz alta. Depois escolha a explicação que mais se aproxima dela."
+        },
+        {
+          "t": "quiz",
+          "title": "Verificação final",
+          "items": [
+            {
+              "id": "ch11-q1",
+              "q": "Um amigo pergunta: \"Por que a transformada de Laplace existe?\"",
+              "options": [
+                {
+                  "text": "Ela transforma inclinações em multiplicação por $s$, então equações sobre mudança viram álgebra, e os polos da resposta mostram de quais comportamentos $e^{st}$ o sistema é feito",
+                  "correct": true,
+                  "why": "É o cerne disso: cálculo em álgebra, mais um mapa (o plano s) que mostra a personalidade de relance."
+                },
+                {
+                  "text": "É uma tabela de fórmulas que engenheiros memorizam para consultar respostas",
+                  "why": "A tabela é um *resultado*. Derivamos cada linha sondando sinais com $e^{-st}$ e medindo a área."
+                },
+                {
+                  "text": "Ela converte sinais em frequências sonoras",
+                  "why": "Isso está mais próximo da transformada de Fourier, que usa apenas a parte giratória ($s = i\\omega$). Laplace também permite crescimento e decaimento ($\\sigma$)."
+                }
+              ]
+            },
+            {
+              "id": "ch11-q2",
+              "q": "\"O que é um polo, de verdade?\"",
+              "options": [
+                {
+                  "text": "Um valor de $s$ onde a função de transferência explode: um dos movimentos $e^{st}$ que o sistema naturalmente faz, com sua parte real indicando crescimento/decaimento e sua parte imaginária indicando oscilação",
+                  "correct": true,
+                  "why": "Metade esquerda = morre, metade direita = explode, altura = velocidade de oscilação. A personalidade inteira em um mapa."
+                },
+                {
+                  "text": "Uma parte física do drone, como um motor",
+                  "why": "Os polos pertencem ao *loop inteiro*: mude um ganho e eles se movem, mesmo que nenhuma parte do drone tenha mudado."
+                },
+                {
+                  "text": "O ponto em que o sistema se torna instável",
+                  "why": "Todo sistema tem polos, inclusive os estáveis. A instabilidade acontece quando um polo fica no semiplano direito."
+                }
+              ]
+            },
+            {
+              "id": "ch11-q3",
+              "q": "\"Por que eu continuava passando do ponto no chuveiro?\"",
+              "options": [
+                {
+                  "text": "Você reagiu a uma informação atrasada com ganho demais: a fase da malha chegou a −180° enquanto o ganho ainda estava acima de 1, então cada correção alimentava a oscilação",
+                  "correct": true,
+                  "why": "Exatamente. A cura foi menos ganho, ou mais margem de fase, não mais esforço."
+                },
+                {
+                  "text": "O chuveiro estava com defeito",
+                  "why": "No Capítulo 0, deslocar as curvas quase alinhava as oscilações amplas, mas o cano também suavizava as mudanças bruscas. A resposta do chuveiro era atrasada e suavizada."
+                },
+                {
+                  "text": "Você não estava reagindo rápido o suficiente",
+                  "why": "Reagir com *mais força* piorou tudo, como as mãos do robô mostraram. O problema é a velocidade sobre uma informação velha."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "next",
+      "title": "Para onde ir agora",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Agora você sabe mais teoria de controle do que a maioria das pessoas chega a conhecer. Aqui está para onde a estrada segue, cada uma um novo caderno:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Lugar das raízes:** em vez de arrastar polos, arraste o *ganho* e veja os polos traçarem caminhos pelo plano s.",
+            "**Controle em espaço de estados:** muitos sensores, muitos motores, tudo ao mesmo tempo: a inclinação, o giro e a posição de um drone real juntos.",
+            "**Controle digital:** controladores reais rodam em computadores que amostram a cada poucos milissegundos. O plano s ganha um primo, o plano z.",
+            "**Filtros de Kalman:** combatendo o ruído de forma inteligente ao misturar a previsão de um modelo com a medição do sensor.",
+            "**Preditores de Smith e controle preditivo baseado em modelo:** controladores que carregam uma pequena simulação dentro de si, para enxergar além dos atrasos.",
+            "**Controle não linear e robusto:** o que fazer quando o mundo não é linear, e como provar que você ainda tem margem."
+          ]
+        },
+        {
+          "t": "cliff",
+          "text": "Da próxima vez que um chuveiro fizer você dançar entre escaldante e congelante, você vai saber exatamente o que está acontecendo. E vai saber que não é culpa sua. **É a margem de fase.**"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "mission": {
+      "title": "Controle da missão",
+      "measured": "leitura do sensor",
+      "hAria": "Altura ao longo da missão de 20 segundos com a faixa alvo; momentos de rajada e de queda de pacote marcados.",
+      "tAria": "Empuxo ao longo da missão com o limite de 20 N do motor.",
+      "gust": "rajada",
+      "drop": "soltar",
+      "max": "20 N máx",
+      "splane": "Polos nominais em malha fechada do drone com atraso do motor e derivativo filtrado.",
+      "filter": "Filtro D $\\tau_f$",
+      "dMeas": "D a partir da medição (sem tranco)",
+      "presetJune": "Ajuste da June para ar calmo",
+      "instant": "Voar instantaneamente",
+      "checklist": "Checklist da missão",
+      "crit": {
+        "rise": "Alcançar e manter 2 m (± {bandCm} cm) até {rise} s, até a rajada",
+        "overshoot": "Sobressinal abaixo de {overshoot} % na decolagem",
+        "gust": "Permanecer dentro de {gustCm} cm desde o início da rajada até o soltar do pacote",
+        "recover": "De volta dentro de ± {bandCm} cm em menos de {recover} s após a soltura",
+        "ground": "Nunca tocar o chão após a decolagem",
+        "calm": "Desvio padrão do empuxo abaixo de {calm} N de 3 a 6 s"
+      },
+      "touched": "tocou!",
+      "clear": "livre",
+      "ready": "Pronto. Ajuste os ganhos e pressione Jogar (ou Voar instantaneamente).",
+      "flying": "Voando…",
+      "gold": "OURO! Todas as seis estrelas. Você é um engenheiro de controle.",
+      "stars": "{n} de 6 estrelas. Continue ajustando!",
+      "best": "Seu melhor até agora: {n} estrelas (Kp {kp}, Ki {ki}, Kd {kd}, τf {tf} s).",
+      "phase": {
+        "takeoff": "{s} s: decolagem com o pacote",
+        "gust": "{s} s: rajada empurrando para baixo!",
+        "hover": "{s} s: pairando, pacote a bordo",
+        "drop": "{s} s: pacote solto!",
+        "done": "Missão cumprida."
+      },
+      "poles": {
+        "stable": "Polos nominais: todos na metade esquerda.",
+        "unstable": "Um polo nominal está na metade direita: essa sintonia não se sustenta!",
+        "off": "({n} polo(s) rápido(s) fora da borda esquerda.)",
+        "marginal": "Polos nominais: um polo está na fronteira de estabilidade."
+      }
+    }
+  }
+}

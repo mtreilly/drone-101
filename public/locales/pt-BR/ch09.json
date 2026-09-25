@@ -1,0 +1,499 @@
+{
+  "kicker": "Capítulo 9",
+  "title": "PID: Consertando Tudo",
+  "question": "Como eliminamos o desvio residual *e* paramos a oscilação?",
+  "sections": [
+    {
+      "id": "stuck",
+      "title": "O desvio residual que não morre",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Lembra do Capítulo 2? Nosso controlador P deixava o drone **parado abaixo de 2 m**, e nenhum $K_p$ conseguia consertar isso. Hora de descobrir o que consegue."
+        },
+        {
+          "t": "p",
+          "text": "Para manter o drone no alto, os motores precisam empurrar $mg \\approx 4.9$ N, para sempre. Um controlador P só empurra quando existe um erro: $\\eff{T} = K_p\\,\\err{e}$. Então, para empurrar 4,9 N, ele *precisa* de um erro de $\\err{e} = mg/K_p$. O desvio residual não é um defeito da nossa sintonia. É o preço que o P cobra para segurar qualquer coisa no alto."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Então precisamos de uma parte do controlador que consiga empurrar 4,9 N **com erro zero**. Algo com memória."
+        },
+        {
+          "t": "note",
+          "text": "Desde o Capítulo 8 os motores são reais: eles podem empurrar entre 0 e 20 N, não mais, e não conseguem puxar para baixo. As curvas laranjas de empuxo vão se achatar quando atingirem um limite."
+        }
+      ]
+    },
+    {
+      "id": "integral",
+      "title": "I: uma pilha de erros passados",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "A ideia é esta. Mantenha um total acumulado do erro, a **área sob a curva do erro**, exatamente a \"área que se acumula\" do [Capítulo 3](#/ch/3). Empurre proporcionalmente a essa pilha:"
+        },
+        {
+          "t": "math",
+          "tex": "\\eff{T_I} = K_i \\int_0^t \\err{e}(\\tau)\\,d\\tau"
+        },
+        {
+          "t": "p",
+          "text": "Enquanto o drone estiver abaixo de 2 m, o erro é positivo e a pilha continua crescendo, então o empurrão continua crescendo. A pilha só para de crescer quando o erro é **exatamente zero**. Nesse ponto ela simplesmente *fica*, segurando o empuxo que tiver acumulado. É essa a memória que a June queria."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Ah, isso é manhoso. O drone não consegue se estabilizar em *nenhum* outro lugar além de 2 m, porque em qualquer outro lugar a pilha ainda estaria mudando."
+        },
+        {
+          "t": "predict",
+          "id": "ch9-bigki",
+          "gate": true,
+          "q": "Mika quer que o desvio residual desapareça *rápido*, então planeja aumentar $K_i$ bem alto. O que vai acontecer?",
+          "options": [
+            {
+              "text": "O desvio residual desaparece de forma rápida e limpa",
+              "sketch": "smooth",
+              "why": "Essa é a esperança. Mas a pilha tem inércia: quando o erro chega a zero, ela já acumulou *empuxo demais*."
+            },
+            {
+              "text": "O desvio residual desaparece, mas o drone oscila mais, e demais faz ele se sacudir até se despedaçar",
+              "sketch": "growing-wiggle",
+              "correct": true,
+              "why": "A pilha lembra o passado, então continua empurrando depois que o drone chega: sobressinal. Um $K_i$ grande demais e cada sobressinal é maior que o anterior."
+            },
+            {
+              "text": "Nada muda, porque $K_i$ só importa no finalzinho",
+              "sketch": "droop",
+              "why": "A pilha começa a crescer desde o primeiro momento em que há erro, então $K_i$ molda o voo inteiro."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Arraste $K_i$ e observe três coisas: a {err|área sombreada em vermelho} (o erro sendo acumulado), a parte integral do empuxo {eff|tracejada em laranja} subindo até a {dis|linha roxa da gravidade}, e a leitura do desvio residual. $K_p$ está fixo em 20 N/m."
+        },
+        {
+          "t": "widget",
+          "id": "integral"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Aumenta logo! $K_i = 50$! Acaba com isso de uma vez!"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "…por que não para? Os quiques foram crescendo, crescendo, e agora ele fica subindo e descendo meio metro, para sempre!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Em 50 você passou de algum limite. Testei alguns valores: abaixo de cerca de 40 ele se estabiliza, acima não. A pilha está *sempre um pouco atrasada*: ela continua empurrando para cima depois que o drone passou dos 2 m."
+        },
+        {
+          "t": "p",
+          "text": "Esse é o erro da Mika, e é muito comum: o integral corrige o desvio residual, mas adiciona **atraso**, e atraso faz as coisas oscilarem (a manopla do chuveiro nos ensinou isso). Precisamos de algo que reaja contra a *velocidade*."
+        }
+      ]
+    },
+    {
+      "id": "derivative",
+      "title": "D: um amortecedor virtual",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "No Capítulo 6, o amortecedor era o que acalmava a mola. E se o controlador **fingisse** ser um amortecedor?"
+        },
+        {
+          "t": "p",
+          "text": "Um amortecedor empurra contra a velocidade. Então adicione um termo que empurra contra a rapidez com que o drone está se movendo:"
+        },
+        {
+          "t": "math",
+          "tex": "\\eff{T_D} = -K_d\\,\\frac{d\\out{h}}{dt}"
+        },
+        {
+          "t": "p",
+          "text": "Veja a equação do drone: o arrasto já dá $-c\\,\\dot h$. O termo D adiciona $-K_d\\,\\dot h$ por cima, então o drone se comporta como se seu arrasto fosse $c + K_d$. Estamos adicionando resistência do ar **em software**."
+        },
+        {
+          "t": "note",
+          "text": "Estritamente, o D no PID é a inclinação do *erro*, $K_d\\,\\dot e$. Quando o valor de referência está parado, $\\dot e = -\\dot h$, é a mesma coisa. Veremos em um momento por que a diferença importa."
+        },
+        {
+          "t": "widget",
+          "id": "damper"
+        },
+        {
+          "t": "p",
+          "text": "Ative o **grande ganho I da Mika** e então adicione amortecimento. Mesmo $K_d = 0.5$ N·s/m o traz de volta à estabilidade (move a borda para $K_i = 60$): o io-iô infinito se torna um quique que morre. Mas ainda ultrapassa o alvo em cerca de um quarto, por mais D que você adicione. Essa pilha enorme simplesmente lembra demais. Agora desligue o $K_i$ da Mika (volte para 10) e tente $K_d \\approx 3$–5: calmo. **I e D se equilibram**: D compra espaço para I, mas não espaço ilimitado."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Então D **prevê o futuro**! Ele vê para onde o drone está indo e chega lá primeiro."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Não exatamente. Ele só conhece a inclinação *agora*. É como adivinhar onde uma bola vai cair assumindo que continua em linha reta. Geralmente é um palpite razoável, mas não é mágica. Espere até alimentarmos isso com um sensor instável."
+        }
+      ]
+    },
+    {
+      "id": "poles",
+      "title": "O que cada botão faz com os polos",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Hora de usar o mapa do Capítulo 8. Escreva todo o laço, com $\\err{e} = \\sp{r} - \\out{h}$:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\ddot{\\out h} + c\\dot{\\out h} = \\underbrace{K_p\\,\\err e + K_i\\!\\int\\!\\err e\\,dt - K_d\\,\\dot{\\out h}}_{\\eff{T}} - \\dis{mg}"
+        },
+        {
+          "t": "p",
+          "text": "A integral é complicada, então tire a inclinação de ambos os lados. A gravidade é constante, então sua inclinação é **zero**: ela simplesmente some. Com um valor de referência fixo, $\\dot{\\err e} = -\\dot{\\out h}$ e a inclinação de $\\int \\err e$ é apenas $\\err e$:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\dddot{\\out h} + (c + K_d)\\,\\ddot{\\out h} + K_p\\,\\dot{\\out h} + K_i\\,\\out h = K_i\\,\\sp r"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "A gravidade *desapareceu* da equação. Esse é o matador do desvio residual na forma algébrica: a altura final não se importa com $mg$ de forma alguma."
+        },
+        {
+          "t": "p",
+          "text": "Tente $e^{st}$ de novo. **Com I ativo**, a equação é cúbica, então há três polos. Se $K_i=0$, não há integrador: um fator comum se cancela e o drone com PD tem dois polos."
+        },
+        {
+          "t": "math",
+          "tex": "m s^3 + (c + K_d)\\,s^2 + K_p\\,s + K_i = 0"
+        },
+        {
+          "t": "p",
+          "text": "Para uma cúbica com todos os coeficientes positivos $a_3 s^3 + a_2 s^2 + a_1 s + a_0$, existe um teste clássico (o critério de **Routh–Hurwitz**) que diz que os três polos estão no semiplano esquerdo exatamente quando $a_2 a_1 > a_3 a_0$. Para o nosso drone, essa é a beira do precipício:"
+        },
+        {
+          "t": "math",
+          "tex": "(c + K_d)\\,K_p > m\\,K_i \\quad\\Longleftrightarrow\\quad K_i < \\frac{(c+K_d)\\,K_p}{m}"
+        },
+        {
+          "t": "p",
+          "text": "Podemos ver por que essa é a beira. No instante em que um par oscilante alcança o eixo vertical, sua parte real é zero, então tente $s=i\\omega$ na cúbica. As partes real e lateral devem somar zero cada uma. Elas dão:"
+        },
+        {
+          "t": "math",
+          "tex": "\\omega^2=\\frac{K_p}{m},\\qquad K_i=(c+K_d)\\omega^2=\\frac{(c+K_d)K_p}{m}"
+        },
+        {
+          "t": "p",
+          "text": "Para $K_i$ positivo abaixo dessa beira, os três polos permanecem à esquerda; na beira, o par pode continuar oscilando. Essa é a travessia por trás do atalho de Routh–Hurwitz."
+        },
+        {
+          "t": "p",
+          "text": "Com $K_p = 20$ e sem D: $K_i < (1)(20)/0.5 = 40$. É exatamente aí que o drone da Mika disparou. Adicionar $K_d = 4$ move a beira para 200. Não confie na gente; mova os controles deslizantes e observe os polos, o minimapa e a resposta ao degrau."
+        },
+        {
+          "t": "widget",
+          "id": "poles"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**O botão do I** ($K_i$) traz um terceiro polo para a malha e pode empurrar um par para a direita. Demais, e ele cruza a linha.",
+            "**O botão do D** ($K_d$) eleva o limite de estabilidade do ganho I ao adicionar amortecimento. Os caminhos dos polos podem virar: mais D não move todo polo para a esquerda.",
+            "**O botão do P** ($K_p$) principalmente espalha o par oscilante para cima e para baixo: mais rápido, mas mais oscilante, a menos que o D acompanhe."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "playground",
+      "title": "O playground de sintonia",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Agora a coisa de verdade: decole do chão até 2 m com motores reais (0–20 N). Conquiste as quatro estrelas. Toda vez que você muda um ganho, o último voo permanece como um fantasma tênue."
+        },
+        {
+          "t": "widget",
+          "id": "playground"
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Travado? Comece com $K_d$ em torno de 4, depois aumente $K_i$ até o desvio residual sumir, então ajuste $K_p$ aos poucos."
+        },
+        {
+          "t": "note",
+          "text": "**Windup do integrador:** enquanto os motores estão presos em 20 N, a pilha de erro continua crescendo mesmo que o empurrão extra não possa acontecer. Depois, todo esse empurrão acumulado sai como sobressinal. O \"anti-windup\" simplesmente pausa a pilha enquanto os motores estão no máximo. Ative e compare."
+        }
+      ]
+    },
+    {
+      "id": "warnings",
+      "title": "Dois avisos sobre D",
+      "blocks": [
+        {
+          "t": "h3",
+          "text": "Aviso 1: o tranco da derivada"
+        },
+        {
+          "t": "p",
+          "text": "O drone paira a 1 m. Em $t = 1$ s movemos o valor de referência para 2 m. Se D usa a inclinação do *erro*, então o erro **salta** um metro num instante. Sua inclinação é enorme, e o empurrão também."
+        },
+        {
+          "t": "widget",
+          "id": "kick"
+        },
+        {
+          "t": "p",
+          "text": "Usar a inclinação da **altura medida** em vez disso resolve: o drone não pode se teletransportar, então sua altura não tem saltos. Mesmo amortecimento, sem tranco. Quase todo PID real faz isso."
+        },
+        {
+          "t": "h3",
+          "text": "Aviso 2: ruído"
+        },
+        {
+          "t": "p",
+          "text": "Sensores de altura reais oscilam alguns centímetros. Alguns centímetros de oscilação, mil vezes por segundo, têm uma **inclinação enorme**. D amplifica isso direto para os motores. A solução é suavizar a medição antes de calcular sua inclinação (um filtro com constante de tempo $\\tau_f$), ao custo de reagir um pouco mais tarde."
+        },
+        {
+          "t": "widget",
+          "id": "noise"
+        },
+        {
+          "t": "note",
+          "text": "Você percebeu o drone **derivando para cima** com o filtro curto? O empuxo oscilante é cortado em 0 N muito mais vezes do que em 20 N (pairar precisa de apenas 4,9 N), então a média cortada fica *acima* do peso. Ruído mais limites podem até deslocar a média. Hardware real é cheio de surpresas assim."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Certo, D *não* prevê o futuro. Ele prevê o que o ruído sentiu um milissegundo atrás."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "O que consertamos",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "**P** empurra em proporção ao erro, mas precisa deixar um desvio residual para manter o drone no ar.",
+            "**I** acumula o erro passado; o único ponto de repouso é erro zero, então ele elimina o desvio residual. Ele adiciona atraso, então demais faz as coisas oscilarem.",
+            "**D** empurra contra a velocidade: um amortecedor virtual que se soma ao arrasto $c$.",
+            "A malha fechada é $m s^3 + (c + K_d)s^2 + K_p s + K_i$; ela é estável exatamente quando $(c+K_d)K_p > mK_i$.",
+            "Tire D da medição (sem kick) e filtre-o (menos ruído)."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch9-q1",
+              "q": "Qual termo remove o desvio residual em regime permanente sob gravidade?",
+              "options": [
+                {
+                  "text": "O termo integral",
+                  "correct": true,
+                  "why": "Sua pilha de erro continua mudando até que o erro seja exatamente zero, e então ele mantém os 4,9 N necessários por conta própria."
+                },
+                {
+                  "text": "O termo derivativo",
+                  "why": "D reage à velocidade. Quando o drone paira parado, a velocidade é zero e D não contribui em nada, então ele não consegue sustentar nada."
+                },
+                {
+                  "text": "Um ganho proporcional maior",
+                  "why": "Um $K_p$ maior encolhe o desvio residual ($mg/K_p$), mas nunca até zero, e deixa o drone mais instável."
+                }
+              ]
+            },
+            {
+              "id": "ch9-q2",
+              "q": "O que o aumento de $K_d$ garante neste modelo ideal com ganhos positivos?",
+              "options": [
+                {
+                  "text": "Ele aumenta o maior $K_i$ que consegue permanecer estável",
+                  "correct": true,
+                  "why": "A condição de estabilidade tem $c+K_d$ no lado favorável. Polos individuais ainda podem se curvar de volta em direção ao eixo."
+                },
+                {
+                  "text": "Todo polo se move para a esquerda",
+                  "why": "O polo real e o par oscilante podem seguir caminhos diferentes. Mais amortecimento não empurra todo polo para a esquerda."
+                },
+                {
+                  "text": "Isso importa apenas quando o sensor tem ruído",
+                  "why": "$K_d$ já altera o polinômio característico ideal e a fronteira de estabilidade."
+                }
+              ]
+            },
+            {
+              "id": "ch9-q3",
+              "q": "Com $K_p = 10$ N/m e $K_d = 1$ N·s/m (drone: $m = 0.5$ kg, $c = 1$ N·s/m), qual é o maior $K_i$ antes da instabilidade?",
+              "options": [
+                {
+                  "text": "20 N/(m·s)",
+                  "why": "Confira a fórmula: $(c + K_d)K_p/m = (1+1)\\cdot 10 / 0.5$. Talvez você tenha esquecido de dividir por $m$."
+                },
+                {
+                  "text": "40 N/(m·s)",
+                  "correct": true,
+                  "why": "$(1 + 1)\\cdot 10 / 0.5 = 40$. Acima disso, dois polos cruzam para o semiplano direito."
+                },
+                {
+                  "text": "80 N/(m·s)",
+                  "why": "Alto demais. Lembre-se de que o arrasto $c$ e o $K_d$ se somam primeiro: $(1+1) = 2$, não 4."
+                }
+              ]
+            },
+            {
+              "id": "ch9-q4",
+              "q": "Por que derivar a **medição** em vez do erro?",
+              "options": [
+                {
+                  "text": "Quando o valor de referência dá um salto, o erro também dá um salto, e sua inclinação é enorme: um pico de empuxo",
+                  "correct": true,
+                  "why": "A altura não pode dar um salto, então sua inclinação permanece razoável. Mesmo amortecimento, sem tranco."
+                },
+                {
+                  "text": "Porque a medição tem menos ruído do que o erro",
+                  "why": "Eles têm exatamente o mesmo ruído; o erro é o valor de referência menos a medição."
+                },
+                {
+                  "text": "Isso torna o controlador mais agressivo",
+                  "why": "É o contrário: isso remove o pico agressivo nas mudanças do valor de referência."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "June testou nosso PID estilo drone no chuveiro… e ele oscilou exatamente como fizemos no Capítulo 0. **O que há com o atraso?**"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "integral": {
+      "title": "A pilha do erro",
+      "slider": "Ganho integral $K_i$",
+      "gravity": "peso mg",
+      "iterm": "empurrão integral Ki·∫e",
+      "readout": {
+        "droop": "queda residual em 12 s",
+        "pile": "empurrão integral"
+      },
+      "status": {
+        "none": "Sem integral: o drone apresenta desvio residual, assim como no Capítulo 2.",
+        "slow": "O desvio residual está diminuindo, mas lentamente. A pilha leva tempo para se acumular.",
+        "gone": "Desvio residual eliminado! A pilha agora sustenta todo o peso.",
+        "unstable": "Passou do limite (Ki > {lim}): as oscilações crescem até os motores atingirem seus limites, e nunca estabiliza."
+      },
+      "describe": "Ganho integral {ki}. Desvio residual após 12 segundos: {droop} centímetros."
+    },
+    "damper": {
+      "title": "Adicionando um amortecedor virtual",
+      "slider": "Ganho derivativo $K_d$",
+      "bigKi": "O grande $K_i$ = 50 da Mika",
+      "readout": {
+        "damping": "amortecimento total c + Kd",
+        "overshoot": "sobressinal"
+      },
+      "status": {
+        "unstable": "Ainda instável: precisa de mais amortecimento.",
+        "bouncy": "Estável, mas com oscilação. Adicione mais Kd.",
+        "calm": "Calmo! O amortecedor absorve a oscilação."
+      }
+    },
+    "poles": {
+      "title": "Três manoplas, três polos",
+      "splane": "plano s mostrando os três polos de malha fechada do drone com controle PID",
+      "kp": "$K_p$",
+      "ki": "$K_i$",
+      "kd": "$K_d$",
+      "offmap": "fora do mapa",
+      "map": {
+        "x": "Kd (N·s/m)",
+        "y": "Ki (N/(m·s))",
+        "edge": "limite crítico Ki = (c+Kd)Kp/m",
+        "you": "você",
+        "aria": "Mapa de Ki contra Kd com a linha de fronteira de estabilidade; abaixo da linha é estável."
+      },
+      "stepAria": "Resposta ao degrau de 1,5 m para 2 m para os ganhos atuais",
+      "status": {
+        "stable": "Estável: Ki deve ficar abaixo de {lim}. O polo mais lento fica em σ = {s}.",
+        "unstable": "Instável! Ki está acima do limite ({lim}). Dois polos cruzaram para a metade direita."
+      },
+      "help": "A resposta ao degrau começa com o drone pairando a 1,5 m e pede 2 m em t = 1 s. Polos além do quadro são fixados na sua borda.",
+      "reShort": "σ",
+      "imShort": "ω"
+    },
+    "playground": {
+      "title": "Playground de sintonia: decolar para 2 m",
+      "kp": "$K_p$",
+      "ki": "$K_i$",
+      "kd": "$K_d$",
+      "antiWindup": "Anti-windup",
+      "targets": "Estrelas para: sobressinal abaixo de {os} %, acomodação (dentro de 2 %) abaixo de {ts} s, sem desvio residual (abaixo de 1 cm) e motores no limite por menos de {sat} s.",
+      "readout": {
+        "overshoot": "sobressinal",
+        "settling": "tempo de acomodação",
+        "sse": "desvio residual",
+        "saturated": "motores no limite"
+      },
+      "never": "nunca",
+      "allStars": "Todas as quatro estrelas! Isso é uma sintonia de verdade.",
+      "someStars": "{n} de 4 estrelas.",
+      "starsAria": "{n} de 4 estrelas conquistadas"
+    },
+    "kick": {
+      "title": "Salto no valor de referência: 1 m → 2 m",
+      "mode": "Tire a derivada de…",
+      "onError": "o erro",
+      "onMeasurement": "a altura medida",
+      "peak": "empuxo de pico",
+      "status": {
+        "error": "O erro dá um salto, sua inclinação é enorme, e os motores vão com tudo para 20 N: um chute da derivada.",
+        "measurement": "A altura não pode dar um salto, então não há chute: uma subida suave."
+      }
+    },
+    "noise": {
+      "title": "Um sensor de altura instável",
+      "toggle": "Ruído do sensor (±2 cm)",
+      "filter": "Filtro derivativo $\\tau_f$",
+      "measured": "leitura do sensor",
+      "jitter": "oscilação do empuxo",
+      "status": {
+        "off": "Um sensor perfeito: motores calmos.",
+        "chatter": "Os motores vibram! O D está amplificando o ruído. Tente um filtro mais longo.",
+        "calm": "Muito mais calmo. (A pequena oscilação que resta vem do termo P, que deixa o ruído passar direto.) O preço: o D agora reage um pouco mais tarde."
+      }
+    }
+  }
+}

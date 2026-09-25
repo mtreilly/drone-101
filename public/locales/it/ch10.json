@@ -47,7 +47,7 @@
         },
         {
           "t": "p",
-          "text": "Mettiamo alla prova l'affermazione di Theo ragionando per **onde**. Muovi la manopola avanti e indietro come un'onda sinusoidale. L'acqua che arriva al soffione è la stessa onda, in ritardo di 2,5 s. Quanto è in ritardo, *rispetto a un'oscillazione*?"
+          "text": "Isoliamo prima il **ritardo puro** del tubo. Immagina un'onda sinusoidale all'ingresso del tubo che raggiunge il soffione senza essere smorzata: l'uscita ha la stessa forma, ma arriva 2,5 s dopo. Quanto vale questo ritardo *rispetto a un'oscillazione*?"
         },
         {
           "t": "widget",
@@ -55,15 +55,15 @@
         },
         {
           "t": "p",
-          "text": "Il ritardo è sempre di 2,5 secondi, ma lo sfasamento nell'**oscillazione** dipende da quanto in fretta oscilli. Misuriamo lo sfasamento come un angolo: un'oscillazione intera è 360°, quindi"
+          "text": "Il ritardo del tubo resta di 2,5 s, ma il suo **sfasamento** dipende dalla velocità dell'oscillazione. Chiamiamo lo sfasamento $\\phi$. Se un'oscillazione dura $T$ secondi, la sua pulsazione è $\\omega=2\\pi/T$ radianti al secondo. Qui uno sfasamento positivo significa che l'uscita segue l'ingresso in ritardo; nel diagramma di fase compare come un angolo negativo. Con un ritardo di $L$ secondi, possiamo esprimere lo stesso sfasamento in gradi o in radianti:"
         },
         {
           "t": "math",
-          "tex": "\\text{sfasamento} = 360^\\circ \\times \\frac{L}{T_{\\text{oscillazione}}} = \\omega L \\;\\text{(in radianti)}"
+          "tex": "\\begin{aligned}\\phi_{\\mathrm{deg}} &= 360^\\circ\\frac{L}{T} \\\\ \\phi_{\\mathrm{rad}} &= \\omega L,\\qquad \\omega=\\frac{2\\pi}{T}\\end{aligned}"
         },
         {
           "t": "p",
-          "text": "Per un'oscillazione lenta di 30 secondi, 2,5 s sono solo 30°: una spintarella. Per un'oscillazione di 5 secondi sono 180°: l'acqua arriva **esattamente capovolta**, calda quando la manopola dice fredda. Un ritardo è innocuo per i cambiamenti lenti e traditore per quelli veloci."
+          "text": "Per un'oscillazione lenta di 30 secondi, 2,5 s corrispondono a soli 30°: un piccolo spostamento. Per un'oscillazione di 5 secondi corrispondono a 180°: in questo modello di ritardo puro, ogni picco dell'uscita coincide con un minimo dell'ingresso. La risposta termica della doccia smorza anche le oscillazioni rapide; aggiungiamola ora."
         },
         {
           "t": "note",
@@ -77,7 +77,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Tutta la doccia (tubo *e* miscelazione) deve fare qualcosa di simile. Ecco il piano: fai oscillare la manopola a una certa velocità, aspetta che le cose prendano un ritmo stabile, e misura due numeri:"
+          "text": "Ora aggiungiamo la risposta termica della doccia al ritardo del tubo. La temperatura dell'acqua impiega tempo a stabilizzarsi: la doccia completa quindi ritarda e smorza i cambiamenti della manopola. Ecco il piano: fai oscillare la manopola a una frequenza, attendi un ritmo stabile e misura due valori:"
         },
         {
           "t": "list",
@@ -96,7 +96,7 @@
         },
         {
           "t": "p",
-          "text": "La miscelazione attenua le oscillazioni rapide, mentre il tubo continua ad aggiungere ritardo di fase. Le curve di guadagno e fase rispetto alla velocità di oscillazione formano un **diagramma di Bode**. Qui l’ingresso è la **temperatura dell’acqua miscelata**, quindi le oscillazioni lente hanno guadagno 1. Se l’ingresso fosse la frazione della manopola, il guadagno sarebbe 45 volte maggiore. Per questo grafico temperatura-temperatura, poniamo $s=i\\omega$ nella risposta normalizzata della doccia:"
+          "text": "L'inerzia termica della doccia attenua le oscillazioni rapide, mentre il tubo continua ad aggiungere sfasamento. Le curve di guadagno e fase rispetto alla frequenza di oscillazione formano un **diagramma di Bode**. Qui l'ingresso è la **temperatura dell'acqua miscelata**, quindi le oscillazioni lente hanno guadagno 1. Se l'ingresso fosse la posizione della manopola, il guadagno sarebbe 45 volte maggiore. Per questo diagramma temperatura-temperatura, poniamo $s=i\\omega$ nella risposta normalizzata della doccia:"
         },
         {
           "t": "math",

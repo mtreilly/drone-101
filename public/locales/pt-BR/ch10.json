@@ -1,0 +1,477 @@
+{
+  "kicker": "Capítulo 10",
+  "title": "De volta ao chuveiro",
+  "question": "Por que oscilamos, e quão perto da borda estamos?",
+  "sections": [
+    {
+      "id": "again",
+      "title": "O chuveiro, com novos olhos",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Eu coloquei o PID do nosso drone no chuveiro. Ele oscilou quente, frio, quente… exatamente como a Mika no Capítulo 0. O drone nunca fez isso!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "O drone não tem grande atraso. O chuveiro tem 2,5 segundos de tubulação. Vamos finalmente descobrir o que um atraso *faz*."
+        },
+        {
+          "t": "p",
+          "text": "Primeiro, uma confissão sobre a \"mão normal\" do Capítulo 0. Ela girava a manopla a uma **velocidade** proporcional ao quão errada a água parecia: velocidade da manopla $= k\\cdot\\err{e}$, com $k = 0{,}8\\,\\%$ de manopla por segundo por °C. Uma velocidade proporcional ao erro significa que a *posição* da manopla é o acúmulo de erros passados. Isso é um **controlador I**, com $K_i = k$."
+        },
+        {
+          "t": "note",
+          "text": "Para os cálculos, a manopla vai de 0 a 1, então 0,8% da sua faixa é 0,008 unidades de manopla. A fórmula da malha abaixo usa 0,008; os controles deslizantes mostram 0,8%. Mantenha as unidades com o número."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Espera, então no Capítulo 0 eu era um controlador PID? Bem, um controlador I. Um muito ansioso."
+        }
+      ]
+    },
+    {
+      "id": "lag",
+      "title": "Atraso é uma defasagem na oscilação",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "neutral",
+          "text": "Eu ainda acho que um atraso só deixa tudo *mais lento*. Ele não deveria ser capaz de tornar nada instável."
+        },
+        {
+          "t": "p",
+          "text": "Vamos isolar primeiro o **atraso puro** do cano. Imagine uma onda senoidal na entrada do cano viajando até o chuveiro sem ser suavizada: a saída tem a mesma forma, mas chega 2,5 s depois. Esse atraso equivale a quanto, *em relação a uma oscilação*?"
+        },
+        {
+          "t": "widget",
+          "id": "phase"
+        },
+        {
+          "t": "p",
+          "text": "O atraso no cano continua sendo de 2,5 s, mas sua **defasagem** depende da rapidez da oscilação. Chame essa defasagem de $\\phi$. Se uma oscilação leva $T$ segundos, sua frequência angular é $\\omega=2\\pi/T$ radianos por segundo. Aqui, uma defasagem positiva significa que a saída fica atrás da entrada; no gráfico de fase, isso aparece como um ângulo negativo. Com um atraso de $L$ segundos, podemos expressar a mesma defasagem em graus ou radianos:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned}\\phi_{\\mathrm{deg}} &= 360^\\circ\\frac{L}{T} \\\\ \\phi_{\\mathrm{rad}} &= \\omega L,\\qquad \\omega=\\frac{2\\pi}{T}\\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Numa oscilação lenta de 30 segundos, 2,5 s correspondem a apenas 30°: um pequeno deslocamento. Numa oscilação de 5 segundos, correspondem a 180°: neste modelo de atraso puro, cada pico da saída coincide com um vale da entrada. A resposta térmica do chuveiro também suaviza oscilações rápidas; vamos incluí-la a seguir."
+        },
+        {
+          "t": "note",
+          "text": "Esta é a flecha giratória do Capítulo 5: um atraso de $L$ gira a flecha $e^{i\\omega t}$ para trás pelo ângulo $\\omega L$. É por isso que a função de transferência de um atraso puro é $e^{-Ls}$."
+        }
+      ]
+    },
+    {
+      "id": "bode",
+      "title": "Medindo o chuveiro uma oscilação de cada vez",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Agora acrescente a resposta térmica do chuveiro ao atraso do cano. Mudanças na temperatura da água levam tempo para se estabilizar; por isso, o chuveiro completo atrasa e suaviza as mudanças na manopla. O plano é: oscilar a manopla em uma frequência, esperar a resposta entrar em ritmo constante e medir dois valores:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Ganho:** quão grande é a oscilação de temperatura, comparada com a oscilação na mistura de água que pedimos.",
+            "**Fase:** quão atrás ela está, como um ângulo."
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Cada medição coloca um ponto em dois gráficos. Meça pelo menos cinco velocidades, lentas e rápidas."
+        },
+        {
+          "t": "widget",
+          "id": "bode"
+        },
+        {
+          "t": "p",
+          "text": "A inércia térmica do chuveiro atenua as oscilações rápidas, enquanto o cano continua acrescentando defasagem. Essas curvas de ganho e fase em função da frequência de oscilação formam um **diagrama de Bode**. Aqui a entrada é a **temperatura da água misturada**; por isso, oscilações lentas têm ganho 1. Se usássemos a posição da manopla como entrada, o ganho seria 45 vezes maior. Para este gráfico de temperatura para temperatura, substituímos $s=i\\omega$ na resposta normalizada do chuveiro:"
+        },
+        {
+          "t": "math",
+          "tex": "G(i\\omega) = \\frac{e^{-i\\omega L}}{1 + i\\omega\\tau}, \\qquad |G| = \\frac{1}{\\sqrt{1+\\omega^2\\tau^2}}, \\qquad \\angle G = -\\arctan(\\omega\\tau) - \\omega L"
+        },
+        {
+          "t": "note",
+          "text": "Uma ajuda honesta: uma única medição não consegue distinguir uma defasagem de 90° de 450° (as ondas parecem iguais). Contamos ciclos extras inteiros seguindo a curva do lento ao rápido, como rastrear uma crista pelo cano."
+        }
+      ]
+    },
+    {
+      "id": "margins",
+      "title": "Quão perto do precipício?",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Agora feche a malha: mão → manopla → cano → pele → mão. Siga uma oscilação por todo o caminho. Para a mão do Capítulo 0, a volta completa pelo loop é"
+        },
+        {
+          "t": "math",
+          "tex": "L(s) = \\underbrace{\\frac{k}{s}}_{\\text{mão}}\\cdot\\underbrace{\\frac{45\\,e^{-2{,}5s}}{s+1}}_{\\text{chuveiro}}"
+        },
+        {
+          "t": "p",
+          "text": "A realimentação subtrai (erro = alvo − temperatura), o que inverte a onda uma vez. Se a volta pelo laço *também* a atrasar em exatamente 180°, as duas inversões se cancelam, e cada correção chega **perfeitamente em sincronia** com a oscilação, como empurrar um balanço no momento exato. Se o laço também não diminuir a onda (ganho ≥ 1), o balanço cresce sozinho."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Para este laço simples do chuveiro, a fase passa por −180° em uma velocidade de oscilação relevante. Encontre essa velocidade no diagrama de fase e depois leia o ganho de laço na mesma velocidade no diagrama de ganho. Ele está abaixo ou acima de 1?"
+        },
+        {
+          "t": "p",
+          "text": "Por exemplo, perto de 0,457 rad/s a mão acumuladora atrasa 90°, a mistura adiciona cerca de 25°, e o cano adiciona cerca de 65°: juntos, 180°. A mão normal devolve uma oscilação apenas cerca de 0,72 vezes maior. Ela poderia ser cerca de 1 ÷ 0,72 ≈ 1,4 vezes mais forte antes de chegar ao limite."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Margem de ganho",
+              "def": "Quantas vezes você poderia multiplicar o ganho do controlador antes que o ganho de laço chegue a 1 na velocidade de −180°. Abaixo de 1 = passou do limite."
+            },
+            {
+              "term": "Margem de fase",
+              "def": "Na velocidade em que o ganho de laço é exatamente 1, quanto atraso *extra* seria necessário para chegar a −180°. Mais é mais seguro; 45°–60° é uma meta comum."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Para o nosso chuveiro, a fase de $L$ atinge −180° em $\\omega \\approx 0{,}457$ rad/s, um período de oscilação de cerca de **13,8 s**. A mão normal ($k = 0{,}008$) tem uma margem de ganho de apenas cerca de **1,4**, e uma margem de fase de cerca de 22°. Perto do limite! A mão mais forte dobra o ganho: 1,4 ÷ 2 = 0,7, **passou do limite**. É exatamente por isso que nunca estabilizou."
+        },
+        {
+          "t": "predict",
+          "id": "ch10-delay",
+          "gate": true,
+          "q": "Suponha que o cano tivesse o dobro do comprimento (um atraso de 5 s). O que acontece com o maior ganho de mão que ainda é estável?",
+          "options": [
+            {
+              "text": "Ele **aumenta**: você pode reagir com mais força, porque tem mais tempo",
+              "why": "Mais tempo para reagir parece bom, mas você está reagindo a uma notícia *mais velha*. O atraso cresce em todas as velocidades."
+            },
+            {
+              "text": "Ele **diminui**: você precisa reagir com mais suavidade",
+              "correct": true,
+              "why": "A fase atinge −180° com uma oscilação mais lenta, e em velocidades lentas a pilha da mão ($k/s$) é grande. O ganho de malha ali é maior, então $k$ precisa encolher: de cerca de 1,12 para 0,60 %/(°C·s)."
+            },
+            {
+              "text": "Fica igual: o atraso muda o tempo, não o ganho",
+              "why": "Um atraso não muda o tamanho de uma onda, é verdade, mas muda *qual* velocidade atinge −180°, e o ganho é diferente ali."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "margins"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Tá, retiro o que disse. Um atraso não só deixa as coisas mais lentas: ele come margem de fase, e a margem de fase é a única coisa entre você e uma oscilação."
+        }
+      ]
+    },
+    {
+      "id": "replay",
+      "title": "O seu chuveiro do Capítulo 0, explicado",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Aqui está a sua própria experiência do Capítulo 0. Se as suas oscilações estavam perto do limite, o período delas deve ser próximo do que a malha prevê. Tem uma reviravolta: as pessoas não são todas o mesmo tipo de controlador."
+        },
+        {
+          "t": "widget",
+          "id": "replay"
+        },
+        {
+          "t": "p",
+          "text": "Uma **mão de velocidade** (girar a manopla enquanto parece errado) é um controlador I: seu limite fica em oscilações de 13,8 s. Uma **mão de posição** (\"está quente demais, põe a manopla *aqui*\") age como um controlador P: $L(s) = 45K\\,e^{-2{,}5s}/(s+1)$, cuja fase atinge −180° em $\\omega \\approx 0{,}95$ rad/s, oscilações de **6,6 s**, para qualquer $K$ acima de cerca de 0,031 manopla por °C. A maioria das pessoas é uma mistura. (A mão do robô normal oscila um pouco mais devagar que 13,8 s, cerca de 15,5 s, porque fica logo dentro do limite; as oscilações da mão mais forte, cerca de 11,6 s, são espremidas pela manopla batendo nos batentes.)"
+        }
+      ]
+    },
+    {
+      "id": "design",
+      "title": "Projete um chuveiro robô",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Agora vamos superar as nossas próprias mãos. O robô usa PI: **P reage ao erro de temperatura atual**, e **I lembra do erro acumulado**. Juntos, eles deixam a manopla responder prontamente enquanto o I encontra o ajuste duradouro certo. Comparado com o I sozinho, o P pode adicionar avanço de fase. Mire numa **margem de fase acima de 45°** e **10 segundos na faixa de conforto começando dentro de 12 s**."
+        },
+        {
+          "t": "note",
+          "text": "O código do robô escreve o PI como uma **velocidade** da manopla: o I continua movendo a manopla enquanto houver erro, e o P reage a uma *mudança* no erro. Na partida, o P também dá à manopla um movimento imediato baseado no erro atual. Isso corresponde à regra de posição, exceto quando a manopla chega a um batente."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Fácil. Vou usar ganhos grandes, como no drone: rápido e ágil."
+        },
+        {
+          "t": "widget",
+          "id": "designer"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "…ele oscila exatamente como nós. Ganhos grandes empurraram a velocidade de −180° além do ponto onde o ganho de malha é 1. Nenhuma margem de fase."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "O drone podia usar ganhos altos porque quase não tinha atraso. Aqui, **robusto** significa gentil: deixe margem para o atraso. Tente cerca de $K_p \\approx 1$ e $K_i \\approx 0{,}6$."
+        },
+        {
+          "t": "note",
+          "text": "Esses números do controle deslizante são porcentagens da faixa total da manopla: P ≈ 1% por °C de erro atual, e I ≈ 0,6% por °C-segundo de erro acumulado. As equações da malha usam frações da manopla, então divida os números exibidos por 100."
+        },
+        {
+          "t": "p",
+          "text": "Um PI com boa margem se acomoda em cerca de 9,4 segundos, sem grandes oscilações repetidas. Isso supera a mão normal (que passou quase um minuto oscilando antes de se acalmar) e a maioria dos humanos. Mas não pode vencer a física: nada pode reagir à água que ainda não chegou. Os engenheiros têm um truque para atrasos longos, o **preditor de Smith**, que executa uma pequena simulação do cano dentro do controlador. Isso é história para outro caderno."
+        },
+        {
+          "t": "note",
+          "text": "A robustez é a verdadeira lição. Seu modelo do chuveiro nunca é perfeito: o cano pode ser mais longo, o aquecedor mais fraco. As margens são o seguro de que seu controlador ainda funciona quando o mundo não é bem o que você supôs."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "O que entendemos agora",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Um atraso $L$ defasa uma oscilação em $\\omega L$: nada para oscilações lentas, muito para as rápidas.",
+            "Alimentar com ondas senoidais e medir ganho e fase dá a **resposta em frequência**; plotada, é um **diagrama de Bode**, e é só $G(i\\omega)$.",
+            "Para este loop simples do chuveiro, a oscilação autossustentada começa quando a malha atinge −180° de fase com ganho 1; ganho maior faz os balanços crescerem até que os limites intervenham.",
+            "**Margem de ganho e margem de fase** medem a distância até esse precipício. Atraso maior significa menos margem, então você precisa de um controle mais suave.",
+            "Nossos balanços do Capítulo 0 eram um controlador (nós) com margem pequena demais."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch10-q1",
+              "q": "Um atraso de 2 s, e uma oscilação com período de 8 s. Quanta defasagem o atraso adiciona?",
+              "options": [
+                {
+                  "text": "90°",
+                  "correct": true,
+                  "why": "2 s é um quarto de 8 s, e um quarto de 360° é 90°."
+                },
+                {
+                  "text": "45°",
+                  "why": "Isso seria um atraso de 1 s. 2 s é um quarto do período, não um oitavo."
+                },
+                {
+                  "text": "180°",
+                  "why": "Isso precisaria de um atraso de metade do período, 4 s."
+                }
+              ]
+            },
+            {
+              "id": "ch10-q2",
+              "q": "Na velocidade em que a fase da malha é −180°, o ganho da malha é 0,5. Qual é a margem de ganho?",
+              "options": [
+                {
+                  "text": "× 2",
+                  "correct": true,
+                  "why": "Você poderia dobrar o ganho antes que o ganho da malha em −180° chegue a 1."
+                },
+                {
+                  "text": "× 0,5",
+                  "why": "Esse é o próprio ganho da malha. A margem é o quanto falta para chegar a 1: 1 ÷ 0,5 = 2."
+                },
+                {
+                  "text": "180°",
+                  "why": "A margem de ganho é um fator, não um ângulo. A versão em ângulo é a margem de fase."
+                }
+              ]
+            },
+            {
+              "id": "ch10-q3",
+              "q": "Por que um tubo mais longo força um controlador mais suave?",
+              "options": [
+                {
+                  "text": "A defasagem extra chega a −180° numa oscilação mais lenta, onde o ganho de malha é maior, então o ganho precisa diminuir",
+                  "correct": true,
+                  "why": "Isso. Para uma mão integradora, oscilações lentas recebem o maior reforço, então o penhasco se aproxima."
+                },
+                {
+                  "text": "A água fica mais fria num tubo mais longo",
+                  "why": "Assumimos que não há perda de calor. O efeito é puramente sobre o tempo."
+                },
+                {
+                  "text": "Não força: você pode reagir com mais força já que tem mais tempo",
+                  "why": "Você não tem mais tempo. Você tem informação mais velha. Essa é a armadilha do Capítulo 0."
+                }
+              ]
+            },
+            {
+              "id": "ch10-q4",
+              "q": "A mão normal tem uma margem de ganho de cerca de 1,4. O que acontece se você reagir 1,5 vez com mais força?",
+              "options": [
+                {
+                  "text": "As oscilações crescem em vez de morrer",
+                  "correct": true,
+                  "why": "1,5 é mais que a margem de 1,4, então o ganho de malha em −180° passa de 1: penhasco abaixo."
+                },
+                {
+                  "text": "Ela estabiliza mais rápido",
+                  "why": "Mais ganho só ajudaria se houvesse bastante margem. Com 1,4, não há."
+                },
+                {
+                  "text": "Nada muda",
+                  "why": "O ganho é exatamente o que a margem de ganho mede, então com certeza importa."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Agora temos todas as ferramentas: realimentação, PID, polos, margens. Hora do teste de verdade: vento, uma entrega de pacote e um sensor ruidoso. **Você consegue manter o drone a 2 m?**"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "phase": {
+      "title": "O mesmo atraso de 2,5 s, oscilações diferentes",
+      "y": "oscilação",
+      "in": "o que a manopla pede",
+      "out": "o que chega, 2,5 s depois",
+      "aria": "Duas ondas senoidais: a entrada e a mesma onda atrasada em 2,5 segundos.",
+      "slider": "Período da oscilação",
+      "lag": "atraso de fase",
+      "status": {
+        "small": "Um atraso pequeno: o atraso quase não importa para oscilações lentas.",
+        "middle": "Um atraso de {d}°: a água fica visivelmente fora de sincronia.",
+        "flipped": "De cabeça para baixo! O quente chega exatamente quando a manopla diz frio.",
+        "full": "Mais de uma oscilação inteira de atraso: parece em fase de novo, mas está um ciclo completo atrasado."
+      },
+      "describe": "Período da oscilação {p} segundos; o atraso de 2,5 segundos defasa em {d} graus."
+    },
+    "bode": {
+      "title": "Construa um diagrama de Bode, uma oscilação de cada vez",
+      "mix": "mistura que pedimos",
+      "head": "temperatura na cabeça",
+      "timeAria": "A última medição: a temperatura da mistura oscilante e a temperatura da cabeça.",
+      "w": "velocidade da oscilação ω (rad/s)",
+      "gain": "ganho",
+      "phase": "fase (°)",
+      "formula": "fórmula",
+      "measured": "suas medições",
+      "gainAria": "Ganho medido em função da velocidade de oscilação, eixos logarítmicos.",
+      "phaseAria": "Atraso de fase medido em função da velocidade de oscilação.",
+      "flip": "−180°: de cabeça para baixo",
+      "slider": "Velocidade de oscilação",
+      "period": "período",
+      "measure": "Medir",
+      "sweep": "Medir 8 velocidades",
+      "clear": "Limpar",
+      "showFormula": "Mostrar a curva da fórmula (precisa de 5 pontos)",
+      "status": {
+        "start": "Escolha uma velocidade de oscilação e pressione Medir.",
+        "measured": "Em ω = {w} rad/s (uma oscilação de {p} s): ganho {g}, fase {ph}°.",
+        "formula": "A fórmula passa bem pelos seus pontos."
+      },
+      "describe": "{n} medições plotadas."
+    },
+    "margins": {
+      "title": "A mão e a beira do precipício",
+      "w": "velocidade de oscilação ω (rad/s)",
+      "gain": "ganho de malha |L|",
+      "phase": "fase da malha (°)",
+      "loop": "malha mão + chuveiro",
+      "gainAria": "Diagrama de Bode do ganho da malha mão-mais-chuveiro com a linha de ganho igual a um.",
+      "phaseAria": "Diagrama de Bode da fase da malha com a linha de −180 graus.",
+      "timeAria": "Temperatura ao longo de 60 segundos com esta mão.",
+      "temp": "temperatura na cabeça",
+      "one": "ganho = 1",
+      "cliff": "−180°: o precipício",
+      "at180": "ganho em −180°",
+      "atCross": "margem de fase",
+      "gm": "margem de ganho",
+      "pm": "margem de fase",
+      "crit": "limite (maior k)",
+      "k": "Velocidade da mão k",
+      "delay": "Atraso do cano",
+      "status": {
+        "safe": "Confortavelmente seguro: bastante margem.",
+        "edge": "Perto do limite (margem de fase {p}°): espere oscilações longas e preguiçosas.",
+        "over": "À beira do abismo: as oscilações crescem até a manopla bater nos batentes."
+      },
+      "describe": "Margem de ganho {gm}, margem de fase {pm} graus."
+    },
+    "replay": {
+      "title": "Suas oscilações do Capítulo 0",
+      "yours": "Esta é a sua própria execução do Capítulo 0.",
+      "robot": "Você ainda não jogou o jogo do Capítulo 0, então esta é a mão normal do robô. (Jogue e volte!)",
+      "aria": "Temperatura da execução do chuveiro do Capítulo 0, com a mistura pedida pela manopla.",
+      "temp": "temperatura na saída do chuveiro",
+      "mix": "o que a manopla pediu",
+      "periodYours": "seu período de oscilação",
+      "periodRobot": "período de oscilação do robô",
+      "predSpeed": "limite: mão de velocidade",
+      "predPos": "limite: mão de posição",
+      "verdict": {
+        "calm": "Oscilações insuficientes para medir: você foi paciente (ou sortudo)!",
+        "speed": "Oscilações a cada {p} s: você se comportou como uma mão de velocidade, um controlador I perto do seu limite.",
+        "position": "Oscilações a cada {p} s: você se comportou como uma mão de posição, um controlador P perto do seu limite.",
+        "robot": "A mão do robô oscila a cada {p} s: uma mão de velocidade (um controlador I) situada logo dentro da sua borda, como previsto."
+      }
+    },
+    "designer": {
+      "title": "Chuveiro do robô: controlador PI",
+      "aria": "Temperatura ao longo de 40 segundos com o controlador PI do robô, o projeto anterior como fantasma.",
+      "temp": "temperatura na cabeça",
+      "mix": "o que a manopla pede",
+      "view": {
+        "aria": "Chuveiro controlado pelo robô. A manopla gira sozinha.",
+        "knob": "Manopla do chuveiro (controlada pelo robô)",
+        "pipe": "cano (2,5 s de percurso)",
+        "head": "cabeça do chuveiro",
+        "thermo": "termômetro"
+      },
+      "kp": "Ganho P $K_p$",
+      "ki": "Ganho I $K_i$",
+      "presetHand": "A mão normal",
+      "presetJune": "Os ganhos estilo drone da June",
+      "goal": "Meta: margem de fase acima de 45° e confortável (na faixa por 10 s seguidos) em até 12 s.",
+      "pm": "margem de fase",
+      "gm": "margem de ganho",
+      "comfort": "confortável depois de",
+      "yours": "você (Capítulo 0)",
+      "never": "nunca",
+      "notPlayed": "não jogado",
+      "status": {
+        "unstable": "Do outro lado do precipício: sem margem, oscilações sem fim.",
+        "edge": "Estável, mas perto demais da borda: mais margem, por favor.",
+        "slow": "Seguro, mas lento. Você consegue ficar confortável mais cedo?",
+        "win": "Robusto e rápido! Este robô vence suas mãos do Capítulo 0.",
+        "winButYou": "Robusto e rápido! (Você foi mais rápido no Capítulo 0. Impressionante! Mas o robô nunca se cansa.)"
+      }
+    }
+  }
+}

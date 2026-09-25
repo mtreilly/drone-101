@@ -145,7 +145,7 @@
         },
         {
           "t": "p",
-          "text": "In modalità retroazione il drone usa una regola semplice: **spingi con la spinta di hovering, più 8 N extra per ogni metro in cui è troppo basso.**"
+          "text": "In modalità retroazione il drone usa una regola semplice: **spingi con la spinta necessaria per restare in volo stazionario, più 8 N extra per ogni metro in cui è troppo basso.**"
         },
         {
           "t": "math",
@@ -204,7 +204,7 @@
             },
             {
               "term": "{err|Errore} $\\err{e} = \\sp{r} - \\out{h}$",
-              "def": "Quanto siamo lontani. Positivo vuol dire troppo basso."
+              "def": "Quanto siamo lontani. Un errore positivo significa che il drone è troppo in basso."
             },
             {
               "term": "Controllore",
@@ -240,7 +240,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Ecco lo stesso schema per il **cruise control** di un'auto. Il riferimento è una velocità, l'impianto è l'auto, e il disturbo è una salita. Il controllore preme di più l'acceleratore quando l'auto va più piano di quanto dovrebbe."
+          "text": "Ecco lo stesso schema per il **regolatore di velocità (cruise control)** di un'auto. Il riferimento è una velocità, l'impianto è l'auto, e il disturbo è una salita. Il controllore preme di più l'acceleratore quando l'auto va più piano di quanto dovrebbe."
         },
         {
           "t": "widget",
@@ -250,7 +250,7 @@
           "t": "say",
           "who": "june",
           "mood": "happy",
-          "text": "Termostati, cruise control, la doccia, il nostro drone… è **lo stesso anello** ogni volta, con etichette diverse!"
+          "text": "Termostati, regolatori di velocità, la doccia, il nostro drone… è **lo stesso anello** ogni volta, con etichette diverse!"
         }
       ]
     },
@@ -437,7 +437,7 @@
       }
     },
     "cruise": {
-      "title": "Cruise control: lo stesso anello",
+      "title": "Regolatore di velocità: lo stesso anello",
       "d": {
         "setpoint": "velocità obiettivo",
         "error": "errore",
@@ -448,7 +448,7 @@
         "disturbance": "salite, vento",
         "output": "velocità",
         "sensor": "tachimetro",
-        "aria": "Schema a blocchi del cruise control di un'auto",
+        "aria": "Schema a blocchi del regolatore di velocità di un'auto",
         "description": "La velocità obiettivo meno la velocità misurata dà l'errore di velocità; il controllore di velocità lo trasforma in pressione sull'acceleratore; il pedale e le salite agiscono sull'auto; il tachimetro misura la velocità e la riporta indietro."
       }
     }

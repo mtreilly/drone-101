@@ -5,7 +5,7 @@
   "sections": [
     {
       "id": "again",
-      "title": "Prysznic nowymi oczami",
+      "title": "Nowe spojrzenie na prysznic",
       "blocks": [
         {
           "t": "say",
@@ -25,7 +25,7 @@
         },
         {
           "t": "note",
-          "text": "W obliczeniach zakres kurka wynosi od 0 do 1, więc 0,8% tego zakresu to 0,008 jednostki kurka. Poniższy wzór pętli używa 0,008; suwaki pokazują 0,8%. Pilnuj jednostek przy liczbie."
+          "text": "W obliczeniach zakres kurka wynosi od 0 do 1, więc 0,8 % tego zakresu to 0,008 jednostki kurka. Poniższy wzór pętli używa 0,008; suwaki pokazują 0,8 %. Pilnuj jednostek przy liczbie."
         },
         {
           "t": "say",
@@ -47,7 +47,7 @@
         },
         {
           "t": "p",
-          "text": "Sprawdźmy tezę Thea, myśląc **falami**. Kręć kurkiem tam i z powrotem jak sinusoida. Woda, która dociera do słuchawki, to ta sama fala, spóźniona o 2,5 s. Jak duże to spóźnienie *w porównaniu z jednym wahnięciem*?"
+          "text": "Najpierw oddzielmy **czyste opóźnienie** rury od reszty. Wyobraź sobie falę sinusoidalną, która przechodzi od wejścia rury do słuchawki bez wygładzania: na wyjściu ma ten sam kształt, tylko pojawia się 2,5 s później. Jak duże to opóźnienie *w porównaniu z jednym pełnym wahnięciem*?"
         },
         {
           "t": "widget",
@@ -55,15 +55,15 @@
         },
         {
           "t": "p",
-          "text": "Opóźnienie zawsze wynosi 2,5 sekundy, ale przesunięcie w **kołysaniu** zależy od tego, jak szybko kręcisz. Przesunięcie mierzymy jako kąt: całe wahnięcie to 360°, więc"
+          "text": "Opóźnienie rury nadal wynosi 2,5 s, ale wywołane nim **opóźnienie fazowe** zależy od szybkości wahań. Oznaczmy kąt opóźnienia przez $\\phi$. Jeśli jedno wahnięcie trwa $T$ sekund, częstość kołowa wynosi $\\omega=2\\pi/T$ radianów na sekundę. Przy opóźnieniu równym $L$ sekund ten sam kąt możemy podać w stopniach lub radianach:"
         },
         {
           "t": "math",
-          "tex": "\\text{przesunięcie} = 360^\\circ \\times \\frac{L}{T_{\\text{wahnięcie}}} = \\omega L \\;\\text{(w radianach)}"
+          "tex": "\\begin{aligned}\\phi_{\\mathrm{deg}} &= 360^\\circ\\frac{L}{T} \\\\ \\phi_{\\mathrm{rad}} &= \\omega L,\\qquad \\omega=\\frac{2\\pi}{T}\\end{aligned}"
         },
         {
           "t": "p",
-          "text": "Dla powolnego, 30-sekundowego wahnięcia 2,5 s to tylko 30°: lekkie szturchnięcie. Dla 5-sekundowego to 180°: woda przychodzi **dokładnie do góry nogami**, gorąca, gdy kurek mówi „zimna”. Opóźnienie jest nieszkodliwe przy powolnych zmianach i zdradliwe przy szybkich."
+          "text": "Gdy jedno powolne wahnięcie trwa 30 sekund, 2,5 s odpowiada zaledwie 30°: niewielkiemu przesunięciu. Gdy trwa 5 sekund, odpowiada 180°: w tym modelu czystego opóźnienia każdy szczyt na wyjściu wypada naprzeciw doliny na wejściu. Reakcja termiczna prysznica dodatkowo wygładza szybkie wahania; zaraz ją dodamy."
         },
         {
           "t": "note",
@@ -77,7 +77,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Cały prysznic (rura *i* mieszanie) musi robić coś podobnego. Plan jest taki: kręć kurkiem z jedną prędkością, poczekaj, aż wszystko wejdzie w równy rytm, i zmierz dwie liczby:"
+          "text": "Dodajmy teraz do opóźnienia rury reakcję termiczną prysznica. Zmiany temperatury wody potrzebują czasu, by się ustalić, więc cały prysznic zarówno opóźnia, jak i wygładza zmiany ustawienia kurka. Plan jest taki: poruszaj kurkiem w jednym rytmie, poczekaj na ustalone wahania i zmierz dwie liczby:"
         },
         {
           "t": "list",
@@ -96,7 +96,7 @@
         },
         {
           "t": "p",
-          "text": "Mieszanie osłabia szybkie wahania, a rura nadal dodaje opóźnienie fazowe. Krzywe wzmocnienia i fazy względem prędkości wahań tworzą **charakterystyki Bodego**. Tutaj wejściem jest **temperatura zmieszanej wody**, więc wolne wahania mają wzmocnienie 1. Gdyby wejściem było położenie kurka od 0 do 1, wzmocnienie byłoby 45 razy większe. Dla tego wykresu temperatura–temperatura podstawiamy $s=i\\omega$ do znormalizowanej odpowiedzi prysznica:"
+          "text": "Reakcja termiczna prysznica tłumi szybkie wahania, a rura nadal dodaje opóźnienie fazowe. Wykresy wzmocnienia i fazy w zależności od szybkości wahań tworzą **charakterystyki Bodego**. Tutaj wejściem jest **temperatura zmieszanej wody**, więc wolne wahania mają wzmocnienie 1. Gdyby wejściem było położenie kurka od 0 do 1, wzmocnienie byłoby 45 razy większe. Na tym wykresie temperatury wejściowej i wyjściowej podstawiamy $s=i\\omega$ do znormalizowanej odpowiedzi prysznica:"
         },
         {
           "t": "math",
@@ -204,7 +204,7 @@
     },
     {
       "id": "design",
-      "title": "Zaprojektuj robotyczny prysznic",
+      "title": "Zaprojektuj automatyczny prysznic",
       "blocks": [
         {
           "t": "p",
@@ -238,7 +238,7 @@
         },
         {
           "t": "note",
-          "text": "Liczby na suwakach to procenty pełnego zakresu kurka: P ≈ 1% na °C bieżącego uchybu, a I ≈ 0,6% na °C-sekundę nagromadzonego uchybu. Równania pętli używają ułamka zakresu kurka, więc podziel wyświetlone liczby przez 100."
+          "text": "Liczby na suwakach to procenty pełnego zakresu kurka: P ≈ 1 % na °C bieżącego uchybu, a I ≈ 0,6 % na °C-sekundę nagromadzonego uchybu. Równania pętli używają ułamka zakresu kurka, więc podziel wyświetlone liczby przez 100."
         },
         {
           "t": "p",

@@ -1,4 +1,5 @@
 import { h } from '../../core/dom';
+import { canvasHandFont } from '../../core/font';
 import { onThemeChange } from '../../core/theme';
 import { color } from '../../ui/colors';
 
@@ -86,7 +87,7 @@ export class PlaneCanvas {
     ctx.moveTo(this.X(0), 4);
     ctx.lineTo(this.X(0), this.size - 4);
     ctx.stroke();
-    ctx.font = '13px "Patrick Hand", cursive';
+    ctx.font = canvasHandFont(13);
     ctx.fillStyle = color('ink3');
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
@@ -97,7 +98,7 @@ export class PlaneCanvas {
       if (extent < 3 && Math.abs(k) === 1) continue;
       ctx.fillText(String(k).replace('-', '−'), this.X(k), this.Y(0) + 5);
     }
-    ctx.font = '15px "Patrick Hand", cursive';
+    ctx.font = canvasHandFont(15);
     ctx.textBaseline = 'alphabetic';
     halo(ctx, this.o.reLabel, this.size - 6, this.Y(0) - 8, 'right', color('ink2'));
     halo(ctx, this.o.imLabel, this.X(0) + 7, 16, 'left', color('ink2'));
@@ -190,7 +191,7 @@ function halo(ctx: CanvasRenderingContext2D, text: string, x: number, y: number,
 /** Places a label next to (x, y), pushed away in direction (dx, dy) so it never sits on the mark. */
 function labelAt(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, dx: number, dy: number, fill: string): void {
   ctx.save();
-  ctx.font = '16px "Patrick Hand", cursive';
+  ctx.font = canvasHandFont(16);
   ctx.textBaseline = dy > 0.35 ? 'top' : dy < -0.35 ? 'bottom' : 'middle';
   const align: CanvasTextAlign = dx > 0.35 ? 'left' : dx < -0.35 ? 'right' : 'center';
   halo(ctx, text, x, y, align, fill);
@@ -286,7 +287,7 @@ export class SpiralCanvas {
     [x, y] = P(0, 0, A);
     ctx.lineTo(x, y);
     ctx.stroke();
-    ctx.font = '15px "Patrick Hand", cursive';
+    ctx.font = canvasHandFont(15);
     const ink2 = color('ink2');
     [x, y] = P(tMax, 0, 0);
     halo(ctx, this.labels.time, x, y + 18, 'right', ink2);

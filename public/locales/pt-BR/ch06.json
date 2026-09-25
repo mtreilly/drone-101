@@ -1,0 +1,396 @@
+{
+  "kicker": "Capítulo 6",
+  "title": "A Verdadeira Personalidade do Drone",
+  "question": "Por que o drone quica como uma mola?",
+  "sections": [
+    {
+      "id": "spring",
+      "title": "O controlador é uma mola",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "June perguntou onde nosso drone mora no mapa. Dica: lembra do drone quicante do Capítulo 2? Quanto mais a gente aumentava $\\eff{K_p}$, mais ele quicava. Parecia exatamente um peso numa mola."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "\"Parecia\" não é prova. Vamos colocá-los lado a lado e escrever as duas equações."
+        },
+        {
+          "t": "p",
+          "text": "À esquerda: uma massa de 0,5 kg pendurada numa mola com um amortecedor (um pequeno pistão cheio de óleo que resiste ao movimento). À direita: nosso drone, mesma massa, mesmo arrasto, sob controle proporcional."
+        },
+        {
+          "t": "note",
+          "text": "Para evitar que a gravidade nos distraia, damos ao drone seu empuxo de pairar (4,9 N) de graça aqui, para que ele não caia. Vamos conquistar isso honestamente no Capítulo 9."
+        },
+        {
+          "t": "widget",
+          "id": "twins"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "As curvas estão **uma em cima da outra**. Não são parecidas. *Idênticas.*"
+        },
+        {
+          "t": "p",
+          "text": "Olhe as duas equações. A mola empurra de volta com força $\\eff{k}\\,x$: quanto mais esticada, com mais força puxa. Nosso controlador empurra com $\\eff{K_p}(\\sp{2} - \\out{h})$: quanto mais longe do alvo, com mais força empurra. **Mesma regra.** O controlador *é* uma mola: uma invisível, puxando o drone em direção a 2 m."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Então um controlador P é uma mola virtual, e o arrasto do ar $c$ é um amortecedor virtual. Tudo o que aprendemos sobre molas, ganhamos de graça."
+        }
+      ]
+    },
+    {
+      "id": "knobs",
+      "title": "Dois botões de personalidade",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Todo sistema massa-mola-amortecedor, e portanto todo drone com controle P, é descrito por apenas **dois números**:"
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Frequência natural $\\omega_n = \\sqrt{k/m}$",
+              "def": "Quão rápido ele *quer* oscilar, em radianos por segundo. Uma mola mais rígida ($\\eff{k}$ maior) ou uma massa menor significa oscilação mais rápida."
+            },
+            {
+              "term": "Razão de amortecimento $\\zeta = \\dfrac{c}{2\\sqrt{m k}}$",
+              "def": "Quão rápido a oscilação desaparece. É um número puro: 0 significa que oscila para sempre, 1 é exatamente a fronteira entre oscilar e não oscilar."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Agora lembre-se da mola dos Capítulos 4 e 5, onde chutar uma exponencial nos deu dois valores de $s$. Adicione um amortecedor e o mesmo chute dá $m s^2 + c s + k = 0$. Suas duas soluções são dois pontos no nosso mapa de $s$. Divida por $m$ e isso se torna"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} & s^2 + 2\\zeta\\omega_n\\, s + \\omega_n^2 = 0 \\\\ \\Longrightarrow\\quad & s = -\\zeta\\omega_n \\pm \\omega_n\\sqrt{\\zeta^2 - 1} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "O sinal ± nos dá duas respostas, uma para cada ponto. Quando o amortecimento é menor que 1, a expressão sob a raiz quadrada é negativa: os pontos compartilham a posição esquerda-direita, mas ficam em alturas opostas. Em 1 eles se encontram; acima de 1 ambos ficam no eixo horizontal."
+        },
+        {
+          "t": "p",
+          "text": "Brinque com os dois botões. Observe os {out|pontos azuis} no mapa: eles são os dois valores de $s$, e o movimento é sempre uma mistura de $e^{s_1 t}$ e $e^{s_2 t}$."
+        },
+        {
+          "t": "widget",
+          "id": "personality"
+        },
+        {
+          "t": "vocab",
+          "title": "Três personalidades",
+          "items": [
+            {
+              "term": "Subamortecido ($\\zeta < 1$)",
+              "def": "Os dois valores de $s$ são um par espelhado fora do eixo real, situados em um círculo de raio $\\omega_n$. A resposta ultrapassa o alvo e oscila enquanto se estabiliza."
+            },
+            {
+              "term": "Criticamente amortecido ($\\zeta = 1$)",
+              "def": "O par se encontra no eixo real. A resposta mais rápida que não ultrapassa o alvo."
+            },
+            {
+              "term": "Superamortecido ($\\zeta > 1$)",
+              "def": "O par se separa ao longo do eixo real: um se move para a esquerda, o outro se aproxima lentamente do zero. Sem sobressinal, mas lento."
+            }
+          ]
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Então as espirais do Capítulo 5 eram a personalidade do drone desde o início. Girar = oscilar, encolher = estabilizar!"
+        }
+      ]
+    },
+    {
+      "id": "damping",
+      "title": "Mais amortecimento é sempre melhor?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Fácil. Oscilações são ruins e o amortecimento mata as oscilações. Então vou definir $\\zeta = 5$ para ficar seguro. O drone mais seguro de todos."
+        },
+        {
+          "t": "predict",
+          "id": "ch6-damping",
+          "gate": true,
+          "q": "Mesma mola, mesmo $\\omega_n$. Aumentamos o amortecimento de $\\zeta = 1$ para $\\zeta = 3$. Ele atinge o alvo **mais rápido** ou **mais devagar**?",
+          "options": [
+            {
+              "text": "Mais rápido: mais amortecimento, menos movimento desperdiçado",
+              "sketch": "smooth",
+              "why": "É verdade que não há sobressinal. Mas o amortecedor grosso também resiste ao movimento *em direção* ao alvo."
+            },
+            {
+              "text": "Mais ou menos o mesmo",
+              "sketch": "overshoot",
+              "why": "Depois de $\\zeta = 1$ não há mais nada para acalmar, e o amortecimento extra só deixa tudo mais lento."
+            },
+            {
+              "text": "Mais devagar: ele se arrasta",
+              "sketch": "sluggish",
+              "correct": true,
+              "why": "Certo. O amortecedor resiste a **todo** movimento, incluindo o movimento que você quer. Com $\\zeta = 3$, leva cerca de quatro vezes mais tempo."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "race"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Meu drone \"seguro\" demora uma eternidade. É como se mover através de mel."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Olhe o mapa! Um ponto disparou para a esquerda, super rápido. Mas o outro está bem pertinho de zero."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "E $e^{st}$ com $s$ próximo de zero desaparece **muito** lentamente. O rápido some num piscar. O lento é quem manda."
+        },
+        {
+          "t": "p",
+          "text": "Para esta resposta ao degrau, o **modo mais lento que realmente aparece** determina a longa espera. Amortecimento de menos significa oscilações; de mais significa arrasto. Para uma resposta simples como esta, $\\zeta$ em torno de 0,7 a 1 costuma dar um equilíbrio útil. Tarefas diferentes podem preferir um equilíbrio diferente."
+        }
+      ]
+    },
+    {
+      "id": "drone",
+      "title": "De volta ao drone",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Agora o Capítulo 2 finalmente faz sentido. Para o nosso drone, a constante da mola *é* o ganho:"
+        },
+        {
+          "t": "math",
+          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{K_p}}{m}}, \\qquad \\zeta = \\frac{c}{2\\sqrt{m\\,\\eff{K_p}}}"
+        },
+        {
+          "t": "p",
+          "text": "$\\eff{K_p}$ fica na parte *de baixo* da fórmula do amortecimento. Aumentar o ganho deixa o drone mais rápido ($\\omega_n$ maior), mas **menos amortecido**. Com $\\eff{K_p} = 20$ N/m: $\\zeta = 1/(2\\sqrt{0.5 \\times 20}) \\approx 0.16$. Bem saltitante, exatamente como vimos. No mapa, seus dois valores de $s$ ficam bem lá em cima e só um pouco à esquerda do eixo vertical. É aí que nosso drone vive."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "E não conseguimos mais amortecimento sem baixar muito $\\eff{K_p}$, o que traz de volta o desvio residual. Precisamos de uma forma de adicionar amortecimento *de propósito*."
+        },
+        {
+          "t": "note",
+          "text": "Experimente no primeiro widget: deslize $K_p$ e veja ζ cair conforme as oscilações ficam mais selvagens."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "O que sabemos agora",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Um drone controlado por P obedece **exatamente** à mesma equação que uma massa numa mola: o controlador é uma mola virtual.",
+            "Dois números capturam a personalidade dele: $\\omega_n$ (quão rápido) e $\\zeta$ (quão oscilante).",
+            "O movimento é uma mistura de dois termos $e^{st}$. Os dois valores de $s$ ficam sobre um círculo de raio $\\omega_n$ quando o sistema é subamortecido, e se separam ao longo do eixo real quando é superamortecido.",
+            "Mais amortecimento nem sempre é melhor: depois de $\\zeta = 1$, o valor lento de $s$ se aproxima devagar de zero e tudo fica mais lento.",
+            "Para o drone, mais $K_p$ significa menos amortecimento. É por isso que ele ficou mais oscilante."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch6-q1",
+              "q": "Os dois valores de $s$ de um sistema são $-1 \\pm 4i$. Qual é a resposta dele?",
+              "options": [
+                {
+                  "text": "Ultrapassa o alvo e oscila",
+                  "sketch": "overshoot",
+                  "correct": true,
+                  "why": "Uma parte imaginária (±4) significa rotação, ou seja, oscilação. Uma parte real negativa (−1) significa que as oscilações diminuem."
+                },
+                {
+                  "text": "Sobe suavemente, sem ultrapassar o alvo",
+                  "sketch": "smooth",
+                  "why": "Subidas suaves vêm de valores de $s$ no eixo real (sem rotação). Esses valores têm parte imaginária ±4."
+                },
+                {
+                  "text": "Sobe devagar",
+                  "sketch": "sluggish",
+                  "why": "Subir devagar vem de um $s$ real muito próximo de zero. Esses valores giram, então a resposta oscila."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q2",
+              "q": "Nosso drone ($m = 0.5$ kg, $c = 1$ N·s/m) com $K_p = 20$ N/m é…",
+              "options": [
+                {
+                  "text": "Subamortecido, $\\zeta \\approx 0.16$",
+                  "correct": true,
+                  "why": "$\\zeta = 1/(2\\sqrt{0.5\\cdot 20}) = 1/(2\\sqrt{10}) \\approx 0.158$. Bem abaixo de 1, então oscila bastante."
+                },
+                {
+                  "text": "Criticamente amortecido, $\\zeta = 1$",
+                  "why": "Isso exigiria $c = 2\\sqrt{m K_p} \\approx 6.3$ N·s/m, mais de seis vezes o arrasto que temos."
+                },
+                {
+                  "text": "Superamortecido, $\\zeta > 1$",
+                  "why": "O superamortecimento exige muito amortecimento em comparação com a rigidez. Nosso ganho é alto e nosso arrasto é pequeno, que é o oposto."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q3",
+              "q": "Usando apenas controle P, qual $K_p$ tornaria o drone criticamente amortecido ($\\zeta = 1$)?",
+              "options": [
+                {
+                  "text": "$K_p = 0.5$ N/m",
+                  "correct": true,
+                  "why": "Defina $c/(2\\sqrt{m K_p}) = 1$ para obter $K_p = c^2/(4m) = 0.5$ N/m. Mas com uma mola tão fraca o drone precisaria estar 9,8 m *abaixo* do alvo só para se manter no ar, então ele nunca decola. O controle P sozinho não consegue nos dar as duas coisas."
+                },
+                {
+                  "text": "$K_p = 20$ N/m",
+                  "why": "Esse é o nosso padrão oscilante com $\\zeta \\approx 0.16$. Mais ganho significa *menos* amortecimento."
+                },
+                {
+                  "text": "$K_p = 200$ N/m",
+                  "why": "Mais ganho diminui $\\zeta$ ainda mais (para cerca de 0,05). O ganho fica no denominador."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q4",
+              "q": "Um sistema superamortecido tem valores de $s$ $-0.2$ e $-10$. Qual deles decide quanto tempo você espera?",
+              "options": [
+                {
+                  "text": "$-0.2$",
+                  "correct": true,
+                  "why": "$e^{-0.2t}$ leva cerca de 20 s para desaparecer até 2%, enquanto $e^{-10t}$ some em 0,4 s. O que está mais próximo do eixo vertical é quem manda."
+                },
+                {
+                  "text": "$-10$",
+                  "why": "$e^{-10t}$ desaparece em uma fração de segundo. É a parte rápida que acaba antes de você perceber."
+                },
+                {
+                  "text": "Ambos igualmente",
+                  "why": "Eles desaparecem em velocidades bem diferentes, então o lento domina o que você vê."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Theo: \"Nós *chutamos* o caminho até esses valores de $s$. Adicione gravidade, vento, pacotes e um controlador mais inteligente, e o chute fica feio. Existe uma máquina que transforma esse cálculo em **álgebra simples**?\""
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "twins": {
+      "title": "Mola vs. drone",
+      "spring": "massa em uma mola",
+      "drone": "drone sob controle P",
+      "msdAria": "Uma massa pendurada em uma mola e um amortecedor, oscilando em torno de sua posição de repouso.",
+      "plotY": "distância até o alvo (m)",
+      "plotAria": "Distância até o alvo ao longo do tempo para o drone e para a mola. As duas curvas ficam sobrepostas.",
+      "target": "alvo / repouso",
+      "kp": "Rigidez: mola $k$ = ganho do drone $K_p$",
+      "personality": "personalidade",
+      "help": "Ambos começam 1 m abaixo de seu alvo e são soltos. O controle deslizante define a rigidez da mola e o ganho do drone para o mesmo número.",
+      "describe": "O drone está a {d} m do alvo, a massa da mola está a {s} m do repouso.",
+      "regime": {
+        "under": "subamortecido",
+        "critical": "criticamente amortecido",
+        "over": "superamortecido"
+      },
+      "together": "ambos, em um único gráfico"
+    },
+    "personality": {
+      "title": "Duas manoplas, dois pontos, uma personalidade",
+      "response": "resposta a um degrau de 1 m",
+      "target": "alvo",
+      "plotAria": "Resposta ao degrau de um sistema de segunda ordem para a frequência natural e a razão de amortecimento escolhidas.",
+      "planeAria": "O mapa do plano s, mostrando os dois valores de s do sistema e um círculo tracejado de raio ômega n.",
+      "msdAria": "Uma massa presa a uma mola reproduzindo a resposta ao degrau.",
+      "panelAria": "Resposta ao degrau pequeno com razão de amortecimento {z}.",
+      "panel": {
+        "0": "subamortecido (ζ = {z})",
+        "1": "criticamente amortecido (ζ = {z})",
+        "2": "superamortecido (ζ = {z})"
+      },
+      "radius": "raio ωn = {w}",
+      "wn": "Frequência natural $\\omega_n$",
+      "zeta": "Taxa de amortecimento $\\zeta$",
+      "overshoot": "sobressinal",
+      "settle": "estabiliza (2%)",
+      "roots": "os dois valores de s",
+      "personality": "personalidade",
+      "never": "nunca",
+      "playSpring": "Reproduzir na mola",
+      "stopSpring": "Pausar a mola",
+      "describe": "Taxa de amortecimento {z}, frequência natural {w} radianos por segundo, valores de s {r}.",
+      "regime": {
+        "under": "subamortecido",
+        "critical": "criticamente amortecido",
+        "over": "superamortecido"
+      },
+      "planeCap": "os dois valores de s",
+      "springCap": "observe em uma mola",
+      "re": "σ",
+      "im": "ω",
+      "offMap": "{v} está fora do mapa ←"
+    },
+    "race": {
+      "title": "A corrida do amortecimento",
+      "choose": "Seu amortecimento",
+      "ref": "ζ = 1 (crítico)",
+      "yours": "seu ζ",
+      "yoursZ": "ζ = {z}",
+      "msdAria": "Uma massa em uma mola se movendo em direção à sua posição de repouso.",
+      "plotAria": "Respostas ao degrau para o amortecimento crítico e para a razão de amortecimento escolhida.",
+      "planeAria": "Os dois valores de s para a razão de amortecimento escolhida.",
+      "settleRef": "ζ = 1 assenta",
+      "settleYours": "seu ζ assenta",
+      "slow": "lento",
+      "fast": "rápido",
+      "never": "não dentro de 12 s",
+      "same": "Esta é a própria referência: a resposta mais rápida sem sobressinal.",
+      "slower": "Seu amortecimento extra o tornou cerca de {k}× mais lento.",
+      "replay": "Corra de novo",
+      "planeCap": "os dois valores de s",
+      "re": "σ",
+      "im": "ω",
+      "fastOff": "← rápido em {v} (fora do mapa)",
+      "double": "ambos aqui"
+    }
+  }
+}

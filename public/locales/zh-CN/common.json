@@ -1,0 +1,252 @@
+{
+  "app": {
+    "title": "谁让无人机保持在空中？",
+    "short": "无人机怎么悬停？",
+    "loading": "正在削铅笔……",
+    "interactiveUnavailable": "这个互动模块未能加载。请刷新页面再试。"
+  },
+  "nav": {
+    "skip": "跳到内容",
+    "chapters": "章节",
+    "chapterN": "第 {n} 章：{title}",
+    "menu": "打开章节目录",
+    "close": "关闭",
+    "map": "概念图",
+    "progress": "已完成章节",
+    "prev": "返回",
+    "next": "下一页",
+    "home": "起始页",
+    "chapterNav": "章节导航",
+    "upNext": "接下来",
+    "readingProgress": "本章阅读进度",
+    "tools": "页面工具"
+  },
+  "theme": {
+    "label": "配色主题：{mode}（点击切换）",
+    "auto": "跟随系统",
+    "light": "纸张",
+    "dark": "夜间笔记本"
+  },
+  "legend": {
+    "button": "配色",
+    "title": "颜色代表什么",
+    "setpoint": "给定值 / 目标（绿色，虚线）",
+    "output": "实际发生的情况（蓝色）",
+    "error": "误差：目标减去实际（红色）",
+    "effort": "控制量：推力、旋钮（橙色）",
+    "disturbance": "扰动：风、包裹、重力（紫色）",
+    "pole": "极点（×）",
+    "zero": "零点（○）",
+    "ghost": "上一次运行（淡淡的残影）",
+    "guess": "你的猜测（铅笔）"
+  },
+  "transport": {
+    "label": "仿真控制",
+    "play": "播放",
+    "pause": "暂停",
+    "reset": "重置",
+    "step": "单步",
+    "speed": "速度"
+  },
+  "splane": {
+    "re": "σ（收缩 ← → 发散）",
+    "im": "ω（旋转）",
+    "stable": "逐渐平静",
+    "unstable": "越来越大",
+    "pole": "极点",
+    "zero": "零点",
+    "point": "点",
+    "draggable": "可拖动的点，用方向键移动，按住 Shift 可加大步长"
+  },
+  "story": {
+    "predict": "先预测一下！",
+    "predictRight": "你猜对了！",
+    "predictSurprise": "意外吧！（意外之处正是学习发生的地方。）",
+    "predictLocked": "猜测已锁定。现在来看看……",
+    "predictAgain": "再预测一次",
+    "check": "检验一下自己",
+    "quizRight": "没错！",
+    "quizWrong": "不完全对，原因如下：",
+    "quizScore": "已解决 {n} / {total}。",
+    "quizDone": "本章完成 ✓",
+    "recap": "我们搞清楚了什么",
+    "vocab": "新词",
+    "completeStamp": "完成！",
+    "completeAnnounce": "第 {n} 章完成。干得漂亮！"
+  },
+  "cast": {
+    "mika": "米卡",
+    "theo": "西奥",
+    "june": "朱恩"
+  },
+  "home": {
+    "kicker": "十二本笔记里的反馈冒险",
+    "question": "一台机器怎么让自己一直待在它该待的位置上？",
+    "intro": [
+      "这一切始于一次淋浴。我们中的一个人拧了旋钮，被烫到了，又拧回去，结果冻得够呛，然后再拧一次。接着我们就想：一架小小的无人机，明明没有大脑，却能在风中稳稳地悬停不动。**这是怎么做到的？**",
+      "这些是我们一路推导出来的笔记，包括每一次走错的路。我们从零开始：不需要微积分。到最后你会明白**拉普拉斯变换**为什么存在、**极点**到底是什么，而且你会调出一个能胜过你自己双手的 **PID** 控制器。"
+    ],
+    "cast": {
+      "mika": "问出每个人心里偷偷在想的问题。把每个滑块都推到最大，“就是想看看会怎样”。",
+      "theo": "不搞清楚*为什么*管用，就绝不接受一个技巧。特别擅长找 bug。",
+      "june": "喜欢动手做东西。总是问：“我们能拿无人机试试吗？”"
+    },
+    "start": "从淋浴开始 →",
+    "resume": "继续第 {n} 章 →",
+    "contents": "笔记本",
+    "done": "已完成",
+    "privacy": "你的进度和猜测只保存在这个浏览器里。",
+    "reset": "重置我的进度"
+  },
+  "chapters": {
+    "0": {
+      "title": "淋浴问题",
+      "short": "淋浴",
+      "question": "为什么我不能直接把淋浴调到 38 °C？"
+    },
+    "1": {
+      "title": "开环与闭环",
+      "short": "反馈",
+      "question": "我们能不能直接*告诉*无人机该用多大推力？"
+    },
+    "2": {
+      "title": "比例控制",
+      "short": "P 控制",
+      "question": "当无人机飞得太低时，它该用多大的力往上推？"
+    },
+    "3": {
+      "title": "变化的语言",
+      "short": "变化",
+      "question": "我们怎么描述某个东西变化得*有多快*？"
+    },
+    "4": {
+      "title": "指数函数为什么如此神奇",
+      "short": "指数函数",
+      "question": "有没有一条曲线，它的斜率就是它自己的复制品？"
+    },
+    "5": {
+      "title": "旋转的数",
+      "short": "旋转",
+      "question": "什么数的平方等于 −1，它又为什么会振荡？"
+    },
+    "6": {
+      "title": "无人机的真实个性",
+      "short": "二阶",
+      "question": "无人机为什么像弹簧一样弹来弹去？"
+    },
+    "7": {
+      "title": "拉普拉斯变换",
+      "short": "拉普拉斯",
+      "question": "我们能把微积分变成代数吗？"
+    },
+    "8": {
+      "title": "传递函数、极点和零点",
+      "short": "极点",
+      "question": "我们能从一个分式里读出系统的全部个性吗？"
+    },
+    "9": {
+      "title": "PID：解决一切",
+      "short": "PID",
+      "question": "我们怎么才能既消除稳态偏差*又*止住振荡？"
+    },
+    "10": {
+      "title": "回到淋浴",
+      "short": "延迟",
+      "question": "我们为什么会振荡，离失控边缘又有多近？"
+    },
+    "11": {
+      "title": "无人机挑战",
+      "short": "终章",
+      "question": "*你*能让无人机在各种情况下都保持在 2 米吗？"
+    }
+  },
+  "map": {
+    "title": "概念图",
+    "intro": "我们构建的每一个概念，以及它们如何相互支撑。你读得越多，它就越丰富。点击气泡可跳回它诞生的地方。",
+    "aria": "课程概念图：概念之间用线连接，并按章节分组。",
+    "listIntro": "目前已解锁的概念：",
+    "locked": "尚未发现",
+    "nodes": {
+      "goal": "给定值",
+      "delay": "延迟",
+      "openloop": "开环",
+      "feedback": "反馈",
+      "blockdiagram": "框图",
+      "error": "误差",
+      "plant": "被控对象",
+      "disturbance": "扰动",
+      "kp": "P 控制 (Kp)",
+      "sserror": "稳态误差",
+      "overshoot": "超调",
+      "derivative": "导数 = 斜率",
+      "firstorder": "一阶系统",
+      "tau": "时间常数 τ",
+      "integral": "积分 = 面积",
+      "exponential": "e^(at)",
+      "guess": "猜一个指数函数",
+      "complex": "i = 转四分之一圈",
+      "spin": "e^(iωt) 在旋转",
+      "spiral": "e^(st) 在螺旋",
+      "smap": "s 的地图",
+      "second": "二阶系统",
+      "wnzeta": "ωn 和 ζ",
+      "sum": "e^(st) 之和",
+      "laplace": "拉普拉斯探针",
+      "dtos": "d/dt → × s",
+      "table": "我们的表",
+      "splane": "s 平面",
+      "tf": "传递函数",
+      "poles": "极点",
+      "zeros": "零点",
+      "stability": "稳定性",
+      "integralaction": "I：消除稳态偏差",
+      "derivativeaction": "D：增加阻尼",
+      "pid": "PID",
+      "noise": "噪声与冲击",
+      "phaselag": "相位滞后",
+      "bode": "波特图",
+      "margins": "增益裕度/相位裕度",
+      "robust": "鲁棒性",
+      "you": "你，一名控制工程师"
+    }
+  },
+  "units": {
+    "m": "m",
+    "s": "s",
+    "N": "N",
+    "C": "°C",
+    "kg": "kg"
+  },
+  "drone": {
+    "aria": "无人机在地面上方的侧视图。一条绿色虚线标出目标高度。",
+    "target": "目标",
+    "height": "高度",
+    "thrust": "推力",
+    "wind": "风",
+    "package": "包裹",
+    "crash": "坠毁！",
+    "ground": "地面",
+    "describe": "无人机在 {h} 米高度，目标 {r} 米，推力 {T} 牛顿。"
+  },
+  "plots": {
+    "time": "时间 (s)",
+    "height": "高度 (m)",
+    "thrust": "推力 (N)",
+    "temp": "温度（°C）",
+    "knob": "旋钮"
+  },
+  "footer": {
+    "label": "关于作者",
+    "name": "Micheal Reilly",
+    "x": "X / Twitter",
+    "bluesky": "Bluesky",
+    "blog": "博客",
+    "source": "源代码"
+  },
+  "lang": {
+    "button": "语言：{name}",
+    "menu": "选择语言",
+    "label": "语言",
+    "switching": "正在切换语言…"
+  }
+}

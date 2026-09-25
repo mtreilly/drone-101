@@ -107,6 +107,30 @@ mark {
   border-right-color: transparent;
   border-left-color: var(--card);
 }
+html[dir='rtl'] .say:not(.right) .bubble::before {
+  left: auto;
+  right: -19px;
+  border-right-color: transparent;
+  border-left-color: var(--ink);
+}
+html[dir='rtl'] .say:not(.right) .bubble::after {
+  left: auto;
+  right: -15px;
+  border-right-color: transparent;
+  border-left-color: var(--card);
+}
+html[dir='rtl'] .say.right .bubble::before {
+  right: auto;
+  left: -19px;
+  border-left-color: transparent;
+  border-right-color: var(--ink);
+}
+html[dir='rtl'] .say.right .bubble::after {
+  right: auto;
+  left: -15px;
+  border-left-color: transparent;
+  border-right-color: var(--card);
+}
 .bubble strong,
 .note strong,
 .cliff strong,
@@ -137,8 +161,9 @@ mark {
   line-height: 1.35;
   color: var(--ink-2);
   transform: rotate(-1.2deg);
-  border-left: 3px solid var(--c-highlight);
-  padding: 4px 0 4px 12px;
+  border-inline-start: 3px solid var(--c-highlight);
+  padding-block: 4px;
+  padding-inline: 12px 0;
   margin: 1em 0;
 }
 .note::before {
@@ -148,14 +173,17 @@ mark {
 @media (min-width: 1240px) {
   .note.aside {
     position: absolute;
-    right: -17rem;
+    inset-inline-end: -17rem;
     width: 14.5rem;
     margin-top: -3.2em;
-    border-left: none;
+    border-inline-start: none;
     padding: 0;
   }
   .note.aside::before {
     content: '← ';
+  }
+  html[dir='rtl'] .note.aside::before {
+    content: '→ ';
   }
 }
 
@@ -169,6 +197,12 @@ mark {
 }
 .katex {
   font-size: 1.08em;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+.math-block {
+  direction: ltr;
+  unicode-bidi: isolate;
 }
 .katex .c-sp,
 .katex .c-out,
@@ -199,7 +233,7 @@ mark {
 }
 
 .vocab {
-  border-left: 5px solid var(--ink);
+  border-inline-start: 5px solid var(--ink);
 }
 .vocab dt {
   font-weight: 700;
@@ -235,7 +269,7 @@ mark {
 .option {
   appearance: none;
   font: inherit;
-  text-align: left;
+  text-align: start;
   display: flex;
   align-items: flex-start;
   gap: 10px;
@@ -361,7 +395,7 @@ mark {
   box-shadow: 4px 4px 0 var(--paper-3);
 }
 .recap ul {
-  padding-left: 1.2em;
+  padding-inline-start: 1.2em;
   margin: 0.3em 0 0.6em;
 }
 .recap li {
@@ -479,11 +513,6 @@ mark {
 .concept-map .node:focus-visible text {
   text-decoration: underline;
 }
-.widget.wide {
-  margin-left: 50%;
-  transform: translateX(-50%);
-}
-
 .avatar-svg {
   color: var(--avatar-ink);
   overflow: visible;
@@ -550,8 +579,9 @@ mark {
     position: static;
     width: auto;
     margin-top: 1em;
-    border-left: 3px solid var(--c-highlight);
-    padding: 4px 0 4px 12px;
+    border-inline-start: 3px solid var(--c-highlight);
+    padding-block: 4px;
+    padding-inline: 12px 0;
   }
   .widget + .note.aside::before {
     content: '✎ ';

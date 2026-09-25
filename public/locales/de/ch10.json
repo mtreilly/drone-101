@@ -47,7 +47,7 @@
         },
         {
           "t": "p",
-          "text": "Testen wir Theos Behauptung, indem wir in **Wellen** denken. Wackel mit dem Knopf hin und her wie eine Sinuswelle. Das Wasser am Duschkopf ist dieselbe Welle, 2,5 s später. Wie spät ist das, *verglichen mit einem Wackler*?"
+          "text": "Betrachten wir zuerst nur die **reine Totzeit** des Rohrs. Stell dir vor, am Rohreingang läuft eine Sinuswelle hinein und erreicht den Duschkopf ohne Glättung: Am Ausgang hat sie dieselbe Form, nur 2,5 s später. Wie groß ist dieser Versatz *im Vergleich zu einer ganzen Schwingung*?"
         },
         {
           "t": "widget",
@@ -55,15 +55,15 @@
         },
         {
           "t": "p",
-          "text": "Die Verzögerung ist immer 2,5 Sekunden, aber das Nachhinken im **Wackeln** hängt davon ab, wie schnell du wackelst. Wir messen das Nachhinken als Winkel: Ein ganzer Wackler sind 360°, also"
+          "text": "Die Totzeit des Rohrs bleibt bei 2,5 s, doch ihr **Phasenverzug** hängt davon ab, wie schnell die Welle schwingt. Nennen wir den Winkelversatz $\\phi$. Dauert eine Schwingung $T$ Sekunden, dann beträgt ihre Kreisfrequenz $\\omega=2\\pi/T$ Radiant pro Sekunde. Bei einer Verzögerung von $L$ Sekunden lässt sich derselbe Versatz in Grad oder Radiant ausdrücken:"
         },
         {
           "t": "math",
-          "tex": "\\text{Nachhinken} = 360^\\circ \\times \\frac{L}{T_{\\text{Wackler}}} = \\omega L \\;\\text{(in Radiant)}"
+          "tex": "\\begin{aligned}\\phi_{\\mathrm{deg}} &= 360^\\circ\\frac{L}{T} \\\\ \\phi_{\\mathrm{rad}} &= \\omega L,\\qquad \\omega=\\frac{2\\pi}{T}\\end{aligned}"
         },
         {
           "t": "p",
-          "text": "Bei einem langsamen 30-Sekunden-Wackler sind 2,5 s nur 30°: ein kleiner Schubs. Bei einem 5-Sekunden-Wackler sind es 180°: Das Wasser kommt **genau verkehrt herum** an, heiß, wenn der Knopf kalt sagt. Eine Verzögerung ist harmlos bei langsamen Änderungen und tückisch bei schnellen."
+          "text": "Bei einer langsamen Schwingung mit 30 s Periodendauer sind 2,5 s nur 30°: eine kleine Verschiebung. Bei 5 s sind es 180°: Im Modell der reinen Totzeit trifft jeder Wellenberg am Ausgang auf ein Wellental am Eingang. Die thermische Antwort der Dusche glättet schnelle Schwingungen zusätzlich; die nehmen wir gleich dazu."
         },
         {
           "t": "note",
@@ -77,7 +77,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Die ganze Dusche (Rohr *und* Mischen) muss etwas Ähnliches tun. Der Plan: mit einem Tempo am Knopf wackeln, warten, bis sich ein gleichmäßiger Rhythmus einstellt, und zwei Zahlen messen:"
+          "text": "Jetzt nehmen wir zur Totzeit des Rohrs die thermische Antwort der Dusche hinzu. Die Wassertemperatur braucht nach einer Änderung Zeit, um sich einzupendeln. Die ganze Dusche verzögert und glättet also Änderungen am Knopf. Unser Plan: Wir wackeln mit dem Knopf in einem Tempo, warten auf einen gleichmäßigen Rhythmus und messen zwei Zahlen:"
         },
         {
           "t": "list",
@@ -96,7 +96,7 @@
         },
         {
           "t": "p",
-          "text": "Die Mischung dämpft schnelle Wellen, während das Rohr immer mehr Phasenverzug hinzufügt. Die Verstärkungs- und Phasenkurven über dem Wackeltempo bilden ein **Bode-Diagramm**. Hier ist der Eingang die **Temperatur des gemischten Wassers**, deshalb ist die Verstärkung langsamer Wellen 1. Bei der Knopfstellung als Eingang wäre sie 45-mal größer. Für dieses Temperatur-zu-Temperatur-Diagramm setzen wir $s=i\\omega$ in die normierte Duschantwort ein:"
+          "text": "Die thermische Trägheit der Dusche dämpft schnelle Wellen, während das Rohr immer mehr Phasenverzug hinzufügt. Die Verstärkungs- und Phasenkurven über dem Schwingungstempo bilden ein **Bode-Diagramm**. Hier ist der Eingang die **Temperatur des gemischten Wassers**, deshalb haben langsame Wellen die Verstärkung 1. Bei der Knopfstellung als Eingang wäre sie 45-mal größer. Für dieses Temperatur-zu-Temperatur-Diagramm setzen wir $s=i\\omega$ in die normierte Duschantwort ein:"
         },
         {
           "t": "math",

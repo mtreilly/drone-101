@@ -47,7 +47,7 @@
         },
         {
           "t": "p",
-          "text": "Testons l'affirmation de Theo en raisonnant en **vagues**. Fais osciller le robinet d'avant en arrière comme une sinusoïde. L'eau qui arrive à la pomme, c'est la même vague, avec 2,5 s de retard. C'est beaucoup, 2,5 s, *comparé à une oscillation* ?"
+          "text": "Isolons d'abord le **retard pur** du tuyau. Imagine une onde sinusoïdale à l'entrée du tuyau qui arrive au pommeau sans être lissée : la sortie garde la même forme, avec 2,5 s de retard. Ce retard représente combien, *par rapport à une oscillation* ?"
         },
         {
           "t": "widget",
@@ -55,15 +55,15 @@
         },
         {
           "t": "p",
-          "text": "Le retard fait toujours 2,5 secondes, mais le décalage dans l'**oscillation** dépend de la vitesse à laquelle tu oscilles. On mesure ce décalage comme un angle : une oscillation complète fait 360°, donc"
+          "text": "Le retard du tuyau reste de 2,5 s, mais son **déphasage** dépend de la vitesse d'oscillation. Appelons ce déphasage $\\phi$. Si une oscillation dure $T$ secondes, sa pulsation vaut $\\omega=2\\pi/T$ radians par seconde. Ici, un déphasage positif signifie que la sortie suit l'entrée avec du retard ; sur un diagramme de phase, cela apparaît comme un angle négatif. Pour un retard de $L$ secondes, on peut exprimer le même déphasage en degrés ou en radians :"
         },
         {
           "t": "math",
-          "tex": "\\text{déphasage} = 360^\\circ \\times \\frac{L}{T_{\\text{oscillation}}} = \\omega L \\;\\text{(en radians)}"
+          "tex": "\\begin{aligned}\\phi_{\\mathrm{deg}} &= 360^\\circ\\frac{L}{T} \\\\ \\phi_{\\mathrm{rad}} &= \\omega L,\\qquad \\omega=\\frac{2\\pi}{T}\\end{aligned}"
         },
         {
           "t": "p",
-          "text": "Pour une oscillation lente de 30 secondes, 2,5 s ne font que 30° : un petit décalage. Pour une oscillation de 5 secondes, ça fait 180° : l'eau arrive **exactement à l'envers**, chaude quand le robinet dit froid. Un retard est inoffensif pour les changements lents et traître pour les rapides."
+          "text": "Pour une oscillation lente de 30 secondes, 2,5 s ne représentent que 30° : un petit décalage. Pour une oscillation de 5 secondes, ils représentent 180° : dans ce modèle de retard pur, chaque sommet de la sortie coïncide avec un creux de l'entrée. La réponse thermique de la douche lisse aussi les oscillations rapides ; ajoutons-la maintenant."
         },
         {
           "t": "note",
@@ -77,7 +77,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "La douche entière (tuyau *et* mélange) doit faire quelque chose de semblable. Voici le plan : faire osciller le robinet à une vitesse, attendre que tout s'installe dans un rythme régulier, et mesurer deux nombres :"
+          "text": "Ajoutons maintenant la réponse thermique de la douche au retard du tuyau. La température de l'eau met du temps à se stabiliser : la douche complète retarde et lisse donc les changements du robinet. Voici le plan : faire osciller le robinet à une fréquence, attendre un rythme stable, puis mesurer deux nombres :"
         },
         {
           "t": "list",
@@ -96,7 +96,7 @@
         },
         {
           "t": "p",
-          "text": "Le mélange atténue les oscillations rapides, tandis que le tuyau ajoute toujours du retard de phase. Les courbes de gain et de phase selon la vitesse d’oscillation forment un **diagramme de Bode**. Ici, l’entrée est la **température de l’eau mélangée** : les oscillations lentes ont donc un gain de 1. Avec la fraction de robinet en entrée, le gain serait 45 fois plus grand. Pour ce graphique température vers température, on pose $s=i\\omega$ dans la réponse normalisée de la douche :"
+          "text": "L'inertie thermique de la douche atténue les oscillations rapides, tandis que le tuyau continue d'ajouter du déphasage. Les courbes de gain et de phase selon la fréquence d'oscillation forment un **diagramme de Bode**. Ici, l'entrée est la **température de l'eau mélangée** : les oscillations lentes ont donc un gain de 1. Avec la position du robinet en entrée, le gain serait 45 fois plus grand. Pour ce diagramme température vers température, on pose $s=i\\omega$ dans la réponse normalisée de la douche :"
         },
         {
           "t": "math",
@@ -198,7 +198,7 @@
         },
         {
           "t": "p",
-          "text": "Une **main vitesse** (tourner le robinet tant que ça semble faux) est un correcteur I : son bord correspond à des oscillations de 13,8 s. Une **main position** (« c'est trop chaud, mets le robinet *ici* ») agit comme un correcteur P : $L(s) = 45K\\,e^{-2{,}5s}/(s+1)$, dont la phase atteint −180° à $\\omega \\approx 0{,}95$ rad/s, soit des oscillations de **6,6 s**, pour tout $K$ au-dessus d'environ 0,031 robinet par °C. La plupart des gens sont un mélange. (La main robot normale oscille un peu plus lentement que 13,8 s, environ 15,5 s, parce qu'elle est juste à l'intérieur du bord ; les oscillations de la main énergique, environ 11,6 s, sont écrasées par le robinet qui arrive en butée.)"
+          "text": "Une **main qui commande une vitesse** (tourner le robinet tant que ça semble faux) est un correcteur I : son bord correspond à des oscillations de 13,8 s. Une **main qui commande une position** (« c'est trop chaud, mets le robinet *ici* ») agit comme un correcteur P : $L(s) = 45K\\,e^{-2{,}5s}/(s+1)$, dont la phase atteint −180° à $\\omega \\approx 0{,}95$ rad/s, soit des oscillations de **6,6 s**, pour tout $K$ au-dessus d'environ 0,031 robinet par °C. La plupart des gens sont un mélange. (La main robot normale oscille un peu plus lentement que 13,8 s, environ 15,5 s, parce qu'elle est juste à l'intérieur du bord ; les oscillations de la main énergique, environ 11,6 s, sont écrasées par le robinet qui arrive en butée.)"
         }
       ]
     },
@@ -242,7 +242,7 @@
         },
         {
           "t": "p",
-          "text": "Un PI avec de bonnes marges devient confortable en environ 9,4 secondes, sans grandes oscylations répétées. C'est mieux que la main normale (qui a passé presque une minute à osciller avant de se calmer) et que la plupart des humains. Mais il ne peut pas battre la physique : rien ne peut réagir à de l'eau qui n'est pas encore arrivée. Les ingénieurs ont bien une astuce pour les longs retards, le **prédicteur de Smith**, qui fait tourner une petite simulation du tuyau à l'intérieur du correcteur. Mais c'est une histoire pour un autre carnet."
+          "text": "Un PI avec de bonnes marges devient confortable en environ 9,4 secondes, sans grandes oscillations répétées. C'est mieux que la main normale (qui a passé presque une minute à osciller avant de se calmer) et que la plupart des humains. Mais il ne peut pas battre la physique : rien ne peut réagir à de l'eau qui n'est pas encore arrivée. Les ingénieurs ont bien une astuce pour les longs retards, le **prédicteur de Smith**, qui fait tourner une petite simulation du tuyau à l'intérieur du correcteur. Mais c'est une histoire pour un autre carnet."
         },
         {
           "t": "note",

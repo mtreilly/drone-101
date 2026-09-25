@@ -256,7 +256,7 @@
       "blocks": [
         {
           "t": "h3",
-          "text": "Warnung 1: der D-Tritt"
+          "text": "Warnung 1: der D-Stoß"
         },
         {
           "t": "p",
@@ -268,7 +268,7 @@
         },
         {
           "t": "p",
-          "text": "Nimm stattdessen die Steigung der **gemessenen Höhe**, und das Problem ist weg: Die Drohne kann sich nicht teleportieren, also hat ihre Höhe keine Sprünge. Gleiche Dämpfung, kein Tritt. Fast jeder echte PID-Regler macht das so."
+          "text": "Nimm stattdessen die Steigung der **gemessenen Höhe**, und das Problem ist weg: Die Drohne kann sich nicht teleportieren, also hat ihre Höhe keine Sprünge. Gleiche Dämpfung, kein Stoß. Fast jeder echte PID-Regler macht das so."
         },
         {
           "t": "h3",
@@ -305,7 +305,7 @@
             "**I** häuft vergangene Fehler an; der einzige Ruhepunkt ist null Fehler, also killt es das Durchhängen. Es bringt Verzögerung mit, also lässt zu viel davon alles schwingen.",
             "**D** drückt gegen das Tempo: ein virtueller Dämpfer, der zum Luftwiderstand $c$ dazukommt.",
             "Der geschlossene Regelkreis ist $m s^3 + (c + K_d)s^2 + K_p s + K_i$; er ist genau dann stabil, wenn $(c+K_d)K_p > mK_i$.",
-            "Nimm D von der Messung (kein Tritt) und filtere es (weniger Rauschen)."
+            "Nimm D von der Messung (kein Stoß) und filtere es (weniger Rauschen)."
           ]
         },
         {
@@ -375,7 +375,7 @@
                 {
                   "text": "Wenn der Sollwert springt, springt auch der Fehler, und seine Steigung ist riesig: eine Schubspitze",
                   "correct": true,
-                  "why": "Die Höhe kann nicht springen, also bleibt ihre Steigung vernünftig. Gleiche Dämpfung, kein Tritt."
+                  "why": "Die Höhe kann nicht springen, also bleibt ihre Steigung vernünftig. Gleiche Dämpfung, kein Stoß."
                 },
                 {
                   "text": "Weil die Messung weniger rauscht als der Fehler",
@@ -484,8 +484,8 @@
       "onMeasurement": "der gemessenen Höhe",
       "peak": "Spitzenschub",
       "status": {
-        "error": "Der Fehler springt, seine Steigung ist riesig, und die Motoren knallen auf 20 N: ein D-Tritt.",
-        "measurement": "Die Höhe kann nicht springen, also kein Tritt: ein sanfter Anstieg."
+        "error": "Der Fehler springt, seine Steigung ist riesig, und die Motoren knallen auf 20 N: ein D-Stoß.",
+        "measurement": "Die Höhe kann nicht springen, also kein Stoß: ein sanfter Anstieg."
       }
     },
     "noise": {

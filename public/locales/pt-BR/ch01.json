@@ -1,0 +1,456 @@
+{
+  "kicker": "Capítulo 1",
+  "title": "Malha Aberta vs. Malha Fechada",
+  "question": "Podemos simplesmente *dizer* ao drone qual empuxo usar?",
+  "sections": [
+    {
+      "id": "meet",
+      "title": "Conheça o drone",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Peguei um drone emprestado! A tarefa dele: carregar pequenos pacotes e **pairar exatamente a 2 metros** para que alguém possa pegá-los."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "É como o chuveiro, certo? Um número que queremos (2 m), uma coisa que podemos mudar (a força com que as hélices empurram)."
+        },
+        {
+          "t": "p",
+          "text": "Aqui estão os fatos. O drone pesa **0,5 kg**, então a gravidade o puxa para baixo com $0.5 \\times 9.81 \\approx 4.9$ newtons. As hélices empurram para cima com um {eff|empuxo} $\\eff{T}$ que escolhemos. Quando o drone se move, o ar empurra de volta um pouco: cerca de **1 newton para cada metro por segundo** de velocidade."
+        },
+        {
+          "t": "math",
+          "tex": "\\underbrace{0.5\\,\\ddot{\\out{h}}}_{\\text{massa}\\times\\text{aceleração}} = \\eff{T} - \\underbrace{4.9}_{\\text{peso}} - \\underbrace{1.0\\,\\dot{\\out{h}}}_{\\text{arrasto do ar}}"
+        },
+        {
+          "t": "p",
+          "text": "Não se preocupe com os pontos sobre $\\out{h}$ ainda. Eles descrevem velocidade e aceleração; vamos construí-los no Capítulo 3. **Quando o drone está parado**, 4,9 N equilibram a gravidade: mais empuxo o faz subir, menos o deixa cair. **Quando ele está se movendo**, o arrasto do ar também empurra contra o movimento, então 4,9 N o desacelera até parar."
+        },
+        {
+          "t": "note",
+          "text": "Simplificações honestas: nosso drone só se move para cima e para baixo, o arrasto do ar é uma regra linear simples, e pelos próximos capítulos os motores têm potência ilimitada (podem até puxar para baixo um pouco). Drones reais são mais bagunçados. Vamos adicionar a bagunça de volta depois."
+        }
+      ]
+    },
+    {
+      "id": "plan",
+      "title": "Apenas diga a ele o que fazer",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Conhecemos a física exatamente. Então não precisamos *olhar* para nada. Podemos **calcular** um plano: empurrar forte por um tempo para subir, depois empurrar exatamente 4,9 N para pairar."
+        },
+        {
+          "t": "p",
+          "text": "Esse tipo de plano é chamado de **malha aberta**: o plano decide o empuxo, e ninguém verifica o que realmente acontece. Experimente. Escolha um empuxo de subida e por quanto tempo subir, depois lance."
+        },
+        {
+          "t": "widget",
+          "id": "schedule"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Eu resolvi. Enquanto sobe, o drone logo entra numa velocidade constante de (empuxo extra ÷ arrasto). A altura em que você acaba é só **(empuxo extra ÷ arrasto) × tempo de subida**. Para 6 N isso dá $(6 - 4.9)/1 \\approx 1.1$ m/s, então suba por $2 \\div 1.1 \\approx 1.83$ segundos."
+        },
+        {
+          "t": "p",
+          "text": "Tem uma sutileza no cálculo do Theo: quando ele muda para 4,9 N, o drone **ainda está subindo**. O arrasto vai parando ele aos poucos. A fórmula da altura final dele inclui essa distância extra depois da troca."
+        },
+        {
+          "t": "p",
+          "text": "Aperte **O plano do Theo**. Ele pousa em 2,00 m. Lindo."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Theo, isso é incrível! Acabamos! Fim do capítulo!"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Vamos só ver o que acontece lá fora… tem uma brisinha hoje."
+        },
+        {
+          "t": "p",
+          "text": "Rode o plano do Theo de novo e, enquanto ele estiver pairando, aperte **Rajada** (um empurrão para baixo de 1 N por um segundo)."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Ele caiu cerca de um metro… e está **ficando** lá embaixo. Meus números estavam certos!"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Seus números estavam perfeitos. O vento é que não estava no seu plano. E o drone não faz ideia de que está no lugar errado."
+        },
+        {
+          "t": "p",
+          "text": "Esse foi o nosso erro: acreditamos que **\"se você acertar os números, não precisa de realimentação.\"** O sucesso com ar calmo foi real, e o plano ainda assim era inútil no momento em que o mundo fez algo que ele não esperava. Depois da rajada, o empuxo é exatamente 4,9 N de novo, então o drone simplesmente fica onde a rajada o deixou."
+        }
+      ]
+    },
+    {
+      "id": "package",
+      "title": "O teste do pacote",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Agora o trabalho de verdade. Abaixo, o drone está pairando a 2 m com um empuxo fixo de 4,9 N, equilibrando exatamente o próprio peso. Alguém prende um **pacote de 0,2 kg**."
+        },
+        {
+          "t": "predict",
+          "id": "ch1-package",
+          "gate": true,
+          "q": "O pacote deixa o drone mais pesado, mas o empuxo continua em 4,9 N. O que acontece?",
+          "options": [
+            {
+              "text": "Ele afunda um pouco e depois para",
+              "sketch": "sink-stop",
+              "why": "Parece que o drone deveria encontrar um novo equilíbrio. Mas com 4,9 N constantes ele é pesado demais em *todas* as alturas: estar mais baixo não ajuda em nada."
+            },
+            {
+              "text": "Ele afunda e continua afundando, até o chão",
+              "sketch": "sink-crash",
+              "correct": true,
+              "why": "Os 2 N extras de peso nunca são equilibrados. O arrasto impede que ele acelere além de cerca de **2 m/s**, mas ele continua caindo nessa velocidade até atingir o solo."
+            },
+            {
+              "text": "Nada: 0,2 kg é pequeno demais para importar",
+              "sketch": "flat",
+              "why": "Qualquer descompasso entre empuxo e peso faz o drone derivar. 0,2 kg acrescentam cerca de 2 N, o que é muito em comparação com o arrasto."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "feedback"
+        },
+        {
+          "t": "p",
+          "text": "**Queda.** Nada em um plano de malha aberta consegue perceber que o drone está caindo. Agora mude o modo para **Realimentação: olhe a altura**, reinicie e tente de novo com o pacote e a rajada."
+        },
+        {
+          "t": "p",
+          "text": "No modo de realimentação o drone usa uma regra simples: **empurre com o empuxo de pairar, mais 8 N extras para cada metro que estiver abaixo do alvo.**"
+        },
+        {
+          "t": "math",
+          "tex": "\\eff{T} = 4.9 + 8 \\times (\\sp{2} - \\out{h})"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Uau. A rajada o derruba menos de 20 cm, e ele volta a subir logo em seguida. O pacote faz ele cair um pouco, mas não cai!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Ele não precisa saber *o que* aconteceu. Ele só vê que está baixo demais e empurra com mais força. É esse o truque."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Mas olhe: com o pacote ele se estabiliza em cerca de **1,75 m**, não em 2. Por que ele não volta até o fim?"
+        },
+        {
+          "t": "note",
+          "text": "Guarde a pergunta da June. Ela é o capítulo 2 inteiro."
+        }
+      ]
+    },
+    {
+      "id": "diagram",
+      "title": "Desenhando isso",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Engenheiros desenham esses sistemas como caixas e setas chamadas **diagramas de blocos**. Cada caixa faz algo; cada seta carrega um sinal. Desenhamos o nosso no quadro branco, uma peça de cada vez."
+        },
+        {
+          "t": "widget",
+          "id": "whiteboard"
+        },
+        {
+          "t": "p",
+          "text": "A diferença principal é que uma seta volta da saída para o início. É por isso que o controle por realimentação é chamado de **malha fechada**: a informação dá a volta completa. Role de volta até o teste do pacote: o diagrama embaixo do drone acende a parte que está ocupada no momento."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "{sp|Valor de referência} $\\sp{r}$",
+              "def": "O que queremos: 2 m de altura, 38 °C de água."
+            },
+            {
+              "term": "{out|Saída} $\\out{h}$",
+              "def": "O que realmente acontece: a altura real."
+            },
+            {
+              "term": "{err|Erro} $\\err{e} = \\sp{r} - \\out{h}$",
+              "def": "O quanto estamos longe. Positivo significa baixo demais."
+            },
+            {
+              "term": "Controlador",
+              "def": "A regra que transforma o erro em uma ação. Até agora: \"8 N extras por metro abaixo do alvo.\""
+            },
+            {
+              "term": "{eff|Esforço de controle} $\\eff{T}$",
+              "def": "O que o controlador realmente faz: o empuxo."
+            },
+            {
+              "term": "Planta",
+              "def": "A coisa que está sendo controlada: o próprio drone, com toda a física envolvida. (O nome vem de \"planta industrial\": a instalação que se quer controlar.)"
+            },
+            {
+              "term": "Sensor",
+              "def": "O que quer que meça a saída: o sensor de altura do drone, sua pele no chuveiro."
+            },
+            {
+              "term": "{dis|Perturbação}",
+              "def": "Qualquer coisa que o mundo faz e que não planejamos: rajadas de vento, pacotes, alguém dando descarga no banheiro."
+            },
+            {
+              "term": "Malha aberta / malha fechada",
+              "def": "Agir a partir de um plano sem olhar / agir com base no que você mede."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cruise",
+      "title": "Mesma figura, máquina diferente",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Aqui está o mesmo diagrama para o **controle de cruzeiro** de um carro. O valor de referência é uma velocidade, a planta é o carro, e a perturbação é uma subida. O controlador pressiona mais o acelerador quando o carro está mais lento do que deveria."
+        },
+        {
+          "t": "widget",
+          "id": "cruise"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Termostatos, controle de cruzeiro, o chuveiro, nosso drone… é o **mesma malha** toda vez, com rótulos diferentes!"
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "O que sabemos até agora",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "**Malha aberta** significa seguir um plano sem olhar. Pode ser perfeito em condições calmas e inútil no momento em que algo inesperado acontece.",
+            "**Malha fechada (realimentação)** significa medir a saída, compará-la com o valor de referência (o **erro**) e agir com base nisso.",
+            "A realimentação lida com perturbações das quais nunca ouviu falar: rajadas de vento, pacotes, qualquer coisa.",
+            "Os diagramas de blocos mostram o laço: valor de referência → erro → controlador → planta → saída → sensor → de volta ao início.",
+            "Nossa regra de realimentação simples evitou a queda, mas com o pacote ela estabilizou cerca de 25 cm abaixo. Por quê?"
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch1-q1",
+              "q": "No chuveiro do Capítulo 0, o que faz o papel do **sensor**?",
+              "options": [
+                {
+                  "text": "A manopla",
+                  "why": "A manopla é como você *age*: ela define o esforço de controle. Ela não mede nada."
+                },
+                {
+                  "text": "Sua pele",
+                  "correct": true,
+                  "why": "Sim. Sua pele mede a saída (a temperatura da água) e a realimenta para o controlador (seu cérebro)."
+                },
+                {
+                  "text": "O cano",
+                  "why": "O cano faz parte da **planta**, o sistema que está sendo controlado. É daí que vem o atraso."
+                }
+              ]
+            },
+            {
+              "id": "ch1-q2",
+              "q": "Qual destes é um sistema de **malha fechada**?",
+              "options": [
+                {
+                  "text": "Uma torradeira com timer",
+                  "why": "O timer não verifica o quão torrada a torrada está. Ele apenas segue o plano: malha aberta."
+                },
+                {
+                  "text": "Um termostato residencial",
+                  "correct": true,
+                  "why": "Isso. Ele mede a temperatura do ambiente e liga ou desliga o aquecimento com base no erro."
+                },
+                {
+                  "text": "Uma máquina de lavar executando um programa fixo",
+                  "why": "Ela segue o programa independentemente de quão suja a roupa está: malha aberta."
+                }
+              ]
+            },
+            {
+              "id": "ch1-q3",
+              "q": "O valor de referência é 2 m e o drone está a 1,5 m. Qual é o erro $\\err{e} = \\sp{r} - \\out{h}$, e o que o controlador deve fazer?",
+              "options": [
+                {
+                  "text": "+0,5 m: empurrar com mais força",
+                  "correct": true,
+                  "why": "Erro positivo significa que está baixo demais, então mais empuxo. Com a nossa regra, isso dá $4.9 + 8 \\times 0.5 = 8.9$ N."
+                },
+                {
+                  "text": "−0,5 m: empurrar com mais força",
+                  "why": "Confira a ordem: $\\sp{r} - \\out{h} = 2 - 1.5 = +0.5$. Escolhemos essa convenção de sinal para que erro positivo signifique \"baixo demais\"."
+                },
+                {
+                  "text": "3,5 m: empurre muito mais forte",
+                  "why": "O erro é uma *diferença*, não uma soma: $2 - 1.5 = 0.5$ m."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Nossa malha tem um número misterioso: **8 newtons por metro**. Por que 8? Por que não 2, ou 50? E por que o drone estabiliza baixo demais?"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "schedule": {
+      "title": "Malha aberta: programe uma tabela de empuxo",
+      "slider": {
+        "thrust": "Aumentar empuxo",
+        "time": "Subir por"
+      },
+      "launch": "Lançar",
+      "theo": "O plano do Theo",
+      "gust": "Rajada ↓",
+      "package": "Adicionar pacote",
+      "disturb": "Surpreenda-o:",
+      "plot": {
+        "height": "altura",
+        "thrust": "empuxo",
+        "aria": "Altura do drone ao longo de 20 segundos, com o alvo de 2 metros.",
+        "target": "alvo 2 m"
+      },
+      "readout": {
+        "height": "altura",
+        "speed": "velocidade",
+        "thrust": "empuxo"
+      },
+      "status": {
+        "ready": "A fórmula do Theo prevê que este plano termina em {h} m. Pressione Lançar.",
+        "perfect": "Terminou em {h} m. Bem no alvo!",
+        "off": "Terminou em {h} m, {d} m {dir} demais.",
+        "high": "alto",
+        "low": "baixo",
+        "crash": "Caiu no chão!",
+        "ceiling": "Pancada! Ele voou para fora da imagem e bateu na página. Os motores travaram e ele caiu. Um plano em malha aberta também não consegue perceber um teto."
+      },
+      "planHelp": "A linha laranja tracejada fraca é o seu plano. A linha sólida é o que os motores realmente fizeram."
+    },
+    "feedback": {
+      "title": "Pairando a 2 m: plano ou realimentação?",
+      "mode": "Modo",
+      "open": "Malha aberta: 4,9 N fixos",
+      "closed": "Realimentação: olhe para a altura",
+      "gust": "Rajada ↓",
+      "package": "Pacote",
+      "disturb": "Perturbações:",
+      "plot": {
+        "height": "altura",
+        "thrust": "empuxo",
+        "aria": "Altura do drone pairando nos últimos 15 segundos, com o erro sombreado entre o alvo e a altura real."
+      },
+      "readout": {
+        "height": "altura",
+        "error": "erro r − h",
+        "thrust": "empuxo"
+      },
+      "status": {
+        "open": "Malha aberta: empuxo fixo em 4,9 N, aconteça o que acontecer.",
+        "closed": "Realimentação: empuxo = 4,9 N + 8 N para cada metro abaixo do alvo.",
+        "crash": "QUEDA! Reinicie, mude para realimentação e tente de novo.",
+        "predictRun": "O pacote entra em t = 1 s…"
+      },
+      "d": {
+        "setpoint": "alvo r",
+        "error": "erro e",
+        "controller": "controlador",
+        "schedule": "empuxo\nfixo",
+        "thrust": "empuxo T",
+        "plant": "drone",
+        "disturbance": "vento, pacote",
+        "output": "altura h",
+        "sensor": "sensor de altura",
+        "aria": "Diagrama de blocos da malha de controle do drone",
+        "description": "O alvo menos a altura medida dá o erro; o controlador transforma o erro em empuxo; o empuxo e as perturbações atuam sobre o drone; a altura do drone é medida pelo sensor e realimentada para ser subtraída do alvo. No modo de malha aberta, apenas o caminho direto é mostrado."
+      }
+    },
+    "whiteboard": {
+      "title": "Desenhando a malha, uma peça de cada vez",
+      "back": "Voltar",
+      "next": "Avançar",
+      "counter": "Passo {n} de {total}",
+      "step1": "Mika: \"O empuxo entra, a altura sai. O drone é uma caixa que transforma um no outro.\" Chamamos isso de planta.",
+      "step2": "Theo: \"Malha aberta: escolhemos o empuxo a partir de um plano, baseando-nos apenas no alvo.\"",
+      "step3": "June: \"E o mundo também empurra o drone: vento, pacotes. Perturbações.\"",
+      "step4": "Mika: \"Então vamos medir a altura com um sensor…\"",
+      "step5": "Theo: \"…e subtrair isso do alvo. Essa diferença é o erro, e o controlador age sobre ele. A malha está fechada!\"",
+      "d": {
+        "setpoint": "alvo r",
+        "error": "erro e",
+        "controller": "controlador",
+        "schedule": "plano de\nempuxo",
+        "thrust": "empuxo T",
+        "plant": "drone\n(planta)",
+        "disturbance": "vento, pacote",
+        "output": "altura h",
+        "sensor": "sensor",
+        "aria": "Diagrama de blocos sendo desenhado passo a passo",
+        "description": "Um diagrama de blocos construído em cinco etapas: a planta sozinha; um plano em malha aberta alimentando-a; perturbações agindo sobre ela; um sensor medindo a saída; e, por fim, o erro, o controlador e o ponto de soma fechando a malha."
+      }
+    },
+    "cruise": {
+      "title": "Controle de cruzeiro: a mesma malha",
+      "d": {
+        "setpoint": "velocidade alvo",
+        "error": "erro",
+        "controller": "controlador\nde cruzeiro",
+        "schedule": "",
+        "thrust": "pedal",
+        "plant": "carro",
+        "disturbance": "ladeiras, vento",
+        "output": "velocidade",
+        "sensor": "velocímetro",
+        "aria": "Diagrama de blocos do controle de cruzeiro de um carro",
+        "description": "A velocidade alvo menos a velocidade medida dá o erro de velocidade; o controlador de cruzeiro o transforma em pedal do acelerador; o pedal e as subidas atuam sobre o carro; o velocímetro mede a velocidade e a realimenta."
+      }
+    }
+  }
+}

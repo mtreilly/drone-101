@@ -33,7 +33,7 @@ const recipe: WidgetFactory = (host, ctx) => {
   const R: Record<In, string> = {
     step: '\\frac{1}{s}',
     pulse: '\\frac{1}{s} - \\frac{1}{s+2}',
-    wave: '\\frac{0.5\\cdot 2}{s^2 + 4}',
+    wave: `\\frac{${fmt(0.5, 1)}\\cdot 2}{s^2 + 4}`,
   };
   host.append(h('p', { class: 'w-title' }, t('title')));
   const seg = segmented(
@@ -92,7 +92,7 @@ const recipe: WidgetFactory = (host, ctx) => {
     }, 20);
     plot.set('r', ts, rs);
     plot.set('h', ts, hs);
-    eq.innerHTML = tex(`\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{20}}{0.5s^2 + s + \\eff{20}}}_{G(s)\\ \\text{${t('same')}}} \\cdot \\underbrace{${R[input]}}_{\\Delta\\sp{R}(s)\\ \\text{${t('changes')}}}`, true);
+    eq.innerHTML = tex(`\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{20}}{${fmt(0.5, 1)}s^2 + s + \\eff{20}}}_{G(s)\\ \\text{${t('same')}}} \\cdot \\underbrace{${R[input]}}_{\\Delta\\sp{R}(s)\\ \\text{${t('changes')}}}`, true);
     plot.describe(t(`describe.${input}`));
     playT = 0;
     if (Loop.autoplay) loop.play();

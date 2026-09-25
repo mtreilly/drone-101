@@ -1,0 +1,439 @@
+{
+  "kicker": "Capítulo 3",
+  "title": "A Linguagem da Mudança",
+  "question": "Como descrevemos *quão rápido* algo está mudando?",
+  "sections": [
+    {
+      "id": "slope",
+      "title": "Inclinação é velocidade",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Ficamos dizendo \"lento\", \"oscilante\", \"estabiliza\". June tem razão: isso são sensações, não matemática. Quero uma forma precisa de dizer *quão rápido* o drone está mudando."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Vamos reproduzir nosso drone do Capítulo 2 (Kp = 20 N/m) e observar de perto."
+        },
+        {
+          "t": "p",
+          "text": "A {out|curva azul} é a altura do drone ao longo do tempo. Velocidade é **quanto a altura muda por segundo**. No gráfico, isso é quão *íngreme* a curva está em um dado momento. Coloque uma régua ao longo da curva de modo que ela apenas a toque em um ponto. Essa régua é a **reta tangente**, e sua inclinação é a velocidade."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Fácil: o drone está mais rápido no topo da subida, porque é onde está mais alto!"
+        },
+        {
+          "t": "widget",
+          "id": "tangent"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Coloque o cursor no topo da subida. A tangente é **plana**. A velocidade é zero ali!"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Ah. O drone sobe, perde velocidade para cima, para por um instante no topo e cai de volta. **Alto** e **rápido** são coisas totalmente diferentes."
+        },
+        {
+          "t": "p",
+          "text": "O momento mais rápido é, na verdade, no meio da subida, onde a curva é mais íngreme. E quando a curva vai *para baixo*, a inclinação é negativa: o drone está caindo."
+        },
+        {
+          "t": "p",
+          "text": "Essa \"inclinação em um instante\" ganha um nome: a **derivada**. Escrevemos como uma pequena variação na altura dividida pelo pequeno tempo que levou:"
+        },
+        {
+          "t": "math",
+          "tex": "\\text{velocidade} = \\frac{d\\out{h}}{dt} \\approx \\frac{\\text{variação da altura}}{\\text{variação do tempo}}\\quad(\\text{em um intervalo muito curto})"
+        },
+        {
+          "t": "note",
+          "text": "As pessoas também escrevem $\\dot{h}$ (\"h-ponto\") para a mesma coisa. Mesma ideia, menos tinta."
+        }
+      ]
+    },
+    {
+      "id": "rule",
+      "title": "Uma regra para a velocidade",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Meu café esfria rápido no começo e depois bem devagar. Ele nunca chega exatamente à temperatura ambiente."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Porque a velocidade de resfriamento depende de **quanto ainda falta para chegar lá**. Uma caneca bem quente perde calor rapidamente. Uma caneca mal morna quase não perde nada."
+        },
+        {
+          "t": "p",
+          "text": "Vamos escrever isso como uma regra para a inclinação. A temperatura do café é {out|T}, o ambiente é {sp|20 °C}:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d\\out{T}}{dt} = -\\frac{\\out{T} - \\sp{T_{\\text{ambiente}}}}{\\tau}"
+        },
+        {
+          "t": "p",
+          "text": "O sinal de menos diz \"esfrie quando estiver mais quente que o ambiente\". O número **τ** (tau, a *constante de tempo*) diz o quão lenta é a caneca. Para uma caneca normal, τ ≈ 10 minutos."
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Confissão honesta: canecas de verdade também perdem calor por vapor e radiação. Esta regra simples (a lei de resfriamento de Newton) é boa o suficiente para ser útil."
+        },
+        {
+          "t": "p",
+          "text": "Aqui está o enigma: a regra só nos diz a inclinação **agora**. Conseguimos obter a curva inteira a partir dela? Vamos construí-la à mão: olhe a inclinação, caminhe ao longo dela por um tempinho (Δt), olhe a nova inclinação, caminhe de novo…"
+        },
+        {
+          "t": "widget",
+          "id": "coffee"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Doze passinhos é entediante. Vou dar passos de **15 minutos** e terminar num instante."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "…Espera. O café está a **−15 °C**?! Ele congelou num ambiente quente?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "A regra está certa. O problema são os *passos*. Num passo gigante você continua usando a inclinação acentuada do **início** do passo, muito depois de ela ter deixado de ser verdadeira. Você passa direto pela temperatura ambiente."
+        },
+        {
+          "t": "p",
+          "text": "Podemos ver exatamente o quanto. Cada passo multiplica a diferença até a temperatura ambiente pelo mesmo número:"
+        },
+        {
+          "t": "math",
+          "tex": "\\text{diferença}_{\\text{próximo}} = \\left(1 - \\frac{\\Delta t}{\\tau}\\right) \\cdot \\text{diferença}"
+        },
+        {
+          "t": "list",
+          "items": [
+            "Δt menor que τ: o fator fica entre 0 e 1. A diferença diminui, sem ultrapassar o alvo.",
+            "Δt entre τ e 2τ: o fator é **negativo**. O café ultrapassa para baixo da temperatura ambiente, depois para cima, oscilando de um lado para o outro enquanto as oscilações diminuem.",
+            "Δt maior que 2τ: o fator é menor que −1. As oscilações **crescem** a cada passo. Café sem sentido."
+          ]
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Isso é o chuveiro! Agir com muita ousadia com base em informação velha faz você oscilar."
+        },
+        {
+          "t": "note",
+          "text": "Isso é um erro numérico, não uma nova lei do café. As simulações do drone usam passos de integração de 1 ms cuidadosamente verificados; o chuveiro usa uma pequena atualização exata para seu atraso de temperatura de primeira ordem. As oscilações posteriores vêm do sistema modelado, não de passos de cálculo gigantes."
+        },
+        {
+          "t": "p",
+          "text": "Faça Δt pequeno e ligue a curva suave. Os pontos construídos à mão caem exatamente sobre ela. Essa forma suave é chamada de **decaimento exponencial**. Ela ganha seu próprio capítulo a seguir."
+        },
+        {
+          "t": "h3",
+          "text": "A constante de tempo é uma régua"
+        },
+        {
+          "t": "predict",
+          "id": "ch3-two-tau",
+          "gate": true,
+          "q": "Depois de **uma** constante de tempo, o café fechou 63% da diferença até a temperatura ambiente. Depois de **duas** constantes de tempo, quanto da diferença foi fechado?",
+          "options": [
+            {
+              "text": "100%: o segundo τ fecha os outros 37%",
+              "why": "Tentador, mas o segundo τ não termina o serviço. Ele fecha 63% do *que sobrou*."
+            },
+            {
+              "text": "Cerca de 86%",
+              "correct": true,
+              "why": "Cada τ fecha 63% da diferença restante: sobram 37% depois de um τ, e 37% de 37% ≈ 14% sobram depois de dois. Então 86% foi fechado."
+            },
+            {
+              "text": "126%, duas vezes 63%",
+              "why": "Isso significaria ultrapassar o alvo abaixo da temperatura ambiente. O café real (suave) nunca faz isso. Só os passos gigantes da June fizeram isso."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "ruler"
+        },
+        {
+          "t": "p",
+          "text": "Após 1τ: 63%. Após 2τ: 86%. Após 3τ: 95%. Nunca chega *exatamente* lá, mas depois de cerca de 4–5 τ ninguém percebe. Mude para o **tanque**: a água que entra desacelera conforme o tanque enche, então a regra é a mesma (\"a taxa depende de quão longe está de cheio\") e a forma também."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Então τ é uma régua embutida. Me diga τ e eu sei quão lenta uma coisa é, seja uma caneca, um tanque ou um drone."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Derivada",
+              "def": "A inclinação de uma curva em um instante: quão rápido algo muda. Escrita $\\frac{dh}{dt}$ ou $\\dot h$."
+            },
+            {
+              "term": "Sistema de primeira ordem",
+              "def": "Algo cuja taxa de variação depende de quão longe está de onde está indo (café, tanques). Sua curva é uma exponencial."
+            },
+            {
+              "term": "Constante de tempo τ",
+              "def": "Quanto tempo um sistema de primeira ordem leva para percorrer 63% da distância restante."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "area",
+      "title": "Indo ao contrário: somando área",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "A inclinação transforma altura em velocidade. Podemos ir **ao contrário**? Suponha que o sensor do drone só nos diga sua velocidade. Onde ele está?"
+        },
+        {
+          "t": "p",
+          "text": "Se você voa a uma velocidade constante de 2 m/s por 3 s, você sobe 6 m: velocidade × tempo. Em um gráfico de velocidade versus tempo, isso é a **área de um retângulo**. Quando a velocidade fica mudando, fatie o tempo em tiras finas, trate cada tira como um retângulo e some todas."
+        },
+        {
+          "t": "p",
+          "text": "Passe o cursor e veja a área sombreada crescer. A {out|curva azul} abaixo é simplesmente *a área até agora*. Onde a velocidade cai abaixo de zero (o drone desce), a área conta como **negativa** e a altura diminui."
+        },
+        {
+          "t": "widget",
+          "id": "area"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "A área acumulada cai exatamente na altura real. A inclinação leva você em um sentido, a área traz de volta."
+        },
+        {
+          "t": "p",
+          "text": "Essa operação de \"acumular a área\" é chamada de **integral**:"
+        },
+        {
+          "t": "math",
+          "tex": "\\out{h}(t) = \\out{h}(0) + \\int_0^{t} \\text{velocidade}\\;dt"
+        },
+        {
+          "t": "note",
+          "text": "É só isso que precisamos de integral por enquanto. Ela volta duas vezes: no Capítulo 7 (uma transformada que mede uma área) e no Capítulo 9 (o \"I\" do PID acumula o erro passado)."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "O que sabemos até agora",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "A **derivada** é a inclinação de uma curva em um instante: quão rápido ela está mudando. Alto e rápido são coisas diferentes.",
+            "Uma regra como \"esfrie mais rápido quanto mais quente você estiver\" define a curva inteira: uma aproximação **exponencial**.",
+            "A **constante de tempo τ** é uma régua: 63% do caminho após τ, 86% após 2τ, 95% após 3τ.",
+            "Construir curvas com passos grandes demais cria sobressinal e oscilações falsas, assim como no chuveiro.",
+            "A **integral** acumula área e desfaz a derivada."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch3-q1",
+              "q": "O drone está no **ponto mais alto** do seu sobressinal. Qual é a sua velocidade vertical?",
+              "options": [
+                {
+                  "text": "O maior valor que ela alcança",
+                  "why": "Altura e velocidade são coisas diferentes. No topo, a curva fica momentaneamente plana."
+                },
+                {
+                  "text": "Zero",
+                  "correct": true,
+                  "why": "A tangente no topo de uma elevação é plana: inclinação zero. O drone para de subir por um instante antes de cair de volta."
+                },
+                {
+                  "text": "Seu valor mais negativo",
+                  "why": "A queda mais rápida vem um pouco depois, onde a curva cai de forma mais acentuada."
+                }
+              ]
+            },
+            {
+              "id": "ch3-q2",
+              "q": "Café a 90 °C, ambiente a 20 °C, τ = 10 min. Aproximadamente quão quente ele está após 10 minutos?",
+              "options": [
+                {
+                  "text": "20 °C",
+                  "why": "Essa é a temperatura ambiente. São necessárias várias constantes de tempo para chegar perto, e nunca chega de fato."
+                },
+                {
+                  "text": "Cerca de 46 °C",
+                  "correct": true,
+                  "why": "Após um τ, 63% da diferença de 70 graus é fechada: 90 − 0,63 × 70 ≈ 46 °C."
+                },
+                {
+                  "text": "Cerca de 55 °C",
+                  "why": "Isso é exatamente a metade. Depois de um τ, fecha um pouco mais que a metade: 63%."
+                }
+              ]
+            },
+            {
+              "id": "ch3-q3",
+              "q": "Um drone sobe a 2 m/s por 3 s, depois sua velocidade cai constantemente até 0 nos próximos 2 s. Quanto de altura ele ganhou?",
+              "options": [
+                {
+                  "text": "6 m",
+                  "why": "Isso é apenas o retângulo (primeiros 3 s). A parte de desaceleração adiciona um triângulo também."
+                },
+                {
+                  "text": "8 m",
+                  "correct": true,
+                  "why": "Retângulo 2 × 3 = 6 m mais triângulo ½ × 2 × 2 = 2 m. Área total 8 m."
+                },
+                {
+                  "text": "10 m",
+                  "why": "Isso trata os últimos 2 s como se ainda estivesse em velocidade máxima. A velocidade estava caindo, então é um triângulo, não um retângulo."
+                }
+              ]
+            },
+            {
+              "id": "ch3-q4",
+              "q": "Você constrói a curva do café à mão com passos de Δt = 15 min, e τ = 10 min. O que acontece?",
+              "options": [
+                {
+                  "text": "Uma versão ligeiramente irregular da curva real",
+                  "why": "Isso é o que acontece com passos menores que τ. Aos 15 min o passo ultrapassa."
+                },
+                {
+                  "text": "Ele ultrapassa abaixo da temperatura ambiente e oscila, com oscilações que diminuem",
+                  "correct": true,
+                  "why": "Cada passo multiplica a diferença por 1 − 15/10 = −0,5: o sinal inverte (ultrapassagem do alvo) e o tamanho cai pela metade (os balanços diminuem)."
+                },
+                {
+                  "text": "Ele oscila cada vez mais amplamente",
+                  "why": "Isso exige Δt > 2τ = 20 min, onde o fator fica abaixo de −1."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Theo: \"A curva do café tinha uma propriedade curiosa: sua inclinação era sempre **proporcional a si mesma**. Existe alguma função especial assim?\""
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "tangent": {
+      "title": "Detetive da inclinação",
+      "height": "altura",
+      "target": "alvo 2 m",
+      "peak": "ponto mais alto",
+      "speed": "velocidade = inclinação",
+      "speedAxis": "velocidade (m/s)",
+      "cursor": "Cursor de tempo",
+      "readSlope": "inclinação (velocidade)",
+      "readHeight": "altura",
+      "sweep": "Trace tudo",
+      "clear": "Começar de novo",
+      "rising": "A tangente inclina para cima: o drone está subindo.",
+      "falling": "A tangente inclina para baixo: o drone está caindo (velocidade negativa).",
+      "flat": "A tangente está plana: a velocidade é zero bem aqui!",
+      "help": "Arraste em qualquer um dos gráficos ou use o controle deslizante. Cada lugar que você visita adiciona um ponto à curva de velocidade.",
+      "ariaTop": "Altura do drone ao longo de 4 segundos com uma reta tangente no cursor de tempo.",
+      "ariaBottom": "Curva de velocidade, desenhada ponto a ponto conforme o cursor visita cada instante.",
+      "describe": "Em {t} s a altura é {h} m e a inclinação é {v} m por segundo.",
+      "atStart": "Bem no início o drone fica parado: inclinação zero. Arraste para a direita para acompanhar a subida.",
+      "pause": "Pausar"
+    },
+    "coffee": {
+      "title": "Construa a curva do café à mão",
+      "timeAxis": "tempo (min)",
+      "exact": "curva suave",
+      "hand": "nossa curva construída à mão",
+      "room": "ambiente 20 °C",
+      "dt": "Tamanho do passo Δt",
+      "dtHint": "τ = 10 min para esta caneca",
+      "step1": "Dê um passo",
+      "step10": "10 passos",
+      "stepAll": "Preencha até 120 min",
+      "restart": "Comece de novo",
+      "showExact": "Mostre a curva suave",
+      "aria": "Temperatura do café construída passo a passo. Cada passo segue a inclinação atual por um tamanho de passo. A linha tracejada laranja pré-visualiza o próximo passo.",
+      "status": {
+        "start": "O café começa a 90 °C, esfriando a {r} °C por minuto. Os traços laranja mostram onde um passo vai parar.",
+        "step": "Passo {n}: em {t} min o café está a {T} °C, esfriando a {r} °C por minuto.",
+        "frozen": "Espere… {T} °C? O café ficou mais frio que a sala!",
+        "growing": "E as oscilações estão ficando maiores!",
+        "dipped": "(No caminho, mergulhou abaixo da temperatura ambiente!)"
+      },
+      "help": "Cada passo anda em linha reta ao longo da inclinação atual por Δt minutos. Passos pequenos acompanham a curva suave; passos gigantes ultrapassam o alvo."
+    },
+    "ruler": {
+      "title": "A régua da constante de tempo",
+      "which": "Qual sistema?",
+      "coffee": "Café esfriando",
+      "tank": "Tanque enchendo",
+      "timeAxis": "tempo (min)",
+      "levelAxis": "nível da água (m)",
+      "curve": "resposta",
+      "room": "sala a 20 °C",
+      "full": "cheio 1,2 m",
+      "tau": "Constante de tempo τ",
+      "read1": "valor em 1τ",
+      "aria": "Curva exponencial com marcas verticais em uma, duas e três constantes de tempo, rotuladas 63, 86 e 95 por cento.",
+      "describe": "Constante de tempo {tau} minutos. As marcas em uma, duas e três constantes de tempo mostram 63, 86 e 95 por cento do percurso.",
+      "read2": "valor em 2τ"
+    },
+    "area": {
+      "title": "Somando a área",
+      "speed": "velocidade",
+      "speedAxis": "velocidade (m/s)",
+      "trueHeight": "altura real (para conferência)",
+      "accHeight": "área até agora",
+      "cursor": "Percorra até",
+      "readArea": "área até agora = altura ganha",
+      "start": "Aperte play (ou arraste o gráfico de velocidade) para começar a somar as faixas.",
+      "positive": "Velocidade acima de zero: cada faixa adiciona altura.",
+      "negative": "Velocidade abaixo de zero: essas faixas contam como negativas. A altura diminui.",
+      "ariaTop": "Velocidade do drone ao longo do tempo com a área sob a curva sombreada até o cursor.",
+      "ariaBottom": "A área acumulada plotada ao longo do tempo, sobre a curva de altura real.",
+      "describe": "Até {t} s a área acumulada é {a} metros.",
+      "help": "Arraste no gráfico de velocidade ou use o controle deslizante. Faixas acima de zero adicionam altura, faixas abaixo de zero tiram."
+    }
+  }
+}

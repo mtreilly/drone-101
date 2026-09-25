@@ -2,6 +2,10 @@
 .plot {
   margin: 0;
   position: relative;
+  direction: ltr;
+}
+html[dir='rtl'] .plot-legend-item {
+  direction: rtl;
 }
 .plot canvas {
   display: block;
@@ -211,12 +215,13 @@
   gap: 2px;
   border: none;
   padding: 0;
-  margin: 0 0 0 4px;
+  margin: 0;
+  margin-inline-start: 4px;
 }
 .speed-label {
   font-size: 0.82rem;
   color: var(--ink-3);
-  margin-right: 4px;
+  margin-inline-end: 4px;
 }
 .speed input,
 .segmented input {

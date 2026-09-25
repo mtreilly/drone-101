@@ -149,17 +149,17 @@
     },
     {
       "id": "spring",
-      "title": "El muelle nos rompe el truco",
+      "title": "El resorte nos rompe el truco",
       "blocks": [
         {
           "t": "say",
           "who": "june",
           "mood": "excited",
-          "text": "Probémoslo con algo que **rebote**. Una masa colgada de un muelle es básicamente nuestro dron con control P: cuanto más lejos está del objetivo, más fuerte tira de él hacia atrás."
+          "text": "Probémoslo con algo que **rebote**. Una masa colgada de un resorte es básicamente nuestro dron con control P: cuanto más lejos está del objetivo, más fuerte tira de él hacia atrás."
         },
         {
           "t": "p",
-          "text": "El muelle tira hacia atrás con una fuerza $-kx$. Fuerza = masa × aceleración, y la aceleración es la pendiente de la pendiente. Así que la regla es:"
+          "text": "El resorte tira hacia atrás con una fuerza $-kx$. Fuerza = masa × aceleración, y la aceleración es la pendiente de la pendiente. Así que la regla es:"
         },
         {
           "t": "math",
@@ -185,13 +185,13 @@
           "t": "say",
           "who": "theo",
           "mood": "worried",
-          "text": "Los cuadrados nunca son negativos. La parábola azul nunca baja hasta la línea verde. Así que **no hay** tal a. Nuestro truco falla: los muelles no se pueden describir con exponenciales, y punto."
+          "text": "Los cuadrados nunca son negativos. La parábola azul nunca baja hasta la línea verde. Así que **no hay** tal a. Nuestro truco falla: los resortes no se pueden describir con exponenciales, y punto."
         },
         {
           "t": "say",
           "who": "mika",
           "mood": "think",
-          "text": "Pero el muelle está ahí, rebotando tan feliz. *Tiene* un movimiento. ¿Y si lo que falla no es el muelle, sino nuestra idea de lo que cuenta como número?"
+          "text": "Pero el resorte está ahí, rebotando tan feliz. *Tiene* un movimiento. ¿Y si lo que falla no es el resorte, sino nuestra idea de lo que cuenta como número?"
         },
         {
           "t": "say",
@@ -216,7 +216,7 @@
             "$e \\approx 2.718$ es la base en la que esa razón vale exactamente 1. Con $e^{at}$, la razón es a.",
             "Calcular la pendiente de $e^{at}$ solo **multiplica por a**. El cálculo se convierte en álgebra.",
             "**Prueba con una exponencial**, sustitúyela en la regla y despeja a. Para el café, a = −1/τ.",
-            "Para un muelle, la suposición exige $a^2 = -k/m$, y ningún número normal hace eso. Todavía."
+            "Para un resorte, la suposición exige $a^2 = -k/m$, y ningún número normal hace eso. Todavía."
           ]
         },
         {
@@ -293,7 +293,7 @@
         },
         {
           "t": "cliff",
-          "text": "El dron y el muelle **oscilan**. Las exponenciales solo crecen o se encogen. A menos que… ¿un número pudiera dar negativo al elevarlo al cuadrado?"
+          "text": "El dron y el resorte **oscilan**. Las exponenciales solo crecen o se encogen. A menos que… ¿un número pudiera dar negativo al elevarlo al cuadrado?"
         }
       ]
     }
@@ -357,11 +357,11 @@
       "need": "necesitamos −k/m = −4",
       "a": "Prueba a =",
       "status": "a = {a} da a² = {sq}. Todavía {gap} de más. Los cuadrados nunca son negativos.",
-      "springCaption": "Mientras tanto, el muelle real (k/m = 4, sin amortiguador) rebota tan feliz:",
-      "springAria": "Una masa colgada de un muelle rebotando arriba y abajo.",
+      "springCaption": "Mientras tanto, el resorte real (k/m = 4, sin amortiguador) rebota tan feliz:",
+      "springAria": "Una masa colgada de un resorte rebotando arriba y abajo.",
       "aria": "Parábola de a al cuadrado con una línea horizontal en menos cuatro que nunca alcanza.",
-      "playSpring": "Poner en marcha el muelle",
-      "pauseSpring": "Pausar el muelle"
+      "playSpring": "Poner en marcha el resorte",
+      "pauseSpring": "Pausar el resorte"
     }
   }
 }
