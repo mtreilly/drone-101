@@ -221,7 +221,9 @@ const playground: WidgetFactory = (host, ctx) => {
     player.hPlot.setLines(on && hitAt !== null ? [{ kind: 'v', at: hitAt, color: 'ink3', dash: [2, 4], label: t('hit.mark') }] : []);
   };
   player.onFrame = (tt) => showHit(hitAt !== null && tt >= hitAt);
-  const run = (preview = false) => {
+  /** `relayout`: the page moved, so the ceiling did; keep the replay going if the flight so far is unchanged */
+  const run = (mode: 'load' | 'preview' | 'relayout' = 'load') => {
+    const oldHit = hitAt;
     ceiling = player.view.ceilingHeight();
     const tr = runUnderCeiling(takeoff(pid(kp, ki, kd, { antiWindup: aw })), 15, ceiling);
     const s = scoreTrace(tr);
@@ -240,12 +242,15 @@ const playground: WidgetFactory = (host, ctx) => {
     showHit(false);
     starsEl.className = `w-status score-line${n === 4 ? ' good' : ''}`;
     const show = { ...tr, t: tr.t.slice(0, 601), h: tr.h.slice(0, 601), thrust: tr.thrust.slice(0, 601), r: tr.r.slice(0, 601) };
-    if (preview) player.show(show);
+    // before either hit, the old and the new flight are the same
+    const same = player.playhead < Math.min(oldHit ?? Infinity, hitAt ?? Infinity);
+    if (mode === 'preview') player.show(show);
+    else if (mode === 'relayout' && (same || !player.loop.playing)) player.swap(show);
     else player.load(show);
   };
-  const sKp = slider({ label: t('kp'), min: 0, max: 40, step: 1, value: kp, unit: 'N/m', color: 'eff', onInput: (v) => { kp = v; run(true); } });
-  const sKi = slider({ label: t('ki'), min: 0, max: 60, step: 1, value: ki, unit: 'N/(m·s)', color: 'eff', onInput: (v) => { ki = v; run(true); } });
-  const sKd = slider({ label: t('kd'), min: 0, max: 10, step: 0.5, value: kd, unit: 'N·s/m', color: 'eff', onInput: (v) => { kd = v; run(true); } });
+  const sKp = slider({ label: t('kp'), min: 0, max: 40, step: 1, value: kp, unit: 'N/m', color: 'eff', onInput: (v) => { kp = v; run('preview'); } });
+  const sKi = slider({ label: t('ki'), min: 0, max: 60, step: 1, value: ki, unit: 'N/(m·s)', color: 'eff', onInput: (v) => { ki = v; run('preview'); } });
+  const sKd = slider({ label: t('kd'), min: 0, max: 10, step: 0.5, value: kd, unit: 'N·s/m', color: 'eff', onInput: (v) => { kd = v; run('preview'); } });
   for (const sl of [sKp, sKi, sKd]) player.bind(sl.input);
   const tg = toggle(t('antiWindup'), aw, (v) => { aw = v; run(); });
   layout(host, player, {
@@ -256,8 +261,8 @@ const playground: WidgetFactory = (host, ctx) => {
     help: h('p', { class: 'w-help' }, t('targets', { os: TARGETS.overshoot, ts: TARGETS.settling, sat: TARGETS.saturated })),
   });
   run();
-  // the layout moved (resize, fonts, a gate opening): measure the page again and recompute the flight
-  const unwatch = watchCeiling(player.view, () => ceiling, () => run());
+  // the page moved (scroll brings the sticky top bar closer, resize, fonts, a gate opening): measure again, recompute
+  const unwatch = watchCeiling(player.view, () => ceiling, () => run('relayout'));
   return () => {
     unwatch();
     player.destroy();

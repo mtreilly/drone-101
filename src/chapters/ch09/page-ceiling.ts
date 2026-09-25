@@ -60,8 +60,8 @@ export const sameCeiling = (a: number | null, b: number | null): boolean => (a =
 
 /**
  * Calls `onChange(h)` when the measured ceiling (`view.ceilingHeight()`) changes: after the page's
- * layout settles from a resize, fonts loading, a prediction gate opening… (debounced). Returns
- * the cleanup.
+ * layout settles from a scroll (the sticky top bar), a resize, fonts loading, a prediction gate
+ * opening… (debounced). Returns the cleanup.
  */
 export function watchCeiling(view: { ceilingHeight(): number | null }, current: () => number | null, onChange: (h: number | null) => void, wait = 250): () => void {
   let timer = 0;
@@ -77,11 +77,14 @@ export function watchCeiling(view: { ceilingHeight(): number | null }, current: 
   const ro = new ResizeObserver(check);
   ro.observe(document.documentElement);
   addEventListener('resize', check);
+  // the sticky top bar is solid too, and scrolling moves it relative to the picture
+  addEventListener('scroll', check, { passive: true });
   void document.fonts?.ready.then(check);
   return () => {
     live = false;
     clearTimeout(timer);
     ro.disconnect();
     removeEventListener('resize', check);
+    removeEventListener('scroll', check);
   };
 }

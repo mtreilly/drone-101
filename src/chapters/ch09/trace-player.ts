@@ -136,6 +136,20 @@ export class TracePlayer {
     }
   }
 
+  /** Seconds into the replay. */
+  get playhead(): number {
+    return this.time;
+  }
+
+  /**
+   * Replaces the trace without moving the playhead or touching the ghosts. Only for a trace that
+   * agrees with the current one up to the playhead (e.g. the page ceiling moved, but it hasn't hit yet).
+   */
+  swap(tr: Trace): void {
+    this.tr = tr;
+    this.showUpTo(Math.min(this.idx, tr.t.length - 1));
+  }
+
   restart(): void {
     if (!this.tr) return;
     this.rewind();
