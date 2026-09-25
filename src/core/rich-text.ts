@@ -61,3 +61,13 @@ export function setRich(el: HTMLElement, src: string): HTMLElement {
   el.innerHTML = rich(src);
   return el;
 }
+
+/** Plain-text version of rich content (maths replaced by its TeX source), for accessible names. */
+export function plainText(el: Element): string {
+  const clone = el.cloneNode(true) as Element;
+  clone.querySelectorAll('.katex').forEach((k) => {
+    const src = k.querySelector('annotation')?.textContent ?? '';
+    k.replaceWith(src);
+  });
+  return (clone.textContent ?? '').replace(/\s+/g, ' ').trim();
+}

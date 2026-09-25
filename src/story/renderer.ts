@@ -1,7 +1,7 @@
 import { h } from '../core/dom';
 import { tc, translator } from '../core/i18n';
 import { progress } from '../core/progress';
-import { setRich, tex } from '../core/rich-text';
+import { plainText, setRich, tex } from '../core/rich-text';
 import { avatar } from './characters';
 import { conceptMap } from './concept-map';
 import { hasSketch, sketch } from './sketches';
@@ -147,7 +147,9 @@ function optionButton(o: Option, i: number, sketchMode: boolean): HTMLButtonElem
   const btn = h('button', { class: 'option', type: 'button', 'aria-pressed': 'false' });
   btn.append(h('span', { class: 'letter', 'aria-hidden': 'true' }, LETTERS[i]));
   if (sketchMode && o.sketch && hasSketch(o.sketch)) btn.append(sketch(o.sketch));
-  btn.append(setRich(h('span', { class: 'option-text' }), o.text));
+  const text = setRich(h('span', { class: 'option-text' }), o.text);
+  btn.append(text);
+  if (text.querySelector('.katex')) btn.setAttribute('aria-label', `${LETTERS[i]}: ${plainText(text)}`);
   return btn;
 }
 

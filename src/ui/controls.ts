@@ -1,6 +1,6 @@
 import { h, uid } from '../core/dom';
 import { fmt, tc } from '../core/i18n';
-import { setRich } from '../core/rich-text';
+import { plainText, setRich } from '../core/rich-text';
 import type { Loop } from './loop';
 
 export interface SliderOptions {
@@ -54,6 +54,7 @@ export function slider(o: SliderOptions): Slider {
   });
   const label = h('label', { for: id, class: 'slider-label' });
   setRich(label, o.label);
+  if (label.querySelector('.katex')) input.setAttribute('aria-label', plainText(label));
   const el = h(
     'div',
     { class: `slider${o.color ? ` c-${o.color}-slider` : ''}` },

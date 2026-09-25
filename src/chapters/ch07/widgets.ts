@@ -463,7 +463,7 @@ const tableW: WidgetFactory = (host, ctx) => {
   let s = 1;
   host.append(h('p', { class: 'w-title' }, t('title')));
   const tbody = h('tbody');
-  const tableEl = h('table', { class: 'ltable' }, h('caption', { class: 'visually-hidden' }, t('caption')), h('thead', null, h('tr', null, h('th', { scope: 'col' }, t('colSignal')), h('th', { scope: 'col' }, t('colF')), h('th', { scope: 'col' }, ''))), tbody);
+  const tableEl = h('table', { class: 'ltable' }, h('caption', { class: 'visually-hidden' }, t('caption')), h('thead', null, h('tr', null, h('th', { scope: 'col' }, t('colSignal')), h('th', { scope: 'col' }, t('colF')), h('th', { scope: 'col' }, h('span', { class: 'visually-hidden' }, t('colCheck'))))), tbody);
   const grid = h('div', { class: 'w-grid side' });
   const left = h('div');
   const right = h('div');
