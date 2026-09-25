@@ -38,7 +38,7 @@ All colour-coded equation terms use the same tokens (KaTeX `\htmlClass`). Colour
 **The drone** (1-D vertical only)
 - Mass `m = 0.5 kg`, gravity `g = 9.81 m/s²` → hover thrust `mg ≈ 4.9 N`.
 - Vertical drag / rotor inflow damping `c = 1.0 N·s/m` (linear — *"we're pretending drag is proportional to speed; real drag is messier"*).
-- Thrust limits `0 ≤ T ≤ 12 N` (motors can't push down, can't push forever).
+- Thrust limits `0 ≤ T ≤ 20 N` (thrust-to-weight ≈ 4, plausible for a small drone). **Chapters 1–7 pretend the motors are unlimited** (and can even pull down) so the linear maths is exact; this is said out loud, and the limit arrives in Ch 8 ("further left needs thrust we don't have") and stays for Ch 9–11.
 - Ground: height can't go below 0 (drone sits on the floor until thrust > weight).
 - Equation: `m ḧ = T − m g − c ḣ + F_wind`.
 - Package: +0.2 kg (pickup) or −0.2 kg (drop).
@@ -232,7 +232,7 @@ Legend for each chapter: **Q** = driving question · **Idea** = the one new idea
 - **Hook / CENTERPIECE:** **Pole playground.** Draggable conjugate pole pair on the s-plane. Linked in real time: step response (with ghost), physical drone animation, the transfer function with colour-coded coefficients, and the equivalent controller (the pair sets `m s² + (c + Kd) s + Kp`, so we display the Kp and damping the drone would need). Shaded regions: left half "calms down", right half "explodes". Guides: vertical lines "settling time", rays "overshoot %", horizontal lines "wiggle frequency". Keyboard: select pole, arrow keys move it; screen-reader description updates ("poles at −2 ± 4i, settles in ≈2 s, overshoots ≈20%").
 - **Predict:** "Drag the poles to the right half-plane. What does the drone do?" (a) lands (b) hovers wobbly (c) oscillates with growing swings and crashes/flies off. Then run. Also: "Move poles straight up. What changes?" (faster wiggle, same decay envelope).
 - **Zeros (short):** a PD-style closed loop `(Kd s + Kp)/(…)` has a zero. Drag the ○: close to the origin → extra overshoot/"kick" even with the same poles. One intuitive line: "a zero is a frequency the system blocks; near the origin it makes the system react to *changes* strongly." Sets up derivative kick in Ch 9.
-- **Misconception:** "Moving poles further left is always better." (June.) The orange thrust plot shows it needs huge thrust spikes → hits the 12 N limit → reality stops obeying the linear picture.
+- **Misconception:** "Moving poles further left is always better." (June.) The orange thrust plot shows it needs huge thrust spikes → hits the 20 N limit → reality stops obeying the linear picture.
 - **Mistake:** Mika drags just one pole off the real axis and it won't separate from its twin — frustrated. Callback to Ch 5c: real systems have mirror-twin spinners, so poles move in pairs.
 - **Check:**
   1. Given 4 pole diagrams, rank them by settling time.
@@ -255,11 +255,11 @@ Legend for each chapter: **Q** = driving question · **Idea** = the one new idea
 - **Predict:** "Add a big Ki to fix droop faster. What happens?" (a) droop vanishes quickly and cleanly (b) droop vanishes but it wiggles more (c) it can go unstable. → (b), and past the cliff (c). The stability boundary `(c + Kd)·Kp = m·Ki` is drawn on a Ki-vs-Kd mini-map with a dot for the current gains.
 - **Misconception:** "The D term predicts the future." (Mika.) It only extrapolates the current slope, and noise makes its "prediction" wild.
 - **Mistake:** Mika cranks Ki to kill droop instantly; poles cross into the right half-plane and the drone oscillates wildly. June adds Kd, which pulls them back — group realises the terms trade off.
-- **Also briefly:** integrator windup while the drone sits on the ground (thrust pegged at 12 N) — shown in one margin note and a toggle; full treatment deferred to "where next".
+- **Also briefly:** integrator windup while the drone sits on the ground (thrust pegged at 20 N) — shown in one margin note and a toggle; full treatment deferred to "where next".
 - **Check:**
   1. Which term fixes steady-state error, and why can't P alone?
   2. Adding Kd moves the poles which way? (left/more damped)
-  3. Mini-challenge: overshoot < 5%, settle < 2 s, zero droop, peak thrust < 12 N.
+  3. Mini-challenge: overshoot < 5%, settle < 2 s, zero droop, peak thrust < 20 N.
   4. Why is derivative on measurement better than on error when the setpoint jumps?
 - **Map:** `Integral action`, `Derivative action`, `PID`, `Noise & derivative kick`.
 - **Cliffhanger:** June: "We could build a shower controller now… but when I tried, it wiggled exactly like we did in Chapter 0. What is it about *delay*?"
