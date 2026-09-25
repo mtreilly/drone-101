@@ -79,8 +79,8 @@ export class SPlane {
       bg.append(
         s('rect', { x: 0, y: 0, width: x0, height: this.H, class: 'region-stable' }),
         s('rect', { x: x0, y: 0, width: W - x0, height: this.H, class: 'region-unstable' }),
-        s('text', { x: 8, y: 22, class: 'region-label stable' }, tc('splane.stable')),
-        s('text', { x: W - 8, y: 22, class: 'region-label unstable', 'text-anchor': 'end' }, tc('splane.unstable')),
+        s('text', { x: 8, y: this.H - 10, class: 'region-label stable' }, tc('splane.stable')),
+        s('text', { x: W - 8, y: this.H - 10, class: 'region-label unstable', 'text-anchor': 'end' }, tc('splane.unstable')),
       );
     }
     // grid
