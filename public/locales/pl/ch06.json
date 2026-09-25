@@ -1,0 +1,392 @@
+{
+  "kicker": "Rozdział 6",
+  "title": "Prawdziwy charakter drona",
+  "question": "Dlaczego dron podskakuje jak sprężyna?",
+  "sections": [
+    {
+      "id": "spring",
+      "title": "Regulator to sprężyna",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "June pytała, gdzie na mapie mieszka nasz dron. Wskazówka: pamiętacie skocznego drona z rozdziału 2? Im bardziej podkręcaliśmy $\\eff{K_p}$, tym bardziej robił „boing”. Wyglądał dokładnie jak ciężarek na sprężynie."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "„Wyglądał jak” to nie dowód. Postawmy je obok siebie i zapiszmy oba równania."
+        },
+        {
+          "t": "p",
+          "text": "Po lewej: masa 0,5 kg zawieszona na sprężynie z tłumikiem (małym tłokiem wypełnionym olejem, który stawia opór ruchowi). Po prawej: nasz dron, ta sama masa, ten sam opór, z regulatorem proporcjonalnym."
+        },
+        {
+          "t": "note",
+          "text": "Żeby grawitacja nas nie rozpraszała, dajemy tu dronowi ciąg zawisu (4,9 N) za darmo, więc nie zwisa. Uczciwie zapracujemy na to w rozdziale 9."
+        },
+        {
+          "t": "widget",
+          "id": "twins"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Krzywe leżą **jedna na drugiej**. Nie podobne. *Identyczne.*"
+        },
+        {
+          "t": "p",
+          "text": "Spójrz na oba równania. Sprężyna odpycha siłą $\\eff{k}\\,x$: im bardziej rozciągnięta, tym mocniej ciągnie. Nasz regulator pcha z siłą $\\eff{K_p}(\\sp{2} - \\out{h})$: im dalej od celu, tym mocniej pcha. **Ta sama reguła.** Regulator *jest* sprężyną: niewidzialną, która ciągnie drona w stronę 2 m."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Czyli regulator P to wirtualna sprężyna, a opór powietrza $c$ to wirtualny tłumik. Wszystko, czego nauczymy się o sprężynach, dostajemy gratis."
+        }
+      ]
+    },
+    {
+      "id": "knobs",
+      "title": "Dwa pokrętła charakteru",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Każdy układ masa-sprężyna-tłumik, a więc każdy dron z regulatorem P, opisują tylko **dwie liczby**:"
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Pulsacja własna $\\omega_n = \\sqrt{k/m}$",
+              "def": "Jak szybko układ *chce* się wahać, w radianach na sekundę. Sztywniejsza sprężyna (większe $\\eff{k}$) albo lżejsza masa to szybsze wahania."
+            },
+            {
+              "term": "Współczynnik tłumienia $\\zeta = \\dfrac{c}{2\\sqrt{m k}}$",
+              "def": "Jak szybko wahania wygasają. To czysta liczba: 0 oznacza wahania w nieskończoność, 1 to dokładna granica między chybotaniem a jego brakiem."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Przypomnij sobie sprężynę z rozdziałów 4 i 5, gdzie zgadywanie wykładniczej dało nam dwie wartości $s$. Dodaj tłumik, a to samo zgadywanie daje $m s^2 + c s + k = 0$. Jego dwa rozwiązania to dwa punkty na naszej mapie $s$. Podziel przez $m$, a dostaniesz"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} & s^2 + 2\\zeta\\omega_n\\, s + \\omega_n^2 = 0 \\\\ \\Longrightarrow\\quad & s = -\\zeta\\omega_n \\pm \\omega_n\\sqrt{\\zeta^2 - 1} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Pobaw się dwoma pokrętłami. Obserwuj {out|niebieskie kropki} na mapie: to dwie wartości $s$, a ruch jest zawsze mieszanką $e^{s_1 t}$ i $e^{s_2 t}$."
+        },
+        {
+          "t": "widget",
+          "id": "personality"
+        },
+        {
+          "t": "vocab",
+          "title": "Trzy charaktery",
+          "items": [
+            {
+              "term": "Niedotłumiony ($\\zeta < 1$)",
+              "def": "Dwie wartości $s$ to lustrzana para poza osią rzeczywistą, leżąca na okręgu o promieniu $\\omega_n$. Odpowiedź przestrzeliwuje i kołysze się, zanim się ustali."
+            },
+            {
+              "term": "Tłumiony krytycznie ($\\zeta = 1$)",
+              "def": "Para spotyka się na osi rzeczywistej. Najszybsza odpowiedź bez przeregulowania."
+            },
+            {
+              "term": "Przetłumiony ($\\zeta > 1$)",
+              "def": "Para rozdziela się wzdłuż osi rzeczywistej: jedna wartość ucieka w lewo, druga pełznie w stronę zera. Bez przeregulowania, ale ospale."
+            }
+          ]
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Czyli spirale z rozdziału 5 były przez cały czas charakterem drona. Wirowanie = kołysanie, zwijanie się = uspokajanie!"
+        }
+      ]
+    },
+    {
+      "id": "damping",
+      "title": "Czy więcej tłumienia to zawsze lepiej?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Proste. Kołysanie jest złe, a tłumienie zabija kołysanie. Więc dla bezpieczeństwa ustawię $\\zeta = 5$. Najbezpieczniejszy dron świata."
+        },
+        {
+          "t": "predict",
+          "id": "ch6-damping",
+          "gate": true,
+          "q": "Ta sama sprężyna, to samo $\\omega_n$. Zwiększamy tłumienie z $\\zeta = 1$ do $\\zeta = 3$. Czy układ dotrze do celu **szybciej**, czy **wolniej**?",
+          "options": [
+            {
+              "text": "Szybciej: więcej tłumienia, mniej zmarnowanego ruchu",
+              "sketch": "smooth",
+              "why": "To prawda, że nie ma przeregulowania. Ale gęsty tłumik stawia opór także ruchowi *w stronę* celu."
+            },
+            {
+              "text": "Mniej więcej tak samo",
+              "sketch": "overshoot",
+              "why": "Powyżej $\\zeta = 1$ nie ma już czego uspokajać, a dodatkowe tłumienie po prostu wszystko spowalnia."
+            },
+            {
+              "text": "Wolniej: pełznie",
+              "sketch": "sluggish",
+              "correct": true,
+              "why": "Zgadza się. Tłumik stawia opór **każdemu** ruchowi, także temu, którego chcesz. Przy $\\zeta = 3$ trwa to mniej więcej cztery razy dłużej."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "race"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Mój „bezpieczny” dron trwa wieki. Jakby poruszał się w miodzie."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Spójrz na mapę! Jedna kropka uciekła w lewo, superszybka. Ale druga siedzi naprawdę blisko zera."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "A $e^{st}$ z $s$ bliskim zera wygasa **bardzo** powoli. Szybka znika w mgnieniu oka. Rządzi ta powolna."
+        },
+        {
+          "t": "p",
+          "text": "To reguła, której będziemy dalej używać: **o tym, jak długo czekasz, decyduje wartość** $s$ **najbliższa osi pionowej.** Za mało tłumienia to chybotanie, za dużo to czekanie. $\\zeta$ w okolicach od 0,7 do 1 to złoty środek, w który celuje większość inżynierów."
+        }
+      ]
+    },
+    {
+      "id": "drone",
+      "title": "Wracamy do drona",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Teraz rozdział 2 wreszcie nabiera sensu. W naszym dronie stała sprężyny *to* wzmocnienie:"
+        },
+        {
+          "t": "math",
+          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{K_p}}{m}}, \\qquad \\zeta = \\frac{c}{2\\sqrt{m\\,\\eff{K_p}}}"
+        },
+        {
+          "t": "p",
+          "text": "$\\eff{K_p}$ siedzi w *mianowniku* wzoru na tłumienie. Podkręcanie wzmocnienia sprawia, że dron jest szybszy (większe $\\omega_n$), ale **słabiej tłumiony**. Przy $\\eff{K_p} = 20$ N/m: $\\zeta = 1/(2\\sqrt{0{,}5 \\times 20}) \\approx 0{,}16$. Bardzo skocznie, dokładnie tak, jak widzieliśmy. Na mapie jego dwie wartości $s$ siedzą wysoko i tylko trochę na lewo od osi pionowej. Tam mieszka nasz dron."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "I nie dostaniemy więcej tłumienia bez mocnego skręcenia $\\eff{K_p}$, a to przywraca zwis. Potrzebujemy sposobu, żeby dodawać tłumienie *celowo*."
+        },
+        {
+          "t": "note",
+          "text": "Wypróbuj to w pierwszym widżecie: przesuwaj $K_p$ i patrz, jak ζ spada, a wahania robią się coraz dziksze."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Co teraz wiemy",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Dron z regulatorem P podlega **dokładnie** temu samemu równaniu co masa na sprężynie: regulator to wirtualna sprężyna.",
+            "Jego charakter opisują dwie liczby: $\\omega_n$ (jak szybko) i $\\zeta$ (jak skocznie).",
+            "Ruch jest mieszanką dwóch składników $e^{st}$. Dwie wartości $s$ leżą na okręgu o promieniu $\\omega_n$, gdy układ jest niedotłumiony, i rozdzielają się wzdłuż osi rzeczywistej, gdy jest przetłumiony.",
+            "Więcej tłumienia to nie zawsze lepiej: powyżej $\\zeta = 1$ powolna wartość $s$ pełznie w stronę zera i wszystko zwalnia.",
+            "W dronie więcej $K_p$ oznacza mniej tłumienia. Dlatego robił się coraz bardziej chybotliwy."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch6-q1",
+              "q": "Dwie wartości $s$ układu to $-1 \\pm 4i$. Jaka to odpowiedź?",
+              "options": [
+                {
+                  "text": "Przestrzeliwuje i się kołysze",
+                  "sketch": "overshoot",
+                  "correct": true,
+                  "why": "Część urojona (±4) oznacza wirowanie, czyli kołysanie. Ujemna część rzeczywista (−1) oznacza, że wahania maleją."
+                },
+                {
+                  "text": "Rośnie gładko, bez przeregulowania",
+                  "sketch": "smooth",
+                  "why": "Gładki wzrost bierze się z wartości $s$ na osi rzeczywistej (bez wirowania). Te mają część urojoną ±4."
+                },
+                {
+                  "text": "Powoli pełznie w górę",
+                  "sketch": "sluggish",
+                  "why": "Pełznięcie bierze się z rzeczywistego $s$ bardzo blisko zera. Te wartości wirują, więc odpowiedź się kołysze."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q2",
+              "q": "Nasz dron ($m = 0{,}5$ kg, $c = 1$ N·s/m) z $K_p = 20$ N/m jest…",
+              "options": [
+                {
+                  "text": "niedotłumiony, $\\zeta \\approx 0{,}16$",
+                  "correct": true,
+                  "why": "$\\zeta = 1/(2\\sqrt{0{,}5\\cdot 20}) = 1/(2\\sqrt{10}) \\approx 0{,}158$. Dużo poniżej 1, więc skoczny."
+                },
+                {
+                  "text": "tłumiony krytycznie, $\\zeta = 1$",
+                  "why": "To wymagałoby $c = 2\\sqrt{m K_p} \\approx 6{,}3$ N·s/m, ponad sześć razy większego oporu, niż mamy."
+                },
+                {
+                  "text": "przetłumiony, $\\zeta > 1$",
+                  "why": "Przetłumienie wymaga dużo tłumienia w porównaniu ze sztywnością. U nas wzmocnienie jest duże, a opór mały, czyli odwrotnie."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q3",
+              "q": "Przy samym regulatorze P jakie $K_p$ dałoby drona tłumionego krytycznie ($\\zeta = 1$)?",
+              "options": [
+                {
+                  "text": "$K_p = 0{,}5$ N/m",
+                  "correct": true,
+                  "why": "Ustaw $c/(2\\sqrt{m K_p}) = 1$, a wyjdzie $K_p = c^2/(4m) = 0{,}5$ N/m. Ale przy tak słabej sprężynie dron musiałby być 9,8 m *poniżej* celu, żeby w ogóle się utrzymać, więc nigdy nie wystartuje. Sam regulator P nie da nam obu rzeczy naraz."
+                },
+                {
+                  "text": "$K_p = 20$ N/m",
+                  "why": "To nasze skoczne ustawienie domyślne z $\\zeta \\approx 0{,}16$. Więcej wzmocnienia to *mniej* tłumienia."
+                },
+                {
+                  "text": "$K_p = 200$ N/m",
+                  "why": "Więcej wzmocnienia obniża $\\zeta$ jeszcze bardziej (do około 0,05). Wzmocnienie siedzi w mianowniku."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q4",
+              "q": "Układ przetłumiony ma wartości $s$ równe $-0{,}2$ i $-10$. Która decyduje o tym, jak długo czekasz?",
+              "options": [
+                {
+                  "text": "$-0{,}2$",
+                  "correct": true,
+                  "why": "$e^{-0{,}2t}$ potrzebuje około 20 s, żeby wygasnąć do 2%, a $e^{-10t}$ znika w 0,4 s. Rządzi ta najbliższa osi pionowej."
+                },
+                {
+                  "text": "$-10$",
+                  "why": "$e^{-10t}$ znika w ułamku sekundy. To szybka część, która kończy się, zanim ją zauważysz."
+                },
+                {
+                  "text": "Obie po równo",
+                  "why": "Wygasają w bardzo różnym tempie, więc to, co widzisz, zdominowane jest przez tę powolną."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Theo: „Do tych wartości $s$ doszliśmy *zgadując*. Dodaj grawitację, wiatr, paczki i sprytniejszy regulator, a zgadywanie zrobi się paskudne. Czy istnieje maszyna, która zamienia tę analizę w **zwykłą algebrę**?”"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "twins": {
+      "title": "Sprężyna kontra dron",
+      "spring": "masa na sprężynie",
+      "drone": "dron z regulatorem P",
+      "msdAria": "Masa zawieszona na sprężynie i tłumiku, podskakująca wokół położenia spoczynkowego.",
+      "plotY": "odległość od celu (m)",
+      "plotAria": "Odległość od celu w czasie dla drona i dla sprężyny. Obie krzywe leżą jedna na drugiej.",
+      "target": "cel / spoczynek",
+      "kp": "Sztywność: sprężyna $k$ = wzmocnienie drona $K_p$",
+      "personality": "charakter",
+      "help": "Oba startują 1 m poniżej celu i zostają puszczone. Suwak ustawia sztywność sprężyny i wzmocnienie drona na tę samą liczbę.",
+      "describe": "Dron jest {d} m od celu, masa na sprężynie {s} m od położenia spoczynkowego.",
+      "regime": {
+        "under": "niedotłumiony",
+        "critical": "tłumiony krytycznie",
+        "over": "przetłumiony"
+      },
+      "together": "oba na jednym wykresie"
+    },
+    "personality": {
+      "title": "Dwa pokrętła, dwie kropki, jeden charakter",
+      "response": "odpowiedź na skok o 1 m",
+      "target": "cel",
+      "plotAria": "Odpowiedź skokowa układu drugiego rzędu dla wybranej pulsacji własnej i współczynnika tłumienia.",
+      "planeAria": "Mapa s z dwiema wartościami s układu i przerywanym okręgiem o promieniu omega n.",
+      "msdAria": "Masa na sprężynie odtwarzająca odpowiedź skokową.",
+      "panelAria": "Mała odpowiedź skokowa ze współczynnikiem tłumienia {z}.",
+      "panel": {
+        "0": "niedotłumiony (ζ = {z})",
+        "1": "krytyczny (ζ = {z})",
+        "2": "przetłumiony (ζ = {z})"
+      },
+      "radius": "promień ωn = {w}",
+      "wn": "Pulsacja własna $\\omega_n$",
+      "zeta": "Współczynnik tłumienia $\\zeta$",
+      "overshoot": "przeregulowanie",
+      "settle": "ustala się (2%)",
+      "roots": "dwie wartości s",
+      "personality": "charakter",
+      "never": "nigdy",
+      "playSpring": "Odtwórz na sprężynie",
+      "stopSpring": "Zatrzymaj sprężynę",
+      "describe": "Współczynnik tłumienia {z}, pulsacja własna {w} radianów na sekundę, wartości s {r}.",
+      "regime": {
+        "under": "niedotłumiony",
+        "critical": "tłumiony krytycznie",
+        "over": "przetłumiony"
+      },
+      "planeCap": "dwie wartości s",
+      "springCap": "zobacz to na sprężynie",
+      "re": "σ",
+      "im": "ω",
+      "offMap": "{v} jest poza mapą ←"
+    },
+    "race": {
+      "title": "Wyścig tłumienia",
+      "choose": "Twoje tłumienie",
+      "ref": "ζ = 1 (krytyczne)",
+      "yours": "twoje ζ",
+      "yoursZ": "ζ = {z}",
+      "msdAria": "Masa na sprężynie zmierzająca do położenia spoczynkowego.",
+      "plotAria": "Odpowiedzi skokowe dla tłumienia krytycznego i dla wybranego współczynnika tłumienia.",
+      "planeAria": "Dwie wartości s dla wybranego współczynnika tłumienia.",
+      "settleRef": "ζ = 1 ustala się po",
+      "settleYours": "twoje ζ ustala się po",
+      "slow": "powolna",
+      "fast": "szybka",
+      "never": "nie w ciągu 12 s",
+      "same": "To samo odniesienie: najszybsza odpowiedź bez przeregulowania.",
+      "slower": "Twoje dodatkowe tłumienie spowolniło układ mniej więcej {k}×.",
+      "replay": "Ścigaj się jeszcze raz",
+      "planeCap": "dwie wartości s",
+      "re": "σ",
+      "im": "ω",
+      "fastOff": "← szybka w {v} (poza mapą)",
+      "double": "obie tutaj"
+    }
+  }
+}

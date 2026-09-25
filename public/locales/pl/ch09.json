@@ -1,0 +1,487 @@
+{
+  "kicker": "Rozdział 9",
+  "title": "PID: naprawiamy wszystko",
+  "question": "Jak pozbyć się zwisu *i* zatrzymać kołysanie?",
+  "sections": [
+    {
+      "id": "stuck",
+      "title": "Zwis, który nie chce zniknąć",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Pamiętacie rozdział 2? Nasz regulator P zostawiał drona **wiszącego poniżej 2 m** i żadne $K_p$ nie mogło tego naprawić. Czas się dowiedzieć, co może."
+        },
+        {
+          "t": "p",
+          "text": "Żeby utrzymać drona w górze, silniki muszą pchać z siłą $mg \\approx 4{,}9$ N, bez końca. Regulator P pcha tylko wtedy, gdy jest uchyb: $\\eff{T} = K_p\\,\\err{e}$. Więc żeby pchać z siłą 4,9 N, *potrzebuje* uchybu $\\err{e} = mg/K_p$. Zwis to nie błąd w strojeniu. To cena, jaką P pobiera za utrzymywanie czegokolwiek w górze."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Czyli potrzebujemy części regulatora, która potrafi pchać z siłą 4,9 N **przy zerowym uchybie**. Czegoś z pamięcią."
+        },
+        {
+          "t": "note",
+          "text": "Od rozdziału 8 silniki są prawdziwe: mogą pchać od 0 do 20 N, nie więcej, i nie potrafią ciągnąć w dół. Pomarańczowe krzywe ciągu spłaszczają się, gdy dojdą do ograniczenia."
+        }
+      ]
+    },
+    {
+      "id": "integral",
+      "title": "I: stos dawnego uchybu",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Pomysł jest taki. Prowadź bieżącą sumę uchybu, czyli **pole pod krzywą uchybu**, dokładnie to „zbierane pole” z [rozdziału 3](#/ch/3). Pchaj proporcjonalnie do tego stosu:"
+        },
+        {
+          "t": "math",
+          "tex": "\\eff{T_I} = K_i \\int_0^t \\err{e}(\\tau)\\,d\\tau"
+        },
+        {
+          "t": "p",
+          "text": "Dopóki dron jest poniżej 2 m, uchyb jest dodatni i stos ciągle rośnie, więc pchnięcie też ciągle rośnie. Stos przestaje rosnąć dopiero wtedy, gdy uchyb jest **dokładnie zerowy**. Wtedy po prostu *zostaje*, trzymając ciąg, jaki zdążył zbudować. To właśnie pamięć, której chciała June."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "O, to sprytne. Dron nie może się ustalić *nigdzie* poza 2 m, bo wszędzie indziej stos wciąż by się zmieniał."
+        },
+        {
+          "t": "predict",
+          "id": "ch9-bigki",
+          "gate": true,
+          "q": "Mika chce się pozbyć zwisu *szybko*, więc planuje mocno podkręcić $K_i$. Co się stanie?",
+          "options": [
+            {
+              "text": "Zwis zniknie szybko i czysto",
+              "sketch": "smooth",
+              "why": "Taka jest nadzieja. Ale stos ma bezwładność: zanim uchyb dojdzie do zera, zbierze się w nim *za dużo* pchnięcia."
+            },
+            {
+              "text": "Zwis zniknie, ale dron będzie się bardziej kołysał, a przy przesadzie rozhuśta się na kawałki",
+              "sketch": "growing-wiggle",
+              "correct": true,
+              "why": "Stos pamięta przeszłość, więc pcha dalej, gdy dron już dotarł: przeregulowanie. Przy zbyt dużym $K_i$ każde przeregulowanie jest większe od poprzedniego."
+            },
+            {
+              "text": "Nic się nie zmieni, bo $K_i$ ma znaczenie dopiero na samym końcu",
+              "sketch": "droop",
+              "why": "Stos zaczyna rosnąć od pierwszej chwili, w której pojawia się uchyb, więc $K_i$ kształtuje cały lot."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Przesuwaj $K_i$ i obserwuj trzy rzeczy: {err|czerwone zacieniowane pole} (uchyb, który się gromadzi), {eff|przerywaną pomarańczową} część całkującą ciągu, która wspina się do {dis|fioletowej linii grawitacji}, oraz odczyt zwisu. $K_p$ jest ustalone na 20 N/m."
+        },
+        {
+          "t": "widget",
+          "id": "integral"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Podkręcaj! $K_i = 50$! Spalić to ogniem!"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "…czemu to się nie zatrzymuje? Podskoki rosły i rosły, a teraz dron jeździ w górę i w dół jak jojo o pół metra, bez końca!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Przy 50 przekroczyłaś jakąś krawędź. Sprawdziłem kilka wartości: poniżej mniej więcej 40 się ustala, powyżej nie. Stos jest *zawsze trochę spóźniony*: pcha w górę jeszcze po tym, jak dron minął 2 m."
+        },
+        {
+          "t": "p",
+          "text": "To błąd Miki i to bardzo częsty: całka naprawia zwis, ale dodaje **opóźnienie**, a opóźnienie powoduje wahania (nauczył nas tego prysznic). Potrzebujemy czegoś, co odpycha się od *prędkości*."
+        }
+      ]
+    },
+    {
+      "id": "derivative",
+      "title": "D: wirtualny amortyzator",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "W rozdziale 6 to tłumik uspokajał sprężynę. A gdyby regulator **udawał** tłumik?"
+        },
+        {
+          "t": "p",
+          "text": "Tłumik działa przeciwnie do prędkości. Więc dodajmy składnik, który działa przeciwnie do tego, jak szybko porusza się dron:"
+        },
+        {
+          "t": "math",
+          "tex": "\\eff{T_D} = -K_d\\,\\frac{d\\out{h}}{dt}"
+        },
+        {
+          "t": "p",
+          "text": "Spójrz na równanie drona: opór już daje $-c\\,\\dot h$. Składnik D dodaje do tego $-K_d\\,\\dot h$, więc dron zachowuje się tak, jakby jego opór wynosił $c + K_d$. Dodajemy opór powietrza **w oprogramowaniu**."
+        },
+        {
+          "t": "note",
+          "text": "Ściśle mówiąc, D w PID to nachylenie *uchybu*, $K_d\\,\\dot e$. Gdy wartość zadana stoi w miejscu, $\\dot e = -\\dot h$, czyli to samo. Za chwilę zobaczymy, dlaczego ta różnica ma znaczenie."
+        },
+        {
+          "t": "widget",
+          "id": "damper"
+        },
+        {
+          "t": "p",
+          "text": "Włącz **duże wzmocnienie I Miki**, a potem dodaj tłumienia. Nawet $K_d = 0{,}5$ N·s/m przywraca stabilność (przesuwa krawędź do $K_i = 60$): niekończące się jojo zamienia się w podskakiwanie, które wygasa. Ale wciąż przestrzeliwuje o mniej więcej ćwierć, niezależnie od tego, ile D dodasz. Ten ogromny stos po prostu pamięta za dużo. Teraz wyłącz $K_i$ Miki (z powrotem na 10) i wypróbuj $K_d \\approx 3$–5: spokój. **I oraz D to kompromis**: D daje miejsce dla I, ale nie nieograniczone."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Czyli D **przewiduje przyszłość**! Widzi, dokąd dron leci, i jest tam pierwszy."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Nie do końca. Zna tylko nachylenie *w tej chwili*. To jak zgadywanie, gdzie wyląduje piłka, przy założeniu, że poleci prosto. Zwykle niezły strzał, ale to nie magia. Poczekaj, aż podłączymy mu rozedrgany czujnik."
+        }
+      ]
+    },
+    {
+      "id": "poles",
+      "title": "Co każde pokrętło robi z biegunami",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Czas użyć mapy z rozdziału 8. Zapiszmy całą pętlę, z $\\err{e} = \\sp{r} - \\out{h}$:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\ddot{\\out h} + c\\dot{\\out h} = \\underbrace{K_p\\,\\err e + K_i\\!\\int\\!\\err e\\,dt - K_d\\,\\dot{\\out h}}_{\\eff{T}} - \\dis{mg}"
+        },
+        {
+          "t": "p",
+          "text": "Całka jest niewygodna, więc weźmy nachylenie obu stron. Grawitacja jest stała, więc jej nachylenie wynosi **zero**: po prostu wypada. Przy stałej wartości zadanej $\\dot{\\err e} = -\\dot{\\out h}$, a nachylenie $\\int \\err e$ to po prostu $\\err e$:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\dddot{\\out h} + (c + K_d)\\,\\ddot{\\out h} + K_p\\,\\dot{\\out h} + K_i\\,\\out h = K_i\\,\\sp r"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Grawitacja *zniknęła* z równania. To zabójca zwisu w wersji algebraicznej: końcowa wysokość w ogóle nie przejmuje się $mg$."
+        },
+        {
+          "t": "p",
+          "text": "Zgadnij jak zwykle $e^{st}$, a wyskoczy wielomian charakterystyczny. To wielomian trzeciego stopnia, więc są **trzy** bieguny:"
+        },
+        {
+          "t": "math",
+          "tex": "m s^3 + (c + K_d)\\,s^2 + K_p\\,s + K_i = 0"
+        },
+        {
+          "t": "p",
+          "text": "Dla wielomianu trzeciego stopnia o samych dodatnich współczynnikach $a_3 s^3 + a_2 s^2 + a_1 s + a_0$ istnieje klasyczny test (**kryterium Routha–Hurwitza**), który mówi, że wszystkie trzy bieguny leżą w lewej połowie dokładnie wtedy, gdy $a_2 a_1 > a_3 a_0$. Dla naszego drona to krawędź urwiska:"
+        },
+        {
+          "t": "math",
+          "tex": "(c + K_d)\\,K_p > m\\,K_i \\quad\\Longleftrightarrow\\quad K_i < \\frac{(c+K_d)\\,K_p}{m}"
+        },
+        {
+          "t": "p",
+          "text": "Przy $K_p = 20$ i bez D: $K_i < (1)(20)/0{,}5 = 40$. Dokładnie tam dron Miki oszalał. Dodanie $K_d = 4$ przesuwa krawędź do 200. Nie wierz nam na słowo; przesuwaj suwaki i obserwuj bieguny, minimapę i odpowiedź skokową."
+        },
+        {
+          "t": "widget",
+          "id": "poles"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Pokrętło I** ($K_i$) wyciąga jeden biegun od początku układu, a pozostałe dwa spycha w prawo. Za dużo, a przekroczą linię.",
+            "**Pokrętło D** ($K_d$) ciągnie bieguny w lewo: więcej tłumienia, spokojniejsza odpowiedź.",
+            "**Pokrętło P** ($K_p$) głównie rozsuwa rozkołysaną parę w górę i w dół: szybciej, ale bardziej rozkołysany układ, chyba że D dotrzymuje kroku."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "playground",
+      "title": "Plac zabaw strojenia",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Teraz na serio: start z ziemi na 2 m z prawdziwymi silnikami (0–20 N). Zdobądź wszystkie cztery gwiazdki. Za każdym razem, gdy zmienisz wzmocnienie, ostatni lot zostaje jako blady duch."
+        },
+        {
+          "t": "widget",
+          "id": "playground"
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Nie idzie? Zacznij od $K_d$ w okolicach 4, potem podnoś $K_i$, aż zniknie zwis, a na koniec delikatnie popraw $K_p$."
+        },
+        {
+          "t": "note",
+          "text": "**Nasycenie całkowania (windup):** kiedy silniki są przyklejone do 20 N, stos uchybu dalej rośnie, choć dodatkowe pchnięcie nie może nastąpić. Później całe to zmagazynowane pchnięcie wychodzi jako przeregulowanie. „Anti-windup” po prostu wstrzymuje stos, dopóki silniki są na maksimum. Przełącz i porównaj."
+        }
+      ]
+    },
+    {
+      "id": "warnings",
+      "title": "Dwa ostrzeżenia w sprawie D",
+      "blocks": [
+        {
+          "t": "h3",
+          "text": "Ostrzeżenie 1: szarpnięcie różniczkujące"
+        },
+        {
+          "t": "p",
+          "text": "Dron wisi na 1 m. W chwili $t = 1$ s przestawiamy wartość zadaną na 2 m. Jeśli D używa nachylenia *uchybu*, to uchyb w jednej chwili **skacze** o metr. Jego nachylenie jest ogromne, a pchnięcie również."
+        },
+        {
+          "t": "widget",
+          "id": "kick"
+        },
+        {
+          "t": "p",
+          "text": "Branie nachylenia **zmierzonej wysokości** rozwiązuje problem: dron nie potrafi się teleportować, więc jego wysokość nie ma skoków. To samo tłumienie, bez szarpnięcia. Robi tak prawie każdy prawdziwy PID."
+        },
+        {
+          "t": "h3",
+          "text": "Ostrzeżenie 2: szum"
+        },
+        {
+          "t": "p",
+          "text": "Prawdziwe czujniki wysokości drżą o kilka centymetrów. Kilka centymetrów drżenia, tysiąc razy na sekundę, ma **ogromne nachylenie**. D wzmacnia je prosto w silniki. Rozwiązaniem jest wygładzenie pomiaru przed wzięciem nachylenia (filtr ze stałą czasową $\\tau_f$), kosztem nieco późniejszej reakcji."
+        },
+        {
+          "t": "widget",
+          "id": "noise"
+        },
+        {
+          "t": "note",
+          "text": "Widać było, jak dron przy krótkim filtrze **dryfuje w górę**? Terkoczący ciąg dużo częściej obcina się na 0 N niż na 20 N (do wiszenia wystarczy 4,9 N), więc obcięta średnia wychodzi *powyżej* ciężaru. Szum plus ograniczenia potrafią nawet przesunąć średnią. Prawdziwy sprzęt jest pełen takich niespodzianek."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Dobra, D *nie* przewiduje przyszłości. Przewiduje to, jak szum się czuł milisekundę temu."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Co naprawiliśmy",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "**P** pcha proporcjonalnie do uchybu, ale musi zostawić zwis, żeby utrzymać drona w górze.",
+            "**I** gromadzi dawny uchyb; jedynym punktem spoczynku jest zerowy uchyb, więc eliminuje zwis. Dodaje opóźnienie, więc przy przesadzie powoduje wahania.",
+            "**D** działa przeciwnie do prędkości: wirtualny tłumik, który dodaje się do oporu $c$.",
+            "Układ zamknięty to $m s^3 + (c + K_d)s^2 + K_p s + K_i$; jest stabilny dokładnie wtedy, gdy $(c+K_d)K_p > mK_i$.",
+            "Licz D z pomiaru (bez szarpnięcia) i go filtruj (mniej szumu)."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch9-q1",
+              "q": "Który składnik usuwa stały zwis pod wpływem grawitacji?",
+              "options": [
+                {
+                  "text": "Składnik całkujący",
+                  "correct": true,
+                  "why": "Jego stos uchybu zmienia się, dopóki uchyb nie jest dokładnie zerowy, a wtedy sam utrzymuje potrzebne 4,9 N."
+                },
+                {
+                  "text": "Składnik różniczkujący",
+                  "why": "D reaguje na prędkość. Gdy dron wisi nieruchomo, prędkość wynosi zero i D nic nie wnosi, więc niczego nie utrzyma."
+                },
+                {
+                  "text": "Większe wzmocnienie proporcjonalne",
+                  "why": "Większe $K_p$ zmniejsza zwis ($mg/K_p$), ale nigdy do zera, a do tego dron bardziej się kołysze."
+                }
+              ]
+            },
+            {
+              "id": "ch9-q2",
+              "q": "Zwiększasz $K_d$. W którą stronę zwykle przesuwają się bieguny?",
+              "options": [
+                {
+                  "text": "W lewo: więcej tłumienia, spokojniejsza odpowiedź",
+                  "correct": true,
+                  "why": "D dodaje się do współczynnika tłumienia $(c + K_d)$, co odciąga bieguny od prawej półpłaszczyzny."
+                },
+                {
+                  "text": "W prawo: w stronę niestabilności",
+                  "why": "Tak działa za duże $K_i$. $K_d$ robi coś przeciwnego, przynajmniej w naszym modelu bez opóźnień."
+                },
+                {
+                  "text": "Nie przesuwają się; D ma znaczenie tylko przy szumie",
+                  "why": "$K_d$ występuje wprost w wielomianie charakterystycznym, więc przesuwa bieguny."
+                }
+              ]
+            },
+            {
+              "id": "ch9-q3",
+              "q": "Przy $K_p = 10$ N/m i $K_d = 1$ N·s/m (dron: $m = 0{,}5$ kg, $c = 1$ N·s/m) jakie jest największe $K_i$ przed utratą stabilności?",
+              "options": [
+                {
+                  "text": "20 N/(m·s)",
+                  "why": "Sprawdź wzór: $(c + K_d)K_p/m = (1+1)\\cdot 10 / 0{,}5$. Może umknęło dzielenie przez $m$."
+                },
+                {
+                  "text": "40 N/(m·s)",
+                  "correct": true,
+                  "why": "$(1 + 1)\\cdot 10 / 0{,}5 = 40$. Powyżej tej wartości dwa bieguny przechodzą do prawej półpłaszczyzny."
+                },
+                {
+                  "text": "80 N/(m·s)",
+                  "why": "Za dużo. Pamiętaj, że opór $c$ i $K_d$ najpierw się dodają: $(1+1) = 2$, a nie 4."
+                }
+              ]
+            },
+            {
+              "id": "ch9-q4",
+              "q": "Dlaczego różniczkuje się **pomiar**, a nie uchyb?",
+              "options": [
+                {
+                  "text": "Kiedy wartość zadana skacze, uchyb też skacze, a jego nachylenie jest ogromne: szpilka ciągu",
+                  "correct": true,
+                  "why": "Wysokość nie może skakać, więc jej nachylenie pozostaje rozsądne. To samo tłumienie, bez szarpnięcia."
+                },
+                {
+                  "text": "Bo pomiar jest mniej zaszumiony niż uchyb",
+                  "why": "Mają dokładnie ten sam szum; uchyb to wartość zadana minus pomiar."
+                },
+                {
+                  "text": "Bo regulator staje się bardziej agresywny",
+                  "why": "Wręcz przeciwnie: usuwa agresywną szpilkę przy zmianach wartości zadanej."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "June wypróbowała nasz dronowy PID na prysznicu… i kołysało się dokładnie tak jak nam w rozdziale 0. **O co chodzi z tym opóźnieniem?**"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "integral": {
+      "title": "Stos uchybu",
+      "slider": "Wzmocnienie całkujące $K_i$",
+      "gravity": "ciężar mg",
+      "iterm": "pchnięcie całkujące Ki·∫e",
+      "readout": {
+        "droop": "zwis po 12 s",
+        "pile": "pchnięcie całkujące"
+      },
+      "status": {
+        "none": "Bez całki: dron zwisa, tak jak w rozdziale 2.",
+        "slow": "Zwis maleje, ale powoli. Stos potrzebuje czasu, żeby urosnąć.",
+        "gone": "Zwis zniknął! Stos utrzymuje teraz cały ciężar.",
+        "unstable": "Za krawędzią (Ki > {lim}): podskoki rosną, aż silniki dojdą do ograniczeń, i nigdy się nie ustala."
+      },
+      "describe": "Wzmocnienie całkujące {ki}. Zwis po 12 sekundach: {droop} cm."
+    },
+    "damper": {
+      "title": "Dodajemy wirtualny tłumik",
+      "slider": "Wzmocnienie różniczkujące $K_d$",
+      "bigKi": "Duże $K_i$ Miki = 50",
+      "readout": {
+        "damping": "całkowite tłumienie c + Kd",
+        "overshoot": "przeregulowanie"
+      },
+      "status": {
+        "unstable": "Wciąż niestabilny: potrzeba więcej tłumienia.",
+        "bouncy": "Stabilny, ale skoczny. Dodaj więcej Kd.",
+        "calm": "Spokój! Tłumik pochłania podskoki."
+      }
+    },
+    "poles": {
+      "title": "Trzy pokrętła, trzy bieguny",
+      "splane": "Płaszczyzna s z trzema biegunami układu zamkniętego drona z regulatorem PID",
+      "kp": "$K_p$",
+      "ki": "$K_i$",
+      "kd": "$K_d$",
+      "offmap": "poza mapą",
+      "map": {
+        "x": "Kd (N·s/m)",
+        "y": "Ki (N/(m·s))",
+        "edge": "krawędź urwiska Ki = (c+Kd)Kp/m",
+        "you": "ty",
+        "aria": "Mapa Ki w zależności od Kd z linią granicy stabilności; poniżej linii układ jest stabilny."
+      },
+      "stepAria": "Odpowiedź skokowa od 1,5 m do 2 m dla bieżących wzmocnień",
+      "status": {
+        "stable": "Stabilny: Ki musi zostać poniżej {lim}. Najwolniejszy biegun siedzi w σ = {s}.",
+        "unstable": "Niestabilny! Ki jest powyżej krawędzi ({lim}). Dwa bieguny przeszły do prawej połowy."
+      },
+      "help": "W odpowiedzi skokowej dron zaczyna, wisząc na 1,5 m, a w t = 1 s dostaje polecenie 2 m. Bieguny poza ramką są przypięte do jej krawędzi.",
+      "reShort": "σ",
+      "imShort": "ω"
+    },
+    "playground": {
+      "title": "Plac zabaw strojenia: start na 2 m",
+      "kp": "$K_p$",
+      "ki": "$K_i$",
+      "kd": "$K_d$",
+      "antiWindup": "Anti-windup",
+      "targets": "Gwiazdki za: przeregulowanie poniżej {os} %, czas ustalania (w granicach 2 %) poniżej {ts} s, brak zwisu (poniżej 1 cm) oraz silniki przyklejone do ograniczenia krócej niż {sat} s.",
+      "readout": {
+        "overshoot": "przeregulowanie",
+        "settling": "czas ustalania",
+        "sse": "zwis",
+        "saturated": "silniki na ograniczeniu"
+      },
+      "never": "nigdy",
+      "allStars": "Wszystkie cztery gwiazdki! To jest prawdziwe strojenie.",
+      "someStars": "Gwiazdki: {n} z 4.",
+      "starsAria": "Zdobyte gwiazdki: {n} z 4"
+    },
+    "kick": {
+      "title": "Skok wartości zadanej: 1 m → 2 m",
+      "mode": "Różniczkuj…",
+      "onError": "uchyb",
+      "onMeasurement": "zmierzoną wysokość",
+      "peak": "szczytowy ciąg",
+      "status": {
+        "error": "Uchyb skacze, jego nachylenie jest ogromne, a silniki walą na 20 N: szarpnięcie różniczkujące.",
+        "measurement": "Wysokość nie może skakać, więc nie ma szarpnięcia: płynne wznoszenie."
+      }
+    },
+    "noise": {
+      "title": "Rozedrgany czujnik wysokości",
+      "toggle": "Szum czujnika (±2 cm)",
+      "filter": "Filtr różniczkowania $\\tau_f$",
+      "measured": "odczyt czujnika",
+      "jitter": "drżenie ciągu",
+      "status": {
+        "off": "Idealny czujnik: spokojne silniki.",
+        "chatter": "Silniki terkoczą! D wzmacnia szum. Spróbuj dłuższego filtra.",
+        "calm": "Dużo spokojniej. (Resztka drżenia pochodzi od składnika P, który przepuszcza szum wprost.) Cena: D reaguje teraz nieco później."
+      }
+    }
+  }
+}

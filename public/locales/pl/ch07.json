@@ -1,0 +1,535 @@
+{
+  "kicker": "Rozdział 7",
+  "title": "Transformata Laplace'a",
+  "question": "Czy da się zamienić analizę matematyczną w algebrę?",
+  "sections": [
+    {
+      "id": "probe",
+      "title": "Sonda do sygnałów",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Za każdym razem, gdy coś rozwiązywaliśmy, *zgadywaliśmy* $e^{st}$, wstawialiśmy i modliliśmy się. A teraz dodaj grawitację, wysokość początkową, regulator… mój zeszyt płonie."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Kiedy coś buduję, trik zawsze polega na zamianie trudnej roboty w łatwą. Trudna: analiza z nachyleniami nachyleń. Łatwa: zwykła algebra z $+$, $-$, $\\times$, $\\div$."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Czyli potrzebujemy maszyny, która zjada krzywą i wypluwa coś, w czym nachylenia zamieniają się w mnożenie? Coś takiego istnieje?"
+        },
+        {
+          "t": "p",
+          "text": "Istnieje, i możemy ją zbudować z rzeczy, które już mamy. Pomysł jest taki. Weź dowolny sygnał $f(t)$. Pomnóż go przez **sondę**, malejącą wykładniczą $e^{-st}$ z rozdziału 4. Potem zmierz **całkowite pole** pod iloczynem (zebrane pole z rozdziału 3)."
+        },
+        {
+          "t": "math",
+          "tex": "F(s) = \\int_0^\\infty \\out{f(t)}\\; e^{-st}\\,dt"
+        },
+        {
+          "t": "p",
+          "text": "I tyle. Liczba $s$ wchodzi, pole wychodzi. Wypróbuj różne wartości $s$, a dostaniesz całą nową krzywą $F(s)$. Ta krzywa to **transformata Laplace'a** sygnału $f$: odcisk palca sygnału."
+        },
+        {
+          "t": "predict",
+          "id": "ch7-step",
+          "gate": true,
+          "q": "Weź najprostszy sygnał, skok: $f(t) = 1$ na zawsze. Gdy **zwiększamy** $s$, co dzieje się z polem pod $1 \\cdot e^{-st}$?",
+          "options": [
+            {
+              "text": "Rośnie",
+              "why": "Większe $s$ sprawia, że sonda wygasa *szybciej*, więc jest jej mniej."
+            },
+            {
+              "text": "Maleje",
+              "correct": true,
+              "why": "Zgadza się. Większe $s$ szybciej spłaszcza sondę, więc pole jest mniejsze. Właściwie pole wynosi dokładnie $1/s$."
+            },
+            {
+              "text": "Zostaje takie samo",
+              "why": "Kształt sondy zależy od $s$: większe $s$ to szybszy spadek, więc mniejsze pole."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "probe"
+        },
+        {
+          "t": "p",
+          "text": "Przesuwaj $s$, a kropki wyrysują $1/s$ dla skoku. Wypróbuj też inne sygnały. Rosnący sygnał $e^{0{,}5t}$ ma skończone pole tylko wtedy, gdy sonda maleje **szybciej**, niż sygnał rośnie, czyli gdy $s > 0{,}5$. Poniżej tej wartości pole ucieka do nieskończoności."
+        },
+        {
+          "t": "note",
+          "text": "Na razie używamy tylko rzeczywistych $s$. Zespolone $s$ pojawią się za chwilę i to tam dzieje się magia.",
+          "aside": true
+        }
+      ]
+    },
+    {
+      "id": "explode",
+      "title": "Transformata krzyczy tam, gdzie mieszka sygnał",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Przyjrzyjmy się bliżej $f(t) = e^{at}$. Zbadaj go sondą $e^{-st}$, a iloczyn wyniesie $e^{(a-s)t}$, zwykłą wykładniczą. Jej pole to $\\frac{1}{s-a}$ (porządnie wyprowadzimy to w tabelce poniżej)."
+        },
+        {
+          "t": "widget",
+          "id": "explode"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Gdy $s$ zbliża się do $a$, liczba robi się **ogromna**! Przy $s = a$ sonda dokładnie znosi wzrost, iloczyn jest płaski na zawsze, a pole jest nieskończone."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Czyli transformata **wybucha dokładnie w tym** $s$, **w którym mieszka sygnał**. Gdybym dostał tylko $F(s)$, mógłbym znaleźć $a$ sygnału, szukając miejsca, w którym wybucha."
+        },
+        {
+          "t": "p",
+          "text": "Teraz niech $s$ będzie zespolone, $s = \\sigma + i\\omega$, jak nasze wirujące liczby z rozdziału 5. Weź wirujący sygnał $e^{2it}$. Sonda $e^{-st}$ go zmniejsza (to część $\\sigma$) **i obraca go do tyłu** (to część $\\omega$). Poniżej małe kawałki pola iloczynu są dodawane jako strzałki, koniec do początku. Obserwuj bieżącą sumę."
+        },
+        {
+          "t": "widget",
+          "id": "unspin"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Kiedy sonda wiruje dokładnie z prędkością 2, sygnał przestaje wirować, wszystkie kawałki wskazują w tę samą stronę i suma wystrzeliwuje. Kiedy się nie zgadzają, strzałki zawijają się w kółko i znoszą."
+        },
+        {
+          "t": "p",
+          "text": "Ta sama lekcja, o jeden wymiar wyżej: transformata wybucha w zespolonym $s$, w którym mieszka sygnał. Dlatego od teraz każde $s$ będziemy rysować na mapie z $\\sigma$ w poziomie i $\\omega$ w pionie. Nasza „mapa $s$” z rozdziału 5 wreszcie dostaje dorosłą nazwę: **płaszczyzna s**."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Płaszczyzna s",
+              "def": "Mapa liczb zespolonych $s = \\sigma + i\\omega$. Lewo oznacza malenie, prawo wzrost, góra i dół wirowanie. Każdy sygnał $e^{st}$ mieszka w jednym jej punkcie, i tam właśnie wybucha jego transformata."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rule",
+      "title": "Nachylenia stają się mnożeniem",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Oto własność, dla której cała ta zabawa jest warta zachodu. Co dzieje się z transformatą, gdy bierzemy **nachylenie** sygnału? Spróbuj z $f = e^{at}$. Jej nachylenie to $a e^{at}$ (rozdział 4), więc"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\mathcal{L}\\{f'\\} &= \\frac{a}{s-a} = \\frac{s}{s-a} - 1 \\\\ &= s\\,F(s) - f(0) \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Nachylenie zamieniło się w **mnożenie przez** $s$, minus wartość początkowa $f(0)$. Analiza stała się algebrą!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Zaraz. To trik, który działa dla $e^{at}$, bo $e^{at}$ jest wyjątkowa. Zaraz mi powiecie, że to reguła z tabelki do wykucia na pamięć. Nie kupuję tego dla *dowolnej* krzywej."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "To przetestujmy ją na najbrzydszej krzywej, jaką potrafisz narysować."
+        },
+        {
+          "t": "p",
+          "text": "Narysuj po lewej dowolny sygnał (albo wybierz gotowy). Obliczamy jego nachylenie, a potem maszyną do pól wyliczamy **obie strony** reguły: transformatę nachylenia oraz $s\\,F(s) - f(0)$. Dwie krzywe po prawej to te dwie strony dla każdego $s$."
+        },
+        {
+          "t": "widget",
+          "id": "derivRule"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Zgadzają się. Nawet dla moich chwiejnych bazgrołów. Dobra, to nie trik. Działa dla każdego sygnału."
+        },
+        {
+          "t": "p",
+          "text": "*Dlaczego* to działa? Pomyśl o polu pod $f'(t)\\,e^{-st}$. Nachylenie sumuje zmiany $f$. Zważone sondą, te zmiany dają w sumie $s$ razy zbadane sondą $f$, minus wartość, od której zaczęliśmy. (Uczciwa nazwa to *całkowanie przez części*, ale rysunek dowodzi tego równie dobrze.) Zastosuj regułę dwa razy, a dostaniesz drugie nachylenie:"
+        },
+        {
+          "t": "math",
+          "tex": "\\mathcal{L}\\{f''\\} = s^2 F(s) - s\\,f(0) - f'(0)"
+        },
+        {
+          "t": "note",
+          "text": "Składniki z $f(0)$ pamiętają, gdzie sygnał **się zaczął**. Miej je na oku. Ktoś wkrótce o nich zapomni."
+        }
+      ]
+    },
+    {
+      "id": "table",
+      "title": "Nasza własna tabelka",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Podręczniki drukują „tablicę transformat Laplace'a”, jakby spadła z nieba. My na swoją zapracujemy, wiersz po wierszu. Każdy wiersz to po prostu maszyna sonda-i-pole zastosowana do jednego sygnału, ze sprawdzeniem, czy wzór zgadza się z faktycznym polem."
+        },
+        {
+          "t": "widget",
+          "id": "table"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Wiersz z sinusem to mój ulubiony. Sinus to po prostu dwa bliźniacze bączki, a transformata każdego bączka to wiersz wykładniczy z $a = \\pm i\\omega$."
+        },
+        {
+          "t": "p",
+          "text": "A ostatni wiersz nie wymagał żadnej nowej pracy: mnożenie przez $e^{-\\sigma t}$ po prostu **przesuwa** $s$ do $s+\\sigma$. Cztery wiersze, wszystkie wyprowadzone, wszystkie sprawdzone. Teraz ich użyjmy."
+        }
+      ]
+    },
+    {
+      "id": "solve",
+      "title": "Rozwiązujemy drona algebrą",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Oto dron z rozdziału 2 z regulatorem P, tyle że teraz startuje z **półki na wysokości 1 m**, a nie z ziemi. Grawitacja i wartość zadana to skoki, które włączają się w $t = 0$:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\,\\out{h}'' + c\\,\\out{h}' = \\eff{K_p}\\,(\\sp{2} - \\out{h}) - \\dis{m g}"
+        },
+        {
+          "t": "p",
+          "text": "**Krok 1:** przetransformuj każdy składnik. Skok o wielkości $r$ staje się $r/s$, a nachylenia stają się mnożeniem przez $s$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} & m\\big(s^2\\out{H} - s\\,h(0) - h'(0)\\big) \\\\ &\\quad + c\\big(s\\,\\out{H} - h(0)\\big) \\\\ &= \\eff{K_p}\\Big(\\frac{\\sp{2}}{s} - \\out{H}\\Big) - \\frac{\\dis{m g}}{s} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "**Krok 2:** teraz to algebra. Zbierz $\\out{H}$ po jednej stronie:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\out{H}(s) &= \\frac{N(s)}{s\\,\\big(m s^2 + c s + \\eff{K_p}\\big)} \\\\[6pt] N(s) &= m\\,h(0)\\,s^2 \\\\ &\\quad + \\big(m\\,h'(0) + c\\,h(0)\\big)\\,s \\\\ &\\quad + (\\eff{K_p}\\,\\sp{2} - \\dis{m g}) \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "**Krok 3:** rozbij to na kawałki, które występują w naszej tabelce (*ułamki proste*: odwracanie szkolnego „sprowadzania do wspólnego mianownika”):"
+        },
+        {
+          "t": "math",
+          "tex": "\\out{H}(s) = \\frac{A}{s} + \\frac{B s + C}{m s^2 + c s + \\eff{K_p}}"
+        },
+        {
+          "t": "p",
+          "text": "**Krok 4:** znajdź każdy kawałek w tabelce, którą właśnie wyprowadziliśmy: $A/s$ to skok, a drugi kawałek to gasnący cosinus plus gasnący sinus. Odczytaj $h(t)$."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Sprawdźmy to z symulacją!"
+        },
+        {
+          "t": "widget",
+          "id": "solve"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Ojej. Wzór zaczyna od **zera**, a dron startuje z półki na 1 m. Algebra kłamie?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Z algebrą wszystko w porządku. To *my* skłamaliśmy. Kiedy wpisywaliśmy krok 1 do sprawdzarki, napisaliśmy $\\mathcal{L}\\{h'\\} = s\\,H$ i zgubiliśmy kawałki z $-h(0)$. A to dokładnie ta część, która pamięta półkę."
+        },
+        {
+          "t": "p",
+          "text": "Przełącz przełącznik, żeby przywrócić składniki z wysokością początkową. Przerywany wzór i niebieska symulacja leżą teraz dokładnie jedno na drugim: największa różnica to milionowe części metra, zwykłe zaokrąglenia numeryczne. Zmień $\\eff{K_p}$ albo wysokość półki, a nadal się zgadzają."
+        },
+        {
+          "t": "p",
+          "text": "Spójrz na kawałek $A$: to $\\sp{2} - \\dis{mg}/\\eff{K_p}$, zwis z rozdziału 2, który wyskakuje prosto z algebry. Bez żadnego zgadywania."
+        },
+        {
+          "t": "note",
+          "text": "Wciąż udajemy, że silniki nie mają limitu ciągu, więc liniowa matematyka jest dokładna. Prawdziwe ograniczenia przyjdą w rozdziale 8."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Co teraz wiemy",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Transformata Laplace'a to **sonda**: pomnóż przez $e^{-st}$ i zmierz całkowite pole. $F(s) = \\int_0^\\infty f(t)e^{-st}dt$.",
+            "**Wybucha dokładnie tam, gdzie mieszka sygnał**: $e^{at}$ daje $1/(s-a)$, co wybucha przy $s = a$. Dla zespolonych $s$ sonda odkręca wirujące sygnały. Wszystko to rysujemy na **płaszczyźnie s**.",
+            "Nachylenia stają się mnożeniem: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. Działa dla każdego sygnału, nawet dla bazgrołów.",
+            "Wyprowadziliśmy własną tabelkę: $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$ i przesuniętą wersję dla gasnących sinusów.",
+            "Transformuj, zrób algebrę, rozbij na kawałki z tabelki, odczytaj odpowiedź. Zgadza się z symulacją dokładnie, **pod warunkiem, że zachowasz wartości początkowe**."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch7-q1",
+              "q": "Ile wynosi transformata Laplace'a sygnału $3e^{-2t}$?",
+              "options": [
+                {
+                  "text": "$\\dfrac{3}{s+2}$",
+                  "correct": true,
+                  "why": "Wiersz wykładniczy z $a = -2$ daje $1/(s+2)$, a transformata 3 razy sygnału to 3 razy jego transformata (pola się skalują)."
+                },
+                {
+                  "text": "$\\dfrac{3}{s-2}$",
+                  "why": "To dla $e^{+2t}$. Wiersz to $1/(s-a)$ z $a = -2$, więc $s - (-2) = s+2$."
+                },
+                {
+                  "text": "$\\dfrac{1}{3(s+2)}$",
+                  "why": "Pomnożenie sygnału przez 3 mnoży pole przez 3, a nie je dzieli."
+                }
+              ]
+            },
+            {
+              "id": "ch7-q2",
+              "q": "$F(s) = \\dfrac{5}{s+4}$. Jaki to sygnał?",
+              "options": [
+                {
+                  "text": "$5e^{-4t}$: zaczyna od 5 i zanika",
+                  "sketch": "decaying-plain",
+                  "correct": true,
+                  "why": "Wybucha w $s = -4$, więc sygnał mieszka w $e^{-4t}$. 5 w liczniku to jego wielkość."
+                },
+                {
+                  "text": "$5e^{4t}$: rośnie",
+                  "sketch": "growing-plain",
+                  "why": "Rosnące $e^{4t}$ wybuchałoby w $s = +4$. Ta transformata wybucha w $s = -4$."
+                },
+                {
+                  "text": "Kołysanie",
+                  "sketch": "decaying-wiggle",
+                  "why": "Kołysanie wymaga pary zespolonych punktów wybuchu (jak $s^2+\\omega^2$ w mianowniku). Tutaj jest jeden rzeczywisty, w $-4$."
+                }
+              ]
+            },
+            {
+              "id": "ch7-q3",
+              "q": "Rozwiąż $x' + 2x = 0$ przy $x(0) = 1$ za pomocą transformaty.",
+              "options": [
+                {
+                  "text": "$X = \\frac{1}{s+2}$, więc $x = e^{-2t}$",
+                  "correct": true,
+                  "why": "$sX - 1 + 2X = 0 \\Rightarrow X(s+2) = 1 \\Rightarrow X = 1/(s+2)$, czyli wiersz wykładniczy z $a=-2$."
+                },
+                {
+                  "text": "$X = 0$, więc $x = 0$",
+                  "why": "To wychodzi, gdy zapomnisz o $-x(0)$, ten sam błąd co nasz z półką. To wartość początkowa sprawia, że wynik nie jest zerem."
+                },
+                {
+                  "text": "$X = \\frac{1}{s-2}$, więc $x = e^{2t}$",
+                  "why": "Pomyłka w znaku: $X(s+2) = 1$, więc wybuch jest w $s=-2$, a sygnał zanika."
+                }
+              ]
+            },
+            {
+              "id": "ch7-q4",
+              "q": "Dlaczego $\\dfrac{1}{s-a}$ wybucha w $s = a$?",
+              "options": [
+                {
+                  "text": "Sonda dokładnie znosi wzrost sygnału, więc iloczyn jest płaski na zawsze, a jego pole nieskończone",
+                  "correct": true,
+                  "why": "$e^{at}\\cdot e^{-at} = 1$ przez cały czas, a pole pod 1 od 0 do ∞ nigdy nie przestaje rosnąć."
+                },
+                {
+                  "text": "Dzielenie przez zero to tylko dziwactwo algebry",
+                  "why": "Algebra odzwierciedla coś prawdziwego: pole naprawdę rośnie bez ograniczeń, gdy $s \\to a$. Zobacz, jak to się dzieje, w widżecie z wybuchem."
+                },
+                {
+                  "text": "Bo sygnał jest tam równy zeru",
+                  "why": "Sygnał $e^{at}$ nigdy nie jest zerem. Kłopot w tym, że sonda w ogóle przestaje go zmniejszać."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "June: „Za każdym razem, gdy coś rozwiązywaliśmy, odpowiedź miała postać *(coś)* ÷ *(wielomian od s)*, a zachowanie drona brało się z miejsc, gdzie mianownik jest zerem. A co, jeśli ten ułamek **jest** dronem?”"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "probe": {
+      "title": "Sonda",
+      "signal": "Sygnał",
+      "sig": {
+        "step": "$\\text{skok } 1$",
+        "decay": "$e^{-t}$",
+        "grow": "$e^{0{,}5t}$",
+        "wiggle": "$\\sin 2t$"
+      },
+      "f": "sygnał f(t)",
+      "probe": "sonda e^(−st)",
+      "product": "f(t)·e^(−st)",
+      "plotAria": "Sygnał, sonda i ich iloczyn w czasie, z zacieniowanym polem pod iloczynem.",
+      "fAria": "Zmierzone wartości całkowitego pola F w zależności od s, jedna kropka na każde wypróbowane s.",
+      "formula": "wzór",
+      "traced": "twoje pomiary",
+      "area": "pole do tej pory",
+      "total": "całkowite pole F(s)",
+      "s": "Tempo sondy $s$",
+      "sweep": "Zbierz pole jeszcze raz",
+      "showFormula": "Odsłoń krzywą ze wzoru",
+      "help": "Przesuń s i puść: pole zostaje zmierzone, a na prawym wykresie pojawia się kropka. Po 5 kropkach możesz odsłonić wzór.",
+      "finite": "Przy s = {s} całkowite pole wynosi {F}.",
+      "infinite": "Tutaj sonda nie maleje szybciej niż sygnał. Pole nigdy się nie ustala: jest nieskończone.",
+      "describe": "Tempo sondy s = {s}; całkowite pole {A}."
+    },
+    "explode": {
+      "title": "Gdzie to wybucha?",
+      "product": "e^(at)·e^(−st)",
+      "prodAria": "Iloczyn e do potęgi a t i sondy, z zacieniowanym polem.",
+      "fAria": "Transformata 1 przez s minus a, z pionową linią tam, gdzie wybucha.",
+      "noArea": "nieskończone pole",
+      "lives": "sygnał mieszka w s = {a}",
+      "a": "Tempo sygnału $a$ w $e^{at}$",
+      "s": "Sonda $s$",
+      "never": "s jest równe a lub mniejsze: iloczyn nigdy nie maleje, więc pole jest nieskończone.",
+      "close": "Coraz bliżej a: pole eksploduje!",
+      "calm": "Daleko od a: ładne, skończone pole."
+    },
+    "unspin": {
+      "title": "Sonda, która odkręca",
+      "re": "część rzeczywista",
+      "im": "część urojona",
+      "path": "bieżąca suma pola",
+      "plotAria": "Bieżąca suma zespolonego pola narysowana jako ścieżka na płaszczyźnie, zmierzająca do wartości końcowej.",
+      "limit": "suma końcowa",
+      "mag": "wielkość sumy |F|",
+      "spin": "pozostałe wirowanie",
+      "sigma": "Malenie sondy $\\sigma$",
+      "omega": "Wirowanie sondy $\\omega$ (sygnał wiruje z prędkością 2)",
+      "again": "Odtwórz ponownie",
+      "matched": "Wirowania dopasowane! Każdy kawałek wskazuje w tę samą stronę. Suma wynosi {m} i dąży do nieskończoności, gdy σ → 0.",
+      "spinning": "Kawałki zawijają się w kółko i w większości się znoszą. Suma zostaje mała."
+    },
+    "derivRule": {
+      "title": "Czy reguła przetrwa bazgroły?",
+      "f": "twój sygnał f(t)",
+      "df": "jego nachylenie f′(t)",
+      "plotAria": "Narysowany sygnał i jego nachylenie w ciągu 8 sekund.",
+      "sAria": "Obie strony reguły dla pochodnej w zależności od s.",
+      "lhs": "pole pod f′·e^(−st)",
+      "rhs": "s·F(s) − f(0)",
+      "lhsShort": "transformata nachylenia",
+      "rhsShort": "s F(s) − f(0)",
+      "s": "Sonda $s$",
+      "draw": "Narysuj własny sygnał",
+      "preset": "Wypróbuj inny gotowy",
+      "help": "Wybierz sygnał albo naciśnij „Narysuj własny sygnał” i przeciągnij po lewym wykresie od lewej do prawej. Po 8 s sygnał zostaje płaski.",
+      "drawing": "Przeciągnij po lewym wykresie od lewej do prawej…",
+      "tooShort": "Narysuj trochę dalej (co najmniej 3 sekundy).",
+      "drawn": "Mamy to! Obie strony zostały przeliczone z twojego rysunku. Przeciągnij jeszcze raz, żeby go zastąpić.",
+      "match": "Przy s = {s} obie strony się zgadzają. Reguła działa dla twojego sygnału.",
+      "nomatch": "Tu trochę się różnią. To zaokrąglenia numeryczne przy bardzo ostrym rysunku.",
+      "describe": "Transformata nachylenia {l}, s F minus f od zera {r}.",
+      "stopDraw": "Przestań rysować",
+      "presetLabel": "Albo wybierz sygnał",
+      "presets": {
+        "0": "chybotanie",
+        "1": "skok",
+        "2": "zanik"
+      },
+      "rhsBrace": "co przewiduje reguła"
+    },
+    "table": {
+      "title": "Tabelka, wyprowadzona",
+      "caption": "Tabelka transformat Laplace'a wyprowadzona w tym rozdziale",
+      "colSignal": "sygnał f(t)",
+      "colF": "transformata F(s)",
+      "derive": "Wyprowadź",
+      "show": "Pokaż",
+      "unknown": "jeszcze niewyprowadzone",
+      "f": "sygnał",
+      "product": "sygnał × sonda",
+      "plotAria": "Wybrany sygnał z tabelki i jego iloczyn z sondą, z zacieniowanym polem.",
+      "numeric": "zmierzone pole",
+      "formulaVal": "wzór",
+      "s": "Sonda $s$",
+      "how": "Jak do tego doszliśmy",
+      "agree": "Zmierzone pole zgadza się ze wzorem.",
+      "twinCheck": "Jego bliźniak (cosinus) też się zgadza: zmierzone {n}, wzór {f}.",
+      "describe": "Zmierzone pole {n}, wzór {f}.",
+      "rows": {
+        "0": {
+          "f": "1\\ \\ (\\text{skok})",
+          "F": "\\dfrac{1}{s}",
+          "steps": "\\text{krzywa, której nachyleniem jest } e^{-st}\\text{, to } -\\tfrac{1}{s}e^{-st}||\\begin{aligned} \\int_0^\\infty e^{-st}\\,dt &=\\Big[-\\tfrac{1}{s}e^{-st}\\Big]_0^\\infty \\\\ &= 0-\\big(-\\tfrac{1}{s}\\big)=\\frac{1}{s}\\quad (s>0) \\end{aligned}"
+        },
+        "1": {
+          "f": "e^{at}",
+          "F": "\\dfrac{1}{s-a}",
+          "steps": "e^{at}\\,e^{-st}=e^{-(s-a)t}||\\text{to wiersz skoku z } s \\text{ zastąpionym przez } s-a||\\begin{gathered} \\int_0^\\infty e^{-(s-a)t}\\,dt=\\frac{1}{s-a} \\\\ (s>a;\\ \\text{tutaj } a=-1) \\end{gathered}"
+        },
+        "2": {
+          "f": "\\sin\\omega t,\\ \\cos\\omega t",
+          "F": "\\dfrac{\\omega}{s^2+\\omega^2},\\ \\dfrac{s}{s^2+\\omega^2}",
+          "steps": "\\begin{gathered} \\sin\\omega t=\\frac{e^{i\\omega t}-e^{-i\\omega t}}{2i} \\\\ \\text{(bliźniacze bączki)} \\end{gathered}||\\begin{gathered} \\mathcal{L}\\{e^{\\pm i\\omega t}\\}=\\frac{1}{s\\mp i\\omega} \\\\ \\text{(wiersz wykładniczy, } a=\\pm i\\omega) \\end{gathered}||\\begin{aligned} &\\frac{1}{2i}\\Big(\\frac{1}{s-i\\omega}-\\frac{1}{s+i\\omega}\\Big) \\\\ &=\\frac{1}{2i}\\cdot\\frac{2i\\omega}{s^2+\\omega^2}=\\frac{\\omega}{s^2+\\omega^2} \\end{aligned}||\\begin{gathered} \\cos\\omega t=\\frac{e^{i\\omega t}+e^{-i\\omega t}}{2}\\ \\Rightarrow\\ \\frac{s}{s^2+\\omega^2} \\\\ (\\text{tutaj }\\omega=2) \\end{gathered}"
+        },
+        "3": {
+          "f": "e^{-\\sigma t}\\sin\\omega t,\\ e^{-\\sigma t}\\cos\\omega t",
+          "F": "\\dfrac{\\omega}{(s+\\sigma)^2+\\omega^2},\\ \\dfrac{s+\\sigma}{(s+\\sigma)^2+\\omega^2}",
+          "steps": "e^{-\\sigma t}\\sin\\omega t\\cdot e^{-st}=\\sin\\omega t\\cdot e^{-(s+\\sigma)t}||\\text{więc weź wiersz sinusa i zastąp } s \\text{ przez } s+\\sigma||\\begin{gathered} \\frac{\\omega}{(s+\\sigma)^2+\\omega^2}\\quad\\text{oraz}\\quad\\frac{s+\\sigma}{(s+\\sigma)^2+\\omega^2} \\\\ (\\text{tutaj }\\sigma=0{,}5,\\ \\omega=2) \\end{gathered}"
+        }
+      },
+      "colCheck": "Sprawdzone ze zmierzonym polem"
+    },
+    "solve": {
+      "title": "Wzór kontra symulacja",
+      "sim": "symulacja RK4",
+      "formula": "nasz wzór z Laplace'a",
+      "target": "cel",
+      "plotAria": "Wysokość drona w czasie z symulacji i ze wzoru Laplace'a.",
+      "gap": "największa różnica",
+      "atZero": "w t = 0: symulacja / wzór",
+      "kp": "Wzmocnienie $K_p$",
+      "h0": "Wysokość początkowa (półka) $h(0)$",
+      "toggle": "Uwzględnij składniki z wysokością początkową $-h(0)$",
+      "mismatch": "Nie zgadzają się! Symulacja startuje z półki na {h} m, a wzór od 0.",
+      "odd": "Wciąż jest różnica. Sprawdź liczby.",
+      "match": "Idealna zgodność: wzór i symulacja zgadzają się z dokładnością do milionowej części metra."
+    }
+  }
+}

@@ -1,0 +1,390 @@
+{
+  "kicker": "Rozdział 8",
+  "title": "Transmitancje, bieguny i zera",
+  "question": "Czy da się odczytać cały charakter układu z jednego ułamka?",
+  "sections": [
+    {
+      "id": "recipe",
+      "title": "Przepis na układ",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Spójrzcie, co wyszło nam w rozdziale 7. Zapomnijmy na chwilę o wysokości początkowej (niech dron startuje, wisząc spokojnie na 1 m). Wtedy odpowiedź była zawsze tym samym ułamkiem *razy* to, o co go poprosiliśmy."
+        },
+        {
+          "t": "math",
+          "tex": "\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\sp{R}(s)"
+        },
+        {
+          "t": "p",
+          "text": "$\\sp{R}(s)$ to transformata **wejścia**: o ile każemy wartości zadanej odsunąć się od 1 m (transformata każdego wejścia pochodzi prosto z naszej tabelki z rozdziału 7). $G(s)$ jest stałe: zależy tylko od drona i regulatora. Więc nadajemy mu nazwę: **transmitancja**, stosunek wyjścia do wejścia w świecie s, gdy wszystko startuje ze spoczynku."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Czyli $G(s)$ to jakby **przepis** drona. Wrzuć dowolny składnik, a powie ci, co wyjdzie!"
+        },
+        {
+          "t": "p",
+          "text": "Wypróbuj trzy różne wejścia na tym samym dronie. Przepis nigdy się nie zmienia, zmienia się tylko $\\sp{R}(s)$."
+        },
+        {
+          "t": "widget",
+          "id": "recipe"
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Transmitancja $G(s)$",
+              "def": "Wyjście ÷ wejście, oba przetransformowane, przy układzie startującym ze spoczynku. To ułamek dwóch wielomianów od $s$ i zawiera wszystko o tym, jak układ reaguje."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "poles",
+      "title": "Bieguny: tam, gdzie układ chce mieszkać",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Gdzie $G(s)$ **wybucha**? Tam, gdzie jego mianownik jest zerem. Rozdział 7 powiedział nam, że transformata wybucha dokładnie w tym $s$, w którym mieszka sygnał. Więc miejsca zerowe mianownika to składniki $e^{st}$, z których zbudowany jest układ. To dokładnie te same dwie kropki, które znaleźliśmy w rozdziale 6. Dostają specjalną nazwę: **bieguny**, rysowane jako ×."
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} & m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p} = 0 \\\\ \\Longrightarrow\\quad & s = p,\\ \\bar p \\qquad \\text{(bieguny)} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Teraz odwróćmy sytuację. Zamiast wybierać wzmocnienia i szukać biegunów, **przeciągajmy bieguny** i zobaczmy, jakiego drona dostaniemy. (Za kulisami wyliczamy regulator, który je tam ustawia. Potrzebuje nowego pokrętła $\\eff{K_d}$, pchnięcia przeciwnego do prędkości, które porządnie poznamy w rozdziale 9.)"
+        },
+        {
+          "t": "predict",
+          "id": "ch8-rhp",
+          "gate": true,
+          "q": "Co zrobi dron, jeśli przeciągniemy bieguny do **prawej połowy** płaszczyzny s?",
+          "options": [
+            {
+              "text": "Łagodnie wyląduje",
+              "sketch": "sluggish",
+              "why": "Lądowanie wymaga, żeby wszystko się uspokoiło, a bieguny w prawej połowie robią coś przeciwnego."
+            },
+            {
+              "text": "Będzie wisiał, trochę się chybocząc",
+              "sketch": "steady-wiggle",
+              "why": "Równomierne chybotanie dostajesz dokładnie **na** osi pionowej. Tuż za nią wszystko rośnie."
+            },
+            {
+              "text": "Będzie się wahał coraz mocniej, aż się rozbije albo odleci",
+              "sketch": "growing-wiggle",
+              "correct": true,
+              "why": "W prawej połowie $e^{st}$ ma $\\sigma > 0$: rosnącą spiralę. Wahania są większe z każdym cyklem."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "playground"
+        },
+        {
+          "t": "p",
+          "text": "Pobaw się. Rzuca się w oczy kilka reguł, a wszystkie to przebrane rozdziały 5 i 6:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Lewa połowa = uspokaja się, prawa połowa = wybucha.** Część rzeczywista $\\sigma$ to tempo malenia albo wzrostu.",
+            "**Bardziej w lewo = szybciej.** Ustalanie się trwa około $4/|\\sigma|$ sekund (przerywane pionowe linie).",
+            "**Wyżej = bardziej rozkołysany.** Wysokość $\\omega$ to prędkość kołysania; jedno wahnięcie trwa $2\\pi/\\omega$ sekund.",
+            "**Kąt ustala przeregulowanie.** Bieguny blisko osi rzeczywistej ledwo przestrzeliwują, bieguny blisko osi pionowej przestrzeliwują mocno (przerywane promienie)."
+          ]
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Chciałam tylko **jeden** biegun wysoko i jeden nisko. Nie pozwala mi! Dolny ciągle kopiuje górny."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Pamiętasz bliźniacze bączki z rozdziału 5? Prawdziwy dron ma prawdziwy ruch, więc każde wirujące $e^{st}$ potrzebuje lustrzanego bliźniaka, żeby znieść części urojone. Bieguny zespolone **zawsze** występują w lustrzanych parach."
+        },
+        {
+          "t": "note",
+          "text": "Nasz dron zaczynał w $-1 \\pm 6{,}24i$: to dron z $K_p = 20$ z rozdziału 2. Wysoko (bardzo rozkołysany) i blisko osi (wolno się ustala). Teraz *widać*, dlaczego podskakiwał."
+        }
+      ]
+    },
+    {
+      "id": "zeros",
+      "title": "Zera: szybkie spojrzenie",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Licznik ułamka też może być zerem. Te miejsca nazywają się **zerami** i rysuje się je jako ○. Nie zmieniają tego, *które* składniki $e^{st}$ się pojawiają (to zadanie biegunów), ale zmieniają to, **ile** każdego z nich dostajesz."
+        },
+        {
+          "t": "p",
+          "text": "Oto układ ze stałymi biegunami w $-2 \\pm 3i$ i jednym zerem, które możesz przesuwać. (Dokładnie taki kształt daje regulator, który reaguje na to, jak szybko zmienia się *uchyb*, czyli zapowiedź rozdziału 9.)"
+        },
+        {
+          "t": "widget",
+          "id": "zero"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Te same bieguny, ale gdy zero zbliża się do początku układu, odpowiedź wyskakuje w górę dużo szybciej i bardziej przestrzeliwuje!"
+        },
+        {
+          "t": "p",
+          "text": "Zero blisko początku układu sprawia, że układ mocno reaguje na **zmiany** wejścia. Przeregulowanie rośnie, choć bieguny się nie ruszyły. Daleko zero prawie nie ma znaczenia. Na razie to wszystko, czego potrzebujemy o zerach."
+        }
+      ]
+    },
+    {
+      "id": "limits",
+      "title": "Czy bardziej w lewo to zawsze lepiej?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Proste: przeciągnijmy bieguny *daleko* w lewo. Ustala się w mgnieniu oka. Najlepszy dron świata!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Tylko jakiego ciągu to wymaga? Do tej pory udawaliśmy, że silniki mogą pchać tak mocno, jak chce matematyka."
+        },
+        {
+          "t": "p",
+          "text": "Czas na szczerość. Nasze silniki mogą pchać od **0 N** do **20 N** (mniej więcej czterokrotność ciężaru drona). Poniżej bieguny przesuwają się w lewo wzdłuż linii 45°. Przerywane krzywe to matematyka z wyimaginowanymi, nieograniczonymi silnikami; ciągłe to prawdziwe silniki."
+        },
+        {
+          "t": "widget",
+          "id": "limit"
+        },
+        {
+          "t": "p",
+          "text": "Od pewnego momentu matematyka żąda 50, 60, 70 niutonów, których silniki po prostu nie mają. {eff|Pomarańczowy ciąg} spłaszcza się na ograniczeniach, prawdziwy dron przestaje podążać za ładną liniową prognozą i przestrzeliwuje *bardziej*, niż przestrzeliwałby z łagodniejszymi biegunami."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Czyli „bardziej w lewo” jest lepsze tylko do momentu, gdy skończy się silnik. Rozmieszczanie biegunów to kompromis, a nie wyścig."
+        },
+        {
+          "t": "note",
+          "text": "Od teraz ograniczenie 20 N zostaje włączone."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Co teraz wiemy",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "**Transmitancja** $G(s)$ = wyjście ÷ wejście w świecie s. To przepis na układ: $\\out{H} = G\\cdot\\sp{R}$.",
+            "**Bieguny** (×) to miejsca, gdzie $G(s)$ wybucha: składniki $e^{st}$, z których zbudowany jest układ.",
+            "Lewa połowa = stabilny, prawa połowa = wybucha, bardziej w lewo = szybciej (≈ 4/|σ| s), wyżej = bardziej rozkołysany, kąt = przeregulowanie.",
+            "Bieguny zespolone zawsze występują w lustrzanych parach.",
+            "**Zera** (○) zmieniają to, ile każdego składnika dostajesz. Blisko początku układu dodają szarpnięcie.",
+            "Bieguny daleko po lewej wymagają ciągu, którego silniki nie mają."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch8-q1",
+              "q": "Która para biegunów ustala się **najszybciej**?",
+              "options": [
+                {
+                  "text": "$-1 \\pm 2i$",
+                  "why": "Ustalanie ≈ $4/1 = 4$ s. Wysokość (2) wpływa tylko na kołysanie, a nie na ustalanie się."
+                },
+                {
+                  "text": "$-4 \\pm 2i$",
+                  "correct": true,
+                  "why": "Najbardziej w lewo: ustalanie ≈ $4/4 = 1$ s."
+                },
+                {
+                  "text": "$-0{,}5 \\pm 5i$",
+                  "why": "Wysoko oznacza mnóstwo szybkich wahnięć, ale para jest blisko osi, więc wygasają powoli (≈ 8 s)."
+                }
+              ]
+            },
+            {
+              "id": "ch8-q2",
+              "q": "$G(s) = \\dfrac{3}{s^2 + 2s + 10}$. Gdzie są bieguny i jak wygląda odpowiedź?",
+              "options": [
+                {
+                  "text": "$-1 \\pm 3i$: stabilna i się kołysze",
+                  "correct": true,
+                  "why": "$s = \\frac{-2 \\pm \\sqrt{4 - 40}}{2} = -1 \\pm 3i$. Lewa połowa oznacza stabilność, część urojona oznacza kołysanie."
+                },
+                {
+                  "text": "$+1 \\pm 3i$: niestabilna",
+                  "why": "Pomyłka w znaku. Dla $s^2 + bs + c$ część rzeczywista to $-b/2 = -1$, czyli lewa połowa."
+                },
+                {
+                  "text": "$-2$ i $-10$: bez kołysania",
+                  "why": "To tylko współczynniki wielomianu. Bieguny to jego pierwiastki: $-1 \\pm 3i$."
+                }
+              ]
+            },
+            {
+              "id": "ch8-q3",
+              "q": "Chcesz **mniejszego przeregulowania** przy **tym samym czasie ustalania**. Jak przesuwasz bieguny?",
+              "options": [
+                {
+                  "text": "Prosto w stronę osi rzeczywistej (σ bez zmian, mniejsze ω)",
+                  "correct": true,
+                  "why": "Ta sama odległość od osi to ten sam czas ustalania. Mniejszy kąt względem osi rzeczywistej to więcej tłumienia, więc mniejsze przeregulowanie."
+                },
+                {
+                  "text": "Prosto w górę (większe ω)",
+                  "why": "To obraca kąt w stronę osi pionowej: *większe* przeregulowanie i szybsze kołysanie."
+                },
+                {
+                  "text": "W prawo",
+                  "why": "Wtedy układ ustala się wolniej, a za osią staje się niestabilny."
+                }
+              ]
+            },
+            {
+              "id": "ch8-q4",
+              "q": "Bieguny w $+0{,}5 \\pm 2i$. Co widzisz?",
+              "options": [
+                {
+                  "text": "Wahania rosnące z każdym cyklem",
+                  "sketch": "growing-wiggle",
+                  "correct": true,
+                  "why": "$\\sigma = +0{,}5 > 0$ oznacza wzrost, $\\omega = 2$ oznacza wirowanie: rosnące kołysanie."
+                },
+                {
+                  "text": "Wahania, które maleją",
+                  "sketch": "decaying-wiggle",
+                  "why": "Malenie wymaga $\\sigma < 0$ (lewa połowa). Te bieguny są po prawej."
+                },
+                {
+                  "text": "Równomierne wahania w nieskończoność",
+                  "sketch": "steady-wiggle",
+                  "why": "To dokładnie na osi ($\\sigma = 0$). Przy $+0{,}5$ rośnie."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Theo: „Bieguny są piękne. Ale chwila: przez cały rozdział oszukiwaliśmy, dając dronowi ciąg zawisu w prezencie. Bez niego grawitacja wciąż powoduje **zwis**. Z naszą mapą wszystko w porządku. To nasz *regulator* wymaga naprawy.”"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "recipe": {
+      "title": "Jeden przepis, trzy wejścia",
+      "choose": "O co prosimy?",
+      "in": {
+        "step": "skok w górę",
+        "pulse": "łagodny skok",
+        "wave": "fala"
+      },
+      "input": "wartość zadana (wejście)",
+      "output": "wysokość (wyjście)",
+      "plotAria": "Wartość zadana i wysokość drona w czasie dla wybranego wejścia.",
+      "same": "bez zmian",
+      "changes": "zmienia się",
+      "describe": {
+        "step": "Wartość zadana skacze z 1 na 2 metry, a dron podąża za nią ze skocznym przeregulowaniem.",
+        "pulse": "Wartość zadana płynnie przechodzi z 1 na 2 metry; dron podąża za nią z mniejszym podskokiem.",
+        "wave": "Wartość zadana faluje w górę i w dół; dron podąża za falą."
+      },
+      "droneCap": "dron, który za tym podąża"
+    },
+    "playground": {
+      "title": "Plac zabaw z biegunami",
+      "planeAria": "Płaszczyzna s z parą biegunów do przeciągania. Lewa połowa się uspokaja, prawa wybucha. Użyj strzałek, żeby przesunąć wybrany biegun.",
+      "pole": "p",
+      "poles": "bieguny",
+      "settle": "ustala się (≈4/σ)",
+      "overshoot": "przeregulowanie",
+      "response": "wysokość po skoku o 1 m",
+      "target": "cel",
+      "plotAria": "Odpowiedź skokowa drona dla wybranych biegunów; poprzednia odpowiedź widoczna jako duch.",
+      "settles": "ustala się",
+      "over": "przeregulowanie",
+      "raysLegend": "przerywane promienie: przeregulowanie w %",
+      "never": "nigdy",
+      "wiggle": "jedno wahnięcie ≈ {T} s",
+      "verdict": {
+        "stable": "Lewa połowa: uspokaja się.",
+        "unstable": "Prawa połowa: wybucha!",
+        "marginal": "Dokładnie na osi: waha się w nieskończoność."
+      },
+      "challenge": "Minizadanie: przeregulowanie poniżej 10% i ustalenie w ciągu 2 s",
+      "chalOk": "Zadanie wykonane! Przeregulowanie {o}%, ustalenie po {s} s.",
+      "chalNo": "Jeszcze nie: przeregulowanie {o}%, ustala się po {s} s. Celuj w podświetloną strefę.",
+      "help": "Przeciągnij dowolny × (albo przejdź do niego Tabem i użyj strzałek, z Shiftem większe kroki). Dron za każdym razem odtwarza swoją odpowiedź skokową.",
+      "describe": "Bieguny w {p}. Współczynnik tłumienia {z}. Ustala się po około {s} sekundach, przeregulowanie około {o} procent.",
+      "re": "σ",
+      "im": "ω"
+    },
+    "zero": {
+      "title": "Przesuń zero",
+      "planeAria": "Płaszczyzna s z dwoma stałymi biegunami w minus 2 plus minus 3 i oraz zerem do przeciągania na osi rzeczywistej.",
+      "zero": "zero",
+      "y": "wyjście",
+      "noZero": "bez zera (te same bieguny)",
+      "withZero": "z zerem",
+      "plotAria": "Odpowiedzi skokowe z zerem i bez niego.",
+      "osNo": "przeregulowanie bez zera",
+      "osYes": "przeregulowanie z zerem",
+      "zeroAt": "zero w",
+      "near": "Blisko początku układu: duże wczesne szarpnięcie i dodatkowe przeregulowanie.",
+      "mid": "Umiarkowane dodatkowe szarpnięcie.",
+      "far": "Daleko: zero prawie niczego nie zmienia.",
+      "describe": "Zero w {z}, przeregulowanie {o} procent.",
+      "re": "σ",
+      "im": "ω",
+      "help": "Przeciągaj ○ wzdłuż osi (albo przejdź do niego Tabem i użyj ← →). Bieguny × zostają na miejscu."
+    },
+    "limit": {
+      "title": "Prawdziwe silniki mają ograniczenia",
+      "ideal": "nieograniczone silniki (matematyka)",
+      "real": "prawdziwy dron",
+      "idealT": "ciąg, którego chce matematyka",
+      "realT": "ciąg, który dostajemy",
+      "hAria": "Wysokość po skoku dla nieograniczonych i dla prawdziwych silników.",
+      "tAria": "Ciąg w czasie, z ograniczeniami silników 0 i 20 niutonów.",
+      "max": "maks. silników 20 N",
+      "min": "silniki nie ciągną w dół",
+      "peak": "szczytowy ciąg, którego chce matematyka",
+      "tsIdeal": "ustala się (matematyka)",
+      "tsReal": "ustala się (naprawdę)",
+      "notYet": "nie w ciągu 3 s",
+      "sigma": "Położenie biegunów (w lewo wzdłuż 45°)",
+      "toggle": "Prawdziwe silniki: 0–20 N",
+      "capped": "Matematyka chce {p} N, ale silniki kończą się na 20 N. Rzeczywistość przestaje podążać za liniowym obrazkiem.",
+      "fantasy": "Wyimaginowane silniki chętnie dają {p} N. Włącz ograniczenia z powrotem.",
+      "fine": "W zakresie silników: matematyka i rzeczywistość się zgadzają."
+    }
+  }
+}

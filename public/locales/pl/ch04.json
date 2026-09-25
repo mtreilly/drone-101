@@ -1,0 +1,367 @@
+{
+  "kicker": "Rozdział 4",
+  "title": "Dlaczego wykładnicze są magiczne",
+  "question": "Czy istnieje krzywa, której nachylenie jest jej własną kopią?",
+  "sections": [
+    {
+      "id": "copy",
+      "title": "Krzywa, która kopiuje samą siebie",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Ostatnio różnica między kawą a temperaturą pokoju malała w tempie **proporcjonalnym do samej różnicy**. Duża różnica: szybkie malenie. Mała różnica: powolne. Jaka krzywa tak się zachowuje?"
+        },
+        {
+          "t": "p",
+          "text": "Poszukajmy krzywej, której nachylenie w każdym punkcie jest stałą wielokrotnością jej wysokości. Dobrzy kandydaci to krzywe „podwajające”: $2^t$, $3^t$ i koledzy. Każda z nich co sekundę mnoży się przez ten sam czynnik."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Widziałam $e^t$ w podręcznikach. Czy $e$ to nie jest po prostu jakaś przypadkowa liczba, którą lubią matematycy? 2,718 z hakiem, nieważne."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Zamiast się kłócić, zmierzmy. Przyłóżmy styczną do każdej krzywej i podzielmy jej nachylenie przez wysokość."
+        },
+        {
+          "t": "widget",
+          "id": "bases"
+        },
+        {
+          "t": "p",
+          "text": "Przeciągnij kursor wzdłuż dowolnej krzywej, a odczyt **nachylenie ÷ wysokość** ani drgnie. Każda wykładnicza kopiuje samą siebie, przeskalowaną o stałą liczbę. Dla podstawy 2 ta liczba to około 0,693, dla podstawy 3 około 1,099."
+        },
+        {
+          "t": "p",
+          "text": "A dla dokładnie jednej podstawy liczba skalująca wynosi **1**, więc krzywa nachylenia leży dokładnie na samej krzywej. Ta podstawa to $e \\approx 2{,}718$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\,e^{t} = e^{t}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Czyli $e$ wcale nie jest przypadkowa. To **ta** liczba, której krzywa jest własnym nachyleniem. Dobra, odszczekuję."
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Liczba skalująca dla podstawy b nazywa się ln b, „logarytm naturalny”. Więcej go nie będziemy potrzebować. Będziemy używać po prostu e."
+        }
+      ]
+    },
+    {
+      "id": "stretch",
+      "title": "Przyspieszamy: e^(at)",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Prawdziwe układy nie zmieniają się wszystkie w tym samym tempie, więc wstawmy pokrętło do wykładnika: $e^{at}$. Liczba **a** rozciąga albo ściska czas."
+        },
+        {
+          "t": "widget",
+          "id": "expA"
+        },
+        {
+          "t": "p",
+          "text": "Teraz nachylenie ÷ wysokość wynosi dokładnie **a**, wszędzie na krzywej. Dodatnie a: rośnie (i to coraz szybciej). Ujemne a: maleje do zera, jak różnica temperatur kawy. a = 0: po prostu stoi w miejscu."
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\,e^{at} = a\\,e^{at}"
+        },
+        {
+          "t": "predict",
+          "id": "ch4-double",
+          "gate": true,
+          "q": "Weź nachylenie $e^{2t}$, a potem nachylenie **tego nachylenia**. Co wychodzi?",
+          "options": [
+            {
+              "text": "Znowu $e^{2t}$",
+              "why": "Tak jest dla $e^{t}$ (a = 1). Tutaj a = 2 i każde nachylenie mnoży przez 2."
+            },
+            {
+              "text": "$4\\,e^{2t}$",
+              "correct": true,
+              "why": "Pierwsze nachylenie daje $2e^{2t}$. Nachylenie *tego* znowu mnoży przez 2: $4e^{2t}$. Branie nachylenia to po prostu mnożenie przez a, za każdym razem."
+            },
+            {
+              "text": "$2t\\,e^{2t}$",
+              "why": "Częsta wpadka algebraiczna. a schodzi w dół jako zwykły mnożnik, a t nigdy nie pojawia się z przodu."
+            }
+          ]
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}e^{at} = a\\,e^{at},\\qquad \\frac{d^2}{dt^2}e^{at} = a^2\\,e^{at}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Chwila, to jest wielka rzecz. Dla wykładniczych branie nachylenia (analiza matematyczna) zamienia się w **mnożenie przez a** (zwykła algebra)."
+        },
+        {
+          "t": "note",
+          "text": "Przyklej na tym karteczkę. W rozdziale 7 ten pomysł dorośnie do triku, który zamienia analizę w algebrę dla *każdego* sygnału."
+        }
+      ]
+    },
+    {
+      "id": "guess",
+      "title": "Zgadnij wykładniczą",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "To daje nam strategię rozwiązywania dowolnej „reguły na nachylenie”: **zgadnij**, że odpowiedź jest wykładnicza, wstaw ją i sprawdź, przy jakim a reguła jest spełniona."
+        },
+        {
+          "t": "p",
+          "text": "Reguła kawy brzmiała $\\frac{dT}{dt} = -\\frac{T - 20}{\\tau}$, przy τ = 10 min. Nasze zgadywanie to $T = 20 + 70\\,e^{at}$ (70 to początkowa różnica). Dostrajaj a, aż nachylenie zgadywanej krzywej zgodzi się z tym, czego żąda reguła."
+        },
+        {
+          "t": "widget",
+          "id": "guess"
+        },
+        {
+          "t": "p",
+          "text": "Algebra zgadza się z suwakiem. Nachylenie zgadywanej krzywej to $a \\cdot 70e^{at}$. Reguła chce $-70e^{at}/\\tau$. $70e^{at}$ pojawia się po obu stronach i się skraca:"
+        },
+        {
+          "t": "math",
+          "tex": "a \\cdot 70e^{at} = -\\frac{70e^{at}}{\\tau} \\quad\\Longrightarrow\\quad a = -\\frac{1}{\\tau}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "I trafia dokładnie w kropki, które zbudowaliśmy ręcznie w rozdziale 3. Zgadywanie wykładniczej działa. Równanie, które wyznacza a, nazywa się **równaniem charakterystycznym**."
+        }
+      ]
+    },
+    {
+      "id": "spring",
+      "title": "Sprężyna psuje nasz trik",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Wypróbujmy to na czymś, co **podskakuje**. Masa na sprężynie to w zasadzie nasz dron z regulatorem P: im dalej od celu, tym mocniej ciągnięta z powrotem."
+        },
+        {
+          "t": "p",
+          "text": "Sprężyna ciągnie z powrotem siłą $-kx$. Siła = masa × przyspieszenie, a przyspieszenie to nachylenie nachylenia. Więc reguła to:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\,\\frac{d^2x}{dt^2} = -k\\,x"
+        },
+        {
+          "t": "p",
+          "text": "Zgadnij $x = e^{at}$. Nachylenie nachylenia to $a^2 e^{at}$, więc $m a^2 e^{at} = -k e^{at}$. Skróć $e^{at}$:"
+        },
+        {
+          "t": "math",
+          "tex": "a^2 = -\\frac{k}{m}"
+        },
+        {
+          "t": "p",
+          "text": "Przy k/m = 4 potrzebujemy liczby, której kwadrat to **−4**. Poszukaj jej:"
+        },
+        {
+          "t": "widget",
+          "id": "square"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Kwadraty nigdy nie są ujemne. Niebieska parabola nigdy nie schodzi do zielonej linii. Więc takiego a **nie ma**. Nasz trik zawodzi: sprężyn po prostu nie da się opisać wykładniczymi."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Ale sprężyna jest tuż obok i wesoło podskakuje. *Ma* jakiś ruch. Może to nie sprężyna jest w błędzie, tylko nasze wyobrażenie o tym, co się liczy jako liczba?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "…Hmm. Przyznaję, że to „nie ma takiej liczby” powiedziałem trochę za szybko. Każda liczba, *o której wiem*, do kwadratu daje coś dodatniego."
+        },
+        {
+          "t": "note",
+          "text": "Miej to na oku. Czy Theo miał rację? (Spoiler: nie miał.)"
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Co już wiemy",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Nachylenie każdej wykładniczej jest jej kopią: nachylenie ÷ wysokość jest stałe.",
+            "$e \\approx 2{,}718$ to podstawa, dla której ten stosunek wynosi dokładnie 1. Dla $e^{at}$ stosunek wynosi a.",
+            "Branie nachylenia $e^{at}$ to po prostu **mnożenie przez a**. Analiza zamienia się w algebrę.",
+            "**Zgadnij wykładniczą**, wstaw ją do reguły i wylicz a. Dla kawy a = −1/τ.",
+            "Dla sprężyny zgadywanie wymaga $a^2 = -k/m$, a żadna zwykła liczba tego nie spełnia. Jeszcze."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch4-q1",
+              "q": "Która krzywa ma wszędzie nachylenie = −0,5 × wysokość?",
+              "options": [
+                {
+                  "text": "Gładki zanik",
+                  "sketch": "decaying-plain",
+                  "correct": true,
+                  "why": "To $e^{-0{,}5t}$: ujemny stosunek oznacza, że maleje, a malenie zwalnia, im jest mniejsza."
+                },
+                {
+                  "text": "Wybuchowy wzrost",
+                  "sketch": "growing-plain",
+                  "why": "Wzrost wymaga *dodatniego* stosunku nachylenie ÷ wysokość."
+                },
+                {
+                  "text": "Równomierne kołysanie",
+                  "sketch": "steady-wiggle",
+                  "why": "Nachylenie kołysania nie jest stałą wielokrotnością wysokości: na szczytach wysokość jest największa, a nachylenie wynosi zero."
+                }
+              ]
+            },
+            {
+              "id": "ch4-q2",
+              "q": "Jeśli $x = e^{-3t}$, ile wynosi $x'' + 3x'$?",
+              "options": [
+                {
+                  "text": "0",
+                  "correct": true,
+                  "why": "$x' = -3e^{-3t}$ oraz $x'' = 9e^{-3t}$. Więc $9e^{-3t} + 3(-3e^{-3t}) = 0$."
+                },
+                {
+                  "text": "$18e^{-3t}$",
+                  "why": "Sprawdź znak $x'$: nachylenia $e^{-3t}$ przychodzą z −3, więc $3x' = -9e^{-3t}$."
+                },
+                {
+                  "text": "$-3e^{-3t}$",
+                  "why": "To tylko $x'$. Trzeba jeszcze dodać składnik $x''$."
+                }
+              ]
+            },
+            {
+              "id": "ch4-q3",
+              "q": "Zbiornik opróżnia się zgodnie z $h' = -h/20$ (czas w sekundach). Ile wynoszą a i stała czasowa?",
+              "options": [
+                {
+                  "text": "a = −1/20 na sekundę, τ = 20 s",
+                  "correct": true,
+                  "why": "Zgadnij $h = Ce^{at}$: $a = -1/20$, a τ = −1/a = 20 s, czyli czas opróżnienia w 63%."
+                },
+                {
+                  "text": "a = −20 na sekundę, τ = 1/20 s",
+                  "why": "Do góry nogami: reguła dzieli przez 20, więc zbiornik opróżnia się powoli (τ = 20 s), a nie superszybko."
+                },
+                {
+                  "text": "a = +1/20 na sekundę, τ = 20 s",
+                  "why": "Dodatnie a sprawiłoby, że poziom wody by *rósł*. Minus w regule oznacza opróżnianie."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "note",
+          "text": "Uczciwa księgowość: „żadna liczba do kwadratu nie daje wartości ujemnej” Thea to błąd. Po prostu jeszcze go nie widzimy. W następnym rozdziale Theo pomyli się w najlepszy możliwy sposób."
+        },
+        {
+          "t": "cliff",
+          "text": "Dron i sprężyna się **kołyszą**. Wykładnicze tylko rosną albo maleją. Chyba że… jakaś liczba do kwadratu mogłaby dać wartość ujemną?"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "bases": {
+      "title": "Nachylenie ÷ wysokość dla różnych podstaw",
+      "base": "Podstawa b",
+      "xAxis": "t",
+      "yAxis": "wysokość bᵗ",
+      "curve": "bᵗ",
+      "slopeCurve": "jej nachylenie",
+      "cursor": "Styczna w t =",
+      "showSlope": "Nałóż krzywą nachylenia",
+      "readHeight": "wysokość",
+      "readSlope": "nachylenie",
+      "readRatio": "nachylenie ÷ wysokość",
+      "statusE": "Podstawa e: nachylenie ÷ wysokość wynosi dokładnie 1. Krzywa jest własnym nachyleniem!",
+      "statusOther": "Nachylenie ÷ wysokość wynosi {r} wszędzie na tej krzywej. Stałe, ale nie 1.",
+      "aria": "Wykres krzywej wykładniczej ze styczną w miejscu kursora i opcjonalnie jej krzywą nachylenia.",
+      "describe": "Podstawa {b}, w t = {t} nachylenie podzielone przez wysokość wynosi {r}.",
+      "help": "Wybierz podstawę, potem przeciągaj po wykresie (albo użyj suwaka), żeby przesuwać styczną wzdłuż krzywej."
+    },
+    "expA": {
+      "title": "Wstaw pokrętło do wykładnika",
+      "xAxis": "czas (s)",
+      "yAxis": "wartość",
+      "curve": "eᵃᵗ",
+      "slopeCurve": "jej nachylenie",
+      "a": "a",
+      "cursor": "Styczna w t =",
+      "readRatio": "nachylenie ÷ wysokość",
+      "grow": "a > 0: rośnie, coraz szybciej.",
+      "shrink": "a < 0: maleje do zera, jak różnica temperatur kawy.",
+      "flat": "a = 0: nigdy się nie zmienia. Nachylenie zero, na zawsze.",
+      "aria": "Wykres e do potęgi a t, jego krzywa nachylenia i styczna.",
+      "describe": "a = {a}. Nachylenie podzielone przez wysokość wynosi wszędzie {r}.",
+      "help": "Przeciągaj po wykresie, żeby przesuwać styczną. Blada przerywana krzywa to twoje poprzednie a."
+    },
+    "guess": {
+      "title": "Dostrój zgadywanie",
+      "xAxis": "czas (min)",
+      "yAxis": "temperatura kawy (°C)",
+      "rule": "reguła, zbudowana ręcznie (rozdział 3)",
+      "guess": "nasze zgadywanie 20 + 70·eᵃᵗ",
+      "room": "pokój 20 °C",
+      "a": "a",
+      "readGuess": "nachylenie zgadywania",
+      "readRule": "nachylenie z reguły",
+      "tooFast": "Zgadywana kawa stygnie za szybko: jej nachylenie jest bardziej strome, niż pozwala reguła. Przybliż a do zera.",
+      "tooSlow": "Zgadywana kawa stygnie za wolno. Zrób a bardziej ujemne.",
+      "match": "Idealne dopasowanie! a = −0,1 na minutę = −1/τ. Zgadywanie spełnia regułę wszędzie.",
+      "aria": "Temperatura kawy: ręcznie zbudowane rozwiązanie reguły stygnięcia i zgadywana krzywa wykładnicza, której tempo a ustawia suwak.",
+      "probe": "nachylenia porównane po 5 min"
+    },
+    "square": {
+      "title": "Szukamy a, dla którego a² = −4",
+      "xAxis": "a",
+      "yAxis": "a²",
+      "square": "a²",
+      "need": "potrzeba −k/m = −4",
+      "a": "Spróbuj a =",
+      "status": "a = {a} daje a² = {sq}. Wciąż o {gap} za dużo. Kwadraty nigdy nie są ujemne.",
+      "springCaption": "Tymczasem prawdziwa sprężyna (k/m = 4, bez tłumika) wesoło podskakuje:",
+      "springAria": "Masa na sprężynie podskakująca w górę i w dół.",
+      "aria": "Parabola a do kwadratu z poziomą linią na minus cztery, do której nigdy nie dochodzi.",
+      "playSpring": "Uruchom sprężynę",
+      "pauseSpring": "Zatrzymaj sprężynę"
+    }
+  }
+}

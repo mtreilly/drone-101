@@ -1,0 +1,430 @@
+{
+  "kicker": "Rozdział 5",
+  "title": "Wirujące liczby",
+  "question": "Jaka liczba do kwadratu daje −1 i dlaczego miałaby się kołysać?",
+  "sections": [
+    {
+      "id": "arrows",
+      "title": "Liczby to strzałki",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Ostatnio sprężyna potrzebowała liczby, dla której $a^2 = -4$. Theo powiedział, że taka nie istnieje. Ale jak by ona w ogóle *wyglądała*?"
+        },
+        {
+          "t": "p",
+          "text": "Wyobraź sobie każdą liczbę jako **strzałkę** od 0 wzdłuż osi liczbowej. Mnożenie przez 2 rozciąga strzałkę. Mnożenie przez ½ ją skraca. A mnożenie przez −1 odwraca ją w przeciwną stronę. To **pół obrotu**."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Ooo. Jeśli ×(−1) to pół obrotu… to co jest *połową* pół obrotu? **Ćwierć** obrotu! Strzałka wskazywałaby prosto w górę, poza oś liczbową."
+        },
+        {
+          "t": "p",
+          "text": "Nazwijmy ćwierć obrotu: **i**. Zrób to dwa razy, a wyjdzie pół obrotu, czyli ×(−1). Więc $i \\cdot i = -1$. Oto nasza liczba, której kwadrat jest ujemny!"
+        },
+        {
+          "t": "widget",
+          "id": "rotate"
+        },
+        {
+          "t": "math",
+          "tex": "i^2 = -1 \\qquad\\text{(dwa ćwierćobroty = pół obrotu)}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Zaraz. To są „liczby urojone”. Wszyscy wiedzą, że są zmyślone. Nie mogą opisywać prawdziwej, fizycznej sprężyny."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "One nie są urojone, one są **boczne**! To po prostu strzałka w 2D. Skręt w lewo jest tak samo prawdziwy jak marsz do przodu."
+        },
+        {
+          "t": "p",
+          "text": "Liczba taka jak $3 + 2i$ oznacza po prostu „3 kroki wzdłuż, 2 kroki w bok”. Cała płaszczyzna strzałek to scena dla wszystkiego, co będzie dalej."
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Nazwa „urojone” zaczęła się wieki temu jako obelga i tak już zostało. Nie daj się zwieść."
+        }
+      ]
+    },
+    {
+      "id": "spin",
+      "title": "Liczba, która wiruje",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Teraz wyobraź sobie punkt biegnący po okręgu ze stałą prędkością, ω radianów na sekundę. Gdzie wskazuje jego **prędkość**? Zawsze wzdłuż okręgu, czyli **ćwierć obrotu** przed strzałką do punktu."
+        },
+        {
+          "t": "p",
+          "text": "Ćwierć obrotu to ×i, a wartość prędkości to ω razy promień. Więc prędkość to położenie obrócone o ćwierć obrotu, razy ω: **prędkość = iω × położenie**."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Chwila. „Nachylenie to stała liczba razy ono samo” to dokładnie własność **wykładniczej** z rozdziału 4! Z a = iω."
+        },
+        {
+          "t": "p",
+          "text": "Czyli $e^{i\\omega t}$ wcale nie jest straszne. To punkt **wirujący** po okręgu o promieniu 1, ω radianów na sekundę. Obserwuj go i obserwuj jego **cień** na osi rzeczywistej:"
+        },
+        {
+          "t": "widget",
+          "id": "spinner"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\,e^{i\\omega t} = i\\omega\\,e^{i\\omega t}\\qquad \\text{cień na osi rzeczywistej} = \\cos(\\omega t)"
+        },
+        {
+          "t": "p",
+          "text": "Cień przesuwa się tam i z powrotem jako idealna **fala cosinusa**. Wirująca strzałka widziana z boku to kołysanie. Tu właśnie ukrywało się kołysanie."
+        },
+        {
+          "t": "note",
+          "text": "Rozpisany w całości bączek to $e^{i\\omega t} = \\cos\\omega t + i\\sin\\omega t$: część wzdłuż to cosinus, część boczna to sinus. Nazywa się to wzorem Eulera."
+        }
+      ]
+    },
+    {
+      "id": "twins",
+      "title": "Powrót do sprężyny (i nowy błąd)",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Sprężyna potrzebowała $a^2 = -k/m = -4$. Spróbuj $a = 2i$: $(2i)^2 = 4\\,i^2 = -4$. ✓ I $a = -2i$ też działa."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Dobra, myliłem się. Trik ze zgadywaniem wykładniczej przetrwał. Sprężyna to $e^{2it}$, bączek, który robi dwa obroty co… 2π sekund."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Czyli położenie sprężyny to $e^{2it}$? Teraz jest na… $0{,}4 + 0{,}9i$ metra?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Sprężyna nie może być 0,9 metra *w bok*. Porusza się tylko w górę i w dół."
+        },
+        {
+          "t": "p",
+          "text": "Mika zapomniała o drugiej odpowiedzi. Znaleźliśmy **dwa** rozwiązania, $e^{2it}$ i $e^{-2it}$: bączka i jego **lustrzanego bliźniaka**, który kręci się w drugą stronę. Dodaj je:"
+        },
+        {
+          "t": "widget",
+          "id": "twins"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Części boczne idealnie się znoszą! Suma po prostu przesuwa się wzdłuż osi rzeczywistej, tam i z powrotem."
+        },
+        {
+          "t": "math",
+          "tex": "x(t) = \\tfrac12\\left(e^{i\\omega t} + e^{-i\\omega t}\\right) = \\cos(\\omega t),\\qquad \\omega = \\sqrt{k/m}"
+        },
+        {
+          "t": "p",
+          "text": "Taka jest reguła dla wszystkiego, co rzeczywiste: bączki zawsze występują w **lustrzanych parach**, więc ich części boczne się znoszą i zostaje prawdziwe kołysanie, które możemy zmierzyć."
+        }
+      ]
+    },
+    {
+      "id": "map",
+      "title": "Mapa s",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Rozdział 4 dał nam wykładnicze, które **rosną albo maleją**. Teraz mamy bączki, które się **kołyszą**. Połączmy je: $e^{st}$, gdzie $s = \\sigma + i\\omega$."
+        },
+        {
+          "t": "math",
+          "tex": "e^{st} = e^{(\\sigma + i\\omega)t} = \\underbrace{e^{\\sigma t}}_{\\text{rośnie/maleje}}\\cdot\\underbrace{e^{i\\omega t}}_{\\text{wiruje}}"
+        },
+        {
+          "t": "p",
+          "text": "Czyli każda liczba s to przepis: **σ** (część wzdłuż) mówi, jak szybko rosnąć albo maleć, **ω** (część boczna) mówi, jak szybko wirować. Razem rysują **spiralę**, a cień spirali to sygnał, który widzimy."
+        },
+        {
+          "t": "predict",
+          "id": "ch5-shadow",
+          "gate": true,
+          "q": "Ustaw s w punkcie $-0{,}5 + 3i$. Jak wygląda cień $e^{st}$?",
+          "options": [
+            {
+              "text": "Kołysanie, które rośnie",
+              "sketch": "growing-wiggle",
+              "why": "Wzrost wymaga σ > 0. Tutaj σ = −0,5 jest ujemne."
+            },
+            {
+              "text": "Kołysanie, które wygasa",
+              "sketch": "decaying-wiggle",
+              "correct": true,
+              "why": "ω = 3 sprawia, że wiruje (jedno wahnięcie mniej więcej co 2 s), a σ = −0,5 zmniejsza je co sekundę o czynnik $e^{-0{,}5} \\approx 0{,}61$."
+            },
+            {
+              "text": "Gładki zanik, bez kołysania",
+              "sketch": "decaying-plain",
+              "why": "Tak byłoby przy ω = 0 (s na osi poziomej). Tutaj ω = 3, więc wiruje."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "smap"
+        },
+        {
+          "t": "p",
+          "text": "Zrób wycieczkę po mapie, przeciągając s (albo używając strzałek):"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Lewa połowa** (σ < 0): spirala się zwija, kołysanie wygasa.",
+            "**Prawa połowa** (σ > 0): spirala rośnie, kołysanie eksploduje.",
+            "**Na pionowej linii** (σ = 0): idealny okrąg, kołysanie, które trwa w nieskończoność.",
+            "**Na poziomej linii** (ω = 0): żadnego wirowania, tylko zwykłe wykładnicze z rozdziału 4.",
+            "**Wyżej**: szybsze wirowanie, szybsze kołysanie. **Bardziej w lewo**: szybsze wygasanie."
+          ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Czyli jedna kropka na tej mapie to cały charakter: jak szybko się kołysze i czy się uspokaja, czy wybucha."
+        },
+        {
+          "t": "note",
+          "text": "Ta mapa stanie się naszym najważniejszym obrazkiem. Oficjalną nazwę dostanie w rozdziale 7."
+        }
+      ]
+    },
+    {
+      "id": "fourier",
+      "title": "Krótki objazd: wszystko jest zrobione z bączków",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Ostatnia niespodzianka. Weź bączki o różnych prędkościach (1, 3, 5, 7… razy szybsze), każdy odpowiednio zmniejsz i dodaj ich cienie. Mając ich wystarczająco dużo, zbudujesz prawie *dowolny* kształt, nawet falę prostokątną z ostrymi narożnikami."
+        },
+        {
+          "t": "widget",
+          "id": "fourier"
+        },
+        {
+          "t": "p",
+          "text": "Niejaki **Fourier** odkrył to 200 lat temu: każdy sygnał da się zbudować z takich wirujących kawałków. Szczegóły nie będą nam potrzebne, ale to pocieszające. Bączki to atomy, z których zrobione są sygnały."
+        },
+        {
+          "t": "note",
+          "text": "Ramka szczerości: tuż przy każdym skoku suma zawsze przestrzeliwuje o około 9% wysokości skoku, niezależnie od liczby dodanych kawałków. Garb robi się węższy, ale nigdy nie znika."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Co już wiemy",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Liczby to strzałki. Mnożenie je obraca i rozciąga. **i** to ćwierć obrotu, więc $i^2 = -1$.",
+            "$e^{i\\omega t}$ to punkt wirujący po okręgu. Jego cień to fala cosinusa.",
+            "Prawdziwe kołysania biorą się z **lustrzanych bliźniaczych bączków**, których części boczne się znoszą.",
+            "$e^{st}$, gdzie $s = \\sigma + i\\omega$, wiruje *i* rośnie albo maleje: to spirala. Jej cień to rosnące albo wygasające kołysanie.",
+            "**Mapa s**: po lewej się uspokaja, po prawej wybucha, wyżej znaczy szybsze kołysanie."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch5-q1",
+              "q": "Co daje dwukrotne pomnożenie strzałki 3 przez i?",
+              "options": [
+                {
+                  "text": "−3",
+                  "correct": true,
+                  "why": "Dwa ćwierćobroty to pół obrotu: 3 → 3i → −3."
+                },
+                {
+                  "text": "3i",
+                  "why": "To po *jednym* ćwierćobrocie. Zrób to jeszcze raz."
+                },
+                {
+                  "text": "9",
+                  "why": "Mnożenie przez i obraca strzałkę. Nie zmienia jej długości."
+                }
+              ]
+            },
+            {
+              "id": "ch5-q2",
+              "q": "Ustaw s dokładnie na pionowej linii, w $s = 2i$. Jaki jest cień $e^{st}$?",
+              "options": [
+                {
+                  "text": "Kołysanie, które trwa w nieskończoność",
+                  "sketch": "steady-wiggle",
+                  "correct": true,
+                  "why": "σ = 0 oznacza brak wzrostu i malenia: idealny okrąg, a jego cień to równomierny cosinus."
+                },
+                {
+                  "text": "Kołysanie, które wygasa",
+                  "sketch": "decaying-wiggle",
+                  "why": "Wygasanie wymaga σ < 0 (na lewo od pionowej linii)."
+                },
+                {
+                  "text": "Wybuchowy wzrost",
+                  "sketch": "growing-plain",
+                  "why": "Wzrost bez kołysania to prawa połowa linii *poziomej*: σ > 0, ω = 0."
+                }
+              ]
+            },
+            {
+              "id": "ch5-q3",
+              "q": "Struna gitary brzmi czystym dźwiękiem i powoli cichnie. Gdzie na mapie s mieszka?",
+              "options": [
+                {
+                  "text": "Tuż na lewo od pionowej linii, wysoko nad poziomą linią",
+                  "correct": true,
+                  "why": "Powolne cichnięcie oznacza lekko ujemne σ, a czysty dźwięk oznacza duże ω (mnóstwo wahnięć na sekundę)."
+                },
+                {
+                  "text": "W prawej połowie",
+                  "why": "Prawa połowa *rośnie*. Struna, która sama z siebie robi się coraz głośniejsza, byłaby niepokojąca."
+                },
+                {
+                  "text": "Na poziomej linii, daleko po lewej",
+                  "why": "Brak ω oznacza brak kołysania (brak dźwięku), a daleko po lewej oznacza natychmiastowe wygaśnięcie. To głuche „bum”."
+                }
+              ]
+            },
+            {
+              "id": "ch5-q4",
+              "q": "Dlaczego bączki prawdziwego, fizycznego kołysania zawsze występują w lustrzanych parach?",
+              "options": [
+                {
+                  "text": "Żeby ich części boczne się znosiły, a suma była liczbą rzeczywistą",
+                  "correct": true,
+                  "why": "Bączek i jego bliźniak mają równe i przeciwne części boczne. Po dodaniu zostaje tylko część wzdłuż (prawdziwe kołysanie)."
+                },
+                {
+                  "text": "Bo $i^2 = -1$",
+                  "why": "To prawda, ale to wyjaśnia, dlaczego bączki *istnieją*, a nie dlaczego łączą się w pary."
+                },
+                {
+                  "text": "Bo sprężyna ma dwa końce",
+                  "why": "Urocze, ale nie. Pojedyncze wahadło też ma bliźniacze bączki."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "June: „To **gdzie na tej mapie mieszka nasz dron?**”"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "rotate": {
+      "title": "Mnożenie obraca strzałki",
+      "re": "wzdłuż (rzeczywista)",
+      "im": "w bok (i)",
+      "start": "Zacznij od strzałki 3. Wypróbuj przyciski!",
+      "tooBig": "To wyjechałoby poza stronę. Spróbuj innego przycisku.",
+      "explain": {
+        "two": "×2 rozciąga strzałkę do podwójnej długości. Ten sam kierunek.",
+        "half": "×½ skraca ją do połowy długości. Ten sam kierunek.",
+        "neg": "×(−1) to pół obrotu: strzałka odwraca się w przeciwną stronę.",
+        "i": "×i to ćwierć obrotu, przeciwnie do ruchu wskazówek zegara. Zrób to dwa razy i porównaj z ×(−1)!"
+      },
+      "aria": "Płaszczyzna ze strzałką wychodzącą z początku układu. Przyciski mnożą strzałkę przez 2, jedną drugą, minus jeden lub i, obracając ją lub rozciągając.",
+      "trail": "Dotychczasowe strzałki"
+    },
+    "spinner": {
+      "title": "Bączek i jego cień",
+      "re": "wzdłuż",
+      "im": "w bok",
+      "position": "położenie",
+      "velocity": "prędkość",
+      "shadow": "cień na osi rzeczywistej",
+      "shadowAxis": "cień",
+      "omega": "Prędkość wirowania ω",
+      "help": "Strzałka prędkości (narysowana krócej, żeby się zmieściła) zawsze wskazuje ćwierć obrotu przed strzałką położenia. Niebieska kropka na osi rzeczywistej to cień.",
+      "aria": "Punkt wirujący po okręgu, ze strzałką położenia, strzałką prędkości o ćwierć obrotu do przodu i cieniem na osi rzeczywistej.",
+      "plotAria": "Cień bączka w czasie: fala cosinusa."
+    },
+    "twins": {
+      "title": "Bączek i jego lustrzany bliźniak",
+      "re": "wzdłuż",
+      "im": "w bok",
+      "sum": "suma",
+      "spinnerLabel": "bączek",
+      "twinLabel": "bliźniak",
+      "toggle": "Dodaj lustrzanego bliźniaka",
+      "axis": "wartość",
+      "realPart": "część sumy wzdłuż",
+      "sidePart": "boczna część sumy",
+      "alone": "Sam jeden bączek: suma odpływa w bok (przerywana krzywa).",
+      "withTwin": "Po dodaniu bliźniaka (koniec do początku) części boczne się znoszą. Suma zostaje na osi rzeczywistej: 2·cos(ωt).",
+      "aria": "Dwie strzałki wirujące w przeciwnych kierunkach, dodane koniec do początku. Ich suma jest zaznaczona kółkiem.",
+      "plotAria": "Część wzdłuż i część boczna sumy w czasie."
+    },
+    "smap": {
+      "title": "Mapa s",
+      "re": "σ: maleje ← → rośnie",
+      "im": "ω: wirowanie",
+      "reShort": "wzdłuż",
+      "imShort": "w bok",
+      "time": "czas →",
+      "shadow": "cień e^(st)",
+      "shadowAxis": "cień",
+      "mirror": "Pokaż lustrzanego bliźniaka",
+      "readS": "s",
+      "readTurns": "obroty",
+      "readSize": "zmiana rozmiaru",
+      "spins": "Wiruje z częstością {n} obr./s",
+      "noSpin": "Wcale nie wiruje",
+      "grows": "i rośnie.",
+      "shrinks": "i maleje.",
+      "steady": "i zachowuje ten sam rozmiar.",
+      "help": "Przeciągnij kropkę s po mapie (albo zaznacz ją i użyj strzałek). Po prawej: spirala e^(st) w 3D, z czasem biegnącym w prawo. Jej niebieski cień jest narysowany pod spodem.",
+      "mapAria": "Mapa s: przeciągnij punkt, żeby wybrać sigmę i omegę.",
+      "spiralAria": "Trójwymiarowa spirala e do potęgi s t, z czasem biegnącym w prawo, i jej cień na tylnej ścianie.",
+      "plotAria": "Cień e do potęgi s t w czasie."
+    },
+    "fourier": {
+      "title": "Budujemy falę prostokątną z bączków",
+      "axis": "wartość",
+      "target": "fala prostokątna",
+      "sum": "suma cieni bączków",
+      "pieces": "Liczba bączków",
+      "status": "Dodane bączki: {n}. Najszybszy wiruje {f}× szybciej niż pierwszy.",
+      "aria": "Fala prostokątna i przybliżająca ją suma wybranej liczby cieni bączków.",
+      "statusOne": "Tylko jeden bączek: zwykłe kołysanie, jeszcze nic prostokątnego."
+    }
+  }
+}
