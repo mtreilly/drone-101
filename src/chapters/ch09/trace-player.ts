@@ -20,6 +20,11 @@ export interface PlayerOptions {
   showMeasured?: boolean;
   measuredLabel?: string;
   gravityLabel?: string;
+  /**
+   * The drone may fly out of its picture and bump into the page. The trace must already contain
+   * the hit (compute it with `view.ceilingHeight()`, see `page-ceiling.ts`): the view only shows it.
+   */
+  pageCeiling?: boolean;
 }
 
 /**
@@ -48,7 +53,12 @@ export class TracePlayer {
     grid.append(left, right);
     host.append(grid);
     this.el = grid;
-    this.view = new DroneView(left, { hMax: o.hMax ?? 3, width: 240, showSensor: o.showSensor });
+    this.view = new DroneView(left, {
+      hMax: o.hMax ?? 3,
+      width: 240,
+      showSensor: o.showSensor,
+      ...(o.pageCeiling ? { onCeiling: () => {}, ceilingResponse: 'bump' as const } : {}),
+    });
     const hs: SeriesDef[] = [
       { id: 'r', color: 'sp', dash: [6, 5], width: 1.8 },
       { id: 'h', color: 'out', label: o.heightLabel, ghost: true },

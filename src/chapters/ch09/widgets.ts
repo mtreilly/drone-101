@@ -7,6 +7,7 @@ import { readout, segmented, slider, toggle } from '../../ui/controls';
 import { color, withAlpha } from '../../ui/colors';
 import { Plot } from '../../ui/plot';
 import { SPlane } from '../../ui/s-plane';
+import { runUnderCeiling, watchCeiling } from './page-ceiling';
 import { LIMITED, TARGETS, hoverStep, kiLimit, pid, pidPoles, runDrone, scoreTrace, stars, takeoff } from './pid-tools';
 import { starRow } from './stars';
 import { TracePlayer } from './trace-player';
@@ -196,7 +197,8 @@ const playground: WidgetFactory = (host, ctx) => {
   let kd = 0;
   let aw = true;
   host.append(h('p', { class: 'w-title' }, t('title')));
-  const player = new TracePlayer(host, { ...playerLabels(ctx), duration: 6 });
+  // windup can throw it out of its picture into the page above; the motors survive the bump (page-ceiling.ts)
+  const player = new TracePlayer(host, { ...playerLabels(ctx), duration: 6, pageCeiling: true });
   const rOs = readout(t('readout.overshoot'), 'out');
   const rTs = readout(t('readout.settling'), 'out');
   const rSse = readout(t('readout.sse'), 'err');
@@ -205,8 +207,23 @@ const playground: WidgetFactory = (host, ctx) => {
   const row = starRow(4, (n) => t('starsAria', { n }));
   const starsText = h('span');
   starsEl.append(row.el, starsText);
+  // metres of open page above the picture (null: none, or reduced motion); the trace already contains the hit
+  let ceiling: number | null = null;
+  let hitAt: number | null = null;
+  let verdict = '';
+  let hitLine = '';
+  let hitShown: boolean | null = null;
+  // the hit sentence (and a mark on the height plot) appear when the replay gets to the hit
+  const showHit = (on: boolean) => {
+    if (on === hitShown) return;
+    hitShown = on;
+    starsText.textContent = on ? `${verdict} ${hitLine}` : verdict;
+    player.hPlot.setLines(on && hitAt !== null ? [{ kind: 'v', at: hitAt, color: 'ink3', dash: [2, 4], label: t('hit.mark') }] : []);
+  };
+  player.onFrame = (tt) => showHit(hitAt !== null && tt >= hitAt);
   const run = (preview = false) => {
-    const tr = runDrone(takeoff(pid(kp, ki, kd, { antiWindup: aw })), 15);
+    ceiling = player.view.ceilingHeight();
+    const tr = runUnderCeiling(takeoff(pid(kp, ki, kd, { antiWindup: aw })), 15, ceiling);
     const s = scoreTrace(tr);
     const st = stars(s);
     rOs.set(`${fmt(s.overshoot, 1)} %`, st.overshoot ? 'good' : 'bad');
@@ -215,7 +232,12 @@ const playground: WidgetFactory = (host, ctx) => {
     rSat.set(`${fmt(s.saturated, 2)} s`, st.saturated ? 'good' : 'bad');
     const n = Object.values(st).filter(Boolean).length;
     row.set(Object.values(st));
-    starsText.textContent = n === 4 ? t('allStars') : t('someStars', { n });
+    verdict = n === 4 ? t('allStars') : t('someStars', { n });
+    // only a hit the replay shows (its first 6 s) gets a sentence
+    hitAt = tr.hitAt !== null && tr.hitAt <= 6 ? tr.hitAt : null;
+    hitLine = t(Number.isFinite(s.settling) ? 'hit.back' : 'hit.wild');
+    hitShown = null;
+    showHit(false);
     starsEl.className = `w-status score-line${n === 4 ? ' good' : ''}`;
     const show = { ...tr, t: tr.t.slice(0, 601), h: tr.h.slice(0, 601), thrust: tr.thrust.slice(0, 601), r: tr.r.slice(0, 601) };
     if (preview) player.show(show);
@@ -234,7 +256,12 @@ const playground: WidgetFactory = (host, ctx) => {
     help: h('p', { class: 'w-help' }, t('targets', { os: TARGETS.overshoot, ts: TARGETS.settling, sat: TARGETS.saturated })),
   });
   run();
-  return () => player.destroy();
+  // the layout moved (resize, fonts, a gate opening): measure the page again and recompute the flight
+  const unwatch = watchCeiling(player.view, () => ceiling, () => run());
+  return () => {
+    unwatch();
+    player.destroy();
+  };
 };
 
 /** 9e (i): derivative kick when the setpoint jumps. */
