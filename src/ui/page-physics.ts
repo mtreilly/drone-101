@@ -34,20 +34,29 @@ export function ceilingHit(box: Box, y0: number, y1: number, solids: Solid[]): S
  * Page elements something can bump into. Running text counts: the point is that the page is
  * physical, and a drone parked in front of a paragraph would hide it.
  */
-const SOLID_SELECTOR = 'main :is(p, h1, h2, h3, li, .bubble, .math-block, .avatar, .widget-frame, .recap)';
+const SOLID_SELECTOR =
+  'main :is(p, h1, h2, h3, li, .bubble, .math-block, .avatar, .widget-frame, .card, .option, .recap, svg.view, .s-plane, canvas)';
+/** Inside the object's own card only other pictures are solid (an s-plane stacked above it on a phone), not its labels. */
+const OWN_CARD_SOLID = 'svg.view, .s-plane, canvas';
 
 export function docBox(r: DOMRect): Box {
   return { x: r.left + scrollX, y: r.top + scrollY, w: r.width, h: r.height };
 }
 
-/** Solids near `near`, excluding the object's own frame and everything inside it. */
-export function pageSolids(ownFrame: Element, near: Box, reach = innerHeight * 1.5): Solid[] {
+/**
+ * Solids near `near`. `self` is the moving object's own picture: it, everything inside it and
+ * everything containing it (its grid, its card) are not obstacles, and neither are its own card's
+ * labels (title, status, help). Other pictures in its card, and everything outside it, are.
+ */
+export function pageSolids(self: Element, near: Box, reach = innerHeight * 1.5): Solid[] {
+  const ownCard = self.closest('.widget-frame');
   const out: Solid[] = [];
   const bar = document.querySelector('.topbar');
   if (bar) out.push({ ...docBox(bar.getBoundingClientRect()), el: bar });
   else out.push({ x: -1e5, y: scrollY - 40, w: 2e5, h: 40 });
   for (const el of document.querySelectorAll(SOLID_SELECTOR)) {
-    if (el === ownFrame || ownFrame.contains(el)) continue;
+    if (el.contains(self) || self.contains(el)) continue;
+    if (ownCard?.contains(el) && !el.matches(OWN_CARD_SOLID)) continue;
     const r = el.getBoundingClientRect();
     if (r.width < 4 || r.height < 4) continue;
     const b = docBox(r);
@@ -59,7 +68,7 @@ export function pageSolids(ownFrame: Element, near: Box, reach = innerHeight * 1
 
 /** A small springy jolt upwards on something that got hit (individual `translate`/`rotate` compose with existing transforms). */
 export function wobble(el: Element, strength: number): void {
-  if (!(el instanceof HTMLElement) || !el.animate) return;
+  if (!(el instanceof HTMLElement || el instanceof SVGSVGElement) || !el.animate) return;
   const a = -Math.min(7, 2 + strength / 250);
   const r = (Math.random() - 0.5) * Math.min(1.2, strength / 900);
   el.animate(

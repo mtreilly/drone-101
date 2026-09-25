@@ -206,10 +206,9 @@ export class DroneView {
     }
     const rising = prev !== null && gy < prev;
     if (tb.hit || !rising || gy + ART.y >= 0) return;
-    const frame = this.el.closest('.widget-frame') ?? this.el;
     const now_ = this.box(gy);
     const before = this.box(prev);
-    const hit = ceilingHit(now_, before.y, now_.y, pageSolids(frame, now_));
+    const hit = ceilingHit(now_, before.y, now_.y, pageSolids(this.el, now_));
     if (!hit) return;
     const speed = (before.y - now_.y) / dt;
     const side = Math.random() < 0.5 ? -1 : 1;
