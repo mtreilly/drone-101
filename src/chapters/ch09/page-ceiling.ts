@@ -12,8 +12,7 @@ export interface CeilingTrace extends Trace {
  * `runDrone` with the page above the picture as a ceiling at `ceiling` metres (null: nothing
  * overhead, the trace is exactly `runDrone`'s). The motors survive the bump (`stall: false`) and
  * the controller carries on. A feedback drone can climb back up to it, and the page is still
- * there then, so every contact is a bump, not just the first (the sim's `cfg.ceiling` handles the
- * first one; later ones call `hitCeiling` again the same way).
+ * there then, so every contact is a bump, not just the first (the sim's `cfg.ceiling` does that).
  */
 export function runUnderCeiling(cfg: DroneConfig, T: number, ceiling: number | null, every = 10): CeilingTrace {
   const sim = new DroneSim({ ...cfg, ceiling: ceiling === null ? undefined : { h: ceiling, stall: false } });
@@ -32,15 +31,10 @@ export function runUnderCeiling(cfg: DroneConfig, T: number, ceiling: number | n
   const n = Math.round(T / sim.dt);
   let touching = false;
   for (let i = 1; i <= n; i++) {
-    const first = sim.ceilingAt === null;
     sim.step();
     if (ceiling !== null) {
-      let contact = first && sim.ceilingAt !== null;
-      if (!first && sim.h >= ceiling && sim.v > 0) {
-        sim.x[0] = ceiling;
-        sim.hitCeiling({ stall: false });
-        contact = true;
-      }
+      // the sim bumps on every contact (`stall: false`); here we only count them
+      const contact = sim.h >= ceiling - 1e-9;
       // a new contact once it has dropped clearly away (1 cm) from the ceiling
       if (contact && !touching) tr.hits++;
       if (contact) touching = true;
