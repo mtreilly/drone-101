@@ -7,6 +7,7 @@ import { Loop } from '../../ui/loop';
 import { Plot } from '../../ui/plot';
 import { SPlane } from '../../ui/s-plane';
 import { type Item, type Pt, PlaneCanvas, SpiralCanvas } from './canvases';
+import '../ch03/polish.css';
 import { shadow, spiralDuration, spiralPoint, squareWave, squareWavePartial } from './models';
 
 const fmtC = (z: C): string => {
@@ -25,8 +26,15 @@ const rotate: WidgetFactory = (host, ctx) => {
   let history: string[] = ['3'];
   let anim = 0;
   const plane = new PlaneCanvas(host, { extent: 7, label: t('aria'), reLabel: t('re'), imLabel: t('im') });
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
-  const hist = h('p', { class: 'w-help', 'aria-live': 'polite', style: { textAlign: 'center' } });
+  const status = h('p', { class: 'w-status steady', 'aria-live': 'polite' });
+  const hist = h('div', { class: 'trail', role: 'group', 'aria-label': t('trail') });
+  const renderTrail = () =>
+    hist.replaceChildren(
+      ...history.flatMap((v, i) => [
+        i ? h('span', { class: 'sep', 'aria-hidden': 'true' }, '→') : null,
+        h('span', { class: 'chip' }, v),
+      ]).filter(Boolean) as HTMLElement[],
+    );
   const draw = (w: C, trail: Pt[] = []) => {
     plane.draw([
       { kind: 'circle', r: abs(w), color: 'ink3' },
@@ -40,8 +48,8 @@ const rotate: WidgetFactory = (host, ctx) => {
     const to = mul(z, k);
     z = to;
     history.push(fmtC(to));
-    if (history.length > 8) history = history.slice(-8);
-    hist.textContent = history.join(' → ');
+    if (history.length > 7) history = history.slice(-7);
+    renderTrail();
     status.textContent = t(`explain.${key}`);
     const a0 = arg(from);
     let da = arg(k);
@@ -55,8 +63,9 @@ const rotate: WidgetFactory = (host, ctx) => {
     const start = performance.now();
     const trail: Pt[] = [];
     const step = (now: number) => {
-      const f = Math.min(1, (now - start) / 700);
-      const e = f < 0.5 ? 2 * f * f : 1 - (-2 * f + 2) ** 2 / 2;
+      const f = Math.min(1, (now - start) / 650);
+      // ease-in-out (0.77, 0, 0.175, 1)-like: decisive start, soft landing
+      const e = f < 0.5 ? 4 * f * f * f : 1 - (-2 * f + 2) ** 3 / 2;
       const a = a0 + da * e;
       const r = r0 + (r1 - r0) * e;
       const w = c(r * Math.cos(a), r * Math.sin(a));
@@ -83,17 +92,17 @@ const rotate: WidgetFactory = (host, ctx) => {
     cancelAnimationFrame(anim);
     z = c(3);
     history = ['3'];
-    hist.textContent = '3';
+    renderTrail();
     status.textContent = t('start');
     draw(z);
   });
   host.prepend(h('p', { class: 'w-title' }, t('title')));
   host.append(
-    h('div', { class: 'w-row', style: { justifyContent: 'center' } }, btn('× 2', c(2), 'two'), btn('× ½', c(0.5), 'half'), btn('× (−1)', c(-1), 'neg'), btn('× i', c(0, 1), 'i'), reset),
-    status,
+    h('div', { class: 'w-row', style: { justifyContent: 'center', marginTop: '12px' } }, btn('× 2', c(2), 'two'), btn('× ½', c(0.5), 'half'), btn('× (−1)', c(-1), 'neg'), btn('× i', c(0, 1), 'i'), reset),
     hist,
+    status,
   );
-  hist.textContent = '3';
+  renderTrail();
   status.textContent = t('start');
   draw(z);
   return () => {
@@ -212,7 +221,7 @@ const twins: WidgetFactory = (host, ctx) => {
     height: 220,
     label: t('plotAria'),
   });
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  const status = h('p', { class: 'w-status steady', 'aria-live': 'polite' });
   const draw = () => {
     const a = spiralPoint(0, w, time);
     const b = spiralPoint(0, -w, time);
@@ -222,9 +231,11 @@ const twins: WidgetFactory = (host, ctx) => {
     ];
     const sum = twin ? c(a.re + b.re, a.im + b.im) : a;
     if (twin) items.push({ kind: 'arrow', from: [a.re, a.im], to: [sum.re, sum.im], color: 'eff', width: 3, label: t('twinLabel') });
-    items.push({ kind: 'dot', at: [sum.re, sum.im], color: 'ink', r: 6, ring: true, label: t('sum') });
+    // alone, the sum *is* the spinner tip, so only label it once the twin joins
+    items.push({ kind: 'dot', at: [sum.re, sum.im], color: 'ink', r: 6, ring: true, label: twin ? t('sum') : undefined, labelAt: 'below' });
     plane.draw(items);
-    status.textContent = twin ? t('withTwin') : t('alone');
+    const msg = twin ? t('withTwin') : t('alone');
+    if (status.textContent !== msg) status.textContent = msg;
   };
   const sample = () => {
     const a = spiralPoint(0, w, time);
@@ -283,21 +294,21 @@ const smap: WidgetFactory = (host, ctx) => {
   let omega = 2;
   let mirror = false;
   let time = 0;
-  const grid = h('div', { class: 'w-grid side' });
+  const grid = h('div', { class: 'smap-grid' });
   const left = h('div');
   const right = h('div');
   grid.append(left, right);
   host.append(h('p', { class: 'w-title' }, t('title')), grid);
+  // a wide, short map so it fits beside (or just above) the spiral on a phone
   const plane = new SPlane(left, {
-    reMin: -3,
+    reMin: -4,
     reMax: 1.5,
-    imMax: 3.5,
+    imMax: 3.2,
     label: t('mapAria'),
     reLabel: t('re'),
     imLabel: t('im'),
     regions: false,
     step: 0.1,
-    maxWidth: 260,
     onChange: (p) => {
       sigma = Math.round(p.re * 100) / 100;
       omega = Math.round(p.im * 100) / 100;
@@ -315,7 +326,7 @@ const smap: WidgetFactory = (host, ctx) => {
   const rS = readout(t('readS'));
   const rTurns = readout(t('readTurns'));
   const rSize = readout(t('readSize'));
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  const status = h('p', { class: 'w-status steady', 'aria-live': 'polite' });
   const place = (rebuild = false) => {
     // the twin marker is created with the point, so rebuild it when the mirror toggles
     if (rebuild) plane.set([]);
@@ -354,7 +365,7 @@ const smap: WidgetFactory = (host, ctx) => {
     const grow = sigma > 0.02 ? t('grows') : sigma < -0.02 ? t('shrinks') : t('steady');
     const spin = Math.abs(omega) < 0.02 ? t('noSpin') : t('spins', { n: fmt(turns, 2) });
     const text = `${spin} ${grow}`;
-    status.textContent = text;
+    if (status.textContent !== text) status.textContent = text;
     plot.describe(text);
   };
   const restart = () => {
@@ -389,9 +400,12 @@ const smap: WidgetFactory = (host, ctx) => {
     place(true);
     if (!loop.playing) drawAll(tMaxFor(), false);
   });
-  left.append(h('div', { class: 'readouts' }, rS.el, rTurns.el, rSize.el), tg.el);
-  right.append(transport({ loop, onReset: () => (loop.pause(), restart()), onStep: () => ((time += 0.1), plot.push('sh', time, shadow(sigma, omega, time)), drawAll(time, true)) }), status);
-  host.append(h('p', { class: 'w-help' }, t('help')));
+  left.append(h('div', { style: { marginTop: '8px' } }, tg.el));
+  host.append(
+    h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rS.el, rTurns.el, rSize.el), transport({ loop, onReset: () => (loop.pause(), restart()), onStep: () => ((time += 0.1), plot.push('sh', time, shadow(sigma, omega, time)), drawAll(time, true)) })),
+    status,
+    h('p', { class: 'w-help' }, t('help')),
+  );
   place();
   const off = ctx.bus.on('predict:ch5-shadow', () => {
     sigma = -0.5;
@@ -424,10 +438,10 @@ const fourier: WidgetFactory = (host, ctx) => {
     label: t('aria'),
   });
   plot.fn('target', squareWave, 800);
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  const status = h('p', { class: 'w-status steady', 'aria-live': 'polite' });
   const draw = () => {
     plot.fn('sum', (x) => squareWavePartial(x, n), 800);
-    status.textContent = t('status', { n, f: 2 * n - 1 });
+    status.textContent = n === 1 ? t('statusOne') : t('status', { n, f: 2 * n - 1 });
     plot.describe(status.textContent);
   };
   const sl = slider({

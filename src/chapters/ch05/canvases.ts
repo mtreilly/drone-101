@@ -7,7 +7,7 @@ export type Pt = [number, number];
 export type Item =
   | { kind: 'arrow'; from?: Pt; to: Pt; color: string; width?: number; label?: string; dash?: number[] }
   | { kind: 'circle'; r: number; color: string; dash?: number[] }
-  | { kind: 'dot'; at: Pt; color: string; r?: number; label?: string; ring?: boolean }
+  | { kind: 'dot'; at: Pt; color: string; r?: number; label?: string; ring?: boolean; labelAt?: 'below' | 'above' | 'right' }
   | { kind: 'path'; pts: Pt[]; color: string; width?: number; dash?: number[]; alpha?: number }
   | { kind: 'line'; from: Pt; to: Pt; color: string; dash?: number[]; width?: number };
 
@@ -30,6 +30,7 @@ export class PlaneCanvas {
     this.ro = new ResizeObserver(() => this.resize());
     this.ro.observe(this.el);
     this.off = onThemeChange(() => this.render());
+    document.fonts?.ready.then(() => this.render());
     this.resize();
   }
 
@@ -85,19 +86,21 @@ export class PlaneCanvas {
     ctx.moveTo(this.X(0), 4);
     ctx.lineTo(this.X(0), this.size - 4);
     ctx.stroke();
-    ctx.fillStyle = color('ink2');
-    ctx.font = '16px "Patrick Hand", cursive';
-    ctx.textAlign = 'right';
-    ctx.fillText(this.o.reLabel, this.size - 6, this.Y(0) - 6);
-    ctx.textAlign = 'left';
-    ctx.fillText(this.o.imLabel, this.X(0) + 6, 16);
-    ctx.font = '11px "Atkinson Hyperlegible", sans-serif';
+    ctx.font = '13px "Patrick Hand", cursive';
     ctx.fillStyle = color('ink3');
     ctx.textAlign = 'center';
-    for (let k = -Math.floor(extent); k <= extent; k++) {
-      if (k === 0 || (extent > 4 && k % 2)) continue;
-      ctx.fillText(String(k), this.X(k), this.Y(0) + 14);
+    ctx.textBaseline = 'top';
+    // tick labels sit below the axis; skip ±1 on small planes where the unit circle crosses
+    const step = extent > 4 ? 2 : 1;
+    for (let k = -Math.floor(extent); k <= extent; k += 1) {
+      if (k === 0 || k % step) continue;
+      if (extent < 3 && Math.abs(k) === 1) continue;
+      ctx.fillText(String(k).replace('-', '−'), this.X(k), this.Y(0) + 5);
     }
+    ctx.font = '15px "Patrick Hand", cursive';
+    ctx.textBaseline = 'alphabetic';
+    halo(ctx, this.o.reLabel, this.size - 6, this.Y(0) - 8, 'right', color('ink2'));
+    halo(ctx, this.o.imLabel, this.X(0) + 7, 16, 'left', color('ink2'));
 
     for (const it of this.items) {
       const col = color(it.color);
@@ -127,7 +130,14 @@ export class PlaneCanvas {
         ctx.lineWidth = 2.5;
         if (it.ring) ctx.stroke();
         else ctx.fill();
-        if (it.label) label(ctx, it.label, this.X(it.at[0]) + 8, this.Y(it.at[1]) - 8);
+        if (it.label) {
+          const X = this.X(it.at[0]);
+          const Y = this.Y(it.at[1]);
+          const r = (it.r ?? 5) + 5;
+          if (it.labelAt === 'below') labelAt(ctx, it.label, X, Y + r, 0, 1, col);
+          else if (it.labelAt === 'above') labelAt(ctx, it.label, X, Y - r, 0, -1, col);
+          else labelAt(ctx, it.label, X + r, Y - r, 1, -1, col);
+        }
       } else if (it.kind === 'arrow') {
         const [x0, y0] = it.from ?? [0, 0];
         const [x1, y1] = it.to;
@@ -153,16 +163,38 @@ export class PlaneCanvas {
           ctx.lineTo(X1 - hs * Math.cos(a + 0.45), Y1 - hs * Math.sin(a + 0.45));
           ctx.stroke();
         }
-        if (it.label) label(ctx, it.label, X1 + 8, Y1 - 8);
+        if (it.label && len > 1) {
+          // put the label just beyond the arrow tip, in the arrow's own direction
+          const dx = (X1 - X0) / len;
+          const dy = (Y1 - Y0) / len;
+          labelAt(ctx, it.label, X1 + dx * 10, Y1 + dy * 10, dx, dy, col);
+        }
       }
     }
   }
 }
 
-function label(ctx: CanvasRenderingContext2D, text: string, x: number, y: number): void {
-  ctx.font = '16px "Patrick Hand", cursive';
-  ctx.textAlign = 'left';
+/** Text with a paper-coloured halo so it stays readable over grid lines and curves. */
+function halo(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, align: CanvasTextAlign, fill: string): void {
+  ctx.save();
+  ctx.textAlign = align;
+  ctx.lineJoin = 'round';
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = color('card');
+  ctx.strokeText(text, x, y);
+  ctx.fillStyle = fill;
   ctx.fillText(text, x, y);
+  ctx.restore();
+}
+
+/** Places a label next to (x, y), pushed away in direction (dx, dy) so it never sits on the mark. */
+function labelAt(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, dx: number, dy: number, fill: string): void {
+  ctx.save();
+  ctx.font = '16px "Patrick Hand", cursive';
+  ctx.textBaseline = dy > 0.35 ? 'top' : dy < -0.35 ? 'bottom' : 'middle';
+  const align: CanvasTextAlign = dx > 0.35 ? 'left' : dx < -0.35 ? 'right' : 'center';
+  halo(ctx, text, x, y, align, fill);
+  ctx.restore();
 }
 
 /**
@@ -186,6 +218,7 @@ export class SpiralCanvas {
     this.ro = new ResizeObserver(() => this.resize());
     this.ro.observe(this.el);
     this.off = onThemeChange(() => this.render());
+    document.fonts?.ready.then(() => this.render());
     this.resize();
   }
 
@@ -253,16 +286,14 @@ export class SpiralCanvas {
     [x, y] = P(0, 0, A);
     ctx.lineTo(x, y);
     ctx.stroke();
-    ctx.fillStyle = color('ink2');
     ctx.font = '15px "Patrick Hand", cursive';
-    ctx.textAlign = 'right';
+    const ink2 = color('ink2');
     [x, y] = P(tMax, 0, 0);
-    ctx.fillText(this.labels.time, x, y + 16);
-    ctx.textAlign = 'left';
+    halo(ctx, this.labels.time, x, y + 18, 'right', ink2);
     [x, y] = P(0, A, 0);
-    ctx.fillText(this.labels.re, x + 4, y + 10);
+    halo(ctx, this.labels.re, x + 6, y + 12, 'left', ink2);
     [x, y] = P(0, 0, A);
-    ctx.fillText(this.labels.im, x + 4, y - 2);
+    halo(ctx, this.labels.im, x + 6, y - 4, 'left', ink2);
     for (const cv of curves) {
       ctx.strokeStyle = color(cv.color);
       ctx.globalAlpha = cv.alpha ?? 1;
