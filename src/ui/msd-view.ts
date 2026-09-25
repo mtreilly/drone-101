@@ -17,6 +17,7 @@ export class MsdView {
     host: HTMLElement,
     label: string,
     private pxPerM = 60,
+    damper = true,
   ) {
     const svg = s('svg', { viewBox: '0 0 200 300', class: 'view msd-view', role: 'img', 'aria-label': label });
     const rc = rough.svg(svg);
@@ -25,9 +26,15 @@ export class MsdView {
     for (let x = 24; x < 180; x += 12) svg.append(s('line', { x1: x, y1: 20, x2: x + 8, y2: 10, stroke: 'var(--ink-3)' }));
     this.spring = s('path', { fill: 'none', stroke: ink, 'stroke-width': 2.2, 'stroke-linejoin': 'round' });
     // damper: cylinder fixed to ceiling, rod attached to mass
-    svg.append(s('line', { x1: 135, y1: 20, x2: 135, y2: 70, stroke: ink, 'stroke-width': 2 }));
-    svg.append(rc.rectangle(125, 70, 20, 60, { stroke: ink, strokeWidth: 1.8, fill: 'var(--paper-3)', fillStyle: 'solid', seed: 3 }));
+    const damperG = s('g');
+    damperG.append(s('line', { x1: 135, y1: 20, x2: 135, y2: 70, stroke: ink, 'stroke-width': 2 }));
+    damperG.append(rc.rectangle(125, 70, 20, 60, { stroke: ink, strokeWidth: 1.8, fill: 'var(--paper-3)', fillStyle: 'solid', seed: 3 }));
+    svg.append(damperG);
     this.rod = s('line', { x1: 135, x2: 135, stroke: ink, 'stroke-width': 3 });
+    if (!damper) {
+      damperG.style.display = 'none';
+      this.rod.style.display = 'none';
+    }
     this.mass = s('g');
     this.mass.append(rc.rectangle(55, 0, 100, 44, { stroke: ink, strokeWidth: 2.2, fill: 'var(--card)', fillStyle: 'solid', seed: 4 }), s('text', { x: 105, y: 29, 'text-anchor': 'middle', 'font-size': 20, 'font-weight': 700 }, 'm'));
     this.setLine = s('line', { x1: 20, x2: 190, stroke: 'var(--c-setpoint)', 'stroke-width': 2, 'stroke-dasharray': '6 5' });

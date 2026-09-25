@@ -132,8 +132,16 @@ export class SPlane {
     }
     for (const p of points) {
       const old = this.pts.get(p.id);
-      this.pts.set(p.id, { ...old, ...p });
-      if (!this.nodes.has(p.id)) this.create(p);
+      const merged = { ...old, ...p };
+      // twin/kind/drag changes need a fresh marker
+      if (old && (!!old.mirror !== !!merged.mirror || old.kind !== merged.kind || !!old.draggable !== !!merged.draggable)) {
+        const n = this.nodes.get(p.id);
+        n?.main.remove();
+        n?.twin?.remove();
+        this.nodes.delete(p.id);
+      }
+      this.pts.set(p.id, merged);
+      if (!this.nodes.has(p.id)) this.create(merged);
       this.place(p.id);
     }
   }
