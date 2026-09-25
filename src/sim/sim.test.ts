@@ -101,6 +101,25 @@ describe('Drone', () => {
     expect(amp(kiCrit * 1.1)).toBeGreaterThan(1);
   });
 
+  it('hitting a ceiling stalls the motors: it falls from where it hit and crashes', () => {
+    const sim = new DroneSim(defaultDroneConfig({ mode: 'open', openThrust: (t) => (t < 1.5 ? 8 : HOVER_THRUST) }));
+    sim.advance(1.2);
+    const peak = sim.h;
+    expect(sim.v).toBeGreaterThan(0);
+    sim.hitCeiling();
+    expect(sim.v).toBeLessThanOrEqual(0);
+    expect(sim.thrust).toBe(0);
+    sim.advance(0.05);
+    expect(sim.h).toBeLessThan(peak);
+    for (let i = 0; i < 5000 && !sim.crashed; i++) sim.step();
+    expect(sim.crashed).toBe(true);
+    expect(sim.h).toBe(0);
+    // the stall lasts until reset
+    expect(sim.thrust).toBe(0);
+    sim.reset();
+    expect(sim.stalled).toBe(false);
+  });
+
   it('saturates thrust when enabled', () => {
     const sim = new DroneSim(defaultDroneConfig({ params: { ...DRONE, saturate: true }, pid: P_ONLY(50) }));
     expect(sim.thrust).toBe(DRONE.tMax);

@@ -108,6 +108,8 @@ export class DroneSim {
   measured = 0;
   crashed = false;
   landed = true;
+  /** motors knocked out by `hitCeiling`; the drone falls for the rest of the run */
+  stalled = false;
   private noise = 0;
   private rand: () => number;
   private rk: RK4;
@@ -124,6 +126,7 @@ export class DroneSim {
     this.t = 0;
     this.stepIndex = 0;
     this.crashed = false;
+    this.stalled = false;
     this.rand = mulberry32(cfg.seed);
     this.x.fill(0);
     this.x[H] = cfg.h0;
@@ -182,7 +185,7 @@ export class DroneSim {
     const { cfg } = this;
     const p = cfg.params;
     const { cmd, e, hm, sat } = this.controller(t, x);
-    const thrust = p.motorTau > 0 ? x[TM] : cmd;
+    const thrust = this.stalled ? 0 : p.motorTau > 0 ? x[TM] : cmd;
     const m = p.m + cfg.extraMass(t);
     let a = (thrust - m * p.g - p.c * x[V] + cfg.wind(t)) / m;
     let hDot = x[V];
@@ -205,7 +208,7 @@ export class DroneSim {
     const { cmd, hm } = this.controller(this.t, this.x);
     const p = this.cfg.params;
     this.command = cmd;
-    this.thrust = p.motorTau > 0 ? this.x[TM] : cmd;
+    this.thrust = this.stalled ? 0 : p.motorTau > 0 ? this.x[TM] : cmd;
     this.error = this.cfg.setpoint(this.t) - this.x[H];
     this.measured = hm;
   }
@@ -223,6 +226,17 @@ export class DroneSim {
       this.x[V] = 0;
     }
     this.landed = this.x[H] <= 1e-6;
+    this.sampleOutputs();
+  }
+
+  /**
+   * The drone flew into something overhead (in the course: the page above its picture). It stops
+   * dead, bounces down a little, and its motors stall, so it falls for the rest of the run.
+   */
+  hitCeiling(): void {
+    if (this.x[V] > 0) this.x[V] = -0.2 * this.x[V];
+    this.x[TM] = 0;
+    this.stalled = true;
     this.sampleOutputs();
   }
 
