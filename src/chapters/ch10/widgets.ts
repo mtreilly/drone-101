@@ -1,3 +1,4 @@
+import '../ch09/ch09.css';
 import { h } from '../../core/dom';
 import { fmt, tc } from '../../core/i18n';
 import { progress } from '../../core/progress';
@@ -5,6 +6,7 @@ import { logspace, sweep } from '../../math/bode';
 import { SHOWER, ShowerSim } from '../../sim/shower-model';
 import type { WidgetCtx, WidgetFactory } from '../../story/types';
 import { readout, slider, toggle, transport } from '../../ui/controls';
+import { color } from '../../ui/colors';
 import { Loop } from '../../ui/loop';
 import { Plot } from '../../ui/plot';
 import { ShowerView } from '../../ui/shower-view';
@@ -63,13 +65,39 @@ const phase: WidgetFactory = (host, ctx) => {
     plot.fn('in', (x) => Math.sin(w * x));
     plot.fn('out', (x) => (x < L ? 0 : Math.sin(w * (x - L))));
     const deg = (360 * L) / period;
+    // bracket the 2.5 s between matching peaks, so the lag is something you can see
+    // first input peak, and the same peak arriving L seconds later
+    const peak = period / 4;
+    plot.overlay = (c, px, py) => {
+      const x0 = px(peak);
+      const x1 = px(peak + L);
+      if (x1 > px(30)) return;
+      const y = py(1.13);
+      c.strokeStyle = c.fillStyle = color('dis');
+      c.lineWidth = 1.6;
+      c.beginPath();
+      c.moveTo(x0, y);
+      c.lineTo(x1, y);
+      c.moveTo(x0 + 6, y - 4);
+      c.lineTo(x0, y);
+      c.lineTo(x0 + 6, y + 4);
+      c.moveTo(x1 - 6, y - 4);
+      c.lineTo(x1, y);
+      c.lineTo(x1 - 6, y + 4);
+      c.stroke();
+      c.font = '15px "Patrick Hand", cursive';
+      c.textAlign = 'left';
+      c.textBaseline = 'middle';
+      c.fillText(`${fmt(L, 1)} s`, x1 + 6, y);
+    };
     rLag.set(`${fmt(deg, 0)}°`);
     const wrapped = deg % 360;
     status.textContent = Math.abs(wrapped - 180) < 20 ? t('status.flipped') : wrapped < 45 || wrapped > 315 ? (deg > 300 ? t('status.full') : t('status.small')) : t('status.middle', { d: fmt(deg, 0) });
     plot.describe(t('describe', { p: fmt(period, 1), d: fmt(deg, 0) }));
   };
   const sl = slider({ label: t('slider'), min: 2, max: 30, step: 0.5, value: 20, unit: 's', color: 'eff', onInput: draw });
-  host.append(h('div', { class: 'w-controls' }, sl.el), h('div', { class: 'readouts' }, rLag.el), status);
+  host.classList.add('pid-widget');
+  host.append(h('div', { class: 'w-controls' }, sl.el), h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rLag.el)), status);
   draw(20);
 };
 
@@ -175,7 +203,10 @@ const bode: WidgetFactory = (host, ctx) => {
     color: 'eff',
     onInput: (v) => (w = wFromSlider(v)),
   });
-  host.append(h('div', { class: 'w-controls' }, sl.el), h('div', { class: 'w-row' }, btn, sweepBtn, clearBtn, formulaToggle.el), status);
+  host.classList.add('pid-widget');
+  host.append(h('div', { class: 'w-controls' }, sl.el), h('div', { class: 'w-hud' }, h('div', { class: 'w-row' }, btn, sweepBtn, clearBtn), formulaToggle.el), status);
+  // start with one measurement so the plots are never blank
+  measure(w);
   redraw();
 };
 
@@ -216,11 +247,13 @@ const margins: WidgetFactory = (host, ctx) => {
   const rCrit = readout(t('crit'), 'eff');
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
   const ws = logspace(Math.log10(0.02), Math.log10(5), 300);
+  // ghost = the last settled setting, not the previous drag frame
+  let fresh = true;
   const update = () => {
     const l = handLoop(k);
     const pts = sweep(l.num, l.den, delay, ws);
-    gain.clear();
-    phase.clear();
+    gain.clear(fresh);
+    phase.clear(fresh);
     gain.set('L', ws, pts.map((p) => p.mag));
     phase.set('L', ws, pts.map((p) => p.phase));
     const m = loopMargins(l, delay);
@@ -243,14 +276,17 @@ const margins: WidgetFactory = (host, ctx) => {
     rCrit.set(`${fmt(crit * 100, 2)} %/(°C·s)`);
     status.textContent = !stable ? t('status.over') : m.gm < 1.5 || m.pm < 30 ? t('status.edge', { p: fmt(m.pm, 0) }) : t('status.safe');
     status.className = `w-status${!stable ? ' bad' : m.pm > 45 ? ' good' : ''}`;
-    temp.clear();
+    temp.clear(fresh);
+    fresh = false;
     const tr = runShower(handPolicy(k), 60, delay);
     temp.set('T', tr.t, tr.T);
     gain.describe(t('describe', { gm: fmt(m.gm, 2), pm: fmt(m.pm, 0) }));
   };
   const sK = slider({ label: t('k'), min: 0.1, max: 2, step: 0.05, value: k * 100, unit: '%/(°C·s)', color: 'eff', onInput: (v) => { k = v / 100; update(); } });
   const sL = slider({ label: t('delay'), min: 1, max: 5, step: 0.25, value: delay, unit: 's', color: 'dis', onInput: (v) => { delay = v; update(); } });
-  host.append(h('div', { class: 'w-controls' }, sK.el, sL.el), h('div', { class: 'readouts' }, rGm.el, rPm.el, rCrit.el), status);
+  for (const el of [sK.input, sL.input]) el.addEventListener('change', () => (fresh = true));
+  host.classList.add('pid-widget');
+  host.append(h('div', { class: 'w-controls' }, sK.el, sL.el), h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rGm.el, rPm.el, rCrit.el)), status);
   update();
 };
 
@@ -284,9 +320,11 @@ const replay: WidgetFactory = (host, ctx) => {
   rPos.set(`${fmt(pPos, 1)} s`);
   let verdict: string;
   if (!Number.isFinite(period)) verdict = t('verdict.calm');
+  else if (!yours) verdict = t('verdict.robot', { p: fmt(period, 1) });
   else if (Math.abs(period - pPos) < Math.abs(period - pSpeed)) verdict = t('verdict.position', { p: fmt(period, 1) });
   else verdict = t('verdict.speed', { p: fmt(period, 1) });
-  host.append(h('div', { class: 'readouts' }, rYours.el, rSpeed.el, rPos.el), h('p', { class: 'w-status' }, verdict));
+  host.classList.add('pid-widget');
+  host.append(h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rYours.el, rSpeed.el, rPos.el)), h('p', { class: 'w-status' }, verdict));
   plot.describe(verdict);
 };
 
@@ -310,8 +348,8 @@ const designer: WidgetFactory = (host, ctx) => {
   ]);
   const rPm = readout(t('pm'));
   const rGm = readout(t('gm'));
-  const rComfort = readout(t('comfort'), 'sp');
-  const rYours = readout(t('yours'), 'ink');
+  const rComfort = readout(t('comfort'));
+  const rYours = readout(t('yours'));
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
   const saved = progress.load<SavedShowerRun>(SHOWER_RUN_KEY);
   const yourComfort = saved && saved.t.length > 50 ? comfortTime({ t: saved.t, T: saved.T, u: saved.u }) : Number.NaN;
@@ -356,12 +394,36 @@ const designer: WidgetFactory = (host, ctx) => {
     if (win) progress.save('ch10.robot', { kp, ki, comfort });
     plot.describe(status.textContent ?? '');
   };
+  // dragging shows the whole run instantly (ghosting the last settled one);
+  // releasing a pointer drag replays it live. Keyboard steps never animate.
+  let fresh = true;
+  let pointer = false;
+  const preview = () => {
+    evaluate();
+    loop.pause();
+    plot.clear(fresh);
+    fresh = false;
+    const tr = runShower(piPolicy(kp, ki), 40);
+    plot.set('T', tr.t, tr.T);
+    plot.set('mix', tr.t, tr.u.map((u) => SHOWER.cold + (SHOWER.hot - SHOWER.cold) * u));
+    const last = tr.t.length - 1;
+    view.update({ u: tr.u[last], pipe: Array.from({ length: 30 }, () => SHOWER.cold + (SHOWER.hot - SHOWER.cold) * tr.u[last]), temp: tr.T[last] });
+  };
   const change = () => {
     evaluate();
     restart();
+    fresh = true;
   };
-  const sKp = slider({ label: t('kp'), min: 0, max: 6, step: 0.1, value: kp * 100, unit: '%/°C', color: 'out', onInput: (v) => { kp = v / 100; change(); } });
-  const sKi = slider({ label: t('ki'), min: 0, max: 6, step: 0.05, value: ki * 100, unit: '%/(°C·s)', color: 'err', onInput: (v) => { ki = v / 100; change(); } });
+  const sKp = slider({ label: t('kp'), min: 0, max: 6, step: 0.1, value: kp * 100, unit: '%/°C', color: 'eff', onInput: (v) => { kp = v / 100; preview(); } });
+  const sKi = slider({ label: t('ki'), min: 0, max: 6, step: 0.05, value: ki * 100, unit: '%/(°C·s)', color: 'eff', onInput: (v) => { ki = v / 100; preview(); } });
+  for (const sl of [sKp, sKi]) {
+    sl.input.addEventListener('pointerdown', () => (pointer = true));
+    sl.input.addEventListener('change', () => {
+      fresh = true;
+      if (pointer && Loop.autoplay) restart();
+      pointer = false;
+    });
+  }
   const preset = (label: string, p: number, i: number) => {
     const b = h('button', { class: 'btn small', type: 'button' }, label);
     b.addEventListener('click', () => {
@@ -373,13 +435,13 @@ const designer: WidgetFactory = (host, ctx) => {
     });
     return b;
   };
-  right.append(transport({ loop, onReset: restart, onStep: () => sim.advance(0.5) }));
+  host.classList.add('pid-widget');
   host.append(
     h('div', { class: 'w-controls' }, sKp.el, sKi.el),
     h('div', { class: 'w-row' }, preset(t('presetHand'), 0, 0.008), preset(t('presetJune'), 0.05, 0.05)),
-    h('p', { class: 'w-help' }, t('goal')),
-    h('div', { class: 'readouts' }, rPm.el, rGm.el, rComfort.el, rYours.el),
+    h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rPm.el, rGm.el, rComfort.el, rYours.el), transport({ loop, onReset: restart, onStep: () => sim.advance(0.5) })),
     status,
+    h('p', { class: 'w-help' }, t('goal')),
   );
   evaluate();
   restart();

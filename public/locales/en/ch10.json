@@ -7,30 +7,74 @@
       "id": "again",
       "title": "The shower, with new eyes",
       "blocks": [
-        { "t": "say", "who": "june", "mood": "worried", "text": "I put our drone PID on the shower. It swung hot, cold, hot… exactly like Mika in Chapter 0. The drone never did that!" },
-        { "t": "say", "who": "theo", "mood": "think", "text": "The drone has no big delay. The shower has 2.5 seconds of pipe. Let's finally work out what a delay *does*." },
-        { "t": "p", "text": "First, a confession about Chapter 0's \"normal hand\". It turned the knob at a **speed** proportional to how wrong the water felt: knob speed $= k\\cdot\\err{e}$, with $k = 0.8\\,\\%$ of the knob per second per °C. A speed proportional to the error means the knob *position* is the pile of past error. That's an **I controller**, with $K_i = k$." },
-        { "t": "say", "who": "mika", "mood": "surprised", "text": "Wait, so in Chapter 0 I was a PID controller? Well, an I controller. An over-eager one." }
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "I put our drone PID on the shower. It swung hot, cold, hot… exactly like Mika in Chapter 0. The drone never did that!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "The drone has no big delay. The shower has 2.5 seconds of pipe. Let's finally work out what a delay *does*."
+        },
+        {
+          "t": "p",
+          "text": "First, a confession about Chapter 0's \"normal hand\". It turned the knob at a **speed** proportional to how wrong the water felt: knob speed $= k\\cdot\\err{e}$, with $k = 0.8\\,\\%$ of the knob per second per °C. A speed proportional to the error means the knob *position* is the pile of past error. That's an **I controller**, with $K_i = k$."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Wait, so in Chapter 0 I was a PID controller? Well, an I controller. An over-eager one."
+        }
       ]
     },
     {
       "id": "lag",
       "title": "Delay is a lag in the wiggle",
       "blocks": [
-        { "t": "say", "who": "theo", "mood": "neutral", "text": "I still think a delay just makes everything *slower*. It shouldn't be able to make anything unstable." },
-        { "t": "p", "text": "Let's test Theo's claim by thinking in **waves**. Wiggle the knob back and forth like a sine wave. The water that arrives at the head is the same wave, 2.5 s late. How late is that, *compared with one wiggle*?" },
-        { "t": "widget", "id": "phase" },
-        { "t": "p", "text": "The delay is always 2.5 seconds, but the lag in the **wiggle** depends on how fast you wiggle. We measure the lag as an angle: a whole wiggle is 360°, so" },
-        { "t": "math", "tex": "\\text{lag} = 360^\\circ \\times \\frac{L}{T_{\\text{wiggle}}} = \\omega L \\;\\text{(in radians)}" },
-        { "t": "p", "text": "For a slow 30-second wiggle, 2.5 s is only 30°: a small nudge. For a 5-second wiggle it's 180°: the water arrives **exactly upside down**, hot when the knob says cold. A delay is harmless for slow changes and treacherous for fast ones." },
-        { "t": "note", "text": "This is the spinning arrow from Chapter 5: a delay of $L$ rotates the arrow $e^{i\\omega t}$ backwards by the angle $\\omega L$. That's why the transfer function of a pure delay is $e^{-Ls}$." }
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "neutral",
+          "text": "I still think a delay just makes everything *slower*. It shouldn't be able to make anything unstable."
+        },
+        {
+          "t": "p",
+          "text": "Let's test Theo's claim by thinking in **waves**. Wiggle the knob back and forth like a sine wave. The water that arrives at the head is the same wave, 2.5 s late. How late is that, *compared with one wiggle*?"
+        },
+        {
+          "t": "widget",
+          "id": "phase"
+        },
+        {
+          "t": "p",
+          "text": "The delay is always 2.5 seconds, but the lag in the **wiggle** depends on how fast you wiggle. We measure the lag as an angle: a whole wiggle is 360°, so"
+        },
+        {
+          "t": "math",
+          "tex": "\\text{lag} = 360^\\circ \\times \\frac{L}{T_{\\text{wiggle}}} = \\omega L \\;\\text{(in radians)}"
+        },
+        {
+          "t": "p",
+          "text": "For a slow 30-second wiggle, 2.5 s is only 30°: a small nudge. For a 5-second wiggle it's 180°: the water arrives **exactly upside down**, hot when the knob says cold. A delay is harmless for slow changes and treacherous for fast ones."
+        },
+        {
+          "t": "note",
+          "text": "This is the spinning arrow from Chapter 5: a delay of $L$ rotates the arrow $e^{i\\omega t}$ backwards by the angle $\\omega L$. That's why the transfer function of a pure delay is $e^{-Ls}$."
+        }
       ]
     },
     {
       "id": "bode",
       "title": "Measuring the shower one wiggle at a time",
       "blocks": [
-        { "t": "p", "text": "The whole shower (pipe *and* mixing) must be doing something similar. Here's the plan: wiggle the knob at one speed, wait until things settle into a steady rhythm, and measure two numbers:" },
+        {
+          "t": "p",
+          "text": "The whole shower (pipe *and* mixing) must be doing something similar. Here's the plan: wiggle the knob at one speed, wait until things settle into a steady rhythm, and measure two numbers:"
+        },
         {
           "t": "list",
           "items": [
@@ -38,59 +82,156 @@
             "**Phase:** how far behind it is, as an angle."
           ]
         },
-        { "t": "p", "text": "Each measurement drops a dot on two plots. Measure at least five speeds, slow and fast." },
-        { "t": "widget", "id": "bode" },
-        { "t": "p", "text": "The mixing lag shrinks fast wiggles (the gain falls away), while the pipe keeps piling on phase lag, without limit. Plotted against wiggle speed on logarithmic axes, this pair of curves is called a **Bode plot**. We just drew one by hand. The formula comes straight from $G(s)$ with $s = i\\omega$, the vertical axis of the s-plane:" },
-        { "t": "math", "tex": "G(i\\omega) = \\frac{e^{-i\\omega L}}{1 + i\\omega\\tau}, \\qquad |G| = \\frac{1}{\\sqrt{1+\\omega^2\\tau^2}}, \\qquad \\angle G = -\\arctan(\\omega\\tau) - \\omega L" },
-        { "t": "note", "text": "One honest assist: a single measurement can't tell a lag of 90° from 450° (the waves look the same). We count whole extra cycles by following the curve from slow to fast, like tracking one crest through the pipe." }
+        {
+          "t": "p",
+          "text": "Each measurement drops a dot on two plots. Measure at least five speeds, slow and fast."
+        },
+        {
+          "t": "widget",
+          "id": "bode"
+        },
+        {
+          "t": "p",
+          "text": "The mixing lag shrinks fast wiggles (the gain falls away), while the pipe keeps piling on phase lag, without limit. Plotted against wiggle speed on logarithmic axes, this pair of curves is called a **Bode plot**. We just drew one by hand. The formula comes straight from $G(s)$ with $s = i\\omega$, the vertical axis of the s-plane:"
+        },
+        {
+          "t": "math",
+          "tex": "G(i\\omega) = \\frac{e^{-i\\omega L}}{1 + i\\omega\\tau}, \\qquad |G| = \\frac{1}{\\sqrt{1+\\omega^2\\tau^2}}, \\qquad \\angle G = -\\arctan(\\omega\\tau) - \\omega L"
+        },
+        {
+          "t": "note",
+          "text": "One honest assist: a single measurement can't tell a lag of 90° from 450° (the waves look the same). We count whole extra cycles by following the curve from slow to fast, like tracking one crest through the pipe."
+        }
       ]
     },
     {
       "id": "margins",
       "title": "How close to the cliff?",
       "blocks": [
-        { "t": "p", "text": "Now close the loop: hand → knob → pipe → skin → hand. Follow a wiggle all the way around. For the Chapter 0 hand, the trip around the loop is" },
-        { "t": "math", "tex": "L(s) = \\underbrace{\\frac{k}{s}}_{\\text{hand}}\\cdot\\underbrace{\\frac{45\\,e^{-2.5s}}{s+1}}_{\\text{shower}}" },
-        { "t": "p", "text": "Feedback subtracts (error = target − temperature), which flips the wave once. If the trip around the loop *also* delays it by exactly 180°, the two flips cancel, and every correction arrives **perfectly in step** with the swing, like pushing a playground swing at just the right moment. If the loop also doesn't shrink the wave (gain ≥ 1), the swing grows by itself." },
-        { "t": "say", "who": "june", "mood": "excited", "text": "So there's one special wiggle speed, where the phase hits −180°. The question is just: at that speed, is the loop gain bigger or smaller than 1?" },
+        {
+          "t": "p",
+          "text": "Now close the loop: hand → knob → pipe → skin → hand. Follow a wiggle all the way around. For the Chapter 0 hand, the trip around the loop is"
+        },
+        {
+          "t": "math",
+          "tex": "L(s) = \\underbrace{\\frac{k}{s}}_{\\text{hand}}\\cdot\\underbrace{\\frac{45\\,e^{-2.5s}}{s+1}}_{\\text{shower}}"
+        },
+        {
+          "t": "p",
+          "text": "Feedback subtracts (error = target − temperature), which flips the wave once. If the trip around the loop *also* delays it by exactly 180°, the two flips cancel, and every correction arrives **perfectly in step** with the swing, like pushing a playground swing at just the right moment. If the loop also doesn't shrink the wave (gain ≥ 1), the swing grows by itself."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "So there's one special wiggle speed, where the phase hits −180°. The question is just: at that speed, is the loop gain bigger or smaller than 1?"
+        },
         {
           "t": "vocab",
           "items": [
-            { "term": "Gain margin", "def": "How many times you could multiply the controller's gain before the loop gain reaches 1 at the −180° speed. Below 1 = over the cliff." },
-            { "term": "Phase margin", "def": "At the speed where the loop gain is exactly 1, how much *extra* lag it would take to reach −180°. More is safer; 45°–60° is a common target." }
+            {
+              "term": "Gain margin",
+              "def": "How many times you could multiply the controller's gain before the loop gain reaches 1 at the −180° speed. Below 1 = over the cliff."
+            },
+            {
+              "term": "Phase margin",
+              "def": "At the speed where the loop gain is exactly 1, how much *extra* lag it would take to reach −180°. More is safer; 45°–60° is a common target."
+            }
           ]
         },
-        { "t": "p", "text": "For our shower, the phase of $L$ hits −180° at $\\omega \\approx 0.457$ rad/s, a wiggle period of about **13.7 s**. The normal hand ($k = 0.8$) has a gain margin of only about **1.4**, and a phase margin of about 22°. Close to the edge! The harder hand doubles the gain: 1.4 ÷ 2 = 0.7, **over the cliff**. That's exactly why it never settled." },
+        {
+          "t": "p",
+          "text": "For our shower, the phase of $L$ hits −180° at $\\omega \\approx 0.457$ rad/s, a wiggle period of about **13.7 s**. The normal hand ($k = 0.8$) has a gain margin of only about **1.4**, and a phase margin of about 22°. Close to the edge! The harder hand doubles the gain: 1.4 ÷ 2 = 0.7, **over the cliff**. That's exactly why it never settled."
+        },
         {
           "t": "predict",
           "id": "ch10-delay",
           "gate": true,
           "q": "Suppose the pipe were twice as long (a 5 s delay). What happens to the largest hand gain that's still stable?",
           "options": [
-            { "text": "It goes **up**: you can react harder, because you have more time", "why": "More time to react sounds nice, but you're reacting to *older* news. The lag grows at every speed." },
-            { "text": "It goes **down**: you must react more gently", "correct": true, "why": "The phase hits −180° at a slower wiggle, and at slow speeds the hand's pile ($k/s$) is big. The loop gain there is larger, so $k$ must shrink: from about 1.12 to 0.60 %/(°C·s)." },
-            { "text": "It stays the same: delay changes timing, not gain", "why": "A delay doesn't change the size of a wave, true, but it changes *which* speed reaches −180°, and the gain is different there." }
+            {
+              "text": "It goes **up**: you can react harder, because you have more time",
+              "why": "More time to react sounds nice, but you're reacting to *older* news. The lag grows at every speed."
+            },
+            {
+              "text": "It goes **down**: you must react more gently",
+              "correct": true,
+              "why": "The phase hits −180° at a slower wiggle, and at slow speeds the hand's pile ($k/s$) is big. The loop gain there is larger, so $k$ must shrink: from about 1.12 to 0.60 %/(°C·s)."
+            },
+            {
+              "text": "It stays the same: delay changes timing, not gain",
+              "why": "A delay doesn't change the size of a wave, true, but it changes *which* speed reaches −180°, and the gain is different there."
+            }
           ]
         },
-        { "t": "widget", "id": "margins" },
-        { "t": "say", "who": "theo", "mood": "surprised", "text": "Okay, I take it back. A delay doesn't just make things slower: it eats phase margin, and phase margin is the only thing between you and an oscillation." },
-        { "t": "h3", "text": "Your Chapter 0 shower, explained" },
-        { "t": "p", "text": "Here's your own run from Chapter 0. If your swings were near the edge, their period should be close to what the loop predicts. There's a twist: people are not all the same kind of controller." },
-        { "t": "widget", "id": "replay" },
-        { "t": "p", "text": "A **speed hand** (turn the knob while it feels wrong) is an I controller: its edge is at 13.7 s swings. A **position hand** (\"it's too hot, put the knob *here*\") acts like a P controller: $L(s) = 45K\\,e^{-2.5s}/(s+1)$, whose phase hits −180° at $\\omega \\approx 0.95$ rad/s, **6.6 s** swings, for any $K$ above about 0.031 knob per °C. Most people are a mix. (The normal robot hand swings a bit slower than 13.7 s, about 15.5 s, because it sits just inside the edge; the harder hand's swings, about 11.6 s, are squashed by the knob hitting its ends.)" }
+        {
+          "t": "widget",
+          "id": "margins"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Okay, I take it back. A delay doesn't just make things slower: it eats phase margin, and phase margin is the only thing between you and an oscillation."
+        }
+      ]
+    },
+    {
+      "id": "replay",
+      "title": "Your Chapter 0 shower, explained",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Here's your own run from Chapter 0. If your swings were near the edge, their period should be close to what the loop predicts. There's a twist: people are not all the same kind of controller."
+        },
+        {
+          "t": "widget",
+          "id": "replay"
+        },
+        {
+          "t": "p",
+          "text": "A **speed hand** (turn the knob while it feels wrong) is an I controller: its edge is at 13.7 s swings. A **position hand** (\"it's too hot, put the knob *here*\") acts like a P controller: $L(s) = 45K\\,e^{-2.5s}/(s+1)$, whose phase hits −180° at $\\omega \\approx 0.95$ rad/s, **6.6 s** swings, for any $K$ above about 0.031 knob per °C. Most people are a mix. (The normal robot hand swings a bit slower than 13.7 s, about 15.5 s, because it sits just inside the edge; the harder hand's swings, about 11.6 s, are squashed by the knob hitting its ends.)"
+        }
       ]
     },
     {
       "id": "design",
       "title": "Design a robot shower",
       "blocks": [
-        { "t": "p", "text": "Now let's beat our own hands. The robot uses a PI controller: an I part (like the hand) plus a P part, which reacts to the *trend* of the temperature and adds phase lead. Aim for a **phase margin above 45°** and **comfortable (in the band for 10 s straight) within 12 s**." },
-        { "t": "say", "who": "june", "mood": "excited", "text": "Easy. I'll use big gains, like on the drone: fast and snappy." },
-        { "t": "widget", "id": "designer" },
-        { "t": "say", "who": "june", "mood": "worried", "text": "…it swings exactly like we did. Big gains pushed the −180° speed past the point where the loop gain is 1. No phase margin at all." },
-        { "t": "say", "who": "theo", "mood": "happy", "text": "The drone could take big gains because it had almost no lag. Here, **robust** means gentle: leave margin for the delay. Try about $K_p \\approx 1$ and $K_i \\approx 0.6$." },
-        { "t": "p", "text": "A well-margined PI gets comfortable in under 8 seconds, with no swinging. That beats the normal hand (which spent most of a minute swinging before it calmed down) and most humans. It can't beat physics, though: nothing can react to water that hasn't arrived yet. Engineers do have a trick for long delays, a **Smith predictor**, which runs a little simulation of the pipe inside the controller. That's a story for another notebook." },
-        { "t": "note", "text": "Robustness is the real lesson. Your model of the shower is never perfect: the pipe might be longer, the heater weaker. Margins are the insurance that your controller still works when the world isn't quite what you assumed." }
+        {
+          "t": "p",
+          "text": "Now let's beat our own hands. The robot uses a PI controller: an I part (like the hand) plus a P part, which reacts to the *trend* of the temperature and adds phase lead. Aim for a **phase margin above 45°** and **comfortable (in the band for 10 s straight) within 12 s**."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Easy. I'll use big gains, like on the drone: fast and snappy."
+        },
+        {
+          "t": "widget",
+          "id": "designer"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "…it swings exactly like we did. Big gains pushed the −180° speed past the point where the loop gain is 1. No phase margin at all."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "The drone could take big gains because it had almost no lag. Here, **robust** means gentle: leave margin for the delay. Try about $K_p \\approx 1$ and $K_i \\approx 0.6$."
+        },
+        {
+          "t": "p",
+          "text": "A well-margined PI gets comfortable in under 8 seconds, with no swinging. That beats the normal hand (which spent most of a minute swinging before it calmed down) and most humans. It can't beat physics, though: nothing can react to water that hasn't arrived yet. Engineers do have a trick for long delays, a **Smith predictor**, which runs a little simulation of the pipe inside the controller. That's a story for another notebook."
+        },
+        {
+          "t": "note",
+          "text": "Robustness is the real lesson. Your model of the shower is never perfect: the pipe might be longer, the heater weaker. Margins are the insurance that your controller still works when the world isn't quite what you assumed."
+        }
       ]
     },
     {
@@ -114,42 +255,87 @@
               "id": "ch10-q1",
               "q": "A 2 s delay, and a wiggle with an 8 s period. How much phase lag does the delay add?",
               "options": [
-                { "text": "90°", "correct": true, "why": "2 s is a quarter of 8 s, and a quarter of 360° is 90°." },
-                { "text": "45°", "why": "That would be a delay of 1 s. 2 s is a quarter of the period, not an eighth." },
-                { "text": "180°", "why": "That would need a delay of half the period, 4 s." }
+                {
+                  "text": "90°",
+                  "correct": true,
+                  "why": "2 s is a quarter of 8 s, and a quarter of 360° is 90°."
+                },
+                {
+                  "text": "45°",
+                  "why": "That would be a delay of 1 s. 2 s is a quarter of the period, not an eighth."
+                },
+                {
+                  "text": "180°",
+                  "why": "That would need a delay of half the period, 4 s."
+                }
               ]
             },
             {
               "id": "ch10-q2",
               "q": "At the speed where the loop's phase is −180°, the loop gain is 0.5. What is the gain margin?",
               "options": [
-                { "text": "× 2", "correct": true, "why": "You could double the gain before the loop gain at −180° reaches 1." },
-                { "text": "× 0.5", "why": "That's the loop gain itself. The margin is how far it is to 1: 1 ÷ 0.5 = 2." },
-                { "text": "180°", "why": "Gain margin is a factor, not an angle. The angle version is the phase margin." }
+                {
+                  "text": "× 2",
+                  "correct": true,
+                  "why": "You could double the gain before the loop gain at −180° reaches 1."
+                },
+                {
+                  "text": "× 0.5",
+                  "why": "That's the loop gain itself. The margin is how far it is to 1: 1 ÷ 0.5 = 2."
+                },
+                {
+                  "text": "180°",
+                  "why": "Gain margin is a factor, not an angle. The angle version is the phase margin."
+                }
               ]
             },
             {
               "id": "ch10-q3",
               "q": "Why does a longer pipe force a gentler controller?",
               "options": [
-                { "text": "The extra lag reaches −180° at a slower wiggle, where the loop gain is bigger, so the gain must come down", "correct": true, "why": "Right. For an integrating hand, slow wiggles get the biggest boost, so the cliff moves closer." },
-                { "text": "The water gets colder in a longer pipe", "why": "We assumed no heat loss. The effect is purely about timing." },
-                { "text": "It doesn't: you can react harder since you have more time", "why": "You don't have more time. You have older information. That's the trap from Chapter 0." }
+                {
+                  "text": "The extra lag reaches −180° at a slower wiggle, where the loop gain is bigger, so the gain must come down",
+                  "correct": true,
+                  "why": "Right. For an integrating hand, slow wiggles get the biggest boost, so the cliff moves closer."
+                },
+                {
+                  "text": "The water gets colder in a longer pipe",
+                  "why": "We assumed no heat loss. The effect is purely about timing."
+                },
+                {
+                  "text": "It doesn't: you can react harder since you have more time",
+                  "why": "You don't have more time. You have older information. That's the trap from Chapter 0."
+                }
               ]
             },
             {
               "id": "ch10-q4",
               "q": "The normal hand has a gain margin of about 1.4. What happens if you react 1.5 times harder?",
               "options": [
-                { "text": "The swings grow instead of dying out", "correct": true, "why": "1.5 is more than the 1.4 margin, so the loop gain at −180° goes past 1: over the cliff." },
-                { "text": "It settles faster", "why": "More gain would only help if there were plenty of margin. With 1.4, there isn't." },
-                { "text": "Nothing changes", "why": "Gain is exactly what the gain margin measures, so it definitely matters." }
+                {
+                  "text": "The swings grow instead of dying out",
+                  "correct": true,
+                  "why": "1.5 is more than the 1.4 margin, so the loop gain at −180° goes past 1: over the cliff."
+                },
+                {
+                  "text": "It settles faster",
+                  "why": "More gain would only help if there were plenty of margin. With 1.4, there isn't."
+                },
+                {
+                  "text": "Nothing changes",
+                  "why": "Gain is exactly what the gain margin measures, so it definitely matters."
+                }
               ]
             }
           ]
         },
-        { "t": "map" },
-        { "t": "cliff", "text": "We have every tool now: feedback, PID, poles, margins. Time for the real test: wind, a package drop, and a noisy sensor. **Can you keep the drone at 2 m?**" }
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "We have every tool now: feedback, PID, poles, margins. Time for the real test: wind, a package drop, and a noisy sensor. **Can you keep the drone at 2 m?**"
+        }
       ]
     }
   ],
@@ -236,7 +422,8 @@
       "verdict": {
         "calm": "Not enough swings to measure: you were patient (or lucky)!",
         "speed": "Swings every {p} s: you behaved like a speed hand, an I controller near its edge.",
-        "position": "Swings every {p} s: you behaved like a position hand, a P controller near its edge."
+        "position": "Swings every {p} s: you behaved like a position hand, a P controller near its edge.",
+        "robot": "The robot hand swings every {p} s: a speed hand (an I controller) sitting just inside its edge, as predicted."
       }
     },
     "designer": {
