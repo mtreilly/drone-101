@@ -88,6 +88,10 @@
           "text": "Each change of a slider restarts the mission, and the previous flight stays as a ghost. The small s-plane shows the **nominal** poles (a perfect sensor, no package, no limits), so you can see the linear picture while the real, messy flight happens next to it. Earn all six stars for gold."
         },
         {
+          "t": "p",
+          "text": "The arrival star means the **true height stays** within ±5 cm from its arrival until the gust at 6 s; merely crossing 2 m once does not count. The calm-motors star uses the **standard deviation** of thrust from 3 to 6 s: its typical variation around its average, including late settling and sensor chatter."
+        },
+        {
           "t": "widget",
           "id": "mission"
         },
@@ -154,7 +158,7 @@
             "**P control** pushes in proportion to the error, but leaves a droop and wiggles when it's strong (Ch 2).",
             "**Derivatives, exponentials and spinning numbers** describe how things change: $e^{st}$ with $s = \\sigma + i\\omega$ grows or shrinks *and* wiggles (Ch 3–6).",
             "The **Laplace transform** turns slopes into multiplication by $s$, so calculus becomes algebra (Ch 7).",
-            "A **transfer function's poles** are the $e^{st}$ terms a system is made of: left half calms down, right half blows up (Ch 8).",
+            "A transfer function’s **uncanceled poles** mark natural motions visible from its chosen input to output: left-half motions fade, right-half motions grow (Ch 8).",
             "**PID**: I kills the droop, D adds damping, and each one moves the poles (Ch 9).",
             "**Delay** adds phase lag; **margins** tell you how far you are from the cliff edge (Ch 10).",
             "Real hardware adds limits, lag and noise, so good controllers are calm as well as fast (Ch 11)."
@@ -280,12 +284,12 @@
       "instant": "Fly instantly",
       "checklist": "Mission checklist",
       "crit": {
-        "rise": "Reach 2 m (± {bandCm} cm) within {rise} s",
+        "rise": "Reach and stay at 2 m (± {bandCm} cm) by {rise} s, until the gust",
         "overshoot": "Overshoot under {overshoot} % on take-off",
-        "gust": "Stay within {gustCm} cm during the gust",
+        "gust": "Stay within {gustCm} cm from gust onset until the package drop",
         "recover": "Back within ± {bandCm} cm less than {recover} s after the drop",
         "ground": "Never touch the ground after take-off",
-        "calm": "Motors calm in hover (jitter under {calm} N)"
+        "calm": "Thrust standard deviation under {calm} N from 3 to 6 s"
       },
       "touched": "touched!",
       "clear": "clear",
@@ -304,7 +308,8 @@
       "poles": {
         "stable": "Nominal poles: all in the left half.",
         "unstable": "A nominal pole is in the right half: this tune can't hold!",
-        "off": "({n} fast pole(s) off the left edge.)"
+        "off": "({n} fast pole(s) off the left edge.)",
+        "marginal": "Nominal poles: a pole is on the stability boundary."
       }
     }
   }

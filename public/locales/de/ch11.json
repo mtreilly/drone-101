@@ -88,6 +88,10 @@
           "text": "Jede Änderung an einem Schieberegler startet den Einsatz neu, und der vorherige Flug bleibt als Geist stehen. Die kleine s-Ebene zeigt die **nominellen** Pole (perfekter Sensor, kein Paket, keine Grenzen). So siehst du das lineare Bild, während daneben der echte, chaotische Flug passiert. Hol dir alle sechs Sterne für Gold."
         },
         {
+          "t": "p",
+          "text": "Für den Ankunftsstern muss die **tatsächliche Höhe** ab der Ankunft bis zur Böe bei 6 s innerhalb von ±5 cm **bleiben**; einmaliges Kreuzen von 2 m zählt nicht. Der Stern für ruhige Motoren nutzt die **Standardabweichung** des Schubs von 3 bis 6 s: die typische Schwankung um den Mittelwert, einschließlich spätem Einpendeln und Sensorrauschen."
+        },
+        {
           "t": "widget",
           "id": "mission"
         },
@@ -154,7 +158,7 @@
             "**P-Regler** drücken proportional zum Fehler, lassen aber ein Durchhängen übrig und wackeln, wenn sie stark sind (Kap. 2).",
             "**Ableitungen, Exponentialfunktionen und drehende Zahlen** beschreiben, wie sich Dinge ändern: $e^{st}$ mit $s = \\sigma + i\\omega$ wächst oder schrumpft *und* wackelt (Kap. 3–6).",
             "Die **Laplace-Transformation** macht aus Steigungen ein Multiplizieren mit $s$, also wird aus Analysis Algebra (Kap. 7).",
-            "Die **Pole einer Übertragungsfunktion** sind die $e^{st}$-Terme, aus denen ein System besteht: Die linke Hälfte beruhigt sich, die rechte explodiert (Kap. 8).",
+            "Die **nicht gekürzten Pole** einer Übertragungsfunktion markieren natürliche Bewegungen, die vom gewählten Eingang zum Ausgang sichtbar sind: links klingen sie ab, rechts wachsen sie (Kap. 8).",
             "**PID**: I killt das Durchhängen, D bringt Dämpfung, und jeder Anteil verschiebt die Pole (Kap. 9).",
             "**Totzeit** bringt Phasenverzug; **Reserven** sagen dir, wie weit du von der Klippe entfernt bist (Kap. 10).",
             "Echte Hardware bringt Grenzen, Verzögerung und Rauschen mit, also sind gute Regler nicht nur schnell, sondern auch ruhig (Kap. 11)."
@@ -280,12 +284,12 @@
       "instant": "Sofort fliegen",
       "checklist": "Einsatz-Checkliste",
       "crit": {
-        "rise": "2 m (± {bandCm} cm) innerhalb von {rise} s erreichen",
+        "rise": "Bis {rise} s 2 m (± {bandCm} cm) erreichen und bis zur Böe dort bleiben",
         "overshoot": "Überschwingen beim Start unter {overshoot} %",
-        "gust": "Während der Böe innerhalb von {gustCm} cm bleiben",
+        "gust": "Von der Böe bis zum Paketabwurf innerhalb von {gustCm} cm bleiben",
         "recover": "Weniger als {recover} s nach dem Abwurf wieder innerhalb ± {bandCm} cm",
         "ground": "Nach dem Start nie den Boden berühren",
-        "calm": "Motoren ruhig im Schwebeflug (Zittern unter {calm} N)"
+        "calm": "Standardabweichung des Schubs von 3 bis 6 s unter {calm} N"
       },
       "touched": "berührt!",
       "clear": "frei",
@@ -304,7 +308,8 @@
       "poles": {
         "stable": "Nominelle Pole: alle in der linken Hälfte.",
         "unstable": "Ein nomineller Pol liegt in der rechten Hälfte: Diese Einstellung kann nicht halten!",
-        "off": "({n} schnelle(r) Pol(e) jenseits des linken Rands.)"
+        "off": "({n} schnelle(r) Pol(e) jenseits des linken Rands.)",
+        "marginal": "Nennpole: Ein Pol liegt auf der Stabilitätsgrenze."
       }
     }
   }

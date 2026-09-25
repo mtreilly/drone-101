@@ -17,7 +17,7 @@ import { CRITERIA, LIMITS, MISSION, evaluate, missionConfig, missionPoles, runMi
 export const BEST_KEY = 'ch11.best';
 
 /** June's "perfect in calm air" tune: flawless with a perfect sensor, chattering with a real one. */
-export const JUNE_TUNE = { kp: 25, ki: 15, kd: 10, dTau: 0.005, dOnMeasurement: true };
+export const JUNE_TUNE = { kp: 30, ki: 15, kd: 10, dTau: 0.005, dOnMeasurement: true };
 
 interface Best {
   stars: number;
@@ -43,6 +43,14 @@ const mission: WidgetFactory = (host, ctx) => {
   const phaseLive = h('span', { class: 'visually-hidden', 'aria-live': 'polite' });
   const fill = h('span', { class: 'mission-fill' });
   const pct = (x: number) => `${(100 * x) / MISSION.duration}%`;
+  const criterionVars = {
+    rise: fmt(LIMITS.rise, 0),
+    overshoot: fmt(LIMITS.overshoot, 0),
+    recover: fmt(LIMITS.recover, 0),
+    calm: fmt(LIMITS.calm, 1),
+    gustCm: fmt(LIMITS.gust * 100, 0),
+    bandCm: fmt(LIMITS.band * 100, 0),
+  };
   const track = h(
     'span',
     { class: 'mission-track', 'aria-hidden': 'true' },
@@ -55,7 +63,7 @@ const mission: WidgetFactory = (host, ctx) => {
     'span',
     { class: 'mission-minis', 'aria-hidden': 'true' },
     CRITERIA.map((id) => {
-      const m = h('span', { class: 'mini', 'data-state': 'pending', title: t(`crit.${id}`, { ...LIMITS, gustCm: LIMITS.gust * 100, bandCm: LIMITS.band * 100 }) }, '○');
+      const m = h('span', { class: 'mini', 'data-state': 'pending', title: t(`crit.${id}`, criterionVars) }, '○');
       minis.set(id, m);
       return m;
     }),
@@ -150,7 +158,7 @@ const mission: WidgetFactory = (host, ctx) => {
   const items = new Map<string, HTMLElement>();
   const list = h('ul', { class: 'checklist' });
   for (const id of CRITERIA) {
-    const li = h('li', { 'data-state': 'pending' }, h('span', { class: 'mark', 'aria-hidden': 'true' }, '○'), h('span', { class: 'crit-text' }, t(`crit.${id}`, { ...LIMITS, gustCm: LIMITS.gust * 100, bandCm: LIMITS.band * 100 })), h('span', { class: 'crit-val' }));
+    const li = h('li', { 'data-state': 'pending' }, h('span', { class: 'mark', 'aria-hidden': 'true' }, '○'), h('span', { class: 'crit-text' }, t(`crit.${id}`, criterionVars)), h('span', { class: 'crit-val' }));
     items.set(id, li);
     list.append(li);
   }
@@ -165,7 +173,7 @@ const mission: WidgetFactory = (host, ctx) => {
     gust: `${fmt(r.gust * 100, 1)} cm`,
     recover: Number.isFinite(r.recover) ? `${fmt(r.recover, 2)} s` : '—',
     ground: r.ground ? t('touched') : t('clear'),
-    calm: Number.isFinite(r.calm) ? `± ${fmt(r.calm, 2)} N` : '—',
+    calm: Number.isFinite(r.calm) ? `${fmt(r.calm, 2)} N` : '—',
   });
   const MARK: Record<string, string> = { pass: '★', fail: '✗', pending: '○' };
   const setState = (el: HTMLElement, mark: HTMLElement, state: string, animate: boolean) => {
@@ -183,7 +191,7 @@ const mission: WidgetFactory = (host, ctx) => {
     const v = values(r);
     const now = tr.t[tr.t.length - 1] ?? 0;
     const decided: Record<string, boolean> = {
-      rise: r.pass.rise || now > LIMITS.rise,
+      rise: now >= MISSION.gust.start,
       overshoot: now >= MISSION.gust.start,
       gust: now >= MISSION.dropAt,
       recover: final,
@@ -286,7 +294,8 @@ const mission: WidgetFactory = (host, ctx) => {
     );
     sp.describe();
     const unstable = ps.some((p) => p.re > 1e-9);
-    poleNote.textContent = `${unstable ? t('poles.unstable') : t('poles.stable')}${off ? ` ${t('poles.off', { n: off })}` : ''}`;
+    const marginal = ps.some((p) => p.re >= -1e-9);
+    poleNote.textContent = `${unstable ? t('poles.unstable') : marginal ? t('poles.marginal') : t('poles.stable')}${off ? ` ${t('poles.off', { n: off })}` : ''}`;
   }
 
   // dragging previews the whole mission instantly; letting go of a pointer drag flies it live

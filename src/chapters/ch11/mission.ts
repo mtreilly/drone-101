@@ -33,22 +33,22 @@ export const runMission = (p: PID, seed = 7): Trace => runDrone(missionConfig(p,
 
 export type CriterionId = 'rise' | 'overshoot' | 'gust' | 'recover' | 'ground' | 'calm';
 
-/** Pass limits: rise ≤ 3 s, overshoot < 10 %, gust deviation < 20 cm, recovery < 2 s, thrust jitter < 0.5 N. */
+/** Pass limits: settled rise ≤ 3 s, overshoot < 10 %, gust deviation < 20 cm, recovery < 2 s, thrust variation < 0.5 N. */
 export const LIMITS = { rise: 3, overshoot: 10, gust: 0.2, recover: 2, calm: 0.5, band: 0.05 };
 export const CRITERIA: CriterionId[] = ['rise', 'overshoot', 'gust', 'recover', 'ground', 'calm'];
 
 export interface MissionResult {
-  /** first time within ±5 cm of 2 m, s */
+  /** first time after which height stays within ±5 cm until the gust, s */
   rise: number;
   /** percent overshoot before the gust */
   overshoot: number;
-  /** worst deviation from 2 m while the gust blows and just after, m */
+  /** worst deviation from 2 m from gust onset until package drop, m */
   gust: number;
   /** time after the drop until it stays within ±5 cm, s */
   recover: number;
   /** touched the ground after take-off */
   ground: boolean;
-  /** thrust jitter (standard deviation) in calm hover t ∈ [3, 6), N */
+  /** thrust variation (standard deviation) during t ∈ [3, 6), N */
   calm: number;
   pass: Record<CriterionId, boolean>;
   stars: number;
@@ -60,7 +60,7 @@ export interface MissionResult {
  */
 export function evaluate(tr: Trace): MissionResult {
   const r = MISSION.setpoint;
-  let rise = NaN;
+  let lastRiseOut = -1;
   let peak = 0;
   let gust = 0;
   let ground = tr.crashed;
@@ -70,7 +70,7 @@ export function evaluate(tr: Trace): MissionResult {
   for (let i = 0; i < tr.t.length; i++) {
     const t = tr.t[i];
     const h = tr.h[i];
-    if (Number.isNaN(rise) && Math.abs(h - r) <= LIMITS.band) rise = t;
+    if (t < MISSION.gust.start && Math.abs(h - r) > LIMITS.band) lastRiseOut = i;
     if (t < MISSION.gust.start) peak = Math.max(peak, h);
     if (t >= MISSION.gust.start && t < MISSION.dropAt) gust = Math.max(gust, Math.abs(h - r));
     if (t > 1 && h <= 1e-6) ground = true;
@@ -78,11 +78,12 @@ export function evaluate(tr: Trace): MissionResult {
     if (t >= 3 && t < 6) calmT.push(tr.thrust[i]);
   }
   const overshoot = Math.max(0, ((peak - r) / r) * 100);
+  const rise = end >= MISSION.gust.start ? (tr.t[lastRiseOut + 1] ?? MISSION.gust.start) : NaN;
   const recover = end >= MISSION.duration - 0.02 ? lastOut - MISSION.dropAt : NaN;
   const mean = calmT.reduce((a, b) => a + b, 0) / Math.max(1, calmT.length);
   const calm = calmT.length ? Math.sqrt(calmT.reduce((a, b) => a + (b - mean) ** 2, 0) / calmT.length) : NaN;
   const pass: Record<CriterionId, boolean> = {
-    rise: rise <= LIMITS.rise,
+    rise: Number.isFinite(rise) && rise <= LIMITS.rise,
     overshoot: end >= MISSION.gust.start && overshoot < LIMITS.overshoot,
     gust: end >= MISSION.dropAt && gust < LIMITS.gust,
     recover: recover < LIMITS.recover,
@@ -101,14 +102,9 @@ export function missionPoles(p: PID, m = DRONE.m, c = DRONE.c): C[] {
   const den = polymul([1, 0], polymul([tf, 1], polymul([MISSION.motorTau, 1], [m, c, 0])));
   const num = addPoly(addPoly(scalePoly([tf, 1, 0], p.kp), scalePoly([tf, 1], p.ki)), scalePoly([1, 0, 0], p.kd));
   const ch = addPoly(den, num);
-  // strip a zero constant term (Ki = 0 leaves a pole at the origin)
-  const out: C[] = [];
-  let poly = ch;
-  while (poly.length > 1 && Math.abs(poly[poly.length - 1]) < 1e-12) {
-    poly = poly.slice(0, -1);
-    out.push({ re: 0, im: 0 });
-  }
-  return [...out, ...roots(poly)];
+  // With Ki = 0, the controller's 1/s representation introduced one common
+  // factor of s. Cancel exactly that factor; any other pole at zero is physical.
+  return roots(p.ki === 0 ? ch.slice(0, -1) : ch);
 }
 
 function scalePoly(p: number[], k: number): number[] {
