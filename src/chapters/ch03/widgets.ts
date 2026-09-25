@@ -175,7 +175,10 @@ const coffee: WidgetFactory = (host, ctx) => {
     if (cur.T < COFFEE.room - 0.5) {
       msg = t('status.frozen', { T: fmt(cur.T, 1) });
       cls += ' bad';
-      if (gap > prevGap) msg += ` ${t('status.growing')}`;
+    }
+    if (dipped && gap > prevGap) {
+      msg += ` ${t('status.growing')}`;
+      cls = 'w-status bad';
     }
     status.textContent = msg;
     status.className = cls;

@@ -1,6 +1,223 @@
 {
   "kicker": "Chapter 5",
-  "title": "Coming soon",
-  "question": "…",
-  "sections": [{ "id": "s1", "title": "", "blocks": [{ "t": "p", "text": "This notebook is still being written." }] }]
+  "title": "Spinning Numbers",
+  "question": "What kind of number could square to −1, and why would it wiggle?",
+  "sections": [
+    {
+      "id": "arrows",
+      "title": "Numbers are arrows",
+      "blocks": [
+        { "t": "say", "who": "mika", "mood": "think", "text": "Last time the spring needed a number with $a^2 = -4$. Theo said no such number exists. But what would one even *look* like?" },
+        { "t": "p", "text": "Picture every number as an **arrow** from 0 along the number line. Multiplying by 2 stretches the arrow. Multiplying by ½ shrinks it. And multiplying by −1 flips it to point the other way. That's a **half turn**." },
+        { "t": "say", "who": "june", "mood": "excited", "text": "Ooh. If ×(−1) is a half turn… what's *half* of a half turn? A **quarter** turn! The arrow would point straight up, off the number line." },
+        { "t": "p", "text": "Let's give the quarter turn a name: **i**. Do it twice and you've done a half turn, which is ×(−1). So $i \\cdot i = -1$. There's our number that squares to a negative!" },
+        { "t": "widget", "id": "rotate" },
+        { "t": "math", "tex": "i^2 = -1 \\qquad\\text{(two quarter turns = a half turn)}" },
+        { "t": "say", "who": "theo", "mood": "worried", "text": "Hold on. These are the \"imaginary numbers\". Everyone knows they're made up. They can't describe a real, physical spring." },
+        { "t": "say", "who": "june", "mood": "happy", "text": "They're not imaginary, they're **sideways**! It's just a 2-D arrow. Turning left is as real as walking forward." },
+        { "t": "p", "text": "A number like $3 + 2i$ just means \"3 steps along, 2 steps sideways\". The whole plane of arrows is the stage for everything that follows." },
+        { "t": "note", "aside": true, "text": "The name \"imaginary\" started out as an insult, centuries ago, and it stuck. Don't let it fool you." }
+      ]
+    },
+    {
+      "id": "spin",
+      "title": "A number that spins",
+      "blocks": [
+        { "t": "p", "text": "Now picture a point running around a circle at a steady speed, ω radians per second. Where does its **velocity** point? Always along the circle, which is a **quarter turn** ahead of the arrow to the point." },
+        { "t": "p", "text": "A quarter turn is ×i, and the speed is ω times the radius. So the velocity is the position turned a quarter turn, times ω: **velocity = iω × position**." },
+        { "t": "say", "who": "theo", "mood": "surprised", "text": "Wait. \"The slope is a fixed number times itself\" is exactly the **exponential** property from Chapter 4! With a = iω." },
+        { "t": "p", "text": "So $e^{i\\omega t}$ is not scary at all. It's a point **spinning** around the circle of radius 1, ω radians every second. Watch it, and watch its **shadow** on the real axis:" },
+        { "t": "widget", "id": "spinner" },
+        { "t": "math", "tex": "\\frac{d}{dt}\\,e^{i\\omega t} = i\\omega\\,e^{i\\omega t}\\qquad \\text{shadow on the real axis} = \\cos(\\omega t)" },
+        { "t": "p", "text": "The shadow slides back and forth as a perfect **cosine wave**. A spinning arrow, seen side-on, is a wiggle. That's where the wiggle has been hiding." },
+        { "t": "note", "text": "Written out in full, the spinner is $e^{i\\omega t} = \\cos\\omega t + i\\sin\\omega t$: the along part is a cosine, the sideways part a sine. People call this Euler's formula." }
+      ]
+    },
+    {
+      "id": "twins",
+      "title": "Back to the spring (and a new mistake)",
+      "blocks": [
+        { "t": "p", "text": "The spring needed $a^2 = -k/m = -4$. Try $a = 2i$: $(2i)^2 = 4\\,i^2 = -4$. ✓ And $a = -2i$ works too." },
+        { "t": "say", "who": "theo", "mood": "happy", "text": "Fine, I was wrong. The guess-an-exponential trick survives. The spring is $e^{2it}$, a spinner going round twice every… 2π seconds." },
+        { "t": "say", "who": "mika", "mood": "excited", "text": "So the spring's position is $e^{2it}$? Right now it's at… $0.4 + 0.9i$ metres?" },
+        { "t": "say", "who": "june", "mood": "worried", "text": "A spring can't be 0.9 metres *sideways*. It only moves up and down." },
+        { "t": "p", "text": "Mika forgot the other answer. We found **two** solutions, $e^{2it}$ and $e^{-2it}$: a spinner and its **mirror twin** going the other way round. Add them up:" },
+        { "t": "widget", "id": "twins" },
+        { "t": "say", "who": "mika", "mood": "surprised", "text": "The sideways parts cancel perfectly! The sum just slides along the real line, back and forth." },
+        { "t": "math", "tex": "x(t) = \\tfrac12\\left(e^{i\\omega t} + e^{-i\\omega t}\\right) = \\cos(\\omega t),\\qquad \\omega = \\sqrt{k/m}" },
+        { "t": "p", "text": "That's the rule for anything real: the spinners always come in **mirror pairs**, so their sideways parts cancel and what's left is a real wiggle we can measure." }
+      ]
+    },
+    {
+      "id": "map",
+      "title": "The map of s",
+      "blocks": [
+        { "t": "p", "text": "Chapter 4 gave us exponentials that **grow or shrink**. Now we have spinners that **wiggle**. Put them together: $e^{st}$ with $s = \\sigma + i\\omega$." },
+        { "t": "math", "tex": "e^{st} = e^{(\\sigma + i\\omega)t} = \\underbrace{e^{\\sigma t}}_{\\text{grow/shrink}}\\cdot\\underbrace{e^{i\\omega t}}_{\\text{spin}}" },
+        { "t": "p", "text": "So every number s is a recipe: **σ** (the along part) says how fast to grow or shrink, **ω** (the sideways part) says how fast to spin. Together they draw a **spiral**, and the spiral's shadow is the signal we'd see." },
+        {
+          "t": "predict",
+          "id": "ch5-shadow",
+          "gate": true,
+          "q": "Put s at $-0.5 + 3i$. What does the shadow of $e^{st}$ look like?",
+          "options": [
+            { "text": "A wiggle that grows", "sketch": "growing-wiggle", "why": "Growth needs σ > 0. Here σ = −0.5 is negative." },
+            { "text": "A wiggle that dies away", "sketch": "decaying-wiggle", "correct": true, "why": "ω = 3 makes it spin (wiggle about every 2 s), and σ = −0.5 shrinks it by a factor $e^{-0.5} \\approx 0.61$ every second." },
+            { "text": "A smooth decay, no wiggle", "sketch": "decaying-plain", "why": "That's what you'd get with ω = 0 (s on the horizontal axis). Here ω = 3, so it spins." }
+          ]
+        },
+        { "t": "widget", "id": "smap" },
+        { "t": "p", "text": "Take a tour of the map by dragging s (or using the arrow keys):" },
+        { "t": "list", "items": [
+          "**Left half** (σ < 0): the spiral shrinks, the wiggle dies away.",
+          "**Right half** (σ > 0): the spiral grows, the wiggle explodes.",
+          "**On the vertical line** (σ = 0): a perfect circle, a wiggle that goes on forever.",
+          "**On the horizontal line** (ω = 0): no spin at all, just the plain exponentials from Chapter 4.",
+          "**Further up**: faster spinning, faster wiggles. **Further left**: faster fading."
+        ] },
+        { "t": "say", "who": "june", "mood": "excited", "text": "So a single dot on this map is a whole personality: how fast it wiggles and whether it calms down or blows up." },
+        { "t": "note", "text": "This map is going to become our most important picture. It gets its official name in Chapter 7." }
+      ]
+    },
+    {
+      "id": "fourier",
+      "title": "A quick detour: everything is made of spinners",
+      "blocks": [
+        { "t": "p", "text": "One last surprise. Take spinners of different speeds (1, 3, 5, 7… times as fast), shrink each one just right, and add their shadows. With enough of them you can build almost *any* shape, even a square wave with sharp corners." },
+        { "t": "widget", "id": "fourier" },
+        { "t": "p", "text": "Someone named **Fourier** figured this out 200 years ago: any signal can be built from these spinning pieces. We won't need the details, but it's comforting. Spinners are the atoms that signals are made of." },
+        { "t": "note", "text": "Honesty box: right next to each jump the sum always overshoots by about 9% of the jump, however many pieces you add. The bump gets narrower but never goes away." }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "What we know so far",
+      "blocks": [
+        { "t": "recap", "items": [
+          "Numbers are arrows. Multiplying rotates and stretches them. **i** is a quarter turn, so $i^2 = -1$.",
+          "$e^{i\\omega t}$ is a point spinning around a circle. Its shadow is a cosine wave.",
+          "Real wiggles come from **mirror-twin spinners** whose sideways parts cancel.",
+          "$e^{st}$ with $s = \\sigma + i\\omega$ spins *and* grows or shrinks: a spiral. Its shadow is a growing or dying wiggle.",
+          "The **map of s**: left calms down, right blows up, up means faster wiggles."
+        ] },
+        { "t": "quiz", "items": [
+          {
+            "id": "ch5-q1",
+            "q": "What does multiplying the arrow 3 by i, twice, give?",
+            "options": [
+              { "text": "−3", "correct": true, "why": "Two quarter turns are a half turn: 3 → 3i → −3." },
+              { "text": "3i", "why": "That's after *one* quarter turn. Do it once more." },
+              { "text": "9", "why": "Multiplying by i turns the arrow. It doesn't change its length." }
+            ]
+          },
+          {
+            "id": "ch5-q2",
+            "q": "Put s exactly on the vertical line, at $s = 2i$. What's the shadow of $e^{st}$?",
+            "options": [
+              { "text": "A wiggle that goes on forever", "sketch": "steady-wiggle", "correct": true, "why": "σ = 0 means no growing or shrinking: a perfect circle, and its shadow is a steady cosine." },
+              { "text": "A wiggle that dies away", "sketch": "decaying-wiggle", "why": "Dying away needs σ < 0 (left of the vertical line)." },
+              { "text": "Explosive growth", "sketch": "growing-plain", "why": "Growth without wiggle is the right half of the *horizontal* line: σ > 0, ω = 0." }
+            ]
+          },
+          {
+            "id": "ch5-q3",
+            "q": "A guitar string rings with a clear note and slowly fades. Where on the map of s does it live?",
+            "options": [
+              { "text": "Just left of the vertical line, well above the horizontal line", "correct": true, "why": "Slow fading means σ slightly negative, and a clear pitch means a large ω (lots of wiggles per second)." },
+              { "text": "In the right half", "why": "The right half *grows*. A string that got louder by itself would be alarming." },
+              { "text": "On the horizontal line, far to the left", "why": "No ω means no wiggle (no note), and far left means it dies instantly. That's a thud." }
+            ]
+          },
+          {
+            "id": "ch5-q4",
+            "q": "Why do the spinners of a real, physical wiggle always come in mirror pairs?",
+            "options": [
+              { "text": "So their sideways parts cancel and the sum is a real number", "correct": true, "why": "A spinner and its twin have equal and opposite sideways parts. Added together, only the along part (a real wiggle) survives." },
+              { "text": "Because $i^2 = -1$", "why": "That's true, but it's why the spinners *exist*, not why they pair up." },
+              { "text": "Because a spring has two ends", "why": "Cute, but no. A single swinging pendulum has twin spinners too." }
+            ]
+          }
+        ] },
+        { "t": "map" },
+        { "t": "cliff", "text": "June: \"So **where on this map does our drone live?**\"" }
+      ]
+    }
+  ],
+  "widgets": {
+    "rotate": {
+      "title": "Multiplying turns arrows",
+      "re": "along (real)",
+      "im": "sideways (i)",
+      "start": "Start with the arrow 3. Try the buttons!",
+      "tooBig": "That would go off the page. Try another button.",
+      "explain": {
+        "two": "×2 stretches the arrow to twice the length. Same direction.",
+        "half": "×½ shrinks it to half the length. Same direction.",
+        "neg": "×(−1) is a half turn: the arrow flips to point the other way.",
+        "i": "×i is a quarter turn, counter-clockwise. Do it twice and compare with ×(−1)!"
+      },
+      "aria": "A plane with an arrow from the origin. Buttons multiply the arrow by 2, one half, minus one or i, rotating or stretching it."
+    },
+    "spinner": {
+      "title": "The spinner and its shadow",
+      "re": "along",
+      "im": "sideways",
+      "position": "position",
+      "velocity": "velocity",
+      "shadow": "shadow on the real axis",
+      "shadowAxis": "shadow",
+      "omega": "Spin speed ω",
+      "help": "The velocity arrow (drawn shorter to fit) always points a quarter turn ahead of the position arrow. The blue dot on the real axis is the shadow.",
+      "aria": "A point spinning around a circle, with its position arrow, a velocity arrow a quarter turn ahead, and its shadow on the real axis.",
+      "plotAria": "The shadow of the spinner over time: a cosine wave."
+    },
+    "twins": {
+      "title": "A spinner and its mirror twin",
+      "re": "along",
+      "im": "sideways",
+      "sum": "sum",
+      "spinnerLabel": "spinner",
+      "twinLabel": "twin",
+      "toggle": "Add the mirror twin",
+      "axis": "value",
+      "realPart": "along part of the sum",
+      "sidePart": "sideways part of the sum",
+      "alone": "One spinner alone: the sum wanders off sideways (dashed curve).",
+      "withTwin": "With its twin added head-to-tail, the sideways parts cancel. The sum stays on the real line: 2·cos(ωt).",
+      "aria": "Two arrows spinning in opposite directions, added head to tail. Their sum is marked with a ring.",
+      "plotAria": "The along and sideways parts of the sum over time."
+    },
+    "smap": {
+      "title": "The map of s",
+      "re": "σ: shrink ← → grow",
+      "im": "ω: spin",
+      "reShort": "along",
+      "imShort": "sideways",
+      "time": "time →",
+      "shadow": "shadow of e^(st)",
+      "shadowAxis": "shadow",
+      "mirror": "Show the mirror twin",
+      "readS": "s",
+      "readTurns": "turns",
+      "readSize": "size change",
+      "spins": "Spins {n} times per second,",
+      "noSpin": "No spinning at all,",
+      "grows": "and grows.",
+      "shrinks": "and shrinks.",
+      "steady": "and keeps the same size.",
+      "help": "Drag the dot s on the map (or focus it and use the arrow keys). Top right: the spiral e^(st) in 3-D, with time running to the right. Its blue shadow on the back wall is plotted below.",
+      "mapAria": "The map of s: drag the point to choose sigma and omega.",
+      "spiralAria": "Three-dimensional spiral of e to the s t, with time running to the right, and its shadow on the back wall.",
+      "plotAria": "Shadow of e to the s t over time."
+    },
+    "fourier": {
+      "title": "Building a square wave from spinners",
+      "axis": "value",
+      "target": "square wave",
+      "sum": "sum of spinner shadows",
+      "pieces": "Number of spinners",
+      "status": "{n} spinner(s) added (the fastest spins {f}× as fast as the first).",
+      "aria": "A square wave and the sum of a chosen number of spinner shadows approximating it."
+    }
+  }
 }
