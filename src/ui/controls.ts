@@ -178,6 +178,7 @@ export function segmented<V extends string>(
         input.addEventListener('change', () => onChange(o.value));
         const lab = h('label', { for: id });
         setRich(lab, o.label);
+        if (lab.querySelector('.katex')) input.setAttribute('aria-label', plainText(lab));
         return h('span', null, input, lab);
       }),
     ),

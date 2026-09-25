@@ -20,7 +20,7 @@ const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
 export function renderChapter(env: RenderEnv): HTMLElement {
   const { content } = env;
-  const page = h('article', { class: 'page chapter' });
+  const page = h('article', { class: `page chapter ch-${env.chapter}` });
   page.append(
     h(
       'header',
@@ -99,8 +99,18 @@ function renderBlock(b: Block, env: RenderEnv): HTMLElement {
     }
     case 'note':
       return setRich(h('p', { class: `note${b.aside ? ' aside' : ''}` }), b.text);
-    case 'math':
-      return h('div', { class: 'math-block', html: tex(b.tex, true) });
+    case 'math': {
+      const el = h('div', { class: 'math-block', html: tex(b.tex, true) });
+      // only a block that actually scrolls needs to be focusable (keyboard scrolling)
+      requestAnimationFrame(() => {
+        if (el.scrollWidth > el.clientWidth + 1) {
+          el.tabIndex = 0;
+          el.setAttribute('role', 'region');
+          el.setAttribute('aria-label', plainText(el));
+        }
+      });
+      return el;
+    }
     case 'widget':
       return mountWidget(b.id, b.caption, b.wide ?? true, env);
     case 'predict':

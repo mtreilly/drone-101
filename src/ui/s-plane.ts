@@ -200,6 +200,8 @@ export class SPlane {
     n.main.setAttribute('transform', `translate(${this.sx(p.re)},${this.sy(p.im)})${sc}`);
     n.twin?.setAttribute('transform', `translate(${this.sx(p.re)},${this.sy(-p.im)})${sc}`);
     if (p.draggable) n.main.setAttribute('aria-label', this.pointText(p));
+    const lbl = n.main.querySelector('.pt-label');
+    if (lbl && lbl.textContent !== (p.label ?? '')) lbl.textContent = p.label ?? '';
     if (n.twin) n.twin.style.display = Math.abs(p.im) < 1e-9 ? 'none' : '';
   }
 
