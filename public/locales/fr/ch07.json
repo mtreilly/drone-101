@@ -67,6 +67,10 @@
           "text": "Balaie $s$ et les points dessinent $1/s$ pour l'échelon. Essaie aussi les autres signaux. Un signal croissant $e^{0{,}5t}$ n'a une aire finie que si la sonde rétrécit **plus vite** que le signal ne grandit, c'est-à-dire quand $s > 0{,}5$. En dessous, l'aire file vers l'infini."
         },
         {
+          "t": "p",
+          "text": "L’aire totale doit se stabiliser à une valeur finie. Si la sonde décroît trop lentement, l’aire continue de grandir et ce choix de s n’a pas de réponse finie. Pour un s complexe, sa partie horizontale règle la décroissance et sa partie verticale règle la rotation inverse."
+        },
+        {
           "t": "note",
           "text": "Pour l'instant, on n'utilise que des $s$ réels. Les $s$ complexes arrivent dans une minute, et c'est là qu'est la magie.",
           "aside": true
@@ -166,11 +170,19 @@
           "t": "say",
           "who": "theo",
           "mood": "surprised",
-          "text": "Elles coïncident. Même pour mon gribouillis tremblant. D'accord, ce n'est pas une astuce. Ça marche pour tous les signaux."
+          "text": "Elles coïncident, même pour mon gribouillis tremblant. C’est donc une règle générale pour les signaux lisses dont les aires pondérées se stabilisent ; le dessin nous donne une vérification numérique."
         },
         {
           "t": "p",
-          "text": "*Pourquoi* ça marche ? Pense à l'aire de $f'(t)\\,e^{-st}$. La pente additionne les variations de $f$. Pondérées par la sonde, ces variations font au total $s$ fois le $f$ sondé, moins la valeur de départ. (Le vrai nom de ce raisonnement, c'est l'*intégration par parties*, mais le dessin le prouve tout aussi bien.) Applique la règle deux fois et tu obtiens la pente seconde :"
+          "text": "Voici le calcul manquant. Déplacer la pente de $f$ sur la sonde décroissante s’appelle une **intégration par parties**. Si le signal pondéré s’éteint au loin, il ne reste que sa valeur de départ sur le bord :"
+        },
+        {
+          "t": "math",
+          "tex": "\\int_0^\\infty f'(t)e^{-st}\\,dt = \\big[f(t)e^{-st}\\big]_0^\\infty + s\\!\\int_0^\\infty f(t)e^{-st}\\,dt = -f(0)+sF(s)"
+        },
+        {
+          "t": "p",
+          "text": "Applique encore la même règle à $f'$ et on obtient la formule pour la deuxième pente :"
         },
         {
           "t": "math",
@@ -212,7 +224,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Voici le drone du chapitre 2 en commande P, mais cette fois il décolle d'un **rebord à 1 m** au lieu du sol. La gravité et la consigne sont toutes les deux des échelons qui s'activent à $t = 0$ :"
+          "text": "Voici le drone du chapitre 2 sous commande P, au départ sur une **plateforme haute de 1 m**. À $t=0$, on le libère et on demande 2 m. Dans le calcul à partir de cet instant, la nouvelle consigne et la force de gravité constante se transforment chacune comme un échelon :"
         },
         {
           "t": "math",
@@ -241,6 +253,18 @@
         {
           "t": "math",
           "tex": "\\out{H}(s) = \\frac{A}{s} + \\frac{B s + C}{m s^2 + c s + \\eff{K_p}}"
+        },
+        {
+          "t": "p",
+          "text": "Comment trouver $A$, $B$ et $C$ ? Multiplie les deux côtés par le dénominateur commun, puis compare les termes constants, en $s$ et en $s^2$ :"
+        },
+        {
+          "t": "math",
+          "tex": "N(s)=A(ms^2+cs+K_p)+s(Bs+C)"
+        },
+        {
+          "t": "p",
+          "text": "Les termes constants donnent $A = 2 - mg/K_p$ ; les deux autres donnent $B$ et $C$. Aucune nouvelle physique ici : on a seulement défait un dénominateur commun pour retrouver les morceaux que notre table ramène dans le temps. Il faut toujours garder la hauteur initiale."
         },
         {
           "t": "p",
@@ -291,7 +315,7 @@
           "items": [
             "La transformée de Laplace est une **sonde** : on multiplie par $e^{-st}$ et on mesure l'aire totale. $F(s) = \\int_0^\\infty f(t)e^{-st}dt$.",
             "Elle **explose exactement là où vit le signal** : $e^{at}$ donne $1/(s-a)$, qui explose en $s = a$. Pour un $s$ complexe, la sonde « dé-tourne » les signaux qui tournent. On dessine tout ça sur le **plan s**.",
-            "Les pentes deviennent des multiplications : $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. Ça marche pour n'importe quel signal, même un gribouillis.",
+            "Les pentes deviennent des multiplications : $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. Pour un signal lisse dont la transformée converge, la valeur initiale compte.",
             "On a démontré notre propre table : $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$, et la version décalée pour les sinus amortis.",
             "Transformer, faire de l'algèbre, découper en morceaux de la table, lire la réponse. Ça colle exactement à la simulation, **à condition de garder les valeurs de départ**."
           ]

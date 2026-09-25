@@ -67,6 +67,10 @@
           "text": "Fahr $s$ durch, und die Punkte zeichnen beim Sprung $1/s$ nach. Probier auch die anderen Signale aus. Ein wachsendes Signal $e^{0{,}5t}$ hat nur dann eine endliche Fläche, wenn die Sonde **schneller** schrumpft, als das Signal wächst, also bei $s > 0{,}5$. Darunter läuft die Fläche ins Unendliche."
         },
         {
+          "t": "p",
+          "text": "Die Gesamtfläche muss sich einem endlichen Wert nähern. Klingt die Sonde zu langsam ab, wächst die Fläche weiter und dieser Wert von s liefert keine endliche Antwort. Bei komplexem s steuert der waagerechte Teil das Abklingen, der senkrechte Teil das Zurückdrehen."
+        },
+        {
           "t": "note",
           "text": "Vorerst nehmen wir nur reelle $s$. Komplexe $s$ kommen gleich, und da steckt die Magie.",
           "aside": true
@@ -166,11 +170,19 @@
           "t": "say",
           "who": "theo",
           "mood": "surprised",
-          "text": "Sie passen. Sogar bei meinem wackeligen Gekritzel. Okay, es ist kein Trick. Es klappt für jedes Signal."
+          "text": "Sie passen, sogar bei meinem wackeligen Gekritzel. Das ist also eine allgemeine Regel für glatte Signale, deren gewichtete Flächen sich einpendeln; die Zeichnung liefert eine numerische Prüfung."
         },
         {
           "t": "p",
-          "text": "*Warum* klappt es? Denk an die Fläche von $f'(t)\\,e^{-st}$. Die Steigung summiert Änderungen von $f$ auf. Mit der Sonde gewichtet ergeben diese Änderungen zusammen $s$ mal das abgetastete $f$, minus den Wert, bei dem du angefangen hast. (Der ehrliche Name dafür ist *partielle Integration*, aber die Zeichnung beweist es genauso gut.) Wende die Regel zweimal an, und du bekommst die zweite Steigung:"
+          "text": "Hier ist die fehlende Rechnung. Die Steigung von $f$ auf die abklingende Sonde zu übertragen heißt **partielle Integration**. Klingt das gewichtete Signal am fernen Ende ab, bleibt am Rand nur sein Anfangswert:"
+        },
+        {
+          "t": "math",
+          "tex": "\\int_0^\\infty f'(t)e^{-st}\\,dt = \\big[f(t)e^{-st}\\big]_0^\\infty + s\\!\\int_0^\\infty f(t)e^{-st}\\,dt = -f(0)+sF(s)"
+        },
+        {
+          "t": "p",
+          "text": "Wende dieselbe Regel noch einmal auf $f'$ an, dann folgt die Formel für die zweite Steigung:"
         },
         {
           "t": "math",
@@ -212,7 +224,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Hier ist die Drohne aus Kapitel 2 mit P-Regler, nur startet sie jetzt von einem **1 m hohen Sims** statt vom Boden. Schwerkraft und Sollwert sind beides Sprünge, die bei $t = 0$ einschalten:"
+          "text": "Hier ist die Drohne aus Kapitel 2 mit P-Regelung, anfangs auf einem **1 m hohen Sims**. Bei $t=0$ lassen wir sie los und verlangen 2 m. In der Rechnung ab diesem Zeitpunkt werden der neue Sollwert und die konstante Schwerkraft jeweils wie ein Sprung transformiert:"
         },
         {
           "t": "math",
@@ -241,6 +253,18 @@
         {
           "t": "math",
           "tex": "\\out{H}(s) = \\frac{A}{s} + \\frac{B s + C}{m s^2 + c s + \\eff{K_p}}"
+        },
+        {
+          "t": "p",
+          "text": "Wie finden wir $A$, $B$ und $C$? Multipliziere beide Seiten mit dem gemeinsamen Nenner und vergleiche die konstanten Terme sowie die Terme mit $s$ und $s^2$:"
+        },
+        {
+          "t": "math",
+          "tex": "N(s)=A(ms^2+cs+K_p)+s(Bs+C)"
+        },
+        {
+          "t": "p",
+          "text": "Die konstanten Terme ergeben $A = 2 - mg/K_p$; die anderen beiden liefern $B$ und $C$. Hier kommt keine neue Physik hinzu: Wir haben nur einen gemeinsamen Nenner aufgelöst, damit unsere Tabelle die Teile zurück in die Zeit übersetzen kann. Die Anfangshöhe muss dabei erhalten bleiben."
         },
         {
           "t": "p",
@@ -291,7 +315,7 @@
           "items": [
             "Die Laplace-Transformation ist eine **Sonde**: mit $e^{-st}$ multiplizieren und die Gesamtfläche messen. $F(s) = \\int_0^\\infty f(t)e^{-st}dt$.",
             "Sie **explodiert genau dort, wo das Signal wohnt**: $e^{at}$ ergibt $1/(s-a)$, und das explodiert bei $s = a$. Bei komplexem $s$ dreht die Sonde drehende Signale zurück. All das zeichnen wir in die **s-Ebene**.",
-            "Aus Steigungen wird Multiplikation: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. Das klappt für jedes Signal, sogar für Gekritzel.",
+            "Aus Steigungen wird Multiplikation: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. Bei glatten Signalen mit konvergierender Transformation zählt der Anfangswert.",
             "Wir haben unsere eigene Tabelle hergeleitet: $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$ und die verschobene Version für abklingende Sinusse.",
             "Transformieren, Algebra machen, in Tabellenstücke zerlegen, Antwort ablesen. Das passt exakt zur Simulation, **solange du die Startwerte mitnimmst**."
           ]

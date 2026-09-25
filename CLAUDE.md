@@ -18,7 +18,8 @@ for layout and `control-course-plan.md` for the pedagogical outline and physical
 
 ## Non-negotiables
 
-1. **Correct maths and physics.** Simulations use RK4 (`src/sim/`), analytic checks live next to
+1. **Correct maths and physics.** The drone uses RK4; the shower uses an exact update for its
+   first-order thermal lag (`src/sim/`). Analytic checks live next to
    them, and every number stated in a chapter's text or quiz is verified by a test in that chapter
    (`src/chapters/chNN/*.test.ts`). If you change a number, change the test and all six languages.
 2. **Colour language, everywhere:** setpoint green (dashed), output blue, error red, control effort

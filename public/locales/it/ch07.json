@@ -67,6 +67,10 @@
           "text": "Fai scorrere $s$ e i punti disegnano $1/s$ per il gradino. Prova anche gli altri segnali. Un segnale che cresce $e^{0{,}5t}$ ha un'area finita solo quando la sonda si restringe **più in fretta** di quanto cresca il segnale, cioè quando $s > 0{,}5$. Sotto quel valore, l'area scappa all'infinito."
         },
         {
+          "t": "p",
+          "text": "L’area totale deve stabilizzarsi su un valore finito. Se la sonda cala troppo lentamente, l’area continua a crescere e quella scelta di s non dà una risposta finita. Con una s complessa, la parte orizzontale regola il calo e quella verticale il giro inverso."
+        },
+        {
           "t": "note",
           "text": "Per ora usiamo solo $s$ reali. Le $s$ complesse arrivano tra un minuto, ed è lì che sta la magia.",
           "aside": true
@@ -166,11 +170,19 @@
           "t": "say",
           "who": "theo",
           "mood": "surprised",
-          "text": "Coincidono. Persino per il mio scarabocchio traballante. Va bene, non è un trucco. Funziona per ogni segnale."
+          "text": "Coincidono, persino per il mio scarabocchio traballante. È dunque una regola generale per i segnali regolari le cui aree pesate si stabilizzano; il disegno ci dà una verifica numerica."
         },
         {
           "t": "p",
-          "text": "*Perché* funziona? Pensa all'area di $f'(t)\\,e^{-st}$. La pendenza somma i cambiamenti di $f$. Pesati dalla sonda, quei cambiamenti fanno in totale $s$ volte la $f$ sondata, meno il valore da cui sei partito. (Il nome onesto è *integrazione per parti*, ma il disegno lo dimostra altrettanto bene.) Applica la regola due volte e ottieni la seconda pendenza:"
+          "text": "Ecco il calcolo mancante. Spostare la pendenza da $f$ alla sonda che cala si chiama **integrazione per parti**. Se il segnale pesato svanisce all’estremo lontano, sul bordo resta solo il valore iniziale:"
+        },
+        {
+          "t": "math",
+          "tex": "\\int_0^\\infty f'(t)e^{-st}\\,dt = \\big[f(t)e^{-st}\\big]_0^\\infty + s\\!\\int_0^\\infty f(t)e^{-st}\\,dt = -f(0)+sF(s)"
+        },
+        {
+          "t": "p",
+          "text": "Applica la stessa regola ancora una volta a $f'$ e ottieni la formula per la seconda pendenza:"
         },
         {
           "t": "math",
@@ -212,7 +224,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Ecco il drone del Capitolo 2 con controllo P, ma ora decolla da una **mensola a 1 m** invece che da terra. La gravità e il riferimento sono entrambi gradini che si accendono a $t = 0$:"
+          "text": "Ecco il drone del capitolo 2 con controllo P, inizialmente su una **piattaforma alta 1 m**. A $t=0$ lo lasciamo andare e chiediamo 2 m. Nel calcolo da quell’istante in poi, il nuovo riferimento e la forza di gravità costante si trasformano ciascuno come un gradino:"
         },
         {
           "t": "math",
@@ -241,6 +253,18 @@
         {
           "t": "math",
           "tex": "\\out{H}(s) = \\frac{A}{s} + \\frac{B s + C}{m s^2 + c s + \\eff{K_p}}"
+        },
+        {
+          "t": "p",
+          "text": "Come troviamo $A$, $B$ e $C$? Moltiplica entrambi i lati per il denominatore comune, poi confronta i termini costanti, in $s$ e in $s^2$:"
+        },
+        {
+          "t": "math",
+          "tex": "N(s)=A(ms^2+cs+K_p)+s(Bs+C)"
+        },
+        {
+          "t": "p",
+          "text": "I termini costanti danno $A = 2 - mg/K_p$; gli altri due danno $B$ e $C$. Non compare nuova fisica: abbiamo solo sciolto un denominatore comune per ottenere pezzi che la tabella riporta nel tempo. L’altezza iniziale va ancora conservata."
         },
         {
           "t": "p",
@@ -291,7 +315,7 @@
           "items": [
             "La trasformata di Laplace è una **sonda**: moltiplica per $e^{-st}$ e misura l'area totale. $F(s) = \\int_0^\\infty f(t)e^{-st}dt$.",
             "**Esplode esattamente dove vive il segnale**: $e^{at}$ dà $1/(s-a)$, che esplode in $s = a$. Per $s$ complesse la sonda ferma la rotazione dei segnali che girano. Disegniamo tutto questo sul **piano s**.",
-            "Le pendenze diventano moltiplicazioni: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. Funziona per qualsiasi segnale, persino uno scarabocchio.",
+            "Le pendenze diventano moltiplicazioni: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. Per segnali regolari la cui trasformata converge, conta il valore iniziale.",
             "Abbiamo ricavato la nostra tabella: $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$, e la versione spostata per i seni smorzati.",
             "Trasforma, fai l'algebra, spezza in pezzi della tabella, leggi la risposta. Coincide esattamente con la simulazione, **purché tu tenga i valori di partenza**."
           ]
