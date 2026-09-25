@@ -136,7 +136,7 @@ export function conceptMap(o: MapOptions): HTMLElement {
   const svg = s('svg', {
     viewBox: '0 0 1200 800',
     class: 'concept-map',
-    role: 'img',
+    role: 'group',
     'aria-label': tc('map.aria'),
   });
   const rc = rough.svg(svg);
