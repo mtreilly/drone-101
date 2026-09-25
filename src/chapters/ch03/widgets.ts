@@ -40,7 +40,7 @@ const tangent: WidgetFactory = (host, ctx) => {
     label: t('ariaBottom'),
   });
   bottom.setLines([{ kind: 'h', at: 0, color: 'ink3', dash: [2, 3], width: 1 }]);
-  const traced = new Array<boolean>(run.t.length).fill(false);
+  const traced: boolean[] = Array.from({ length: run.t.length }, () => false);
   let lastIdx = 0;
   let cursor = 0;
   const rSlope = readout(t('readSlope'));
