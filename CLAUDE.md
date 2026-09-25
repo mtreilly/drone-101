@@ -116,6 +116,9 @@ through its own picture and crashes on the grass. Rules for adding this to other
 6. **Precomputed traces** (players that replay arrays instead of stepping a live sim) can't react
    mid-flight. Measure the ceiling first (how many metres of open page are above the picture), pass
    it to the sim as a parameter and recompute the trace, so the replay already contains the hit.
+   Re-measure after scroll as well as resize (debounced): the sticky top bar is solid too, so the
+   ceiling moves as the page scrolls. Keep an unchanged replay going; restart only if the flight
+   so far would differ (see `src/chapters/ch09/page-ceiling.ts`).
 7. **Only where the physics really gets there.** Before adding it, measure how many metres of open
    page sit above the picture (at 1280 px and 375 px) and compare with what the model can actually
    reach. Chapter 2's P control peaks at 3.4 m and the page is ~7.6 m away, so it was left alone

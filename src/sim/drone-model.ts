@@ -75,9 +75,9 @@ export interface DroneConfig {
   seed: number;
   /**
    * Something overhead at this height (in the course: the page above the drone's picture, measured
-   * by `DroneView.ceilingHeight()`). The first time the drone reaches it while climbing it calls
-   * `hitCeiling`, so precomputed traces already contain the hit. `stall: false` = a bump the
-   * motors survive (feedback can recover); `true` = the motors stall and it falls.
+   * by `DroneView.ceilingHeight()`). When the drone reaches it while climbing it calls `hitCeiling`,
+   * so precomputed traces already contain the hit. `stall: false` = a bump the motors survive, on
+   * every contact (feedback can climb back to it); `true` = the motors stall once and it falls.
    */
   ceiling?: { h: number; stall: boolean };
 }
@@ -236,7 +236,8 @@ export class DroneSim {
       this.x[V] = 0;
     }
     const ceil = cfg.ceiling;
-    if (ceil && this.ceilingAt === null && this.x[H] >= ceil.h && this.x[V] > 0) {
+    // a stall happens once (then it falls); a survivable bump happens on every contact while climbing
+    if (ceil && (this.ceilingAt === null || !ceil.stall) && this.x[H] >= ceil.h && this.x[V] > 0) {
       this.x[H] = ceil.h;
       this.hitCeiling({ stall: ceil.stall });
     }

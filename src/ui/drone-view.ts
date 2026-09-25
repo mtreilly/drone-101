@@ -222,8 +222,10 @@ export class DroneView {
       return;
     }
     if (tb.on && tb.bump) {
-      // a knock the motors survive: tip over a little and settle straight away
+      // a knock the motors survive: tip over a little and settle straight away; once it is back in
+      // its picture it can climb out and knock again (feedback keeps flying)
       tb.angle *= Math.exp(-5 * dt);
+      if (gy + ART.y >= 0) tb.hit = false;
     } else if (tb.on) {
       if (gy + ART.y < 0) {
         tb.dx += tb.vx * dt;

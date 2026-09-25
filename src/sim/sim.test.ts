@@ -136,6 +136,25 @@ describe('Drone', () => {
     expect(sim.h).toBeCloseTo(2 - (DRONE.m * DRONE.g) / 60, 2);
   });
 
+  it('a survivable ceiling bumps on every contact, never letting it through', () => {
+    // weak P + strong I winds up and swings back to the ceiling more than once
+    const cfg = defaultDroneConfig({ pid: { ...P_ONLY(5), ki: 20 }, ceiling: { h: 2.6, stall: false } });
+    const sim = new DroneSim(cfg);
+    let contacts = 0;
+    let touching = false;
+    let peak = 0;
+    for (let i = 0; i < 20000; i++) {
+      sim.step();
+      peak = Math.max(peak, sim.h);
+      const at = sim.h >= 2.6 - 1e-9;
+      if (at && !touching) contacts++;
+      touching = at ? true : sim.h < 2.59 ? false : touching;
+    }
+    expect(contacts).toBeGreaterThan(1);
+    expect(peak).toBeLessThanOrEqual(2.6 + 1e-9);
+    expect(sim.stalled).toBe(false);
+  });
+
   it('a configured ceiling that stalls the motors is hit once, then it falls and crashes', () => {
     const sim = new DroneSim(defaultDroneConfig({ pid: P_ONLY(60), ceiling: { h: 2.4, stall: true } }));
     for (let i = 0; i < 20000 && !sim.crashed; i++) sim.step();
