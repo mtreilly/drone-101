@@ -140,6 +140,14 @@ How it is wired: `new DroneView(host, { onCeiling })` makes the drone free-flyin
 and shows `status.ceiling` instead of `status.crash`. Chapter 8 (formula) switches to `fallSim()`
 and shows the verdict plus `verdict.hitPage`.
 
+Shared building blocks (one owner: change them only with tests, never per chapter):
+- `DroneSim.hitCeiling({ stall })`: `stall: true` motors stall and it falls (open loop, unstable
+  poles); `stall: false` a bump the motors survive, so feedback can recover. `ceilingAt` records when.
+- `DroneConfig.ceiling = { h, stall }`: the sim hits the ceiling by itself, for traces computed ahead.
+- `DroneView.ceilingHeight()`: metres at which this drone would touch the page, from the live layout
+  (verified to match where the view registers the hit). Re-measure and recompute on resize.
+- `DroneView({ ceilingResponse: 'bump' })`: a short knock instead of the tumble, for `stall: false`.
+
 ## Commands
 
 ```sh

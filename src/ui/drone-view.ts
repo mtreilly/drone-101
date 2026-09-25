@@ -15,6 +15,13 @@ export interface DroneViewOptions {
    * this is called so the simulation can react (e.g. `DroneSim.hitCeiling`). Off with reduced motion.
    */
   onCeiling?: () => void;
+  /**
+   * How the drawing reacts to a hit: `stall` (default) tumbles, for motors that stall and a fall;
+   * `bump` is a short knock for a drone whose motors keep running (`hitCeiling({ stall: false })`).
+   * Widgets that replay precomputed traces pass `ceilingHeight()` into the sim instead of reacting
+   * in `onCeiling` (then a no-op): the trace already contains the hit, the view only shows it.
+   */
+  ceilingResponse?: 'stall' | 'bump';
 }
 
 export interface DroneState {
@@ -56,7 +63,7 @@ export class DroneView {
   private prevGy: number | null = null;
   private lastT = 0;
   /** tumble after a knock: sideways drift (px) and rotation (deg), purely visual since the model is vertical only */
-  private tumble = { on: false, hit: false, dx: 0, vx: 0, angle: 0, spin: 0 };
+  private tumble = { on: false, hit: false, bump: false, dx: 0, vx: 0, angle: 0, spin: 0 };
 
   constructor(host: HTMLElement, private o: DroneViewOptions = {}) {
     this.hMax = o.hMax ?? 3;
@@ -178,6 +185,29 @@ export class DroneView {
     return { x: r.x + ART.x * k + this.tumble.dx, y: r.y + (gy + ART.y) * k, w: ART.w * k, h: ART.h * k };
   }
 
+  /**
+   * Metres above the ground at which this drone would touch the page above its picture, from the
+   * current layout; null if nothing is overhead or the drone can't leave its picture (reduced
+   * motion, no `onCeiling`). Pass it to `DroneConfig.ceiling` for precomputed traces.
+   */
+  ceilingHeight(): number | null {
+    if (!this.free) return null;
+    const r = docBox(this.svg.getBoundingClientRect());
+    const k = r.w / W;
+    if (!k) return null;
+    const probe = this.box(this.y(this.hMax) - 6);
+    const hs = pageSolids(this.el, probe)
+      .filter((sd) => probe.x < sd.x + sd.w && probe.x + probe.w > sd.x && sd.y + sd.h <= probe.y + 1)
+      // 1 px of overlap, so the view registers the contact the sim reports
+      .map((sd) => this.hFromY((sd.y + sd.h - 1 - r.y) / k - ART.y));
+    return hs.length ? Math.min(...hs) : null;
+  }
+
+  /** Height (m) for a drone group placed at view y `gy` (the inverse of `y(h) - 6`). */
+  private hFromY(gy: number): number {
+    return ((GROUND - 10 - (gy + 6)) / (GROUND - 10 - TOP)) * this.hMax;
+  }
+
   /** Collisions with the page above the picture, and the tumble after a knock. */
   private fly(gy: number, h: number): void {
     const now = performance.now();
@@ -188,10 +218,13 @@ export class DroneView {
     this.prevGy = gy;
     if (h <= 0.001) {
       // on the ground (landed, crashed or reset): upright, and ready for the next flight
-      Object.assign(tb, { on: false, hit: false, dx: 0, vx: 0, angle: 0, spin: 0 });
+      Object.assign(tb, { on: false, hit: false, bump: false, dx: 0, vx: 0, angle: 0, spin: 0 });
       return;
     }
-    if (tb.on) {
+    if (tb.on && tb.bump) {
+      // a knock the motors survive: tip over a little and settle straight away
+      tb.angle *= Math.exp(-5 * dt);
+    } else if (tb.on) {
       if (gy + ART.y < 0) {
         tb.dx += tb.vx * dt;
         tb.vx *= Math.max(0, 1 - 1.5 * dt);
@@ -212,7 +245,8 @@ export class DroneView {
     if (!hit) return;
     const speed = (before.y - now_.y) / dt;
     const side = Math.random() < 0.5 ? -1 : 1;
-    Object.assign(tb, { on: true, hit: true, vx: side * (50 + Math.random() * 70), spin: side * (300 + Math.random() * 250) });
+    if (this.o.ceilingResponse === 'bump') Object.assign(tb, { on: true, hit: true, bump: true, angle: side * 16 });
+    else Object.assign(tb, { on: true, hit: true, vx: side * (50 + Math.random() * 70), spin: side * (300 + Math.random() * 250) });
     if (hit.el) wobble(hit.el, Math.max(400, speed * 1.6));
     impactBurst(now_.x + now_.w / 2, hit.y + hit.h);
     this.o.onCeiling?.();

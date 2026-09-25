@@ -73,6 +73,13 @@ export interface DroneConfig {
   h0: number;
   v0: number;
   seed: number;
+  /**
+   * Something overhead at this height (in the course: the page above the drone's picture, measured
+   * by `DroneView.ceilingHeight()`). The first time the drone reaches it while climbing it calls
+   * `hitCeiling`, so precomputed traces already contain the hit. `stall: false` = a bump the
+   * motors survive (feedback can recover); `true` = the motors stall and it falls.
+   */
+  ceiling?: { h: number; stall: boolean };
 }
 
 export const defaultDroneConfig = (over: Partial<DroneConfig> = {}): DroneConfig => ({
@@ -110,6 +117,8 @@ export class DroneSim {
   landed = true;
   /** motors knocked out by `hitCeiling`; the drone falls for the rest of the run */
   stalled = false;
+  /** when the drone hit `cfg.ceiling` (or `hitCeiling` was called), s; null if it hasn't */
+  ceilingAt: number | null = null;
   private noise = 0;
   private rand: () => number;
   private rk: RK4;
@@ -127,6 +136,7 @@ export class DroneSim {
     this.stepIndex = 0;
     this.crashed = false;
     this.stalled = false;
+    this.ceilingAt = null;
     this.rand = mulberry32(cfg.seed);
     this.x.fill(0);
     this.x[H] = cfg.h0;
@@ -225,18 +235,27 @@ export class DroneSim {
       this.x[H] = 0;
       this.x[V] = 0;
     }
+    const ceil = cfg.ceiling;
+    if (ceil && this.ceilingAt === null && this.x[H] >= ceil.h && this.x[V] > 0) {
+      this.x[H] = ceil.h;
+      this.hitCeiling({ stall: ceil.stall });
+    }
     this.landed = this.x[H] <= 1e-6;
     this.sampleOutputs();
   }
 
   /**
    * The drone flew into something overhead (in the course: the page above its picture). It stops
-   * dead, bounces down a little, and its motors stall, so it falls for the rest of the run.
+   * dead and bounces down a little. With `stall` (the default) its motors stall, so it falls for
+   * the rest of the run; without, the motors keep running and the controller carries on.
    */
-  hitCeiling(): void {
+  hitCeiling({ stall = true }: { stall?: boolean } = {}): void {
     if (this.x[V] > 0) this.x[V] = -0.2 * this.x[V];
-    this.x[TM] = 0;
-    this.stalled = true;
+    if (this.ceilingAt === null) this.ceilingAt = this.t;
+    if (stall) {
+      this.x[TM] = 0;
+      this.stalled = true;
+    }
     this.sampleOutputs();
   }
 

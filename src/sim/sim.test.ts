@@ -120,6 +120,39 @@ describe('Drone', () => {
     expect(sim.stalled).toBe(false);
   });
 
+  it('a bump the motors survive: closed loop recovers and still settles at the target', () => {
+    const sim = new DroneSim(defaultDroneConfig({ pid: P_ONLY(60), ceiling: { h: 2.4, stall: false } }));
+    let peak = 0;
+    for (let i = 0; i < 20000; i++) {
+      sim.step();
+      peak = Math.max(peak, sim.h);
+    }
+    expect(sim.ceilingAt).not.toBeNull();
+    // never above the ceiling
+    expect(peak).toBeLessThanOrEqual(2.4 + 1e-9);
+    expect(sim.stalled).toBe(false);
+    expect(sim.crashed).toBe(false);
+    // P control still ends at its droop height r − mg/Kp
+    expect(sim.h).toBeCloseTo(2 - (DRONE.m * DRONE.g) / 60, 2);
+  });
+
+  it('a configured ceiling that stalls the motors is hit once, then it falls and crashes', () => {
+    const sim = new DroneSim(defaultDroneConfig({ pid: P_ONLY(60), ceiling: { h: 2.4, stall: true } }));
+    for (let i = 0; i < 20000 && !sim.crashed; i++) sim.step();
+    expect(sim.ceilingAt).toBeGreaterThan(0);
+    expect(sim.stalled).toBe(true);
+    expect(sim.crashed).toBe(true);
+  });
+
+  it('no ceiling below the flight: nothing changes', () => {
+    const a = new DroneSim(defaultDroneConfig({ pid: P_ONLY(20) }));
+    const b = new DroneSim(defaultDroneConfig({ pid: P_ONLY(20), ceiling: { h: 10, stall: true } }));
+    a.advance(8);
+    b.advance(8);
+    expect(b.ceilingAt).toBeNull();
+    expect(b.h).toBe(a.h);
+  });
+
   it('saturates thrust when enabled', () => {
     const sim = new DroneSim(defaultDroneConfig({ params: { ...DRONE, saturate: true }, pid: P_ONLY(50) }));
     expect(sim.thrust).toBe(DRONE.tMax);
