@@ -55,6 +55,8 @@ const schedule: WidgetFactory = (host, ctx) => {
       }),
     );
   let sim = makeSim();
+  // flying out of the picture into the page: the page is a ceiling, and open loop can't notice it either
+  let hitCeiling = false;
   host.append(h('p', { class: 'w-title' }, t('title')));
   const rig = droneRig(host, {
     tMax: RUN,
@@ -64,6 +66,10 @@ const schedule: WidgetFactory = (host, ctx) => {
     heightLabel: t('plot.height'),
     thrustLabel: t('plot.thrust'),
     aria: t('plot.aria'),
+    onCeiling: () => {
+      hitCeiling = true;
+      sim.hitCeiling();
+    },
   });
   rig.hPlot.setLines([{ kind: 'h', at: 2, color: 'sp', label: t('plot.target') }]);
   // the programmed schedule, drawn faintly so you can see the plan before (and while) it runs
@@ -101,7 +107,7 @@ const schedule: WidgetFactory = (host, ctx) => {
     render();
     if (sim.crashed) {
       loop.pause();
-      status.textContent = t('status.crash');
+      status.textContent = t(hitCeiling ? 'status.ceiling' : 'status.crash');
       status.className = 'w-status bad';
     } else if (sim.t >= RUN) {
       loop.pause();
@@ -118,6 +124,7 @@ const schedule: WidgetFactory = (host, ctx) => {
     dist.d.pkg = false;
     pressed(pkgBtn, false);
     sim = makeSim();
+    hitCeiling = false;
     rig.hPlot.clear();
     rig.tPlot.clear();
     rig.hPlot.set('r', [0, RUN], [2, 2]);

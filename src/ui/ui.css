@@ -565,3 +565,22 @@
   stroke-width: 4px;
   stroke-linejoin: round;
 }
+
+/* ---------- free-flying drone (can leave its picture and hit the page) ---------- */
+.drone-wrap.free {
+  position: relative;
+  z-index: 40;
+}
+.drone-view.free {
+  overflow: visible;
+}
+.drone-view.free .drone {
+  pointer-events: none;
+}
+.page-impact {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  z-index: 40;
+}

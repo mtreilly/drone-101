@@ -9,14 +9,14 @@ import './ch01.css';
 /** Drone view on the left, height + thrust plots on the right. Shared by chapters 1 and 2. */
 export function droneRig(
   host: HTMLElement,
-  o: { tMax: number; hMax: number; thrustMin: number; thrustMax: number; heightLabel: string; thrustLabel: string; aria: string; errorBand?: boolean },
+  o: { tMax: number; hMax: number; thrustMin: number; thrustMax: number; heightLabel: string; thrustLabel: string; aria: string; errorBand?: boolean; onCeiling?: () => void },
 ): { view: DroneView; hPlot: Plot; tPlot: Plot; left: HTMLElement; right: HTMLElement } {
   const grid = h('div', { class: 'w-grid side' });
   const left = h('div');
   const right = h('div');
   grid.append(left, right);
   host.append(grid);
-  const view = new DroneView(left, { hMax: o.hMax, width: 230 });
+  const view = new DroneView(left, { hMax: o.hMax, width: 230, onCeiling: o.onCeiling });
   const hPlot = new Plot(right, {
     x: { label: tc('plots.time'), min: 0, max: o.tMax },
     y: { label: tc('plots.height'), min: 0, max: o.hMax },
