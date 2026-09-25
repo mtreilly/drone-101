@@ -108,6 +108,10 @@ const twins: WidgetFactory = (host, ctx) => {
     show(playT);
     if (playT >= RUN) loop.pause();
   }, host);
+  // pressing Play at the end starts the run again from the beginning
+  loop.onChange((on) => {
+    if (on && playT >= RUN) playT = 0;
+  });
   const reset = () => {
     loop.pause();
     playT = 0;

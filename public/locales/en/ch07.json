@@ -136,7 +136,7 @@
         },
         {
           "t": "math",
-          "tex": "\\mathcal{L}\\{f'\\} = \\frac{a}{s-a} = \\frac{s}{s-a} - 1 = s\\,F(s) - f(0)"
+          "tex": "\\begin{aligned} \\mathcal{L}\\{f'\\} &= \\frac{a}{s-a} = \\frac{s}{s-a} - 1 \\\\ &= s\\,F(s) - f(0) \\end{aligned}"
         },
         {
           "t": "p",
@@ -224,7 +224,7 @@
         },
         {
           "t": "math",
-          "tex": "m\\big(s^2\\out{H} - s\\,h(0) - h'(0)\\big) + c\\big(s\\,\\out{H} - h(0)\\big) = \\eff{K_p}\\Big(\\frac{\\sp{2}}{s} - \\out{H}\\Big) - \\frac{\\dis{m g}}{s}"
+          "tex": "\\begin{aligned} & m\\big(s^2\\out{H} - s\\,h(0) - h'(0)\\big) \\\\ &\\quad + c\\big(s\\,\\out{H} - h(0)\\big) \\\\ &= \\eff{K_p}\\Big(\\frac{\\sp{2}}{s} - \\out{H}\\Big) - \\frac{\\dis{m g}}{s} \\end{aligned}"
         },
         {
           "t": "p",
@@ -232,7 +232,7 @@
         },
         {
           "t": "math",
-          "tex": "\\out{H}(s) = \\frac{m\\,h(0)\\,s^2 + \\big(m\\,h'(0) + c\\,h(0)\\big)s + (\\eff{K_p}\\,\\sp{2} - \\dis{m g})}{s\\,\\big(m s^2 + c s + \\eff{K_p}\\big)}"
+          "tex": "\\begin{aligned} \\out{H}(s) &= \\frac{N(s)}{s\\,\\big(m s^2 + c s + \\eff{K_p}\\big)} \\\\[6pt] N(s) &= m\\,h(0)\\,s^2 \\\\ &\\quad + \\big(m\\,h'(0) + c\\,h(0)\\big)\\,s \\\\ &\\quad + (\\eff{K_p}\\,\\sp{2} - \\dis{m g}) \\end{aligned}"
         },
         {
           "t": "p",
@@ -496,22 +496,22 @@
         "0": {
           "f": "1\\ \\ (\\text{step})",
           "F": "\\dfrac{1}{s}",
-          "steps": "\\text{the curve whose slope is } e^{-st} \\text{ is } -\\tfrac{1}{s}e^{-st}||\\int_0^\\infty e^{-st}\\,dt=\\Big[-\\tfrac{1}{s}e^{-st}\\Big]_0^\\infty = 0-\\big(-\\tfrac{1}{s}\\big)=\\frac{1}{s}\\qquad (s>0)"
+          "steps": "\\text{the curve whose slope is } e^{-st} \\text{ is } -\\tfrac{1}{s}e^{-st}||\\begin{aligned} \\int_0^\\infty e^{-st}\\,dt &=\\Big[-\\tfrac{1}{s}e^{-st}\\Big]_0^\\infty \\\\ &= 0-\\big(-\\tfrac{1}{s}\\big)=\\frac{1}{s}\\quad (s>0) \\end{aligned}"
         },
         "1": {
           "f": "e^{at}",
           "F": "\\dfrac{1}{s-a}",
-          "steps": "e^{at}\\,e^{-st}=e^{-(s-a)t}||\\text{it's the step row with } s \\text{ replaced by } s-a||\\int_0^\\infty e^{-(s-a)t}\\,dt=\\frac{1}{s-a}\\qquad(s>a;\\ \\text{here } a=-1)"
+          "steps": "e^{at}\\,e^{-st}=e^{-(s-a)t}||\\text{it's the step row with } s \\text{ replaced by } s-a||\\begin{gathered} \\int_0^\\infty e^{-(s-a)t}\\,dt=\\frac{1}{s-a} \\\\ (s>a;\\ \\text{here } a=-1) \\end{gathered}"
         },
         "2": {
           "f": "\\sin\\omega t,\\ \\cos\\omega t",
           "F": "\\dfrac{\\omega}{s^2+\\omega^2},\\ \\dfrac{s}{s^2+\\omega^2}",
-          "steps": "\\sin\\omega t=\\frac{e^{i\\omega t}-e^{-i\\omega t}}{2i}\\qquad\\text{(twin spinners)}||\\mathcal{L}\\{e^{\\pm i\\omega t}\\}=\\frac{1}{s\\mp i\\omega}\\qquad\\text{(exponential row, } a=\\pm i\\omega)||\\frac{1}{2i}\\Big(\\frac{1}{s-i\\omega}-\\frac{1}{s+i\\omega}\\Big)=\\frac{1}{2i}\\cdot\\frac{2i\\omega}{s^2+\\omega^2}=\\frac{\\omega}{s^2+\\omega^2}||\\cos\\omega t=\\frac{e^{i\\omega t}+e^{-i\\omega t}}{2}\\ \\Rightarrow\\ \\frac{s}{s^2+\\omega^2}\\qquad(\\text{here }\\omega=2)"
+          "steps": "\\begin{gathered} \\sin\\omega t=\\frac{e^{i\\omega t}-e^{-i\\omega t}}{2i} \\\\ \\text{(twin spinners)} \\end{gathered}||\\begin{gathered} \\mathcal{L}\\{e^{\\pm i\\omega t}\\}=\\frac{1}{s\\mp i\\omega} \\\\ \\text{(exponential row, } a=\\pm i\\omega) \\end{gathered}||\\begin{aligned} &\\frac{1}{2i}\\Big(\\frac{1}{s-i\\omega}-\\frac{1}{s+i\\omega}\\Big) \\\\ &=\\frac{1}{2i}\\cdot\\frac{2i\\omega}{s^2+\\omega^2}=\\frac{\\omega}{s^2+\\omega^2} \\end{aligned}||\\begin{gathered} \\cos\\omega t=\\frac{e^{i\\omega t}+e^{-i\\omega t}}{2}\\ \\Rightarrow\\ \\frac{s}{s^2+\\omega^2} \\\\ (\\text{here }\\omega=2) \\end{gathered}"
         },
         "3": {
           "f": "e^{-\\sigma t}\\sin\\omega t,\\ e^{-\\sigma t}\\cos\\omega t",
           "F": "\\dfrac{\\omega}{(s+\\sigma)^2+\\omega^2},\\ \\dfrac{s+\\sigma}{(s+\\sigma)^2+\\omega^2}",
-          "steps": "e^{-\\sigma t}\\sin\\omega t\\cdot e^{-st}=\\sin\\omega t\\cdot e^{-(s+\\sigma)t}||\\text{so take the sine row and replace } s \\text{ by } s+\\sigma||\\frac{\\omega}{(s+\\sigma)^2+\\omega^2}\\quad\\text{and}\\quad\\frac{s+\\sigma}{(s+\\sigma)^2+\\omega^2}\\qquad(\\text{here }\\sigma=0.5,\\ \\omega=2)"
+          "steps": "e^{-\\sigma t}\\sin\\omega t\\cdot e^{-st}=\\sin\\omega t\\cdot e^{-(s+\\sigma)t}||\\text{so take the sine row and replace } s \\text{ by } s+\\sigma||\\begin{gathered} \\frac{\\omega}{(s+\\sigma)^2+\\omega^2}\\quad\\text{and}\\quad\\frac{s+\\sigma}{(s+\\sigma)^2+\\omega^2} \\\\ (\\text{here }\\sigma=0.5,\\ \\omega=2) \\end{gathered}"
         }
       },
       "colCheck": "Checked against the measured area"

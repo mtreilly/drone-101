@@ -1,6 +1,7 @@
 import { type C, c } from '../../math/complex';
 import { h, s as svgEl } from '../../core/dom';
 import { fmt } from '../../core/i18n';
+import { plainText } from '../../core/rich-text';
 import { ICON } from '../../ui/controls';
 import type { SPlane } from '../../ui/s-plane';
 import './ch06.css';
@@ -104,4 +105,12 @@ export function planeLabel(plane: SPlane, cls = 'pt-note'): (text: string, re: n
     el.setAttribute('text-anchor', anchor);
     el.style.display = text ? '' : 'none';
   };
+}
+
+/** Gives radio options whose visible label is pure maths a plain-text accessible name. */
+export function nameMathOptions(root: HTMLElement): void {
+  root.querySelectorAll<HTMLInputElement>('input[type="radio"]').forEach((input) => {
+    const label = root.querySelector<HTMLLabelElement>(`label[for="${input.id}"]`);
+    if (label?.querySelector('.katex')) input.setAttribute('aria-label', plainText(label));
+  });
 }

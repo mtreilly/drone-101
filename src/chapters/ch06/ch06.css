@@ -18,6 +18,7 @@
 .eq-row .math-block {
   margin: 0.2em 0;
   max-width: 100%;
+  overflow: visible;
 }
 .panel {
   border: 1.5px dashed transparent;
@@ -78,7 +79,7 @@
 }
 @media (max-width: 520px) {
   .p68 .math-block {
-    font-size: min(1.12em, 3.7vw);
+    font-size: min(1.12em, 3.3vw);
   }
 }
 .twins-grid {
@@ -110,4 +111,11 @@
   .p68 .w-grid {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+.p68 .fix-row {
+  margin-top: 14px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  border: 1.5px dashed var(--paper-3);
 }

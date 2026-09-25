@@ -9,7 +9,7 @@ import { DroneView } from '../../ui/drone-view';
 import { Loop } from '../../ui/loop';
 import { Plot } from '../../ui/plot';
 import { SPlane, formatS } from '../../ui/s-plane';
-import { sample } from '../ch06/helpers';
+import { caption, mark, sample } from '../ch06/helpers';
 import './ch08.css';
 import { gainsFromPoles, noZeroResponse, overshootOf, settleOf, stepFromPoles, zeroResponse, zetaOf } from './poles';
 
@@ -19,6 +19,7 @@ const pd = (kp: number, kd: number): PID => ({ kp, ki: 0, kd, ff: HOVER_THRUST, 
 /** 8a — the same recipe G(s) turns any input into an output: Y = G·R. */
 const recipe: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
+  mark(host);
   const KP = 20;
   const T1 = 8;
   type In = 'step' | 'pulse' | 'wave';
@@ -58,6 +59,7 @@ const recipe: WidgetFactory = (host, ctx) => {
     height: 240,
     label: t('plotAria'),
   });
+  right.append(caption(t('droneCap')));
   const view = new DroneView(right, { hMax: 3, width: 200 });
   const eq = h('div', { class: 'math-block' });
   host.append(eq);
@@ -102,6 +104,7 @@ const recipe: WidgetFactory = (host, ctx) => {
 /** 8b — the centrepiece: drag the poles, everything else follows. */
 const playground: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
+  mark(host);
   const T1 = 6;
   let re = -1;
   let im = Math.sqrt(39);
@@ -114,13 +117,16 @@ const playground: WidgetFactory = (host, ctx) => {
   const plane = new SPlane(left, {
     reMin: -10,
     reMax: 4,
-    imMax: 7,
+    imMax: 8,
     label: t('planeAria'),
+    reLabel: t('re'),
+    imLabel: t('im'),
     regions: true,
     step: 0.1,
     onChange: (p) => {
       re = p.re;
       im = Math.max(0, p.im);
+      pushTrail(re, im);
       if (Math.hypot(re, im) < 0.15) {
         re = -0.15;
         plane.move('p', re, im);
@@ -146,7 +152,7 @@ const playground: WidgetFactory = (host, ctx) => {
     const x = plane.sx(r);
     const y = plane.sy(-4.2);
     plane.deco.append(
-      svg('line', { class: 'guide', x1: x, x2: x, y1: plane.sy(7), y2: plane.sy(-7) }),
+      svg('line', { class: 'guide', x1: x, x2: x, y1: plane.sy(8), y2: plane.sy(-8) }),
       svg('text', { class: 'guide-label', x: x - 4, y, transform: `rotate(-90 ${x - 4} ${y})`, 'text-anchor': 'middle' }, `${t('settles')} ≈ ${lab}`),
     );
   }
@@ -160,22 +166,41 @@ const playground: WidgetFactory = (host, ctx) => {
     const x2 = -L * Math.cos(th);
     const y2 = L * Math.sin(th);
     for (const sgn of [1, -1]) plane.deco.append(svg('line', { class: 'guide ray', x1: plane.sx(0), y1: plane.sy(0), x2: plane.sx(x2), y2: plane.sy(sgn * y2) }));
-    const yl = 6.3;
+    const yl = 7.4;
     const xl = -yl / Math.tan(th);
     plane.deco.append(svg('text', { class: 'guide-label', x: plane.sx(xl) - 4, y: plane.sy(yl), 'text-anchor': 'end' }, lab));
   }
   plane.deco.append(svg('text', { class: 'guide-label', x: plane.sx(-9.8), y: plane.sy(-5.6) }, t('raysLegend')));
   const wLine = svg('line', { class: 'guide wiggle' });
-  const wLabel = svg('text', { class: 'guide-label', 'text-anchor': 'end' });
-  plane.deco.append(wLine, wLabel);
-  plane.set([{ id: 'p', re, im, kind: 'pole', mirror: true, draggable: true, label: t('pole') }]);
+  const wLabel = svg('text', { class: 'guide-label wiggle-label', 'text-anchor': 'start' });
+  // a faint trail of where the poles have just been; it fades once you let go
+  const trail = svg('polyline', { class: 'pole-trail' });
+  const trailTwin = svg('polyline', { class: 'pole-trail' });
+  plane.deco.append(wLine, wLabel, trail, trailTwin);
+  let trailPts: [number, number][] = [];
+  let trailTimer = 0;
+  function pushTrail(r: number, i: number): void {
+    trailPts.push([r, i]);
+    if (trailPts.length > 40) trailPts.shift();
+    trail.setAttribute('points', trailPts.map(([x, y]) => `${plane.sx(x)},${plane.sy(y)}`).join(' '));
+    trailTwin.setAttribute('points', trailPts.map(([x, y]) => `${plane.sx(x)},${plane.sy(-y)}`).join(' '));
+    trail.classList.add('on');
+    trailTwin.classList.add('on');
+    clearTimeout(trailTimer);
+    trailTimer = window.setTimeout(() => {
+      trail.classList.remove('on');
+      trailTwin.classList.remove('on');
+      trailPts = [];
+    }, 900);
+  }
+  plane.set([{ id: 'p', re, im, kind: 'pole', mirror: true, draggable: true }]);
 
-  const top = h('div', { class: 'w-grid two' });
+  const top = h('div', { class: 'pair-grid' });
   const vbox = h('div');
   const rbox = h('div');
   top.append(vbox, rbox);
   right.append(top);
-  const view = new DroneView(vbox, { hMax: 3, width: 190 });
+  const view = new DroneView(vbox, { hMax: 3, width: 180 });
   const rP = readout(t('poles'));
   const rTs = readout(t('settle'));
   const rOs = readout(t('overshoot'));
@@ -199,20 +224,20 @@ const playground: WidgetFactory = (host, ctx) => {
     challengeStatus.hidden = !v;
     update();
   });
-  host.append(chal.el, challengeStatus, h('p', { class: 'w-help' }, t('help')));
+  host.append(h('div', { class: 'w-row fix-row' }, chal.el), challengeStatus, h('p', { class: 'w-help' }, t('help')));
   zone.style.display = 'none';
   challengeStatus.hidden = true;
   {
     // overshoot < 10% ⇔ ζ > 0.591; settling < 2 s ⇔ σ > 2
     const tanT = Math.tan(Math.acos(0.591));
     const y1 = 2 * tanT;
-    const xClip = -7 / tanT;
+    const xClip = -8 / tanT;
     const pts: [number, number][] = [
       [-2, y1],
-      [xClip, 7],
-      [-10, 7],
-      [-10, -7],
-      [xClip, -7],
+      [xClip, 8],
+      [-10, 8],
+      [-10, -8],
+      [xClip, -8],
       [-2, -y1],
     ];
     zone.setAttribute('points', pts.map(([x, y]) => `${plane.sx(x)},${plane.sy(y)}`).join(' '));
@@ -251,8 +276,15 @@ const playground: WidgetFactory = (host, ctx) => {
     rKp.set(`${fmt(kp, 1)} N/m`);
     rKd.set(`${fmt(kd, 2)} N·s/m`);
     const cd = c + kd;
+    const lhs = `\\frac{\\out{H}(s)}{\\sp{R}(s)}`;
+    const general = `\\frac{\\eff{K_p}}{m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p}}`;
+    const numeric = `\\frac{\\eff{${fmt(kp, 1)}}}{${fmt(m, 1)}s^2 ${cd >= 0 ? '+' : '-'} ${fmt(Math.abs(cd), 2)}s + \\eff{${fmt(kp, 1)}}}`;
+    const factored = `\\frac{${fmt(kp / m, 1)}}{(s - p)(s - \\bar p)},\\quad p = ${formatS(re, im).replace('i', '\\,i')}`;
+    // wide screens: one line; narrow screens: aligned steps instead of a sideways scroll
     eq.innerHTML = tex(
-      `\\frac{\\out{H}(s)}{\\sp{R}(s)} = \\frac{\\eff{K_p}}{m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p}} = \\frac{\\eff{${fmt(kp, 1)}}}{${fmt(m, 1)}s^2 ${cd >= 0 ? '+' : '-'} ${fmt(Math.abs(cd), 2)}s + \\eff{${fmt(kp, 1)}}} = \\frac{${fmt(kp / m, 1)}}{(s - p)(s - \\bar p)},\\quad p = ${formatS(re, im).replace('i', '\\,i')}`,
+      host.clientWidth < 760
+        ? `\\begin{aligned} ${lhs} &= ${general} \\\\[4pt] &= ${numeric} \\\\[4pt] &= ${factored} \\end{aligned}`
+        : `${lhs} = ${general} = ${numeric} = ${factored}`,
       true,
     );
     const w = im;
@@ -261,8 +293,9 @@ const playground: WidgetFactory = (host, ctx) => {
     wLine.setAttribute('y1', String(plane.sy(w)));
     wLine.setAttribute('y2', String(plane.sy(w)));
     wLine.style.display = w > 0.05 ? '' : 'none';
-    wLabel.setAttribute('x', String(plane.sx(4) - 4));
-    wLabel.setAttribute('y', String(plane.sy(w) - 4));
+    // sit the label at the left edge, below the line, clear of the pole marker and axis names
+    wLabel.setAttribute('x', String(plane.sx(-10) + 6));
+    wLabel.setAttribute('y', String(plane.sy(w) + (w > 7 ? 16 : -6)));
     wLabel.textContent = w > 0.05 ? t('wiggle', { T: fmt((2 * Math.PI) / w, 2) }) : '';
     const verdict = re < -0.02 ? 'stable' : re > 0.02 ? 'unstable' : 'marginal';
     status.textContent = t(`verdict.${verdict}`);
@@ -290,6 +323,7 @@ const playground: WidgetFactory = (host, ctx) => {
   });
   return () => {
     off();
+    clearTimeout(trailTimer);
     loop.destroy();
   };
 };
@@ -297,6 +331,7 @@ const playground: WidgetFactory = (host, ctx) => {
 /** 8c — a zero: same poles, extra kick. */
 const zero: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
+  mark(host);
   const T1 = 4;
   let z = -3;
   host.append(h('p', { class: 'w-title' }, t('title')));
@@ -310,6 +345,8 @@ const zero: WidgetFactory = (host, ctx) => {
     reMax: 2,
     imMax: 5,
     label: t('planeAria'),
+    reLabel: t('re'),
+    imLabel: t('im'),
     step: 0.1,
     onChange: (p) => {
       z = Math.min(-0.3, p.re);
@@ -339,7 +376,7 @@ const zero: WidgetFactory = (host, ctx) => {
   const eq = h('div', { class: 'math-block' });
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
   right.append(h('div', { class: 'readouts' }, rA.el, rB.el), status);
-  host.append(eq);
+  host.append(eq, h('p', { class: 'w-help' }, t('help')));
   const osNo = stepMetrics(ref.xs, ref.ys, 0, 1).overshoot;
   rA.set(`${fmt(osNo, 1)} %`);
   plane.svg.addEventListener('pointerdown', () => plot.clear(true));
@@ -358,6 +395,7 @@ const zero: WidgetFactory = (host, ctx) => {
 /** 8d — "further left is always better?" — not with real motors. */
 const limit: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
+  mark(host);
   const T1 = 3;
   let sig = 2;
   let real = true;
@@ -428,7 +466,7 @@ const limit: WidgetFactory = (host, ctx) => {
   };
   const sl = slider({ label: t('sigma'), min: 1, max: 8, step: 0.5, value: sig, unit: '', format: (v) => `−${fmt(v, 1)} ± ${fmt(v, 1)}i`, onInput: (v) => ((sig = v), update()) });
   const tg = toggle(t('toggle'), real, (v) => ((real = v), update()));
-  host.append(h('div', { class: 'readouts' }, rPeak.el, rTsI.el, rTsR.el), status, h('div', { class: 'w-controls' }, sl.el), tg.el);
+  host.append(h('div', { class: 'w-controls' }, sl.el), h('div', { class: 'w-row fix-row' }, tg.el), h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rPeak.el, rTsI.el, rTsR.el)), status);
   update();
 };
 

@@ -11,7 +11,7 @@ import { readout, segmented, slider, toggle } from '../../ui/controls';
 import { Loop } from '../../ui/loop';
 import { prefersReducedMotion } from '../../core/dom';
 import { Plot } from '../../ui/plot';
-import { iconButton, mark, onInteractStart, sample } from '../ch06/helpers';
+import { iconButton, mark, nameMathOptions, onInteractStart, sample } from '../ch06/helpers';
 import { DRAW_T, dampedCos, derivativeRule, fromFunction, fromPoints, solveDrone, unspinIntegral, unspinLimit } from './tools';
 
 type Sig = { f: (t: number) => number; F: (s: number) => number; a: number; yMin: number; yMax: number };
@@ -82,6 +82,7 @@ const probe: WidgetFactory = (host, ctx) => {
       restart();
     },
   );
+  nameMathOptions(seg.el);
   host.append(seg.el);
   const grid = h('div', { class: 'w-grid two' });
   const a = h('div');

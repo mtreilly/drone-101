@@ -1,384 +1,390 @@
 {
- "kicker": "Chapter 8",
- "title": "Transfer Functions, Poles and Zeros",
- "question": "Can we read a system's whole personality off one fraction?",
- "sections": [
-  {
-   "id": "recipe",
-   "title": "The system's recipe",
-   "blocks": [
+  "kicker": "Chapter 8",
+  "title": "Transfer Functions, Poles and Zeros",
+  "question": "Can we read a system's whole personality off one fraction?",
+  "sections": [
     {
-     "t": "say",
-     "who": "june",
-     "mood": "think",
-     "text": "Look at what we got in Chapter 7. Forget the starting height for a moment (start the drone hovering, calm, at 1 m). Then the answer was always the same fraction *times* whatever we asked it to do."
-    },
-    {
-     "t": "math",
-     "tex": "\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\sp{R}(s)"
-    },
-    {
-     "t": "p",
-     "text": "$\\sp{R}(s)$ is the transform of the **input**: how far we ask the setpoint to move away from 1 m (each input's transform comes straight from our Chapter 7 table). $G(s)$ is fixed: it only depends on the drone and the controller. So we give it a name: the **transfer function**, the output-to-input ratio in s-land, with everything starting at rest."
-    },
-    {
-     "t": "say",
-     "who": "mika",
-     "mood": "excited",
-     "text": "So $G(s)$ is like the drone's **recipe**. Feed in any ingredient and it tells you what comes out!"
-    },
-    {
-     "t": "p",
-     "text": "Try three different inputs on the same drone. The recipe never changes, only $\\sp{R}(s)$ does."
-    },
-    {
-     "t": "widget",
-     "id": "recipe"
-    },
-    {
-     "t": "vocab",
-     "items": [
-      {
-       "term": "Transfer function $G(s)$",
-       "def": "Output ÷ input, both transformed, with the system starting at rest. It's a fraction of two polynomials in $s$, and it contains everything about how the system responds."
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "id": "poles",
-   "title": "Poles: where the system wants to live",
-   "blocks": [
-    {
-     "t": "p",
-     "text": "Where does $G(s)$ **explode**? Where its bottom is zero. Chapter 7 told us that a transform explodes exactly at the $s$ where a signal lives. So the zeros of the denominator are the $e^{st}$ terms the system is made of. They're the very same two dots we found in Chapter 6. They get a special name: **poles**, drawn as ×."
-    },
-    {
-     "t": "math",
-     "tex": "m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p} = 0 \\quad\\Longrightarrow\\quad s = p,\\ \\bar p \\qquad \\text{(the poles)}"
-    },
-    {
-     "t": "p",
-     "text": "Now flip it around. Instead of choosing gains and finding the poles, let's **drag the poles** and see what drone we get. (Behind the scenes we work out the controller that puts them there. It needs a new knob $\\eff{K_d}$, a push against speed, which we'll meet properly in Chapter 9.)"
-    },
-    {
-     "t": "predict",
-     "id": "ch8-rhp",
-     "gate": true,
-     "q": "What does the drone do if we drag the poles into the **right half** of the s-plane?",
-     "options": [
-      {
-       "text": "It lands gently",
-       "sketch": "sluggish",
-       "why": "Landing needs everything to calm down, and right-half poles do the opposite."
-      },
-      {
-       "text": "It hovers, a little wobbly",
-       "sketch": "steady-wiggle",
-       "why": "Steady wobbling is what you get exactly **on** the vertical axis. Just past it, things grow."
-      },
-      {
-       "text": "It swings harder and harder until it crashes or flies off",
-       "sketch": "growing-wiggle",
-       "correct": true,
-       "why": "On the right half, $e^{st}$ has $\\sigma > 0$: a growing spiral. The swings get bigger every cycle."
-      }
-     ]
-    },
-    {
-     "t": "widget",
-     "id": "playground"
-    },
-    {
-     "t": "p",
-     "text": "Play with it. A few rules jump out, and they're all Chapter 5 and 6 in disguise:"
-    },
-    {
-     "t": "list",
-     "items": [
-      "**Left half = calms down, right half = blows up.** The real part $\\sigma$ is the shrink or grow rate.",
-      "**Further left = faster.** Settling takes about $4/|\\sigma|$ seconds (the dashed vertical lines).",
-      "**Further up = more wiggly.** The height $\\omega$ is the wiggle speed; one wiggle takes $2\\pi/\\omega$ seconds.",
-      "**The angle sets the overshoot.** Poles near the real axis barely overshoot, poles near the vertical axis overshoot a lot (the dashed rays)."
-     ]
-    },
-    {
-     "t": "say",
-     "who": "mika",
-     "mood": "worried",
-     "text": "I wanted just **one** pole up high and one down low. It won't let me! The bottom one keeps copying the top one."
-    },
-    {
-     "t": "say",
-     "who": "theo",
-     "mood": "happy",
-     "text": "Remember the twin spinners from Chapter 5? A real drone has real motion, so every spinning $e^{st}$ needs its mirror twin to cancel the imaginary parts. Complex poles **always** come in mirror pairs."
-    },
-    {
-     "t": "note",
-     "text": "Our drone started at $-1 \\pm 6.24i$: that's the $K_p = 20$ drone from Chapter 2. Far up (very wiggly) and close to the axis (slow to settle). Now you can *see* why it bounced."
-    }
-   ]
-  },
-  {
-   "id": "zeros",
-   "title": "Zeros: a quick look",
-   "blocks": [
-    {
-     "t": "p",
-     "text": "The top of the fraction can be zero too. Those spots are called **zeros**, drawn as ○. They don't change *which* $e^{st}$ terms appear (that's the poles' job), but they change **how much** of each you get."
-    },
-    {
-     "t": "p",
-     "text": "Here's a system with fixed poles at $-2 \\pm 3i$ and one zero you can slide. (You get exactly this shape from a controller that reacts to how fast the *error* changes, which is a teaser for Chapter 9.)"
-    },
-    {
-     "t": "widget",
-     "id": "zero"
-    },
-    {
-     "t": "say",
-     "who": "june",
-     "mood": "surprised",
-     "text": "Same poles, but when the zero gets close to the origin the response jumps up way faster and overshoots more!"
-    },
-    {
-     "t": "p",
-     "text": "A zero near the origin makes the system react strongly to **changes** in the input. The overshoot grows, even though the poles didn't move. Far away, the zero hardly matters. That's all we need about zeros for now."
-    }
-   ]
-  },
-  {
-   "id": "limits",
-   "title": "Is further left always better?",
-   "blocks": [
-    {
-     "t": "say",
-     "who": "june",
-     "mood": "excited",
-     "text": "Easy: drag the poles *way* left. Settles in a blink. Best drone ever!"
-    },
-    {
-     "t": "say",
-     "who": "theo",
-     "mood": "think",
-     "text": "What thrust does that need, though? Until now we've pretended the motors could push as hard as the maths wants."
-    },
-    {
-     "t": "p",
-     "text": "Time to be honest. Our motors can push between **0 N** and **20 N** (about four times the drone's weight). Below, the poles move left along a 45° line. The dashed curves are the maths with imaginary, unlimited motors; the solid ones are real motors."
-    },
-    {
-     "t": "widget",
-     "id": "limit"
-    },
-    {
-     "t": "p",
-     "text": "Past a certain point the maths demands 50, 60, 70 newtons that the motors simply don't have. The {eff|orange thrust} flattens against the limits, the real drone stops following the pretty linear prediction, and it overshoots *more* than it would with gentler poles."
-    },
-    {
-     "t": "say",
-     "who": "june",
-     "mood": "worried",
-     "text": "So \"further left\" is only better until you run out of motor. Placing poles is a trade-off, not a race."
-    },
-    {
-     "t": "note",
-     "text": "From now on the 20 N limit stays switched on."
-    }
-   ]
-  },
-  {
-   "id": "wrap",
-   "title": "What we know now",
-   "blocks": [
-    {
-     "t": "recap",
-     "items": [
-      "The **transfer function** $G(s)$ = output ÷ input in s-land. It's the system's recipe: $\\out{H} = G\\cdot\\sp{R}$.",
-      "**Poles** (×) are where $G(s)$ explodes: the $e^{st}$ terms the system is made of.",
-      "Left half = stable, right half = explodes, further left = faster (≈ 4/|σ| s), higher = wigglier, angle = overshoot.",
-      "Complex poles always come in mirror pairs.",
-      "**Zeros** (○) change how much of each term you get. Near the origin they add a kick.",
-      "Far-left poles need thrust the motors don't have."
-     ]
-    },
-    {
-     "t": "quiz",
-     "items": [
-      {
-       "id": "ch8-q1",
-       "q": "Which pole pair settles **fastest**?",
-       "options": [
+      "id": "recipe",
+      "title": "The system's recipe",
+      "blocks": [
         {
-         "text": "$-1 \\pm 2i$",
-         "why": "Settling ≈ $4/1 = 4$ s. The height (2) only affects wiggling, not settling."
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Look at what we got in Chapter 7. Forget the starting height for a moment (start the drone hovering, calm, at 1 m). Then the answer was always the same fraction *times* whatever we asked it to do."
         },
         {
-         "text": "$-4 \\pm 2i$",
-         "correct": true,
-         "why": "Furthest left: settling ≈ $4/4 = 1$ s."
+          "t": "math",
+          "tex": "\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\sp{R}(s)"
         },
         {
-         "text": "$-0.5 \\pm 5i$",
-         "why": "High up means lots of fast wiggles, but it's close to the axis, so they die out slowly (≈ 8 s)."
+          "t": "p",
+          "text": "$\\sp{R}(s)$ is the transform of the **input**: how far we ask the setpoint to move away from 1 m (each input's transform comes straight from our Chapter 7 table). $G(s)$ is fixed: it only depends on the drone and the controller. So we give it a name: the **transfer function**, the output-to-input ratio in s-land, with everything starting at rest."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "So $G(s)$ is like the drone's **recipe**. Feed in any ingredient and it tells you what comes out!"
+        },
+        {
+          "t": "p",
+          "text": "Try three different inputs on the same drone. The recipe never changes, only $\\sp{R}(s)$ does."
+        },
+        {
+          "t": "widget",
+          "id": "recipe"
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Transfer function $G(s)$",
+              "def": "Output ÷ input, both transformed, with the system starting at rest. It's a fraction of two polynomials in $s$, and it contains everything about how the system responds."
+            }
+          ]
         }
-       ]
-      },
-      {
-       "id": "ch8-q2",
-       "q": "$G(s) = \\dfrac{3}{s^2 + 2s + 10}$. Where are the poles, and what does the response look like?",
-       "options": [
-        {
-         "text": "$-1 \\pm 3i$: stable, and it wiggles",
-         "correct": true,
-         "why": "$s = \\frac{-2 \\pm \\sqrt{4 - 40}}{2} = -1 \\pm 3i$. Left half means stable, imaginary part means wiggles."
-        },
-        {
-         "text": "$+1 \\pm 3i$: unstable",
-         "why": "Sign slip. For $s^2 + bs + c$ the real part is $-b/2 = -1$, which is in the left half."
-        },
-        {
-         "text": "$-2$ and $-10$: no wiggles",
-         "why": "Those are just coefficients of the polynomial. The poles are its roots: $-1 \\pm 3i$."
-        }
-       ]
-      },
-      {
-       "id": "ch8-q3",
-       "q": "You want **less overshoot** but the **same settling time**. How do you move the poles?",
-       "options": [
-        {
-         "text": "Straight towards the real axis (keep σ, shrink ω)",
-         "correct": true,
-         "why": "Same distance from the axis means same settling time. A smaller angle from the real axis means more damping, so less overshoot."
-        },
-        {
-         "text": "Straight up (bigger ω)",
-         "why": "That swings the angle towards the vertical axis: *more* overshoot and faster wiggles."
-        },
-        {
-         "text": "To the right",
-         "why": "That makes it settle more slowly, and past the axis it becomes unstable."
-        }
-       ]
-      },
-      {
-       "id": "ch8-q4",
-       "q": "Poles at $+0.5 \\pm 2i$. What do you see?",
-       "options": [
-        {
-         "text": "Swings that grow every cycle",
-         "sketch": "growing-wiggle",
-         "correct": true,
-         "why": "$\\sigma = +0.5 > 0$ means growth, $\\omega = 2$ means spinning: a growing wiggle."
-        },
-        {
-         "text": "Swings that shrink",
-         "sketch": "decaying-wiggle",
-         "why": "Shrinking needs $\\sigma < 0$ (left half). These poles are on the right."
-        },
-        {
-         "text": "Steady swinging forever",
-         "sketch": "steady-wiggle",
-         "why": "That's exactly on the axis ($\\sigma = 0$). At $+0.5$ it grows."
-        }
-       ]
-      }
-     ]
+      ]
     },
     {
-     "t": "map"
+      "id": "poles",
+      "title": "Poles: where the system wants to live",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Where does $G(s)$ **explode**? Where its bottom is zero. Chapter 7 told us that a transform explodes exactly at the $s$ where a signal lives. So the zeros of the denominator are the $e^{st}$ terms the system is made of. They're the very same two dots we found in Chapter 6. They get a special name: **poles**, drawn as ×."
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} & m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p} = 0 \\\\ \\Longrightarrow\\quad & s = p,\\ \\bar p \\qquad \\text{(the poles)} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Now flip it around. Instead of choosing gains and finding the poles, let's **drag the poles** and see what drone we get. (Behind the scenes we work out the controller that puts them there. It needs a new knob $\\eff{K_d}$, a push against speed, which we'll meet properly in Chapter 9.)"
+        },
+        {
+          "t": "predict",
+          "id": "ch8-rhp",
+          "gate": true,
+          "q": "What does the drone do if we drag the poles into the **right half** of the s-plane?",
+          "options": [
+            {
+              "text": "It lands gently",
+              "sketch": "sluggish",
+              "why": "Landing needs everything to calm down, and right-half poles do the opposite."
+            },
+            {
+              "text": "It hovers, a little wobbly",
+              "sketch": "steady-wiggle",
+              "why": "Steady wobbling is what you get exactly **on** the vertical axis. Just past it, things grow."
+            },
+            {
+              "text": "It swings harder and harder until it crashes or flies off",
+              "sketch": "growing-wiggle",
+              "correct": true,
+              "why": "On the right half, $e^{st}$ has $\\sigma > 0$: a growing spiral. The swings get bigger every cycle."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "playground"
+        },
+        {
+          "t": "p",
+          "text": "Play with it. A few rules jump out, and they're all Chapter 5 and 6 in disguise:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Left half = calms down, right half = blows up.** The real part $\\sigma$ is the shrink or grow rate.",
+            "**Further left = faster.** Settling takes about $4/|\\sigma|$ seconds (the dashed vertical lines).",
+            "**Further up = more wiggly.** The height $\\omega$ is the wiggle speed; one wiggle takes $2\\pi/\\omega$ seconds.",
+            "**The angle sets the overshoot.** Poles near the real axis barely overshoot, poles near the vertical axis overshoot a lot (the dashed rays)."
+          ]
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "I wanted just **one** pole up high and one down low. It won't let me! The bottom one keeps copying the top one."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Remember the twin spinners from Chapter 5? A real drone has real motion, so every spinning $e^{st}$ needs its mirror twin to cancel the imaginary parts. Complex poles **always** come in mirror pairs."
+        },
+        {
+          "t": "note",
+          "text": "Our drone started at $-1 \\pm 6.24i$: that's the $K_p = 20$ drone from Chapter 2. Far up (very wiggly) and close to the axis (slow to settle). Now you can *see* why it bounced."
+        }
+      ]
     },
     {
-     "t": "cliff",
-     "text": "Theo: \"The poles are beautiful. But hold on: we cheated all chapter by handing the drone its hover thrust. Without it, gravity still makes it **droop**. Our map is fine. It's our *controller* that needs fixing.\""
+      "id": "zeros",
+      "title": "Zeros: a quick look",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "The top of the fraction can be zero too. Those spots are called **zeros**, drawn as ○. They don't change *which* $e^{st}$ terms appear (that's the poles' job), but they change **how much** of each you get."
+        },
+        {
+          "t": "p",
+          "text": "Here's a system with fixed poles at $-2 \\pm 3i$ and one zero you can slide. (You get exactly this shape from a controller that reacts to how fast the *error* changes, which is a teaser for Chapter 9.)"
+        },
+        {
+          "t": "widget",
+          "id": "zero"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Same poles, but when the zero gets close to the origin the response jumps up way faster and overshoots more!"
+        },
+        {
+          "t": "p",
+          "text": "A zero near the origin makes the system react strongly to **changes** in the input. The overshoot grows, even though the poles didn't move. Far away, the zero hardly matters. That's all we need about zeros for now."
+        }
+      ]
+    },
+    {
+      "id": "limits",
+      "title": "Is further left always better?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Easy: drag the poles *way* left. Settles in a blink. Best drone ever!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "What thrust does that need, though? Until now we've pretended the motors could push as hard as the maths wants."
+        },
+        {
+          "t": "p",
+          "text": "Time to be honest. Our motors can push between **0 N** and **20 N** (about four times the drone's weight). Below, the poles move left along a 45° line. The dashed curves are the maths with imaginary, unlimited motors; the solid ones are real motors."
+        },
+        {
+          "t": "widget",
+          "id": "limit"
+        },
+        {
+          "t": "p",
+          "text": "Past a certain point the maths demands 50, 60, 70 newtons that the motors simply don't have. The {eff|orange thrust} flattens against the limits, the real drone stops following the pretty linear prediction, and it overshoots *more* than it would with gentler poles."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "So \"further left\" is only better until you run out of motor. Placing poles is a trade-off, not a race."
+        },
+        {
+          "t": "note",
+          "text": "From now on the 20 N limit stays switched on."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "What we know now",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "The **transfer function** $G(s)$ = output ÷ input in s-land. It's the system's recipe: $\\out{H} = G\\cdot\\sp{R}$.",
+            "**Poles** (×) are where $G(s)$ explodes: the $e^{st}$ terms the system is made of.",
+            "Left half = stable, right half = explodes, further left = faster (≈ 4/|σ| s), higher = wigglier, angle = overshoot.",
+            "Complex poles always come in mirror pairs.",
+            "**Zeros** (○) change how much of each term you get. Near the origin they add a kick.",
+            "Far-left poles need thrust the motors don't have."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch8-q1",
+              "q": "Which pole pair settles **fastest**?",
+              "options": [
+                {
+                  "text": "$-1 \\pm 2i$",
+                  "why": "Settling ≈ $4/1 = 4$ s. The height (2) only affects wiggling, not settling."
+                },
+                {
+                  "text": "$-4 \\pm 2i$",
+                  "correct": true,
+                  "why": "Furthest left: settling ≈ $4/4 = 1$ s."
+                },
+                {
+                  "text": "$-0.5 \\pm 5i$",
+                  "why": "High up means lots of fast wiggles, but it's close to the axis, so they die out slowly (≈ 8 s)."
+                }
+              ]
+            },
+            {
+              "id": "ch8-q2",
+              "q": "$G(s) = \\dfrac{3}{s^2 + 2s + 10}$. Where are the poles, and what does the response look like?",
+              "options": [
+                {
+                  "text": "$-1 \\pm 3i$: stable, and it wiggles",
+                  "correct": true,
+                  "why": "$s = \\frac{-2 \\pm \\sqrt{4 - 40}}{2} = -1 \\pm 3i$. Left half means stable, imaginary part means wiggles."
+                },
+                {
+                  "text": "$+1 \\pm 3i$: unstable",
+                  "why": "Sign slip. For $s^2 + bs + c$ the real part is $-b/2 = -1$, which is in the left half."
+                },
+                {
+                  "text": "$-2$ and $-10$: no wiggles",
+                  "why": "Those are just coefficients of the polynomial. The poles are its roots: $-1 \\pm 3i$."
+                }
+              ]
+            },
+            {
+              "id": "ch8-q3",
+              "q": "You want **less overshoot** but the **same settling time**. How do you move the poles?",
+              "options": [
+                {
+                  "text": "Straight towards the real axis (keep σ, shrink ω)",
+                  "correct": true,
+                  "why": "Same distance from the axis means same settling time. A smaller angle from the real axis means more damping, so less overshoot."
+                },
+                {
+                  "text": "Straight up (bigger ω)",
+                  "why": "That swings the angle towards the vertical axis: *more* overshoot and faster wiggles."
+                },
+                {
+                  "text": "To the right",
+                  "why": "That makes it settle more slowly, and past the axis it becomes unstable."
+                }
+              ]
+            },
+            {
+              "id": "ch8-q4",
+              "q": "Poles at $+0.5 \\pm 2i$. What do you see?",
+              "options": [
+                {
+                  "text": "Swings that grow every cycle",
+                  "sketch": "growing-wiggle",
+                  "correct": true,
+                  "why": "$\\sigma = +0.5 > 0$ means growth, $\\omega = 2$ means spinning: a growing wiggle."
+                },
+                {
+                  "text": "Swings that shrink",
+                  "sketch": "decaying-wiggle",
+                  "why": "Shrinking needs $\\sigma < 0$ (left half). These poles are on the right."
+                },
+                {
+                  "text": "Steady swinging forever",
+                  "sketch": "steady-wiggle",
+                  "why": "That's exactly on the axis ($\\sigma = 0$). At $+0.5$ it grows."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Theo: \"The poles are beautiful. But hold on: we cheated all chapter by handing the drone its hover thrust. Without it, gravity still makes it **droop**. Our map is fine. It's our *controller* that needs fixing.\""
+        }
+      ]
     }
-   ]
+  ],
+  "widgets": {
+    "recipe": {
+      "title": "One recipe, three inputs",
+      "choose": "What do we ask for?",
+      "in": {
+        "step": "a step up",
+        "pulse": "a gentle step",
+        "wave": "a wave"
+      },
+      "input": "setpoint (input)",
+      "output": "height (output)",
+      "plotAria": "Setpoint and drone height over time for the chosen input.",
+      "same": "stays the same",
+      "changes": "changes",
+      "describe": {
+        "step": "The setpoint steps from 1 to 2 metres and the drone follows with a bouncy overshoot.",
+        "pulse": "The setpoint glides from 1 to 2 metres; the drone follows with a smaller bounce.",
+        "wave": "The setpoint waves up and down; the drone follows the wave."
+      },
+      "droneCap": "the drone following it"
+    },
+    "playground": {
+      "title": "The pole playground",
+      "planeAria": "The s-plane with a draggable pair of poles. Left half calms down, right half blows up. Use arrow keys to move the selected pole.",
+      "pole": "p",
+      "poles": "poles",
+      "settle": "settles (≈4/σ)",
+      "overshoot": "overshoot",
+      "response": "height after a 1 m step",
+      "target": "target",
+      "plotAria": "Step response of the drone for the chosen poles, previous response shown as a ghost.",
+      "settles": "settles",
+      "over": "overshoot",
+      "raysLegend": "dashed rays: overshoot %",
+      "never": "never",
+      "wiggle": "one wiggle ≈ {T} s",
+      "verdict": {
+        "stable": "Left half: it calms down.",
+        "unstable": "Right half: it blows up!",
+        "marginal": "Right on the axis: it swings forever."
+      },
+      "challenge": "Mini-challenge: overshoot under 10% and settled within 2 s",
+      "chalOk": "Challenge met! Overshoot {o}%, settled in {s} s.",
+      "chalNo": "Not yet: overshoot {o}%, settles in {s} s. Aim for the highlighted zone.",
+      "help": "Drag either × (or Tab to it and use the arrow keys, Shift for big steps). The drone replays its step response each time.",
+      "describe": "Poles at {p}. Damping ratio {z}. Settles in about {s} seconds, overshoots about {o} percent.",
+      "re": "σ",
+      "im": "ω"
+    },
+    "zero": {
+      "title": "Slide the zero",
+      "planeAria": "The s-plane with two fixed poles at minus 2 plus or minus 3 i and a draggable zero on the real axis.",
+      "zero": "zero",
+      "y": "output",
+      "noZero": "no zero (same poles)",
+      "withZero": "with the zero",
+      "plotAria": "Step responses with and without the zero.",
+      "osNo": "overshoot without zero",
+      "osYes": "overshoot with zero",
+      "zeroAt": "zero at",
+      "near": "Near the origin: a big early kick and extra overshoot.",
+      "mid": "A moderate extra kick.",
+      "far": "Far away: the zero barely changes anything.",
+      "describe": "Zero at {z}, overshoot {o} percent.",
+      "re": "σ",
+      "im": "ω",
+      "help": "Drag the ○ along the axis (or Tab to it and use ← →). The × poles stay put."
+    },
+    "limit": {
+      "title": "Real motors have limits",
+      "ideal": "unlimited motors (maths)",
+      "real": "real drone",
+      "idealT": "thrust the maths wants",
+      "realT": "thrust we get",
+      "hAria": "Height after a step for unlimited and for real motors.",
+      "tAria": "Thrust over time, with the 0 and 20 newton motor limits.",
+      "max": "motor max 20 N",
+      "min": "motors can't pull down",
+      "peak": "peak thrust the maths wants",
+      "tsIdeal": "settles (maths)",
+      "tsReal": "settles (real)",
+      "notYet": "not within 3 s",
+      "sigma": "Pole position (moving left along 45°)",
+      "toggle": "Real motors: 0–20 N",
+      "capped": "The maths wants {p} N, but the motors top out at 20 N. Reality stops following the linear picture.",
+      "fantasy": "Imaginary motors happily deliver {p} N. Switch the limits back on.",
+      "fine": "Within the motors' range: maths and reality agree."
+    }
   }
- ],
- "widgets": {
-  "recipe": {
-   "title": "One recipe, three inputs",
-   "choose": "What do we ask for?",
-   "in": {
-    "step": "a step up",
-    "pulse": "a gentle step",
-    "wave": "a wave"
-   },
-   "input": "setpoint (input)",
-   "output": "height (output)",
-   "plotAria": "Setpoint and drone height over time for the chosen input.",
-   "same": "stays the same",
-   "changes": "changes",
-   "describe": {
-    "step": "The setpoint steps from 1 to 2 metres and the drone follows with a bouncy overshoot.",
-    "pulse": "The setpoint glides from 1 to 2 metres; the drone follows with a smaller bounce.",
-    "wave": "The setpoint waves up and down; the drone follows the wave."
-   }
-  },
-  "playground": {
-   "title": "The pole playground",
-   "planeAria": "The s-plane with a draggable pair of poles. Left half calms down, right half blows up. Use arrow keys to move the selected pole.",
-   "pole": "p",
-   "poles": "poles",
-   "settle": "settles (≈4/σ)",
-   "overshoot": "overshoot",
-   "response": "height after a 1 m step",
-   "target": "target",
-   "plotAria": "Step response of the drone for the chosen poles, previous response shown as a ghost.",
-   "settles": "settles",
-   "over": "overshoot",
-   "raysLegend": "dashed rays: overshoot %",
-   "never": "never",
-   "wiggle": "one wiggle ≈ {T} s",
-   "verdict": {
-    "stable": "Left half: it calms down.",
-    "unstable": "Right half: it blows up!",
-    "marginal": "Right on the axis: it swings forever."
-   },
-   "challenge": "Mini-challenge: overshoot under 10% and settled within 2 s",
-   "chalOk": "Challenge met! Overshoot {o}%, settled in {s} s.",
-   "chalNo": "Not yet: overshoot {o}%, settles in {s} s. Aim for the highlighted zone.",
-   "help": "Drag either × (or Tab to it and use the arrow keys, Shift for big steps). The drone replays its step response each time.",
-   "describe": "Poles at {p}. Damping ratio {z}. Settles in about {s} seconds, overshoots about {o} percent."
-  },
-  "zero": {
-   "title": "Slide the zero",
-   "planeAria": "The s-plane with two fixed poles at minus 2 plus or minus 3 i and a draggable zero on the real axis.",
-   "zero": "zero",
-   "y": "output",
-   "noZero": "no zero (same poles)",
-   "withZero": "with the zero",
-   "plotAria": "Step responses with and without the zero.",
-   "osNo": "overshoot without zero",
-   "osYes": "overshoot with zero",
-   "zeroAt": "zero at",
-   "near": "Near the origin: a big early kick and extra overshoot.",
-   "mid": "A moderate extra kick.",
-   "far": "Far away: the zero barely changes anything.",
-   "describe": "Zero at {z}, overshoot {o} percent."
-  },
-  "limit": {
-   "title": "Real motors have limits",
-   "ideal": "unlimited motors (maths)",
-   "real": "real drone",
-   "idealT": "thrust the maths wants",
-   "realT": "thrust we get",
-   "hAria": "Height after a step for unlimited and for real motors.",
-   "tAria": "Thrust over time, with the 0 and 20 newton motor limits.",
-   "max": "motor max 20 N",
-   "min": "motors can't pull down",
-   "peak": "peak thrust the maths wants",
-   "tsIdeal": "settles (maths)",
-   "tsReal": "settles (real)",
-   "notYet": "not within 3 s",
-   "sigma": "Pole position (moving left along 45°)",
-   "toggle": "Real motors: 0–20 N",
-   "capped": "The maths wants {p} N, but the motors top out at 20 N. Reality stops following the linear picture.",
-   "fantasy": "Imaginary motors happily deliver {p} N. Switch the limits back on.",
-   "fine": "Within the motors' range: maths and reality agree."
-  }
- }
 }
