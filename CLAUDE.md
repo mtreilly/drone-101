@@ -103,7 +103,9 @@ through its own picture and crashes on the grass. Rules for adding this to other
    widget's status line (a new string in all six languages). Nothing in the prose may be
    contradicted by the new outcome.
 4. **Page geometry comes from `src/ui/page-physics.ts`:** `pageSolids()` (what counts as solid:
-   `SOLID_SELECTOR`, the top bar, never the object's own `.widget-frame` or its contents),
+   `SOLID_SELECTOR` (text, bubbles, prediction cards and their options, other cards, pictures)
+   and the top bar; never the object's own picture or what contains it; inside its own card only
+   other pictures such as an s-plane stacked above it on a phone, never its own title or labels),
    `ceilingHit()` (swept test, so a fast object can't tunnel through), `wobble()` (the thing that
    was hit jolts, using individual `translate`/`rotate` so it composes with layout transforms) and
    `impactBurst()` (hand-drawn strokes, positioned with `translate`, not `transform`). Everything is
@@ -114,16 +116,29 @@ through its own picture and crashes on the grass. Rules for adding this to other
 6. **Precomputed traces** (players that replay arrays instead of stepping a live sim) can't react
    mid-flight. Measure the ceiling first (how many metres of open page are above the picture), pass
    it to the sim as a parameter and recompute the trace, so the replay already contains the hit.
-7. **Reduced motion turns it off completely:** the object stays pinned and clipped at its
+7. **Only where the physics really gets there.** Before adding it, measure how many metres of open
+   page sit above the picture (at 1280 px and 375 px) and compare with what the model can actually
+   reach. Chapter 2's P control peaks at 3.4 m and the page is ~7.6 m away, so it was left alone
+   rather than faking a bonk by changing scales or ranges.
+8. **Formula-driven widgets** (Chapter 8's pole playground plays an analytic response) hand over
+   at the hit to the same `DroneSim`, started from the hit height and speed and stalled
+   (`src/chapters/ch08/fall.ts`); the plot is re-set to the real path (formula up to the hit, then
+   the fall). Once the drone is down it stays down until the replay restarts or the input changes:
+   an analytic curve must never resurrect a crashed drone.
+9. **Keep status lines true in every layout:** whether a hit happens depends on the page layout, so
+   compose the message from the current verdict plus the hit sentence rather than a fixed text that
+   assumes why it flew off.
+10. **Reduced motion turns it off completely:** the object stays pinned and clipped at its
    picture's edge as before, and the readout still shows the true value.
-8. **Test it:** a sim test for the event (what happens after it, until reset), unit tests for any
+11. **Test it:** a sim test for the event (what happens after it, until reset), unit tests for any
    geometry helper, and a recorded check (`agent-browser record start …`, then look at frames) at
    1280 px and 375 px, light and dark: a real bonk, reset mid-flight, navigate away mid-flight, and
    reduced motion.
 
-How Chapter 1 wires it: `new DroneView(host, { onCeiling })` (via `droneRig({ onCeiling })`) makes the
-drone free-flying; `onCeiling` calls `sim.hitCeiling()` and sets a flag so the crash status reads
-`status.ceiling` instead of `status.crash`.
+How it is wired: `new DroneView(host, { onCeiling })` makes the drone free-flying and calls
+`onCeiling` on a hit. Chapter 1 (live sim, via `droneRig({ onCeiling })`) calls `sim.hitCeiling()`
+and shows `status.ceiling` instead of `status.crash`. Chapter 8 (formula) switches to `fallSim()`
+and shows the verdict plus `verdict.hitPage`.
 
 ## Commands
 
