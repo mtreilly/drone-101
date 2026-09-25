@@ -143,7 +143,7 @@ function buildFooter(): HTMLElement {
   return h(
     'footer',
     { class: 'site-footer', 'aria-label': tc('footer.label') },
-    h('p', null, `${tc('footer.madeBy')} `, h('a', { href: 'https://actuallymaybe.com', class: 'footer-name' }, tc('footer.name'))),
+    h('p', null, h('a', { href: 'https://actuallymaybe.com', class: 'footer-name' }, tc('footer.name'))),
     links,
   );
 }
