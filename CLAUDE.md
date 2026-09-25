@@ -77,8 +77,10 @@ For all locales, [Microsoft localization style guides](https://learn.microsoft.c
 When adding a locale, verify locale-file structure, maths, placeholders, colour markers, numerical
 claims and quiz semantics. Check fonts for script coverage and readable canvas labels. Test narrow
 screens and screen readers. For `ar`, test RTL layout and isolation of LTR formulas, units, symbols
-and chart axes; agree on numeral style with an Arabic reviewer rather than assuming one style for
-all Arabic readers. For `ja` and `zh-CN`, inspect line breaks, punctuation, and CJK glyph coverage.
+and chart axes; use logical CSS spacing and keep physical-coordinate SVG drawings in LTR direction
+so text anchors stay on the intended side. Isolate mixed Arabic labels and Latin units when their
+visual order matters. Agree on numeral style with an Arabic reviewer rather than assuming one style
+for all Arabic readers. For `ja` and `zh-CN`, inspect line breaks, punctuation, and CJK glyph coverage.
 
 ## Accessibility: checked, not assumed
 

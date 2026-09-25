@@ -46,7 +46,8 @@ export class ShowerView {
 
   constructor(host: HTMLElement, private o: ShowerViewOptions) {
     const L = o.labels;
-    this.svg = s('svg', { viewBox: `0 0 ${W} ${H}`, class: 'view shower-view', role: 'group', 'aria-label': L.aria });
+    // SVG positions use physical x coordinates; keep text anchors on that axis in RTL pages.
+    this.svg = s('svg', { viewBox: `0 0 ${W} ${H}`, class: 'view shower-view', direction: 'ltr', role: 'group', 'aria-label': L.aria });
     const rc = rough.svg(this.svg);
     const ink = 'currentColor';
     // wall tiles

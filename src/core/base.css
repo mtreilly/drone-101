@@ -413,6 +413,11 @@ html[dir='rtl'] .read-progress span {
     right: 0;
     translate: 0 -2px;
   }
+  html[dir='rtl'] .toolbar [data-tip]:last-child::after,
+  html[dir='rtl'] .toolbar .hide-narrow + .tool::after {
+    left: 0;
+    right: auto;
+  }
   .toolbar [data-tip]:last-child:hover::after,
   .toolbar .hide-narrow + .tool:hover::after {
     translate: 0 0;
@@ -672,6 +677,8 @@ main {
   transform: translateX(-50%);
 }
 html[dir='rtl'] .wide {
+  margin-inline-start: 0;
+  /* 21rem is half of --measure; the half viewport term covers narrow screens. */
   transform: translateX(calc(50% - min(21rem, 50vw - var(--gutter))));
 }
 

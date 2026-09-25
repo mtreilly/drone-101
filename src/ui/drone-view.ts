@@ -68,7 +68,8 @@ export class DroneView {
   constructor(host: HTMLElement, private o: DroneViewOptions = {}) {
     this.hMax = o.hMax ?? 3;
     this.free = !!o.onCeiling && !prefersReducedMotion();
-    this.svg = s('svg', { viewBox: `0 0 ${W} ${H}`, class: `view drone-view${this.free ? ' free' : ''}`, role: 'img', 'aria-label': tc('drone.aria') });
+    // Physical x coordinates and text anchors stay left-to-right even in Arabic UI.
+    this.svg = s('svg', { viewBox: `0 0 ${W} ${H}`, class: `view drone-view${this.free ? ' free' : ''}`, direction: 'ltr', role: 'img', 'aria-label': tc('drone.aria') });
     const rc = rough.svg(this.svg);
     const ink = 'currentColor';
     // scale
@@ -166,7 +167,10 @@ export class DroneView {
     this.pkgG.setAttribute('transform', hangRoom < 52 ? `translate(-50, ${hangRoom - 50})` : '');
     this.drawWind(st.wind ?? 0, this.y(hClamped));
     this.crash.setAttribute('opacity', st.crashed ? '1' : '0');
-    this.readout.textContent = `${tc('drone.height')}: ${fmt(Math.max(0, st.h), 2)} m`;
+    const height = `${fmt(Math.max(0, st.h), 2)} m`;
+    this.readout.textContent = document.documentElement.dir === 'rtl'
+      ? `\u2067${tc('drone.height')}\u2069: \u2066${height}\u2069`
+      : `${tc('drone.height')}: ${height}`;
     if (this.o.showSensor && st.measured !== undefined) {
       this.sensor.setAttribute('opacity', '1');
       this.sensor.setAttribute('cy', String(this.y(st.measured) - 6));
