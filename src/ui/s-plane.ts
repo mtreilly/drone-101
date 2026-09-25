@@ -47,6 +47,8 @@ export class SPlane {
   /** decoration layer under the points (guides, trails) */
   readonly deco: SVGGElement;
   private desc: HTMLElement;
+  /** viewBox units per CSS pixel, so labels and markers keep a readable size in narrow columns */
+  private k = 1;
 
   constructor(host: HTMLElement, public o: SPlaneOptions) {
     this.H = Math.round((W * 2 * o.imMax) / (o.reMax - o.reMin));
@@ -63,6 +65,15 @@ export class SPlane {
     this.svg.append(this.deco, this.layer);
     this.el = h('div', { class: 's-plane-wrap', style: o.maxWidth ? { maxWidth: `${o.maxWidth}px` } : undefined }, this.svg, this.desc);
     host.append(this.el);
+    const ro = new ResizeObserver(() => {
+      const w = this.svg.clientWidth || W;
+      const k = Math.min(1.8, Math.max(1, (W / w) * 0.75));
+      if (Math.abs(k - this.k) < 0.02) return;
+      this.k = k;
+      this.svg.style.setProperty('--k', k.toFixed(3));
+      for (const id of this.pts.keys()) this.place(id);
+    });
+    ro.observe(this.svg);
   }
 
   sx = (re: number): number => ((re - this.o.reMin) / (this.o.reMax - this.o.reMin)) * W;
@@ -185,8 +196,9 @@ export class SPlane {
   private place(id: string): void {
     const p = this.pts.get(id)!;
     const n = this.nodes.get(id)!;
-    n.main.setAttribute('transform', `translate(${this.sx(p.re)},${this.sy(p.im)})`);
-    n.twin?.setAttribute('transform', `translate(${this.sx(p.re)},${this.sy(-p.im)})`);
+    const sc = this.k === 1 ? '' : ` scale(${this.k.toFixed(3)})`;
+    n.main.setAttribute('transform', `translate(${this.sx(p.re)},${this.sy(p.im)})${sc}`);
+    n.twin?.setAttribute('transform', `translate(${this.sx(p.re)},${this.sy(-p.im)})${sc}`);
     if (p.draggable) n.main.setAttribute('aria-label', this.pointText(p));
     if (n.twin) n.twin.style.display = Math.abs(p.im) < 1e-9 ? 'none' : '';
   }
