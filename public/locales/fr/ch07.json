@@ -1,0 +1,535 @@
+{
+  "kicker": "Chapitre 7",
+  "title": "La transformée de Laplace",
+  "question": "Peut-on transformer le calcul différentiel en algèbre ?",
+  "sections": [
+    {
+      "id": "probe",
+      "title": "Une sonde pour les signaux",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "À chaque fois qu'on a résolu quelque chose, on a *deviné* $e^{st}$, on l'a branché, et on a croisé les doigts. Maintenant, ajoute la gravité, une hauteur de départ, un correcteur… mon carnet est en feu."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Quand je construis des trucs, l'astuce est toujours de transformer un travail difficile en travail facile. Difficile : du calcul différentiel avec des pentes de pentes. Facile : de la simple algèbre avec $+$, $-$, $\\times$, $\\div$."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Donc il nous faut une machine qui avale une courbe et recrache un truc où les pentes deviennent des multiplications ? Ça existe ?"
+        },
+        {
+          "t": "p",
+          "text": "Ça existe, et on peut la construire avec ce qu'on a déjà. Voici l'idée. Prends n'importe quel signal $f(t)$. Multiplie-le par une **sonde**, l'exponentielle décroissante $e^{-st}$ du chapitre 4. Puis mesure l'**aire totale** sous le produit (l'aire accumulée du chapitre 3)."
+        },
+        {
+          "t": "math",
+          "tex": "F(s) = \\int_0^\\infty \\out{f(t)}\\; e^{-st}\\,dt"
+        },
+        {
+          "t": "p",
+          "text": "C'est tout. Un nombre $s$ entre, une aire sort. Essaie différentes valeurs de $s$ et tu obtiens toute une nouvelle courbe $F(s)$. Cette courbe, c'est la **transformée de Laplace** de $f$ : une empreinte digitale du signal."
+        },
+        {
+          "t": "predict",
+          "id": "ch7-step",
+          "gate": true,
+          "q": "Prenons le signal le plus simple, un échelon : $f(t) = 1$ pour toujours. Quand on rend $s$ **plus grand**, que devient l'aire sous $1 \\cdot e^{-st}$ ?",
+          "options": [
+            {
+              "text": "Elle grandit",
+              "why": "Un $s$ plus grand fait s'éteindre la sonde *plus vite*, donc il en reste moins."
+            },
+            {
+              "text": "Elle diminue",
+              "correct": true,
+              "why": "Exact. Un $s$ plus grand écrase la sonde plus vite, donc il y a moins d'aire. En fait, l'aire vaut exactement $1/s$."
+            },
+            {
+              "text": "Elle reste la même",
+              "why": "La forme de la sonde dépend de $s$ : un $s$ plus grand veut dire une chute plus rapide, donc une aire plus petite."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "probe"
+        },
+        {
+          "t": "p",
+          "text": "Balaie $s$ et les points dessinent $1/s$ pour l'échelon. Essaie aussi les autres signaux. Un signal croissant $e^{0{,}5t}$ n'a une aire finie que si la sonde rétrécit **plus vite** que le signal ne grandit, c'est-à-dire quand $s > 0{,}5$. En dessous, l'aire file vers l'infini."
+        },
+        {
+          "t": "note",
+          "text": "Pour l'instant, on n'utilise que des $s$ réels. Les $s$ complexes arrivent dans une minute, et c'est là qu'est la magie.",
+          "aside": true
+        }
+      ]
+    },
+    {
+      "id": "explode",
+      "title": "La transformée hurle là où vit le signal",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Regardons de plus près $f(t) = e^{at}$. Sonde-le avec $e^{-st}$ et le produit est $e^{(a-s)t}$, une simple exponentielle. Son aire vaut $\\frac{1}{s-a}$ (on le démontrera proprement dans la table plus bas)."
+        },
+        {
+          "t": "widget",
+          "id": "explode"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Quand $s$ s'approche de $a$, le nombre devient **énorme** ! En $s = a$, la sonde annule exactement la croissance, le produit est plat pour toujours, et l'aire est infinie."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Donc la transformée **explose exactement au** $s$ **où vit le signal**. Si tu me donnais seulement $F(s)$, je pourrais retrouver le $a$ du signal en cherchant où elle explose."
+        },
+        {
+          "t": "p",
+          "text": "Maintenant, rendons $s$ complexe, $s = \\sigma + i\\omega$, exactement comme nos nombres qui tournent du chapitre 5. Prenons un signal qui tourne, $e^{2it}$. La sonde $e^{-st}$ le rétrécit (c'est la partie $\\sigma$) **et le fait tourner à l'envers** (c'est la partie $\\omega$). Ci-dessous, les petits morceaux d'aire du produit sont ajoutés bout à bout comme des flèches. Regarde le total courant."
+        },
+        {
+          "t": "widget",
+          "id": "unspin"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Quand la sonde tourne exactement à 2, le signal arrête de tourner, tous les morceaux pointent dans la même direction et le total s'envole. Quand ça ne correspond pas, les flèches s'enroulent et s'annulent."
+        },
+        {
+          "t": "p",
+          "text": "Même leçon, une dimension plus haut : la transformée explose au $s$ complexe où vit le signal. C'est pour ça que désormais, on dessinera chaque $s$ sur une carte avec $\\sigma$ en travers et $\\omega$ vers le haut. Notre « carte de $s$ » du chapitre 5 reçoit enfin son nom d'adulte : le **plan s**."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Le plan s",
+              "def": "La carte des nombres complexes $s = \\sigma + i\\omega$. À gauche, ça rétrécit ; à droite, ça grandit ; en haut et en bas, ça tourne. Chaque signal $e^{st}$ vit en un point de cette carte, et sa transformée y explose."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rule",
+      "title": "Les pentes deviennent des multiplications",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Voici la propriété qui fait que tout ça en vaut la peine. Que devient la transformée quand on prend la **pente** du signal ? Essayons avec $f = e^{at}$. Sa pente est $a e^{at}$ (chapitre 4), donc"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\mathcal{L}\\{f'\\} &= \\frac{a}{s-a} = \\frac{s}{s-a} - 1 \\\\ &= s\\,F(s) - f(0) \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "La pente est devenue une **multiplication par** $s$, moins la valeur de départ $f(0)$. Le calcul différentiel est devenu de l'algèbre !"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Minute. C'est une astuce qui marche pour $e^{at}$ parce que $e^{at}$ est spéciale. Tu vas encore me dire que c'est une règle à apprendre par cœur. Je n'y crois pas pour *n'importe quelle* courbe."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Alors testons-la sur la courbe la plus moche que tu puisses dessiner."
+        },
+        {
+          "t": "p",
+          "text": "Dessine le signal que tu veux à gauche (ou choisis-en un tout prêt). On calcule sa pente, puis on calcule **les deux côtés** de la règle avec la machine à aires : la transformée de la pente, et $s\\,F(s) - f(0)$. Les deux courbes à droite sont ces deux côtés, pour chaque $s$."
+        },
+        {
+          "t": "widget",
+          "id": "derivRule"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Elles coïncident. Même pour mon gribouillis tremblant. D'accord, ce n'est pas une astuce. Ça marche pour tous les signaux."
+        },
+        {
+          "t": "p",
+          "text": "*Pourquoi* ça marche ? Pense à l'aire de $f'(t)\\,e^{-st}$. La pente additionne les variations de $f$. Pondérées par la sonde, ces variations font au total $s$ fois le $f$ sondé, moins la valeur de départ. (Le vrai nom de ce raisonnement, c'est l'*intégration par parties*, mais le dessin le prouve tout aussi bien.) Applique la règle deux fois et tu obtiens la pente seconde :"
+        },
+        {
+          "t": "math",
+          "tex": "\\mathcal{L}\\{f''\\} = s^2 F(s) - s\\,f(0) - f'(0)"
+        },
+        {
+          "t": "note",
+          "text": "Les termes en $f(0)$ se souviennent d'où le signal est **parti**. Garde un œil sur eux. Quelqu'un va bientôt les oublier."
+        }
+      ]
+    },
+    {
+      "id": "table",
+      "title": "Notre propre table",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Les manuels impriment une « table des transformées de Laplace » comme si elle tombait du ciel. Nous, on va gagner la nôtre, ligne par ligne. Chaque ligne, c'est juste la machine sonde-et-aire appliquée à un signal, avec une vérification que la formule colle à l'aire réelle."
+        },
+        {
+          "t": "widget",
+          "id": "table"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "La ligne du sinus, c'est ma préférée. Un sinus, c'est juste deux tourniquets jumeaux, et la transformée de chaque tourniquet, c'est la ligne de l'exponentielle avec $a = \\pm i\\omega$."
+        },
+        {
+          "t": "p",
+          "text": "Et la dernière ligne n'a demandé aucun travail nouveau : multiplier par $e^{-\\sigma t}$ **décale** simplement $s$ en $s+\\sigma$. Quatre lignes, toutes démontrées, toutes vérifiées. Maintenant, utilisons-les."
+        }
+      ]
+    },
+    {
+      "id": "solve",
+      "title": "Résoudre le drone avec de l'algèbre",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Voici le drone du chapitre 2 en commande P, mais cette fois il décolle d'un **rebord à 1 m** au lieu du sol. La gravité et la consigne sont toutes les deux des échelons qui s'activent à $t = 0$ :"
+        },
+        {
+          "t": "math",
+          "tex": "m\\,\\out{h}'' + c\\,\\out{h}' = \\eff{K_p}\\,(\\sp{2} - \\out{h}) - \\dis{m g}"
+        },
+        {
+          "t": "p",
+          "text": "**Étape 1 :** on transforme chaque terme. Un échelon de taille $r$ devient $r/s$, et les pentes deviennent des multiplications par $s$ :"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} & m\\big(s^2\\out{H} - s\\,h(0) - h'(0)\\big) \\\\ &\\quad + c\\big(s\\,\\out{H} - h(0)\\big) \\\\ &= \\eff{K_p}\\Big(\\frac{\\sp{2}}{s} - \\out{H}\\Big) - \\frac{\\dis{m g}}{s} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "**Étape 2 :** maintenant, c'est de l'algèbre. On rassemble $\\out{H}$ d'un côté :"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\out{H}(s) &= \\frac{N(s)}{s\\,\\big(m s^2 + c s + \\eff{K_p}\\big)} \\\\[6pt] N(s) &= m\\,h(0)\\,s^2 \\\\ &\\quad + \\big(m\\,h'(0) + c\\,h(0)\\big)\\,s \\\\ &\\quad + (\\eff{K_p}\\,\\sp{2} - \\dis{m g}) \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "**Étape 3 :** on découpe en morceaux qui figurent dans notre table (*décomposition en éléments simples* : on défait l'étape « mettre au même dénominateur » de l'école) :"
+        },
+        {
+          "t": "math",
+          "tex": "\\out{H}(s) = \\frac{A}{s} + \\frac{B s + C}{m s^2 + c s + \\eff{K_p}}"
+        },
+        {
+          "t": "p",
+          "text": "**Étape 4 :** on cherche chaque morceau dans la table qu'on vient de démontrer : $A/s$ est un échelon, et le second morceau est un cosinus amorti plus un sinus amorti. On lit $h(t)$."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Comparons avec la simulation !"
+        },
+        {
+          "t": "widget",
+          "id": "solve"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Oh oh. La formule part de **zéro**, mais le drone part du rebord à 1 m. L'algèbre ment ?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "L'algèbre va très bien. C'est *nous* qui avons menti. Quand on a tapé l'étape 1 dans le vérificateur, on a écrit $\\mathcal{L}\\{h'\\} = s\\,H$ et on a laissé tomber les morceaux en $-h(0)$. C'est exactement la partie qui se souvient du rebord."
+        },
+        {
+          "t": "p",
+          "text": "Actionne l'interrupteur pour remettre les termes de hauteur de départ. La formule en tirets et la simulation bleue sont maintenant exactement superposées : l'écart maximal est de quelques millionièmes de mètre, juste des arrondis numériques. Change $\\eff{K_p}$ ou la hauteur du rebord : elles restent d'accord."
+        },
+        {
+          "t": "p",
+          "text": "Regarde le morceau $A$ : c'est $\\sp{2} - \\dis{mg}/\\eff{K_p}$, l'affaissement du chapitre 2, qui sort tout droit de l'algèbre. Pas besoin de deviner."
+        },
+        {
+          "t": "note",
+          "text": "On fait toujours comme si les moteurs n'avaient pas de limite de poussée, pour que les maths linéaires soient exactes. Les vraies limites arrivent au chapitre 8."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Ce qu'on sait maintenant",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "La transformée de Laplace est une **sonde** : on multiplie par $e^{-st}$ et on mesure l'aire totale. $F(s) = \\int_0^\\infty f(t)e^{-st}dt$.",
+            "Elle **explose exactement là où vit le signal** : $e^{at}$ donne $1/(s-a)$, qui explose en $s = a$. Pour un $s$ complexe, la sonde « dé-tourne » les signaux qui tournent. On dessine tout ça sur le **plan s**.",
+            "Les pentes deviennent des multiplications : $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. Ça marche pour n'importe quel signal, même un gribouillis.",
+            "On a démontré notre propre table : $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$, et la version décalée pour les sinus amortis.",
+            "Transformer, faire de l'algèbre, découper en morceaux de la table, lire la réponse. Ça colle exactement à la simulation, **à condition de garder les valeurs de départ**."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch7-q1",
+              "q": "Quelle est la transformée de Laplace de $3e^{-2t}$ ?",
+              "options": [
+                {
+                  "text": "$\\dfrac{3}{s+2}$",
+                  "correct": true,
+                  "why": "La ligne de l'exponentielle avec $a = -2$ donne $1/(s+2)$, et la transformée de 3 fois un signal est 3 fois sa transformée (les aires suivent)."
+                },
+                {
+                  "text": "$\\dfrac{3}{s-2}$",
+                  "why": "Ça, c'est pour $e^{+2t}$. La ligne est $1/(s-a)$ avec $a = -2$, donc $s - (-2) = s+2$."
+                },
+                {
+                  "text": "$\\dfrac{1}{3(s+2)}$",
+                  "why": "Multiplier le signal par 3 multiplie l'aire par 3 ; ça ne la divise pas."
+                }
+              ]
+            },
+            {
+              "id": "ch7-q2",
+              "q": "$F(s) = \\dfrac{5}{s+4}$. De quel signal s'agit-il ?",
+              "options": [
+                {
+                  "text": "$5e^{-4t}$ : part de 5 et décroît",
+                  "sketch": "decaying-plain",
+                  "correct": true,
+                  "why": "Elle explose en $s = -4$, donc le signal vit en $e^{-4t}$. Le 5 au numérateur, c'est sa taille."
+                },
+                {
+                  "text": "$5e^{4t}$ : grandit",
+                  "sketch": "growing-plain",
+                  "why": "Un $e^{4t}$ croissant exploserait en $s = +4$. Celle-ci explose en $s = -4$."
+                },
+                {
+                  "text": "Une oscillation",
+                  "sketch": "decaying-wiggle",
+                  "why": "Une oscillation demande une paire de points d'explosion complexes (comme $s^2+\\omega^2$ au dénominateur). Ici, il n'y en a qu'un, réel, en $-4$."
+                }
+              ]
+            },
+            {
+              "id": "ch7-q3",
+              "q": "Résous $x' + 2x = 0$ avec $x(0) = 1$ grâce à la transformée.",
+              "options": [
+                {
+                  "text": "$X = \\frac{1}{s+2}$, donc $x = e^{-2t}$",
+                  "correct": true,
+                  "why": "$sX - 1 + 2X = 0 \\Rightarrow X(s+2) = 1 \\Rightarrow X = 1/(s+2)$, qui est la ligne de l'exponentielle avec $a=-2$."
+                },
+                {
+                  "text": "$X = 0$, donc $x = 0$",
+                  "why": "C'est ce qu'on obtient si on oublie $-x(0)$, la même erreur que la nôtre avec le rebord. C'est la valeur de départ qui l'empêche d'être nulle."
+                },
+                {
+                  "text": "$X = \\frac{1}{s-2}$, donc $x = e^{2t}$",
+                  "why": "Erreur de signe : $X(s+2) = 1$, donc l'explosion est en $s=-2$ et le signal décroît."
+                }
+              ]
+            },
+            {
+              "id": "ch7-q4",
+              "q": "Pourquoi $\\dfrac{1}{s-a}$ explose-t-elle en $s = a$ ?",
+              "options": [
+                {
+                  "text": "La sonde annule exactement la croissance du signal, donc le produit est plat pour toujours et son aire est infinie",
+                  "correct": true,
+                  "why": "$e^{at}\\cdot e^{-at} = 1$ pour tout temps, et l'aire sous 1 entre 0 et ∞ n'arrête jamais de grandir."
+                },
+                {
+                  "text": "La division par zéro est juste une bizarrerie de l'algèbre",
+                  "why": "L'algèbre reflète quelque chose de réel : l'aire grandit vraiment sans limite quand $s \\to a$. Regarde-le se produire dans le widget de l'explosion."
+                },
+                {
+                  "text": "Parce que le signal y vaut zéro",
+                  "why": "Le signal $e^{at}$ ne vaut jamais zéro. Le problème, c'est que la sonde ne le rétrécit plus du tout."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "June : « À chaque fois qu'on a résolu quelque chose, la réponse était *(quelque chose)* ÷ *(un polynôme en s)*, et le comportement du drone venait des endroits où le dénominateur s'annule. Et si cette fraction **était** le drone ? »"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "probe": {
+      "title": "La sonde",
+      "signal": "Signal",
+      "sig": {
+        "step": "$\\text{échelon } 1$",
+        "decay": "$e^{-t}$",
+        "grow": "$e^{0{,}5t}$",
+        "wiggle": "$\\sin 2t$"
+      },
+      "f": "signal f(t)",
+      "probe": "sonde e^(−st)",
+      "product": "f(t)·e^(−st)",
+      "plotAria": "Le signal, la sonde et leur produit au cours du temps, avec l'aire sous le produit ombrée.",
+      "fAria": "Valeurs relevées de l'aire totale F en fonction de s, un point pour chaque s essayé.",
+      "formula": "formule",
+      "traced": "tes mesures",
+      "area": "aire jusqu'ici",
+      "total": "aire totale F(s)",
+      "s": "Taux de la sonde $s$",
+      "sweep": "Rebalayer l'aire",
+      "showFormula": "Révéler la courbe de la formule",
+      "help": "Déplace s et relâche : l'aire est mesurée et un point est ajouté au graphique de droite. Après 5 points, tu peux révéler la formule.",
+      "finite": "En s = {s}, l'aire totale vaut {F}.",
+      "infinite": "Ici, la sonde ne rétrécit pas plus vite que le signal. L'aire ne se stabilise jamais : elle est infinie.",
+      "describe": "Taux de la sonde s = {s} ; aire totale {A}."
+    },
+    "explode": {
+      "title": "Où est-ce que ça explose ?",
+      "product": "e^(at)·e^(−st)",
+      "prodAria": "Le produit de e puissance a t par la sonde, avec son aire ombrée.",
+      "fAria": "La transformée 1 sur s moins a, avec une ligne verticale là où elle explose.",
+      "noArea": "aire infinie",
+      "lives": "le signal vit en s = {a}",
+      "a": "Taux du signal $a$ dans $e^{at}$",
+      "s": "Sonde $s$",
+      "never": "s est inférieur ou égal à a : le produit ne rétrécit jamais, donc l'aire est infinie.",
+      "close": "On s'approche de a : l'aire explose !",
+      "calm": "Loin de a : une jolie aire finie."
+    },
+    "unspin": {
+      "title": "Une sonde qui dé-tourne",
+      "re": "partie réelle",
+      "im": "partie imaginaire",
+      "path": "total courant de l'aire",
+      "plotAria": "Le total courant de l'aire complexe, dessiné comme un chemin dans le plan qui se dirige vers sa valeur finale.",
+      "limit": "total final",
+      "mag": "taille du total |F|",
+      "spin": "rotation restante",
+      "sigma": "Rétrécissement de la sonde $\\sigma$",
+      "omega": "Rotation de la sonde $\\omega$ (le signal tourne à 2)",
+      "again": "Rejouer",
+      "matched": "Rotations accordées ! Chaque morceau pointe dans la même direction. Le total vaut {m} et file vers l'infini quand σ → 0.",
+      "spinning": "Les morceaux s'enroulent et s'annulent en grande partie. Le total reste petit."
+    },
+    "derivRule": {
+      "title": "La règle survit-elle à un gribouillis ?",
+      "f": "ton signal f(t)",
+      "df": "sa pente f′(t)",
+      "plotAria": "Le signal dessiné et sa pente sur 8 secondes.",
+      "sAria": "Les deux côtés de la règle de la dérivée tracés en fonction de s.",
+      "lhs": "aire de f′·e^(−st)",
+      "rhs": "s·F(s) − f(0)",
+      "lhsShort": "transformée de la pente",
+      "rhsShort": "s F(s) − f(0)",
+      "s": "Sonde $s$",
+      "draw": "Dessiner ton propre signal",
+      "preset": "Essayer un autre signal tout prêt",
+      "help": "Choisis un signal, ou appuie sur « Dessiner ton propre signal » et fais glisser sur le graphique de gauche, de gauche à droite. Après 8 s, le signal reste plat.",
+      "drawing": "Fais glisser sur le graphique de gauche, de gauche à droite…",
+      "tooShort": "Dessine un peu plus loin (au moins l'équivalent de 3 secondes).",
+      "drawn": "C'est noté ! Les deux côtés ont été recalculés à partir de ton dessin. Fais glisser à nouveau pour le remplacer.",
+      "match": "En s = {s}, les deux côtés sont d'accord. La règle tient pour ton signal.",
+      "nomatch": "Ils diffèrent un peu ici. Des arrondis numériques sur un dessin très anguleux.",
+      "describe": "Transformée de la pente {l}, s F moins f de zéro {r}.",
+      "stopDraw": "Arrêter de dessiner",
+      "presetLabel": "Ou choisis un signal",
+      "presets": {
+        "0": "tremblote",
+        "1": "saut",
+        "2": "décroissance"
+      },
+      "rhsBrace": "ce que prédit la règle"
+    },
+    "table": {
+      "title": "La table, démontrée",
+      "caption": "Table des transformées de Laplace démontrée dans ce chapitre",
+      "colSignal": "signal f(t)",
+      "colF": "transformée F(s)",
+      "derive": "Démontrer",
+      "show": "Afficher",
+      "unknown": "pas encore démontré",
+      "f": "signal",
+      "product": "signal × sonde",
+      "plotAria": "Le signal choisi dans la table et son produit par la sonde, avec l'aire ombrée.",
+      "numeric": "aire mesurée",
+      "formulaVal": "formule",
+      "s": "Sonde $s$",
+      "how": "Comment on l'a obtenue",
+      "agree": "L'aire mesurée correspond à la formule.",
+      "twinCheck": "Son jumeau (le cosinus) se vérifie aussi : mesuré {n}, formule {f}.",
+      "describe": "Aire mesurée {n}, formule {f}.",
+      "rows": {
+        "0": {
+          "f": "1\\ \\ (\\text{échelon})",
+          "F": "\\dfrac{1}{s}",
+          "steps": "\\text{la courbe dont la pente est } e^{-st} \\text{ est } -\\tfrac{1}{s}e^{-st}||\\begin{aligned} \\int_0^\\infty e^{-st}\\,dt &=\\Big[-\\tfrac{1}{s}e^{-st}\\Big]_0^\\infty \\\\ &= 0-\\big(-\\tfrac{1}{s}\\big)=\\frac{1}{s}\\quad (s>0) \\end{aligned}"
+        },
+        "1": {
+          "f": "e^{at}",
+          "F": "\\dfrac{1}{s-a}",
+          "steps": "e^{at}\\,e^{-st}=e^{-(s-a)t}||\\text{c'est la ligne de l'échelon avec } s \\text{ remplacé par } s-a||\\begin{gathered} \\int_0^\\infty e^{-(s-a)t}\\,dt=\\frac{1}{s-a} \\\\ (s>a;\\ \\text{ici } a=-1) \\end{gathered}"
+        },
+        "2": {
+          "f": "\\sin\\omega t,\\ \\cos\\omega t",
+          "F": "\\dfrac{\\omega}{s^2+\\omega^2},\\ \\dfrac{s}{s^2+\\omega^2}",
+          "steps": "\\begin{gathered} \\sin\\omega t=\\frac{e^{i\\omega t}-e^{-i\\omega t}}{2i} \\\\ \\text{(tourniquets jumeaux)} \\end{gathered}||\\begin{gathered} \\mathcal{L}\\{e^{\\pm i\\omega t}\\}=\\frac{1}{s\\mp i\\omega} \\\\ \\text{(ligne de l'exponentielle, } a=\\pm i\\omega) \\end{gathered}||\\begin{aligned} &\\frac{1}{2i}\\Big(\\frac{1}{s-i\\omega}-\\frac{1}{s+i\\omega}\\Big) \\\\ &=\\frac{1}{2i}\\cdot\\frac{2i\\omega}{s^2+\\omega^2}=\\frac{\\omega}{s^2+\\omega^2} \\end{aligned}||\\begin{gathered} \\cos\\omega t=\\frac{e^{i\\omega t}+e^{-i\\omega t}}{2}\\ \\Rightarrow\\ \\frac{s}{s^2+\\omega^2} \\\\ (\\text{ici }\\omega=2) \\end{gathered}"
+        },
+        "3": {
+          "f": "e^{-\\sigma t}\\sin\\omega t,\\ e^{-\\sigma t}\\cos\\omega t",
+          "F": "\\dfrac{\\omega}{(s+\\sigma)^2+\\omega^2},\\ \\dfrac{s+\\sigma}{(s+\\sigma)^2+\\omega^2}",
+          "steps": "e^{-\\sigma t}\\sin\\omega t\\cdot e^{-st}=\\sin\\omega t\\cdot e^{-(s+\\sigma)t}||\\text{donc on prend la ligne du sinus et on remplace } s \\text{ par } s+\\sigma||\\begin{gathered} \\frac{\\omega}{(s+\\sigma)^2+\\omega^2}\\quad\\text{ et }\\quad\\frac{s+\\sigma}{(s+\\sigma)^2+\\omega^2} \\\\ (\\text{ici }\\sigma=0{,}5,\\ \\omega=2) \\end{gathered}"
+        }
+      },
+      "colCheck": "Vérifié avec l'aire mesurée"
+    },
+    "solve": {
+      "title": "Formule contre simulation",
+      "sim": "simulation RK4",
+      "formula": "notre formule de Laplace",
+      "target": "cible",
+      "plotAria": "Hauteur du drone au cours du temps, d'après la simulation et d'après la formule de Laplace.",
+      "gap": "plus grand écart",
+      "atZero": "en t = 0 : simu / formule",
+      "kp": "Gain $K_p$",
+      "h0": "Hauteur de départ (rebord) $h(0)$",
+      "toggle": "Inclure les termes de hauteur de départ $-h(0)$",
+      "mismatch": "Elles ne sont pas d'accord ! La simu part du rebord à {h} m, la formule part de 0.",
+      "odd": "Il reste un écart. Vérifie les nombres.",
+      "match": "Correspondance parfaite : formule et simulation sont d'accord au millionième de mètre près."
+    }
+  }
+}

@@ -1,0 +1,390 @@
+{
+  "kicker": "Chapitre 8",
+  "title": "Fonctions de transfert, pôles et zéros",
+  "question": "Peut-on lire toute la personnalité d'un système dans une seule fraction ?",
+  "sections": [
+    {
+      "id": "recipe",
+      "title": "La recette du système",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Regardez ce qu'on a obtenu au chapitre 7. Oublions la hauteur de départ un instant (le drone démarre en vol stationnaire, calme, à 1 m). Alors la réponse était toujours la même fraction, *multipliée* par ce qu'on lui demandait de faire."
+        },
+        {
+          "t": "math",
+          "tex": "\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\sp{R}(s)"
+        },
+        {
+          "t": "p",
+          "text": "$\\sp{R}(s)$ est la transformée de l'**entrée** : de combien on demande à la consigne de s'éloigner de 1 m (la transformée de chaque entrée sort tout droit de notre table du chapitre 7). $G(s)$, elle, est fixe : elle ne dépend que du drone et du correcteur. Alors on lui donne un nom : la **fonction de transfert**, le rapport sortie sur entrée au pays des s, quand tout part du repos."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Donc $G(s)$, c'est comme la **recette** du drone. Tu mets n'importe quel ingrédient, et elle te dit ce qui en sort !"
+        },
+        {
+          "t": "p",
+          "text": "Essaie trois entrées différentes sur le même drone. La recette ne change jamais, seul $\\sp{R}(s)$ change."
+        },
+        {
+          "t": "widget",
+          "id": "recipe"
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Fonction de transfert $G(s)$",
+              "def": "Sortie ÷ entrée, toutes deux transformées, avec le système parti du repos. C'est une fraction de deux polynômes en $s$, et elle contient tout ce qu'il faut savoir sur la façon dont le système réagit."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "poles",
+      "title": "Les pôles : là où le système veut vivre",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Où est-ce que $G(s)$ **explose** ? Là où son dénominateur s'annule. Le chapitre 7 nous a appris qu'une transformée explose exactement au $s$ où vit un signal. Donc les zéros du dénominateur sont les termes $e^{st}$ dont le système est fait. Ce sont exactement les deux points qu'on a trouvés au chapitre 6. Ils reçoivent un nom spécial : les **pôles**, dessinés par des ×."
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} & m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p} = 0 \\\\ \\Longrightarrow\\quad & s = p,\\ \\bar p \\qquad \\text{(les pôles)} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Maintenant, retournons le problème. Au lieu de choisir des gains et de trouver les pôles, **déplaçons les pôles** et voyons quel drone on obtient. (En coulisses, on calcule le correcteur qui les met là. Il a besoin d'un nouveau bouton $\\eff{K_d}$, une poussée contre la vitesse, qu'on découvrira vraiment au chapitre 9.)"
+        },
+        {
+          "t": "predict",
+          "id": "ch8-rhp",
+          "gate": true,
+          "q": "Que fait le drone si on déplace les pôles dans la **moitié droite** du plan s ?",
+          "options": [
+            {
+              "text": "Il atterrit en douceur",
+              "sketch": "sluggish",
+              "why": "Pour atterrir, il faut que tout se calme, et les pôles de la moitié droite font l'inverse."
+            },
+            {
+              "text": "Il plane, en oscillant un peu",
+              "sketch": "steady-wiggle",
+              "why": "Une oscillation régulière, c'est ce qu'on obtient exactement **sur** l'axe vertical. Juste après, ça grandit."
+            },
+            {
+              "text": "Il oscille de plus en plus fort jusqu'à s'écraser ou s'envoler",
+              "sketch": "growing-wiggle",
+              "correct": true,
+              "why": "Dans la moitié droite, $e^{st}$ a $\\sigma > 0$ : une spirale qui grandit. Les oscillations s'amplifient à chaque cycle."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "playground"
+        },
+        {
+          "t": "p",
+          "text": "Amuse-toi avec. Quelques règles sautent aux yeux, et ce sont toutes les chapitres 5 et 6 déguisés :"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Moitié gauche = se calme, moitié droite = explose.** La partie réelle $\\sigma$ est le taux de rétrécissement ou de croissance.",
+            "**Plus à gauche = plus rapide.** La stabilisation prend environ $4/|\\sigma|$ secondes (les lignes verticales en tirets).",
+            "**Plus haut = plus oscillant.** La hauteur $\\omega$ est la vitesse d'oscillation ; une oscillation dure $2\\pi/\\omega$ secondes.",
+            "**L'angle fixe le dépassement.** Des pôles proches de l'axe réel dépassent à peine, des pôles proches de l'axe vertical dépassent beaucoup (les rayons en tirets)."
+          ]
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Je voulais juste **un** pôle en haut et un tout en bas. Il ne me laisse pas faire ! Celui du bas n'arrête pas de copier celui du haut."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Tu te souviens des tourniquets jumeaux du chapitre 5 ? Un vrai drone a un vrai mouvement, donc chaque $e^{st}$ qui tourne a besoin de son jumeau miroir pour annuler les parties imaginaires. Les pôles complexes viennent **toujours** par paires miroirs."
+        },
+        {
+          "t": "note",
+          "text": "Notre drone démarrait en $-1 \\pm 6{,}24i$ : c'est le drone à $K_p = 20$ du chapitre 2. Très haut (très oscillant) et près de l'axe (lent à se stabiliser). Maintenant tu *vois* pourquoi il rebondissait."
+        }
+      ]
+    },
+    {
+      "id": "zeros",
+      "title": "Les zéros : un coup d'œil",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Le numérateur de la fraction peut aussi s'annuler. Ces endroits s'appellent des **zéros**, dessinés par des ○. Ils ne changent pas *quels* termes $e^{st}$ apparaissent (ça, c'est le boulot des pôles), mais ils changent **combien** de chacun on obtient."
+        },
+        {
+          "t": "p",
+          "text": "Voici un système avec des pôles fixes en $-2 \\pm 3i$ et un zéro que tu peux faire glisser. (On obtient exactement cette forme avec un correcteur qui réagit à la vitesse à laquelle l'*erreur* change, un avant-goût du chapitre 9.)"
+        },
+        {
+          "t": "widget",
+          "id": "zero"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Mêmes pôles, mais quand le zéro s'approche de l'origine, la réponse bondit bien plus vite et dépasse davantage !"
+        },
+        {
+          "t": "p",
+          "text": "Un zéro près de l'origine rend le système très réactif aux **changements** de l'entrée. Le dépassement augmente, alors que les pôles n'ont pas bougé. Loin, le zéro ne compte presque pas. C'est tout ce qu'il nous faut savoir sur les zéros pour l'instant."
+        }
+      ]
+    },
+    {
+      "id": "limits",
+      "title": "Plus à gauche, c'est toujours mieux ?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Facile : on déplace les pôles *très* loin à gauche. Stabilisé en un clin d'œil. Le meilleur drone du monde !"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Mais quelle poussée il faut pour ça ? Jusqu'ici, on a fait comme si les moteurs pouvaient pousser aussi fort que les maths le demandent."
+        },
+        {
+          "t": "p",
+          "text": "Il est temps d'être honnêtes. Nos moteurs peuvent pousser entre **0 N** et **20 N** (environ quatre fois le poids du drone). Ci-dessous, les pôles se déplacent vers la gauche le long d'une ligne à 45°. Les courbes en tirets, ce sont les maths avec des moteurs imaginaires et illimités ; les courbes pleines, ce sont de vrais moteurs."
+        },
+        {
+          "t": "widget",
+          "id": "limit"
+        },
+        {
+          "t": "p",
+          "text": "Passé un certain point, les maths réclament 50, 60, 70 newtons que les moteurs n'ont tout simplement pas. La {eff|poussée orange} s'écrase contre les limites, le vrai drone arrête de suivre la jolie prédiction linéaire, et il dépasse *plus* qu'il ne le ferait avec des pôles plus doux."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Donc « plus à gauche », c'est mieux seulement jusqu'à ce qu'on soit à court de moteur. Placer des pôles, c'est un compromis, pas une course."
+        },
+        {
+          "t": "note",
+          "text": "À partir de maintenant, la limite de 20 N reste activée."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Ce qu'on sait maintenant",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "La **fonction de transfert** $G(s)$ = sortie ÷ entrée au pays des s. C'est la recette du système : $\\out{H} = G\\cdot\\sp{R}$.",
+            "Les **pôles** (×) sont les endroits où $G(s)$ explose : les termes $e^{st}$ dont le système est fait.",
+            "Moitié gauche = stable, moitié droite = explose, plus à gauche = plus rapide (≈ 4/|σ| s), plus haut = plus oscillant, angle = dépassement.",
+            "Les pôles complexes viennent toujours par paires miroirs.",
+            "Les **zéros** (○) changent la quantité de chaque terme. Près de l'origine, ils ajoutent un coup de fouet.",
+            "Les pôles très à gauche demandent une poussée que les moteurs n'ont pas."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch8-q1",
+              "q": "Quelle paire de pôles se stabilise **le plus vite** ?",
+              "options": [
+                {
+                  "text": "$-1 \\pm 2i$",
+                  "why": "Stabilisation ≈ $4/1 = 4$ s. La hauteur (2) ne joue que sur les oscillations, pas sur la stabilisation."
+                },
+                {
+                  "text": "$-4 \\pm 2i$",
+                  "correct": true,
+                  "why": "La plus à gauche : stabilisation ≈ $4/4 = 1$ s."
+                },
+                {
+                  "text": "$-0{,}5 \\pm 5i$",
+                  "why": "Très haut veut dire beaucoup d'oscillations rapides, mais c'est près de l'axe, donc elles s'éteignent lentement (≈ 8 s)."
+                }
+              ]
+            },
+            {
+              "id": "ch8-q2",
+              "q": "$G(s) = \\dfrac{3}{s^2 + 2s + 10}$. Où sont les pôles, et à quoi ressemble la réponse ?",
+              "options": [
+                {
+                  "text": "$-1 \\pm 3i$ : stable, et ça oscille",
+                  "correct": true,
+                  "why": "$s = \\frac{-2 \\pm \\sqrt{4 - 40}}{2} = -1 \\pm 3i$. Moitié gauche veut dire stable, partie imaginaire veut dire oscillations."
+                },
+                {
+                  "text": "$+1 \\pm 3i$ : instable",
+                  "why": "Erreur de signe. Pour $s^2 + bs + c$, la partie réelle vaut $-b/2 = -1$, ce qui est dans la moitié gauche."
+                },
+                {
+                  "text": "$-2$ et $-10$ : pas d'oscillations",
+                  "why": "Ce sont juste des coefficients du polynôme. Les pôles sont ses racines : $-1 \\pm 3i$."
+                }
+              ]
+            },
+            {
+              "id": "ch8-q3",
+              "q": "Tu veux **moins de dépassement** mais le **même temps de stabilisation**. Comment déplaces-tu les pôles ?",
+              "options": [
+                {
+                  "text": "Tout droit vers l'axe réel (on garde σ, on réduit ω)",
+                  "correct": true,
+                  "why": "Même distance à l'axe veut dire même temps de stabilisation. Un angle plus petit par rapport à l'axe réel veut dire plus d'amortissement, donc moins de dépassement."
+                },
+                {
+                  "text": "Tout droit vers le haut (ω plus grand)",
+                  "why": "Ça fait pivoter l'angle vers l'axe vertical : *plus* de dépassement et des oscillations plus rapides."
+                },
+                {
+                  "text": "Vers la droite",
+                  "why": "Ça le fait se stabiliser plus lentement, et au-delà de l'axe, il devient instable."
+                }
+              ]
+            },
+            {
+              "id": "ch8-q4",
+              "q": "Des pôles en $+0{,}5 \\pm 2i$. Que vois-tu ?",
+              "options": [
+                {
+                  "text": "Des oscillations qui grandissent à chaque cycle",
+                  "sketch": "growing-wiggle",
+                  "correct": true,
+                  "why": "$\\sigma = +0{,}5 > 0$ veut dire croissance, $\\omega = 2$ veut dire rotation : une oscillation qui grandit."
+                },
+                {
+                  "text": "Des oscillations qui rétrécissent",
+                  "sketch": "decaying-wiggle",
+                  "why": "Pour rétrécir, il faut $\\sigma < 0$ (moitié gauche). Ces pôles sont à droite."
+                },
+                {
+                  "text": "Une oscillation régulière pour toujours",
+                  "sketch": "steady-wiggle",
+                  "why": "Ça, c'est exactement sur l'axe ($\\sigma = 0$). À $+0{,}5$, ça grandit."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Theo : « Les pôles, c'est magnifique. Mais attendez : on a triché tout le chapitre en offrant au drone sa poussée de vol stationnaire. Sans elle, la gravité le fait toujours **s'affaisser**. Notre carte est très bien. C'est notre *correcteur* qu'il faut réparer. »"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "recipe": {
+      "title": "Une recette, trois entrées",
+      "choose": "Qu'est-ce qu'on demande ?",
+      "in": {
+        "step": "un échelon vers le haut",
+        "pulse": "un échelon en douceur",
+        "wave": "une vague"
+      },
+      "input": "consigne (entrée)",
+      "output": "hauteur (sortie)",
+      "plotAria": "Consigne et hauteur du drone au cours du temps pour l'entrée choisie.",
+      "same": "reste la même",
+      "changes": "change",
+      "describe": {
+        "step": "La consigne saute de 1 à 2 mètres et le drone suit avec un dépassement rebondissant.",
+        "pulse": "La consigne glisse de 1 à 2 mètres ; le drone suit avec un rebond plus petit.",
+        "wave": "La consigne ondule de haut en bas ; le drone suit la vague."
+      },
+      "droneCap": "le drone qui la suit"
+    },
+    "playground": {
+      "title": "Le terrain de jeu des pôles",
+      "planeAria": "Le plan s avec une paire de pôles déplaçables. La moitié gauche se calme, la moitié droite explose. Utilise les flèches pour déplacer le pôle sélectionné.",
+      "pole": "p",
+      "poles": "pôles",
+      "settle": "stabilisation (≈4/σ)",
+      "overshoot": "dépassement",
+      "response": "hauteur après un échelon de 1 m",
+      "target": "cible",
+      "plotAria": "Réponse indicielle du drone pour les pôles choisis, la réponse précédente affichée en fantôme.",
+      "settles": "se stabilise",
+      "over": "dépassement",
+      "raysLegend": "rayons en tirets : dépassement en %",
+      "never": "jamais",
+      "wiggle": "une oscillation ≈ {T} s",
+      "verdict": {
+        "stable": "Moitié gauche : ça se calme.",
+        "unstable": "Moitié droite : ça explose !",
+        "marginal": "Pile sur l'axe : ça oscille pour toujours."
+      },
+      "challenge": "Mini-défi : dépassement sous 10 % et stabilisé en moins de 2 s",
+      "chalOk": "Défi réussi ! Dépassement {o} %, stabilisé en {s} s.",
+      "chalNo": "Pas encore : dépassement {o} %, stabilisation en {s} s. Vise la zone en surbrillance.",
+      "help": "Fais glisser l'un des × (ou atteins-le avec Tab et utilise les flèches, Maj pour de grands pas). Le drone rejoue sa réponse indicielle à chaque fois.",
+      "describe": "Pôles en {p}. Taux d'amortissement {z}. Se stabilise en environ {s} secondes, dépasse d'environ {o} pour cent.",
+      "re": "σ",
+      "im": "ω"
+    },
+    "zero": {
+      "title": "Fais glisser le zéro",
+      "planeAria": "Le plan s avec deux pôles fixes en moins 2 plus ou moins 3 i et un zéro déplaçable sur l'axe réel.",
+      "zero": "zéro",
+      "y": "sortie",
+      "noZero": "sans zéro (mêmes pôles)",
+      "withZero": "avec le zéro",
+      "plotAria": "Réponses indicielles avec et sans le zéro.",
+      "osNo": "dépassement sans zéro",
+      "osYes": "dépassement avec zéro",
+      "zeroAt": "zéro en",
+      "near": "Près de l'origine : un gros coup de fouet au début et du dépassement en plus.",
+      "mid": "Un coup de fouet modéré en plus.",
+      "far": "Loin : le zéro ne change presque rien.",
+      "describe": "Zéro en {z}, dépassement de {o} pour cent.",
+      "re": "σ",
+      "im": "ω",
+      "help": "Fais glisser le ○ le long de l'axe (ou atteins-le avec Tab et utilise ← →). Les pôles × ne bougent pas."
+    },
+    "limit": {
+      "title": "Les vrais moteurs ont des limites",
+      "ideal": "moteurs illimités (maths)",
+      "real": "vrai drone",
+      "idealT": "poussée que veulent les maths",
+      "realT": "poussée qu'on obtient",
+      "hAria": "Hauteur après un échelon, pour des moteurs illimités et pour de vrais moteurs.",
+      "tAria": "Poussée au cours du temps, avec les limites des moteurs à 0 et 20 newtons.",
+      "max": "max moteurs 20 N",
+      "min": "les moteurs ne peuvent pas tirer vers le bas",
+      "peak": "poussée max que veulent les maths",
+      "tsIdeal": "stabilisation (maths)",
+      "tsReal": "stabilisation (réel)",
+      "notYet": "pas en 3 s",
+      "sigma": "Position des pôles (vers la gauche le long de 45°)",
+      "toggle": "Vrais moteurs : 0–20 N",
+      "capped": "Les maths veulent {p} N, mais les moteurs plafonnent à 20 N. La réalité arrête de suivre l'image linéaire.",
+      "fantasy": "Des moteurs imaginaires livrent joyeusement {p} N. Réactive les limites.",
+      "fine": "Dans la plage des moteurs : maths et réalité sont d'accord."
+    }
+  }
+}

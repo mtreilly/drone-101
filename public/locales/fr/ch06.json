@@ -1,0 +1,392 @@
+{
+  "kicker": "Chapitre 6",
+  "title": "La vraie personnalité du drone",
+  "question": "Pourquoi le drone rebondit-il comme un ressort ?",
+  "sections": [
+    {
+      "id": "spring",
+      "title": "Le correcteur est un ressort",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "June a demandé où vit notre drone sur la carte. Indice : vous vous souvenez du drone rebondissant du chapitre 2 ? Plus on montait $\\eff{K_p}$, plus il faisait « boing ». On aurait vraiment dit un poids au bout d'un ressort."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "« On aurait dit », ce n'est pas une preuve. Mettons-les côte à côte et écrivons les deux équations."
+        },
+        {
+          "t": "p",
+          "text": "À gauche : une masse de 0,5 kg suspendue à un ressort avec un amortisseur (un petit piston rempli d'huile qui résiste au mouvement). À droite : notre drone, même masse, même traînée, en commande proportionnelle."
+        },
+        {
+          "t": "note",
+          "text": "Pour que la gravité ne nous distraie pas, on offre ici au drone sa poussée de vol stationnaire (4,9 N), pour qu'il ne s'affaisse pas. On la gagnera honnêtement au chapitre 9."
+        },
+        {
+          "t": "widget",
+          "id": "twins"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Les courbes sont **superposées**. Pas semblables. *Identiques.*"
+        },
+        {
+          "t": "p",
+          "text": "Regarde les deux équations. Le ressort repousse avec une force $\\eff{k}\\,x$ : plus il est étiré, plus il tire fort. Notre correcteur pousse avec $\\eff{K_p}(\\sp{2} - \\out{h})$ : plus on est loin de la cible, plus il pousse fort. **Même règle.** Le correcteur *est* un ressort : un ressort invisible, qui tire le drone vers 2 m."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Donc un correcteur P est un ressort virtuel, et la traînée de l'air $c$ est un amortisseur virtuel. Tout ce qu'on apprend sur les ressorts, on l'a gratuitement."
+        }
+      ]
+    },
+    {
+      "id": "knobs",
+      "title": "Deux boutons de personnalité",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Chaque système masse-ressort-amortisseur, et donc chaque drone en commande P, est décrit par seulement **deux nombres** :"
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Pulsation propre $\\omega_n = \\sqrt{k/m}$",
+              "def": "À quelle vitesse il *veut* osciller, en radians par seconde. Un ressort plus raide (plus grand $\\eff{k}$) ou une masse plus légère donnent une oscillation plus rapide."
+            },
+            {
+              "term": "Taux d'amortissement $\\zeta = \\dfrac{c}{2\\sqrt{m k}}$",
+              "def": "À quelle vitesse l'oscillation s'éteint. C'est un nombre pur : 0 veut dire qu'il oscille pour toujours, 1 est la frontière exacte entre osciller et ne pas osciller."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Souviens-toi du ressort des chapitres 4 et 5, où deviner une exponentielle nous donnait deux valeurs de $s$. Ajoute un amortisseur et la même supposition donne $m s^2 + c s + k = 0$. Ses deux solutions sont deux points sur notre carte de $s$. Divise par $m$ et ça devient"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} & s^2 + 2\\zeta\\omega_n\\, s + \\omega_n^2 = 0 \\\\ \\Longrightarrow\\quad & s = -\\zeta\\omega_n \\pm \\omega_n\\sqrt{\\zeta^2 - 1} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Joue avec les deux boutons. Regarde les {out|points bleus} sur la carte : ce sont les deux valeurs de $s$, et le mouvement est toujours un mélange de $e^{s_1 t}$ et $e^{s_2 t}$."
+        },
+        {
+          "t": "widget",
+          "id": "personality"
+        },
+        {
+          "t": "vocab",
+          "title": "Trois personnalités",
+          "items": [
+            {
+              "term": "Sous-amorti ($\\zeta < 1$)",
+              "def": "Les deux valeurs de $s$ forment une paire miroir hors de l'axe réel, posée sur un cercle de rayon $\\omega_n$. La réponse dépasse et oscille avant de se stabiliser."
+            },
+            {
+              "term": "Amortissement critique ($\\zeta = 1$)",
+              "def": "La paire se rejoint sur l'axe réel. La réponse la plus rapide sans dépassement."
+            },
+            {
+              "term": "Sur-amorti ($\\zeta > 1$)",
+              "def": "La paire se sépare le long de l'axe réel : l'une part vers la gauche, l'autre se traîne vers zéro. Pas de dépassement, mais c'est mou."
+            }
+          ]
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Donc les spirales du chapitre 5, c'était la personnalité du drone depuis le début. Tourner = osciller, rétrécir = se stabiliser !"
+        }
+      ]
+    },
+    {
+      "id": "damping",
+      "title": "Plus d'amortissement, c'est toujours mieux ?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Facile. Les oscillations, c'est mal, et l'amortissement tue les oscillations. Donc je mets $\\zeta = 5$ par sécurité. Le drone le plus sûr de tous les temps."
+        },
+        {
+          "t": "predict",
+          "id": "ch6-damping",
+          "gate": true,
+          "q": "Même ressort, même $\\omega_n$. On augmente l'amortissement de $\\zeta = 1$ à $\\zeta = 3$. Atteint-il la cible **plus vite** ou **plus lentement** ?",
+          "options": [
+            {
+              "text": "Plus vite : plus d'amortissement, moins de mouvement gaspillé",
+              "sketch": "smooth",
+              "why": "C'est vrai qu'il n'y a pas de dépassement. Mais l'amortisseur épais freine aussi le mouvement *vers* la cible."
+            },
+            {
+              "text": "À peu près pareil",
+              "sketch": "overshoot",
+              "why": "Au-delà de $\\zeta = 1$, il n'y a plus rien à calmer, et l'amortissement en plus ralentit tout."
+            },
+            {
+              "text": "Plus lentement : il se traîne",
+              "sketch": "sluggish",
+              "correct": true,
+              "why": "Exact. L'amortisseur freine **tout** mouvement, y compris celui qu'on veut. Avec $\\zeta = 3$, ça prend environ quatre fois plus de temps."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "race"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Mon drone « sûr » met une éternité. C'est comme avancer dans du miel."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Regarde la carte ! Un des points est parti loin à gauche, super rapide. Mais l'autre est tout près de zéro."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Et $e^{st}$ avec $s$ proche de zéro s'éteint **très** lentement. Le rapide a disparu en un clin d'œil. C'est le lent qui commande."
+        },
+        {
+          "t": "p",
+          "text": "C'est une règle qu'on va continuer d'utiliser : **la valeur de** $s$ **la plus proche de l'axe vertical décide du temps d'attente.** Trop peu d'amortissement, ça oscille ; trop, ça traîne. Un $\\zeta$ autour de 0,7 à 1, c'est le bon compromis que visent la plupart des ingénieurs."
+        }
+      ]
+    },
+    {
+      "id": "drone",
+      "title": "Retour au drone",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Maintenant, le chapitre 2 prend enfin tout son sens. Pour notre drone, la raideur du ressort *est* le gain :"
+        },
+        {
+          "t": "math",
+          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{K_p}}{m}}, \\qquad \\zeta = \\frac{c}{2\\sqrt{m\\,\\eff{K_p}}}"
+        },
+        {
+          "t": "p",
+          "text": "$\\eff{K_p}$ est *en bas* de la formule de l'amortissement. Monter le gain rend le drone plus rapide (plus grand $\\omega_n$), mais **moins amorti**. Avec $\\eff{K_p} = 20$ N/m : $\\zeta = 1/(2\\sqrt{0{,}5 \\times 20}) \\approx 0{,}16$. Très rebondissant, exactement comme on l'a vu. Sur la carte, ses deux valeurs de $s$ sont très haut et juste un peu à gauche de l'axe vertical. C'est là que vit notre drone."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Et on ne peut pas avoir plus d'amortissement sans baisser énormément $\\eff{K_p}$, ce qui ramène l'affaissement. Il nous faut un moyen d'ajouter de l'amortissement *exprès*."
+        },
+        {
+          "t": "note",
+          "text": "Essaie dans le premier widget : fais glisser $K_p$ et regarde ζ baisser à mesure que les oscillations deviennent plus folles."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Ce qu'on sait maintenant",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Un drone en commande P obéit **exactement** à la même équation qu'une masse au bout d'un ressort : le correcteur est un ressort virtuel.",
+            "Deux nombres résument sa personnalité : $\\omega_n$ (à quelle vitesse) et $\\zeta$ (à quel point ça rebondit).",
+            "Le mouvement est un mélange de deux termes $e^{st}$. Les deux valeurs de $s$ sont sur un cercle de rayon $\\omega_n$ quand c'est sous-amorti, et se séparent le long de l'axe réel quand c'est sur-amorti.",
+            "Plus d'amortissement, ce n'est pas toujours mieux : au-delà de $\\zeta = 1$, la valeur de $s$ lente se traîne vers zéro et tout ralentit.",
+            "Pour le drone, plus de $K_p$ veut dire moins d'amortissement. C'est pour ça qu'il oscillait de plus en plus."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch6-q1",
+              "q": "Les deux valeurs de $s$ d'un système sont $-1 \\pm 4i$. Quelle réponse est-ce ?",
+              "options": [
+                {
+                  "text": "Dépasse et oscille",
+                  "sketch": "overshoot",
+                  "correct": true,
+                  "why": "Une partie imaginaire (±4) veut dire rotation, donc oscillation. Une partie réelle négative (−1) veut dire que les oscillations rétrécissent."
+                },
+                {
+                  "text": "Monte en douceur, sans dépassement",
+                  "sketch": "smooth",
+                  "why": "Les montées douces viennent de valeurs de $s$ sur l'axe réel (sans rotation). Celles-ci ont une partie imaginaire de ±4."
+                },
+                {
+                  "text": "Monte lentement en se traînant",
+                  "sketch": "sluggish",
+                  "why": "Se traîner, ça vient d'un $s$ réel très proche de zéro. Ces valeurs-ci tournent, donc la réponse oscille."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q2",
+              "q": "Notre drone ($m = 0{,}5$ kg, $c = 1$ N·s/m) avec $K_p = 20$ N/m est…",
+              "options": [
+                {
+                  "text": "Sous-amorti, $\\zeta \\approx 0{,}16$",
+                  "correct": true,
+                  "why": "$\\zeta = 1/(2\\sqrt{0{,}5\\cdot 20}) = 1/(2\\sqrt{10}) \\approx 0{,}158$. Bien en dessous de 1, donc rebondissant."
+                },
+                {
+                  "text": "En amortissement critique, $\\zeta = 1$",
+                  "why": "Il faudrait $c = 2\\sqrt{m K_p} \\approx 6{,}3$ N·s/m, plus de six fois la traînée qu'on a."
+                },
+                {
+                  "text": "Sur-amorti, $\\zeta > 1$",
+                  "why": "Le sur-amortissement demande beaucoup d'amortissement par rapport à la raideur. Notre gain est élevé et notre traînée faible : c'est l'inverse."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q3",
+              "q": "Avec seulement une commande P, quel $K_p$ donnerait au drone un amortissement critique ($\\zeta = 1$) ?",
+              "options": [
+                {
+                  "text": "$K_p = 0{,}5$ N/m",
+                  "correct": true,
+                  "why": "Pose $c/(2\\sqrt{m K_p}) = 1$ pour obtenir $K_p = c^2/(4m) = 0{,}5$ N/m. Mais avec un ressort aussi faible, le drone devrait être 9,8 m *sous* la cible rien que pour se maintenir en l'air, donc il ne décolle jamais. La commande P seule ne peut pas nous donner les deux."
+                },
+                {
+                  "text": "$K_p = 20$ N/m",
+                  "why": "C'est notre réglage rebondissant par défaut, avec $\\zeta \\approx 0{,}16$. Plus de gain veut dire *moins* d'amortissement."
+                },
+                {
+                  "text": "$K_p = 200$ N/m",
+                  "why": "Plus de gain fait baisser $\\zeta$ encore plus (à environ 0,05). Le gain est au dénominateur."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q4",
+              "q": "Un système sur-amorti a pour valeurs de $s$ $-0{,}2$ et $-10$. Laquelle décide du temps d'attente ?",
+              "options": [
+                {
+                  "text": "$-0{,}2$",
+                  "correct": true,
+                  "why": "$e^{-0{,}2t}$ met environ 20 s à tomber à 2 %, alors que $e^{-10t}$ a disparu en 0,4 s. C'est celle qui est la plus proche de l'axe vertical qui commande."
+                },
+                {
+                  "text": "$-10$",
+                  "why": "$e^{-10t}$ disparaît en une fraction de seconde. C'est la partie rapide, finie avant qu'on la remarque."
+                },
+                {
+                  "text": "Les deux autant",
+                  "why": "Elles s'éteignent à des vitesses très différentes, donc c'est la lente qui domine ce qu'on voit."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Theo : « On a trouvé ces valeurs de $s$ en *devinant*. Ajoute la gravité, le vent, des colis et un correcteur plus malin, et deviner devient l'enfer. Existe-t-il une machine qui transforme ce calcul différentiel en **simple algèbre** ? »"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "twins": {
+      "title": "Ressort contre drone",
+      "spring": "masse au bout d'un ressort",
+      "drone": "drone en commande P",
+      "msdAria": "Une masse suspendue à un ressort et un amortisseur, qui rebondit autour de sa position de repos.",
+      "plotY": "distance à la cible (m)",
+      "plotAria": "Distance à la cible au cours du temps pour le drone et pour le ressort. Les deux courbes sont superposées.",
+      "target": "cible / repos",
+      "kp": "Raideur : ressort $k$ = gain du drone $K_p$",
+      "personality": "personnalité",
+      "help": "Les deux partent 1 m sous leur cible et sont lâchés. Le curseur règle la raideur du ressort et le gain du drone sur le même nombre.",
+      "describe": "Le drone est à {d} m de la cible, la masse du ressort à {s} m du repos.",
+      "regime": {
+        "under": "sous-amorti",
+        "critical": "amortissement critique",
+        "over": "sur-amorti"
+      },
+      "together": "les deux, sur un seul graphique"
+    },
+    "personality": {
+      "title": "Deux boutons, deux points, une personnalité",
+      "response": "réponse à un échelon de 1 m",
+      "target": "cible",
+      "plotAria": "Réponse indicielle d'un système du second ordre pour la pulsation propre et le taux d'amortissement choisis.",
+      "planeAria": "La carte de s, montrant les deux valeurs de s du système et un cercle en tirets de rayon oméga n.",
+      "msdAria": "Une masse au bout d'un ressort qui rejoue la réponse indicielle.",
+      "panelAria": "Petite réponse indicielle avec un taux d'amortissement de {z}.",
+      "panel": {
+        "0": "sous-amorti (ζ = {z})",
+        "1": "critique (ζ = {z})",
+        "2": "sur-amorti (ζ = {z})"
+      },
+      "radius": "rayon ωn = {w}",
+      "wn": "Pulsation propre $\\omega_n$",
+      "zeta": "Taux d'amortissement $\\zeta$",
+      "overshoot": "dépassement",
+      "settle": "stabilisé (2 %)",
+      "roots": "les deux valeurs de s",
+      "personality": "personnalité",
+      "never": "jamais",
+      "playSpring": "Rejouer sur le ressort",
+      "stopSpring": "Mettre le ressort en pause",
+      "describe": "Taux d'amortissement {z}, pulsation propre {w} radians par seconde, valeurs de s {r}.",
+      "regime": {
+        "under": "sous-amorti",
+        "critical": "amortissement critique",
+        "over": "sur-amorti"
+      },
+      "planeCap": "les deux valeurs de s",
+      "springCap": "regarde-le sur un ressort",
+      "re": "σ",
+      "im": "ω",
+      "offMap": "{v} est hors de la carte ←"
+    },
+    "race": {
+      "title": "La course de l'amortissement",
+      "choose": "Ton amortissement",
+      "ref": "ζ = 1 (critique)",
+      "yours": "ton ζ",
+      "yoursZ": "ζ = {z}",
+      "msdAria": "Une masse au bout d'un ressort qui se dirige vers sa position de repos.",
+      "plotAria": "Réponses indicielles pour l'amortissement critique et pour le taux d'amortissement choisi.",
+      "planeAria": "Les deux valeurs de s pour le taux d'amortissement choisi.",
+      "settleRef": "ζ = 1 se stabilise",
+      "settleYours": "ton ζ se stabilise",
+      "slow": "la lente",
+      "fast": "la rapide",
+      "never": "pas en 12 s",
+      "same": "C'est la référence elle-même : la réponse la plus rapide sans dépassement.",
+      "slower": "Ton amortissement en plus l'a rendu environ {k}× plus lent.",
+      "replay": "Refaire la course",
+      "planeCap": "les deux valeurs de s",
+      "re": "σ",
+      "im": "ω",
+      "fastOff": "← la rapide en {v} (hors de la carte)",
+      "double": "les deux ici"
+    }
+  }
+}

@@ -1,0 +1,487 @@
+{
+  "kicker": "Kapitel 9",
+  "title": "PID: Alles reparieren",
+  "question": "Wie werden wir das Durchhängen los *und* stoppen das Wackeln?",
+  "sections": [
+    {
+      "id": "stuck",
+      "title": "Das Durchhängen, das nicht sterben will",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Erinnert ihr euch an Kapitel 2? Unser P-Regler hat die Drohne **unter 2 m hängen** lassen, und kein $K_p$ konnte das reparieren. Zeit herauszufinden, was es kann."
+        },
+        {
+          "t": "p",
+          "text": "Um die Drohne zu halten, müssen die Motoren $mg \\approx 4{,}9$ N drücken, und zwar für immer. Ein P-Regler drückt nur, wenn es einen Fehler gibt: $\\eff{T} = K_p\\,\\err{e}$. Um 4,9 N zu drücken, *braucht* er also einen Fehler von $\\err{e} = mg/K_p$. Das Durchhängen ist kein Fehler in unserer Einstellung. Es ist der Preis, den P fürs Halten verlangt."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Wir brauchen also einen Teil im Regler, der 4,9 N **bei null Fehler** drücken kann. Etwas mit Gedächtnis."
+        },
+        {
+          "t": "note",
+          "text": "Seit Kapitel 8 sind die Motoren echt: Sie drücken zwischen 0 und 20 N, nicht mehr, und nach unten ziehen können sie nicht. Die orangen Schubkurven werden flach, wenn sie an eine Grenze stoßen."
+        }
+      ]
+    },
+    {
+      "id": "integral",
+      "title": "I: ein Haufen vergangener Fehler",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Die Idee: Führ eine laufende Summe des Fehlers, die **Fläche unter der Fehlerkurve**, genau die „aufsummierte Fläche“ aus [Kapitel 3](#/ch/3). Drück proportional zu diesem Haufen:"
+        },
+        {
+          "t": "math",
+          "tex": "\\eff{T_I} = K_i \\int_0^t \\err{e}(\\tau)\\,d\\tau"
+        },
+        {
+          "t": "p",
+          "text": "Solange die Drohne unter 2 m ist, ist der Fehler positiv, und der Haufen wächst weiter. Also wächst auch der Schub weiter. Der Haufen hört erst auf zu wachsen, wenn der Fehler **genau null** ist. Dann *bleibt* er einfach und hält den Schub, den er aufgebaut hat. Das ist das Gedächtnis, das June wollte."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Oh, das ist raffiniert. Die Drohne kann sich *nirgendwo* anders einpendeln als bei 2 m, weil sich der Haufen überall sonst noch ändern würde."
+        },
+        {
+          "t": "predict",
+          "id": "ch9-bigki",
+          "gate": true,
+          "q": "Mika will das Durchhängen *schnell* loswerden und plant, $K_i$ ordentlich aufzudrehen. Was wird passieren?",
+          "options": [
+            {
+              "text": "Das Durchhängen verschwindet schnell und sauber",
+              "sketch": "smooth",
+              "why": "Das ist die Hoffnung. Aber der Haufen hat Schwung: Wenn der Fehler null erreicht, hat er schon *zu viel* Schub aufgebaut."
+            },
+            {
+              "text": "Das Durchhängen verschwindet, aber die Drohne wackelt mehr, und zu viel davon schüttelt sie kaputt",
+              "sketch": "growing-wiggle",
+              "correct": true,
+              "why": "Der Haufen erinnert sich an die Vergangenheit, also drückt er weiter, nachdem die Drohne angekommen ist: Überschwingen. Bei zu großem $K_i$ ist jedes Überschwingen größer als das vorige."
+            },
+            {
+              "text": "Nichts ändert sich, weil $K_i$ erst ganz am Ende eine Rolle spielt",
+              "sketch": "droop",
+              "why": "Der Haufen wächst ab dem ersten Moment, in dem es einen Fehler gibt. $K_i$ prägt also den ganzen Flug."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Zieh an $K_i$ und achte auf drei Dinge: die {err|rot schattierte Fläche} (der Fehler, der sich anhäuft), den {eff|gestrichelten orangen} Integralanteil des Schubs, der bis zur {dis|lila Schwerkraftlinie} klettert, und die Anzeige fürs Durchhängen. $K_p$ ist fest auf 20 N/m."
+        },
+        {
+          "t": "widget",
+          "id": "integral"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Aufdrehen! $K_i = 50$! Weg mit dem Ding!"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "…warum hört es nicht auf? Die Hüpfer wurden immer größer, und jetzt jojot sie für immer einen halben Meter auf und ab!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Bei 50 bist du über eine Art Kante gegangen. Ich hab ein paar Werte ausprobiert: Unter etwa 40 kommt sie zur Ruhe, darüber nicht. Der Haufen ist *immer etwas hinterher*: Er drückt weiter nach oben, wenn die Drohne schon über 2 m hinaus ist."
+        },
+        {
+          "t": "p",
+          "text": "Das ist Mikas Fehler, und er ist sehr verbreitet: Das Integral repariert das Durchhängen, aber es bringt **Verzögerung** mit, und Verzögerung bringt Dinge zum Schwingen (das hat uns die Dusche gelehrt). Wir brauchen etwas, das gegen das *Tempo* drückt."
+        }
+      ]
+    },
+    {
+      "id": "derivative",
+      "title": "D: ein virtueller Stoßdämpfer",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "In Kapitel 6 war der Dämpfer das, was die Feder beruhigt hat. Was, wenn der Regler **so tut**, als wäre er ein Dämpfer?"
+        },
+        {
+          "t": "p",
+          "text": "Ein Dämpfer drückt gegen die Geschwindigkeit. Also fügen wir einen Term hinzu, der dagegen drückt, wie schnell sich die Drohne bewegt:"
+        },
+        {
+          "t": "math",
+          "tex": "\\eff{T_D} = -K_d\\,\\frac{d\\out{h}}{dt}"
+        },
+        {
+          "t": "p",
+          "text": "Schau dir die Gleichung der Drohne an: Der Luftwiderstand liefert schon $-c\\,\\dot h$. Der D-Term legt $-K_d\\,\\dot h$ obendrauf, also verhält sich die Drohne, als wäre ihr Luftwiderstand $c + K_d$. Wir fügen Luftwiderstand **per Software** hinzu."
+        },
+        {
+          "t": "note",
+          "text": "Genau genommen ist das D in PID die Steigung des *Fehlers*, $K_d\\,\\dot e$. Wenn der Sollwert stillsteht, ist $\\dot e = -\\dot h$, also dasselbe. Gleich sehen wir, warum der Unterschied trotzdem wichtig ist."
+        },
+        {
+          "t": "widget",
+          "id": "damper"
+        },
+        {
+          "t": "p",
+          "text": "Schalte **Mikas große I-Verstärkung** ein und nimm dann Dämpfung dazu. Schon $K_d = 0{,}5$ N·s/m kippt es zurück ins Stabile (es schiebt die Kante raus auf $K_i = 60$): Aus dem endlosen Jojo wird ein Hüpfen, das abklingt. Aber es schwingt immer noch um etwa ein Viertel über, egal wie viel D du dazunimmst. Dieser riesige Haufen erinnert sich einfach an zu viel. Schalte jetzt Mikas $K_i$ ab (zurück auf 10) und probier $K_d \\approx 3$–5: Ruhe. **I und D sind ein Tauschgeschäft**: D verschafft dir Spielraum für I, aber keinen unbegrenzten."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "D **sagt also die Zukunft voraus**! Es sieht, wohin die Drohne will, und ist schon vorher da."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Nicht wirklich. Es kennt nur die Steigung *genau jetzt*. Das ist, als würdest du raten, wo ein Ball landet, indem du annimmst, dass er geradeaus weiterfliegt. Meistens eine ordentliche Schätzung, aber keine Magie. Wart ab, bis wir ihm einen zappeligen Sensor geben."
+        }
+      ]
+    },
+    {
+      "id": "poles",
+      "title": "Was jeder Knopf mit den Polen macht",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Zeit für die Karte aus Kapitel 8. Schreiben wir den ganzen Kreis auf, mit $\\err{e} = \\sp{r} - \\out{h}$:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\ddot{\\out h} + c\\dot{\\out h} = \\underbrace{K_p\\,\\err e + K_i\\!\\int\\!\\err e\\,dt - K_d\\,\\dot{\\out h}}_{\\eff{T}} - \\dis{mg}"
+        },
+        {
+          "t": "p",
+          "text": "Das Integral ist unhandlich, also nehmen wir auf beiden Seiten die Steigung. Die Schwerkraft ist konstant, ihre Steigung ist also **null**: Sie fällt einfach raus. Bei festem Sollwert ist $\\dot{\\err e} = -\\dot{\\out h}$, und die Steigung von $\\int \\err e$ ist einfach $\\err e$:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\dddot{\\out h} + (c + K_d)\\,\\ddot{\\out h} + K_p\\,\\dot{\\out h} + K_i\\,\\out h = K_i\\,\\sp r"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Die Schwerkraft ist aus der Gleichung *verschwunden*. Das ist der Durchhäng-Killer in Algebraform: Der Endhöhe ist $mg$ völlig egal."
+        },
+        {
+          "t": "p",
+          "text": "Rate wie immer $e^{st}$, und das charakteristische Polynom springt heraus. Es ist kubisch, also gibt es **drei** Pole:"
+        },
+        {
+          "t": "math",
+          "tex": "m s^3 + (c + K_d)\\,s^2 + K_p\\,s + K_i = 0"
+        },
+        {
+          "t": "p",
+          "text": "Für ein kubisches Polynom mit lauter positiven Koeffizienten $a_3 s^3 + a_2 s^2 + a_1 s + a_0$ gibt es einen klassischen Test (das **Routh-Hurwitz**-Kriterium). Er sagt: Alle drei Pole liegen genau dann in der linken Hälfte, wenn $a_2 a_1 > a_3 a_0$. Für unsere Drohne ist das die Klippe:"
+        },
+        {
+          "t": "math",
+          "tex": "(c + K_d)\\,K_p > m\\,K_i \\quad\\Longleftrightarrow\\quad K_i < \\frac{(c+K_d)\\,K_p}{m}"
+        },
+        {
+          "t": "p",
+          "text": "Mit $K_p = 20$ und ohne D: $K_i < (1)(20)/0{,}5 = 40$. Genau da ist Mikas Drohne durchgedreht. Mit $K_d = 4$ wandert die Kante raus auf 200. Glaub uns nicht einfach: Beweg die Schieberegler und schau auf die Pole, die Mini-Karte und die Sprungantwort."
+        },
+        {
+          "t": "widget",
+          "id": "poles"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Der I-Knopf** ($K_i$) zieht einen Pol aus dem Ursprung heraus und schiebt die anderen zwei nach rechts. Zu viel, und sie überqueren die Linie.",
+            "**Der D-Knopf** ($K_d$) zieht Pole nach links: mehr Dämpfung, ruhigere Antwort.",
+            "**Der P-Knopf** ($K_p$) spreizt vor allem das wackelige Paar nach oben und unten: schneller, aber wackeliger, außer D hält mit."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "playground",
+      "title": "Der Einstell-Spielplatz",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Jetzt der Ernstfall: vom Boden auf 2 m starten, mit echten Motoren (0–20 N). Hol dir alle vier Sterne. Jedes Mal, wenn du eine Verstärkung änderst, bleibt der letzte Flug als blasser Geist stehen."
+        },
+        {
+          "t": "widget",
+          "id": "playground"
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Du steckst fest? Fang mit $K_d$ um 4 an, erhöhe dann $K_i$, bis das Durchhängen weg ist, und stups dann $K_p$ an."
+        },
+        {
+          "t": "note",
+          "text": "**Integrator-Windup:** Während die Motoren bei 20 N am Anschlag sind, wächst der Fehlerhaufen weiter, obwohl der zusätzliche Schub gar nicht möglich ist. Später kommt der ganze angestaute Schub als Überschwingen heraus. „Anti-Windup“ hält den Haufen einfach an, solange die Motoren am Maximum sind. Schalt es um und vergleiche."
+        }
+      ]
+    },
+    {
+      "id": "warnings",
+      "title": "Zwei Warnungen zu D",
+      "blocks": [
+        {
+          "t": "h3",
+          "text": "Warnung 1: der D-Tritt"
+        },
+        {
+          "t": "p",
+          "text": "Die Drohne schwebt auf 1 m. Bei $t = 1$ s setzen wir den Sollwert auf 2 m. Wenn D die Steigung des *Fehlers* nimmt, **springt** der Fehler in einem Augenblick um einen Meter. Seine Steigung ist riesig, und der Schub auch."
+        },
+        {
+          "t": "widget",
+          "id": "kick"
+        },
+        {
+          "t": "p",
+          "text": "Nimm stattdessen die Steigung der **gemessenen Höhe**, und das Problem ist weg: Die Drohne kann sich nicht teleportieren, also hat ihre Höhe keine Sprünge. Gleiche Dämpfung, kein Tritt. Fast jeder echte PID-Regler macht das so."
+        },
+        {
+          "t": "h3",
+          "text": "Warnung 2: Rauschen"
+        },
+        {
+          "t": "p",
+          "text": "Echte Höhensensoren zittern um ein paar Zentimeter. Ein paar Zentimeter Zittern, tausendmal pro Sekunde, haben eine **riesige Steigung**. D verstärkt das direkt in die Motoren. Die Lösung: die Messung glätten, bevor man ihre Steigung nimmt (ein Filter mit Zeitkonstante $\\tau_f$). Der Preis: Man reagiert etwas später."
+        },
+        {
+          "t": "widget",
+          "id": "noise"
+        },
+        {
+          "t": "note",
+          "text": "Hast du gesehen, wie die Drohne mit dem kurzen Filter **nach oben driftet**? Der ratternde Schub wird viel öfter bei 0 N abgeschnitten als bei 20 N (zum Schweben braucht es nur 4,9 N), also liegt der abgeschnittene Mittelwert *über* dem Gewicht. Rauschen plus Grenzen können sogar den Mittelwert verschieben. Echte Hardware steckt voller solcher Überraschungen."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Okay, D sagt *nicht* die Zukunft voraus. Es sagt voraus, wonach dem Rauschen vor einer Millisekunde zumute war."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Was wir repariert haben",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "**P** drückt proportional zum Fehler, muss aber ein Durchhängen übrig lassen, um die Drohne zu halten.",
+            "**I** häuft vergangene Fehler an; der einzige Ruhepunkt ist null Fehler, also killt es das Durchhängen. Es bringt Verzögerung mit, also lässt zu viel davon alles schwingen.",
+            "**D** drückt gegen das Tempo: ein virtueller Dämpfer, der zum Luftwiderstand $c$ dazukommt.",
+            "Der geschlossene Regelkreis ist $m s^3 + (c + K_d)s^2 + K_p s + K_i$; er ist genau dann stabil, wenn $(c+K_d)K_p > mK_i$.",
+            "Nimm D von der Messung (kein Tritt) und filtere es (weniger Rauschen)."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch9-q1",
+              "q": "Welcher Term beseitigt das bleibende Durchhängen unter Schwerkraft?",
+              "options": [
+                {
+                  "text": "Der Integralterm",
+                  "correct": true,
+                  "why": "Sein Fehlerhaufen ändert sich so lange, bis der Fehler genau null ist, und dann hält er die nötigen 4,9 N ganz allein."
+                },
+                {
+                  "text": "Der Ableitungsterm",
+                  "why": "D reagiert aufs Tempo. Wenn die Drohne ruhig schwebt, ist das Tempo null, und D trägt nichts bei. Halten kann es also nichts."
+                },
+                {
+                  "text": "Eine größere Proportionalverstärkung",
+                  "why": "Größeres $K_p$ verkleinert das Durchhängen ($mg/K_p$), aber nie auf null, und es macht die Drohne wackeliger."
+                }
+              ]
+            },
+            {
+              "id": "ch9-q2",
+              "q": "Du erhöhst $K_d$. In welche Richtung wandern die Pole meistens?",
+              "options": [
+                {
+                  "text": "Nach links: mehr Dämpfung, ruhigere Antwort",
+                  "correct": true,
+                  "why": "D kommt zum Dämpfungskoeffizienten $(c + K_d)$ dazu, und das zieht die Pole von der rechten Halbebene weg."
+                },
+                {
+                  "text": "Nach rechts: Richtung Instabilität",
+                  "why": "Das macht zu viel $K_i$. $K_d$ macht das Gegenteil, zumindest in unserem Modell ohne Verzögerungen."
+                },
+                {
+                  "text": "Gar nicht; D spielt nur bei Rauschen eine Rolle",
+                  "why": "$K_d$ steht direkt im charakteristischen Polynom, also verschiebt es die Pole."
+                }
+              ]
+            },
+            {
+              "id": "ch9-q3",
+              "q": "Mit $K_p = 10$ N/m und $K_d = 1$ N·s/m (Drohne: $m = 0{,}5$ kg, $c = 1$ N·s/m): Was ist das größte $K_i$ vor der Instabilität?",
+              "options": [
+                {
+                  "text": "20 N/(m·s)",
+                  "why": "Prüf die Formel: $(c + K_d)K_p/m = (1+1)\\cdot 10 / 0{,}5$. Vielleicht hast du vergessen, durch $m$ zu teilen."
+                },
+                {
+                  "text": "40 N/(m·s)",
+                  "correct": true,
+                  "why": "$(1 + 1)\\cdot 10 / 0{,}5 = 40$. Darüber wandern zwei Pole in die rechte Halbebene."
+                },
+                {
+                  "text": "80 N/(m·s)",
+                  "why": "Zu hoch. Denk dran: Luftwiderstand $c$ und $K_d$ werden zuerst addiert: $(1+1) = 2$, nicht 4."
+                }
+              ]
+            },
+            {
+              "id": "ch9-q4",
+              "q": "Warum nimmt man die Ableitung der **Messung** statt des Fehlers?",
+              "options": [
+                {
+                  "text": "Wenn der Sollwert springt, springt auch der Fehler, und seine Steigung ist riesig: eine Schubspitze",
+                  "correct": true,
+                  "why": "Die Höhe kann nicht springen, also bleibt ihre Steigung vernünftig. Gleiche Dämpfung, kein Tritt."
+                },
+                {
+                  "text": "Weil die Messung weniger rauscht als der Fehler",
+                  "why": "Sie haben genau dasselbe Rauschen; der Fehler ist Sollwert minus Messung."
+                },
+                {
+                  "text": "Es macht den Regler aggressiver",
+                  "why": "Im Gegenteil: Es entfernt die aggressive Spitze bei Sollwertänderungen."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "June hat unseren Drohnen-PID an der Dusche ausprobiert… und die hat genauso gewackelt wie wir in Kapitel 0. **Was ist bloß mit dieser Verzögerung?**"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "integral": {
+      "title": "Der Fehlerhaufen",
+      "slider": "Integralverstärkung $K_i$",
+      "gravity": "Gewicht mg",
+      "iterm": "Integralschub Ki·∫e",
+      "readout": {
+        "droop": "Durchhängen bei 12 s",
+        "pile": "Integralschub"
+      },
+      "status": {
+        "none": "Kein Integral: Die Drohne hängt durch, genau wie in Kapitel 2.",
+        "slow": "Das Durchhängen schrumpft, aber langsam. Der Haufen braucht Zeit zum Aufbauen.",
+        "gone": "Durchhängen weg! Der Haufen hält jetzt das ganze Gewicht.",
+        "unstable": "Über die Kante (Ki > {lim}): Die Hüpfer wachsen, bis die Motoren an ihre Grenzen stoßen, und sie kommt nie zur Ruhe."
+      },
+      "describe": "Integralverstärkung {ki}. Durchhängen nach 12 Sekunden: {droop} Zentimeter."
+    },
+    "damper": {
+      "title": "Einen virtuellen Dämpfer hinzufügen",
+      "slider": "Differenzialverstärkung $K_d$",
+      "bigKi": "Mikas großes $K_i$ = 50",
+      "readout": {
+        "damping": "Gesamtdämpfung c + Kd",
+        "overshoot": "Überschwingen"
+      },
+      "status": {
+        "unstable": "Immer noch instabil: braucht mehr Dämpfung.",
+        "bouncy": "Stabil, aber hüpfig. Nimm mehr Kd dazu.",
+        "calm": "Ruhe! Der Dämpfer schluckt das Hüpfen."
+      }
+    },
+    "poles": {
+      "title": "Drei Knöpfe, drei Pole",
+      "splane": "s-Ebene mit den drei Polen des geschlossenen Regelkreises der Drohne mit PID-Regler",
+      "kp": "$K_p$",
+      "ki": "$K_i$",
+      "kd": "$K_d$",
+      "offmap": "außerhalb der Karte",
+      "map": {
+        "x": "Kd (N·s/m)",
+        "y": "Ki (N/(m·s))",
+        "edge": "Klippe Ki = (c+Kd)Kp/m",
+        "you": "du",
+        "aria": "Karte von Ki über Kd mit der Stabilitätsgrenze; unterhalb der Linie ist es stabil."
+      },
+      "stepAria": "Sprungantwort von 1,5 m auf 2 m für die aktuellen Verstärkungen",
+      "status": {
+        "stable": "Stabil: Ki muss unter {lim} bleiben. Der langsamste Pol sitzt bei σ = {s}.",
+        "unstable": "Instabil! Ki liegt über der Kante ({lim}). Zwei Pole sind in die rechte Hälfte gewandert."
+      },
+      "help": "Bei der Sprungantwort schwebt die Drohne zuerst auf 1,5 m und soll bei t = 1 s auf 2 m. Pole außerhalb des Rahmens werden an seinen Rand geheftet.",
+      "reShort": "σ",
+      "imShort": "ω"
+    },
+    "playground": {
+      "title": "Einstell-Spielplatz: Start auf 2 m",
+      "kp": "$K_p$",
+      "ki": "$K_i$",
+      "kd": "$K_d$",
+      "antiWindup": "Anti-Windup",
+      "targets": "Sterne gibt’s für: Überschwingen unter {os} %, Einschwingen (auf 2 % genau) unter {ts} s, kein Durchhängen (unter 1 cm) und Motoren weniger als {sat} s am Anschlag.",
+      "readout": {
+        "overshoot": "Überschwingen",
+        "settling": "Einschwingzeit",
+        "sse": "Durchhängen",
+        "saturated": "Motoren am Anschlag"
+      },
+      "never": "nie",
+      "allStars": "Alle vier Sterne! Das ist eine echte Einstellung.",
+      "someStars": "{n} von 4 Sternen.",
+      "starsAria": "{n} von 4 Sternen verdient"
+    },
+    "kick": {
+      "title": "Sollwertsprung: 1 m → 2 m",
+      "mode": "Ableitung nehmen von…",
+      "onError": "dem Fehler",
+      "onMeasurement": "der gemessenen Höhe",
+      "peak": "Spitzenschub",
+      "status": {
+        "error": "Der Fehler springt, seine Steigung ist riesig, und die Motoren knallen auf 20 N: ein D-Tritt.",
+        "measurement": "Die Höhe kann nicht springen, also kein Tritt: ein sanfter Anstieg."
+      }
+    },
+    "noise": {
+      "title": "Ein zappeliger Höhensensor",
+      "toggle": "Sensorrauschen (±2 cm)",
+      "filter": "Ableitungsfilter $\\tau_f$",
+      "measured": "Sensorwert",
+      "jitter": "Schubzittern",
+      "status": {
+        "off": "Ein perfekter Sensor: ruhige Motoren.",
+        "chatter": "Die Motoren rattern! D verstärkt das Rauschen. Probier einen längeren Filter.",
+        "calm": "Viel ruhiger. (Das bisschen Zittern, das bleibt, kommt vom P-Term, der das Rauschen direkt durchreicht.) Der Preis: D reagiert jetzt etwas später."
+      }
+    }
+  }
+}

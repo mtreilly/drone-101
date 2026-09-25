@@ -1,0 +1,430 @@
+{
+  "kicker": "Chapitre 5",
+  "title": "Des nombres qui tournent",
+  "question": "Quel genre de nombre pourrait avoir −1 pour carré, et pourquoi ferait-il des vagues ?",
+  "sections": [
+    {
+      "id": "arrows",
+      "title": "Les nombres sont des flèches",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "La dernière fois, le ressort avait besoin d'un nombre avec $a^2 = -4$. Theo a dit qu'un tel nombre n'existe pas. Mais à quoi est-ce qu'il *ressemblerait*, au moins ?"
+        },
+        {
+          "t": "p",
+          "text": "Imagine chaque nombre comme une **flèche** qui part de 0 le long de la droite des nombres. Multiplier par 2 allonge la flèche. Multiplier par ½ la raccourcit. Et multiplier par −1 la retourne pour qu'elle pointe dans l'autre sens. C'est un **demi-tour**."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Ooh. Si ×(−1) est un demi-tour… c'est quoi, la *moitié* d'un demi-tour ? Un **quart** de tour ! La flèche pointerait tout droit vers le haut, en dehors de la droite des nombres."
+        },
+        {
+          "t": "p",
+          "text": "Donnons un nom au quart de tour : **i**. Fais-le deux fois et tu as fait un demi-tour, c'est-à-dire ×(−1). Donc $i \\cdot i = -1$. Le voilà, notre nombre dont le carré est négatif !"
+        },
+        {
+          "t": "widget",
+          "id": "rotate"
+        },
+        {
+          "t": "math",
+          "tex": "i^2 = -1 \\qquad\\text{(deux quarts de tour = un demi-tour)}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Minute. Ce sont les « nombres imaginaires ». Tout le monde sait qu'ils sont inventés. Ils ne peuvent pas décrire un vrai ressort physique."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Ils ne sont pas imaginaires, ils sont **de côté** ! C'est juste une flèche en 2D. Tourner à gauche, c'est aussi réel qu'avancer tout droit."
+        },
+        {
+          "t": "p",
+          "text": "Un nombre comme $3 + 2i$ veut juste dire « 3 pas en avant, 2 pas de côté ». Tout le plan des flèches est la scène de tout ce qui va suivre."
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Le nom « imaginaire » était au départ une insulte, il y a des siècles, et il est resté. Ne te laisse pas avoir."
+        }
+      ]
+    },
+    {
+      "id": "spin",
+      "title": "Un nombre qui tourne",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Maintenant, imagine un point qui fait le tour d'un cercle à vitesse constante, ω radians par seconde. Vers où pointe sa **vitesse** ? Toujours le long du cercle, c'est-à-dire un **quart de tour** en avance sur la flèche qui mène au point."
+        },
+        {
+          "t": "p",
+          "text": "Un quart de tour, c'est ×i, et la vitesse vaut ω fois le rayon. Donc la vitesse, c'est la position tournée d'un quart de tour, fois ω : **vitesse = iω × position**."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Attends. « La pente est un nombre fixe fois elle-même », c'est exactement la propriété de l'**exponentielle** du chapitre 4 ! Avec a = iω."
+        },
+        {
+          "t": "p",
+          "text": "Donc $e^{i\\omega t}$ n'a rien d'effrayant. C'est un point qui **tourne** sur le cercle de rayon 1, de ω radians chaque seconde. Regarde-le, et regarde son **ombre** sur l'axe réel :"
+        },
+        {
+          "t": "widget",
+          "id": "spinner"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\,e^{i\\omega t} = i\\omega\\,e^{i\\omega t}\\qquad \\text{ombre sur l'axe réel} = \\cos(\\omega t)"
+        },
+        {
+          "t": "p",
+          "text": "L'ombre glisse d'avant en arrière en une parfaite **onde cosinus**. Une flèche qui tourne, vue de profil, c'est une oscillation. C'est là que l'oscillation se cachait."
+        },
+        {
+          "t": "note",
+          "text": "Écrit en entier, le tourniquet donne $e^{i\\omega t} = \\cos\\omega t + i\\sin\\omega t$ : la partie « en avant » est un cosinus, la partie « de côté » un sinus. On appelle ça la formule d'Euler."
+        }
+      ]
+    },
+    {
+      "id": "twins",
+      "title": "Retour au ressort (et une nouvelle erreur)",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Le ressort avait besoin de $a^2 = -k/m = -4$. Essaie $a = 2i$ : $(2i)^2 = 4\\,i^2 = -4$. ✓ Et $a = -2i$ marche aussi."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "D'accord, j'avais tort. L'astuce « deviner une exponentielle » survit. Le ressort, c'est $e^{2it}$, un tourniquet qui fait deux tours toutes les… 2π secondes."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Donc la position du ressort, c'est $e^{2it}$ ? Là, maintenant, il est à… $0{,}4 + 0{,}9i$ mètre ?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Un ressort ne peut pas être à 0,9 mètre *sur le côté*. Il ne bouge que de haut en bas."
+        },
+        {
+          "t": "p",
+          "text": "Mika a oublié l'autre réponse. On a trouvé **deux** solutions, $e^{2it}$ et $e^{-2it}$ : un tourniquet et son **jumeau miroir** qui tourne dans l'autre sens. Additionne-les :"
+        },
+        {
+          "t": "widget",
+          "id": "twins"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Les parties de côté s'annulent parfaitement ! La somme glisse juste le long de la droite réelle, d'avant en arrière."
+        },
+        {
+          "t": "math",
+          "tex": "x(t) = \\tfrac12\\left(e^{i\\omega t} + e^{-i\\omega t}\\right) = \\cos(\\omega t),\\qquad \\omega = \\sqrt{k/m}"
+        },
+        {
+          "t": "p",
+          "text": "C'est la règle pour tout ce qui est réel : les tourniquets viennent toujours par **paires miroirs**, donc leurs parties de côté s'annulent et il reste une vraie oscillation qu'on peut mesurer."
+        }
+      ]
+    },
+    {
+      "id": "map",
+      "title": "La carte de s",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Le chapitre 4 nous a donné des exponentielles qui **grandissent ou rétrécissent**. Maintenant, on a des tourniquets qui **oscillent**. Mettons-les ensemble : $e^{st}$ avec $s = \\sigma + i\\omega$."
+        },
+        {
+          "t": "math",
+          "tex": "e^{st} = e^{(\\sigma + i\\omega)t} = \\underbrace{e^{\\sigma t}}_{\\text{grandir/rétrécir}}\\cdot\\underbrace{e^{i\\omega t}}_{\\text{tourner}}"
+        },
+        {
+          "t": "p",
+          "text": "Chaque nombre s est donc une recette : **σ** (la partie « en avant ») dit à quelle vitesse grandir ou rétrécir, **ω** (la partie « de côté ») dit à quelle vitesse tourner. Ensemble, ils dessinent une **spirale**, et l'ombre de la spirale est le signal qu'on verrait."
+        },
+        {
+          "t": "predict",
+          "id": "ch5-shadow",
+          "gate": true,
+          "q": "Place s en $-0{,}5 + 3i$. À quoi ressemble l'ombre de $e^{st}$ ?",
+          "options": [
+            {
+              "text": "Une oscillation qui grandit",
+              "sketch": "growing-wiggle",
+              "why": "Pour grandir, il faut σ > 0. Ici σ = −0,5 est négatif."
+            },
+            {
+              "text": "Une oscillation qui s'éteint",
+              "sketch": "decaying-wiggle",
+              "correct": true,
+              "why": "ω = 3 la fait tourner (une oscillation toutes les 2 s environ), et σ = −0,5 la rétrécit d'un facteur $e^{-0{,}5} \\approx 0{,}61$ chaque seconde."
+            },
+            {
+              "text": "Une décroissance douce, sans oscillation",
+              "sketch": "decaying-plain",
+              "why": "C'est ce qu'on obtiendrait avec ω = 0 (s sur l'axe horizontal). Ici ω = 3, donc ça tourne."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "smap"
+        },
+        {
+          "t": "p",
+          "text": "Fais le tour de la carte en déplaçant s (ou avec les flèches du clavier) :"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Moitié gauche** (σ < 0) : la spirale rétrécit, l'oscillation s'éteint.",
+            "**Moitié droite** (σ > 0) : la spirale grandit, l'oscillation explose.",
+            "**Sur la ligne verticale** (σ = 0) : un cercle parfait, une oscillation qui dure pour toujours.",
+            "**Sur la ligne horizontale** (ω = 0) : aucune rotation, juste les exponentielles simples du chapitre 4.",
+            "**Plus haut** : ça tourne plus vite, les oscillations sont plus rapides. **Plus à gauche** : ça s'éteint plus vite."
+          ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Donc un seul point sur cette carte, c'est toute une personnalité : à quelle vitesse ça oscille, et si ça se calme ou si ça explose."
+        },
+        {
+          "t": "note",
+          "text": "Cette carte va devenir notre image la plus importante. Elle recevra son nom officiel au chapitre 7."
+        }
+      ]
+    },
+    {
+      "id": "fourier",
+      "title": "Petit détour : tout est fait de tourniquets",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Une dernière surprise. Prends des tourniquets de vitesses différentes (1, 3, 5, 7… fois plus rapides), rétrécis chacun juste comme il faut, et additionne leurs ombres. Avec assez de tourniquets, tu peux construire presque *n'importe quelle* forme, même un signal carré avec des coins pointus."
+        },
+        {
+          "t": "widget",
+          "id": "fourier"
+        },
+        {
+          "t": "p",
+          "text": "Un certain **Fourier** a compris ça il y a 200 ans : n'importe quel signal peut être construit avec ces morceaux qui tournent. On n'aura pas besoin des détails, mais c'est rassurant. Les tourniquets sont les atomes dont les signaux sont faits."
+        },
+        {
+          "t": "note",
+          "text": "Minute honnêteté : juste à côté de chaque saut, la somme dépasse toujours d'environ 9 % de la hauteur du saut, quel que soit le nombre de morceaux ajoutés. La bosse devient plus étroite mais ne disparaît jamais."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Ce qu'on sait pour l'instant",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Les nombres sont des flèches. Multiplier les fait tourner et les étire. **i** est un quart de tour, donc $i^2 = -1$.",
+            "$e^{i\\omega t}$ est un point qui tourne sur un cercle. Son ombre est une onde cosinus.",
+            "Les vraies oscillations viennent de **tourniquets jumeaux miroirs** dont les parties de côté s'annulent.",
+            "$e^{st}$ avec $s = \\sigma + i\\omega$ tourne *et* grandit ou rétrécit : une spirale. Son ombre est une oscillation qui grandit ou s'éteint.",
+            "La **carte de s** : à gauche ça se calme, à droite ça explose, plus haut les oscillations sont plus rapides."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch5-q1",
+              "q": "Que donne la flèche 3 multipliée deux fois par i ?",
+              "options": [
+                {
+                  "text": "−3",
+                  "correct": true,
+                  "why": "Deux quarts de tour font un demi-tour : 3 → 3i → −3."
+                },
+                {
+                  "text": "3i",
+                  "why": "Ça, c'est après *un* quart de tour. Refais-le une fois."
+                },
+                {
+                  "text": "9",
+                  "why": "Multiplier par i fait tourner la flèche. Ça ne change pas sa longueur."
+                }
+              ]
+            },
+            {
+              "id": "ch5-q2",
+              "q": "Place s exactement sur la ligne verticale, en $s = 2i$. Quelle est l'ombre de $e^{st}$ ?",
+              "options": [
+                {
+                  "text": "Une oscillation qui dure pour toujours",
+                  "sketch": "steady-wiggle",
+                  "correct": true,
+                  "why": "σ = 0 veut dire ni grandir ni rétrécir : un cercle parfait, et son ombre est un cosinus régulier."
+                },
+                {
+                  "text": "Une oscillation qui s'éteint",
+                  "sketch": "decaying-wiggle",
+                  "why": "Pour s'éteindre, il faut σ < 0 (à gauche de la ligne verticale)."
+                },
+                {
+                  "text": "Une croissance explosive",
+                  "sketch": "growing-plain",
+                  "why": "Une croissance sans oscillation, c'est la moitié droite de la ligne *horizontale* : σ > 0, ω = 0."
+                }
+              ]
+            },
+            {
+              "id": "ch5-q3",
+              "q": "Une corde de guitare sonne une note claire et s'éteint lentement. Où vit-elle sur la carte de s ?",
+              "options": [
+                {
+                  "text": "Juste à gauche de la ligne verticale, bien au-dessus de la ligne horizontale",
+                  "correct": true,
+                  "why": "S'éteindre lentement veut dire σ légèrement négatif, et une note claire veut dire un grand ω (beaucoup d'oscillations par seconde)."
+                },
+                {
+                  "text": "Dans la moitié droite",
+                  "why": "La moitié droite *grandit*. Une corde qui jouerait de plus en plus fort toute seule, ce serait inquiétant."
+                },
+                {
+                  "text": "Sur la ligne horizontale, très à gauche",
+                  "why": "Pas de ω veut dire pas d'oscillation (pas de note), et très à gauche veut dire que ça s'éteint instantanément. Ça fait « bonk »."
+                }
+              ]
+            },
+            {
+              "id": "ch5-q4",
+              "q": "Pourquoi les tourniquets d'une vraie oscillation physique viennent-ils toujours par paires miroirs ?",
+              "options": [
+                {
+                  "text": "Pour que leurs parties de côté s'annulent et que la somme soit un nombre réel",
+                  "correct": true,
+                  "why": "Un tourniquet et son jumeau ont des parties de côté égales et opposées. Additionnées, seule la partie « en avant » (une vraie oscillation) survit."
+                },
+                {
+                  "text": "Parce que $i^2 = -1$",
+                  "why": "C'est vrai, mais c'est la raison pour laquelle les tourniquets *existent*, pas pour laquelle ils vont par paires."
+                },
+                {
+                  "text": "Parce qu'un ressort a deux bouts",
+                  "why": "Mignon, mais non. Un simple pendule qui se balance a aussi des tourniquets jumeaux."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "June : « Alors **où vit notre drone, sur cette carte ?** »"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "rotate": {
+      "title": "Multiplier fait tourner les flèches",
+      "re": "en avant (réel)",
+      "im": "de côté (i)",
+      "start": "Commence avec la flèche 3. Essaie les boutons !",
+      "tooBig": "Ça sortirait de la page. Essaie un autre bouton.",
+      "explain": {
+        "two": "×2 allonge la flèche au double de sa longueur. Même direction.",
+        "half": "×½ la raccourcit de moitié. Même direction.",
+        "neg": "×(−1) est un demi-tour : la flèche se retourne et pointe dans l'autre sens.",
+        "i": "×i est un quart de tour, dans le sens inverse des aiguilles d'une montre. Fais-le deux fois et compare avec ×(−1) !"
+      },
+      "aria": "Un plan avec une flèche partant de l'origine. Des boutons multiplient la flèche par 2, un demi, moins un ou i, ce qui la fait tourner ou l'étire.",
+      "trail": "Les flèches jusqu'ici"
+    },
+    "spinner": {
+      "title": "Le tourniquet et son ombre",
+      "re": "en avant",
+      "im": "de côté",
+      "position": "position",
+      "velocity": "vitesse",
+      "shadow": "ombre sur l'axe réel",
+      "shadowAxis": "ombre",
+      "omega": "Vitesse de rotation ω",
+      "help": "La flèche de vitesse (dessinée plus courte pour tenir) pointe toujours un quart de tour en avance sur la flèche de position. Le point bleu sur l'axe réel est l'ombre.",
+      "aria": "Un point qui tourne sur un cercle, avec sa flèche de position, une flèche de vitesse un quart de tour en avance, et son ombre sur l'axe réel.",
+      "plotAria": "L'ombre du tourniquet au cours du temps : une onde cosinus."
+    },
+    "twins": {
+      "title": "Un tourniquet et son jumeau miroir",
+      "re": "en avant",
+      "im": "de côté",
+      "sum": "somme",
+      "spinnerLabel": "tourniquet",
+      "twinLabel": "jumeau",
+      "toggle": "Ajouter le jumeau miroir",
+      "axis": "valeur",
+      "realPart": "partie « en avant » de la somme",
+      "sidePart": "partie « de côté » de la somme",
+      "alone": "Un tourniquet seul : la somme part sur le côté (courbe en tirets).",
+      "withTwin": "Avec son jumeau ajouté bout à bout, les parties de côté s'annulent. La somme reste sur la droite réelle : 2·cos(ωt).",
+      "aria": "Deux flèches qui tournent en sens opposés, ajoutées bout à bout. Leur somme est marquée d'un anneau.",
+      "plotAria": "Les parties « en avant » et « de côté » de la somme au cours du temps."
+    },
+    "smap": {
+      "title": "La carte de s",
+      "re": "σ : rétrécir ← → grandir",
+      "im": "ω : tourner",
+      "reShort": "en avant",
+      "imShort": "de côté",
+      "time": "temps →",
+      "shadow": "ombre de e^(st)",
+      "shadowAxis": "ombre",
+      "mirror": "Afficher le jumeau miroir",
+      "readS": "s",
+      "readTurns": "tours",
+      "readSize": "variation de taille",
+      "spins": "Fait {n} tours par seconde,",
+      "noSpin": "Ne tourne pas du tout,",
+      "grows": "et grandit.",
+      "shrinks": "et rétrécit.",
+      "steady": "et garde la même taille.",
+      "help": "Déplace le point s sur la carte (ou sélectionne-le et utilise les flèches). À droite : la spirale e^(st) en 3D, avec le temps qui s'écoule vers la droite. Son ombre bleue est tracée en dessous.",
+      "mapAria": "La carte de s : déplace le point pour choisir sigma et oméga.",
+      "spiralAria": "Spirale en trois dimensions de e puissance s t, avec le temps qui s'écoule vers la droite, et son ombre sur le mur du fond.",
+      "plotAria": "Ombre de e puissance s t au cours du temps."
+    },
+    "fourier": {
+      "title": "Construire un signal carré avec des tourniquets",
+      "axis": "valeur",
+      "target": "signal carré",
+      "sum": "somme des ombres des tourniquets",
+      "pieces": "Nombre de tourniquets",
+      "status": "{n} tourniquets ajoutés. Le plus rapide tourne {f}× plus vite que le premier.",
+      "aria": "Un signal carré et la somme d'un nombre choisi d'ombres de tourniquets qui l'approche.",
+      "statusOne": "Un seul tourniquet : une simple oscillation, rien de carré pour l'instant."
+    }
+  }
+}

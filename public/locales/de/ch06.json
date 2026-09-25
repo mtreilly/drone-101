@@ -1,0 +1,392 @@
+{
+  "kicker": "Kapitel 6",
+  "title": "Der wahre Charakter der Drohne",
+  "question": "Warum federt die Drohne wie eine Sprungfeder?",
+  "sections": [
+    {
+      "id": "spring",
+      "title": "Der Regler ist eine Feder",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "June hat gefragt, wo unsere Drohne auf der Karte wohnt. Ein Hinweis: Erinnert ihr euch an die hüpfende Drohne aus Kapitel 2? Je weiter wir $\\eff{K_p}$ aufgedreht haben, desto mehr hat sie gewippt. Sah genau aus wie ein Gewicht an einer Feder."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "„Sah aus wie“ ist kein Beweis. Stellen wir beide nebeneinander und schreiben beide Gleichungen auf."
+        },
+        {
+          "t": "p",
+          "text": "Links: eine Masse von 0,5 kg an einer Feder mit Dämpfer (ein kleiner ölgefüllter Kolben, der sich gegen Bewegung sträubt). Rechts: unsere Drohne, gleiche Masse, gleicher Luftwiderstand, mit Proportionalregelung."
+        },
+        {
+          "t": "note",
+          "text": "Damit uns die Schwerkraft nicht ablenkt, schenken wir der Drohne hier ihren Schwebeschub (4,9 N), sodass sie nicht durchhängt. In Kapitel 9 verdienen wir ihn uns ehrlich."
+        },
+        {
+          "t": "widget",
+          "id": "twins"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Die Kurven liegen **genau übereinander**. Nicht ähnlich. *Identisch.*"
+        },
+        {
+          "t": "p",
+          "text": "Schau dir die zwei Gleichungen an. Die Feder drückt mit der Kraft $\\eff{k}\\,x$ zurück: Je weiter sie gedehnt ist, desto stärker zieht sie. Unser Regler drückt mit $\\eff{K_p}(\\sp{2} - \\out{h})$: Je weiter vom Ziel weg, desto stärker drückt er. **Dieselbe Regel.** Der Regler *ist* eine Feder: eine unsichtbare, die die Drohne Richtung 2 m zieht."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Ein P-Regler ist also eine virtuelle Feder, und der Luftwiderstand $c$ ist ein virtueller Dämpfer. Alles, was wir über Federn lernen, gibt’s gratis dazu."
+        }
+      ]
+    },
+    {
+      "id": "knobs",
+      "title": "Zwei Charakterknöpfe",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Jedes Feder-Masse-Dämpfer-System, und damit jede Drohne mit P-Regler, wird durch nur **zwei Zahlen** beschrieben:"
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Eigenkreisfrequenz $\\omega_n = \\sqrt{k/m}$",
+              "def": "Wie schnell es schwingen *will*, in Radiant pro Sekunde. Eine steifere Feder (größeres $\\eff{k}$) oder eine leichtere Masse heißt schnelleres Schwingen."
+            },
+            {
+              "term": "Dämpfungsgrad $\\zeta = \\dfrac{c}{2\\sqrt{m k}}$",
+              "def": "Wie schnell das Schwingen abklingt. Eine reine Zahl ohne Einheit: 0 heißt, es schwingt ewig, 1 ist die genaue Grenze zwischen Wackeln und Nicht-Wackeln."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Erinnere dich an die Feder aus Kapitel 4 und 5: Das Raten einer Exponentialfunktion hat uns zwei Werte für $s$ geliefert. Mit Dämpfer ergibt derselbe Tipp $m s^2 + c s + k = 0$. Seine zwei Lösungen sind zwei Punkte auf unserer Karte von $s$. Teil durch $m$, dann wird daraus"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} & s^2 + 2\\zeta\\omega_n\\, s + \\omega_n^2 = 0 \\\\ \\Longrightarrow\\quad & s = -\\zeta\\omega_n \\pm \\omega_n\\sqrt{\\zeta^2 - 1} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Spiel mit den zwei Knöpfen. Achte auf die {out|blauen Punkte} auf der Karte: Das sind die zwei Werte von $s$, und die Bewegung ist immer eine Mischung aus $e^{s_1 t}$ und $e^{s_2 t}$."
+        },
+        {
+          "t": "widget",
+          "id": "personality"
+        },
+        {
+          "t": "vocab",
+          "title": "Drei Charaktere",
+          "items": [
+            {
+              "term": "Unterdämpft ($\\zeta < 1$)",
+              "def": "Die zwei $s$-Werte sind ein Spiegelpaar abseits der reellen Achse und sitzen auf einem Kreis mit Radius $\\omega_n$. Die Antwort schwingt über und wackelt, während sie zur Ruhe kommt."
+            },
+            {
+              "term": "Kritisch gedämpft ($\\zeta = 1$)",
+              "def": "Das Paar trifft sich auf der reellen Achse. Die schnellste Antwort ohne Überschwingen."
+            },
+            {
+              "term": "Überdämpft ($\\zeta > 1$)",
+              "def": "Das Paar teilt sich auf der reellen Achse auf: Einer wandert nach links, einer kriecht Richtung null. Kein Überschwingen, aber träge."
+            }
+          ]
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Die Spiralen aus Kapitel 5 waren also die ganze Zeit der Charakter der Drohne. Drehen = Wackeln, Schrumpfen = zur Ruhe kommen!"
+        }
+      ]
+    },
+    {
+      "id": "damping",
+      "title": "Ist mehr Dämpfung immer besser?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Einfach. Wackeln ist schlecht, und Dämpfung killt Wackeln. Also stell ich sicherheitshalber $\\zeta = 5$ ein. Sicherste Drohne aller Zeiten."
+        },
+        {
+          "t": "predict",
+          "id": "ch6-damping",
+          "gate": true,
+          "q": "Gleiche Feder, gleiches $\\omega_n$. Wir erhöhen die Dämpfung von $\\zeta = 1$ auf $\\zeta = 3$. Erreicht sie das Ziel **schneller** oder **langsamer**?",
+          "options": [
+            {
+              "text": "Schneller: mehr Dämpfung, weniger verschwendete Bewegung",
+              "sketch": "smooth",
+              "why": "Stimmt, es gibt kein Überschwingen. Aber der dicke Dämpfer sträubt sich auch gegen die Bewegung *zum* Ziel."
+            },
+            {
+              "text": "Ungefähr gleich schnell",
+              "sketch": "overshoot",
+              "why": "Ab $\\zeta = 1$ gibt es nichts mehr zu beruhigen, und die zusätzliche Dämpfung bremst einfach alles."
+            },
+            {
+              "text": "Langsamer: Sie kriecht",
+              "sketch": "sluggish",
+              "correct": true,
+              "why": "Richtig. Der Dämpfer sträubt sich gegen **jede** Bewegung, auch gegen die, die du willst. Mit $\\zeta = 3$ dauert es etwa viermal so lange."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "race"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Meine „sichere“ Drohne braucht ewig. Als würde sie sich durch Honig bewegen."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Schaut auf die Karte! Ein Punkt ist nach links abgehauen, superschnell. Aber der andere sitzt ganz nah bei null."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Und $e^{st}$ mit $s$ nah bei null klingt **sehr** langsam ab. Der schnelle ist im Nu weg. Der langsame hat das Sagen."
+        },
+        {
+          "t": "p",
+          "text": "Diese Regel werden wir noch oft brauchen: **Der** $s$**-Wert, der der senkrechten Achse am nächsten liegt, entscheidet, wie lange du wartest.** Zu wenig Dämpfung heißt Wackeln, zu viel heißt Warten. $\\zeta$ um 0,7 bis 1 ist der Bereich, den die meisten Ingenieurinnen und Ingenieure anpeilen."
+        }
+      ]
+    },
+    {
+      "id": "drone",
+      "title": "Zurück zur Drohne",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Jetzt ergibt Kapitel 2 endlich Sinn. Bei unserer Drohne *ist* die Federkonstante die Verstärkung:"
+        },
+        {
+          "t": "math",
+          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{K_p}}{m}}, \\qquad \\zeta = \\frac{c}{2\\sqrt{m\\,\\eff{K_p}}}"
+        },
+        {
+          "t": "p",
+          "text": "$\\eff{K_p}$ steht *unten* in der Dämpfungsformel. Mehr Verstärkung macht die Drohne schneller (größeres $\\omega_n$), aber **weniger gedämpft**. Mit $\\eff{K_p} = 20$ N/m: $\\zeta = 1/(2\\sqrt{0{,}5 \\times 20}) \\approx 0{,}16$. Sehr hüpfig, genau wie wir gesehen haben. Auf der Karte sitzen ihre zwei $s$-Werte weit oben und nur ein kleines Stück links der senkrechten Achse. Dort wohnt unsere Drohne."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Und mehr Dämpfung kriegen wir nur, wenn wir $\\eff{K_p}$ stark runterdrehen, und dann ist das Durchhängen wieder da. Wir brauchen einen Weg, Dämpfung *absichtlich* hinzuzufügen."
+        },
+        {
+          "t": "note",
+          "text": "Probier’s im ersten Widget aus: Schieb $K_p$ und schau zu, wie ζ fällt, während die Schwünge wilder werden."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Was wir jetzt wissen",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Eine Drohne mit P-Regler gehorcht **genau** derselben Gleichung wie eine Masse an einer Feder: Der Regler ist eine virtuelle Feder.",
+            "Zwei Zahlen fassen ihren Charakter zusammen: $\\omega_n$ (wie schnell) und $\\zeta$ (wie hüpfig).",
+            "Die Bewegung ist eine Mischung aus zwei $e^{st}$-Termen. Die zwei $s$-Werte sitzen bei Unterdämpfung auf einem Kreis mit Radius $\\omega_n$ und teilen sich bei Überdämpfung auf der reellen Achse auf.",
+            "Mehr Dämpfung ist nicht immer besser: Ab $\\zeta = 1$ kriecht der langsame $s$-Wert Richtung null, und alles wird langsamer.",
+            "Bei der Drohne heißt mehr $K_p$ weniger Dämpfung. Deshalb wurde sie wackeliger."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch6-q1",
+              "q": "Die zwei $s$-Werte eines Systems sind $-1 \\pm 4i$. Welche Antwort ist es?",
+              "options": [
+                {
+                  "text": "Schwingt über und wackelt",
+                  "sketch": "overshoot",
+                  "correct": true,
+                  "why": "Ein imaginärer Teil (±4) heißt Drehen, also Wackeln. Ein negativer Realteil (−1) heißt, die Wackler werden kleiner."
+                },
+                {
+                  "text": "Steigt sanft, ohne Überschwingen",
+                  "sketch": "smooth",
+                  "why": "Sanftes Ansteigen kommt von $s$-Werten auf der reellen Achse (kein Drehen). Diese haben einen imaginären Teil von ±4."
+                },
+                {
+                  "text": "Kriecht langsam hoch",
+                  "sketch": "sluggish",
+                  "why": "Kriechen kommt von einem reellen $s$ sehr nah bei null. Diese Werte drehen sich, also wackelt die Antwort."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q2",
+              "q": "Unsere Drohne ($m = 0{,}5$ kg, $c = 1$ N·s/m) mit $K_p = 20$ N/m ist…",
+              "options": [
+                {
+                  "text": "Unterdämpft, $\\zeta \\approx 0{,}16$",
+                  "correct": true,
+                  "why": "$\\zeta = 1/(2\\sqrt{0{,}5\\cdot 20}) = 1/(2\\sqrt{10}) \\approx 0{,}158$. Weit unter 1, also hüpfig."
+                },
+                {
+                  "text": "Kritisch gedämpft, $\\zeta = 1$",
+                  "why": "Dafür bräuchte es $c = 2\\sqrt{m K_p} \\approx 6{,}3$ N·s/m, mehr als sechsmal so viel Luftwiderstand, wie wir haben."
+                },
+                {
+                  "text": "Überdämpft, $\\zeta > 1$",
+                  "why": "Überdämpfung braucht viel Dämpfung im Vergleich zur Steifigkeit. Unsere Verstärkung ist hoch und unser Luftwiderstand klein, also genau umgekehrt."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q3",
+              "q": "Welches $K_p$ würde die Drohne mit reinem P-Regler kritisch dämpfen ($\\zeta = 1$)?",
+              "options": [
+                {
+                  "text": "$K_p = 0{,}5$ N/m",
+                  "correct": true,
+                  "why": "Setz $c/(2\\sqrt{m K_p}) = 1$, dann ist $K_p = c^2/(4m) = 0{,}5$ N/m. Aber mit so einer schwachen Feder müsste die Drohne 9,8 m *unter* dem Ziel sein, nur um sich zu halten. Sie hebt also nie ab. Ein P-Regler allein kann uns nicht beides geben."
+                },
+                {
+                  "text": "$K_p = 20$ N/m",
+                  "why": "Das ist unsere hüpfige Standardeinstellung mit $\\zeta \\approx 0{,}16$. Mehr Verstärkung heißt *weniger* Dämpfung."
+                },
+                {
+                  "text": "$K_p = 200$ N/m",
+                  "why": "Mehr Verstärkung senkt $\\zeta$ noch weiter (auf etwa 0,05). Die Verstärkung steht im Nenner."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q4",
+              "q": "Ein überdämpftes System hat die $s$-Werte $-0{,}2$ und $-10$. Welcher entscheidet, wie lange du wartest?",
+              "options": [
+                {
+                  "text": "$-0{,}2$",
+                  "correct": true,
+                  "why": "$e^{-0{,}2t}$ braucht etwa 20 s, um auf 2 % abzuklingen, $e^{-10t}$ ist nach 0,4 s weg. Der, der der senkrechten Achse am nächsten liegt, hat das Sagen."
+                },
+                {
+                  "text": "$-10$",
+                  "why": "$e^{-10t}$ verschwindet in Bruchteilen einer Sekunde. Das ist der schnelle Teil, der vorbei ist, bevor du ihn bemerkst."
+                },
+                {
+                  "text": "Beide gleich",
+                  "why": "Sie klingen sehr unterschiedlich schnell ab, also bestimmt der langsame, was du siehst."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Theo: „Wir haben uns zu diesen $s$-Werten *durchgeraten*. Nimm Schwerkraft, Wind, Pakete und einen schlaueren Regler dazu, und das Raten wird hässlich. Gibt es eine Maschine, die diese Analysis in **schlichte Algebra** verwandelt?“"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "twins": {
+      "title": "Feder gegen Drohne",
+      "spring": "Masse an einer Feder",
+      "drone": "Drohne mit P-Regler",
+      "msdAria": "Eine Masse an einer Feder und einem Dämpfer, die um ihre Ruhelage federt.",
+      "plotY": "Abstand zum Ziel (m)",
+      "plotAria": "Abstand zum Ziel über die Zeit für die Drohne und für die Feder. Die zwei Kurven liegen übereinander.",
+      "target": "Ziel / Ruhelage",
+      "kp": "Steifigkeit: Feder $k$ = Drohnenverstärkung $K_p$",
+      "personality": "Charakter",
+      "help": "Beide starten 1 m unter ihrem Ziel und werden losgelassen. Der Schieberegler setzt die Steifigkeit der Feder und die Verstärkung der Drohne auf dieselbe Zahl.",
+      "describe": "Drohne ist {d} m vom Ziel entfernt, Federmasse {s} m von der Ruhelage.",
+      "regime": {
+        "under": "unterdämpft",
+        "critical": "kritisch gedämpft",
+        "over": "überdämpft"
+      },
+      "together": "beide in einem Diagramm"
+    },
+    "personality": {
+      "title": "Zwei Knöpfe, zwei Punkte, ein Charakter",
+      "response": "Antwort auf einen Sprung um 1 m",
+      "target": "Ziel",
+      "plotAria": "Sprungantwort eines Systems 2. Ordnung für die gewählte Eigenkreisfrequenz und den gewählten Dämpfungsgrad.",
+      "planeAria": "Die Karte von s mit den zwei s-Werten des Systems und einem gestrichelten Kreis mit Radius Omega n.",
+      "msdAria": "Eine Masse an einer Feder, die die Sprungantwort nachspielt.",
+      "panelAria": "Kleine Sprungantwort mit Dämpfungsgrad {z}.",
+      "panel": {
+        "0": "unterdämpft (ζ = {z})",
+        "1": "kritisch (ζ = {z})",
+        "2": "überdämpft (ζ = {z})"
+      },
+      "radius": "Radius ωn = {w}",
+      "wn": "Eigenkreisfrequenz $\\omega_n$",
+      "zeta": "Dämpfungsgrad $\\zeta$",
+      "overshoot": "Überschwingen",
+      "settle": "eingeschwungen (2 %)",
+      "roots": "die zwei s-Werte",
+      "personality": "Charakter",
+      "never": "nie",
+      "playSpring": "An der Feder nachspielen",
+      "stopSpring": "Feder anhalten",
+      "describe": "Dämpfungsgrad {z}, Eigenkreisfrequenz {w} Radiant pro Sekunde, s-Werte {r}.",
+      "regime": {
+        "under": "unterdämpft",
+        "critical": "kritisch gedämpft",
+        "over": "überdämpft"
+      },
+      "planeCap": "die zwei s-Werte",
+      "springCap": "an einer Feder zuschauen",
+      "re": "σ",
+      "im": "ω",
+      "offMap": "{v} liegt außerhalb der Karte ←"
+    },
+    "race": {
+      "title": "Das Dämpfungsrennen",
+      "choose": "Deine Dämpfung",
+      "ref": "ζ = 1 (kritisch)",
+      "yours": "dein ζ",
+      "yoursZ": "ζ = {z}",
+      "msdAria": "Eine Masse an einer Feder, die sich auf ihre Ruhelage zubewegt.",
+      "plotAria": "Sprungantworten für kritische Dämpfung und für den gewählten Dämpfungsgrad.",
+      "planeAria": "Die zwei s-Werte für den gewählten Dämpfungsgrad.",
+      "settleRef": "ζ = 1 eingeschwungen",
+      "settleYours": "dein ζ eingeschwungen",
+      "slow": "der langsame",
+      "fast": "der schnelle",
+      "never": "nicht innerhalb von 12 s",
+      "same": "Das ist die Referenz selbst: die schnellste Antwort ohne Überschwingen.",
+      "slower": "Deine zusätzliche Dämpfung hat sie etwa {k}-mal langsamer gemacht.",
+      "replay": "Nochmal rennen",
+      "planeCap": "die zwei s-Werte",
+      "re": "σ",
+      "im": "ω",
+      "fastOff": "← der schnelle bei {v} (außerhalb der Karte)",
+      "double": "beide hier"
+    }
+  }
+}

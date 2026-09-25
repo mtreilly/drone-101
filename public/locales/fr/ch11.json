@@ -1,0 +1,311 @@
+{
+  "kicker": "Chapitre 11",
+  "title": "Le défi du drone",
+  "question": "Arriveras-*tu* à garder le drone à 2 m quoi qu'il arrive ?",
+  "sections": [
+    {
+      "id": "briefing",
+      "title": "Briefing de mission",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Bon. Vrai drone, vraie livraison. Il décolle avec un colis, encaisse une rafale, largue le colis, et tient 2 m tout du long. Vingt secondes."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Et on n'a le droit de toucher à rien pendant qu'il vole ?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "C'est tout l'intérêt. Le correcteur doit se débrouiller seul. Nous, on choisit juste trois nombres. Enfin, quatre."
+        },
+        {
+          "t": "p",
+          "text": "La mission, seconde par seconde :"
+        },
+        {
+          "t": "list",
+          "ordered": true,
+          "items": [
+            "**0 s :** décollage du sol avec un {dis|colis} de 0,2 kg (0,7 kg au total).",
+            "**6–9 s :** une {dis|rafale} vers le bas pousse avec 1,5 N.",
+            "**12 s :** le {dis|colis est largué}. D'un coup, le drone est 0,2 kg plus léger.",
+            "**20 s :** fin de la mission."
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Pour le final, notre modèle de drone devient un peu plus honnête. Chacun de ces points est une réalité avec laquelle les vrais drones doivent vivre :"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Retard des moteurs :** les hélices mettent environ 0,05 s à accélérer ou ralentir. La poussée demandée arrive un instant plus tard.",
+            "**Un capteur bruité :** chaque mesure de hauteur est fausse d'environ 2 cm, au hasard, mille fois par seconde.",
+            "**Des moteurs limités :** de 0 à 20 N, jamais négatif.",
+            "**D est filtré :** comme on ne connaît pas la vraie vitesse, D utilise la pente de la mesure filtrée du capteur, avec la constante de temps $\\tau_f$ que tu choisis."
+          ]
+        },
+        {
+          "t": "note",
+          "text": "On ignore toujours l'inclinaison, le vent latéral, les batteries qui faiblissent et cent autres choses. Mais la boucle d'altitude d'un vrai drone ressemble beaucoup à celle-ci."
+        },
+        {
+          "t": "predict",
+          "id": "ch11-drop",
+          "gate": true,
+          "q": "Quand le colis est largué à 12 s, quel terme fait le gros du travail pour ramener le drone à exactement 2 m ?",
+          "options": [
+            {
+              "text": "P : il réagit tout de suite à l'erreur",
+              "why": "P réagit en premier, mais P seul se stabiliserait juste avec un affaissement *différent*, parce que la poussée de vol stationnaire a changé."
+            },
+            {
+              "text": "I : le tas doit trouver la nouvelle poussée de vol stationnaire",
+              "correct": true,
+              "why": "Le drone a maintenant besoin d'environ 4,9 N au lieu de 6,9 N. Seule l'intégrale peut aller chercher une nouvelle poussée constante et finir quand même avec une erreur nulle."
+            },
+            {
+              "text": "D : il arrête le saut",
+              "why": "D amortit le saut, ce qui est utile, mais il se tait dès que le drone est immobile, donc il ne peut pas tenir le nouvel équilibre."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mission",
+      "title": "Pilote la mission",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Chaque changement de curseur relance la mission, et le vol précédent reste affiché en fantôme. Le petit plan s montre les pôles **nominaux** (capteur parfait, pas de colis, pas de limites), pour que tu voies l'image linéaire pendant que le vrai vol, bien plus désordonné, se déroule à côté. Gagne les six étoiles pour l'or."
+        },
+        {
+          "t": "widget",
+          "id": "mission"
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Bloqué ? Les réglages gagnants du terrain de jeu du chapitre 9 sont un bon point de départ. Ensuite, allonge $\\tau_f$ jusqu'à ce que les moteurs arrêtent de crépiter."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "J'ai réglé le correcteur parfait dans ma tête : un $K_d$ énorme, le filtre le plus court possible pour que D réagisse instantanément. Il est impeccable par air calme ! Regardez…"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "…pourquoi les moteurs hurlent ? La ligne orange est toute floue, et maintenant il dépasse aussi !"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Chapitre 9, avertissement 2. Un gros $K_d$ fois un filtre minuscule transforme chaque tremblement de 2 cm du capteur en pic de poussée. Et les pics sont écrêtés à 0 N bien plus souvent qu'à 20 N, donc ils ajoutent une poussée en plus, déséquilibrée : c'est ça, le dépassement. Il n'était impeccable que parce que ton air calme imaginaire venait avec un capteur parfait."
+        },
+        {
+          "t": "p",
+          "text": "Essaie **le réglage air calme de June** et regarde l'étoile « moteurs calmes » échouer. Puis allonge le filtre à environ 0,04 s et descends $K_d$ vers 6. Tu perds un chouïa de vitesse et tu gagnes des moteurs calmes. Ce compromis, la vitesse contre le bruit et contre la robustesse, c'est *ça*, l'automatique."
+        }
+      ]
+    },
+    {
+      "id": "reflect",
+      "title": "Un regard en arrière",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Au début, je pensais que « pousser plus fort » réglait tout. C'est l'inverse, en fait ? La plupart des problèmes venaient du fait de pousser trop fort sur des informations vieilles ou bruitées. Je suis content d'avoir posé toutes les questions bêtes. Aucune ne l'était."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Je crois enfin à la transformée de Laplace. Ce n'est pas une table à consulter : c'est une sonde qui demande à un signal « combien de $e^{st}$ y a-t-il en toi ? ». Et comme les pentes deviennent des multiplications par $s$, le calcul différentiel devient de l'algèbre. Les pôles sont là où la réponse explose : les $e^{st}$ dont le système est construit."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Et moi, j'ai appris que « plus », ce n'est pas « mieux » : plus de gain, plus d'amortissement, plus de $K_i$, plus de vitesse. Il y a toujours une falaise, et les bonnes conceptions gardent une marge. Et aussi : toujours essayer sur le drone."
+        },
+        {
+          "t": "p",
+          "text": "Voici tout ce qu'on a construit, de la douche jusqu'au final. Chaque bulle renvoie à l'endroit où l'idée est née."
+        },
+        {
+          "t": "recap",
+          "title": "Tout le voyage, d'une traite",
+          "items": [
+            "**Rétroaction** : mesurer ce qui s'est passé, comparer à l'objectif, agir sur l'erreur (chap. 0–1).",
+            "La **commande P** pousse proportionnellement à l'erreur, mais laisse un affaissement et oscille quand elle est forte (chap. 2).",
+            "Les **dérivées, exponentielles et nombres qui tournent** décrivent comment les choses changent : $e^{st}$ avec $s = \\sigma + i\\omega$ grandit ou rétrécit *et* oscille (chap. 3–6).",
+            "La **transformée de Laplace** transforme les pentes en multiplications par $s$, donc le calcul différentiel devient de l'algèbre (chap. 7).",
+            "Les **pôles d'une fonction de transfert** sont les termes $e^{st}$ dont un système est fait : moitié gauche, ça se calme ; moitié droite, ça explose (chap. 8).",
+            "**PID** : I tue l'affaissement, D ajoute de l'amortissement, et chacun déplace les pôles (chap. 9).",
+            "Le **retard** ajoute du retard de phase ; les **marges** disent à quelle distance du bord de la falaise on est (chap. 10).",
+            "Le vrai matériel ajoute des limites, du retard et du bruit, donc un bon correcteur est calme autant que rapide (chap. 11)."
+          ]
+        },
+        {
+          "t": "map"
+        }
+      ]
+    },
+    {
+      "id": "final-check",
+      "title": "Explique-le à un ami",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Le meilleur test de compréhension, c'est d'expliquer. Avant chaque réponse, essaie de dire *ta* version à voix haute. Puis choisis l'explication qui lui correspond le mieux."
+        },
+        {
+          "t": "quiz",
+          "title": "Vérification finale",
+          "items": [
+            {
+              "id": "ch11-q1",
+              "q": "Un ami demande : « Mais pourquoi la transformée de Laplace existe-t-elle ? »",
+              "options": [
+                {
+                  "text": "Elle transforme les pentes en multiplications par $s$, donc les équations du changement deviennent de l'algèbre, et les pôles de la réponse montrent de quels comportements $e^{st}$ le système est fait",
+                  "correct": true,
+                  "why": "C'est le cœur de l'affaire : du calcul différentiel à l'algèbre, plus une carte (le plan s) qui montre la personnalité d'un coup d'œil."
+                },
+                {
+                  "text": "C'est une table de formules que les ingénieurs apprennent par cœur pour trouver les réponses",
+                  "why": "La table est un *résultat*. On a démontré chaque ligne en sondant des signaux avec $e^{-st}$ et en mesurant l'aire."
+                },
+                {
+                  "text": "Elle convertit les signaux en fréquences sonores",
+                  "why": "Ça, c'est plus proche de la transformée de Fourier, qui n'utilise que la partie qui tourne ($s = i\\omega$). Laplace autorise aussi la croissance et la décroissance ($\\sigma$)."
+                }
+              ]
+            },
+            {
+              "id": "ch11-q2",
+              "q": "« C'est quoi, vraiment, un pôle ? »",
+              "options": [
+                {
+                  "text": "Une valeur de $s$ où la fonction de transfert explose : un des mouvements $e^{st}$ que le système fait naturellement, avec sa partie réelle qui dit croissance/décroissance et sa partie imaginaire qui dit oscillation",
+                  "correct": true,
+                  "why": "Moitié gauche = s'éteint, moitié droite = explose, hauteur = vitesse d'oscillation. Toute la personnalité sur une seule carte."
+                },
+                {
+                  "text": "Une pièce physique du drone, comme un moteur",
+                  "why": "Les pôles appartiennent à *toute la boucle* : change un gain et ils bougent, alors qu'aucune pièce du drone n'a changé."
+                },
+                {
+                  "text": "Le point où le système devient instable",
+                  "why": "Tous les systèmes ont des pôles, les stables aussi. L'instabilité, c'est quand un pôle se trouve dans le demi-plan droit."
+                }
+              ]
+            },
+            {
+              "id": "ch11-q3",
+              "q": "« Pourquoi je dépassais sans arrêt sous la douche ? »",
+              "options": [
+                {
+                  "text": "Tu réagissais à une information en retard avec trop de gain : la phase de la boucle atteignait −180° alors que son gain était encore au-dessus de 1, donc chaque correction entretenait l'oscillation",
+                  "correct": true,
+                  "why": "Exactement. Le remède, c'était moins de gain, ou plus de marge de phase, pas plus d'effort."
+                },
+                {
+                  "text": "La douche était défectueuse",
+                  "why": "Le robinet et la pomme correspondaient parfaitement une fois décalés du retard (chapitre 0). Pas cassée : en retard."
+                },
+                {
+                  "text": "Tu ne réagissais pas assez vite",
+                  "why": "Réagir *plus fort* empirait les choses, comme l'ont montré les mains robots. La vitesse sur de vieilles nouvelles, c'est ça le problème."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "next",
+      "title": "Et après ?",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Tu en sais maintenant plus en automatique que la plupart des gens n'en croiseront jamais. Voici où la route continue, chaque piste étant un nouveau carnet :"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Lieu des racines :** au lieu de déplacer les pôles, déplace le *gain* et regarde les pôles tracer des chemins à travers le plan s.",
+            "**Représentation d'état :** plein de capteurs, plein de moteurs, tout à la fois : l'inclinaison, la rotation et la position d'un vrai drone ensemble.",
+            "**Commande numérique :** les vrais correcteurs tournent sur des ordinateurs qui échantillonnent toutes les quelques millisecondes. Le plan s a un cousin, le plan z.",
+            "**Filtres de Kalman :** combattre le bruit intelligemment en mélangeant la prédiction d'un modèle et la mesure du capteur.",
+            "**Prédicteurs de Smith et commande prédictive :** des correcteurs qui embarquent une petite simulation, pour voir au-delà des retards.",
+            "**Commande non linéaire et robuste :** que faire quand le monde n'est pas linéaire, et comment prouver qu'on a encore de la marge."
+          ]
+        },
+        {
+          "t": "cliff",
+          "text": "La prochaine fois qu'une douche te fera danser entre brûlant et glacial, tu sauras exactement ce qui se passe. Et tu sauras que ce n'est pas ta faute. **C'est la marge de phase.**"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "mission": {
+      "title": "Contrôle de mission",
+      "measured": "lecture du capteur",
+      "hAria": "Hauteur pendant les 20 secondes de la mission avec la bande cible ; les moments de la rafale et du largage du colis sont marqués.",
+      "tAria": "Poussée pendant la mission avec la limite moteur de 20 N.",
+      "gust": "rafale",
+      "drop": "largage",
+      "max": "20 N max",
+      "splane": "Pôles nominaux en boucle fermée du drone avec retard des moteurs et dérivée filtrée.",
+      "filter": "Filtre de D $\\tau_f$",
+      "dMeas": "D sur la mesure (pas d'à-coup)",
+      "presetJune": "Le réglage air calme de June",
+      "instant": "Voler instantanément",
+      "checklist": "Liste de contrôle de la mission",
+      "crit": {
+        "rise": "Atteindre 2 m (± {bandCm} cm) en moins de {rise} s",
+        "overshoot": "Dépassement sous {overshoot} % au décollage",
+        "gust": "Rester à moins de {gustCm} cm pendant la rafale",
+        "recover": "Revenir à ± {bandCm} cm moins de {recover} s après le largage",
+        "ground": "Ne jamais toucher le sol après le décollage",
+        "calm": "Moteurs calmes en vol stationnaire (tremblement sous {calm} N)"
+      },
+      "touched": "touché !",
+      "clear": "OK",
+      "ready": "Prêt. Règle les gains, puis appuie sur Lecture (ou Voler instantanément).",
+      "flying": "En vol…",
+      "gold": "OR ! Les six étoiles. Tu es automaticien·ne.",
+      "stars": "{n} étoiles sur 6. Continue à régler !",
+      "best": "Ton meilleur score jusqu'ici : {n} étoiles (Kp {kp}, Ki {ki}, Kd {kd}, τf {tf} s).",
+      "phase": {
+        "takeoff": "{s} s : décollage avec le colis",
+        "gust": "{s} s : une rafale pousse vers le bas !",
+        "hover": "{s} s : vol stationnaire, colis à bord",
+        "drop": "{s} s : colis largué !",
+        "done": "Mission accomplie."
+      },
+      "poles": {
+        "stable": "Pôles nominaux : tous dans la moitié gauche.",
+        "unstable": "Un pôle nominal est dans la moitié droite : ce réglage ne peut pas tenir !",
+        "off": "({n} pôle(s) rapide(s) hors du bord gauche.)"
+      }
+    }
+  }
+}

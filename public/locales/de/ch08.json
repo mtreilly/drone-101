@@ -1,0 +1,390 @@
+{
+  "kicker": "Kapitel 8",
+  "title": "Übertragungsfunktionen, Pole und Nullstellen",
+  "question": "Können wir den ganzen Charakter eines Systems an einem Bruch ablesen?",
+  "sections": [
+    {
+      "id": "recipe",
+      "title": "Das Rezept des Systems",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Schaut euch an, was in Kapitel 7 rauskam. Vergesst mal kurz die Starthöhe (die Drohne schwebt am Anfang ruhig auf 1 m). Dann war die Antwort immer derselbe Bruch *mal* das, worum wir sie gebeten haben."
+        },
+        {
+          "t": "math",
+          "tex": "\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\sp{R}(s)"
+        },
+        {
+          "t": "p",
+          "text": "$\\sp{R}(s)$ ist die Transformation des **Eingangs**: wie weit sich der Sollwert von 1 m wegbewegen soll (die Transformation jedes Eingangs kommt direkt aus unserer Tabelle aus Kapitel 7). $G(s)$ ist fest: Es hängt nur von der Drohne und vom Regler ab. Also geben wir ihm einen Namen: die **Übertragungsfunktion**, das Verhältnis von Ausgang zu Eingang im s-Land, wenn alles in Ruhe startet."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "$G(s)$ ist also wie das **Rezept** der Drohne. Wirf irgendeine Zutat rein, und es sagt dir, was rauskommt!"
+        },
+        {
+          "t": "p",
+          "text": "Probier drei verschiedene Eingänge an derselben Drohne aus. Das Rezept ändert sich nie, nur $\\sp{R}(s)$."
+        },
+        {
+          "t": "widget",
+          "id": "recipe"
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Übertragungsfunktion $G(s)$",
+              "def": "Ausgang ÷ Eingang, beide transformiert, wenn das System in Ruhe startet. Sie ist ein Bruch aus zwei Polynomen in $s$ und enthält alles darüber, wie das System reagiert."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "poles",
+      "title": "Pole: wo das System wohnen will",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Wo **explodiert** $G(s)$? Dort, wo sein Nenner null ist. Kapitel 7 hat uns gezeigt, dass eine Transformation genau bei dem $s$ explodiert, wo ein Signal wohnt. Die Nullstellen des Nenners sind also die $e^{st}$-Terme, aus denen das System besteht. Es sind genau die zwei Punkte, die wir in Kapitel 6 gefunden haben. Sie bekommen einen besonderen Namen: **Pole**, gezeichnet als ×."
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} & m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p} = 0 \\\\ \\Longrightarrow\\quad & s = p,\\ \\bar p \\qquad \\text{(die Pole)} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Jetzt drehen wir den Spieß um. Statt Verstärkungen zu wählen und die Pole zu suchen, **ziehen wir die Pole** und schauen, was für eine Drohne wir bekommen. (Im Hintergrund rechnen wir den Regler aus, der sie dorthin setzt. Dafür braucht es einen neuen Knopf $\\eff{K_d}$, ein Gegendrücken gegen das Tempo, den wir in Kapitel 9 richtig kennenlernen.)"
+        },
+        {
+          "t": "predict",
+          "id": "ch8-rhp",
+          "gate": true,
+          "q": "Was macht die Drohne, wenn wir die Pole in die **rechte Hälfte** der s-Ebene ziehen?",
+          "options": [
+            {
+              "text": "Sie landet sanft",
+              "sketch": "sluggish",
+              "why": "Landen braucht, dass sich alles beruhigt, und Pole in der rechten Hälfte tun das Gegenteil."
+            },
+            {
+              "text": "Sie schwebt, ein bisschen wackelig",
+              "sketch": "steady-wiggle",
+              "why": "Gleichmäßiges Wackeln bekommst du genau **auf** der senkrechten Achse. Knapp dahinter wächst alles."
+            },
+            {
+              "text": "Sie schwingt immer stärker, bis sie abstürzt oder davonfliegt",
+              "sketch": "growing-wiggle",
+              "correct": true,
+              "why": "In der rechten Hälfte hat $e^{st}$ ein $\\sigma > 0$: eine wachsende Spirale. Die Schwünge werden mit jedem Durchgang größer."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "playground"
+        },
+        {
+          "t": "p",
+          "text": "Spiel damit. Ein paar Regeln springen ins Auge, und alle sind Kapitel 5 und 6 in Verkleidung:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Linke Hälfte = beruhigt sich, rechte Hälfte = explodiert.** Der Realteil $\\sigma$ ist die Schrumpf- oder Wachstumsrate.",
+            "**Weiter links = schneller.** Das Einschwingen dauert etwa $4/|\\sigma|$ Sekunden (die gestrichelten senkrechten Linien).",
+            "**Weiter oben = wackeliger.** Die Höhe $\\omega$ ist das Wackeltempo; ein Wackler dauert $2\\pi/\\omega$ Sekunden.",
+            "**Der Winkel bestimmt das Überschwingen.** Pole nahe der reellen Achse schwingen kaum über, Pole nahe der senkrechten Achse schwingen stark über (die gestrichelten Strahlen)."
+          ]
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Ich wollte nur **einen** Pol weit oben und einen weit unten. Es lässt mich nicht! Der untere macht dem oberen alles nach."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Erinnerst du dich an die Zwillingsdreher aus Kapitel 5? Eine echte Drohne macht echte Bewegungen, also braucht jedes drehende $e^{st}$ seinen Spiegelzwilling, damit sich die imaginären Teile aufheben. Komplexe Pole kommen **immer** in Spiegelpaaren."
+        },
+        {
+          "t": "note",
+          "text": "Unsere Drohne startete bei $-1 \\pm 6{,}24i$: Das ist die Drohne mit $K_p = 20$ aus Kapitel 2. Weit oben (sehr wackelig) und nah an der Achse (schwingt langsam ein). Jetzt kannst du *sehen*, warum sie gehüpft ist."
+        }
+      ]
+    },
+    {
+      "id": "zeros",
+      "title": "Nullstellen: ein kurzer Blick",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Auch der Zähler des Bruchs kann null werden. Diese Stellen heißen **Nullstellen**, gezeichnet als ○. Sie ändern nicht, *welche* $e^{st}$-Terme vorkommen (das ist der Job der Pole), aber sie ändern, **wie viel** du von jedem bekommst."
+        },
+        {
+          "t": "p",
+          "text": "Hier ist ein System mit festen Polen bei $-2 \\pm 3i$ und einer Nullstelle, die du verschieben kannst. (Genau diese Form bekommst du von einem Regler, der darauf reagiert, wie schnell sich der *Fehler* ändert. Ein kleiner Vorgeschmack auf Kapitel 9.)"
+        },
+        {
+          "t": "widget",
+          "id": "zero"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Gleiche Pole, aber wenn die Nullstelle nah an den Ursprung kommt, springt die Antwort viel schneller hoch und schwingt stärker über!"
+        },
+        {
+          "t": "p",
+          "text": "Eine Nullstelle nahe am Ursprung lässt das System stark auf **Änderungen** des Eingangs reagieren. Das Überschwingen wächst, obwohl sich die Pole nicht bewegt haben. Weit weg spielt die Nullstelle kaum eine Rolle. Mehr brauchen wir über Nullstellen vorerst nicht."
+        }
+      ]
+    },
+    {
+      "id": "limits",
+      "title": "Ist weiter links immer besser?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Ganz einfach: die Pole *ganz weit* nach links ziehen. Eingeschwungen im Nu. Beste Drohne aller Zeiten!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Aber wie viel Schub braucht das? Bisher haben wir so getan, als könnten die Motoren so stark drücken, wie die Mathematik will."
+        },
+        {
+          "t": "p",
+          "text": "Zeit für Ehrlichkeit. Unsere Motoren können zwischen **0 N** und **20 N** drücken (etwa das Vierfache des Drohnengewichts). Unten wandern die Pole auf einer 45°-Linie nach links. Die gestrichelten Kurven sind die Mathematik mit ausgedachten, unbegrenzten Motoren; die durchgezogenen sind echte Motoren."
+        },
+        {
+          "t": "widget",
+          "id": "limit"
+        },
+        {
+          "t": "p",
+          "text": "Ab einem bestimmten Punkt verlangt die Mathematik 50, 60, 70 Newton, die die Motoren einfach nicht haben. Der {eff|orange Schub} klatscht gegen die Grenzen, die echte Drohne folgt der hübschen linearen Vorhersage nicht mehr, und sie schwingt *stärker* über, als sie es mit sanfteren Polen täte."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "„Weiter links“ ist also nur besser, bis dir der Motor ausgeht. Pole setzen ist ein Abwägen, kein Wettrennen."
+        },
+        {
+          "t": "note",
+          "text": "Ab jetzt bleibt die 20-N-Grenze eingeschaltet."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Was wir jetzt wissen",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Die **Übertragungsfunktion** $G(s)$ = Ausgang ÷ Eingang im s-Land. Sie ist das Rezept des Systems: $\\out{H} = G\\cdot\\sp{R}$.",
+            "**Pole** (×) sind die Stellen, an denen $G(s)$ explodiert: die $e^{st}$-Terme, aus denen das System besteht.",
+            "Linke Hälfte = stabil, rechte Hälfte = explodiert, weiter links = schneller (≈ 4/|σ| s), weiter oben = wackeliger, Winkel = Überschwingen.",
+            "Komplexe Pole kommen immer in Spiegelpaaren.",
+            "**Nullstellen** (○) ändern, wie viel du von jedem Term bekommst. Nahe am Ursprung geben sie einen Tritt dazu.",
+            "Pole weit links brauchen Schub, den die Motoren nicht haben."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch8-q1",
+              "q": "Welches Polpaar schwingt **am schnellsten** ein?",
+              "options": [
+                {
+                  "text": "$-1 \\pm 2i$",
+                  "why": "Einschwingen ≈ $4/1 = 4$ s. Die Höhe (2) wirkt sich nur aufs Wackeln aus, nicht aufs Einschwingen."
+                },
+                {
+                  "text": "$-4 \\pm 2i$",
+                  "correct": true,
+                  "why": "Am weitesten links: Einschwingen ≈ $4/4 = 1$ s."
+                },
+                {
+                  "text": "$-0{,}5 \\pm 5i$",
+                  "why": "Weit oben heißt viele schnelle Wackler, aber es liegt nah an der Achse, also klingen sie langsam ab (≈ 8 s)."
+                }
+              ]
+            },
+            {
+              "id": "ch8-q2",
+              "q": "$G(s) = \\dfrac{3}{s^2 + 2s + 10}$. Wo liegen die Pole, und wie sieht die Antwort aus?",
+              "options": [
+                {
+                  "text": "$-1 \\pm 3i$: stabil, und es wackelt",
+                  "correct": true,
+                  "why": "$s = \\frac{-2 \\pm \\sqrt{4 - 40}}{2} = -1 \\pm 3i$. Linke Hälfte heißt stabil, Imaginärteil heißt Wackeln."
+                },
+                {
+                  "text": "$+1 \\pm 3i$: instabil",
+                  "why": "Vorzeichenfehler. Bei $s^2 + bs + c$ ist der Realteil $-b/2 = -1$, und das liegt in der linken Hälfte."
+                },
+                {
+                  "text": "$-2$ und $-10$: kein Wackeln",
+                  "why": "Das sind nur Koeffizienten des Polynoms. Die Pole sind seine Nullstellen: $-1 \\pm 3i$."
+                }
+              ]
+            },
+            {
+              "id": "ch8-q3",
+              "q": "Du willst **weniger Überschwingen**, aber **dieselbe Einschwingzeit**. Wie verschiebst du die Pole?",
+              "options": [
+                {
+                  "text": "Direkt auf die reelle Achse zu (σ behalten, ω verkleinern)",
+                  "correct": true,
+                  "why": "Gleicher Abstand zur Achse heißt gleiche Einschwingzeit. Ein kleinerer Winkel zur reellen Achse heißt mehr Dämpfung, also weniger Überschwingen."
+                },
+                {
+                  "text": "Direkt nach oben (größeres ω)",
+                  "why": "Damit kippt der Winkel Richtung senkrechte Achse: *mehr* Überschwingen und schnellere Wackler."
+                },
+                {
+                  "text": "Nach rechts",
+                  "why": "Dann schwingt es langsamer ein, und hinter der Achse wird es instabil."
+                }
+              ]
+            },
+            {
+              "id": "ch8-q4",
+              "q": "Pole bei $+0{,}5 \\pm 2i$. Was siehst du?",
+              "options": [
+                {
+                  "text": "Schwünge, die mit jedem Durchgang wachsen",
+                  "sketch": "growing-wiggle",
+                  "correct": true,
+                  "why": "$\\sigma = +0{,}5 > 0$ heißt Wachstum, $\\omega = 2$ heißt Drehen: ein wachsendes Wackeln."
+                },
+                {
+                  "text": "Schwünge, die kleiner werden",
+                  "sketch": "decaying-wiggle",
+                  "why": "Kleiner werden braucht $\\sigma < 0$ (linke Hälfte). Diese Pole liegen rechts."
+                },
+                {
+                  "text": "Gleichmäßiges Schwingen für immer",
+                  "sketch": "steady-wiggle",
+                  "why": "Das gibt’s genau auf der Achse ($\\sigma = 0$). Bei $+0{,}5$ wächst es."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Theo: „Die Pole sind wunderschön. Aber Moment: Wir haben das ganze Kapitel geschummelt und der Drohne ihren Schwebeschub geschenkt. Ohne ihn lässt die Schwerkraft sie immer noch **durchhängen**. Unsere Karte ist in Ordnung. Unser *Regler* muss repariert werden.“"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "recipe": {
+      "title": "Ein Rezept, drei Eingänge",
+      "choose": "Worum bitten wir?",
+      "in": {
+        "step": "ein Sprung nach oben",
+        "pulse": "ein sanfter Sprung",
+        "wave": "eine Welle"
+      },
+      "input": "Sollwert (Eingang)",
+      "output": "Höhe (Ausgang)",
+      "plotAria": "Sollwert und Höhe der Drohne über die Zeit für den gewählten Eingang.",
+      "same": "bleibt gleich",
+      "changes": "ändert sich",
+      "describe": {
+        "step": "Der Sollwert springt von 1 auf 2 Meter, und die Drohne folgt mit hüpfigem Überschwingen.",
+        "pulse": "Der Sollwert gleitet von 1 auf 2 Meter; die Drohne folgt mit einem kleineren Hüpfer.",
+        "wave": "Der Sollwert wellt sich auf und ab; die Drohne folgt der Welle."
+      },
+      "droneCap": "die Drohne, die folgt"
+    },
+    "playground": {
+      "title": "Der Pol-Spielplatz",
+      "planeAria": "Die s-Ebene mit einem verschiebbaren Polpaar. Die linke Hälfte beruhigt sich, die rechte explodiert. Mit den Pfeiltasten bewegst du den gewählten Pol.",
+      "pole": "p",
+      "poles": "Pole",
+      "settle": "Einschwingen (≈4/σ)",
+      "overshoot": "Überschwingen",
+      "response": "Höhe nach einem Sprung um 1 m",
+      "target": "Ziel",
+      "plotAria": "Sprungantwort der Drohne für die gewählten Pole, die vorherige Antwort als Geist.",
+      "settles": "eingeschwungen",
+      "over": "Überschwingen",
+      "raysLegend": "gestrichelte Strahlen: Überschwingen in %",
+      "never": "nie",
+      "wiggle": "ein Wackler ≈ {T} s",
+      "verdict": {
+        "stable": "Linke Hälfte: Sie beruhigt sich.",
+        "unstable": "Rechte Hälfte: Sie explodiert!",
+        "marginal": "Genau auf der Achse: Sie schwingt ewig."
+      },
+      "challenge": "Mini-Challenge: Überschwingen unter 10 % und in 2 s eingeschwungen",
+      "chalOk": "Challenge geschafft! Überschwingen {o} %, eingeschwungen in {s} s.",
+      "chalNo": "Noch nicht: Überschwingen {o} %, eingeschwungen in {s} s. Ziel auf die markierte Zone.",
+      "help": "Zieh eines der × (oder spring mit Tab hin und nimm die Pfeiltasten, mit Umschalt in großen Schritten). Die Drohne spielt jedes Mal ihre Sprungantwort ab.",
+      "describe": "Pole bei {p}. Dämpfungsgrad {z}. Eingeschwungen in etwa {s} Sekunden, Überschwingen etwa {o} Prozent.",
+      "re": "σ",
+      "im": "ω"
+    },
+    "zero": {
+      "title": "Verschieb die Nullstelle",
+      "planeAria": "Die s-Ebene mit zwei festen Polen bei minus 2 plus minus 3 i und einer verschiebbaren Nullstelle auf der reellen Achse.",
+      "zero": "Nullstelle",
+      "y": "Ausgang",
+      "noZero": "ohne Nullstelle (gleiche Pole)",
+      "withZero": "mit der Nullstelle",
+      "plotAria": "Sprungantworten mit und ohne Nullstelle.",
+      "osNo": "Überschwingen ohne Nullstelle",
+      "osYes": "Überschwingen mit Nullstelle",
+      "zeroAt": "Nullstelle bei",
+      "near": "Nahe am Ursprung: ein kräftiger Tritt am Anfang und zusätzliches Überschwingen.",
+      "mid": "Ein mäßiger zusätzlicher Tritt.",
+      "far": "Weit weg: Die Nullstelle ändert kaum etwas.",
+      "describe": "Nullstelle bei {z}, Überschwingen {o} Prozent.",
+      "re": "σ",
+      "im": "ω",
+      "help": "Zieh den ○ entlang der Achse (oder spring mit Tab hin und nimm ← →). Die × Pole bleiben, wo sie sind."
+    },
+    "limit": {
+      "title": "Echte Motoren haben Grenzen",
+      "ideal": "unbegrenzte Motoren (Mathematik)",
+      "real": "echte Drohne",
+      "idealT": "Schub, den die Mathematik will",
+      "realT": "Schub, den wir bekommen",
+      "hAria": "Höhe nach einem Sprung für unbegrenzte und für echte Motoren.",
+      "tAria": "Schub über die Zeit, mit den Motorgrenzen bei 0 und 20 Newton.",
+      "max": "Motor max. 20 N",
+      "min": "Motoren können nicht nach unten ziehen",
+      "peak": "Spitzenschub, den die Mathematik will",
+      "tsIdeal": "eingeschwungen (Mathematik)",
+      "tsReal": "eingeschwungen (echt)",
+      "notYet": "nicht innerhalb von 3 s",
+      "sigma": "Polposition (wandert auf 45° nach links)",
+      "toggle": "Echte Motoren: 0–20 N",
+      "capped": "Die Mathematik will {p} N, aber bei 20 N ist für die Motoren Schluss. Die Wirklichkeit folgt dem linearen Bild nicht mehr.",
+      "fantasy": "Ausgedachte Motoren liefern fröhlich {p} N. Schalte die Grenzen wieder ein.",
+      "fine": "Im Bereich der Motoren: Mathematik und Wirklichkeit stimmen überein."
+    }
+  }
+}

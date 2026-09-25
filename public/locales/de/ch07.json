@@ -1,0 +1,535 @@
+{
+  "kicker": "Kapitel 7",
+  "title": "Die Laplace-Transformation",
+  "question": "Können wir Analysis in Algebra verwandeln?",
+  "sections": [
+    {
+      "id": "probe",
+      "title": "Eine Sonde für Signale",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Jedes Mal, wenn wir etwas gelöst haben, haben wir $e^{st}$ *geraten*, eingesetzt und gebetet. Jetzt noch Schwerkraft, eine Starthöhe, ein Regler dazu… mein Notizheft brennt."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Wenn ich was baue, ist der Trick immer, aus einer schweren Aufgabe eine leichte zu machen. Schwer: Analysis mit Steigungen von Steigungen. Leicht: schlichte Algebra mit $+$, $-$, $\\times$, $\\div$."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Wir brauchen also eine Maschine, die eine Kurve frisst und etwas ausspuckt, in dem Steigungen zu Multiplikation werden? Gibt’s so was?"
+        },
+        {
+          "t": "p",
+          "text": "Gibt es, und wir können sie aus Dingen bauen, die wir schon haben. Die Idee: Nimm irgendein Signal $f(t)$. Multiplizier es mit einer **Sonde**, der schrumpfenden Exponentialfunktion $e^{-st}$ aus Kapitel 4. Dann miss die **Gesamtfläche** unter dem Produkt (die aufsummierte Fläche aus Kapitel 3)."
+        },
+        {
+          "t": "math",
+          "tex": "F(s) = \\int_0^\\infty \\out{f(t)}\\; e^{-st}\\,dt"
+        },
+        {
+          "t": "p",
+          "text": "Das ist alles. Eine Zahl $s$ geht rein, eine Fläche kommt raus. Probier verschiedene $s$-Werte aus, und du bekommst eine ganz neue Kurve $F(s)$. Diese Kurve ist die **Laplace-Transformation** von $f$: ein Fingerabdruck des Signals."
+        },
+        {
+          "t": "predict",
+          "id": "ch7-step",
+          "gate": true,
+          "q": "Nimm das einfachste Signal, einen Sprung: $f(t) = 1$ für immer. Wir machen $s$ **größer**. Was passiert dann mit der Fläche unter $1 \\cdot e^{-st}$?",
+          "options": [
+            {
+              "text": "Sie wächst",
+              "why": "Ein größeres $s$ lässt die Sonde *schneller* abklingen, also bleibt weniger von ihr übrig."
+            },
+            {
+              "text": "Sie schrumpft",
+              "correct": true,
+              "why": "Richtig. Ein größeres $s$ drückt die Sonde schneller zusammen, also gibt es weniger Fläche. Genau genommen ist die Fläche exakt $1/s$."
+            },
+            {
+              "text": "Sie bleibt gleich",
+              "why": "Die Form der Sonde hängt von $s$ ab: Größeres $s$ heißt schnelleres Abfallen, also kleinere Fläche."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "probe"
+        },
+        {
+          "t": "p",
+          "text": "Fahr $s$ durch, und die Punkte zeichnen beim Sprung $1/s$ nach. Probier auch die anderen Signale aus. Ein wachsendes Signal $e^{0{,}5t}$ hat nur dann eine endliche Fläche, wenn die Sonde **schneller** schrumpft, als das Signal wächst, also bei $s > 0{,}5$. Darunter läuft die Fläche ins Unendliche."
+        },
+        {
+          "t": "note",
+          "text": "Vorerst nehmen wir nur reelle $s$. Komplexe $s$ kommen gleich, und da steckt die Magie.",
+          "aside": true
+        }
+      ]
+    },
+    {
+      "id": "explode",
+      "title": "Die Transformation schreit dort, wo das Signal wohnt",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Schauen wir uns $f(t) = e^{at}$ genauer an. Tasten wir es mit $e^{-st}$ ab, ist das Produkt $e^{(a-s)t}$, eine schlichte Exponentialfunktion. Ihre Fläche ist $\\frac{1}{s-a}$ (das leiten wir unten in der Tabelle richtig her)."
+        },
+        {
+          "t": "widget",
+          "id": "explode"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Wenn $s$ nah an $a$ kommt, wird die Zahl **riesig**! Bei $s = a$ hebt die Sonde das Wachstum genau auf, das Produkt ist für immer flach, und die Fläche ist unendlich."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Die Transformation **explodiert also genau bei dem** $s$**, wo das Signal wohnt**. Wenn du mir nur $F(s)$ geben würdest, könnte ich das $a$ des Signals finden, indem ich suche, wo sie explodiert."
+        },
+        {
+          "t": "p",
+          "text": "Jetzt machen wir $s$ komplex, $s = \\sigma + i\\omega$, genau wie unsere drehenden Zahlen aus Kapitel 5. Nimm ein drehendes Signal $e^{2it}$. Die Sonde $e^{-st}$ schrumpft es (das ist der $\\sigma$-Teil) **und dreht es rückwärts** (das ist der $\\omega$-Teil). Unten werden die kleinen Flächenstücke des Produkts als Pfeile Spitze an Ende aneinandergehängt. Schau auf die laufende Summe."
+        },
+        {
+          "t": "widget",
+          "id": "unspin"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Wenn sich die Sonde genau mit 2 dreht, hört das Signal auf zu drehen, alle Stücke zeigen in dieselbe Richtung, und die Summe schießt davon. Wenn sie nicht zusammenpassen, rollen sich die Pfeile ein und heben sich auf."
+        },
+        {
+          "t": "p",
+          "text": "Dieselbe Lektion, eine Dimension höher: Die Transformation explodiert bei dem komplexen $s$, wo das Signal wohnt. Deshalb zeichnen wir ab jetzt jedes $s$ auf eine Karte mit $\\sigma$ nach rechts und $\\omega$ nach oben. Unsere „Karte von $s$“ aus Kapitel 5 bekommt endlich ihren erwachsenen Namen: die **s-Ebene**."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Die s-Ebene",
+              "def": "Die Karte der komplexen Zahlen $s = \\sigma + i\\omega$. Links heißt schrumpfen, rechts heißt wachsen, hoch und runter heißt drehen. Jedes Signal $e^{st}$ wohnt an einem Punkt darauf, und seine Transformation explodiert genau dort."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rule",
+      "title": "Aus Steigungen wird Multiplikation",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Jetzt die Eigenschaft, für die sich das Ganze lohnt. Was passiert mit der Transformation, wenn wir die **Steigung** des Signals nehmen? Probier’s mit $f = e^{at}$. Seine Steigung ist $a e^{at}$ (Kapitel 4), also"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\mathcal{L}\\{f'\\} &= \\frac{a}{s-a} = \\frac{s}{s-a} - 1 \\\\ &= s\\,F(s) - f(0) \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Aus der Steigung wurde **Multiplizieren mit** $s$, minus der Startwert $f(0)$. Aus Analysis wurde Algebra!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Moment. Das ist ein Trick, der bei $e^{at}$ klappt, weil $e^{at}$ besonders ist. Gleich erzählt ihr mir, das ist eine Regel zum Auswendiglernen. Dass das für *jede* Kurve gilt, kauf ich euch nicht ab."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Dann testen wir’s an der hässlichsten Kurve, die du zeichnen kannst."
+        },
+        {
+          "t": "p",
+          "text": "Zeichne links ein beliebiges Signal (oder wähl eine Vorlage). Wir berechnen seine Steigung und dann mit der Flächenmaschine **beide Seiten** der Regel: die Transformation der Steigung und $s\\,F(s) - f(0)$. Die zwei Kurven rechts sind diese zwei Seiten für jedes $s$."
+        },
+        {
+          "t": "widget",
+          "id": "derivRule"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Sie passen. Sogar bei meinem wackeligen Gekritzel. Okay, es ist kein Trick. Es klappt für jedes Signal."
+        },
+        {
+          "t": "p",
+          "text": "*Warum* klappt es? Denk an die Fläche von $f'(t)\\,e^{-st}$. Die Steigung summiert Änderungen von $f$ auf. Mit der Sonde gewichtet ergeben diese Änderungen zusammen $s$ mal das abgetastete $f$, minus den Wert, bei dem du angefangen hast. (Der ehrliche Name dafür ist *partielle Integration*, aber die Zeichnung beweist es genauso gut.) Wende die Regel zweimal an, und du bekommst die zweite Steigung:"
+        },
+        {
+          "t": "math",
+          "tex": "\\mathcal{L}\\{f''\\} = s^2 F(s) - s\\,f(0) - f'(0)"
+        },
+        {
+          "t": "note",
+          "text": "Die $f(0)$-Terme merken sich, wo das Signal **angefangen** hat. Behalt sie im Auge. Bald wird sie jemand vergessen."
+        }
+      ]
+    },
+    {
+      "id": "table",
+      "title": "Unsere eigene Tabelle",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Lehrbücher drucken eine „Tabelle der Laplace-Transformationen“ ab, als wäre sie vom Himmel gefallen. Wir verdienen uns unsere, Zeile für Zeile. Jede Zeile ist einfach die Sonden-und-Flächen-Maschine, angewendet auf ein Signal, plus eine Prüfung, dass die Formel zur tatsächlichen Fläche passt."
+        },
+        {
+          "t": "widget",
+          "id": "table"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Die Sinuszeile ist meine liebste. Ein Sinus ist einfach zwei Zwillingsdreher, und die Transformation jedes Drehers ist die Exponentialzeile mit $a = \\pm i\\omega$."
+        },
+        {
+          "t": "p",
+          "text": "Und die letzte Zeile brauchte überhaupt keine neue Arbeit: Multiplizieren mit $e^{-\\sigma t}$ **verschiebt** einfach $s$ zu $s+\\sigma$. Vier Zeilen, alle hergeleitet, alle geprüft. Jetzt setzen wir sie ein."
+        }
+      ]
+    },
+    {
+      "id": "solve",
+      "title": "Die Drohne mit Algebra lösen",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Hier ist die Drohne aus Kapitel 2 mit P-Regler, nur startet sie jetzt von einem **1 m hohen Sims** statt vom Boden. Schwerkraft und Sollwert sind beides Sprünge, die bei $t = 0$ einschalten:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\,\\out{h}'' + c\\,\\out{h}' = \\eff{K_p}\\,(\\sp{2} - \\out{h}) - \\dis{m g}"
+        },
+        {
+          "t": "p",
+          "text": "**Schritt 1:** Transformier jeden Term. Ein Sprung der Größe $r$ wird zu $r/s$, und Steigungen werden zu Multiplikation mit $s$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} & m\\big(s^2\\out{H} - s\\,h(0) - h'(0)\\big) \\\\ &\\quad + c\\big(s\\,\\out{H} - h(0)\\big) \\\\ &= \\eff{K_p}\\Big(\\frac{\\sp{2}}{s} - \\out{H}\\Big) - \\frac{\\dis{m g}}{s} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "**Schritt 2:** Jetzt ist es Algebra. Sammle $\\out{H}$ auf einer Seite:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\out{H}(s) &= \\frac{N(s)}{s\\,\\big(m s^2 + c s + \\eff{K_p}\\big)} \\\\[6pt] N(s) &= m\\,h(0)\\,s^2 \\\\ &\\quad + \\big(m\\,h'(0) + c\\,h(0)\\big)\\,s \\\\ &\\quad + (\\eff{K_p}\\,\\sp{2} - \\dis{m g}) \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "**Schritt 3:** Zerleg es in Stücke, die in unserer Tabelle stehen (*Partialbruchzerlegung*: der „Hauptnenner“-Schritt aus der Schule, nur rückwärts):"
+        },
+        {
+          "t": "math",
+          "tex": "\\out{H}(s) = \\frac{A}{s} + \\frac{B s + C}{m s^2 + c s + \\eff{K_p}}"
+        },
+        {
+          "t": "p",
+          "text": "**Schritt 4:** Schlag jedes Stück in der Tabelle nach, die wir gerade hergeleitet haben: $A/s$ ist ein Sprung, und das zweite Stück ist ein abklingender Kosinus plus ein abklingender Sinus. Lies $h(t)$ ab."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Vergleichen wir’s mit der Simulation!"
+        },
+        {
+          "t": "widget",
+          "id": "solve"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Oje. Die Formel startet bei **null**, aber die Drohne startet auf dem Sims bei 1 m. Die Algebra lügt?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Die Algebra ist in Ordnung. *Wir* haben gelogen. Als wir Schritt 1 in den Prüfer getippt haben, haben wir $\\mathcal{L}\\{h'\\} = s\\,H$ geschrieben und die $-h(0)$-Teile weggelassen. Genau das Stück, das sich an den Sims erinnert."
+        },
+        {
+          "t": "p",
+          "text": "Leg den Schalter um, um die Starthöhen-Terme zurückzuholen. Die gestrichelte Formel und die blaue Simulation liegen jetzt genau übereinander: Die größte Lücke sind Millionstel Meter, reine Rundung. Ändere $\\eff{K_p}$ oder die Höhe des Simses, und sie stimmen immer noch überein."
+        },
+        {
+          "t": "p",
+          "text": "Schau dir Stück $A$ an: Es ist $\\sp{2} - \\dis{mg}/\\eff{K_p}$, das Durchhängen aus Kapitel 2, das direkt aus der Algebra herausspringt. Ganz ohne Raten."
+        },
+        {
+          "t": "note",
+          "text": "Wir tun immer noch so, als hätten die Motoren keine Schubgrenze, damit die lineare Mathematik exakt ist. Echte Grenzen kommen in Kapitel 8."
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Was wir jetzt wissen",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Die Laplace-Transformation ist eine **Sonde**: mit $e^{-st}$ multiplizieren und die Gesamtfläche messen. $F(s) = \\int_0^\\infty f(t)e^{-st}dt$.",
+            "Sie **explodiert genau dort, wo das Signal wohnt**: $e^{at}$ ergibt $1/(s-a)$, und das explodiert bei $s = a$. Bei komplexem $s$ dreht die Sonde drehende Signale zurück. All das zeichnen wir in die **s-Ebene**.",
+            "Aus Steigungen wird Multiplikation: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. Das klappt für jedes Signal, sogar für Gekritzel.",
+            "Wir haben unsere eigene Tabelle hergeleitet: $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$ und die verschobene Version für abklingende Sinusse.",
+            "Transformieren, Algebra machen, in Tabellenstücke zerlegen, Antwort ablesen. Das passt exakt zur Simulation, **solange du die Startwerte mitnimmst**."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch7-q1",
+              "q": "Was ist die Laplace-Transformation von $3e^{-2t}$?",
+              "options": [
+                {
+                  "text": "$\\dfrac{3}{s+2}$",
+                  "correct": true,
+                  "why": "Die Exponentialzeile mit $a = -2$ ergibt $1/(s+2)$, und die Transformation von 3 mal einem Signal ist 3 mal seine Transformation (Flächen skalieren mit)."
+                },
+                {
+                  "text": "$\\dfrac{3}{s-2}$",
+                  "why": "Das gilt für $e^{+2t}$. Die Zeile ist $1/(s-a)$ mit $a = -2$, also $s - (-2) = s+2$."
+                },
+                {
+                  "text": "$\\dfrac{1}{3(s+2)}$",
+                  "why": "Das Signal mal 3 zu nehmen multipliziert die Fläche mit 3, es teilt sie nicht."
+                }
+              ]
+            },
+            {
+              "id": "ch7-q2",
+              "q": "$F(s) = \\dfrac{5}{s+4}$. Welches Signal ist das?",
+              "options": [
+                {
+                  "text": "$5e^{-4t}$: startet bei 5 und klingt ab",
+                  "sketch": "decaying-plain",
+                  "correct": true,
+                  "why": "Es explodiert bei $s = -4$, also wohnt das Signal bei $e^{-4t}$. Die 5 oben ist seine Größe."
+                },
+                {
+                  "text": "$5e^{4t}$: wächst",
+                  "sketch": "growing-plain",
+                  "why": "Ein wachsendes $e^{4t}$ würde bei $s = +4$ explodieren. Dieses explodiert bei $s = -4$."
+                },
+                {
+                  "text": "Ein Wackeln",
+                  "sketch": "decaying-wiggle",
+                  "why": "Wackeln braucht ein Paar komplexer Explosionspunkte (wie bei $s^2+\\omega^2$ unten). Hier gibt es einen einzigen reellen bei $-4$."
+                }
+              ]
+            },
+            {
+              "id": "ch7-q3",
+              "q": "Löse $x' + 2x = 0$ mit $x(0) = 1$ mithilfe der Transformation.",
+              "options": [
+                {
+                  "text": "$X = \\frac{1}{s+2}$, also $x = e^{-2t}$",
+                  "correct": true,
+                  "why": "$sX - 1 + 2X = 0 \\Rightarrow X(s+2) = 1 \\Rightarrow X = 1/(s+2)$, und das ist die Exponentialzeile mit $a=-2$."
+                },
+                {
+                  "text": "$X = 0$, also $x = 0$",
+                  "why": "Das kommt raus, wenn du $-x(0)$ vergisst, derselbe Fehler wie unserer mit dem Sims. Der Startwert ist genau das, was es von null unterscheidet."
+                },
+                {
+                  "text": "$X = \\frac{1}{s-2}$, also $x = e^{2t}$",
+                  "why": "Vorzeichenfehler: $X(s+2) = 1$, also liegt die Explosion bei $s=-2$, und das Signal klingt ab."
+                }
+              ]
+            },
+            {
+              "id": "ch7-q4",
+              "q": "Warum explodiert $\\dfrac{1}{s-a}$ bei $s = a$?",
+              "options": [
+                {
+                  "text": "Die Sonde hebt das Wachstum des Signals genau auf, also ist das Produkt für immer flach und seine Fläche unendlich",
+                  "correct": true,
+                  "why": "$e^{at}\\cdot e^{-at} = 1$ für alle Zeit, und die Fläche unter 1 von 0 bis ∞ hört nie auf zu wachsen."
+                },
+                {
+                  "text": "Division durch null ist einfach eine Macke der Algebra",
+                  "why": "Die Algebra spiegelt etwas Echtes: Die Fläche wächst wirklich ohne Grenze, wenn $s \\to a$ geht. Schau’s dir im Explosions-Widget an."
+                },
+                {
+                  "text": "Weil das Signal dort null ist",
+                  "why": "Das Signal $e^{at}$ ist nie null. Das Problem ist, dass die Sonde es überhaupt nicht mehr schrumpft."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "June: „Jedes Mal, wenn wir etwas gelöst haben, war die Antwort *(irgendwas)* ÷ *(ein Polynom in s)*, und das Verhalten der Drohne kam von den Stellen, wo der Nenner null ist. Was, wenn dieser Bruch die Drohne **ist**?“"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "probe": {
+      "title": "Die Sonde",
+      "signal": "Signal",
+      "sig": {
+        "step": "$\\text{Sprung } 1$",
+        "decay": "$e^{-t}$",
+        "grow": "$e^{0{,}5t}$",
+        "wiggle": "$\\sin 2t$"
+      },
+      "f": "Signal f(t)",
+      "probe": "Sonde e^(−st)",
+      "product": "f(t)·e^(−st)",
+      "plotAria": "Das Signal, die Sonde und ihr Produkt über die Zeit, die Fläche unter dem Produkt schattiert.",
+      "fAria": "Gemessene Werte der Gesamtfläche F über s, ein Punkt für jedes ausprobierte s.",
+      "formula": "Formel",
+      "traced": "deine Messungen",
+      "area": "Fläche bis hierhin",
+      "total": "Gesamtfläche F(s)",
+      "s": "Sondenrate $s$",
+      "sweep": "Fläche nochmal abfahren",
+      "showFormula": "Formelkurve aufdecken",
+      "help": "Beweg s und lass los: Die Fläche wird gemessen, und rechts kommt ein Punkt dazu. Nach 5 Punkten kannst du die Formel aufdecken.",
+      "finite": "Bei s = {s} ist die Gesamtfläche {F}.",
+      "infinite": "Hier schrumpft die Sonde nicht schneller als das Signal. Die Fläche kommt nie zur Ruhe: Sie ist unendlich.",
+      "describe": "Sondenrate s = {s}; Gesamtfläche {A}."
+    },
+    "explode": {
+      "title": "Wo explodiert es?",
+      "product": "e^(at)·e^(−st)",
+      "prodAria": "Das Produkt aus e hoch a t und der Sonde, mit schattierter Fläche.",
+      "fAria": "Die Transformation 1 durch s minus a, mit einer senkrechten Linie, wo sie explodiert.",
+      "noArea": "unendliche Fläche",
+      "lives": "Signal wohnt bei s = {a}",
+      "a": "Rate des Signals $a$ in $e^{at}$",
+      "s": "Sonde $s$",
+      "never": "s ist bei oder unter a: Das Produkt schrumpft nie, also ist die Fläche unendlich.",
+      "close": "Nah an a: Die Fläche explodiert!",
+      "calm": "Weit weg von a: eine schöne endliche Fläche."
+    },
+    "unspin": {
+      "title": "Eine Sonde, die zurückdreht",
+      "re": "Realteil",
+      "im": "Imaginärteil",
+      "path": "laufende Summe der Fläche",
+      "plotAria": "Die laufende Summe der komplexen Fläche als Pfad in der Ebene, auf dem Weg zu ihrem Endwert.",
+      "limit": "Endsumme",
+      "mag": "Größe der Summe |F|",
+      "spin": "übrige Drehung",
+      "sigma": "Sonden-Schrumpfen $\\sigma$",
+      "omega": "Sonden-Drehung $\\omega$ (Signal dreht mit 2)",
+      "again": "Nochmal abspielen",
+      "matched": "Drehungen passen! Jedes Stück zeigt in dieselbe Richtung. Die Summe ist {m} und läuft für σ → 0 ins Unendliche.",
+      "spinning": "Die Stücke rollen sich ein und heben sich größtenteils auf. Die Summe bleibt klein."
+    },
+    "derivRule": {
+      "title": "Überlebt die Regel ein Gekritzel?",
+      "f": "dein Signal f(t)",
+      "df": "seine Steigung f′(t)",
+      "plotAria": "Das gezeichnete Signal und seine Steigung über 8 Sekunden.",
+      "sAria": "Beide Seiten der Ableitungsregel über s aufgetragen.",
+      "lhs": "Fläche von f′·e^(−st)",
+      "rhs": "s·F(s) − f(0)",
+      "lhsShort": "Transformation der Steigung",
+      "rhsShort": "s F(s) − f(0)",
+      "s": "Sonde $s$",
+      "draw": "Eigenes Signal zeichnen",
+      "preset": "Andere Vorlage probieren",
+      "help": "Wähl ein Signal, oder drück auf „Eigenes Signal zeichnen“ und zieh im linken Diagramm von links nach rechts. Nach 8 s bleibt das Signal flach.",
+      "drawing": "Zieh im linken Diagramm von links nach rechts…",
+      "tooShort": "Zeichne ein bisschen weiter (mindestens 3 Sekunden lang).",
+      "drawn": "Hab’s! Beide Seiten wurden aus deiner Zeichnung neu berechnet. Zieh nochmal, um sie zu ersetzen.",
+      "match": "Bei s = {s} stimmen beide Seiten überein. Die Regel gilt für dein Signal.",
+      "nomatch": "Hier weichen sie etwas ab. Rundungsfehler bei einer sehr scharfen Zeichnung.",
+      "describe": "Transformation der Steigung {l}, s F minus f von null {r}.",
+      "stopDraw": "Zeichnen beenden",
+      "presetLabel": "Oder wähl ein Signal",
+      "presets": {
+        "0": "Wackeln",
+        "1": "Sprung",
+        "2": "Abfall"
+      },
+      "rhsBrace": "was die Regel vorhersagt"
+    },
+    "table": {
+      "title": "Die Tabelle, hergeleitet",
+      "caption": "In diesem Kapitel hergeleitete Tabelle der Laplace-Transformationen",
+      "colSignal": "Signal f(t)",
+      "colF": "Transformation F(s)",
+      "derive": "Herleiten",
+      "show": "Zeigen",
+      "unknown": "noch nicht hergeleitet",
+      "f": "Signal",
+      "product": "Signal × Sonde",
+      "plotAria": "Das gewählte Tabellensignal und sein abgetastetes Produkt mit schattierter Fläche.",
+      "numeric": "gemessene Fläche",
+      "formulaVal": "Formel",
+      "s": "Sonde $s$",
+      "how": "Wie wir darauf kamen",
+      "agree": "Die gemessene Fläche passt zur Formel.",
+      "twinCheck": "Sein Zwilling (Kosinus) passt auch: gemessen {n}, Formel {f}.",
+      "describe": "Gemessene Fläche {n}, Formel {f}.",
+      "rows": {
+        "0": {
+          "f": "1\\ \\ (\\text{Sprung})",
+          "F": "\\dfrac{1}{s}",
+          "steps": "\\text{die Kurve mit der Steigung } e^{-st} \\text{ ist } -\\tfrac{1}{s}e^{-st}||\\begin{aligned} \\int_0^\\infty e^{-st}\\,dt &=\\Big[-\\tfrac{1}{s}e^{-st}\\Big]_0^\\infty \\\\ &= 0-\\big(-\\tfrac{1}{s}\\big)=\\frac{1}{s}\\quad (s>0) \\end{aligned}"
+        },
+        "1": {
+          "f": "e^{at}",
+          "F": "\\dfrac{1}{s-a}",
+          "steps": "e^{at}\\,e^{-st}=e^{-(s-a)t}||\\text{das ist die Sprungzeile, nur mit } s-a \\text{ statt } s||\\begin{gathered} \\int_0^\\infty e^{-(s-a)t}\\,dt=\\frac{1}{s-a} \\\\ (s>a;\\ \\text{hier } a=-1) \\end{gathered}"
+        },
+        "2": {
+          "f": "\\sin\\omega t,\\ \\cos\\omega t",
+          "F": "\\dfrac{\\omega}{s^2+\\omega^2},\\ \\dfrac{s}{s^2+\\omega^2}",
+          "steps": "\\begin{gathered} \\sin\\omega t=\\frac{e^{i\\omega t}-e^{-i\\omega t}}{2i} \\\\ \\text{(Zwillingsdreher)} \\end{gathered}||\\begin{gathered} \\mathcal{L}\\{e^{\\pm i\\omega t}\\}=\\frac{1}{s\\mp i\\omega} \\\\ \\text{(Exponentialzeile, } a=\\pm i\\omega) \\end{gathered}||\\begin{aligned} &\\frac{1}{2i}\\Big(\\frac{1}{s-i\\omega}-\\frac{1}{s+i\\omega}\\Big) \\\\ &=\\frac{1}{2i}\\cdot\\frac{2i\\omega}{s^2+\\omega^2}=\\frac{\\omega}{s^2+\\omega^2} \\end{aligned}||\\begin{gathered} \\cos\\omega t=\\frac{e^{i\\omega t}+e^{-i\\omega t}}{2}\\ \\Rightarrow\\ \\frac{s}{s^2+\\omega^2} \\\\ (\\text{hier }\\omega=2) \\end{gathered}"
+        },
+        "3": {
+          "f": "e^{-\\sigma t}\\sin\\omega t,\\ e^{-\\sigma t}\\cos\\omega t",
+          "F": "\\dfrac{\\omega}{(s+\\sigma)^2+\\omega^2},\\ \\dfrac{s+\\sigma}{(s+\\sigma)^2+\\omega^2}",
+          "steps": "e^{-\\sigma t}\\sin\\omega t\\cdot e^{-st}=\\sin\\omega t\\cdot e^{-(s+\\sigma)t}||\\text{also nimm die Sinuszeile und setz } s+\\sigma \\text{ statt } s \\text{ ein}||\\begin{gathered} \\frac{\\omega}{(s+\\sigma)^2+\\omega^2}\\quad\\text{ und }\\quad\\frac{s+\\sigma}{(s+\\sigma)^2+\\omega^2} \\\\ (\\text{hier }\\sigma=0{,}5,\\ \\omega=2) \\end{gathered}"
+        }
+      },
+      "colCheck": "Mit der gemessenen Fläche geprüft"
+    },
+    "solve": {
+      "title": "Formel gegen Simulation",
+      "sim": "RK4-Simulation",
+      "formula": "unsere Laplace-Formel",
+      "target": "Ziel",
+      "plotAria": "Höhe der Drohne über die Zeit aus der Simulation und aus der Laplace-Formel.",
+      "gap": "größte Lücke",
+      "atZero": "bei t = 0: Sim / Formel",
+      "kp": "Verstärkung $K_p$",
+      "h0": "Starthöhe (Sims) $h(0)$",
+      "toggle": "Starthöhen-Terme $-h(0)$ mitnehmen",
+      "mismatch": "Sie passen nicht! Die Sim startet auf dem {h}-m-Sims, die Formel bei 0.",
+      "odd": "Immer noch eine Lücke. Prüf die Zahlen.",
+      "match": "Passt perfekt: Formel und Simulation stimmen auf ein Millionstel Meter überein."
+    }
+  }
+}

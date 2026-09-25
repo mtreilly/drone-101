@@ -1,0 +1,311 @@
+{
+  "kicker": "Kapitel 11",
+  "title": "Die Drohnen-Challenge",
+  "question": "Schaffst *du* es, die Drohne durch alles hindurch auf 2 m zu halten?",
+  "sections": [
+    {
+      "id": "briefing",
+      "title": "Einsatzbesprechung",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Okay. Echte Drohne, echte Lieferung. Sie startet mit einem Paket, übersteht eine Böe, wirft das Paket ab und hält die ganze Zeit 2 m. Zwanzig Sekunden."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Und wir dürfen nichts anfassen, während sie fliegt?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Genau darum geht’s. Der Regler muss es allein schaffen. Wir wählen nur drei Zahlen. Na gut, vier."
+        },
+        {
+          "t": "p",
+          "text": "Der Einsatz, Sekunde für Sekunde:"
+        },
+        {
+          "t": "list",
+          "ordered": true,
+          "items": [
+            "**0 s:** Start vom Boden mit einem 0,2-kg-{dis|Paket} (0,7 kg insgesamt).",
+            "**6–9 s:** Eine {dis|Böe} drückt mit 1,5 N nach unten.",
+            "**12 s:** Das {dis|Paket fällt ab}. Plötzlich ist die Drohne 0,2 kg leichter.",
+            "**20 s:** Einsatz beendet."
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Unser Drohnenmodell wird fürs Finale ein bisschen ehrlicher. Mit jedem dieser Punkte müssen echte Drohnen leben:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Motorverzögerung:** Die Propeller brauchen etwa 0,05 s, um hoch- oder runterzudrehen. Der Schub, den du verlangst, kommt einen Moment später an.",
+            "**Ein verrauschter Sensor:** Jede Höhenmessung liegt zufällig um etwa 2 cm daneben, tausendmal pro Sekunde.",
+            "**Begrenzte Motoren:** 0 bis 20 N, nie negativ.",
+            "**D ist gefiltert:** Weil das wahre Tempo unbekannt ist, nimmt D die Steigung des gefilterten Sensorwerts, mit der Zeitkonstante $\\tau_f$, die du wählst."
+          ]
+        },
+        {
+          "t": "note",
+          "text": "Wir ignorieren immer noch Kippen, Seitenwind, schwächelnde Akkus und hundert andere Dinge. Der Höhenregelkreis einer echten Drohne sieht aber ziemlich genau so aus."
+        },
+        {
+          "t": "predict",
+          "id": "ch11-drop",
+          "gate": true,
+          "q": "Wenn das Paket bei 12 s abfällt: Welcher Term leistet die Hauptarbeit, um die Drohne wieder auf genau 2 m zu bringen?",
+          "options": [
+            {
+              "text": "P: Er reagiert sofort auf den Fehler",
+              "why": "P reagiert zuerst, aber P allein würde sich einfach bei einem *anderen* Durchhängen einpendeln, weil sich der Schwebeschub geändert hat."
+            },
+            {
+              "text": "I: Der Haufen muss den neuen Schwebeschub finden",
+              "correct": true,
+              "why": "Die Drohne braucht jetzt etwa 4,9 N statt 6,9 N. Nur das Integral kann einen neuen konstanten Schub aufspüren und trotzdem bei null Fehler landen."
+            },
+            {
+              "text": "D: Er stoppt den Sprung",
+              "why": "D dämpft den Sprung, und das ist nützlich. Aber er verstummt, sobald die Drohne stillsteht, also kann er das neue Gleichgewicht nicht halten."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mission",
+      "title": "Flieg den Einsatz",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Jede Änderung an einem Schieberegler startet den Einsatz neu, und der vorherige Flug bleibt als Geist stehen. Die kleine s-Ebene zeigt die **nominellen** Pole (perfekter Sensor, kein Paket, keine Grenzen). So siehst du das lineare Bild, während daneben der echte, chaotische Flug passiert. Hol dir alle sechs Sterne für Gold."
+        },
+        {
+          "t": "widget",
+          "id": "mission"
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Du steckst fest? Die Gewinner vom Spielplatz aus Kapitel 9 sind ein guter Start. Dann verlängere $\\tau_f$, bis die Motoren aufhören zu rattern."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Ich hab im Kopf den perfekten Regler eingestellt: riesiges $K_d$, winzigster Filter, damit D sofort reagiert. Bei Windstille ist er makellos! Schaut her…"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "…warum kreischen die Motoren? Die orange Linie ist nur noch Fussel, und jetzt schwingt sie auch noch über!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Kapitel 9, Warnung 2. Großes $K_d$ mal winziger Filter macht aus jeden 2 cm Sensorzittern eine Schubspitze. Und die Spitzen werden viel öfter bei 0 N abgeschnitten als bei 20 N, also geben sie einen schiefen Extraschub dazu: Das ist das Überschwingen. Makellos war er nur, weil deine ausgedachte Windstille einen perfekten Sensor mitbrachte."
+        },
+        {
+          "t": "p",
+          "text": "Probier **Junes Windstille-Einstellung** und schau zu, wie der Stern „Motoren ruhig“ durchfällt. Dann verlängere den Filter auf etwa 0,04 s und nimm $K_d$ runter auf etwa 6. Du gibst ein Haar an Tempo ab und bekommst ruhige Motoren. Dieses Abwägen, Tempo gegen Rauschen und gegen Robustheit, *ist* Regelungstechnik."
+        }
+      ]
+    },
+    {
+      "id": "reflect",
+      "title": "Rückblick",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Am Anfang dachte ich, „stärker drücken“ repariert alles. Es ist genau umgekehrt, oder? Der meiste Ärger kam davon, zu stark auf alte oder verrauschte Informationen zu drücken. Ich bin froh, dass ich all die dummen Fragen gestellt hab. Keine davon war dumm."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Ich glaube der Laplace-Transformation endlich. Sie ist keine Nachschlagetabelle: Sie ist eine Sonde, die ein Signal fragt: „Wie viel $e^{st}$ steckt in dir?“ Und weil aus Steigungen ein Multiplizieren mit $s$ wird, wird aus Analysis Algebra. Die Pole sind dort, wo die Antwort explodiert: die $e^{st}$, aus denen das System gebaut ist."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Und ich hab gelernt, dass „mehr“ nicht „besser“ ist: mehr Verstärkung, mehr Dämpfung, mehr $K_i$, mehr Tempo. Es gibt immer eine Klippe, und gute Entwürfe halten Abstand von ihr. Außerdem: Immer an der Drohne ausprobieren."
+        },
+        {
+          "t": "p",
+          "text": "Hier ist alles, was wir gebaut haben, von der Dusche bis zum Finale. Jede Blase führt zurück dorthin, wo sie entstanden ist."
+        },
+        {
+          "t": "recap",
+          "title": "Die ganze Reise in einem Atemzug",
+          "items": [
+            "**Rückkopplung**: messen, was passiert ist, mit dem Ziel vergleichen, auf den Fehler reagieren (Kap. 0–1).",
+            "**P-Regler** drücken proportional zum Fehler, lassen aber ein Durchhängen übrig und wackeln, wenn sie stark sind (Kap. 2).",
+            "**Ableitungen, Exponentialfunktionen und drehende Zahlen** beschreiben, wie sich Dinge ändern: $e^{st}$ mit $s = \\sigma + i\\omega$ wächst oder schrumpft *und* wackelt (Kap. 3–6).",
+            "Die **Laplace-Transformation** macht aus Steigungen ein Multiplizieren mit $s$, also wird aus Analysis Algebra (Kap. 7).",
+            "Die **Pole einer Übertragungsfunktion** sind die $e^{st}$-Terme, aus denen ein System besteht: Die linke Hälfte beruhigt sich, die rechte explodiert (Kap. 8).",
+            "**PID**: I killt das Durchhängen, D bringt Dämpfung, und jeder Anteil verschiebt die Pole (Kap. 9).",
+            "**Totzeit** bringt Phasenverzug; **Reserven** sagen dir, wie weit du von der Klippe entfernt bist (Kap. 10).",
+            "Echte Hardware bringt Grenzen, Verzögerung und Rauschen mit, also sind gute Regler nicht nur schnell, sondern auch ruhig (Kap. 11)."
+          ]
+        },
+        {
+          "t": "map"
+        }
+      ]
+    },
+    {
+      "id": "final-check",
+      "title": "Erklär es einem Freund",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Der beste Test fürs Verstehen ist Erklären. Versuch vor jeder Antwort, *deine* Version laut zu sagen. Dann wähl die Erklärung, die am besten dazu passt."
+        },
+        {
+          "t": "quiz",
+          "title": "Abschlusstest",
+          "items": [
+            {
+              "id": "ch11-q1",
+              "q": "Eine Freundin fragt: „Warum gibt es die Laplace-Transformation überhaupt?“",
+              "options": [
+                {
+                  "text": "Sie macht aus Steigungen ein Multiplizieren mit $s$. So werden Gleichungen über Veränderung zu Algebra, und die Pole der Antwort zeigen, aus welchen $e^{st}$-Verhaltensweisen das System besteht",
+                  "correct": true,
+                  "why": "Das ist der Kern: aus Analysis wird Algebra, plus eine Karte (die s-Ebene), die den Charakter auf einen Blick zeigt."
+                },
+                {
+                  "text": "Sie ist eine Formeltabelle, die Ingenieure auswendig lernen, um Antworten nachzuschlagen",
+                  "why": "Die Tabelle ist ein *Ergebnis*. Wir haben jede Zeile hergeleitet, indem wir Signale mit $e^{-st}$ abgetastet und die Fläche gemessen haben."
+                },
+                {
+                  "text": "Sie wandelt Signale in Tonfrequenzen um",
+                  "why": "Das ist eher die Fourier-Transformation, die nur den drehenden Teil nutzt ($s = i\\omega$). Laplace erlaubt auch Wachsen und Abklingen ($\\sigma$)."
+                }
+              ]
+            },
+            {
+              "id": "ch11-q2",
+              "q": "„Was ist ein Pol eigentlich?“",
+              "options": [
+                {
+                  "text": "Ein Wert von $s$, bei dem die Übertragungsfunktion explodiert: eine der $e^{st}$-Bewegungen, die das System von Natur aus macht. Ihr Realteil sagt Wachsen/Abklingen, ihr Imaginärteil sagt Wackeln",
+                  "correct": true,
+                  "why": "Linke Hälfte = klingt ab, rechte Hälfte = explodiert, Höhe = Wackeltempo. Der ganze Charakter auf einer Karte."
+                },
+                {
+                  "text": "Ein physisches Teil der Drohne, wie ein Motor",
+                  "why": "Pole gehören zum *ganzen Kreis*: Änder eine Verstärkung, und sie wandern, obwohl sich an der Drohne nichts geändert hat."
+                },
+                {
+                  "text": "Der Punkt, an dem das System instabil wird",
+                  "why": "Jedes System hat Pole, auch stabile Systeme. Instabil ist es, wenn ein Pol in der rechten Halbebene sitzt."
+                }
+              ]
+            },
+            {
+              "id": "ch11-q3",
+              "q": "„Warum bin ich unter der Dusche immer übers Ziel hinausgeschossen?“",
+              "options": [
+                {
+                  "text": "Du hast mit zu viel Verstärkung auf verzögerte Informationen reagiert: Die Phase des Kreises hat −180° erreicht, während seine Verstärkung noch über 1 lag. So hat jede Korrektur den Schwung aufgepumpt",
+                  "correct": true,
+                  "why": "Genau. Die Kur war weniger Verstärkung oder mehr Phasenreserve, nicht mehr Anstrengung."
+                },
+                {
+                  "text": "Die Dusche war kaputt",
+                  "why": "Knopf und Duschkopf haben perfekt zusammengepasst, als wir um die Verzögerung verschoben haben (Kapitel 0). Nicht kaputt: spät."
+                },
+                {
+                  "text": "Du hast nicht schnell genug reagiert",
+                  "why": "*Stärker* zu reagieren hat es schlimmer gemacht, wie die Roboterhände gezeigt haben. Tempo auf alte Nachrichten ist das Problem."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "next",
+      "title": "Wie es weitergeht",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Du weißt jetzt mehr über Regelungstechnik, als die meisten Menschen je zu Gesicht bekommen. Hier geht der Weg weiter, jede Station ein neues Notizheft:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Wurzelortskurve:** Statt Pole zu ziehen, ziehst du an der *Verstärkung* und schaust zu, wie die Pole Bahnen durch die s-Ebene zeichnen.",
+            "**Zustandsraumregelung:** viele Sensoren, viele Motoren, alles gleichzeitig: Neigung, Drehung und Position einer echten Drohne zusammen.",
+            "**Digitale Regelung:** Echte Regler laufen auf Computern, die alle paar Millisekunden abtasten. Die s-Ebene bekommt eine Cousine, die z-Ebene.",
+            "**Kalman-Filter:** Rauschen clever bekämpfen, indem man die Vorhersage eines Modells mit der Messung des Sensors mischt.",
+            "**Smith-Prädiktoren und modellprädiktive Regelung:** Regler, die eine kleine Simulation in sich tragen, um um Verzögerungen herumzuschauen.",
+            "**Nichtlineare und robuste Regelung:** was tun, wenn die Welt nicht linear ist, und wie man beweist, dass man trotzdem noch Reserve hat."
+          ]
+        },
+        {
+          "t": "cliff",
+          "text": "Wenn dich das nächste Mal eine Dusche zwischen kochend und eiskalt tanzen lässt, weißt du genau, was los ist. Und du weißt, dass es nicht deine Schuld ist. **Es ist die Phasenreserve.**"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "mission": {
+      "title": "Einsatzzentrale",
+      "measured": "Sensorwert",
+      "hAria": "Höhe über den 20-Sekunden-Einsatz mit dem Zielband; die Momente von Böe und Paketabwurf sind markiert.",
+      "tAria": "Schub über den Einsatz mit der Motorgrenze von 20 N.",
+      "gust": "Böe",
+      "drop": "Abwurf",
+      "max": "max. 20 N",
+      "splane": "Nominelle Pole des geschlossenen Regelkreises der Drohne mit Motorverzögerung und gefilterter Ableitung.",
+      "filter": "D-Filter $\\tau_f$",
+      "dMeas": "D von der Messung (kein Tritt)",
+      "presetJune": "Junes Windstille-Einstellung",
+      "instant": "Sofort fliegen",
+      "checklist": "Einsatz-Checkliste",
+      "crit": {
+        "rise": "2 m (± {bandCm} cm) innerhalb von {rise} s erreichen",
+        "overshoot": "Überschwingen beim Start unter {overshoot} %",
+        "gust": "Während der Böe innerhalb von {gustCm} cm bleiben",
+        "recover": "Weniger als {recover} s nach dem Abwurf wieder innerhalb ± {bandCm} cm",
+        "ground": "Nach dem Start nie den Boden berühren",
+        "calm": "Motoren ruhig im Schwebeflug (Zittern unter {calm} N)"
+      },
+      "touched": "berührt!",
+      "clear": "frei",
+      "ready": "Bereit. Stell die Verstärkungen ein und drück dann auf Abspielen (oder Sofort fliegen).",
+      "flying": "Fliegt…",
+      "gold": "GOLD! Alle sechs Sterne. Du bist eine echte Regelungstechnikerin / ein echter Regelungstechniker.",
+      "stars": "{n} von 6 Sternen. Weiter einstellen!",
+      "best": "Dein bisher Bestes: {n} Sterne (Kp {kp}, Ki {ki}, Kd {kd}, τf {tf} s).",
+      "phase": {
+        "takeoff": "{s} s: Start mit dem Paket",
+        "gust": "{s} s: Böe drückt nach unten!",
+        "hover": "{s} s: Schwebeflug, Paket an Bord",
+        "drop": "{s} s: Paket abgeworfen!",
+        "done": "Einsatz geschafft."
+      },
+      "poles": {
+        "stable": "Nominelle Pole: alle in der linken Hälfte.",
+        "unstable": "Ein nomineller Pol liegt in der rechten Hälfte: Diese Einstellung kann nicht halten!",
+        "off": "({n} schnelle(r) Pol(e) jenseits des linken Rands.)"
+      }
+    }
+  }
+}
