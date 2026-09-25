@@ -59,6 +59,9 @@ export function settling(xs: number[], ys: number[], target: number, size: numbe
   return 0;
 }
 
+/** Marks a widget host so the chapter 6–8 polish styles apply only to these widgets. */
+export const mark = (host: HTMLElement): void => host.classList.add('p68');
+
 /** Small hand-lettered caption above a panel or view. */
 export const caption = (text: string): HTMLElement => h('p', { class: 'w-cap' }, text);
 

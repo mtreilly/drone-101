@@ -9,8 +9,9 @@ import './ch07.css';
 import { color, withAlpha } from '../../ui/colors';
 import { readout, segmented, slider, toggle } from '../../ui/controls';
 import { Loop } from '../../ui/loop';
+import { prefersReducedMotion } from '../../core/dom';
 import { Plot } from '../../ui/plot';
-import { onInteractStart, sample } from '../ch06/helpers';
+import { iconButton, mark, onInteractStart, sample } from '../ch06/helpers';
 import { DRAW_T, dampedCos, derivativeRule, fromFunction, fromPoints, solveDrone, unspinIntegral, unspinLimit } from './tools';
 
 type Sig = { f: (t: number) => number; F: (s: number) => number; a: number; yMin: number; yMax: number };
@@ -64,6 +65,7 @@ function runningAreaAt(g: (t: number) => number, tEnd: number): number {
 /** 7a — the probe: multiply by e^(−st), measure the area, trace F(s). */
 const probe: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
+  mark(host);
   let key = 'step';
   let s = 1;
   let tc0 = PROBE_T;
@@ -187,7 +189,7 @@ const probe: WidgetFactory = (host, ctx) => {
     },
   });
   sl.input.addEventListener('change', () => addTrace());
-  const sweep = h('button', { class: 'btn small', type: 'button' }, t('sweep'));
+  const sweep = iconButton('play', t('sweep'));
   sweep.addEventListener('click', () => {
     tc0 = 0;
     loop.play();
@@ -203,8 +205,12 @@ const probe: WidgetFactory = (host, ctx) => {
     }
     fplot.set('formula', xs, ys);
   });
-  host.append(h('div', { class: 'readouts' }, rArea.el, rTotal.el), status, h('div', { class: 'w-controls' }, sl.el), h('div', { class: 'w-row' }, sweep, showFormula));
-  host.append(h('p', { class: 'w-help' }, t('help')));
+  host.append(
+    h('div', { class: 'w-controls' }, sl.el),
+    h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rArea.el, rTotal.el), h('div', { class: 'w-row' }, sweep, showFormula)),
+    status,
+    h('p', { class: 'w-help' }, t('help')),
+  );
   restart();
   const off = ctx.bus.on('predict:ch7-step', () => {
     key = 'step';
@@ -220,6 +226,7 @@ const probe: WidgetFactory = (host, ctx) => {
 /** 7b — the transform of e^(at) explodes as s approaches a. */
 const explode: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
+  mark(host);
   let a = -0.5;
   let s = 1.5;
   host.append(h('p', { class: 'w-title' }, t('title')));
@@ -267,13 +274,14 @@ const explode: WidgetFactory = (host, ctx) => {
   };
   const sa = slider({ label: t('a'), min: -2, max: 1, step: 0.05, value: a, color: 'out', onInput: (v) => ((a = v), update()) });
   const ss = slider({ label: t('s'), min: -2.5, max: 4, step: 0.05, value: s, onInput: (v) => ((s = v), update()) });
-  host.append(eq, h('div', { class: 'readouts' }, rF.el), status, h('div', { class: 'w-controls' }, sa.el, ss.el));
+  host.append(eq, h('div', { class: 'w-controls' }, sa.el, ss.el), h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rF.el)), status);
   update();
 };
 
 /** 7b (part 2) — a complex s can unspin a spinning signal. */
 const unspin: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
+  mark(host);
   const W0 = 2;
   let sig = 0.4;
   let om = 0.5;
@@ -335,12 +343,16 @@ const unspin: WidgetFactory = (host, ctx) => {
   };
   const ss = slider({ label: t('sigma'), min: 0.05, max: 2, step: 0.05, value: sig, onInput: (v) => ((sig = v), restart()) });
   const so = slider({ label: t('omega'), min: 0, max: 4, step: 0.05, value: om, onInput: (v) => ((om = v), restart()) });
-  const again = h('button', { class: 'btn small', type: 'button' }, t('again'));
+  const again = iconButton('play', t('again'));
   again.addEventListener('click', () => {
     tNow = 0;
     loop.play();
   });
-  side.append(h('div', { class: 'readouts' }, rMag.el, rSpin.el), status, h('div', { style: { display: 'grid', gap: '12px', marginTop: '10px' } }, ss.el, so.el), again);
+  side.append(
+    h('div', { style: { display: 'grid', gap: '10px' } }, ss.el, so.el),
+    h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rMag.el, rSpin.el), again),
+    status,
+  );
   restart();
   return () => loop.destroy();
 };
@@ -348,6 +360,7 @@ const unspin: WidgetFactory = (host, ctx) => {
 /** 7c — test the derivative rule on a signal the learner draws. */
 const derivRule: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
+  mark(host);
   let d = fromFunction((tt) => 1 + 0.8 * Math.exp(-0.6 * tt) * Math.cos(1.8 * tt));
   let s = 1;
   host.append(h('p', { class: 'w-title' }, t('title')));
@@ -407,45 +420,65 @@ const derivRule: WidgetFactory = (host, ctx) => {
     fp.describe(t('describe', { l: fmt(r.lhs, 3), r: fmt(r.rhs, 3) }));
   };
   const sl = slider({ label: t('s'), min: 0.2, max: 3, step: 0.05, value: s, onInput: (v) => ((s = v), update()) });
-  const drawBtn = h('button', { class: 'btn small primary', type: 'button' }, t('draw'));
-  const presetBtn = h('button', { class: 'btn small', type: 'button' }, t('preset'));
-  const hint = h('p', { class: 'w-help', 'aria-live': 'polite' }, t('help'));
-  drawBtn.addEventListener('click', () => {
-    hint.textContent = t('drawing');
-    fp.setGuess([]);
-    fp.enableSketch((pts) => {
-      if (pts.length < 5 || pts[pts.length - 1].x - pts[0].x < 3) {
-        hint.textContent = t('tooShort');
-        return;
-      }
-      d = fromPoints(pts.map((p) => ({ x: Math.max(0, Math.min(DRAW_T, p.x)), y: Math.max(-1.5, Math.min(2.5, p.y)) })));
-      fp.setGuess(pts);
-      hint.textContent = t('drawn');
-      update();
-    });
-  });
   const presets = [
     (tt: number) => 1 + 0.8 * Math.exp(-0.6 * tt) * Math.cos(1.8 * tt),
     (tt: number) => (tt < 2 ? 0.1 : 1.5) + 0.3 * Math.sin(3 * tt),
     (tt: number) => 2 * Math.exp(-0.4 * tt) - 0.5,
   ];
-  let pi = 0;
-  presetBtn.addEventListener('click', () => {
-    pi = (pi + 1) % presets.length;
-    fp.disableSketch();
-    fp.setGuess([]);
-    d = fromFunction(presets[pi]);
-    hint.textContent = t('help');
-    update();
-  });
-  const eq = h('div', { class: 'math-block', html: tex('\\underbrace{\\int_0^\\infty f\'(t)\\,e^{-st}\\,dt}_{\\text{' + t('lhsShort') + '}} \\;\\overset{?}{=}\\; \\underbrace{s\\,F(s) - f(0)}_{\\text{' + t('rhsShort') + '}}', true) });
-  host.append(eq, h('div', { class: 'readouts' }, rL.el, rR.el), status, h('div', { class: 'w-controls' }, sl.el), h('div', { class: 'w-row' }, drawBtn, presetBtn), hint);
+  const hint = h('p', { class: 'w-help', 'aria-live': 'polite' }, t('help'));
+  let drawing = false;
+  const drawBtn = h('button', { class: 'btn small primary', type: 'button', 'aria-pressed': 'false' }, t('draw'));
+  const setDrawing = (on: boolean) => {
+    drawing = on;
+    drawBtn.setAttribute('aria-pressed', String(on));
+    drawBtn.textContent = on ? t('stopDraw') : t('draw');
+    fp.el.classList.toggle('drawing', on);
+    if (on) {
+      hint.textContent = t('drawing');
+      fp.enableSketch((pts) => {
+        if (pts.length < 5 || pts[pts.length - 1].x - pts[0].x < 3) {
+          hint.textContent = t('tooShort');
+          return;
+        }
+        d = fromPoints(pts.map((p) => ({ x: Math.max(0, Math.min(DRAW_T, p.x)), y: Math.max(-1.5, Math.min(2.5, p.y)) })));
+        fp.setGuess(pts);
+        seg.set('none');
+        hint.textContent = t('drawn');
+        update();
+      });
+    } else {
+      fp.disableSketch();
+      hint.textContent = t('help');
+    }
+  };
+  drawBtn.addEventListener('click', () => setDrawing(!drawing));
+  const seg = segmented(
+    t('presetLabel'),
+    presets.map((_, i) => ({ value: String(i), label: t(`presets.${i}`) })),
+    '0',
+    (v) => {
+      setDrawing(false);
+      fp.setGuess([]);
+      d = fromFunction(presets[Number(v)]);
+      update();
+    },
+  );
+  const eq = h('div', { class: 'math-block', html: tex('\\underbrace{\\int_0^\\infty f\'(t)\\,e^{-st}\\,dt}_{\\text{' + t('lhsShort') + '}} \\;\\overset{?}{=}\\; \\underbrace{s\\,F(s) - f(0)}_{\\text{' + t('rhsBrace') + '}}', true) });
+  host.append(
+    eq,
+    h('div', { class: 'w-controls' }, sl.el),
+    h('div', { class: 'w-controls draw-row' }, seg.el, drawBtn),
+    h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rL.el, rR.el)),
+    status,
+    hint,
+  );
   update();
 };
 
 /** 7d — derive the table one row at a time, each row checked against the probe. */
 const tableW: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
+  mark(host);
   const rows = [
     { f: () => 1, F: (s: number) => T.step(cx(s)).re, a: 0 },
     { f: (tt: number) => Math.exp(-tt), F: (s: number) => T.exp(-1)(cx(s)).re, a: -1 },
@@ -455,6 +488,7 @@ const tableW: WidgetFactory = (host, ctx) => {
   const extra = [null, null, { f: (tt: number) => Math.cos(2 * tt), F: (s: number) => T.cos(2)(cx(s)).re }, { f: (tt: number) => Math.exp(-0.5 * tt) * Math.cos(2 * tt), F: (s: number) => dampedCos(0.5, 2)(cx(s)).re }];
   const derived = new Set<number>([0]);
   let cur = 0;
+  let shownRow = -1;
   let s = 1;
   host.append(h('p', { class: 'w-title' }, t('title')));
   const tbody = h('tbody');
@@ -516,7 +550,10 @@ const tableW: WidgetFactory = (host, ctx) => {
     const ex = extra[cur];
     status.textContent = ex ? t('twinCheck', { n: fmt(laplaceReal(ex.f, s, Math.min(200, 40 / (s - r.a)), 20000), 4), f: fmt(ex.F(s), 4) }) : t('agree');
     const list = (t(`rows.${cur}.steps`) || '').split('||');
-    steps.replaceChildren(h('p', { class: 'w-title' }, t('how')), ...list.map((st) => h('div', { class: 'math-block', html: tex(st, true) })));
+    if (shownRow !== cur) {
+      shownRow = cur;
+      steps.replaceChildren(h('p', { class: 'w-subtitle' }, t('how')), ...list.map((st) => h('div', { class: 'math-block', html: tex(st, true) })));
+    }
     plot.describe(t('describe', { n: fmt(num, 4), f: fmt(form, 4) }));
   };
   const sl = slider({ label: t('s'), min: 0.2, max: 3, step: 0.05, value: s, onInput: (v) => ((s = v), update()) });
@@ -528,6 +565,7 @@ const tableW: WidgetFactory = (host, ctx) => {
 /** 7e — solve the drone with the transform and compare with the simulation. */
 const solve: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
+  mark(host);
   let kp = 20;
   let h0 = 1;
   let ic = false;
@@ -549,6 +587,30 @@ const solve: WidgetFactory = (host, ctx) => {
   const rGap = readout(t('gap'));
   const rZero = readout(t('atZero'));
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  // when the h(0) fix is switched on/off the formula curve glides onto its new shape
+  let shownF: number[] = [];
+  let morphing = 0;
+  let animateNext = false;
+  const morphFormula = (xs: number[], f: number[]) => {
+    cancelAnimationFrame(morphing);
+    const from = shownF.length === f.length ? shownF : f;
+    if (!animateNext || prefersReducedMotion() || from === f) {
+      shownF = f;
+      plot.set('formula', xs, f);
+      return;
+    }
+    animateNext = false;
+    const t0 = performance.now();
+    const DUR = 520;
+    const step = (now: number) => {
+      const k = Math.min(1, (now - t0) / DUR);
+      const e = 1 - Math.pow(1 - k, 3);
+      shownF = f.map((v, i) => from[i] + (v - from[i]) * e);
+      plot.set('formula', xs, shownF);
+      if (k < 1) morphing = requestAnimationFrame(step);
+    };
+    morphing = requestAnimationFrame(step);
+  };
   const update = () => {
     const p = { m: DRONE.m, c: DRONE.c, g: DRONE.g, kp, r: 2, h0, v0: 0 };
     const sol = solveDrone(p, ic);
@@ -561,14 +623,22 @@ const solve: WidgetFactory = (host, ctx) => {
     }, 10);
     plot.set('sim', xs, ys);
     const f = xs.map(sol.f);
-    plot.set('formula', xs, f);
+    morphFormula(xs, f);
     let gap = 0;
     xs.forEach((_, i) => (gap = Math.max(gap, Math.abs(ys[i] - f[i]))));
     rGap.set(`${fmt(gap, gap < 0.01 ? 6 : 2)} m`, gap < 1e-3 ? 'good' : 'bad');
     rZero.set(`${fmt(ys[0], 2)} / ${fmt(f[0], 2)} m`);
     const num = ic ? `${fmt(DRONE.m * h0, 2)}s^2 + ${fmt(DRONE.c * h0, 2)}s + ${fmt(kp * 2 - DRONE.m * DRONE.g, 3)}` : `${fmt(kp * 2 - DRONE.m * DRONE.g, 3)}`;
-    eqH.innerHTML = tex(`\\out{H}(s) = \\frac{${num}}{s\\,(${fmt(DRONE.m, 1)}s^2 + s + \\eff{${fmt(kp, 0)}})} = \\frac{${fmt(sol.A, 3)}}{s} + \\frac{${fmt(sol.B, 3)}\\,s ${sol.C >= 0 ? '+' : '-'} ${fmt(Math.abs(sol.C), 3)}}{${fmt(DRONE.m, 1)}s^2 + s + \\eff{${fmt(kp, 0)}}}`, true);
-    eqT.innerHTML = tex(`\\out{h}(t) = ${fmt(sol.A, 3)} + e^{-t}\\big(${fmt(sol.K1, 3)}\\cos ${fmt(sol.wd, 2)}t ${sol.K2 >= 0 ? '+' : '-'} ${fmt(Math.abs(sol.K2), 3)}\\sin ${fmt(sol.wd, 2)}t\\big)`, true);
+    eqH.innerHTML = tex(
+      `\\begin{aligned} \\out{H}(s) &= \\frac{${num}}{s\\,(${fmt(DRONE.m, 1)}s^2 + s + \\eff{${fmt(kp, 0)}})} \\\\[4pt] &= \\frac{${fmt(sol.A, 3)}}{s} + \\frac{${fmt(sol.B, 3)}\\,s ${sol.C >= 0 ? '+' : '-'} ${fmt(Math.abs(sol.C), 3)}}{${fmt(DRONE.m, 1)}s^2 + s + \\eff{${fmt(kp, 0)}}} \\end{aligned}`,
+      true,
+    );
+    const osc = `e^{-t}\\big(${fmt(sol.K1, 3)}\\cos ${fmt(sol.wd, 2)}t ${sol.K2 >= 0 ? '+' : '-'} ${fmt(Math.abs(sol.K2), 3)}\\sin ${fmt(sol.wd, 2)}t\\big)`;
+    // on narrow screens the solution breaks onto two aligned lines instead of scrolling sideways
+    eqT.innerHTML = tex(
+      host.clientWidth < 560 ? `\\begin{aligned} \\out{h}(t) &= ${fmt(sol.A, 3)} \\\\ &\\quad + ${osc} \\end{aligned}` : `\\out{h}(t) = ${fmt(sol.A, 3)} + ${osc}`,
+      true,
+    );
     status.textContent = gap < 1e-3 ? t('match') : ic ? t('odd') : t('mismatch', { h: fmt(h0, 1) });
     status.className = `w-status${gap < 1e-3 ? ' good' : ' bad'}`;
     plot.describe(status.textContent);
@@ -579,11 +649,20 @@ const solve: WidgetFactory = (host, ctx) => {
   onInteractStart(sh.input, () => plot.clear(true));
   const tg = toggle(t('toggle'), ic, (v) => {
     ic = v;
+    animateNext = true;
     ctx.bus.emit('ch7:ic', v);
     update();
   });
-  host.append(eqH, eqT, h('div', { class: 'readouts' }, rGap.el, rZero.el), status, tg.el, h('div', { class: 'w-controls' }, sk.el, sh.el));
+  host.append(
+    eqH,
+    eqT,
+    h('div', { class: 'w-row fix-row' }, tg.el),
+    h('div', { class: 'w-controls' }, sk.el, sh.el),
+    h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rGap.el, rZero.el)),
+    status,
+  );
   update();
+  return () => cancelAnimationFrame(morphing);
 };
 
 export const widgets: Record<string, WidgetFactory> = { probe, explode, unspin, derivRule, table: tableW, solve };

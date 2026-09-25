@@ -12,7 +12,37 @@
 }
 .ltable th {
   font-family: var(--font-hand);
+  font-weight: 400;
   font-size: 1.05rem;
+  white-space: nowrap;
+  color: var(--ink-2);
+}
+.ltable tr {
+  transition: background-color 200ms ease;
+}
+.derivation > * {
+  animation: rise-in 360ms var(--ease-out) both;
+}
+.derivation > :nth-child(2) {
+  animation-delay: 50ms;
+}
+.derivation > :nth-child(n + 3) {
+  animation-delay: 100ms;
+}
+.plot.drawing canvas {
+  outline: 2px dashed var(--focus);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+.draw-row {
+  align-items: flex-end;
+}
+.fix-row {
+  margin-top: 14px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  border: 1.5px dashed var(--paper-3);
 }
 .ltable tr.current td {
   background: var(--paper);
@@ -22,4 +52,17 @@
 }
 .derivation .math-block {
   margin: 0.2em 0;
+}
+@media (max-width: 520px) {
+  .ltable {
+    font-size: 0.85rem;
+  }
+  .ltable th,
+  .ltable td {
+    padding: 6px 3px;
+  }
+  .ltable .btn.small {
+    padding: 2px 10px;
+    min-height: 34px;
+  }
 }

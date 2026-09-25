@@ -18,6 +18,7 @@ import {
   eqRow,
   fmtC,
   iconButton,
+  mark,
   onInteractStart,
   planeLabel,
   regime,
@@ -33,6 +34,7 @@ const RUN = 6;
 /** The drone under P control (with hover thrust given for free) next to a mass on a spring. */
 const twins: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
+  mark(host);
   let kp = 20;
   type Trace = { t: number[]; drone: number[]; thrust: number[]; spring: number[] };
   /** Whole 6 s run for both systems, so a slider drag redraws instantly. */
@@ -155,6 +157,7 @@ const twins: WidgetFactory = (host, ctx) => {
 /** ωn and ζ sliders driving a step response, the two s values, three regime panels and a spring. */
 const personality: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
+  mark(host);
   let wn = 3;
   let zeta = 0.3;
   const T1 = 10;
@@ -271,6 +274,7 @@ const personality: WidgetFactory = (host, ctx) => {
 /** June's "more damping is safer": race ζ = 1 against a heavier damper. */
 const race: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
+  mark(host);
   const wn = 3;
   const T1 = 12;
   let zeta = 3;

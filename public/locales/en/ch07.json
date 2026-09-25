@@ -395,10 +395,10 @@
       "title": "The probe",
       "signal": "Signal",
       "sig": {
-        "step": "step: 1",
-        "decay": "e^(−t)",
-        "grow": "e^(0.5t)",
-        "wiggle": "sin 2t"
+        "step": "$\\text{step } 1$",
+        "decay": "$e^{-t}$",
+        "grow": "$e^{0.5t}$",
+        "wiggle": "$\\sin 2t$"
       },
       "f": "signal f(t)",
       "probe": "probe e^(−st)",
@@ -410,7 +410,7 @@
       "area": "area so far",
       "total": "total area F(s)",
       "s": "Probe rate $s$",
-      "sweep": "▶ Sweep the area again",
+      "sweep": "Sweep the area again",
       "showFormula": "Reveal the formula curve",
       "help": "Move s and let go: the area is measured and a dot is added to the right-hand plot. After 5 dots you can reveal the formula.",
       "finite": "At s = {s} the total area is {F}.",
@@ -441,7 +441,7 @@
       "spin": "leftover spin",
       "sigma": "Probe shrink $\\sigma$",
       "omega": "Probe spin $\\omega$ (signal spins at 2)",
-      "again": "▶ Replay",
+      "again": "Replay",
       "matched": "Spins matched! Every piece points the same way. The total is {m} and it heads to infinity as σ → 0.",
       "spinning": "The pieces curl around and mostly cancel. The total stays small."
     },
@@ -456,15 +456,23 @@
       "lhsShort": "transform of the slope",
       "rhsShort": "s F(s) − f(0)",
       "s": "Probe $s$",
-      "draw": "✎ Draw your own signal",
+      "draw": "Draw your own signal",
       "preset": "Try another preset",
-      "help": "Press \"Draw your own\", then drag across the left plot from left to right. After 8 s the signal stays flat.",
+      "help": "Pick a signal, or press \"Draw your own signal\" and drag across the left plot from left to right. After 8 s the signal stays flat.",
       "drawing": "Drag across the left plot from left to right…",
       "tooShort": "Draw a bit further across (at least 3 seconds' worth).",
-      "drawn": "Got it! Both sides were recomputed from your drawing.",
+      "drawn": "Got it! Both sides were recomputed from your drawing. Drag again to replace it.",
       "match": "At s = {s} both sides agree. The rule holds for your signal.",
       "nomatch": "They differ a little here. Numerical rounding on a very sharp drawing.",
-      "describe": "Transform of the slope {l}, s F minus f of zero {r}."
+      "describe": "Transform of the slope {l}, s F minus f of zero {r}.",
+      "stopDraw": "Stop drawing",
+      "presetLabel": "Or pick a signal",
+      "presets": {
+        "0": "wobble",
+        "1": "jump",
+        "2": "decay"
+      },
+      "rhsBrace": "what the rule predicts"
     },
     "table": {
       "title": "The table, derived",
