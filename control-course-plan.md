@@ -2,7 +2,7 @@
 
 > **Working title:** *Who Keeps the Drone Up? A Feedback Adventure*
 > **Driving question:** How does a machine keep itself where it's supposed to be?
-> **Status:** Outline for approval. No code yet.
+> **Status:** Built. All 12 chapters implemented (see README for how to run).
 
 ---
 
