@@ -419,7 +419,8 @@ export class Plot {
         ctx.font = '15px Caveat, cursive';
         ctx.textAlign = 'left';
         ctx.textBaseline = 'bottom';
-        ctx.fillText(b.label, PAD.l + 4, b.kind === 'h' ? this.py(b.to) - 1 : PAD.t + 14);
+        if (b.kind === 'h') ctx.fillText(b.label, PAD.l + 4, this.py(b.to) - 1);
+        else ctx.fillText(b.label, Math.max(PAD.l, this.px(b.from)) + 4, PAD.t + 14);
       }
     }
 

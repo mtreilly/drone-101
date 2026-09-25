@@ -94,7 +94,7 @@ export class DroneView {
     this.drone.append(this.thrustArrow, this.thrustLabel, this.pkgG, body);
     this.sensor = s('circle', { r: 4, cx: 60, fill: 'none', stroke: 'var(--c-output)', 'stroke-width': 2, 'stroke-dasharray': '2 2', opacity: 0 });
     this.windG = s('g', { class: 'wind' });
-    this.crash = s('text', { x: W / 2 + 10, y: GROUND - 60, 'text-anchor': 'middle', 'font-size': 34, 'font-weight': 700, fill: 'var(--c-error)', opacity: 0 }, tc('drone.crash'));
+    this.crash = s('text', { x: W / 2 + 10, y: GROUND - 120, 'text-anchor': 'middle', 'font-size': 34, 'font-weight': 700, fill: 'var(--c-error)', opacity: 0 }, tc('drone.crash'));
     this.readout = s('text', { x: 40, y: 22, 'font-size': 18, fill: 'var(--c-output)', 'font-weight': 700 });
     this.svg.append(scale, ground, this.setLine, this.windG, this.drone, this.sensor, this.crash, this.readout);
     this.desc = h('p', { class: 'visually-hidden', 'aria-live': 'off' });
@@ -131,6 +131,9 @@ export class DroneView {
     }
     this.svg.classList.toggle('spinning', T > 0.05 && !prefersReducedMotion());
     this.pkgG.style.display = (st.pkg ?? 0) > 0 ? '' : 'none';
+    // near the ground the package rests on the grass instead of hanging through it
+    const hangRoom = GROUND - (this.y(hClamped) - 6);
+    this.pkgG.setAttribute('transform', hangRoom < 52 ? `translate(-50, ${hangRoom - 50})` : '');
     this.drawWind(st.wind ?? 0, this.y(hClamped));
     this.crash.setAttribute('opacity', st.crashed ? '1' : '0');
     this.readout.textContent = `${tc('drone.height')}: ${fmt(Math.max(0, st.h), 2)} m`;
