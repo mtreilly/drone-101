@@ -6,34 +6,188 @@ import { conceptMap } from '../story/concept-map';
 import { renderChapter } from '../story/renderer';
 import { createBus, type ChapterContent } from '../story/types';
 import { h } from './dom';
-import { loadNamespace, raw, tc } from './i18n';
+import { applyDocumentLang, getLang, loadNamespace, onLangChange, prefetchNamespace, raw, setLang, tc } from './i18n';
+import { LANGUAGES, languageOf } from './languages';
 import { progress } from './progress';
 import { setRich } from './rich-text';
 import { applyTheme, getTheme, type ThemeChoice } from './theme';
 
 let cleanups: (() => void)[] = [];
+let rootEl: HTMLElement;
 let main: HTMLElement;
 let strip: HTMLElement;
 let drawerList: HTMLElement;
 let bar: HTMLElement;
+let readBar: HTMLElement;
 
 const ICONS = {
   menu: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
-  map: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="7" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="7" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="18" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8.5 9l2.3 6.3M15.5 9l-2.3 6.3M9 7h6" stroke="currentColor" stroke-width="2"/></svg>',
-  legend: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h4M4 12h4M4 17h4" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M11 7h9M11 12h9M11 17h9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
-  auto: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>',
-  light: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
-  dark: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
+  map: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="7" r="2.6" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="18" cy="7" r="2.6" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="18" r="2.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8.3 8.6l2.5 7M15.7 8.6l-2.5 7M8.8 7h6.4" stroke="currentColor" stroke-width="1.8"/></svg>',
+  legend: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h4M4 12h4M4 17h4" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M11.5 7h8.5M11.5 12h8.5M11.5 17h8.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  globe: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M3.8 12h16.4M12 3.8c2.4 2.3 3.6 5 3.6 8.2s-1.2 5.9-3.6 8.2c-2.4-2.3-3.6-5-3.6-8.2s1.2-5.9 3.6-8.2z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
+  check: '<svg viewBox="0 0 24 24" aria-hidden="true" class="menu-check"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  auto: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 4.5a7.5 7.5 0 0 1 0 15z" fill="currentColor"/></svg>',
+  light: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  dark: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 14.6A7.8 7.8 0 1 1 9.4 4.5a6.2 6.2 0 0 0 10.1 10.1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
 };
 
+/* ---------- popovers (legend, language): one open at a time, Esc / outside click closes ---------- */
+interface Pop {
+  el: HTMLElement;
+  btn: HTMLElement;
+  onOpen?: () => void;
+}
+let openPop: Pop | null = null;
+
+function togglePop(p: Pop): void {
+  if (openPop?.el === p.el) {
+    closePop(false);
+    return;
+  }
+  closePop(false);
+  p.el.hidden = false;
+  p.btn.setAttribute('aria-expanded', 'true');
+  openPop = p;
+  p.onOpen?.();
+}
+
+function closePop(returnFocus: boolean): void {
+  if (!openPop) return;
+  const { el, btn } = openPop;
+  el.hidden = true;
+  btn.setAttribute('aria-expanded', 'false');
+  openPop = null;
+  if (returnFocus) btn.focus();
+}
+
+function installGlobalHandlers(): void {
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && openPop) {
+      e.preventDefault();
+      closePop(true);
+    }
+  });
+  document.addEventListener('pointerdown', (e) => {
+    if (!openPop) return;
+    const t = e.target as Node;
+    if (!openPop.el.contains(t) && !openPop.btn.contains(t)) closePop(false);
+  });
+  // reading progress for the current chapter (decorative; the chapter bar carries the real progress)
+  let ticking = false;
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      ticking = false;
+      const isChapter = !!main?.querySelector('.chapter');
+      readBar?.parentElement?.classList.toggle('on', isChapter);
+      if (!isChapter || !readBar) return;
+      const max = document.documentElement.scrollHeight - innerHeight;
+      readBar.style.transform = `scaleX(${max > 0 ? Math.min(1, scrollY / max) : 0})`;
+    });
+  };
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', onScroll, { passive: true });
+  addEventListener('route:rendered', onScroll);
+}
+
 export async function startApp(root: HTMLElement): Promise<void> {
+  rootEl = root;
   applyTheme(getTheme());
+  applyDocumentLang();
   await loadNamespace('common');
-  document.title = tc('app.title');
+  installGlobalHandlers();
   root.append(buildShell());
   window.addEventListener('hashchange', route);
   progress.subscribe(updateNav);
+  // a language switch rebuilds the chrome and the current page in place, no reload
+  onLangChange(async () => {
+    closePop(false);
+    cleanups.forEach((c) => c());
+    cleanups = [];
+    rootEl.replaceChildren(buildShell());
+    await route({ keepScroll: true });
+    document.getElementById('lang-btn')?.focus();
+    announce(tc('lang.button', { name: languageOf(getLang()).name }));
+  });
   await route();
+}
+
+/** Polite screen-reader announcement for app-level events. */
+function announce(text: string): void {
+  const el = document.getElementById('app-announcer');
+  if (!el) return;
+  el.textContent = '';
+  requestAnimationFrame(() => (el.textContent = text));
+}
+
+function tool(icon: string, label: string, attrs: Record<string, unknown> = {}, tag: 'button' | 'a' = 'button'): HTMLElement {
+  const el = h(tag as 'button', { class: 'tool', 'aria-label': label, 'data-tip': label, ...(tag === 'button' ? { type: 'button' } : {}), ...attrs });
+  el.innerHTML = icon;
+  return el;
+}
+
+function buildLanguageMenu(): { btn: HTMLElement; pop: HTMLElement } {
+  const current = languageOf(getLang());
+  const btn = tool(`${ICONS.globe}<span class="tool-code" aria-hidden="true">${current.code.toUpperCase()}</span>`, tc('lang.button', { name: current.name }), {
+    id: 'lang-btn',
+    class: 'tool tool-lang',
+    'aria-haspopup': 'menu',
+    'aria-expanded': 'false',
+    'aria-controls': 'lang-menu',
+  });
+  const list = h('ul', { role: 'menu', 'aria-label': tc('lang.menu'), class: 'menu-list' });
+  const items: HTMLButtonElement[] = [];
+  for (const l of LANGUAGES) {
+    const active = l.code === current.code;
+    const item = h(
+      'button',
+      { type: 'button', role: 'menuitemradio', 'aria-checked': String(active), lang: l.code, class: 'menu-item', tabindex: '-1' },
+      h('span', { class: 'menu-code', 'aria-hidden': 'true' }, l.code.toUpperCase()),
+      h('span', { class: 'menu-name' }, l.name),
+    );
+    item.insertAdjacentHTML('beforeend', ICONS.check);
+    item.addEventListener('click', async () => {
+      if (l.code === getLang()) {
+        closePop(true);
+        return;
+      }
+      btn.setAttribute('aria-busy', 'true');
+      btn.classList.add('busy');
+      try {
+        await setLang(l.code);
+      } catch (err) {
+        console.error(err);
+        btn.removeAttribute('aria-busy');
+        btn.classList.remove('busy');
+        closePop(true);
+      }
+    });
+    items.push(item);
+    list.append(h('li', { role: 'none' }, item));
+  }
+  list.addEventListener('keydown', (e) => {
+    const i = items.indexOf(document.activeElement as HTMLButtonElement);
+    const go = (j: number) => items[(j + items.length) % items.length].focus();
+    if (e.key === 'ArrowDown') go(i + 1);
+    else if (e.key === 'ArrowUp') go(i - 1);
+    else if (e.key === 'Home') go(0);
+    else if (e.key === 'End') go(items.length - 1);
+    else if (e.key === 'Tab') closePop(false);
+    else return;
+    if (e.key !== 'Tab') e.preventDefault();
+  });
+  const pop = h('div', { class: 'menu-pop', id: 'lang-menu', hidden: true }, list);
+  btn.addEventListener('click', () =>
+    togglePop({ el: pop, btn, onOpen: () => (items.find((it) => it.getAttribute('aria-checked') === 'true') ?? items[0]).focus() }),
+  );
+  btn.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' && openPop?.el !== pop) {
+      e.preventDefault();
+      btn.click();
+    }
+  });
+  return { btn, pop };
 }
 
 function buildShell(): DocumentFragment {
@@ -43,7 +197,7 @@ function buildShell(): DocumentFragment {
     e.preventDefault();
     main.focus();
   });
-  strip = h('ol', { class: 'chapter-strip', 'aria-label': tc('nav.chapters') });
+  strip = h('ol', { class: 'chapter-strip' });
   drawerList = h('ol');
   const drawer = h('nav', { class: 'drawer', id: 'drawer', hidden: true, 'aria-label': tc('nav.chapters') });
   const scrim = h('div', { class: 'scrim', hidden: true });
@@ -52,12 +206,13 @@ function buildShell(): DocumentFragment {
     scrim.hidden = true;
     menuBtn.setAttribute('aria-expanded', 'false');
   };
-  const menuBtn = h('button', { class: 'icon-btn menu-btn', type: 'button', 'aria-controls': 'drawer', 'aria-expanded': 'false', 'aria-label': tc('nav.menu'), html: ICONS.menu });
+  const menuBtn = tool(ICONS.menu, tc('nav.menu'), { class: 'tool menu-btn', 'aria-controls': 'drawer', 'aria-expanded': 'false' });
   menuBtn.addEventListener('click', () => {
+    closePop(false);
     drawer.hidden = false;
     scrim.hidden = false;
     menuBtn.setAttribute('aria-expanded', 'true');
-    (drawer.querySelector('a') as HTMLElement | null)?.focus();
+    (drawer.querySelector('a[aria-current]') as HTMLElement | null)?.focus() ?? (drawer.querySelector('a') as HTMLElement | null)?.focus();
   });
   scrim.addEventListener('click', closeDrawer);
   drawer.addEventListener('keydown', (e) => {
@@ -69,44 +224,30 @@ function buildShell(): DocumentFragment {
   drawer.addEventListener('click', (e) => {
     if ((e.target as HTMLElement).closest('a')) closeDrawer();
   });
-  const closeBtn = h('button', { class: 'icon-btn', type: 'button' }, tc('nav.close'));
+  const closeBtn = h('button', { class: 'btn small', type: 'button' }, tc('nav.close'));
   closeBtn.addEventListener('click', () => {
     closeDrawer();
     menuBtn.focus();
   });
-  drawer.append(h('div', { class: 'w-row', style: { justifyContent: 'space-between' } }, h('strong', null, tc('nav.chapters')), closeBtn), drawerList, h('a', { href: '#/map' }, tc('nav.map')));
+  drawer.append(h('div', { class: 'drawer-head' }, h('strong', null, tc('nav.chapters')), closeBtn), drawerList, h('a', { href: '#/map', class: 'drawer-map' }, tc('nav.map')));
 
   const legend = h('div', { class: 'legend-pop', id: 'legend', hidden: true, role: 'dialog', 'aria-label': tc('legend.title') }, legendContent());
-  const legendBtn = h('button', { class: 'icon-btn', type: 'button', 'aria-controls': 'legend', 'aria-expanded': 'false', html: `${ICONS.legend}<span class="btn-label">${tc('legend.button')}</span>` });
-  legendBtn.setAttribute('aria-label', tc('legend.title'));
-  legendBtn.addEventListener('click', () => {
-    legend.hidden = !legend.hidden;
-    legendBtn.setAttribute('aria-expanded', String(!legend.hidden));
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !legend.hidden) {
-      legend.hidden = true;
-      legendBtn.setAttribute('aria-expanded', 'false');
-      legendBtn.focus();
-    }
-  });
-  const mapBtn = h('a', { class: 'icon-btn hide-narrow', href: '#/map', html: `${ICONS.map}<span class="btn-label">${tc('nav.map')}</span>` });
-  mapBtn.setAttribute('aria-label', tc('nav.map'));
-  const themeBtn = h('button', { class: 'icon-btn', type: 'button' });
-  const syncTheme = () => {
-    const t = getTheme();
-    themeBtn.innerHTML = ICONS[t];
-    themeBtn.setAttribute('aria-label', tc('theme.label', { mode: tc(`theme.${t}`) }));
-    themeBtn.title = tc('theme.label', { mode: tc(`theme.${t}`) });
-  };
+  const legendBtn = tool(ICONS.legend, tc('legend.title'), { 'aria-controls': 'legend', 'aria-expanded': 'false', 'aria-haspopup': 'dialog' });
+  legendBtn.addEventListener('click', () => togglePop({ el: legend, btn: legendBtn }));
+  const mapBtn = tool(ICONS.map, tc('nav.map'), { href: '#/map', class: 'tool hide-narrow' }, 'a');
+  const themeLabel = () => tc('theme.label', { mode: tc(`theme.${getTheme()}`) });
+  const themeBtn = tool(ICONS[getTheme()], themeLabel());
   themeBtn.addEventListener('click', () => {
     const order: ThemeChoice[] = ['auto', 'light', 'dark'];
     applyTheme(order[(order.indexOf(getTheme()) + 1) % 3]);
-    syncTheme();
+    themeBtn.innerHTML = ICONS[getTheme()];
+    themeBtn.setAttribute('aria-label', themeLabel());
+    themeBtn.dataset.tip = themeLabel();
   });
-  syncTheme();
+  const lang = buildLanguageMenu();
 
   bar = h('span', { style: { width: '0%' } });
+  readBar = h('span');
   const header = h(
     'header',
     { class: 'topbar' },
@@ -114,17 +255,20 @@ function buildShell(): DocumentFragment {
       'div',
       { class: 'topbar-inner' },
       h('a', { class: 'brand', href: '#/' }, tc('app.short')),
-      h('nav', { 'aria-label': tc('nav.chapters'), style: { margin: '0 auto' } }, strip),
-      h('div', { class: 'topbar-actions' }, legendBtn, mapBtn, themeBtn, menuBtn),
+      h('nav', { class: 'strip-nav', 'aria-label': tc('nav.chapters') }, strip),
+      h('div', { class: 'toolbar', role: 'group', 'aria-label': tc('nav.tools') }, lang.btn, legendBtn, mapBtn, themeBtn, menuBtn),
     ),
     h('div', { class: 'progress', role: 'progressbar', 'aria-label': tc('nav.progress'), 'aria-valuemin': 0, 'aria-valuemax': CHAPTER_COUNT }, bar),
+    h('div', { class: 'read-progress', 'aria-hidden': 'true' }, readBar),
     legend,
+    lang.pop,
   );
   main = h('main', { id: 'main', tabindex: '-1' });
-  frag.append(skip, header, drawer, scrim, main, buildFooter());
+  const announcer = h('div', { id: 'app-announcer', class: 'visually-hidden', 'aria-live': 'polite' });
+  frag.append(skip, header, drawer, scrim, main, buildFooter(), announcer);
   for (let i = 0; i < CHAPTER_COUNT; i++) {
     const title = tc(`chapters.${i}.title`);
-    strip.append(h('li', null, h('a', { href: `#/ch/${i}`, 'aria-label': tc('nav.chapterN', { n: i, title }), title }, String(i))));
+    strip.append(h('li', null, h('a', { href: `#/ch/${i}`, 'aria-label': tc('nav.chapterN', { n: i, title }), 'data-tip': title }, String(i))));
     drawerList.append(h('li', null, h('a', { href: `#/ch/${i}` }, h('span', { class: 'num' }, String(i)), h('span', null, title), h('span', { class: 'done-mark', 'aria-hidden': 'true' }))));
   }
   return frag;
@@ -184,7 +328,9 @@ function updateNav(): void {
   bar.parentElement?.setAttribute('aria-valuenow', String(done.length));
 }
 
-async function route(): Promise<void> {
+async function route(opts: { keepScroll?: boolean } | Event = {}): Promise<void> {
+  const keepScroll = !(opts instanceof Event) && !!opts.keepScroll;
+  const y = scrollY;
   cleanups.forEach((c) => c());
   cleanups = [];
   const hash = location.hash.replace(/^#/, '');
@@ -194,30 +340,56 @@ async function route(): Promise<void> {
   if (m) {
     const n = Number(m[1]);
     if (n >= 0 && n < CHAPTER_COUNT) {
-      await showChapter(n, m[2]);
+      await showChapter(n, m[2], keepScroll);
+      if (keepScroll) scrollTo(0, y);
+      dispatchEvent(new Event('route:rendered'));
       return;
     }
   }
   if (hash === '/map') showMap();
   else showHome();
+  if (keepScroll) scrollTo(0, y);
+  dispatchEvent(new Event('route:rendered'));
 }
 
-async function showChapter(n: number, sectionId?: string): Promise<void> {
+async function showChapter(n: number, sectionId?: string, keepScroll = false): Promise<void> {
   const entry = CHAPTERS[n];
   main.append(h('p', { class: 'page loading', 'aria-live': 'polite' }, tc('app.loading')));
   const [content, mod] = await Promise.all([loadNamespace(entry.ns) as Promise<unknown>, entry.load()]);
   const bus = createBus();
   const page = renderChapter({ chapter: n, ns: entry.ns, content: content as ChapterContent, widgets: mod.widgets, bus, cleanups });
   const navEl = h('nav', { class: 'chapter-nav', 'aria-label': tc('nav.chapterNav') });
-  if (n > 0) navEl.append(h('a', { class: 'btn', href: `#/ch/${n - 1}` }, `← ${tc('nav.prev')}: ${tc(`chapters.${n - 1}.short`)}`));
+  if (n > 0) navEl.append(h('a', { class: 'btn', href: `#/ch/${n - 1}` }, `← ${tc(`chapters.${n - 1}.short`)}`));
   else navEl.append(h('a', { class: 'btn', href: '#/' }, `← ${tc('nav.home')}`));
-  if (n < CHAPTER_COUNT - 1) navEl.append(h('a', { class: 'btn primary', href: `#/ch/${n + 1}` }, `${tc('nav.next')}: ${tc(`chapters.${n + 1}.short`)} →`));
-  else navEl.append(h('a', { class: 'btn primary', href: '#/map' }, `${tc('nav.map')} →`));
+  const nextHref = n < CHAPTER_COUNT - 1 ? `#/ch/${n + 1}` : '#/map';
+  const nextTitle = n < CHAPTER_COUNT - 1 ? tc(`chapters.${n + 1}.title`) : tc('map.title');
+  const nextQ = n < CHAPTER_COUNT - 1 ? tc(`chapters.${n + 1}.question`) : tc('map.intro');
+  navEl.append(
+    h(
+      'a',
+      { class: 'up-next', href: nextHref },
+      h('span', { class: 'up-next-kicker' }, tc('nav.upNext')),
+      h('span', { class: 'up-next-title' }, nextTitle),
+      setRich(h('span', { class: 'up-next-q' }), nextQ),
+      h('span', { class: 'up-next-arrow', 'aria-hidden': 'true' }, '→'),
+    ),
+  );
   page.append(navEl);
   main.replaceChildren(page);
   document.title = `${(content as ChapterContent).title} · ${tc('app.short')}`;
   progress.visit(n);
   updateNav();
+  // warm the next chapter (text + code) while the reader is busy with this one
+  if (n < CHAPTER_COUNT - 1) {
+    const next = CHAPTERS[n + 1];
+    const warm = () => {
+      prefetchNamespace(next.ns);
+      next.load().catch(() => {});
+    };
+    if ('requestIdleCallback' in window) requestIdleCallback(warm, { timeout: 4000 });
+    else setTimeout(warm, 1500);
+  }
+  if (keepScroll) return;
   if (sectionId) document.getElementById(sectionId)?.scrollIntoView();
   else {
     window.scrollTo(0, 0);

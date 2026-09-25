@@ -45,7 +45,8 @@ export function rich(src: string): string {
   return parts
     .map((part) => {
       if (part.length > 2 && part.startsWith('$') && part.endsWith('$')) return tex(part.slice(1, -1));
-      let out = escapeHtml(part);
+      // keep numbers and their units together on one line ("38 °C", "0,245 m", "2.5 s")
+      let out = escapeHtml(part).replace(/(\d) (°C|°|%|m\/s|m|s|N·s\/m|N\/m|N|kg|rad\/s|Hz|cm|min)(?![\p{L}])/gu, '$1\u00a0$2');
       out = out.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
       out = out.replace(/(^|[^*])\*(?!\s)(.+?)\*/g, '$1<em>$2</em>');
       out = out.replace(/==(.+?)==/g, '<mark>$1</mark>');
