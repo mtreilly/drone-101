@@ -20,15 +20,20 @@ export const loopMargins = (l: { num: number[]; den: number[] }, delay: number):
 export const handPolicy = (k: number): ShowerPolicy => ({ kind: 'rate', rate: (_t, felt) => k * (SHOWER.target - felt) });
 
 /**
- * PI in "velocity form": the knob *speed* is ki·e + kp·(de/dt). It is exactly kp·e + ki∫e,
- * and because it moves the knob rather than storing a pile, it can't wind up at the knob's ends.
+ * PI in velocity form: knob speed is ki·e + kp·(de/dt). Apply the initial P
+ * command on the first step so the position matches u_initial + kp·e + ki∫e.
+ * The knob itself is clamped; there is no separate integral state to wind up.
  */
 export function piPolicy(kp: number, ki: number, dt = 0.005): ShowerPolicy {
   let prev = Number.NaN;
   return {
     kind: 'rate',
     rate: (_t, felt) => {
-      const dT = Number.isNaN(prev) ? 0 : (felt - prev) / dt;
+      if (Number.isNaN(prev)) {
+        prev = felt;
+        return (kp * (SHOWER.target - felt)) / dt + ki * (SHOWER.target - felt);
+      }
+      const dT = (felt - prev) / dt;
       prev = felt;
       return -kp * dT + ki * (SHOWER.target - felt);
     },

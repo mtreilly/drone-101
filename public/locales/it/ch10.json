@@ -24,6 +24,10 @@
           "text": "Prima, una confessione sulla \"mano normale\" del Capitolo 0. Girava la manopola a una **velocità** proporzionale a quanto le sembrava sbagliata l'acqua: velocità della manopola $= k\\cdot\\err{e}$, con $k = 0{,}8\\,\\%$ della manopola al secondo per °C. Una velocità proporzionale all'errore vuol dire che la *posizione* della manopola è la pila dell'errore passato. È un **controllore I**, con $K_i = k$."
         },
         {
+          "t": "note",
+          "text": "Nei calcoli, la manopola va da 0 a 1: lo 0,8 % della sua corsa vale quindi 0,008 unità di manopola. La formula dell’anello sotto usa 0,008; i cursori mostrano 0,8 %. Tieni sempre le unità accanto al numero."
+        },
+        {
           "t": "say",
           "who": "mika",
           "mood": "surprised",
@@ -92,7 +96,7 @@
         },
         {
           "t": "p",
-          "text": "Il ritardo della miscelazione rimpicciolisce le oscillazioni veloci (il guadagno crolla), mentre il tubo continua ad accumulare ritardo di fase, senza limiti. Disegnata in funzione della velocità di oscillazione su assi logaritmici, questa coppia di curve si chiama **diagramma di Bode**. Ne abbiamo appena disegnato uno a mano. La formula viene dritta da $G(s)$ con $s = i\\omega$, l'asse verticale del piano s:"
+          "text": "La miscelazione attenua le oscillazioni rapide, mentre il tubo continua ad aggiungere ritardo di fase. Le curve di guadagno e fase rispetto alla velocità di oscillazione formano un **diagramma di Bode**. Qui l’ingresso è la **temperatura dell’acqua miscelata**, quindi le oscillazioni lente hanno guadagno 1. Se l’ingresso fosse la frazione della manopola, il guadagno sarebbe 45 volte maggiore. Per questo grafico temperatura-temperatura, poniamo $s=i\\omega$ nella risposta normalizzata della doccia:"
         },
         {
           "t": "math",
@@ -124,7 +128,11 @@
           "t": "say",
           "who": "june",
           "mood": "excited",
-          "text": "Quindi c'è una velocità di oscillazione speciale, dove la fase arriva a −180°. La domanda è solo: a quella velocità, il guadagno d'anello è più grande o più piccolo di 1?"
+          "text": "In questo semplice anello della doccia, la fase attraversa −180° a una velocità di oscillazione importante. Trovala nel grafico di fase, poi leggi il guadagno d’anello alla stessa velocità nel grafico del guadagno. È sotto o sopra 1?"
+        },
+        {
+          "t": "p",
+          "text": "Per esempio, vicino a 0,457 rad/s, la mano che accumula è in ritardo di 90°, la miscelazione aggiunge circa 25° e il tubo circa 65°: in totale 180°. La mano normale rimanda un’oscillazione grande solo circa 0,72 volte l’originale. Potrebbe essere circa 1 ÷ 0,72 ≈ 1,4 volte più energica prima del confine."
         },
         {
           "t": "vocab",
@@ -141,7 +149,7 @@
         },
         {
           "t": "p",
-          "text": "Per la nostra doccia, la fase di $L$ arriva a −180° a $\\omega \\approx 0{,}457$ rad/s, un periodo di oscillazione di circa **13,8 s**. La mano normale ($k = 0{,}8$) ha un margine di guadagno di appena **1,4** circa, e un margine di fase di circa 22°. Vicino al bordo! La mano energica raddoppia il guadagno: 1,4 ÷ 2 = 0,7, **oltre il precipizio**. Ecco esattamente perché non si assestava mai."
+          "text": "Per la nostra doccia, la fase di $L$ arriva a −180° a $\\omega \\approx 0{,}457$ rad/s, un periodo di oscillazione di circa **13,8 s**. La mano normale ($k = 0{,}008$) ha un margine di guadagno di appena **1,4** circa, e un margine di fase di circa 22°. Vicino al bordo! La mano energica raddoppia il guadagno: 1,4 ÷ 2 = 0,7, **oltre il precipizio**. Ecco esattamente perché non si assestava mai."
         },
         {
           "t": "predict",
@@ -200,7 +208,11 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Ora battiamo le nostre mani. Il robot usa un controllore PI: una parte I (come la mano) più una parte P, che reagisce alla *tendenza* della temperatura e aggiunge anticipo di fase. Punta a un **margine di fase sopra i 45°** e a stare **comodo (nella fascia per 10 s di fila) entro 12 s**."
+          "text": "Ora battiamo le nostre mani. Il robot usa PI: **P reagisce all’errore di temperatura attuale** e **I ricorda l’errore accumulato**. Insieme fanno reagire subito la manopola mentre I trova l’impostazione duratura. Rispetto al solo I, P può aggiungere anticipo di fase. Punta a un **margine di fase sopra i 45°** e a **10 secondi nella fascia comoda, iniziando entro 12 s**."
+        },
+        {
+          "t": "note",
+          "text": "Il codice del robot scrive PI come **velocità** della manopola: I continua a muoverla finché resta un errore e P risponde a una *variazione* dell’errore. All’avvio, P dà anche un primo movimento in base all’errore attuale. Questo coincide con la regola in posizione, tranne quando la manopola raggiunge un fine corsa."
         },
         {
           "t": "say",
@@ -225,8 +237,12 @@
           "text": "Il drone reggeva guadagni grandi perché non aveva quasi nessun ritardo. Qui, **robusto** vuol dire delicato: lascia margine per il ritardo. Prova circa $K_p \\approx 1$ e $K_i \\approx 0{,}6$."
         },
         {
+          "t": "note",
+          "text": "Questi numeri sui cursori sono percentuali della corsa completa della manopola: P ≈ 1 % per °C di errore attuale e I ≈ 0,6 % per °C-secondo di errore accumulato. Le equazioni dell’anello usano frazioni della corsa: dividi per 100 i numeri mostrati."
+        },
+        {
           "t": "p",
-          "text": "Un PI con buoni margini diventa comodo in meno di 8 secondi, senza oscillare. Batte la mano normale (che ha passato quasi un minuto a oscillare prima di calmarsi) e la maggior parte degli umani. Però non può battere la fisica: niente può reagire ad acqua che non è ancora arrivata. Gli ingegneri hanno un trucco per i ritardi lunghi, il **predittore di Smith**, che fa girare una piccola simulazione del tubo dentro il controllore. Ma questa è una storia per un altro quaderno."
+          "text": "Un PI con buoni margini diventa comodo in circa 9,4 secondi, senza grandi oscillazioni ripetute. Batte la mano normale (che ha passato quasi un minuto a oscillare prima di calmarsi) e la maggior parte degli umani. Però non può battere la fisica: niente può reagire ad acqua che non è ancora arrivata. Gli ingegneri hanno un trucco per i ritardi lunghi, il **predittore di Smith**, che fa girare una piccola simulazione del tubo dentro il controllore. Ma questa è una storia per un altro quaderno."
         },
         {
           "t": "note",
@@ -243,7 +259,7 @@
           "items": [
             "Un ritardo $L$ sfasa un'oscillazione di $\\omega L$: niente per le oscillazioni lente, tanto per quelle veloci.",
             "Mandare dentro onde sinusoidali e misurare guadagno e fase dà la **risposta in frequenza**; disegnata, è un **diagramma di Bode**, ed è semplicemente $G(i\\omega)$.",
-            "Un'oscillazione parte dove la fase dell'anello arriva a −180° con un guadagno di almeno 1.",
+            "In questo semplice anello della doccia, un’oscillazione persistente inizia quando la fase d’anello arriva a −180° con guadagno 1; con più guadagno, le oscillazioni crescono finché intervengono i limiti.",
             "Il **margine di guadagno e di fase** misurano la distanza da quel precipizio. Un ritardo più lungo vuol dire meno margine, quindi serve un controllo più delicato.",
             "Le nostre oscillazioni del Capitolo 0 erano un controllore (noi) con troppo poco margine."
           ]

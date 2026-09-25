@@ -61,7 +61,8 @@ export const pidCharPoly = (kp: number, ki: number, kd: number, m = DRONE.m, c =
 
 export const pidPoles = (kp: number, ki: number, kd: number, m = DRONE.m, c = DRONE.c): C[] => {
   const p = pidCharPoly(kp, ki, kd, m, c);
-  return ki === 0 ? [...roots(p.slice(0, 3)), { re: 0, im: 0 }] : roots(p);
+  // With no I term, the controller has no integrator: cancel the common s factor.
+  return roots(ki === 0 ? p.slice(0, 3) : p);
 };
 
 /** Routh–Hurwitz for the cubic: stable iff all coefficients > 0 and (c+Kd)·Kp > m·Ki. */
@@ -132,4 +133,3 @@ export function hoverStep(p: PID, r0: number, r1: number, T: number, noiseStd = 
   sim.advance(T, sample, 10);
   return tr;
 }
-

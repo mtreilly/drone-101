@@ -24,6 +24,10 @@
           "text": "Zuerst ein Geständnis zur „normalen Hand“ aus Kapitel 0. Sie hat den Knopf mit einem **Tempo** gedreht, das proportional dazu war, wie falsch sich das Wasser anfühlte: Knopftempo $= k\\cdot\\err{e}$, mit $k = 0{,}8\\,\\%$ des Knopfs pro Sekunde pro °C. Ein Tempo proportional zum Fehler heißt: Die Knopf*stellung* ist der Haufen vergangener Fehler. Das ist ein **I-Regler**, mit $K_i = k$."
         },
         {
+          "t": "note",
+          "text": "In Rechnungen reicht der Knopf von 0 bis 1: 0,8 % seines Bereichs sind also 0,008 Knopfeinheiten. Die Kreisformel unten verwendet 0,008; die Schieber zeigen 0,8 %. Behalte die Einheit bei der Zahl."
+        },
+        {
           "t": "say",
           "who": "mika",
           "mood": "surprised",
@@ -92,7 +96,7 @@
         },
         {
           "t": "p",
-          "text": "Die Mischträgheit staucht schnelle Wackler (die Verstärkung fällt ab), während das Rohr immer weiter Phasenverzug aufhäuft, ohne Grenze. Über dem Wackeltempo auf logarithmischen Achsen aufgetragen, heißt dieses Kurvenpaar **Bode-Diagramm**. Wir haben gerade eins von Hand gezeichnet. Die Formel kommt direkt aus $G(s)$ mit $s = i\\omega$, der senkrechten Achse der s-Ebene:"
+          "text": "Die Mischung dämpft schnelle Wellen, während das Rohr immer mehr Phasenverzug hinzufügt. Die Verstärkungs- und Phasenkurven über dem Wackeltempo bilden ein **Bode-Diagramm**. Hier ist der Eingang die **Temperatur des gemischten Wassers**, deshalb ist die Verstärkung langsamer Wellen 1. Bei der Knopfstellung als Eingang wäre sie 45-mal größer. Für dieses Temperatur-zu-Temperatur-Diagramm setzen wir $s=i\\omega$ in die normierte Duschantwort ein:"
         },
         {
           "t": "math",
@@ -124,7 +128,11 @@
           "t": "say",
           "who": "june",
           "mood": "excited",
-          "text": "Es gibt also ein besonderes Wackeltempo, bei dem die Phase −180° erreicht. Die Frage ist nur: Ist die Kreisverstärkung bei diesem Tempo größer oder kleiner als 1?"
+          "text": "Bei diesem einfachen Duschkreis durchläuft die Phase −180° bei einem wichtigen Wackeltempo. Finde es im Phasendiagramm und lies dann bei demselben Tempo die Kreisverstärkung im Verstärkungsdiagramm ab. Liegt sie unter oder über 1?"
+        },
+        {
+          "t": "p",
+          "text": "Zum Beispiel hinkt die sammelnde Hand bei etwa 0,457 rad/s um 90° nach, die Mischung fügt rund 25° hinzu und das Rohr rund 65°: zusammen 180°. Die normale Hand schickt eine Welle mit nur etwa 0,72 der ursprünglichen Größe zurück. Sie könnte ungefähr 1 ÷ 0,72 ≈ 1,4-mal stärker sein, bevor sie die Grenze erreicht."
         },
         {
           "t": "vocab",
@@ -141,7 +149,7 @@
         },
         {
           "t": "p",
-          "text": "Bei unserer Dusche erreicht die Phase von $L$ bei $\\omega \\approx 0{,}457$ rad/s −180°, eine Wackelperiode von etwa **13,8 s**. Die normale Hand ($k = 0{,}8$) hat eine Amplitudenreserve von nur etwa **1,4** und eine Phasenreserve von etwa 22°. Knapp an der Kante! Die eifrige Hand verdoppelt die Verstärkung: 1,4 ÷ 2 = 0,7, **über die Klippe**. Genau deshalb kam sie nie zur Ruhe."
+          "text": "Bei unserer Dusche erreicht die Phase von $L$ bei $\\omega \\approx 0{,}457$ rad/s −180°, eine Wackelperiode von etwa **13,8 s**. Die normale Hand ($k = 0{,}008$) hat eine Amplitudenreserve von nur etwa **1,4** und eine Phasenreserve von etwa 22°. Knapp an der Kante! Die eifrige Hand verdoppelt die Verstärkung: 1,4 ÷ 2 = 0,7, **über die Klippe**. Genau deshalb kam sie nie zur Ruhe."
         },
         {
           "t": "predict",
@@ -200,7 +208,11 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Jetzt schlagen wir unsere eigenen Hände. Der Roboter nutzt einen PI-Regler: einen I-Teil (wie die Hand) plus einen P-Teil, der auf den *Trend* der Temperatur reagiert und Phase gutmacht. Ziel: **Phasenreserve über 45°** und **angenehm (10 s am Stück im Band) innerhalb von 12 s**."
+          "text": "Jetzt wollen wir unsere eigenen Hände schlagen. Der Roboter nutzt PI: **P reagiert auf den aktuellen Temperaturfehler**, **I merkt sich den angesammelten Fehler**. So reagiert der Knopf sofort, während I die dauerhafte Einstellung findet. Gegenüber I allein kann P Phasenvorsprung bringen. Ziel sind **mehr als 45° Phasenreserve** und **10 Sekunden im angenehmen Band, beginnend vor 12 s**."
+        },
+        {
+          "t": "note",
+          "text": "Im Robotercode steht PI als **Drehgeschwindigkeit** des Knopfs: I bewegt ihn weiter, solange ein Fehler besteht, und P reagiert auf eine *Änderung* des Fehlers. Beim Start gibt P dem Knopf auch eine erste Bewegung entsprechend dem aktuellen Fehler. Das entspricht der Stellungsregel, außer wenn der Knopf an einen Anschlag kommt."
         },
         {
           "t": "say",
@@ -225,8 +237,12 @@
           "text": "Die Drohne hat große Verstärkungen vertragen, weil sie fast kein Nachhinken hatte. Hier heißt **robust** sanft: Lass Reserve für die Verzögerung. Probier ungefähr $K_p \\approx 1$ und $K_i \\approx 0{,}6$."
         },
         {
+          "t": "note",
+          "text": "Die Schieberzahlen sind Prozent des vollen Knopfbereichs: P ≈ 1 % pro °C aktuellem Fehler und I ≈ 0,6 % pro °C-Sekunde angesammeltem Fehler. Die Kreisgleichungen nutzen Bruchteile des Bereichs; teile die angezeigten Zahlen daher durch 100."
+        },
+        {
           "t": "p",
-          "text": "Ein PI-Regler mit guter Reserve ist in unter 8 Sekunden angenehm, ganz ohne Schwingen. Das schlägt die normale Hand (die fast eine Minute geschwungen hat, bevor sie sich beruhigte) und die meisten Menschen. Die Physik schlagen kann er aber nicht: Nichts kann auf Wasser reagieren, das noch nicht angekommen ist. Für lange Verzögerungen haben Ingenieurinnen und Ingenieure einen Trick, den **Smith-Prädiktor**, der eine kleine Simulation des Rohrs im Regler laufen lässt. Aber das ist eine Geschichte für ein anderes Notizheft."
+          "text": "Ein PI-Regler mit guter Reserve ist in etwa 9,4 Sekunden angenehm, ohne wiederholte große Schwingungen. Das schlägt die normale Hand (die fast eine Minute geschwungen hat, bevor sie sich beruhigte) und die meisten Menschen. Die Physik schlagen kann er aber nicht: Nichts kann auf Wasser reagieren, das noch nicht angekommen ist. Für lange Verzögerungen haben Ingenieurinnen und Ingenieure einen Trick, den **Smith-Prädiktor**, der eine kleine Simulation des Rohrs im Regler laufen lässt. Aber das ist eine Geschichte für ein anderes Notizheft."
         },
         {
           "t": "note",
@@ -243,7 +259,7 @@
           "items": [
             "Eine Verzögerung $L$ lässt einen Wackler um $\\omega L$ nachhinken: nichts bei langsamen Wacklern, viel bei schnellen.",
             "Sinuswellen einspeisen und Verstärkung und Phase messen ergibt den **Frequenzgang**; aufgezeichnet ist das ein **Bode-Diagramm**, und es ist einfach $G(i\\omega)$.",
-            "Eine Schwingung beginnt dort, wo die Phase des Kreises −180° erreicht und die Verstärkung mindestens 1 ist.",
+            "In diesem einfachen Duschkreis beginnt eine anhaltende Schwingung, wenn die Kreisphase −180° bei Verstärkung 1 erreicht; bei größerer Verstärkung wachsen die Schwingungen, bis Grenzen eingreifen.",
             "**Amplituden- und Phasenreserve** messen den Abstand zu dieser Klippe. Längere Verzögerung heißt weniger Reserve, also brauchst du eine sanftere Regelung.",
             "Unsere Schwünge aus Kapitel 0 kamen von einem Regler (uns) mit zu wenig Reserve."
           ]

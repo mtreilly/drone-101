@@ -11,15 +11,19 @@
           "t": "say",
           "who": "june",
           "mood": "think",
-          "text": "Look at what we got in Chapter 7. Forget the starting height for a moment (start the drone hovering, calm, at 1 m). Then the answer was always the same fraction *times* whatever we asked it to do."
+          "text": "Start the drone hovering at 1 m, with 4.9 N of base thrust balancing gravity. Measure both the requested change and the actual height change from that baseline. Just before a new request, both changes are zero. In the step example the request jumps to 2 m at $t=0$, so its change becomes 1 m while the drone is still at 1 m."
         },
         {
           "t": "math",
-          "tex": "\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\sp{R}(s)"
+          "tex": "\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\Delta\\sp{R}(s)"
         },
         {
           "t": "p",
-          "text": "$\\sp{R}(s)$ is the transform of the **input**: how far we ask the setpoint to move away from 1 m (each input's transform comes straight from our Chapter 7 table). $G(s)$ is fixed: it only depends on the drone and the controller. So we give it a name: the **transfer function**, the output-to-input ratio in s-land, with everything starting at rest."
+          "text": "$\\Delta\\sp{R}(s)$ is the transform of the **requested change** from 1 m; $\\Delta\\out{H}(s)$ is the transform of the **actual change** from 1 m. $G(s)$ is fixed by the drone and controller. It is the **transfer function**: output change divided by input change, with both changes starting at zero."
+        },
+        {
+          "t": "p",
+          "text": "The plot still shows heights above the ground. Add the 1 m starting height to a change predicted by the formula to get the blue height on the plot."
         },
         {
           "t": "say",
@@ -29,7 +33,7 @@
         },
         {
           "t": "p",
-          "text": "Try three different inputs on the same drone. The recipe never changes, only $\\sp{R}(s)$ does."
+          "text": "Try three different inputs on the same drone. The recipe never changes, only $\\Delta\\sp{R}(s)$ does."
         },
         {
           "t": "widget",
@@ -40,7 +44,7 @@
           "items": [
             {
               "term": "Transfer function $G(s)$",
-              "def": "Output ÷ input, both transformed, with the system starting at rest. It's a fraction of two polynomials in $s$, and it contains everything about how the system responds."
+              "def": "Transformed output change ÷ transformed input change, starting from the same resting state. For this linear drone it is a fraction of polynomials in $s$."
             }
           ]
         }
@@ -52,7 +56,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Where does $G(s)$ **explode**? Where its bottom is zero. Chapter 7 told us that a transform explodes exactly at the $s$ where a signal lives. So the zeros of the denominator are the $e^{st}$ terms the system is made of. They're the very same two dots we found in Chapter 6. They get a special name: **poles**, drawn as ×."
+          "text": "Where does $G(s)$ **blow up**? At a zero of its denominator, after any common factors have been canceled. Those points are the **poles**, drawn as ×. In this drone there are two, matching the two natural $e^{st}$ motions from Chapter 6."
         },
         {
           "t": "math",
@@ -127,7 +131,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "The top of the fraction can be zero too. Those spots are called **zeros**, drawn as ○. They don't change *which* $e^{st}$ terms appear (that's the poles' job), but they change **how much** of each you get."
+          "text": "The numerator can be zero too. Those points are **zeros**, drawn as ○. Usually they change **how much** of each pole’s motion appears in the output. If a zero sits exactly on a pole, the shared factor cancels and that pole disappears from this input-to-output transfer function. An internal motion can still remain hidden from that particular input and output."
         },
         {
           "t": "p",

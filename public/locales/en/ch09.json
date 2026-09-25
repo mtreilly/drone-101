@@ -183,7 +183,7 @@
         },
         {
           "t": "p",
-          "text": "Guess $e^{st}$ as usual and the characteristic polynomial pops out. It's a cubic, so there are **three** poles:"
+          "text": "Guess $e^{st}$ again. **With I active**, the equation is cubic, so there are three poles. If $K_i=0$, there is no integrator: a common factor cancels and the PD drone has two poles."
         },
         {
           "t": "math",
@@ -199,6 +199,18 @@
         },
         {
           "t": "p",
+          "text": "We can see why that is the edge. At the instant a wiggly pair reaches the vertical axis, its real part is zero, so try $s=i\\omega$ in the cubic. The real and sideways parts must each add to zero. They give:"
+        },
+        {
+          "t": "math",
+          "tex": "\\omega^2=\\frac{K_p}{m},\\qquad K_i=(c+K_d)\\omega^2=\\frac{(c+K_d)K_p}{m}"
+        },
+        {
+          "t": "p",
+          "text": "For positive $K_i$ below this edge, all three poles stay left; at the edge the pair can keep swinging. This is the crossing behind the Routh–Hurwitz shortcut."
+        },
+        {
+          "t": "p",
           "text": "With $K_p = 20$ and no D: $K_i < (1)(20)/0.5 = 40$. That's exactly where Mika's drone went wild. Adding $K_d = 4$ moves the edge out to 200. Don't trust us; move the sliders and watch the poles, the mini-map and the step response."
         },
         {
@@ -208,8 +220,8 @@
         {
           "t": "list",
           "items": [
-            "**The I knob** ($K_i$) drags one pole out from the origin, and pushes the other two towards the right. Too much and they cross the line.",
-            "**The D knob** ($K_d$) pulls poles to the left: more damping, calmer response.",
+            "**The I knob** ($K_i$) brings a third pole into the loop and can push a pair towards the right. Too much and it crosses the line.",
+            "**The D knob** ($K_d$) raises the I-gain stability limit by adding damping. Pole paths can turn: more D does not move every pole left.",
             "**The P knob** ($K_p$) mostly spreads the wiggly pair up and down: faster, but more wiggly, unless D keeps up."
           ]
         }
@@ -320,20 +332,20 @@
             },
             {
               "id": "ch9-q2",
-              "q": "You increase $K_d$. Which way do the poles tend to move?",
+              "q": "What does increasing $K_d$ guarantee in this ideal model with positive gains?",
               "options": [
                 {
-                  "text": "Left: more damping, calmer response",
+                  "text": "It raises the largest $K_i$ that can stay stable",
                   "correct": true,
-                  "why": "D adds to the damping coefficient $(c + K_d)$, which pulls the poles away from the right half-plane."
+                  "why": "The stability condition has $c+K_d$ on the helpful side. Individual poles can still curve back toward the axis."
                 },
                 {
-                  "text": "Right: towards instability",
-                  "why": "That's what too much $K_i$ does. $K_d$ does the opposite, at least in our model without delays."
+                  "text": "Every pole moves left",
+                  "why": "The real pole and the wiggly pair can follow different paths. More damping does not push every pole left."
                 },
                 {
-                  "text": "They don't move; D only matters when there's noise",
-                  "why": "$K_d$ appears right in the characteristic polynomial, so it moves the poles."
+                  "text": "It matters only when the sensor is noisy",
+                  "why": "$K_d$ already changes the ideal characteristic polynomial and stability boundary."
                 }
               ]
             },

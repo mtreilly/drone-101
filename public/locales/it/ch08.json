@@ -11,15 +11,19 @@
           "t": "say",
           "who": "june",
           "mood": "think",
-          "text": "Guardate cosa abbiamo ottenuto nel Capitolo 7. Dimentichiamo per un attimo l'altezza di partenza (facciamo partire il drone già sospeso, tranquillo, a 1 m). Allora la risposta era sempre la stessa frazione *per* quello che gli chiedevamo di fare."
+          "text": "Partiamo con il drone in volo stazionario a 1 m, con 4,9 N di spinta di base che bilanciano la gravità. Misuriamo sia il cambiamento richiesto sia quello reale di quota rispetto a quel riferimento. Appena prima di una nuova richiesta entrambi sono zero. Nell’esempio del gradino il riferimento salta a 2 m a $t=0$: il cambiamento richiesto diventa 1 m, mentre il drone è ancora a 1 m."
         },
         {
           "t": "math",
-          "tex": "\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\sp{R}(s)"
+          "tex": "\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\Delta\\sp{R}(s)"
         },
         {
           "t": "p",
-          "text": "$\\sp{R}(s)$ è la trasformata dell'**ingresso**: di quanto chiediamo al riferimento di spostarsi da 1 m (la trasformata di ogni ingresso viene dritta dalla tabella del Capitolo 7). $G(s)$ è fissa: dipende solo dal drone e dal controllore. Quindi le diamo un nome: la **funzione di trasferimento**, il rapporto uscita/ingresso nel mondo di s, con tutto che parte da fermo."
+          "text": "$\\Delta\\sp{R}(s)$ è la trasformata dello **spostamento richiesto** da 1 m; $\\Delta\\out{H}(s)$ è quella dello **spostamento reale** da 1 m. $G(s)$ dipende dal drone e dal controllore. È la **funzione di trasferimento**: spostamento in uscita diviso per quello in ingresso, entrambi inizialmente zero."
+        },
+        {
+          "t": "p",
+          "text": "Il grafico mostra sempre le altezze da terra. Aggiungi il metro iniziale allo spostamento previsto dalla formula per ottenere l’altezza blu nel grafico."
         },
         {
           "t": "say",
@@ -29,7 +33,7 @@
         },
         {
           "t": "p",
-          "text": "Prova tre ingressi diversi sullo stesso drone. La ricetta non cambia mai, cambia solo $\\sp{R}(s)$."
+          "text": "Prova tre ingressi diversi sullo stesso drone. La ricetta non cambia mai, cambia solo $\\Delta\\sp{R}(s)$."
         },
         {
           "t": "widget",
@@ -40,7 +44,7 @@
           "items": [
             {
               "term": "Funzione di trasferimento $G(s)$",
-              "def": "Uscita ÷ ingresso, tutti e due trasformati, con il sistema che parte da fermo. È una frazione di due polinomi in $s$, e contiene tutto su come risponde il sistema."
+              "def": "Spostamento in uscita trasformato ÷ spostamento in ingresso trasformato, partendo dallo stesso stato di quiete. Per questo drone lineare è un rapporto di polinomi in $s$."
             }
           ]
         }
@@ -52,7 +56,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Dove **esplode** $G(s)$? Dove il suo denominatore è zero. Il Capitolo 7 ci ha detto che una trasformata esplode esattamente nella $s$ dove vive un segnale. Quindi gli zeri del denominatore sono i termini $e^{st}$ di cui è fatto il sistema. Sono proprio gli stessi due puntini che abbiamo trovato nel Capitolo 6. Hanno un nome speciale: **poli**, disegnati come ×."
+          "text": "Dove **esplode** $G(s)$? Dove il denominatore si annulla, dopo aver cancellato eventuali fattori comuni. Questi punti sono i **poli**, disegnati come ×. Il drone ne ha due, corrispondenti ai due moti naturali $e^{st}$ del Capitolo 6."
         },
         {
           "t": "math",
@@ -127,7 +131,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Anche il numeratore della frazione può essere zero. Quei punti si chiamano **zeri**, disegnati come ○. Non cambiano *quali* termini $e^{st}$ compaiono (quello è il lavoro dei poli), ma cambiano **quanto** ne ottieni di ciascuno."
+          "text": "Anche il numeratore può annullarsi. Questi punti sono gli **zeri**, disegnati come ○. Di solito cambiano **quanto** del moto di ogni polo appare in uscita. Se uno zero cade esattamente su un polo, il fattore comune si semplifica e quel polo sparisce da questa funzione di trasferimento ingresso-uscita. Un moto interno può comunque restare nascosto a quell’ingresso e a quell’uscita particolari."
         },
         {
           "t": "p",

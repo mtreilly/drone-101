@@ -22,6 +22,12 @@ describe('Chapter 9 claims', () => {
     }
   });
 
+  it('removes the unused integrator pole when Ki is zero', () => {
+    const ps = pidPoles(20, 0, 4);
+    expect(ps).toHaveLength(2);
+    expect(ps.every((p) => p.re < 0)).toBe(true);
+  });
+
   it('simulation agrees: Kp=20, Kd=0 settles below Ki=40 and grows above', () => {
     expect(growth(20, 36, 0)).toBeLessThan(1);
     expect(growth(20, 44, 0)).toBeGreaterThan(1);

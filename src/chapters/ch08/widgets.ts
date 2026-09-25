@@ -16,7 +16,7 @@ import { gainsFromPoles, noZeroResponse, overshootOf, settleOf, stepFromPoles, z
 const { m, c } = DRONE;
 const pd = (kp: number, kd: number): PID => ({ kp, ki: 0, kd, ff: HOVER_THRUST, dTau: 0, dOnMeasurement: true, antiWindup: false });
 
-/** 8a — the same recipe G(s) turns any input into an output: Y = G·R. */
+/** 8a — G(s) maps setpoint changes to height changes around the 1 m hover. */
 const recipe: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
   mark(host);
@@ -91,7 +91,7 @@ const recipe: WidgetFactory = (host, ctx) => {
     }, 20);
     plot.set('r', ts, rs);
     plot.set('h', ts, hs);
-    eq.innerHTML = tex(`\\out{Y}(s) = \\underbrace{\\frac{\\eff{20}}{0.5s^2 + s + \\eff{20}}}_{G(s)\\ \\text{${t('same')}}} \\cdot \\underbrace{${R[input]}}_{\\sp{R}(s)\\ \\text{${t('changes')}}}`, true);
+    eq.innerHTML = tex(`\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{20}}{0.5s^2 + s + \\eff{20}}}_{G(s)\\ \\text{${t('same')}}} \\cdot \\underbrace{${R[input]}}_{\\Delta\\sp{R}(s)\\ \\text{${t('changes')}}}`, true);
     plot.describe(t(`describe.${input}`));
     playT = 0;
     if (Loop.autoplay) loop.play();

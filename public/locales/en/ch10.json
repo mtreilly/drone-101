@@ -24,6 +24,10 @@
           "text": "First, a confession about Chapter 0's \"normal hand\". It turned the knob at a **speed** proportional to how wrong the water felt: knob speed $= k\\cdot\\err{e}$, with $k = 0.8\\,\\%$ of the knob per second per °C. A speed proportional to the error means the knob *position* is the pile of past error. That's an **I controller**, with $K_i = k$."
         },
         {
+          "t": "note",
+          "text": "For calculations the knob runs from 0 to 1, so 0.8% of its range is 0.008 knob units. The loop formula below uses 0.008; the sliders display 0.8%. Keep the units with the number."
+        },
+        {
           "t": "say",
           "who": "mika",
           "mood": "surprised",
@@ -92,7 +96,7 @@
         },
         {
           "t": "p",
-          "text": "The mixing lag shrinks fast wiggles (the gain falls away), while the pipe keeps piling on phase lag, without limit. Plotted against wiggle speed on logarithmic axes, this pair of curves is called a **Bode plot**. We just drew one by hand. The formula comes straight from $G(s)$ with $s = i\\omega$, the vertical axis of the s-plane:"
+          "text": "Mixing shrinks fast wiggles, while the pipe keeps adding phase lag. These gain and phase curves against wiggle speed form a **Bode plot**. Here the input is the **temperature of the mixed water**, so slow wiggles have gain 1. If we used knob fraction as input, the gain would be 45 times larger. For this temperature-to-temperature plot, set $s=i\\omega$ in the normalized shower response:"
         },
         {
           "t": "math",
@@ -124,7 +128,11 @@
           "t": "say",
           "who": "june",
           "mood": "excited",
-          "text": "So there's one special wiggle speed, where the phase hits −180°. The question is just: at that speed, is the loop gain bigger or smaller than 1?"
+          "text": "For this simple shower loop, the phase falls through −180° at one relevant wiggle speed. Find that speed on the phase plot, then read the loop gain at the same speed on the gain plot. Is it below or above 1?"
+        },
+        {
+          "t": "p",
+          "text": "For example, near 0.457 rad/s the accumulating hand lags by 90°, mixing adds about 25°, and the pipe adds about 65°: together, 180°. The normal hand returns a swing only about 0.72 times as large. It could be about 1 ÷ 0.72 ≈ 1.4 times stronger before reaching the edge."
         },
         {
           "t": "vocab",
@@ -141,7 +149,7 @@
         },
         {
           "t": "p",
-          "text": "For our shower, the phase of $L$ hits −180° at $\\omega \\approx 0.457$ rad/s, a wiggle period of about **13.8 s**. The normal hand ($k = 0.8$) has a gain margin of only about **1.4**, and a phase margin of about 22°. Close to the edge! The harder hand doubles the gain: 1.4 ÷ 2 = 0.7, **over the cliff**. That's exactly why it never settled."
+          "text": "For our shower, the phase of $L$ hits −180° at $\\omega \\approx 0.457$ rad/s, a wiggle period of about **13.8 s**. The normal hand ($k = 0.008$) has a gain margin of only about **1.4**, and a phase margin of about 22°. Close to the edge! The harder hand doubles the gain: 1.4 ÷ 2 = 0.7, **over the cliff**. That's exactly why it never settled."
         },
         {
           "t": "predict",
@@ -200,7 +208,11 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Now let's beat our own hands. The robot uses a PI controller: an I part (like the hand) plus a P part, which reacts to the *trend* of the temperature and adds phase lead. Aim for a **phase margin above 45°** and **comfortable (in the band for 10 s straight) within 12 s**."
+          "text": "Now let’s beat our own hands. The robot uses PI: **P reacts to the current temperature error**, and **I remembers accumulated error**. Together they let the knob respond promptly while I finds the right lasting setting. Compared with I alone, P can add phase lead. Aim for a **phase margin above 45°** and **10 seconds in the comfort band starting within 12 s**."
+        },
+        {
+          "t": "note",
+          "text": "The robot code writes PI as a knob **speed**: I keeps moving the knob while error remains, and P responds to a *change* in error. At startup, P also gives the knob an immediate move based on the current error. This matches the position rule, except when the knob reaches an end stop."
         },
         {
           "t": "say",
@@ -225,8 +237,12 @@
           "text": "The drone could take big gains because it had almost no lag. Here, **robust** means gentle: leave margin for the delay. Try about $K_p \\approx 1$ and $K_i \\approx 0.6$."
         },
         {
+          "t": "note",
+          "text": "These slider numbers are percentages of the full knob range: P ≈ 1% per °C of current error, and I ≈ 0.6% per °C-second of accumulated error. The loop equations use knob fractions, so divide the displayed numbers by 100."
+        },
+        {
           "t": "p",
-          "text": "A well-margined PI gets comfortable in under 8 seconds, with no swinging. That beats the normal hand (which spent most of a minute swinging before it calmed down) and most humans. It can't beat physics, though: nothing can react to water that hasn't arrived yet. Engineers do have a trick for long delays, a **Smith predictor**, which runs a little simulation of the pipe inside the controller. That's a story for another notebook."
+          "text": "A well-margined PI gets comfortable in about 9.4 seconds, without repeated large swings. That beats the normal hand (which spent most of a minute swinging before it calmed down) and most humans. It can't beat physics, though: nothing can react to water that hasn't arrived yet. Engineers do have a trick for long delays, a **Smith predictor**, which runs a little simulation of the pipe inside the controller. That's a story for another notebook."
         },
         {
           "t": "note",
@@ -243,7 +259,7 @@
           "items": [
             "A delay $L$ lags a wiggle by $\\omega L$: nothing for slow wiggles, a lot for fast ones.",
             "Feeding in sine waves and measuring gain and phase gives the **frequency response**; plotted, it's a **Bode plot**, and it's just $G(i\\omega)$.",
-            "An oscillation starts where the loop's phase reaches −180° with a gain of at least 1.",
+            "For this simple shower loop, self-sustained oscillation begins when the loop reaches −180° phase with gain 1; larger gain makes the swings grow until limits intervene.",
             "**Gain and phase margin** measure the distance to that cliff. Longer delay means less margin, so you need gentler control.",
             "Our Chapter 0 swings were a controller (us) with too little margin."
           ]

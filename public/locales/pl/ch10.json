@@ -24,6 +24,10 @@
           "text": "Najpierw wyznanie w sprawie „zwykłej ręki” z rozdziału 0. Kręciła kurkiem z **prędkością** proporcjonalną do tego, jak bardzo woda odbiegała od celu: prędkość kurka $= k\\cdot\\err{e}$, gdzie $k = 0{,}8\\,\\%$ zakresu kurka na sekundę na każdy °C. Prędkość proporcjonalna do uchybu oznacza, że *położenie* kurka to stos dawnego uchybu. To **regulator I**, z $K_i = k$."
         },
         {
+          "t": "note",
+          "text": "W obliczeniach zakres kurka wynosi od 0 do 1, więc 0,8% tego zakresu to 0,008 jednostki kurka. Poniższy wzór pętli używa 0,008; suwaki pokazują 0,8%. Pilnuj jednostek przy liczbie."
+        },
+        {
           "t": "say",
           "who": "mika",
           "mood": "surprised",
@@ -92,7 +96,7 @@
         },
         {
           "t": "p",
-          "text": "Bezwładność mieszania zmniejsza szybkie wahania (wzmocnienie spada), a rura bez końca dokłada opóźnienia fazowego. Ta para krzywych, narysowana w zależności od prędkości wahań na osiach logarytmicznych, nazywa się **charakterystykami Bodego**. Właśnie narysowaliśmy je ręcznie. Wzór pochodzi prosto z $G(s)$ z $s = i\\omega$, czyli z osi pionowej płaszczyzny s:"
+          "text": "Mieszanie osłabia szybkie wahania, a rura nadal dodaje opóźnienie fazowe. Krzywe wzmocnienia i fazy względem prędkości wahań tworzą **charakterystyki Bodego**. Tutaj wejściem jest **temperatura zmieszanej wody**, więc wolne wahania mają wzmocnienie 1. Gdyby wejściem było położenie kurka od 0 do 1, wzmocnienie byłoby 45 razy większe. Dla tego wykresu temperatura–temperatura podstawiamy $s=i\\omega$ do znormalizowanej odpowiedzi prysznica:"
         },
         {
           "t": "math",
@@ -124,7 +128,11 @@
           "t": "say",
           "who": "june",
           "mood": "excited",
-          "text": "Czyli jest jedna szczególna prędkość wahań, przy której faza dochodzi do −180°. Pytanie brzmi tylko: czy przy tej prędkości wzmocnienie pętli jest większe, czy mniejsze od 1?"
+          "text": "W tej prostej pętli prysznica faza przechodzi przez −180° przy jednej istotnej prędkości wahań. Znajdź ją na wykresie fazy, a potem odczytaj wzmocnienie pętli przy tej samej prędkości. Czy jest mniejsze, czy większe od 1?"
+        },
+        {
+          "t": "p",
+          "text": "Na przykład przy około 0,457 rad/s gromadząca uchyb ręka spóźnia się o 90°, mieszanie dodaje około 25°, a rura około 65°: razem 180°. Zwykła ręka odsyła wahanie o amplitudzie tylko około 0,72 początkowej. Mogłaby być około 1 ÷ 0,72 ≈ 1,4 razy mocniejsza, zanim dojdzie do granicy."
         },
         {
           "t": "vocab",
@@ -141,7 +149,7 @@
         },
         {
           "t": "p",
-          "text": "Dla naszego prysznica faza $L$ dochodzi do −180° przy $\\omega \\approx 0{,}457$ rad/s, czyli przy okresie wahań około **13,8 s**. Zwykła ręka ($k = 0{,}8$) ma zapas wzmocnienia tylko około **1,4** i zapas fazy około 22°. Blisko krawędzi! Mocniejsza ręka podwaja wzmocnienie: 1,4 ÷ 2 = 0,7, **za urwiskiem**. Właśnie dlatego nigdy się nie uspokajała."
+          "text": "Dla naszego prysznica faza $L$ dochodzi do −180° przy $\\omega \\approx 0{,}457$ rad/s, czyli przy okresie wahań około **13,8 s**. Zwykła ręka ($k = 0{,}008$) ma zapas wzmocnienia tylko około **1,4** i zapas fazy około 22°. Blisko krawędzi! Mocniejsza ręka podwaja wzmocnienie: 1,4 ÷ 2 = 0,7, **za urwiskiem**. Właśnie dlatego nigdy się nie uspokajała."
         },
         {
           "t": "predict",
@@ -200,7 +208,11 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Teraz pobijmy własne ręce. Robot używa regulatora PI: część I (jak ręka) plus część P, która reaguje na *trend* temperatury i dodaje wyprzedzenie fazowe. Celuj w **zapas fazy powyżej 45°** i **komfort (10 s bez przerwy w pasie) w ciągu 12 s**."
+          "text": "Teraz pobijmy własne ręce. Robot używa PI: **P reaguje na bieżący uchyb temperatury**, a **I pamięta nagromadzony uchyb**. Dzięki temu kurek reaguje szybko, a I znajduje właściwe trwałe położenie. W porównaniu z samym I człon P może dodać wyprzedzenie fazowe. Cel to **zapas fazy powyżej 45°** oraz **10 sekund w pasie komfortu, zaczynające się przed 12 s**."
+        },
+        {
+          "t": "note",
+          "text": "W kodzie robota PI jest zapisane jako **prędkość** kurka: I porusza nim dalej, dopóki jest uchyb, a P reaguje na *zmianę* uchybu. Na początku P daje też pierwszy ruch zależny od bieżącego uchybu. Odpowiada to regule położenia, chyba że kurek dojdzie do ogranicznika."
         },
         {
           "t": "say",
@@ -225,8 +237,12 @@
           "text": "Dron mógł przyjąć duże wzmocnienia, bo prawie nie miał opóźnienia. Tutaj **odporny** znaczy łagodny: zostaw zapas na opóźnienie. Spróbuj mniej więcej $K_p \\approx 1$ i $K_i \\approx 0{,}6$."
         },
         {
+          "t": "note",
+          "text": "Liczby na suwakach to procenty pełnego zakresu kurka: P ≈ 1% na °C bieżącego uchybu, a I ≈ 0,6% na °C-sekundę nagromadzonego uchybu. Równania pętli używają ułamka zakresu kurka, więc podziel wyświetlone liczby przez 100."
+        },
+        {
           "t": "p",
-          "text": "PI z dobrym zapasem osiąga komfort w niecałe 8 sekund, bez żadnych wahań. To lepiej niż zwykła ręka (która przez większą część minuty się huśtała, zanim się uspokoiła) i niż większość ludzi. Fizyki jednak nie pobije: nic nie zareaguje na wodę, która jeszcze nie dopłynęła. Inżynierowie mają co prawda trik na długie opóźnienia, **predyktor Smitha**, który w środku regulatora uruchamia małą symulację rury. Ale to opowieść na inny zeszyt."
+          "text": "PI z dobrym zapasem osiąga komfort w około 9,4 sekundy, bez powtarzających się dużych wahań. To lepiej niż zwykła ręka (która przez większą część minuty się huśtała, zanim się uspokoiła) i niż większość ludzi. Fizyki jednak nie pobije: nic nie zareaguje na wodę, która jeszcze nie dopłynęła. Inżynierowie mają co prawda trik na długie opóźnienia, **predyktor Smitha**, który w środku regulatora uruchamia małą symulację rury. Ale to opowieść na inny zeszyt."
         },
         {
           "t": "note",
@@ -243,7 +259,7 @@
           "items": [
             "Opóźnienie $L$ przesuwa wahnięcie o $\\omega L$: nic dla powolnych wahań, dużo dla szybkich.",
             "Podawanie sinusoid i mierzenie wzmocnienia i fazy daje **charakterystykę częstotliwościową**; narysowana to **charakterystyki Bodego**, i to po prostu $G(i\\omega)$.",
-            "Oscylacja zaczyna się tam, gdzie faza pętli dochodzi do −180° przy wzmocnieniu co najmniej 1.",
+            "W tej prostej pętli prysznica trwałe wahania zaczynają się, gdy faza pętli osiąga −180° przy wzmocnieniu 1; większe wzmocnienie powiększa wahania, aż zadziałają ograniczenia.",
             "**Zapas wzmocnienia i zapas fazy** mierzą odległość od tego urwiska. Dłuższe opóźnienie to mniejszy zapas, więc potrzeba łagodniejszego sterowania.",
             "Nasze wahania z rozdziału 0 to był regulator (my) ze zbyt małym zapasem."
           ]

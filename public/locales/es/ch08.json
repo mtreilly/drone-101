@@ -11,15 +11,19 @@
           "t": "say",
           "who": "june",
           "mood": "think",
-          "text": "Mirad lo que sacamos en el capítulo 7. Olvidaos un momento de la altura inicial (el dron empieza flotando, tranquilo, a 1 m). Entonces la respuesta siempre era la misma fracción *multiplicada por* lo que le pidiéramos que hiciera."
+          "text": "Empecemos con el dron en vuelo estacionario a 1 m, con 4,9 N de empuje base que equilibran la gravedad. Midamos el cambio solicitado y el cambio real de altura desde esa referencia. Justo antes de una nueva orden, ambos cambios valen cero. En el ejemplo del escalón, la consigna salta a 2 m en $t=0$: su cambio pasa a ser 1 m mientras el dron sigue a 1 m."
         },
         {
           "t": "math",
-          "tex": "\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\sp{R}(s)"
+          "tex": "\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\Delta\\sp{R}(s)"
         },
         {
           "t": "p",
-          "text": "$\\sp{R}(s)$ es la transformada de la **entrada**: cuánto le pedimos a la consigna que se aleje de 1 m (la transformada de cada entrada sale directamente de nuestra tabla del capítulo 7). $G(s)$ es fija: solo depende del dron y del controlador. Así que le damos un nombre: la **función de transferencia**, el cociente salida/entrada en el mundo de s, con todo partiendo del reposo."
+          "text": "$\\Delta\\sp{R}(s)$ es la transformada del **cambio pedido** desde 1 m; $\\Delta\\out{H}(s)$ es la del **cambio real** desde 1 m. $G(s)$ depende del dron y el controlador. Es la **función de transferencia**: cambio de salida dividido por cambio de entrada, con ambos cambios partiendo de cero."
+        },
+        {
+          "t": "p",
+          "text": "La gráfica sigue mostrando alturas sobre el suelo. Suma el metro inicial al cambio que predice la fórmula para obtener la altura azul de la gráfica."
         },
         {
           "t": "say",
@@ -29,7 +33,7 @@
         },
         {
           "t": "p",
-          "text": "Prueba tres entradas distintas con el mismo dron. La receta nunca cambia; solo cambia $\\sp{R}(s)$."
+          "text": "Prueba tres entradas distintas con el mismo dron. La receta nunca cambia; solo cambia $\\Delta\\sp{R}(s)$."
         },
         {
           "t": "widget",
@@ -40,7 +44,7 @@
           "items": [
             {
               "term": "Función de transferencia $G(s)$",
-              "def": "Salida ÷ entrada, ambas transformadas, con el sistema partiendo del reposo. Es una fracción de dos polinomios en $s$, y contiene todo lo que hay que saber sobre cómo responde el sistema."
+              "def": "Cambio de salida transformado ÷ cambio de entrada transformado, partiendo del mismo estado de reposo. Para este dron lineal es un cociente de polinomios en $s$."
             }
           ]
         }
@@ -52,7 +56,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "¿Dónde **explota** $G(s)$? Donde su denominador vale cero. El capítulo 7 nos dijo que una transformada explota exactamente en la $s$ donde vive una señal. Así que los ceros del denominador son los términos $e^{st}$ de los que está hecho el sistema. Son los mismos dos puntos que encontramos en el capítulo 6. Reciben un nombre especial: **polos**, y se dibujan como ×."
+          "text": "¿Dónde **explota** $G(s)$? En los ceros de su denominador, una vez cancelados los factores comunes. Esos puntos son los **polos**, dibujados como ×. Este dron tiene dos, que corresponden a los dos movimientos naturales $e^{st}$ del capítulo 6."
         },
         {
           "t": "math",
@@ -127,7 +131,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "El numerador de la fracción también puede valer cero. Esos puntos se llaman **ceros** y se dibujan como ○. No cambian *qué* términos $e^{st}$ aparecen (eso es cosa de los polos), pero cambian **cuánto** hay de cada uno."
+          "text": "El numerador también puede valer cero. Esos puntos son **ceros**, dibujados como ○. Normalmente cambian **cuánto** del movimiento de cada polo aparece en la salida. Si un cero cae exactamente sobre un polo, el factor común se cancela y ese polo desaparece de esta función de transferencia entre entrada y salida. Un movimiento interno aún puede quedar oculto para esa entrada y esa salida concretas."
         },
         {
           "t": "p",

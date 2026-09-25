@@ -183,7 +183,7 @@
         },
         {
           "t": "p",
-          "text": "Proviamo $e^{st}$ come al solito e salta fuori il polinomio caratteristico. È una cubica, quindi ci sono **tre** poli:"
+          "text": "Proviamo ancora $e^{st}$. **Con I attivo**, l’equazione è cubica e ha tre poli. Se $K_i=0$, non c’è integratore: un fattore comune si semplifica e il drone PD ha due poli."
         },
         {
           "t": "math",
@@ -199,6 +199,18 @@
         },
         {
           "t": "p",
+          "text": "Possiamo vedere perché questo è il confine. Quando una coppia oscillante raggiunge l’asse verticale, la parte reale è zero: proviamo $s=i\\omega$ nel polinomio cubico. La parte reale e quella verticale devono annullarsi separatamente. Otteniamo:"
+        },
+        {
+          "t": "math",
+          "tex": "\\omega^2=\\frac{K_p}{m},\\qquad K_i=(c+K_d)\\omega^2=\\frac{(c+K_d)K_p}{m}"
+        },
+        {
+          "t": "p",
+          "text": "Con $K_i$ positivo sotto questa soglia, tutti e tre i poli restano a sinistra; sulla soglia la coppia può continuare a oscillare. Questo è l’attraversamento dietro la scorciatoia di Routh–Hurwitz."
+        },
+        {
+          "t": "p",
           "text": "Con $K_p = 20$ e senza D: $K_i < (1)(20)/0{,}5 = 40$. È esattamente dove il drone di Mika è impazzito. Aggiungere $K_d = 4$ sposta il bordo fino a 200. Non fidarti di noi: muovi i cursori e guarda i poli, la minimappa e la risposta al gradino."
         },
         {
@@ -208,9 +220,9 @@
         {
           "t": "list",
           "items": [
-            "**La manopola I** ($K_i$) tira fuori un polo dall'origine, e spinge gli altri due verso destra. Se esageri attraversano la linea.",
-            "**La manopola D** ($K_d$) tira i poli verso sinistra: più smorzamento, risposta più calma.",
-            "**La manopola P** ($K_p$) soprattutto allarga su e giù la coppia oscillante: più rapido, ma più oscillante, a meno che la D non tenga il passo."
+            "**La manopola I** ($K_i$) aggiunge un terzo polo all’anello e può spingere una coppia verso destra. Troppo I e attraversa la linea.",
+            "**La manopola D** ($K_d$) alza il limite di stabilità del guadagno I aggiungendo smorzamento. Le traiettorie possono piegare: più D non sposta ogni polo a sinistra.",
+            "**La manopola P** ($K_p$) allarga soprattutto la coppia oscillante in alto e in basso: più veloce, ma più oscillante se D non tiene il passo."
           ]
         }
       ]
@@ -320,20 +332,20 @@
             },
             {
               "id": "ch9-q2",
-              "q": "Aumenti $K_d$. In che direzione tendono a spostarsi i poli?",
+              "q": "Che cosa garantisce aumentare $K_d$ in questo modello ideale con guadagni positivi?",
               "options": [
                 {
-                  "text": "A sinistra: più smorzamento, risposta più calma",
+                  "text": "Alza il massimo $K_i$ che può restare stabile",
                   "correct": true,
-                  "why": "La D si aggiunge al coefficiente di smorzamento $(c + K_d)$, che allontana i poli dal semipiano destro."
+                  "why": "La condizione di stabilità contiene $c+K_d$ dal lato favorevole. Alcuni poli possono comunque tornare verso l’asse."
                 },
                 {
-                  "text": "A destra: verso l'instabilità",
-                  "why": "Quello lo fa un $K_i$ eccessivo. $K_d$ fa l'opposto, almeno nel nostro modello senza ritardi."
+                  "text": "Tutti i poli si spostano a sinistra",
+                  "why": "Il polo reale e la coppia oscillante possono seguire percorsi diversi. Più smorzamento non spinge ogni polo a sinistra."
                 },
                 {
-                  "text": "Non si spostano; la D conta solo quando c'è rumore",
-                  "why": "$K_d$ compare proprio nel polinomio caratteristico, quindi sposta i poli."
+                  "text": "Conta solo quando il sensore è rumoroso",
+                  "why": "$K_d$ cambia già il polinomio caratteristico ideale e il limite di stabilità."
                 }
               ]
             },
