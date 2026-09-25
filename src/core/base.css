@@ -899,3 +899,32 @@ main {
     forced-color-adjust: none;
   }
 }
+
+/* long words (German compounds, Polish inflections) hyphenate by language instead of overflowing */
+h1,
+h2,
+h3,
+.w-title,
+.card-title,
+.up-next-title,
+.bubble,
+.btn,
+.option,
+.readout-label,
+.slider-label,
+.toc-body strong {
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+@media (max-width: 520px) {
+  p,
+  li,
+  dd,
+  .note {
+    hyphens: auto;
+    overflow-wrap: break-word;
+  }
+  h1 {
+    font-size: clamp(2.2rem, 9vw, 2.6rem);
+  }
+}
