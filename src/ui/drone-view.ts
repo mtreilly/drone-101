@@ -67,7 +67,7 @@ export class DroneView {
     this.setLine = s('g', { class: 'setpoint' });
     this.setLine.append(
       s('line', { x1: 52, x2: W - 6, y1: 0, y2: 0, stroke: 'var(--c-setpoint)', 'stroke-width': 2, 'stroke-dasharray': '7 5' }),
-      s('text', { x: W - 8, y: -6, 'text-anchor': 'end', 'font-size': 17, fill: 'var(--c-setpoint)', 'font-weight': 700 }, tc('drone.target')),
+      s('text', { x: 54, y: -6, 'font-size': 16, fill: 'var(--c-setpoint)' }, tc('drone.target')),
     );
     // drone
     this.drone = s('g', { class: 'drone' });

@@ -64,7 +64,7 @@ export class ShowerView {
       this.segs.push(seg);
       pipeInner.append(seg);
     }
-    const pipeLabel = s('text', { x: 210, y: 28, 'text-anchor': 'middle', 'font-size': 16, fill: 'var(--ink-2)' }, L.pipe);
+    const pipeLabel = s('text', { x: 210, y: 26, 'text-anchor': 'middle', 'font-size': 17, fill: 'var(--ink-2)' }, L.pipe);
     // head
     const head = s('g');
     head.append(rc.path(`M${HEAD.x - 26} ${HEAD.y} L${HEAD.x + 26} ${HEAD.y} L${HEAD.x + 16} ${HEAD.y - 14} L${HEAD.x - 16} ${HEAD.y - 14} Z`, { stroke: ink, strokeWidth: 2, fill: 'var(--card)', fillStyle: 'solid', seed: 4 }));
@@ -91,8 +91,8 @@ export class ShowerView {
     const dial = s('g');
     dial.append(
       rc.circle(0, 0, KNOB.r * 2 + 16, { stroke: 'var(--ink-3)', strokeWidth: 1, roughness: 0.6, seed: 12 }),
-      s('text', { x: -KNOB.r - 14, y: 24, 'font-size': 18, 'font-weight': 700, fill: tempColor(15), 'text-anchor': 'end' }, L.cold),
-      s('text', { x: KNOB.r + 14, y: 24, 'font-size': 18, 'font-weight': 700, fill: tempColor(60) }, L.hot),
+      s('text', { x: -KNOB.r - 12, y: 26, 'font-size': 22, fill: tempColor(15), 'text-anchor': 'end' }, L.cold),
+      s('text', { x: KNOB.r + 12, y: 26, 'font-size': 22, fill: tempColor(60) }, L.hot),
     );
     this.pointer = s('g');
     this.pointer.append(
@@ -173,6 +173,7 @@ export class ShowerView {
   setKnob(u: number): void {
     this.u = u;
     this.pointer.setAttribute('transform', `rotate(${-135 + 270 * u})`);
+    if (!this.o.onKnob) return;
     this.knob.setAttribute('aria-valuenow', String(Math.round(u * 100)));
     this.knob.setAttribute('aria-valuetext', `${Math.round(u * 100)}% ${this.o.labels.hot}`);
   }

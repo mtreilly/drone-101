@@ -171,7 +171,7 @@ const challenge: WidgetFactory = (host, ctx) => {
   });
   droopPlot.fn('d', droopOf, 600);
   overPlot.fn('o', (k) => overshootOf(k), 600);
-  const zone = 'rgba(45,122,50,0.14)';
+  const zone = 'sp@0.16';
   droopPlot.setBands([{ kind: 'v', from: b.droopNeedsAbove, to: 60, color: zone }]);
   overPlot.setBands([{ kind: 'v', from: LIFTOFF_KP, to: b.overshootNeedsBelow, color: zone }]);
   droopPlot.setLines([{ kind: 'h', at: 0.2, color: 'sp', label: t('droopLimit') }]);

@@ -412,7 +412,7 @@ export class Plot {
     ctx.clip();
 
     for (const b of this.bands) {
-      ctx.fillStyle = b.color;
+      ctx.fillStyle = bandColor(b.color);
       if (b.kind === 'h') {
         const a = this.py(b.to);
         ctx.fillRect(PAD.l, a, this.w - PAD.l - PAD.r, this.py(b.from) - a);
@@ -578,6 +578,12 @@ export class Plot {
     ctx.closePath();
     ctx.fill();
   }
+}
+
+/** Band colours may be literal CSS or `key@alpha` (e.g. `sp@0.16`), resolved per theme. */
+function bandColor(c: string): string {
+  const m = /^(\w+)@([\d.]+)$/.exec(c);
+  return m ? withAlpha(color(m[1]), Number(m[2])) : c;
 }
 
 function cssName(k: string): string {
