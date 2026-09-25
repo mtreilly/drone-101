@@ -1,23 +1,102 @@
+import { DEFAULT_LANG, isSupported, languageOf } from './languages';
+
 /**
  * Minimal i18n: every visible string lives in /public/locales/{lang}/{namespace}.json.
  * Namespaces: `common` (UI chrome, concept map, shared widget labels) and `chNN` (one per chapter).
+ *
+ * Files are fetched lazily, one namespace at a time, only for the active language, so adding
+ * languages never grows the JavaScript bundle. A missing file falls back to English (a language
+ * can ship chapter by chapter); a missing key falls back to English if that file is cached.
  */
 type Dict = { [k: string]: unknown };
 
 const cache = new Map<string, Dict>();
-let lang = 'en';
+const inflight = new Map<string, Promise<Dict>>();
+const STORE_KEY = 'feedback-adventure:lang';
+let lang = detectLang();
+const listeners = new Set<(lang: string) => void>();
 
 export const getLang = (): string => lang;
 
-export async function loadNamespace(ns: string): Promise<Dict> {
-  const key = `${lang}/${ns}`;
+/** ?lang= in the URL, then the saved choice, then the browser's preferences, then English. */
+function detectLang(): string {
+  if (typeof window === 'undefined') return DEFAULT_LANG;
+  const fromUrl = new URLSearchParams(location.search).get('lang');
+  if (fromUrl && isSupported(fromUrl)) return fromUrl;
+  try {
+    const saved = localStorage.getItem(STORE_KEY);
+    if (saved && isSupported(saved)) return saved;
+  } catch {
+    /* storage blocked */
+  }
+  for (const pref of navigator.languages ?? [navigator.language]) {
+    const base = pref.toLowerCase().split('-')[0];
+    if (isSupported(base)) return base;
+  }
+  return DEFAULT_LANG;
+}
+
+/** Reflects the language on <html> (lang + dir) so screen readers pronounce text correctly. */
+export function applyDocumentLang(): void {
+  const l = languageOf(lang);
+  document.documentElement.lang = l.code;
+  document.documentElement.dir = l.dir;
+}
+
+/** Switches language: loads its common strings first, then notifies listeners to re-render. */
+export async function setLang(code: string): Promise<void> {
+  if (!isSupported(code) || code === lang) return;
+  const previous = lang;
+  lang = code;
+  try {
+    await loadNamespace('common');
+  } catch (err) {
+    lang = previous;
+    throw err;
+  }
+  try {
+    localStorage.setItem(STORE_KEY, code);
+  } catch {
+    /* ignore */
+  }
+  applyDocumentLang();
+  listeners.forEach((l) => l(code));
+}
+
+export function onLangChange(fn: (lang: string) => void): () => void {
+  listeners.add(fn);
+  return () => listeners.delete(fn);
+}
+
+async function fetchJson(code: string, ns: string): Promise<Dict | null> {
+  const res = await fetch(`${import.meta.env.BASE_URL}locales/${code}/${ns}.json`);
+  if (!res.ok) return null;
+  return (await res.json()) as Dict;
+}
+
+export function loadNamespace(ns: string, code = lang): Promise<Dict> {
+  const key = `${code}/${ns}`;
   const hit = cache.get(key);
-  if (hit) return hit;
-  const res = await fetch(`${import.meta.env.BASE_URL}locales/${lang}/${ns}.json`);
-  if (!res.ok) throw new Error(`Missing locale file ${key}`);
-  const data = (await res.json()) as Dict;
-  cache.set(key, data);
-  return data;
+  if (hit) return Promise.resolve(hit);
+  const pending = inflight.get(key);
+  if (pending) return pending;
+  const p = (async () => {
+    let data = await fetchJson(code, ns);
+    if (!data && code !== DEFAULT_LANG) {
+      if (import.meta.env.DEV) console.warn(`[i18n] ${key} not translated yet, using ${DEFAULT_LANG}`);
+      data = await loadNamespace(ns, DEFAULT_LANG);
+    }
+    if (!data) throw new Error(`Missing locale file ${key}`);
+    cache.set(key, data);
+    return data;
+  })().finally(() => inflight.delete(key));
+  inflight.set(key, p);
+  return p;
+}
+
+/** Warms the cache for a namespace without blocking (used to preload the next chapter). */
+export function prefetchNamespace(ns: string): void {
+  loadNamespace(ns).catch(() => {});
 }
 
 export function lookup(dict: Dict | undefined, path: string): unknown {
@@ -34,13 +113,19 @@ export const interpolate = (str: string, vars?: Record<string, string | number>)
 
 export type T = (key: string, vars?: Record<string, string | number>) => string;
 
+function find(ns: string, path: string): unknown {
+  const v = lookup(cache.get(`${lang}/${ns}`), path);
+  if (v !== undefined || lang === DEFAULT_LANG) return v;
+  return lookup(cache.get(`${DEFAULT_LANG}/${ns}`), path);
+}
+
 /** Creates a translator bound to a namespace; missing keys render visibly as ⟦key⟧. */
 export function translator(ns: string, prefix = ''): T {
   return (key, vars) => {
-    const dict = cache.get(`${lang}/${ns}`);
-    const v = lookup(dict, prefix ? `${prefix}.${key}` : key);
+    const path = prefix ? `${prefix}.${key}` : key;
+    const v = find(ns, path);
     if (typeof v !== 'string') {
-      if (import.meta.env.DEV) console.warn(`[i18n] missing ${ns}:${prefix ? prefix + '.' : ''}${key}`);
+      if (import.meta.env.DEV) console.warn(`[i18n] missing ${lang}/${ns}:${path}`);
       return `⟦${key}⟧`;
     }
     return interpolate(v, vars);
@@ -49,10 +134,10 @@ export function translator(ns: string, prefix = ''): T {
 
 /** Raw (possibly structured) value, for arrays of strings etc. */
 export function raw<V = unknown>(ns: string, key: string): V | undefined {
-  return lookup(cache.get(`${lang}/${ns}`), key) as V | undefined;
+  return find(ns, key) as V | undefined;
 }
 
-/** Locale-aware number formatting. */
+/** Locale-aware number formatting (decimal comma in fr/es/it/de/pl, true minus sign). */
 export function fmt(n: number, digits = 2): string {
   if (!Number.isFinite(n)) return n > 0 ? '∞' : n < 0 ? '−∞' : '—';
   return new Intl.NumberFormat(lang, {
