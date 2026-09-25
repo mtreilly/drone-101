@@ -260,7 +260,7 @@ const square: WidgetFactory = (host, ctx) => {
   });
   left.append(h('div', { class: 'w-controls' }, sl.el), status);
   right.append(h('p', { class: 'w-help' }, t('springCaption')));
-  const view = new MsdView(right, t('springAria'), 55);
+  const view = new MsdView(right, t('springAria'), 55, false);
   let time = 0;
   const loop = new Loop((dt) => {
     time += dt;
