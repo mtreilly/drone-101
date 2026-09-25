@@ -25,6 +25,12 @@ export class DelayLine {
     return this.buf[(this.head + 1) % this.buf.length];
   }
 
+  /** Value pushed `k` steps ago (k = 0 is the most recent push). */
+  ago(k: number): number {
+    const n = this.buf.length;
+    return this.buf[(((this.head - 1 - k) % n) + n) % n];
+  }
+
   reset(initial = 0): void {
     this.buf.fill(initial);
     this.head = 0;

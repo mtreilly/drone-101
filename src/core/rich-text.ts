@@ -1,0 +1,63 @@
+import katex from 'katex';
+
+/**
+ * KaTeX macros for the colour language, so equations match the plots:
+ *   \sp{r}  setpoint (green)   \out{h}  output (blue)   \err{e}  error (red)
+ *   \eff{u} effort (orange)    \dis{d}  disturbance (purple)
+ */
+const macros = {
+  '\\sp': '\\htmlClass{c-sp}{#1}',
+  '\\out': '\\htmlClass{c-out}{#1}',
+  '\\err': '\\htmlClass{c-err}{#1}',
+  '\\eff': '\\htmlClass{c-eff}{#1}',
+  '\\dis': '\\htmlClass{c-dis}{#1}',
+};
+
+export function tex(src: string, display = false): string {
+  return katex.renderToString(src, {
+    displayMode: display,
+    throwOnError: false,
+    trust: (ctx) => ctx.command === '\\htmlClass',
+    strict: 'ignore',
+    macros: { ...macros },
+    output: 'htmlAndMathml',
+  });
+}
+
+const escapeHtml = (s: string): string =>
+  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+const COLOR_CLASS: Record<string, string> = {
+  sp: 'c-sp',
+  out: 'c-out',
+  err: 'c-err',
+  eff: 'c-eff',
+  dis: 'c-dis',
+};
+
+/**
+ * Inline markup used in the locale files:
+ *   $…$ inline maths · **bold** · *italic* · ==highlight== · {out|coloured text} · [text](#/ch/3)
+ * Everything else is escaped.
+ */
+export function rich(src: string): string {
+  const parts = src.split(/(\$[^$]+\$)/g);
+  return parts
+    .map((part) => {
+      if (part.length > 2 && part.startsWith('$') && part.endsWith('$')) return tex(part.slice(1, -1));
+      let out = escapeHtml(part);
+      out = out.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      out = out.replace(/(^|[^*])\*(?!\s)(.+?)\*/g, '$1<em>$2</em>');
+      out = out.replace(/==(.+?)==/g, '<mark>$1</mark>');
+      out = out.replace(/\{(sp|out|err|eff|dis)\|(.+?)\}/g, (_m, k: string, txt: string) => `<span class="${COLOR_CLASS[k]}">${txt}</span>`);
+      out = out.replace(/\[(.+?)\]\((#[^)\s]*)\)/g, '<a href="$2">$1</a>');
+      return out;
+    })
+    .join('');
+}
+
+/** Sets rich content on an element. */
+export function setRich(el: HTMLElement, src: string): HTMLElement {
+  el.innerHTML = rich(src);
+  return el;
+}

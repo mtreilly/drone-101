@@ -1,0 +1,381 @@
+/* colour-language text classes (prose and KaTeX via \htmlClass) */
+.c-sp {
+  color: var(--c-setpoint);
+}
+.c-out {
+  color: var(--c-output);
+}
+.c-err {
+  color: var(--c-error);
+}
+.c-eff {
+  color: var(--c-effort);
+}
+.c-dis {
+  color: var(--c-disturb);
+}
+span.c-sp,
+span.c-out,
+span.c-err,
+span.c-eff,
+span.c-dis {
+  font-weight: 700;
+}
+mark {
+  background: linear-gradient(transparent 45%, var(--c-highlight) 45%, var(--c-highlight) 90%, transparent 90%);
+  color: inherit;
+  padding: 0 2px;
+}
+
+/* ---------- dialogue ---------- */
+.say {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin: 0.9em 0;
+}
+.say.right {
+  flex-direction: row-reverse;
+}
+.say .avatar {
+  flex: none;
+  width: 58px;
+  height: 58px;
+  display: grid;
+  justify-items: center;
+}
+.say .avatar svg {
+  width: 58px;
+  height: 58px;
+}
+.say .name {
+  font-family: var(--font-hand);
+  font-size: 1.05rem;
+  line-height: 1;
+  color: var(--ink-3);
+  margin-top: -2px;
+}
+.bubble {
+  position: relative;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: 18px 18px 18px 6px;
+  padding: 8px 14px 10px;
+  font-family: var(--font-hand);
+  font-size: 1.42rem;
+  line-height: 1.25;
+  max-width: 34rem;
+  box-shadow: 2px 3px 0 color-mix(in srgb, var(--ink) 18%, transparent);
+}
+.say.right .bubble {
+  border-radius: 18px 18px 6px 18px;
+}
+.bubble .katex {
+  font-size: 0.8em;
+}
+.say.think .bubble {
+  border-style: dashed;
+}
+
+/* ---------- margin note ---------- */
+.note {
+  font-family: var(--font-hand);
+  font-size: 1.3rem;
+  line-height: 1.2;
+  color: var(--ink-2);
+  transform: rotate(-1.2deg);
+  border-left: 3px solid var(--c-highlight);
+  padding: 4px 0 4px 12px;
+  margin: 1em 0;
+}
+.note::before {
+  content: '✎ ';
+  color: var(--ink-3);
+}
+@media (min-width: 1240px) {
+  .note.aside {
+    position: absolute;
+    right: -17rem;
+    width: 14.5rem;
+    margin-top: -3.2em;
+    border-left: none;
+    padding: 0;
+  }
+  .note.aside::before {
+    content: '← ';
+  }
+}
+
+/* ---------- math ---------- */
+.math-block {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.3em 0;
+  margin: 0.4em 0 1em;
+  font-size: 1.12em;
+}
+.katex {
+  font-size: 1.08em;
+}
+.katex .c-sp,
+.katex .c-out,
+.katex .c-err,
+.katex .c-eff,
+.katex .c-dis {
+  font-weight: inherit;
+}
+
+/* ---------- cards ---------- */
+.card {
+  background: var(--card);
+  border: 1.5px solid var(--paper-3);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px 18px;
+  margin: 1.5em 0;
+}
+.card-title {
+  font-family: var(--font-hand);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.3em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vocab {
+  border-left: 5px solid var(--ink);
+}
+.vocab dt {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.vocab dd {
+  margin: 0 0 0.6em;
+}
+
+/* ---------- predict ---------- */
+.predict {
+  border: 2px dashed var(--ink-3);
+  background: color-mix(in srgb, var(--card) 70%, transparent);
+}
+.predict .card-title::before {
+  content: '?';
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  font-size: 1.2rem;
+}
+.options {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0 4px;
+}
+.options.sketches {
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+.option {
+  appearance: none;
+  font: inherit;
+  text-align: left;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid var(--ink-3);
+  border-radius: 10px;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+  min-height: 44px;
+}
+.options.sketches .option {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.option:hover:not([disabled]) {
+  border-color: var(--ink);
+}
+.option .letter {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 1.3rem;
+  line-height: 1.1;
+  flex: none;
+}
+.option[aria-pressed='true'] {
+  border-color: var(--ink);
+  background: var(--paper-2);
+}
+.option.correct {
+  border-color: var(--c-good);
+  border-style: solid;
+}
+.option.wrong {
+  border-color: var(--c-bad);
+  border-style: dashed;
+}
+.option[disabled] {
+  cursor: default;
+}
+.option svg {
+  width: 100%;
+  max-width: 150px;
+  height: 70px;
+}
+.feedback {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--paper-2);
+}
+.feedback .verdict {
+  font-family: var(--font-hand);
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.feedback .verdict.good {
+  color: var(--c-good);
+}
+.feedback .verdict.bad {
+  color: var(--c-bad);
+}
+.feedback .verdict.surprise {
+  color: var(--c-effort);
+}
+
+/* ---------- quiz ---------- */
+.quiz {
+  border-top: 5px solid var(--c-output);
+}
+.quiz-item + .quiz-item {
+  margin-top: 1.4em;
+  padding-top: 1em;
+  border-top: 1.5px dashed var(--paper-3);
+}
+.quiz-q {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.quiz-score {
+  font-family: var(--font-hand);
+  font-size: 1.4rem;
+  margin-top: 1em;
+}
+
+/* ---------- recap / cliffhanger ---------- */
+.recap {
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: 4px 14px 4px 14px;
+  padding: 14px 18px 8px;
+  margin: 2em 0;
+  box-shadow: 4px 4px 0 var(--paper-3);
+}
+.recap ul {
+  padding-left: 1.2em;
+  margin: 0.3em 0 0.6em;
+}
+.recap li {
+  margin: 0.3em 0;
+}
+.recap li::marker {
+  content: '✓  ';
+  color: var(--c-good);
+  font-weight: 700;
+}
+.cliff {
+  font-family: var(--font-hand);
+  font-size: 1.75rem;
+  line-height: 1.25;
+  text-align: center;
+  margin: 2.5em auto 1em;
+  max-width: 34rem;
+  color: var(--ink);
+}
+.cliff::before,
+.cliff::after {
+  content: '~';
+  display: block;
+  color: var(--ink-3);
+}
+
+/* ---------- widgets ---------- */
+.widget {
+  margin: 1.8em 0;
+}
+.widget-frame {
+  background: var(--card);
+  border: 1.5px solid var(--paper-3);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px;
+}
+.widget-caption {
+  font-family: var(--font-hand);
+  font-size: 1.25rem;
+  color: var(--ink-2);
+  text-align: center;
+  margin-top: 6px;
+}
+.widget-error {
+  color: var(--c-bad);
+  font-family: monospace;
+}
+
+/* ---------- concept map ---------- */
+.concept-map-wrap {
+  margin: 1.5em 0;
+}
+.concept-map-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius);
+  background: var(--card);
+  border: 1.5px solid var(--paper-3);
+}
+.concept-map {
+  display: block;
+  width: 100%;
+  min-width: 720px;
+  height: auto;
+  color: var(--ink);
+}
+.concept-map text {
+  font-family: var(--font-hand);
+  font-size: 19px;
+  font-weight: 700;
+  fill: currentColor;
+}
+.concept-map .ch-label {
+  font-size: 22px;
+  fill: var(--ink-3);
+}
+.concept-map .ch-label.faded {
+  opacity: 0.4;
+}
+.concept-map .edge {
+  opacity: 0.55;
+}
+.concept-map .hidden-edge {
+  opacity: 0.1;
+}
+.concept-map .node.locked {
+  opacity: 0.4;
+}
+.concept-map .node:hover path,
+.concept-map .node:focus-visible path {
+  stroke-width: 2.6;
+}
+.concept-map .node:focus-visible {
+  outline: none;
+}
+.concept-map .node:focus-visible text {
+  text-decoration: underline;
+}

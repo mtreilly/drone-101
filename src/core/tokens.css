@@ -1,0 +1,97 @@
+/* Design tokens. The data colours are the course's colour language and are used
+   identically in plots, equations (KaTeX \htmlClass) and prose. */
+:root {
+  color-scheme: light;
+  --paper: #f6f0e1;
+  --paper-2: #efe6d0;
+  --paper-3: #e6dabd;
+  --rule: rgba(64, 104, 160, 0.13);
+  --margin-rule: rgba(190, 60, 60, 0.28);
+  --ink: #2a2723;
+  --ink-2: #57514a;
+  --ink-3: #7c746a;
+  --pencil: #6f6a64;
+  --card: #fbf7ee;
+  --shadow: 0 1px 0 rgba(60, 40, 10, 0.08), 0 8px 24px -12px rgba(60, 40, 10, 0.25);
+  --focus: #1b5fc1;
+
+  /* colour language */
+  --c-setpoint: #2d7a32;
+  --c-output: #1f5fbf;
+  --c-error: #b3261e;
+  --c-effort: #b85000;
+  --c-disturb: #7a3d9e;
+  --c-pole: #2a2723;
+  --c-ghost-alpha: 0.28;
+  --c-error-fill: rgba(179, 38, 30, 0.12);
+  --c-good: #2d7a32;
+  --c-bad: #b3261e;
+  --c-highlight: rgba(255, 214, 90, 0.55);
+  --c-stable: rgba(45, 122, 50, 0.08);
+  --c-unstable: rgba(179, 38, 30, 0.08);
+
+  --font-body: 'Atkinson Hyperlegible', system-ui, sans-serif;
+  --font-hand: 'Caveat', 'Comic Sans MS', cursive;
+  --measure: 42rem;
+  --wide: 68rem;
+  --radius: 10px;
+  --gutter: 16px;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --paper: #1c1f24;
+  --paper-2: #23272e;
+  --paper-3: #2c313a;
+  --rule: rgba(150, 180, 230, 0.045);
+  --margin-rule: rgba(255, 120, 120, 0.18);
+  --ink: #ece6d8;
+  --ink-2: #c3bcaf;
+  --ink-3: #9a9387;
+  --pencil: #a7a198;
+  --card: #252a31;
+  --shadow: 0 1px 0 rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  --focus: #8ab8ff;
+  --c-setpoint: #72cf77;
+  --c-output: #6aa9ff;
+  --c-error: #ff7b72;
+  --c-effort: #ffa652;
+  --c-disturb: #c99af0;
+  --c-pole: #ece6d8;
+  --c-error-fill: rgba(255, 123, 114, 0.14);
+  --c-good: #72cf77;
+  --c-bad: #ff7b72;
+  --c-highlight: rgba(255, 214, 90, 0.25);
+  --c-stable: rgba(114, 207, 119, 0.08);
+  --c-unstable: rgba(255, 123, 114, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --paper: #1c1f24;
+    --paper-2: #23272e;
+    --paper-3: #2c313a;
+    --rule: rgba(150, 180, 230, 0.045);
+    --margin-rule: rgba(255, 120, 120, 0.18);
+    --ink: #ece6d8;
+    --ink-2: #c3bcaf;
+    --ink-3: #9a9387;
+    --pencil: #a7a198;
+    --card: #252a31;
+    --shadow: 0 1px 0 rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+    --focus: #8ab8ff;
+    --c-setpoint: #72cf77;
+    --c-output: #6aa9ff;
+    --c-error: #ff7b72;
+    --c-effort: #ffa652;
+    --c-disturb: #c99af0;
+    --c-pole: #ece6d8;
+    --c-error-fill: rgba(255, 123, 114, 0.14);
+    --c-good: #72cf77;
+    --c-bad: #ff7b72;
+    --c-highlight: rgba(255, 214, 90, 0.25);
+    --c-stable: rgba(114, 207, 119, 0.08);
+    --c-unstable: rgba(255, 123, 114, 0.08);
+  }
+}

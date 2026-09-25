@@ -78,6 +78,12 @@ export class ShowerSim {
     return this.mix(this.line.peek());
   }
 
+  /** Mixed-water temperature along the pipe, from the valve (index 0) to the head. */
+  pipeProfile(n: number): number[] {
+    const steps = this.line.steps;
+    return Array.from({ length: n }, (_, i) => this.mix(this.line.ago(Math.round((i / (n - 1)) * steps))));
+  }
+
   step(): void {
     const { policy, dt, p } = this;
     const err = p.target - this.temp;
