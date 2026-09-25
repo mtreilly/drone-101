@@ -13,6 +13,8 @@ const cache = new Map<string, string>();
 export function avatar(who: Who, mood: Mood = 'neutral'): SVGSVGElement {
   const key = `${who}:${mood}`;
   const svg = s('svg', { viewBox: '0 0 64 64', 'aria-hidden': 'true', class: `avatar-svg ${who}` });
+  // each avatar blinks on its own rhythm
+  svg.style.setProperty('--blink-delay', `${(-Math.random() * 6).toFixed(2)}s`);
   const hit = cache.get(key);
   if (hit) {
     svg.innerHTML = hit;
@@ -51,7 +53,7 @@ export function avatar(who: Who, mood: Mood = 'neutral'): SVGSVGElement {
   const eyeR = mood === 'surprised' ? 2.6 : 1.8;
   for (const x of eyeX) {
     if (mood === 'happy' || mood === 'excited') parts.push(rc.path(`M${x - 3} ${eyeY + 1} Q${x} ${eyeY - 3} ${x + 3} ${eyeY + 1}`, base));
-    else parts.push(s('circle', { cx: x, cy: eyeY, r: eyeR, fill: ink }));
+    else parts.push(s('circle', { cx: x, cy: eyeY, r: eyeR, fill: ink, class: 'eye' }));
   }
   if (mood === 'think') parts.push(rc.line(eyeX[1] - 4, eyeY - 6, eyeX[1] + 4, eyeY - 8, base));
   if (mood === 'worried') {

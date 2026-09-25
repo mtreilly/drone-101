@@ -85,8 +85,8 @@ const manual: WidgetFactory = (host, ctx) => {
   const rCross = readout(t('readout.crossings'), 'err');
   const startBtn = h('button', { class: 'btn primary small', type: 'button' }, t('start'));
   const resetBtn = h('button', { class: 'btn small', type: 'button' }, tc('transport.reset'));
-  right.append(h('div', { class: 'readouts' }, rTime.el, rStreak.el, rCross.el), status, h('div', { class: 'w-row' }, startBtn, resetBtn));
-  host.append(h('p', { class: 'w-help' }, t('help')));
+  right.append(h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rTime.el, rStreak.el, rCross.el), h('div', { class: 'w-row' }, startBtn, resetBtn)));
+  host.append(status, h('p', { class: 'w-help' }, t('help')));
 
   const loop = new Loop((dt) => {
     if (state !== 'running') return;

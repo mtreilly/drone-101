@@ -86,7 +86,7 @@ export class PlaneCanvas {
     ctx.lineTo(this.X(0), this.size - 4);
     ctx.stroke();
     ctx.fillStyle = color('ink2');
-    ctx.font = '700 17px Caveat, cursive';
+    ctx.font = '16px "Patrick Hand", cursive';
     ctx.textAlign = 'right';
     ctx.fillText(this.o.reLabel, this.size - 6, this.Y(0) - 6);
     ctx.textAlign = 'left';
@@ -160,7 +160,7 @@ export class PlaneCanvas {
 }
 
 function label(ctx: CanvasRenderingContext2D, text: string, x: number, y: number): void {
-  ctx.font = '700 17px Caveat, cursive';
+  ctx.font = '16px "Patrick Hand", cursive';
   ctx.textAlign = 'left';
   ctx.fillText(text, x, y);
 }
@@ -254,7 +254,7 @@ export class SpiralCanvas {
     ctx.lineTo(x, y);
     ctx.stroke();
     ctx.fillStyle = color('ink2');
-    ctx.font = '700 16px Caveat, cursive';
+    ctx.font = '15px "Patrick Hand", cursive';
     ctx.textAlign = 'right';
     [x, y] = P(tMax, 0, 0);
     ctx.fillText(this.labels.time, x, y + 16);

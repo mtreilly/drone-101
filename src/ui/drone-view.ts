@@ -54,10 +54,10 @@ export class DroneView {
       for (let m = 0; m <= this.hMax; m += 0.5) {
         const y = this.y(m);
         const major = Number.isInteger(m);
-        scale.append(s('line', { x1: 22, x2: major ? 34 : 29, y1: y, y2: y, stroke: 'var(--ink-3)', 'stroke-width': 1.2 }));
-        if (major) scale.append(s('text', { x: 18, y: y + 5, 'text-anchor': 'end', 'font-size': 16, fill: 'var(--ink-3)' }, `${m} m`));
+        scale.append(s('line', { x1: 38, x2: major ? 50 : 45, y1: y, y2: y, stroke: 'var(--ink-3)', 'stroke-width': 1.2 }));
+        if (major) scale.append(s('text', { x: 33, y: y + 5, 'text-anchor': 'end', 'font-size': 15, fill: 'var(--ink-3)' }, `${m} m`));
       }
-      scale.append(s('line', { x1: 22, x2: 22, y1: this.y(this.hMax), y2: GROUND, stroke: 'var(--ink-3)', 'stroke-width': 1.2 }));
+      scale.append(s('line', { x1: 38, x2: 38, y1: this.y(this.hMax), y2: GROUND, stroke: 'var(--ink-3)', 'stroke-width': 1.2 }));
     }
     // ground
     const ground = s('g', { class: 'ground' });
@@ -66,7 +66,7 @@ export class DroneView {
     // setpoint
     this.setLine = s('g', { class: 'setpoint' });
     this.setLine.append(
-      s('line', { x1: 36, x2: W - 6, y1: 0, y2: 0, stroke: 'var(--c-setpoint)', 'stroke-width': 2, 'stroke-dasharray': '7 5' }),
+      s('line', { x1: 52, x2: W - 6, y1: 0, y2: 0, stroke: 'var(--c-setpoint)', 'stroke-width': 2, 'stroke-dasharray': '7 5' }),
       s('text', { x: W - 8, y: -6, 'text-anchor': 'end', 'font-size': 17, fill: 'var(--c-setpoint)', 'font-weight': 700 }, tc('drone.target')),
     );
     // drone
@@ -95,7 +95,7 @@ export class DroneView {
     this.sensor = s('circle', { r: 4, cx: 60, fill: 'none', stroke: 'var(--c-output)', 'stroke-width': 2, 'stroke-dasharray': '2 2', opacity: 0 });
     this.windG = s('g', { class: 'wind' });
     this.crash = s('text', { x: W / 2 + 10, y: GROUND - 120, 'text-anchor': 'middle', 'font-size': 34, 'font-weight': 700, fill: 'var(--c-error)', opacity: 0 }, tc('drone.crash'));
-    this.readout = s('text', { x: 40, y: 22, 'font-size': 18, fill: 'var(--c-output)', 'font-weight': 700 });
+    this.readout = s('text', { x: W - 6, y: 18, 'text-anchor': 'end', 'font-size': 17, fill: 'var(--c-output)', 'font-weight': 700 });
     this.svg.append(scale, ground, this.setLine, this.windG, this.drone, this.sensor, this.crash, this.readout);
     this.desc = h('p', { class: 'visually-hidden', 'aria-live': 'off' });
     this.el = h('div', { class: 'drone-wrap', style: { maxWidth: `${o.width ?? 300}px`, margin: '0 auto' } }, this.svg, this.desc);

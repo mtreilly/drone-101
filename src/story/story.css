@@ -30,9 +30,18 @@ mark {
 /* ---------- dialogue ---------- */
 .say {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   align-items: flex-start;
-  margin: 0.9em 0;
+  margin: 1em 0;
+}
+.say + .say {
+  margin-top: 0.6em;
+}
+.say.reveal-pending {
+  opacity: 0;
+}
+.say.revealed {
+  animation: rise-in 420ms var(--ease-out) both;
 }
 .say.right {
   flex-direction: row-reverse;
@@ -50,7 +59,7 @@ mark {
 }
 .say .name {
   font-family: var(--font-hand);
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   line-height: 1;
   color: var(--ink-3);
   margin-top: -2px;
@@ -59,16 +68,60 @@ mark {
   position: relative;
   background: var(--card);
   border: 2px solid var(--ink);
-  border-radius: 18px 18px 18px 6px;
-  padding: 8px 14px 10px;
+  border-radius: 18px;
+  padding: 9px 16px 11px;
+  margin-top: 4px;
+  text-wrap: pretty;
   font-family: var(--font-hand);
-  font-size: 1.42rem;
-  line-height: 1.25;
+  font-size: 1.2rem;
+  line-height: 1.38;
   max-width: 34rem;
   box-shadow: 2px 3px 0 color-mix(in srgb, var(--ink) 18%, transparent);
 }
-.say.right .bubble {
-  border-radius: 18px 18px 6px 18px;
+.bubble::before,
+.bubble::after {
+  content: '';
+  position: absolute;
+  top: 16px;
+  width: 0;
+  height: 0;
+  border: 9px solid transparent;
+}
+.bubble::before {
+  left: -19px;
+  border-right-color: var(--ink);
+}
+.bubble::after {
+  left: -15px;
+  border-right-color: var(--card);
+}
+.say.right .bubble::before {
+  left: auto;
+  right: -19px;
+  border-right-color: transparent;
+  border-left-color: var(--ink);
+}
+.say.right .bubble::after {
+  left: auto;
+  right: -15px;
+  border-right-color: transparent;
+  border-left-color: var(--card);
+}
+.bubble strong,
+.note strong,
+.cliff strong,
+.w-status strong,
+.driving-q strong {
+  font-weight: 400;
+  background: linear-gradient(transparent 55%, var(--c-highlight) 55%, var(--c-highlight) 92%, transparent 92%);
+  padding: 0 2px;
+  border-radius: 2px;
+}
+.bubble em {
+  font-style: normal;
+  text-decoration: underline wavy color-mix(in srgb, var(--ink) 45%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
 }
 .bubble .katex {
   font-size: 0.8em;
@@ -80,8 +133,8 @@ mark {
 /* ---------- margin note ---------- */
 .note {
   font-family: var(--font-hand);
-  font-size: 1.3rem;
-  line-height: 1.2;
+  font-size: 1.12rem;
+  line-height: 1.35;
   color: var(--ink-2);
   transform: rotate(-1.2deg);
   border-left: 3px solid var(--c-highlight);
@@ -136,7 +189,7 @@ mark {
 }
 .card-title {
   font-family: var(--font-hand);
-  font-size: 1.5rem;
+  font-size: 1.28rem;
   font-weight: 700;
   margin: 0 0 0.3em;
   display: flex;
@@ -199,14 +252,28 @@ mark {
   align-items: center;
   text-align: center;
 }
-.option:hover:not([disabled]) {
-  border-color: var(--ink);
+.option {
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease,
+    transform 160ms var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+@media (hover: hover) and (pointer: fine) {
+  .option:hover:not([disabled]) {
+    border-color: var(--ink);
+    background: var(--paper-2);
+  }
+}
+.option:active:not([disabled]) {
+  transform: scale(0.98);
+  transition-duration: 80ms;
 }
 .option .letter {
   font-family: var(--font-hand);
   font-weight: 700;
-  font-size: 1.3rem;
-  line-height: 1.1;
+  font-size: 1.15rem;
+  line-height: 1.2;
   flex: none;
 }
 .option[aria-pressed='true'] {
@@ -229,6 +296,21 @@ mark {
   max-width: 150px;
   height: 70px;
 }
+.feedback:not([hidden]) {
+  animation: rise-in 320ms var(--ease-out) both;
+}
+.gated:not([hidden]) > * {
+  animation: rise-in 480ms var(--ease-out) both;
+}
+.gated:not([hidden]) > :nth-child(2) {
+  animation-delay: 60ms;
+}
+.gated:not([hidden]) > :nth-child(3) {
+  animation-delay: 120ms;
+}
+.gated:not([hidden]) > :nth-child(n + 4) {
+  animation-delay: 180ms;
+}
 .feedback {
   margin-top: 10px;
   padding: 10px 12px;
@@ -237,8 +319,7 @@ mark {
 }
 .feedback .verdict {
   font-family: var(--font-hand);
-  font-size: 1.4rem;
-  font-weight: 700;
+  font-size: 1.2rem;
 }
 .feedback .verdict.good {
   color: var(--c-good);
@@ -265,7 +346,7 @@ mark {
 }
 .quiz-score {
   font-family: var(--font-hand);
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   margin-top: 1em;
 }
 
@@ -292,8 +373,8 @@ mark {
 }
 .cliff {
   font-family: var(--font-hand);
-  font-size: 1.75rem;
-  line-height: 1.25;
+  font-size: 1.45rem;
+  line-height: 1.35;
   text-align: center;
   margin: 2.5em auto 1em;
   max-width: 34rem;
@@ -313,13 +394,18 @@ mark {
 .widget-frame {
   background: var(--card);
   border: 1.5px solid var(--paper-3);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
-  padding: 14px;
+  padding: 16px;
+}
+@media (min-width: 768px) {
+  .widget-frame {
+    padding: 20px 22px;
+  }
 }
 .widget-caption {
   font-family: var(--font-hand);
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   color: var(--ink-2);
   text-align: center;
   margin-top: 6px;
@@ -349,8 +435,7 @@ mark {
 }
 .concept-map text {
   font-family: var(--font-hand);
-  font-size: 19px;
-  font-weight: 700;
+  font-size: 17px;
   fill: currentColor;
 }
 .concept-map .ch-label {
@@ -382,4 +467,38 @@ mark {
 .widget.wide {
   margin-left: 50%;
   transform: translateX(-50%);
+}
+
+/* characters blink now and then (skipped with reduced motion) */
+@media (prefers-reduced-motion: no-preference) {
+  .avatar-svg .eye {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: blink 6s infinite;
+    animation-delay: var(--blink-delay, 0s);
+  }
+}
+@keyframes blink {
+  0%,
+  95.5%,
+  100% {
+    transform: scaleY(1);
+  }
+  97% {
+    transform: scaleY(0.12);
+  }
+}
+
+/* an aside right after a widget stays in the flow (it would collide with the frame) */
+@media (min-width: 1240px) {
+  .widget + .note.aside {
+    position: static;
+    width: auto;
+    margin-top: 1em;
+    border-left: 3px solid var(--c-highlight);
+    padding: 4px 0 4px 12px;
+  }
+  .widget + .note.aside::before {
+    content: '✎ ';
+  }
 }

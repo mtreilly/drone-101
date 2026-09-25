@@ -50,7 +50,7 @@ export class ShowerView {
     const rc = rough.svg(this.svg);
     const ink = 'currentColor';
     // wall tiles
-    const tiles = s('g', { opacity: 0.35 });
+    const tiles = s('g', { opacity: 0.16 });
     for (let x = 150; x < 370; x += 44) for (let y = 80; y < 290; y += 44) tiles.append(s('rect', { x, y, width: 44, height: 44, fill: 'none', stroke: 'var(--ink-3)', 'stroke-width': 0.8 }));
     // pipe outline
     const pipeD = PIPE.map((p, i) => `${i ? 'L' : 'M'}${p[0]} ${p[1]}`).join(' ');

@@ -1,4 +1,4 @@
-import '@fontsource/caveat/400.css';
+import '@fontsource/patrick-hand/400.css';
 import '@fontsource/caveat/700.css';
 import '@fontsource/atkinson-hyperlegible/400.css';
 import '@fontsource/atkinson-hyperlegible/700.css';

@@ -14,6 +14,10 @@ export function getTheme(): ThemeChoice {
 
 export function applyTheme(choice: ThemeChoice): void {
   const root = document.documentElement;
+  // disable transitions for one frame so the whole page swaps at once
+  root.classList.add('theme-switching');
+  void root.offsetHeight;
+  requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('theme-switching')));
   if (choice === 'auto') root.removeAttribute('data-theme');
   else root.setAttribute('data-theme', choice);
   try {

@@ -24,6 +24,9 @@ body {
   font-size: 1.075rem;
   line-height: 1.65;
   min-height: 100vh;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 a {
@@ -62,7 +65,7 @@ a {
 h1,
 h2,
 h3 {
-  font-family: var(--font-hand);
+  font-family: var(--font-display);
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: 0.01em;
@@ -107,7 +110,7 @@ strong {
   min-height: 52px;
 }
 .brand {
-  font-family: var(--font-hand);
+  font-family: var(--font-display);
   font-size: 1.55rem;
   font-weight: 700;
   color: var(--ink);
@@ -167,8 +170,19 @@ strong {
   align-items: center;
   gap: 6px;
 }
-.icon-btn:hover {
-  background: var(--paper-2);
+@media (hover: hover) and (pointer: fine) {
+  .icon-btn:hover {
+    background: var(--paper-2);
+  }
+}
+.icon-btn {
+  transition:
+    transform 160ms var(--ease-out),
+    background-color 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.icon-btn:active {
+  transform: scale(0.96);
 }
 .icon-btn svg {
   width: 20px;
@@ -221,7 +235,7 @@ strong {
 }
 .drawer .num {
   font-family: var(--font-hand);
-  font-size: 1.3rem;
+  font-size: 1.15rem;
   width: 1.6rem;
   font-weight: 700;
 }
@@ -319,12 +333,13 @@ main {
 }
 .kicker {
   font-family: var(--font-hand);
-  font-size: 1.4rem;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
   color: var(--ink-3);
 }
 .driving-q {
   font-family: var(--font-hand);
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   line-height: 1.2;
   color: var(--c-output);
   margin: 0.4em 0 1.2em;
@@ -354,20 +369,32 @@ main {
   align-items: center;
   gap: 8px;
   box-shadow: 2px 2px 0 var(--ink);
-  transition: transform 0.08s, box-shadow 0.08s;
+  transition:
+    transform 160ms var(--ease-out),
+    box-shadow 160ms var(--ease-out),
+    background-color 150ms ease,
+    color 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
-.btn:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0 var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover:not([disabled]) {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 var(--ink);
+  }
 }
-.btn:active {
-  transform: translate(1px, 1px);
-  box-shadow: 1px 1px 0 var(--ink);
+.btn:active:not([disabled]) {
+  transform: translate(1px, 1px) scale(0.96);
+  box-shadow: 0 0 0 var(--ink);
+  transition-duration: 80ms;
 }
 .btn[disabled] {
   opacity: 0.45;
   cursor: not-allowed;
-  transform: none;
+  box-shadow: 1px 1px 0 var(--ink);
+}
+.btn svg {
+  flex: none;
 }
 .btn.primary {
   background: var(--ink);
@@ -380,12 +407,46 @@ main {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+  /* keep colour/opacity feedback, drop movement */
   *,
   *::before,
   *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
+    transition-property: color, background-color, border-color, opacity, box-shadow !important;
+  }
+}
+
+/* theme switches snap instead of smearing */
+.theme-switching,
+.theme-switching *,
+.theme-switching *::before,
+.theme-switching *::after {
+  transition: none !important;
+}
+
+/* gentle entrance for content that appears after an interaction */
+/* uses the independent `translate` property so it composes with layout transforms (.wide) */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+    }
   }
 }

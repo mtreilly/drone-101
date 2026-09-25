@@ -1,4 +1,4 @@
-import { h } from '../core/dom';
+import { h, prefersReducedMotion } from '../core/dom';
 import { tc, translator } from '../core/i18n';
 import { progress } from '../core/progress';
 import { plainText, setRich, tex } from '../core/rich-text';
@@ -51,7 +51,30 @@ export function renderChapter(env: RenderEnv): HTMLElement {
     }
     page.append(sec);
   }
+  revealDialogue(page, env);
   return page;
+}
+
+/** Dialogue lines rise in as they scroll into view, a beat apart, once. */
+function revealDialogue(page: HTMLElement, env: RenderEnv): void {
+  if (prefersReducedMotion() || typeof IntersectionObserver === 'undefined') return;
+  const lines = [...page.querySelectorAll<HTMLElement>('.say')];
+  lines.forEach((l) => l.classList.add('reveal-pending'));
+  const io = new IntersectionObserver(
+    (entries) => {
+      const visible = entries.filter((e) => e.isIntersecting).map((e) => e.target as HTMLElement);
+      visible.sort((a, b) => lines.indexOf(a) - lines.indexOf(b));
+      visible.forEach((el, i) => {
+        io.unobserve(el);
+        el.style.animationDelay = `${i * 90}ms`;
+        el.classList.remove('reveal-pending');
+        el.classList.add('revealed');
+      });
+    },
+    { rootMargin: '0px 0px -8% 0px' },
+  );
+  lines.forEach((l) => io.observe(l));
+  env.cleanups.push(() => io.disconnect());
 }
 
 function renderBlock(b: Block, env: RenderEnv): HTMLElement {
