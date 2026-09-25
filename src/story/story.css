@@ -436,7 +436,7 @@ mark {
 }
 .concept-map text {
   font-family: var(--font-hand);
-  font-size: 17px;
+  font-size: 19px;
   fill: currentColor;
 }
 .concept-map .ch-label {
@@ -446,8 +446,22 @@ mark {
 .concept-map .ch-label.faded {
   opacity: 0.4;
 }
+.concept-map a {
+  color: var(--ink);
+}
 .concept-map .edge {
-  opacity: 0.55;
+  opacity: 0.4;
+  transition: opacity 180ms ease;
+}
+.concept-map .node {
+  transition: opacity 180ms ease;
+}
+.concept-map.focus-mode .edge:not(.hot),
+.concept-map.focus-mode .node:not(.hot) {
+  opacity: 0.18;
+}
+.concept-map.focus-mode .edge.hot {
+  opacity: 1;
 }
 .concept-map .hidden-edge {
   opacity: 0.1;

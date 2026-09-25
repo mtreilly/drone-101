@@ -134,7 +134,7 @@ export function conceptMap(o: MapOptions): HTMLElement {
   const done = new Set(progress.get().completed);
   const revealed = (ch: number) => ch <= o.upTo || done.has(ch);
   const svg = s('svg', {
-    viewBox: '0 0 1200 800',
+    viewBox: '-50 -40 1300 870',
     class: 'concept-map',
     role: 'group',
     'aria-label': tc('map.aria'),
@@ -147,8 +147,17 @@ export function conceptMap(o: MapOptions): HTMLElement {
     const rb = revealed(NODES[b][0]);
     const [x1, y1] = pos(a);
     const [x2, y2] = pos(b);
-    const line = rc.line(x1, y1, x2, y2, { stroke: 'currentColor', strokeWidth: 1.2, roughness: 1.4, seed: i + 1 });
+    // a gentle bow keeps long links from reading as a tangle of straight wires
+    const mx = (x1 + x2) / 2;
+    const my = (y1 + y2) / 2;
+    const len = Math.hypot(x2 - x1, y2 - y1);
+    const bow = Math.min(40, len * 0.12) * (i % 2 ? 1 : -1);
+    const cx = mx - ((y2 - y1) / (len || 1)) * bow;
+    const cy = my + ((x2 - x1) / (len || 1)) * bow;
+    const line = rc.path(`M${x1} ${y1} Q${cx} ${cy} ${x2} ${y2}`, { stroke: 'currentColor', strokeWidth: 1.2, roughness: 0.9, seed: i + 1 });
     line.setAttribute('class', ra && rb ? 'edge' : 'edge hidden-edge');
+    line.dataset.a = a;
+    line.dataset.b = b;
     edges.append(line);
   });
   // chapter labels
@@ -161,11 +170,11 @@ export function conceptMap(o: MapOptions): HTMLElement {
     const [x, y] = pos(id);
     const show = revealed(ch);
     const label = show ? tc(`map.nodes.${id}`) : '?';
-    const w = Math.max(60, label.length * 8.6 + 26);
+    const w = Math.max(64, label.length * 9.6 + 30);
     const hi = o.highlight === ch;
-    const g = s('a', { href: `#/ch/${ch}`, class: `node${show ? '' : ' locked'}${hi ? ' new' : ''}`, 'aria-label': show ? `${label} — ${tc(`chapters.${ch}.title`)}` : tc('map.locked') });
+    const g = s('a', { href: `#/ch/${ch}`, 'data-id': id, class: `node${show ? '' : ' locked'}${hi ? ' new' : ''}`, 'aria-label': show ? `${label} — ${tc(`chapters.${ch}.title`)}` : tc('map.locked') });
     g.append(
-      rc.ellipse(x, y, w, 40, {
+      rc.ellipse(x, y, w, 44, {
         stroke: 'currentColor',
         strokeWidth: hi ? 2.2 : 1.4,
         roughness: 1.2,
@@ -180,6 +189,26 @@ export function conceptMap(o: MapOptions): HTMLElement {
     if (show) listItems.push(label);
   }
   svg.append(edges, nodes);
+  // hovering or focusing an idea lights up what it connects to
+  const light = (id: string | null) => {
+    svg.classList.toggle('focus-mode', !!id);
+    const linked = new Set<string>(id ? [id] : []);
+    edges.querySelectorAll<SVGElement>('.edge').forEach((e) => {
+      const on = !!id && (e.dataset.a === id || e.dataset.b === id);
+      e.classList.toggle('hot', on);
+      if (on) {
+        linked.add(e.dataset.a!);
+        linked.add(e.dataset.b!);
+      }
+    });
+    nodes.querySelectorAll<SVGElement>('.node').forEach((n) => n.classList.toggle('hot', linked.has(n.dataset.id ?? '')));
+  };
+  nodes.querySelectorAll<SVGElement>('.node:not(.locked)').forEach((n) => {
+    n.addEventListener('pointerenter', () => light(n.dataset.id ?? null));
+    n.addEventListener('pointerleave', () => light(null));
+    n.addEventListener('focus', () => light(n.dataset.id ?? null));
+    n.addEventListener('blur', () => light(null));
+  });
   const textList = h('p', { class: 'visually-hidden' }, `${tc('map.listIntro')} ${listItems.join(', ')}.`);
   return h('div', { class: `concept-map-wrap${o.compact ? ' compact' : ''}` }, h('div', { class: 'concept-map-scroll' }, svg), textList);
 }
