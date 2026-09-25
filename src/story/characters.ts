@@ -23,8 +23,9 @@ export function avatar(who: Who, mood: Mood = 'neutral'): SVGSVGElement {
   const rc = rough.svg(svg);
   const ink = 'currentColor';
   const base = { stroke: ink, strokeWidth: 1.6, roughness: 1.1, seed: who.length * 13 + 5 };
-  const skin = { ...base, fill: 'var(--paper-2)', fillStyle: 'solid' };
-  const hair = { ...base, fill: ink, fillStyle: 'hachure', hachureGap: 2.6, fillWeight: 1.2 };
+  const skin = { ...base, fill: 'var(--face)', fillStyle: 'solid' };
+  // each character has their own hair tone (tuned per theme in tokens.css)
+  const hair = { ...base, fill: `var(--hair-${who})`, fillStyle: 'hachure', hachureGap: 2.4, fillWeight: 1.5 };
   const parts: SVGElement[] = [];
 
   if (who === 'mika') {
@@ -43,17 +44,29 @@ export function avatar(who: Who, mood: Mood = 'neutral'): SVGSVGElement {
     parts.push(rc.path('M49 26 Q60 30 56 46 Q53 38 48 34', hair));
     // goggles on the forehead
     parts.push(rc.line(14, 24, 50, 24, { ...base, strokeWidth: 2.2 }));
-    parts.push(rc.circle(25, 23, 9, { ...base, fill: 'var(--card)', fillStyle: 'solid' }));
-    parts.push(rc.circle(39, 23, 9, { ...base, fill: 'var(--card)', fillStyle: 'solid' }));
+    parts.push(rc.circle(25, 23, 9, { ...base, fill: 'var(--goggle)', fillStyle: 'solid' }));
+    parts.push(rc.circle(39, 23, 9, { ...base, fill: 'var(--goggle)', fillStyle: 'solid' }));
   }
+
+  // soft cheeks
+  const cheekY = who === 'theo' ? 42 : 42;
+  const cheekX = who === 'theo' ? [20, 44] : [20.5, 43.5];
+  for (const x of cheekX) parts.push(s('ellipse', { cx: x, cy: cheekY, rx: 3.6, ry: 2.2, fill: 'var(--blush)', class: 'cheek' }));
 
   // eyes
   const eyeY = who === 'theo' ? 35 : 36;
   const eyeX = who === 'theo' ? [23.5, 40.5] : [25, 39];
   const eyeR = mood === 'surprised' ? 2.6 : 1.8;
+  // every eye shape sits in a .eye group so all moods blink the same way
   for (const x of eyeX) {
-    if (mood === 'happy' || mood === 'excited') parts.push(rc.path(`M${x - 3} ${eyeY + 1} Q${x} ${eyeY - 3} ${x + 3} ${eyeY + 1}`, base));
-    else parts.push(s('circle', { cx: x, cy: eyeY, r: eyeR, fill: ink, class: 'eye' }));
+    const eye = s('g', { class: 'eye' });
+    if (mood === 'happy' || mood === 'excited') eye.append(rc.path(`M${x - 3} ${eyeY + 1} Q${x} ${eyeY - 3} ${x + 3} ${eyeY + 1}`, base));
+    else {
+      eye.append(s('circle', { cx: x, cy: eyeY, r: eyeR, fill: ink }));
+      // a tiny catch-light makes the eyes feel alive
+      eye.append(s('circle', { cx: x + eyeR * 0.35, cy: eyeY - eyeR * 0.4, r: eyeR * 0.32, fill: 'var(--face)' }));
+    }
+    parts.push(eye);
   }
   if (mood === 'think') parts.push(rc.line(eyeX[1] - 4, eyeY - 6, eyeX[1] + 4, eyeY - 8, base));
   if (mood === 'worried') {
@@ -72,9 +85,15 @@ export function avatar(who: Who, mood: Mood = 'neutral'): SVGSVGElement {
     worried: `M26 ${my + 2} Q32 ${my - 3} 38 ${my + 2}`,
   };
   if (mood === 'surprised') parts.push(rc.ellipse(32, my, 6, 8, base));
-  else parts.push(rc.path(mouths[mood], mood === 'excited' ? { ...base, fill: ink, fillStyle: 'solid' } : base));
+  else if (mood === 'excited') {
+    // open grin: dark mouth with a small tongue, drawn cleanly (no scribble fill)
+    parts.push(s('path', { d: mouths.excited, fill: ink, stroke: ink, 'stroke-width': 1.6, 'stroke-linejoin': 'round' }));
+    parts.push(s('ellipse', { cx: 32, cy: my + 3, rx: 3.2, ry: 1.6, fill: '#d9726a' }));
+  } else parts.push(rc.path(mouths[mood], base));
 
-  svg.append(...parts);
+  const head = s('g', { class: 'head' });
+  head.append(...parts);
+  svg.append(head);
   cache.set(key, svg.innerHTML);
   return svg;
 }

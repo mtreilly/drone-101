@@ -484,13 +484,30 @@ mark {
   transform: translateX(-50%);
 }
 
-/* characters blink now and then (skipped with reduced motion) */
+.avatar-svg {
+  color: var(--avatar-ink);
+  overflow: visible;
+  /* on the night page a thin light edge keeps dark hair and outlines visible */
+  filter: var(--avatar-halo);
+}
+/* the characters share one quiet idle loop: blink, breathe, and a small nod when they speak */
 @media (prefers-reduced-motion: no-preference) {
   .avatar-svg .eye {
     transform-box: fill-box;
     transform-origin: center;
     animation: blink 6s infinite;
     animation-delay: var(--blink-delay, 0s);
+  }
+  .avatar-svg .head {
+    transform-box: view-box;
+    transform-origin: 32px 60px;
+    animation: breathe 4.4s var(--ease-in-out) infinite alternate;
+    animation-delay: var(--blink-delay, 0s);
+  }
+  .say.revealed .avatar-svg {
+    transform-origin: 50% 90%;
+    animation: hello 560ms var(--ease-out) both;
+    animation-delay: inherit;
   }
 }
 @keyframes blink {
@@ -501,6 +518,29 @@ mark {
   }
   97% {
     transform: scaleY(0.12);
+  }
+}
+@keyframes breathe {
+  from {
+    translate: 0 0.5px;
+    rotate: -0.6deg;
+  }
+  to {
+    translate: 0 -0.7px;
+    rotate: 0.6deg;
+  }
+}
+@keyframes hello {
+  0% {
+    scale: 0.92;
+    rotate: -5deg;
+  }
+  60% {
+    rotate: 2deg;
+  }
+  100% {
+    scale: 1;
+    rotate: 0deg;
   }
 }
 
