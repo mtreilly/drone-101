@@ -1,6 +1,172 @@
 {
   "kicker": "Chapter 0",
-  "title": "Coming soon",
-  "question": "…",
-  "sections": [{ "id": "s1", "title": "", "blocks": [{ "t": "p", "text": "This notebook is still being written." }] }]
+  "title": "The Shower Problem",
+  "question": "Why can't I just get the shower to 38 °C?",
+  "sections": [
+    {
+      "id": "hook",
+      "title": "Hot! Cold! Hot!",
+      "blocks": [
+        { "t": "say", "who": "mika", "mood": "worried", "text": "Okay, confession. This morning I turned the shower knob, got **boiled**, turned it back, got **frozen**, and did that about six times." },
+        { "t": "say", "who": "june", "mood": "happy", "text": "Everybody does that! Old apartment showers are the worst." },
+        { "t": "say", "who": "theo", "mood": "think", "text": "But *why* is it hard? You want one number, 38 degrees. You have one knob. That should be easy." },
+        { "t": "p", "text": "Let's find out. Below is a shower with a **long pipe** between the knob and the shower head, like a real one. Water you mix at the knob takes a couple of seconds to travel up the pipe. You can watch the water's colour creep along it." },
+        { "t": "p", "text": "**Your goal:** get the water to {sp|38 °C} (the green band) and keep it there for 10 seconds straight. Drag the {eff|orange knob}, or click it and use the arrow keys. The clock starts when you touch it." },
+        { "t": "widget", "id": "manual" },
+        { "t": "note", "aside": true, "text": "The pipe has a 2.5-second delay. That's about what you get from a few metres of pipe." },
+        { "t": "p", "text": "How did it go? If you swung back and forth, over and under the green band, you're in good company. Look at the {out|blue curve}: it probably zig-zags like a nervous snake." }
+      ]
+    },
+    {
+      "id": "broken",
+      "title": "Is the shower broken?",
+      "blocks": [
+        { "t": "say", "who": "june", "mood": "worried", "text": "I think the shower is broken. I set the knob to *warm*, and it keeps going *hot* anyway!" },
+        { "t": "say", "who": "theo", "mood": "think", "text": "Hmm. Let's plot two things: what the knob **asks for** and what the head **gives you**. If it's broken they shouldn't match at all." },
+        { "t": "p", "text": "The {eff|dotted orange curve} is the temperature your knob position *asks for*: the mix at the valve. The {out|blue curve} is what actually arrives. Slide the orange curve later in time and see if they line up." },
+        { "t": "widget", "id": "lag" },
+        { "t": "say", "who": "june", "mood": "surprised", "text": "Oh! Slide it about 3 seconds and they're almost the **same curve**. The shower isn't broken…" },
+        { "t": "say", "who": "mika", "mood": "excited", "text": "…it's just **late**! Everything I felt was about 3 seconds old." },
+        { "t": "p", "text": "That's the first clue. When you feel \"too hot\", you're feeling the knob position from a few seconds ago. By then you've *already* turned it hotter, so you turn it back, too far, and the cycle starts again." },
+        { "t": "note", "text": "2.5 s is the pipe. The extra half-second or so is the water mixing and warming the metal. It smooths out sudden changes." }
+      ]
+    },
+    {
+      "id": "harder",
+      "title": "Would trying harder help?",
+      "blocks": [
+        { "t": "say", "who": "mika", "mood": "excited", "text": "I've got it: I was too **gentle**! If I turn the knob **faster** whenever it's wrong, I'll fix it faster." },
+        { "t": "p", "text": "We built three robot hands to test ideas without getting wet. The **normal hand** turns the knob a little faster the more wrong the water feels, like most people do. The **harder hand** does exactly the same thing, twice as vigorously." },
+        {
+          "t": "predict",
+          "id": "ch0-harder",
+          "gate": true,
+          "q": "Compared with the normal hand, what will the **harder** hand do?",
+          "options": [
+            { "text": "Reach 38 °C sooner and settle faster", "sketch": "swing-better", "why": "That's what our gut says: more effort, faster result." },
+            { "text": "About the same, only slightly quicker", "sketch": "overshoot", "why": "A reasonable hedge, but the delay makes things much more dramatic than that." },
+            { "text": "Swing even harder and never settle", "sketch": "swing-worse", "correct": true, "why": "Turning faster means that by the time the (late) water tells you to stop, you've turned *even further*. The swings grow until the knob hits its ends." }
+          ]
+        },
+        { "t": "widget", "id": "robots" },
+        { "t": "p", "text": "Try all three. The **harder** hand thrashes between freezing and scalding. The **patient** hand sets the knob to about 51% (the right mix, worked out in advance) and simply *waits*. It wins easily." },
+        { "t": "say", "who": "theo", "mood": "think", "text": "So delay alone isn't the problem. The patient hand has the same delay and does fine. The problem is **reacting to old news, too eagerly**." },
+        { "t": "say", "who": "mika", "mood": "worried", "text": "So \"push harder when you're further off\" is the *wrong* instinct? That's my whole personality." },
+        { "t": "say", "who": "june", "mood": "think", "text": "But the patient hand cheated. It knew the right answer in advance. If the hot water tank cools down, or someone flushes a toilet, the right knob position changes and the patient hand won't notice." },
+        { "t": "p", "text": "That's the real puzzle. We need something that **reacts** (so it can handle surprises) but doesn't **over-react** (so it doesn't swing). Hold on to that thought. The whole course is about it." }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "What we know so far",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Having a **goal** (38 °C) and a way to act (the knob) isn't enough. **How** you react matters.",
+            "A **delay** means you always feel old information. The shower isn't broken, it's late.",
+            "Reacting harder to old information makes the swings **worse**, not better.",
+            "Setting the knob once and waiting works, but only if nothing ever changes."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch0-q1",
+              "q": "At t = 5 s you snap the knob from cold to warm. Roughly when does the temperature at the head **start** to rise?",
+              "options": [
+                { "text": "Immediately, at 5 s", "why": "The water you just mixed is still at the bottom of the pipe. The head keeps getting the old cold water for a while." },
+                { "text": "Around 7.5 s", "correct": true, "why": "Right: 2.5 s later, when the new water has travelled the pipe. After that it rises smoothly over about a second as it mixes." },
+                { "text": "Around 15 s", "why": "Too late: our pipe's delay is 2.5 s, not 10 s." }
+              ]
+            },
+            {
+              "id": "ch0-q2",
+              "q": "You set the knob exactly right (51%) and walk away. What happens?",
+              "options": [
+                { "text": "It warms up and settles at 38 °C without swinging", "correct": true, "why": "Yes. Delay only makes things **late**. Swinging comes from *reacting* to late information." },
+                { "text": "It swings forever, because of the delay", "why": "Delay by itself doesn't create swings. Nobody is reacting, so nothing can overshoot." },
+                { "text": "It never reaches 38 °C", "why": "It gets there: 2.5 s of delay, then about a second of smooth warming." }
+              ]
+            },
+            {
+              "id": "ch0-q3",
+              "q": "Which temperature plot belongs to someone who **reacts too hard**?",
+              "options": [
+                { "text": "Growing swings", "sketch": "swing-worse", "correct": true, "why": "Over-reacting to delayed information pumps energy into the swings, like pushing a swing at just the wrong moments." },
+                { "text": "Swings that shrink", "sketch": "swing-better", "why": "Shrinking swings mean the reactions are gentle enough to calm down. That's a *gentle* reactor." },
+                { "text": "Wait, then rise smoothly", "sketch": "delay-then-rise", "why": "That's the patient hand: set it and wait. No over-reaction at all." }
+              ]
+            }
+          ]
+        },
+        { "t": "map" },
+        { "t": "cliff", "text": "A tiny drone hovers perfectly still at 2 metres, in the wind, with no brain at all. It has the same problem we do. **How does it solve it?**" }
+      ]
+    }
+  ],
+  "widgets": {
+    "manual": {
+      "title": "Your shower",
+      "start": "Start the clock",
+      "help": "Keyboard: Tab to the knob, then arrow keys (small turns), Page Up/Down (big turns), Home (all cold), End (all hot).",
+      "view": {
+        "aria": "Shower: a knob at the bottom left mixes cold and hot water, a long pipe carries it to the shower head, and a thermometer shows the temperature at the head.",
+        "knob": "Shower knob, from cold to hot",
+        "cold": "C",
+        "hot": "H",
+        "pipe": "pipe (2.5 s of travel)",
+        "head": "shower head",
+        "thermo": "thermometer"
+      },
+      "plot": { "temp": "temperature at the head", "mix": "what the knob asks for", "aria": "Plot of temperature at the shower head over 60 seconds, with the 38 degree target band." },
+      "readout": { "time": "time", "streak": "in the band", "crossings": "times you crossed 38°" },
+      "status": {
+        "ready": "Touch the knob to begin.",
+        "go": "Go! Get it to 38 °C…",
+        "hot": "Too hot! 🔥",
+        "cold": "Too cold! 🧊",
+        "inband": "In the band, hold it…",
+        "won": "You did it at {t} s, after crossing 38° {n} times. Nice!",
+        "timeup": "Time's up! You crossed 38° {n} times. Don't worry, that's the whole point."
+      }
+    },
+    "robots": {
+      "title": "Three robot hands",
+      "choose": "Which hand?",
+      "hand": { "normal": "Normal hand", "harder": "Harder hand", "patient": "Patient hand" },
+      "intro": {
+        "normal": "Turns the knob faster the more wrong the water feels.",
+        "harder": "Same idea, but reacts twice as vigorously.",
+        "patient": "Sets the knob to 51% once, then waits."
+      },
+      "result": {
+        "normal": "Gets there eventually, after a few big swings.",
+        "harder": "Never settles! It over-reacts to old news every time.",
+        "patient": "Calm and quick, but only because it knew the answer in advance."
+      },
+      "view": {
+        "aria": "Shower controlled by a robot hand. The knob turns by itself.",
+        "knob": "Shower knob (robot-controlled)",
+        "cold": "C",
+        "hot": "H",
+        "pipe": "pipe (2.5 s of travel)",
+        "head": "shower head",
+        "thermo": "thermometer"
+      },
+      "plot": { "temp": "temperature at the head", "mix": "what the knob asks for", "aria": "Plot of shower temperature for the selected robot hand, with the previous hand shown as a faint ghost." }
+    },
+    "lag": {
+      "title": "Is it broken, or just late?",
+      "slider": "Slide the knob curve later by",
+      "sourceYours": "This is your own run from above.",
+      "sourceRobot": "This is a sample run. (Play the game above and come back to use your own.)",
+      "plot": { "temp": "temperature at the head", "mix": "what the knob asks for", "aria": "Knob mix temperature and head temperature over time; the knob curve can be shifted later with the slider." },
+      "status": {
+        "mismatch": "They don't match yet (average gap {e} °C). Keep sliding.",
+        "match": "They line up! The head gets what the knob asked for about {s} s ago."
+      }
+    }
+  }
 }

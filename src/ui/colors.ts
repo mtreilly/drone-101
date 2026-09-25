@@ -33,9 +33,20 @@ export function withAlpha(c: string, a: number): string {
   return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
 }
 
-/** Colour for a water temperature (cold blue → hot red), used only for the water itself. */
+/**
+ * Colour for a water temperature (cold blue → neutral → hot red), used only for the water
+ * itself. Deliberately avoids green, which means "setpoint" everywhere else.
+ */
 export function tempColor(t: number): string {
   const f = Math.min(1, Math.max(0, (t - 15) / 45));
-  const hue = 210 - 210 * f;
-  return `hsl(${hue} 75% 52%)`;
+  const stops: [number, number, number][] = [
+    [52, 120, 230],
+    [200, 190, 175],
+    [225, 60, 45],
+  ];
+  const k = f < 0.5 ? 0 : 1;
+  const g = f < 0.5 ? f / 0.5 : (f - 0.5) / 0.5;
+  const [a, b] = [stops[k], stops[k + 1]];
+  const mix = (i: number) => Math.round(a[i] + (b[i] - a[i]) * g);
+  return `rgb(${mix(0)}, ${mix(1)}, ${mix(2)})`;
 }
