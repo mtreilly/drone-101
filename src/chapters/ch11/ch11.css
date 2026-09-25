@@ -1,0 +1,13 @@
+/* Finale mission checklist */
+.checklist { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+.checklist li { display: grid; grid-template-columns: 1.6rem 1fr auto; gap: 8px; align-items: baseline; padding: 4px 8px; border-radius: 8px; border: 1.5px dashed var(--paper-3); }
+.checklist li[data-state='pass'] { border-style: solid; border-color: var(--c-good); }
+.checklist li[data-state='fail'] { border-color: var(--c-bad); }
+.checklist .mark { font-weight: 700; text-align: center; }
+.checklist li[data-state='pass'] .mark { color: var(--c-good); }
+.checklist li[data-state='fail'] .mark { color: var(--c-bad); }
+.checklist .crit-val { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+.mission-card { margin-top: 12px; }
+.mission-bottom { display: grid; gap: 14px; margin-top: 12px; }
+@media (min-width: 768px) { .mission-bottom { grid-template-columns: minmax(0, 1.6fr) minmax(200px, 0.8fr); align-items: start; } }
+.mission-poles .w-help { text-align: center; }

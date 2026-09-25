@@ -106,7 +106,7 @@ const bode: WidgetFactory = (host, ctx) => {
   });
   const phasePlot = new Plot(right, {
     x: { label: t('w'), min: W_MIN, max: W_MAX, log: true },
-    y: { label: t('phase'), min: -540, max: 0, ticks: [0, -90, -180, -270, -360, -450, -540] },
+    y: { label: t('phase'), min: -540, max: 0, ticks: [0, -180, -360, -540] },
     series: [
       { id: 'formula', color: 'ink3', dash: [5, 4] },
       { id: 'dots', color: 'out', dots: true },
@@ -190,7 +190,7 @@ function marginPlots(host: HTMLElement, t: WidgetCtx['t']) {
   });
   const phase = new Plot(host, {
     x: { label: t('w'), min: 0.02, max: 5, log: true },
-    y: { label: t('phase'), min: -540, max: -90, ticks: [-90, -180, -270, -360, -450, -540] },
+    y: { label: t('phase'), min: -540, max: -90, ticks: [-90, -180, -360, -540] },
     series: [{ id: 'L', color: 'out', ghost: true }],
     height: 170,
     label: t('phaseAria'),
