@@ -121,13 +121,31 @@ function buildShell(): DocumentFragment {
     legend,
   );
   main = h('main', { id: 'main', tabindex: '-1' });
-  frag.append(skip, header, drawer, scrim, main);
+  frag.append(skip, header, drawer, scrim, main, buildFooter());
   for (let i = 0; i < CHAPTER_COUNT; i++) {
     const title = tc(`chapters.${i}.title`);
     strip.append(h('li', null, h('a', { href: `#/ch/${i}`, 'aria-label': tc('nav.chapterN', { n: i, title }), title }, String(i))));
     drawerList.append(h('li', null, h('a', { href: `#/ch/${i}` }, h('span', { class: 'num' }, String(i)), h('span', null, title), h('span', { class: 'done-mark', 'aria-hidden': 'true' }))));
   }
   return frag;
+}
+
+const AUTHOR_LINKS: [key: string, href: string][] = [
+  ['x', 'https://x.com/MichealReilly'],
+  ['bluesky', 'https://bsky.app/profile/michealrs.bsky.social'],
+  ['blog', 'https://actuallymaybe.com'],
+  ['source', 'https://github.com/mtreilly/drone-101'],
+];
+
+function buildFooter(): HTMLElement {
+  const links = h('ul', { class: 'footer-links' });
+  for (const [key, href] of AUTHOR_LINKS) links.append(h('li', null, h('a', { href, rel: 'me noopener' }, tc(`footer.${key}`))));
+  return h(
+    'footer',
+    { class: 'site-footer', 'aria-label': tc('footer.label') },
+    h('p', null, `${tc('footer.madeBy')} `, h('a', { href: 'https://actuallymaybe.com', class: 'footer-name' }, tc('footer.name'))),
+    links,
+  );
 }
 
 function legendContent(): HTMLElement {
