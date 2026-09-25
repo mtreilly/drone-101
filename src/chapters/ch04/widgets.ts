@@ -11,6 +11,14 @@ import { dragX } from '../ch03/plot-drag';
 import { BASES, coffeeGuess, measuredSlope } from './models';
 
 type Ctx = CanvasRenderingContext2D;
+
+/** A small "click" of the readout when the learner's answer locks in. */
+function lockIn(el: HTMLElement, on: boolean): void {
+  el.classList.remove('locked');
+  if (!on) return;
+  void el.offsetWidth;
+  el.classList.add('locked');
+}
 type Px = (v: number) => number;
 
 /** Draws a short tangent line and a dot at (t, f(t)). */
@@ -50,7 +58,7 @@ const bases: WidgetFactory = (host, ctx) => {
   const rH = readout(t('readHeight'), 'out');
   const rS = readout(t('readSlope'));
   const rR = readout(t('readRatio'));
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  const status = h('p', { class: 'w-status steady', 'aria-live': 'polite' });
   const draw = () => {
     const f = (x: number) => b ** x;
     plot.fn('f', f);
@@ -63,7 +71,8 @@ const bases: WidgetFactory = (host, ctx) => {
     rH.set(fmt(f(cur), 3));
     rS.set(fmt(s, 3));
     rR.set(fmt(s / f(cur), 3), Math.abs(s / f(cur) - 1) < 1e-4 ? 'good' : '');
-    status.textContent = b === Math.E ? t('statusE') : t('statusOther', { r: fmt(Math.log(b), 3) });
+    const msg = b === Math.E ? t('statusE') : t('statusOther', { r: fmt(Math.log(b), 3) });
+    if (status.textContent !== msg) status.textContent = msg;
     plot.describe(t('describe', { b: fmt(b, 3), t: fmt(cur, 2), r: fmt(s / f(cur), 3) }));
   };
   const seg = segmented(
@@ -73,6 +82,7 @@ const bases: WidgetFactory = (host, ctx) => {
     (v) => {
       b = Number(v);
       draw();
+      lockIn(rR.el, b === Math.E);
     },
   );
   const sl = slider({
@@ -96,7 +106,7 @@ const bases: WidgetFactory = (host, ctx) => {
     draw();
   });
   host.prepend(h('p', { class: 'w-title' }, t('title')), seg.el);
-  host.append(h('div', { class: 'w-controls' }, sl.el, tg.el), h('div', { class: 'readouts' }, rH.el, rS.el, rR.el), status);
+  host.append(h('div', { class: 'w-controls' }, sl.el, tg.el), h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rH.el, rS.el, rR.el)), status, h('p', { class: 'w-help' }, t('help')));
   draw();
 };
 
@@ -117,7 +127,7 @@ const expA: WidgetFactory = (host, ctx) => {
   });
   plot.setLines([{ kind: 'h', at: 0, color: 'ink3', dash: [2, 3], width: 1 }]);
   const rR = readout(t('readRatio'));
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  const status = h('p', { class: 'w-status steady', 'aria-live': 'polite' });
   const draw = () => {
     const f = (x: number) => Math.exp(a * x);
     plot.fn('f', f);
@@ -127,7 +137,8 @@ const expA: WidgetFactory = (host, ctx) => {
     plot.invalidate();
     const r = measuredSlope(f, cur) / f(cur);
     rR.set(fmt(r, 2));
-    status.textContent = a > 0.001 ? t('grow') : a < -0.001 ? t('shrink') : t('flat');
+    const msg = a > 0.001 ? t('grow') : a < -0.001 ? t('shrink') : t('flat');
+    if (status.textContent !== msg) status.textContent = msg;
     plot.describe(t('describe', { a: fmt(a, 1), r: fmt(r, 2) }));
   };
   const sa = slider({
@@ -142,8 +153,19 @@ const expA: WidgetFactory = (host, ctx) => {
       draw();
     },
   });
-  sa.input.addEventListener('pointerdown', () => plot.clear());
-  sa.input.addEventListener('keydown', () => plot.clear());
+  // keep the previous curve as a ghost once per gesture (a drag, or a burst of key presses)
+  let ghostArmed = true;
+  const ghost = () => {
+    if (!ghostArmed) return;
+    ghostArmed = false;
+    plot.clear();
+    draw();
+  };
+  sa.input.addEventListener('pointerdown', ghost);
+  sa.input.addEventListener('keydown', (ev) => {
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'].includes(ev.key)) ghost();
+  });
+  sa.input.addEventListener('change', () => (ghostArmed = true));
   const sc = slider({
     label: t('cursor'),
     min: 0,
@@ -156,8 +178,13 @@ const expA: WidgetFactory = (host, ctx) => {
       draw();
     },
   });
+  dragX(plot, (x) => {
+    cur = x;
+    sc.value = x;
+    draw();
+  });
   host.prepend(h('p', { class: 'w-title' }, t('title')));
-  host.append(h('div', { class: 'w-controls' }, sa.el, sc.el), h('div', { class: 'readouts' }, rR.el), status);
+  host.append(h('div', { class: 'w-controls' }, sa.el, sc.el), h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rR.el)), status, h('p', { class: 'w-help' }, t('help')));
   draw();
 };
 
@@ -181,11 +208,12 @@ const guess: WidgetFactory = (host, ctx) => {
   plot.set('rule', tt, truth);
   plot.setLines([
     { kind: 'h', at: 20, color: 'sp', label: t('room') },
-    { kind: 'v', at: probe, color: 'ink3', dash: [3, 4], width: 1 },
+    { kind: 'v', at: probe, color: 'ink3', dash: [3, 4], width: 1, label: t('probe') },
   ]);
   const rG = readout(t('readGuess'), 'out');
   const rRule = readout(t('readRule'));
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  const status = h('p', { class: 'w-status steady', 'aria-live': 'polite' });
+  let wasOk = false;
   const draw = () => {
     const g = coffeeGuess(a);
     plot.fn('g', g);
@@ -195,7 +223,9 @@ const guess: WidgetFactory = (host, ctx) => {
     const ok = Math.abs(a + 0.1) < 0.0026;
     rG.set(`${fmt(slopeGuess, 2)} °C/min`, ok ? 'good' : '');
     status.textContent = ok ? t('match') : a < -0.1 ? t('tooFast') : t('tooSlow');
-    status.className = `w-status${ok ? ' good' : ''}`;
+    status.className = `w-status steady${ok ? ' good' : ''}`;
+    if (ok && !wasOk) lockIn(rG.el, true);
+    wasOk = ok;
     plot.describe(status.textContent ?? '');
   };
   const sl = slider({
@@ -216,7 +246,7 @@ const guess: WidgetFactory = (host, ctx) => {
     draw();
   });
   host.prepend(h('p', { class: 'w-title' }, t('title')));
-  host.append(h('div', { class: 'w-controls' }, sl.el), h('div', { class: 'readouts' }, rG.el, rRule.el), status);
+  host.append(h('div', { class: 'w-controls' }, sl.el), h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rG.el, rRule.el)), status);
   draw();
 };
 
@@ -242,9 +272,9 @@ const square: WidgetFactory = (host, ctx) => {
     { kind: 'h', at: -kOverM, color: 'sp', label: t('need') },
     { kind: 'h', at: 0, color: 'ink3', dash: [2, 3], width: 1 },
   ]);
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  const status = h('p', { class: 'w-status steady', 'aria-live': 'polite' });
   const draw = () => {
-    plot.setMarkers([{ x: a, y: a * a, color: 'out', label: `a² = ${fmt(a * a, 2)}` }]);
+    plot.setMarkers([{ x: a, y: a * a, color: 'out' }]);
     status.textContent = t('status', { a: fmt(a, 2), sq: fmt(a * a, 2), gap: fmt(a * a + kOverM, 2) });
   };
   const sl = slider({
@@ -268,9 +298,12 @@ const square: WidgetFactory = (host, ctx) => {
   }, host);
   view.update(1, null);
   if (Loop.autoplay) loop.play();
-  const btn = h('button', { class: 'btn small', type: 'button' }, t('toggleSpring'));
+  const btn = h('button', { class: 'btn small', type: 'button' });
+  const syncBtn = (playing: boolean) => (btn.textContent = playing ? t('pauseSpring') : t('playSpring'));
+  loop.onChange(syncBtn);
+  syncBtn(loop.playing);
   btn.addEventListener('click', () => loop.toggle());
-  right.append(btn);
+  right.append(h('div', { class: 'w-row', style: { justifyContent: 'center' } }, btn));
   draw();
   return () => loop.destroy();
 };
