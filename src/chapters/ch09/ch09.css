@@ -1,0 +1,78 @@
+/* Chapter 9 and 11 shared bits: status lines reserve two lines so layouts never jump */
+.pid-widget .w-status {
+  min-height: 2.8em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pid-widget .w-hud .readouts {
+  flex: 1 1 auto;
+}
+.pid-widget .w-controls .toggle {
+  flex: 0 0 auto;
+  padding-bottom: 4px;
+}
+
+.star-row {
+  display: inline-flex;
+  gap: 2px;
+  font-size: 1.6rem;
+  line-height: 1;
+  vertical-align: -0.12em;
+  margin-right: 10px;
+}
+.star {
+  color: var(--ink-3);
+  display: inline-block;
+  transition: color 200ms ease;
+}
+.star.on {
+  color: var(--star, #a87800);
+}
+:root[data-theme='dark'] .star-row {
+  --star: #f2c14e;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .star-row {
+    --star: #f2c14e;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .star.pop {
+    animation: star-pop 420ms var(--ease-out);
+  }
+}
+@keyframes star-pop {
+  0% {
+    transform: scale(0.6) rotate(-12deg);
+  }
+  55% {
+    transform: scale(1.25) rotate(4deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+.score-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px 0;
+}
+
+/* on phones the drone shrinks so it stays in view next to the plots and sliders */
+@media (max-width: 520px) {
+  .pid-widget .drone-wrap {
+    max-width: 150px !important;
+  }
+}
+/* two sliders per row on phones, so the plots stay close to the knobs */
+@media (max-width: 520px) {
+  .pid-widget .w-controls {
+    gap: 8px 16px;
+  }
+  .pid-widget .w-controls > .slider {
+    flex: 1 1 130px;
+  }
+}

@@ -32,7 +32,11 @@ export class TracePlayer {
   readonly tPlot: Plot;
   readonly view: DroneView;
   readonly loop: Loop;
+  /** play/pause/reset/step/speed; the widget decides where it goes (after its sliders) */
+  readonly transportEl: HTMLElement;
   private tr: Trace | null = null;
+  /** next preview should ghost the current run (true after a slider is released) */
+  private fresh = true;
   private idx = 0;
   private time = 0;
   onFrame: ((t: number, i: number) => void) | null = null;
@@ -69,13 +73,48 @@ export class TracePlayer {
     if (o.gravityLabel) lines.push({ kind: 'h', at: LIMITED.m * LIMITED.g, color: 'dis', dash: [5, 4], label: o.gravityLabel });
     this.tPlot.setLines(lines);
     this.loop = new Loop((dt) => this.advance(dt), host);
-    right.append(transport({ loop: this.loop, onReset: () => this.restart(), onStep: () => this.advance(0.1) }));
+    // pressing play on a finished flight replays it from the start
+    this.loop.onChange((playing) => {
+      if (playing && this.tr && this.idx >= this.tr.t.length - 1) this.rewind();
+    });
+    this.transportEl = transport({ loop: this.loop, onReset: () => this.restart(), onStep: () => this.advance(0.1) });
+  }
+
+  /**
+   * Instant preview while a slider is being dragged: the whole flight appears at once,
+   * with the last settled run as the ghost. Call `commit()` when the drag ends.
+   */
+  show(tr: Trace): void {
+    this.tr = tr;
+    this.loop.pause();
+    this.hPlot.clear(this.fresh);
+    this.tPlot.clear(this.fresh);
+    this.fresh = false;
+    this.showUpTo(tr.t.length - 1);
+  }
+
+  commit(): void {
+    this.fresh = true;
+  }
+
+  /** Wires a slider so dragging previews instantly and releasing settles the ghost. */
+  bind(input: HTMLInputElement): void {
+    input.addEventListener('change', () => this.commit());
+  }
+
+  private rewind(): void {
+    this.hPlot.clear(false);
+    this.tPlot.clear(false);
+    this.idx = 0;
+    this.time = 0;
+    this.showUpTo(0);
   }
 
   load(tr: Trace, autoplay = Loop.autoplay): void {
     this.tr = tr;
     this.hPlot.clear();
     this.tPlot.clear();
+    this.fresh = true;
     this.idx = 0;
     this.time = 0;
     if (autoplay) {
@@ -89,11 +128,7 @@ export class TracePlayer {
 
   restart(): void {
     if (!this.tr) return;
-    this.hPlot.clear(false);
-    this.tPlot.clear(false);
-    this.idx = 0;
-    this.time = 0;
-    this.advance(0);
+    this.rewind();
     this.loop.play();
   }
 
