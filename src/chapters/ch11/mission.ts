@@ -31,6 +31,9 @@ export function missionConfig(p: PID, seed = 7): DroneConfig {
 
 export const runMission = (p: PID, seed = 7): Trace => runDrone(missionConfig(p, seed), MISSION.duration, 10);
 
+/** A mission trace; `stalledAt` is when the motors stalled after hitting what is above the picture (see page-hit.ts). */
+export type MissionTrace = Trace & { stalledAt?: number | null };
+
 export type CriterionId = 'rise' | 'overshoot' | 'gust' | 'recover' | 'ground' | 'calm';
 
 /** Pass limits: rise ≤ 3 s, overshoot < 10 %, gust deviation < 20 cm, recovery < 2 s, thrust jitter < 0.5 N. */
@@ -48,7 +51,7 @@ export interface MissionResult {
   recover: number;
   /** touched the ground after take-off */
   ground: boolean;
-  /** thrust jitter (standard deviation) in calm hover t ∈ [3, 6), N */
+  /** thrust jitter (standard deviation) in calm hover t ∈ [3, 6), N; NaN if it wasn't hovering on running motors */
   calm: number;
   pass: Record<CriterionId, boolean>;
   stars: number;
@@ -58,14 +61,18 @@ export interface MissionResult {
  * Evaluates a mission trace (true height, not the noisy measurement).
  * Partial traces are evaluated as far as they go; unmet criteria count as fails.
  */
-export function evaluate(tr: Trace): MissionResult {
+export function evaluate(tr: MissionTrace): MissionResult {
   const r = MISSION.setpoint;
   let rise = NaN;
   let peak = 0;
   let gust = 0;
-  let ground = tr.crashed;
+  // a stall (hit what is above the picture) is a certain fall, even if the mission ends before it lands
+  let ground = tr.crashed || tr.stalledAt != null;
   let lastOut = MISSION.dropAt;
   const calmT: number[] = [];
+  // "motors calm in hover" needs a hover: in the air on running motors for the whole window
+  // (a stalled or grounded drone has perfectly steady thrust, 0 N, and must not earn the star)
+  let hovering = true;
   const end = tr.t[tr.t.length - 1] ?? 0;
   for (let i = 0; i < tr.t.length; i++) {
     const t = tr.t[i];
@@ -75,12 +82,15 @@ export function evaluate(tr: Trace): MissionResult {
     if (t >= MISSION.gust.start && t < MISSION.dropAt) gust = Math.max(gust, Math.abs(h - r));
     if (t > 1 && h <= 1e-6) ground = true;
     if (t >= MISSION.dropAt && Math.abs(h - r) > LIMITS.band) lastOut = t;
-    if (t >= 3 && t < 6) calmT.push(tr.thrust[i]);
+    if (t >= 3 && t < 6) {
+      calmT.push(tr.thrust[i]);
+      if (h <= 1e-6 || (tr.stalledAt != null && t >= tr.stalledAt)) hovering = false;
+    }
   }
   const overshoot = Math.max(0, ((peak - r) / r) * 100);
   const recover = end >= MISSION.duration - 0.02 ? lastOut - MISSION.dropAt : NaN;
   const mean = calmT.reduce((a, b) => a + b, 0) / Math.max(1, calmT.length);
-  const calm = calmT.length ? Math.sqrt(calmT.reduce((a, b) => a + (b - mean) ** 2, 0) / calmT.length) : NaN;
+  const calm = calmT.length && hovering ? Math.sqrt(calmT.reduce((a, b) => a + (b - mean) ** 2, 0) / calmT.length) : NaN;
   const pass: Record<CriterionId, boolean> = {
     rise: rise <= LIMITS.rise,
     overshoot: end >= MISSION.gust.start && overshoot < LIMITS.overshoot,

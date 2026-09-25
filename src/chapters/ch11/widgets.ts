@@ -10,9 +10,10 @@ import { Loop } from '../../ui/loop';
 import { Plot } from '../../ui/plot';
 import { SPlane } from '../../ui/s-plane';
 import '../ch09/ch09.css';
-import { pid, type Trace } from '../ch09/pid-tools';
+import { pid } from '../ch09/pid-tools';
 import { starRow } from '../ch09/stars';
-import { CRITERIA, LIMITS, MISSION, evaluate, missionConfig, missionPoles, runMission, type MissionResult } from './mission';
+import { CRITERIA, LIMITS, MISSION, evaluate, missionConfig, missionPoles, type MissionResult, type MissionTrace } from './mission';
+import { flyMission, pageCeiling, withCeiling } from './page-hit';
 
 export const BEST_KEY = 'ch11.best';
 
@@ -28,7 +29,7 @@ interface Best {
   dOnMeasurement: boolean;
 }
 
-const emptyTrace = (): Trace => ({ t: [], h: [], thrust: [], integral: [], r: [], wind: [], pkg: [], measured: [], crashed: false });
+const emptyTrace = (): MissionTrace => ({ t: [], h: [], thrust: [], integral: [], r: [], wind: [], pkg: [], measured: [], crashed: false });
 
 /** The final mission sandbox. */
 const mission: WidgetFactory = (host, ctx) => {
@@ -67,7 +68,9 @@ const mission: WidgetFactory = (host, ctx) => {
   const right = h('div');
   grid.append(left, right);
   host.append(grid);
-  const view = new DroneView(left, { hMax: 3, width: 240, showSensor: true });
+  // a tune that climbs far past the target flies out of the picture into the page: the sim hits it (page-hit.ts)
+  const view = new DroneView(left, { hMax: 3, width: 240, showSensor: true, onCeiling: () => {} });
+  const ceil = pageCeiling(view, () => pageMoved());
   const hPlot = new Plot(right, {
     x: { label: tc('plots.time'), min: 0, max: MISSION.duration },
     y: { label: tc('plots.height'), min: 0, max: 3 },
@@ -132,8 +135,13 @@ const mission: WidgetFactory = (host, ctx) => {
     }
     fill.style.transform = `scaleX(${Math.min(1, now / MISSION.duration)})`;
   };
+  /** keep the live sim's ceiling on the page's current layout while it could still reach it */
+  const aim = () => {
+    if (sim.ceilingAt === null && sim.h > 2.5) sim.cfg.ceiling = withCeiling(sim.cfg, ceil.measure()).ceiling;
+  };
   const loop = new Loop((dt) => {
     if (finished) return;
+    aim();
     const steps = Math.round(Math.min(dt, MISSION.duration - sim.t) / sim.dt);
     for (let k = 0; k < steps; k++) {
       sim.step();
@@ -141,6 +149,7 @@ const mission: WidgetFactory = (host, ctx) => {
       if (acc % 10 === 0) record();
     }
     tr.crashed = sim.crashed;
+    tr.stalledAt = sim.stalled ? sim.ceilingAt : null;
     draw();
     if (sim.t >= MISSION.duration - 1e-9) finish();
     else showResult(evaluate(tr), false, true);
@@ -200,7 +209,7 @@ const mission: WidgetFactory = (host, ctx) => {
     }
     if (final) {
       row.set(CRITERIA.map((id) => r.pass[id]));
-      starsText.textContent = r.stars === 6 ? t('gold') : t('stars', { n: r.stars });
+      starsText.textContent = `${r.stars === 6 ? t('gold') : t('stars', { n: r.stars })}${sim.ceilingAt === null ? '' : ` ${t('hitPage')}`}`;
       starsEl.className = `w-status score-line${r.stars === 6 ? ' good' : ''}`;
       if (save) {
         const best = progress.load<Best>(BEST_KEY);
@@ -210,7 +219,8 @@ const mission: WidgetFactory = (host, ctx) => {
       }
     } else {
       row.set([]);
-      if (starsText.textContent !== t('flying')) starsText.textContent = t('flying');
+      const txt = sim.ceilingAt === null ? t('flying') : t('hitPage');
+      if (starsText.textContent !== txt) starsText.textContent = txt;
       starsEl.className = 'w-status score-line';
     }
   }
@@ -223,6 +233,7 @@ const mission: WidgetFactory = (host, ctx) => {
     finished = true;
     loop.pause();
     tr.crashed = sim.crashed;
+    tr.stalledAt = sim.stalled ? sim.ceilingAt : null;
     draw();
     showResult(evaluate(tr), true, true);
   }
@@ -240,7 +251,7 @@ const mission: WidgetFactory = (host, ctx) => {
     hPlot.clear(fresh);
     tPlot.clear(fresh);
     fresh = false;
-    sim = new DroneSim(missionConfig(gains()));
+    sim = new DroneSim(withCeiling(missionConfig(gains()), ceil.measure()));
     tr = emptyTrace();
     acc = 0;
     finished = false;
@@ -258,8 +269,7 @@ const mission: WidgetFactory = (host, ctx) => {
     hPlot.clear(fresh);
     tPlot.clear(fresh);
     fresh = false;
-    tr = runMission(gains());
-    sim = new DroneSim(missionConfig(gains()));
+    ({ tr, sim } = flyMission(gains(), ceil.measure()));
     finished = true;
     draw();
     resetMarks();
@@ -335,6 +345,7 @@ const mission: WidgetFactory = (host, ctx) => {
     },
     onStep: () => {
       if (finished) return;
+      aim();
       for (let k = 0; k < 100; k++) {
         sim.step();
         acc++;
@@ -360,7 +371,14 @@ const mission: WidgetFactory = (host, ctx) => {
   restart(false);
   if (Loop.autoplay) loop.play();
   else instant(false);
-  return () => loop.destroy();
+  /** the page moved: a finished flight whose hit depends on it is flown again under the new layout */
+  function pageMoved(): void {
+    if (finished && (sim.ceilingAt !== null || (ceil.h !== null && Math.max(...tr.h) >= ceil.h))) instant(false);
+  }
+  return () => {
+    loop.destroy();
+    ceil.destroy();
+  };
 };
 
 export const widgets: Record<string, WidgetFactory> = { mission };
