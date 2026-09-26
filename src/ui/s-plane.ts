@@ -334,7 +334,8 @@ export class SPlane {
     // off the plane: an arrow at the edge, pointing at where the point really is (its tip on the edge)
     g.append(s('path', { d: 'M0,0L-13,-7.5L-13,7.5Z', class: 'edge' }));
     if (!twin && !ghost) {
-      if (p.label) g.append(s('text', { x: 12, y: -12, class: 'pt-label' }, p.label));
+      // always there, so a label can be given later (place() fills it)
+      g.append(s('text', { x: 12, y: -12, class: 'pt-label' }, p.label ?? ''));
       g.append(s('text', { class: 'off-value' }));
     }
     return g;
