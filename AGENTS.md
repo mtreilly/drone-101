@@ -1,8 +1,19 @@
 # Who Keeps the Drone Up? — project guide
 
 An interactive, hand-drawn course that takes a curious beginner from "what is feedback?" to
-Laplace transforms, poles and PID control. Vite + TypeScript, no framework. See `README.md`
-for layout and `control-course-plan.md` for the pedagogical outline and physical parameters.
+Laplace transforms, poles and PID control. Vite + TypeScript, no framework. `README.md` gives a
+rough map of the source; the code is the truth, so look before assuming a file or name still exists.
+
+All other documentation lives in `docs/`:
+
+- `docs/course-plan.md`: pedagogical outline and physical parameters, chapter by chapter.
+- `docs/glossary.md`: per-locale terminology choices (read before translating anything).
+- `docs/page-physics.md`: rules for objects that fly out of their picture onto the page.
+- `docs/open-issues.md`: known gaps between these rules and the code, and reviews still owed.
+- `docs/plans/`: phased plans for past and current extensions (historical once built).
+- `docs/software-quality-goal.md`: brief for architecture/software-quality reviews.
+
+New plans go in `docs/plans/{feature}.md`; new standing documentation goes in `docs/`.
 
 ## Key inspirations (the quality bar)
 
@@ -18,10 +29,10 @@ for layout and `control-course-plan.md` for the pedagogical outline and physical
 
 ## Non-negotiables
 
-1. **Correct maths and physics.** The drone uses RK4; the shower uses an exact update for its
-   first-order thermal lag (`src/sim/`). Analytic checks live next to
-   them, and every number stated in a chapter's text or quiz is verified by a test in that chapter
-   (`src/chapters/chNN/*.test.ts`). If you change a number, change the test and every supported locale.
+1. **Correct maths and physics.** Simulations use an integrator that suits the model (RK4 for the
+   drone and mass-spring, an exact update for the shower's first-order lag), with analytic checks
+   in their tests. Every number stated in a chapter's text or quiz is verified by a test in that
+   chapter's folder. If you change a number, change the test and every supported locale.
 2. **Colour language, everywhere:** setpoint green (dashed), output blue, error red, control effort
    orange, disturbance purple, poles black ×, zeros open ○, previous run = faint ghost. KaTeX macros
    `\sp{} \out{} \err{} \eff{} \dis{}` keep equations in step with plots.
@@ -35,14 +46,16 @@ for layout and `control-course-plan.md` for the pedagogical outline and physical
   (`common.json` + one `chNN.json` per chapter). Widgets read `ctx.t('…')` (their
   `widgets.<id>` subtree), shared chrome uses `tc('…')`.
 - Current languages: **en (source), fr, es, it, de, pl, pt-BR, ja, zh-CN, ar** (Modern Standard
-  Arabic). List supported locales in `src/core/languages.ts` (endonyms,
+  Arabic). Supported locales are listed in one language registry in `src/core/` (endonyms,
   never flags). Files load lazily per language *and* per chapter; the next chapter is prefetched.
   A missing file falls back to English at runtime, but must never ship that way.
 - **Every change to English text must be mirrored in every supported translation in the same commit.**
-  `src/core/locales.test.ts` enforces identical structure, control fields (`t`, `who`, `mood`,
-  `id`, `sketch`, `correct`, `gate`, …), maths, `{placeholders}` and colour markers. It must pass.
-- Keep each language's glossary consistent (feedback, setpoint, plant, overshoot, droop, pole,
-  s-plane — "map of s" before chapter 7 — etc.). Match the voice: playful, short sentences,
+  The locale validator test enforces identical structure, control fields (block type, speaker,
+  mood, ids, sketches, correct answers, gates, …), maths, `{placeholders}` and colour markers. It
+  must pass.
+- Keep each language's terms consistent with `docs/glossary.md` (feedback, setpoint, plant,
+  overshoot, droop, pole, s-plane — "map of s" before chapter 7 — etc.) and add every new term
+  there in the same commit as the translation. Match the voice: playful, short sentences,
   natural address for that language. Format prose numbers according to the locale, not a blanket
   "decimal comma outside English" rule; inside maths write decimal commas as `{,}` (`tex()` also
   protects `1,5` automatically).
@@ -51,13 +64,13 @@ for layout and `control-course-plan.md` for the pedagogical outline and physical
 
 ### Translation sources and term verification
 
-Translate the **concept**, then choose the local term. For each important term, record its English
-definition, target-language choice, rejected alternatives, supporting sources, first chapter, and
-any note needed for student-friendly wording. Check ambiguous terms such as *plant*, *setpoint*,
-*overshoot*, *pole*, *zero*, *gain*, *droop*, *phase margin*, *feedback*, and *control effort* against
-a control-engineering teaching source in the target language. A general dictionary can confirm
-spelling or usage; it cannot settle the engineering meaning. Aviation authorities are for aircraft
-names, not control theory. Sources support original prose; do not copy their explanations.
+Translate the **concept**, then choose the local term. For each important term, record in
+`docs/glossary.md` its English definition, target-language choice, rejected alternatives,
+supporting sources, first chapter, and any note needed for student-friendly wording. Check
+ambiguous terms such as *plant*, *setpoint*, *overshoot*, *pole*, *zero*, *gain*, *droop*,
+*phase margin*, *feedback*, and *control effort* against a control-engineering teaching source
+in the target language. A general dictionary can confirm spelling or usage; it cannot settle the
+engineering meaning. Aviation authorities are for aircraft names, not control theory. Sources support original prose; do not copy their explanations.
 
 | Locale | Control/measurement terminology | Aviation terminology | Language and layout |
 | --- | --- | --- | --- |
@@ -85,21 +98,24 @@ for all Arabic readers. For `ja` and `zh-CN`, inspect line breaks, punctuation, 
 ## Accessibility: checked, not assumed
 
 - Target: **WCAG 2.2 AA**, keyboard-first, screen-reader friendly, `prefers-reduced-motion`,
-  `prefers-contrast: more` and forced-colours respected.
+  `prefers-contrast: more` and forced-colours respected. (Contrast and forced-colours styles are
+  not built yet: see `docs/open-issues.md`. New UI must still work in them.)
 - **Run the axe-core CLI suite before committing UI changes:**
   - `pnpm a11y --quick` — English, light theme, every page
   - `pnpm a11y` — every page in every language (+ English dark)
-  - `pnpm a11y --full` — every language × both themes (280 pages)
+  - `pnpm a11y --full` — every language × both themes
 
   It builds, serves the site and runs `@axe-core/cli` with `?reveal` (opens prediction gates so
   hidden widgets are tested) and `?theme=` / `?lang=`. It needs Chrome plus a matching
   ChromeDriver (`pnpm install` builds chromedriver; set `CHROME_PATH` if Chrome is elsewhere).
+  When adding a page or route, add it to the suite's route list.
   **Zero violations is the bar.** axe finds only part of the problems, so also check by hand:
   tab through every control, use arrow keys on sliders, knobs and s-plane points, and read the
   live-region text.
-- Every control has an accessible name (maths-only labels get a plain-text `aria-label` via
-  `plainText()`), live regions are throttled, focus is visible, drag interactions have keyboard
-  equivalents, and motion is never the only cue.
+- Every control has an accessible name (maths-only labels get a plain-text `aria-label` from the
+  shared maths-to-plain-text helper), live regions only update when their text changes and never
+  on every animation frame, focus is visible, drag interactions have keyboard equivalents, and
+  motion is never the only cue.
 
 ## Animation, UI and UX craft
 
@@ -108,10 +124,13 @@ for all Arabic readers. For `ja` and `zh-CN`, inspect line breaks, punctuation, 
 - Use the easing tokens (`--ease-out`, `--ease-in-out`, `--ease-std`); keep UI transitions under
   ~300 ms; press feedback is `scale(0.96)`; never animate from `scale(0)`; transition named
   properties only; entrances use the `translate` property so they compose with layout transforms.
-- Friendly Latin-script text uses **Patrick Hand**; **Caveat** only for large display headings;
-  Latin body text is Atkinson Hyperlegible. Japanese, Simplified Chinese and Arabic use their
-  matching Noto Sans fonts, including canvas labels via `src/core/font.ts`. Canvas text must
-  redraw after `document.fonts.ready`.
+- Fonts come from the tokens (`--font-body`, `--font-hand`, `--font-display`), never hard-coded
+  families. In Latin scripts: **Patrick Hand** (`--font-hand`) for the hand-written voice
+  (dialogue, notes, sketch and canvas labels); **Caveat** (`--font-display`) only for large
+  display headings; **Atkinson Hyperlegible** (`--font-body`) for body text. Japanese, Simplified
+  Chinese and Arabic map all three to their Noto Sans font. Canvas labels use the shared canvas
+  font helper, and canvas text must redraw once web fonts have loaded (`document.fonts.ready`;
+  not built yet, see `docs/open-issues.md`).
 - Widgets share one anatomy: title → visual(s) → sliders (`.w-controls`) → readouts + transport
   (`.w-hud`) → status (reserves its height) → help. Labels never collide; stacked plots share a left
   edge; nothing clips at 375 px.
@@ -120,74 +139,14 @@ for all Arabic readers. For `ja` and `zh-CN`, inspect line breaks, punctuation, 
   (and in a long-word language such as German or Polish), look at the images, fix, and look again.
   Parallel agents per chapter work well for big passes; shared components stay with one owner.
 
-## Page-aware physics: the page is part of the world
+## Page-aware physics
 
-When a simulated object overshoots its picture, it does not vanish behind the frame edge: it flies
-out over the page, runs into real content (paragraphs, bubbles, headings, other cards, the sticky
-top bar) and the page reacts. First built for Chapter 1's open-loop widget (`schedule`): the drone
-climbs out of its picture, bonks the paragraph above, its motors stall, and it tumbles back down
-through its own picture and crashes on the grass. Rules for adding this to other interactives:
-
-1. **One object, never a copy.** The drawing inside the widget is the thing that leaves the frame
-   (its SVG gets `overflow: visible`; its wrapper `position: relative; z-index: 40`, under the top
-   bar's 50; the moving group gets `pointer-events: none`). No hand-off to a clone.
-2. **A contact is a real event in the model.** It goes into the simulation (e.g.
-   `DroneSim.hitCeiling()`), so the plots, readouts and status keep telling the truth. Never let
-   the picture and the numbers disagree. The only visual-only freedom is for dimensions the model
-   does not have (the 1-D drone's tumble angle and sideways drift), and those ease back to zero
-   before anything the model can see happens (landing, crash).
-3. **The event must teach.** Choose the model's response for the chapter's idea: in Chapter 1 the
-   stall and crash show that an open-loop plan can't notice a ceiling either. Explain it in the
-   widget's status line (a new string in every supported locale). Nothing in the prose may be
-   contradicted by the new outcome.
-4. **Page geometry comes from `src/ui/page-physics.ts`:** `pageSolids()` (what counts as solid:
-   `SOLID_SELECTOR` (text, bubbles, prediction cards and their options, other cards, pictures)
-   and the top bar; never the object's own picture or what contains it; inside its own card only
-   other pictures such as an s-plane stacked above it on a phone, never its own title or labels),
-   `ceilingHit()` (swept test, so a fast object can't tunnel through), `wobble()` (the thing that
-   was hit jolts, using individual `translate`/`rotate` so it composes with layout transforms) and
-   `impactBurst()` (hand-drawn strokes, positioned with `translate`, not `transform`). Everything is
-   in document pixels and re-measured each frame, and nothing animates layout properties.
-5. **Once per run.** Detect contacts only while rising and outside the picture, arm again when the
-   object is back on the ground or reset. A reset or navigating away mid-flight must leave nothing
-   behind.
-6. **Precomputed traces** (players that replay arrays instead of stepping a live sim) can't react
-   mid-flight. Measure the ceiling first (how many metres of open page are above the picture), pass
-   it to the sim as a parameter and recompute the trace, so the replay already contains the hit.
-   Re-measure after scroll as well as resize (debounced): the sticky top bar is solid too, so the
-   ceiling moves as the page scrolls. Keep an unchanged replay going; restart only if the flight
-   so far would differ (see `src/chapters/ch09/page-ceiling.ts`).
-7. **Only where the physics really gets there.** Before adding it, measure how many metres of open
-   page sit above the picture (at 1280 px and 375 px) and compare with what the model can actually
-   reach. Chapter 2's P control peaks at 3.4 m and the page is ~7.6 m away, so it was left alone
-   rather than faking a bonk by changing scales or ranges.
-8. **Formula-driven widgets** (Chapter 8's pole playground plays an analytic response) hand over
-   at the hit to the same `DroneSim`, started from the hit height and speed and stalled
-   (`src/chapters/ch08/fall.ts`); the plot is re-set to the real path (formula up to the hit, then
-   the fall). Once the drone is down it stays down until the replay restarts or the input changes:
-   an analytic curve must never resurrect a crashed drone.
-9. **Keep status lines true in every layout:** whether a hit happens depends on the page layout, so
-   compose the message from the current verdict plus the hit sentence rather than a fixed text that
-   assumes why it flew off.
-10. **Reduced motion turns it off completely:** the object stays pinned and clipped at its
-   picture's edge as before, and the readout still shows the true value.
-11. **Test it:** a sim test for the event (what happens after it, until reset), unit tests for any
-   geometry helper, and a recorded check (`agent-browser record start …`, then look at frames) at
-   1280 px and 375 px, light and dark: a real bonk, reset mid-flight, navigate away mid-flight, and
-   reduced motion.
-
-How it is wired: `new DroneView(host, { onCeiling })` makes the drone free-flying and calls
-`onCeiling` on a hit. Chapter 1 (live sim, via `droneRig({ onCeiling })`) calls `sim.hitCeiling()`
-and shows `status.ceiling` instead of `status.crash`. Chapter 8 (formula) switches to `fallSim()`
-and shows the verdict plus `verdict.hitPage`.
-
-Shared building blocks (one owner: change them only with tests, never per chapter):
-- `DroneSim.hitCeiling({ stall })`: `stall: true` motors stall and it falls (open loop, unstable
-  poles); `stall: false` a bump the motors survive, so feedback can recover. `ceilingAt` records when.
-- `DroneConfig.ceiling = { h, stall }`: the sim hits the ceiling by itself, for traces computed ahead.
-- `DroneView.ceilingHeight()`: metres at which this drone would touch the page, from the live layout
-  (verified to match where the view registers the hit). Re-measure and recompute on resize.
-- `DroneView({ ceilingResponse: 'bump' })`: a short knock instead of the tumble, for `stall: false`.
+When a simulated object overshoots its picture it flies out over the page, hits real content and
+the page reacts (Chapter 1's drone bonks the paragraph above and crashes). Read
+`docs/page-physics.md` before adding or changing this anywhere. The short version: one object,
+never a copy; every contact is a real event in the model, so numbers and picture agree; the event
+must teach the chapter's idea; add it only where the model really reaches the page; reduced motion
+turns it off; shared geometry and sim pieces have one owner.
 
 ## Lessons from past passes
 
@@ -232,8 +191,9 @@ Hard-won habits from extending chapters. They apply to any chapter, whatever the
   and one long-word language, in light and dark, and look again after fixing.
 - **Pass URLs to axe as separate arguments.** A single string of space-separated URLs is tested as
   one page and reports a false "0 violations".
-- **Keep every commit green.** Plan the commit order up front so shared building blocks land (with
-  their tests passing) before the chapter content and its translations.
+- **Keep every commit green.** Plan the commit order up front: shared building blocks land first
+  (with their tests passing), then each piece of chapter content lands with its English text,
+  every translation, its glossary entries and its number tests together.
 
 ## Commands
 
@@ -241,6 +201,7 @@ Hard-won habits from extending chapters. They apply to any chapter, whatever the
 pnpm dev           # http://localhost:5173
 pnpm test          # maths/physics checks + locale validator
 pnpm lint          # oxlint
+pnpm fmt           # oxfmt
 pnpm build         # static site in dist/
 pnpm a11y          # axe-core accessibility suite (see above)
 ```

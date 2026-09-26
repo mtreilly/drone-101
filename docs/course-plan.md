@@ -307,7 +307,7 @@ Legend for each chapter: **Q** = driving question · **Idea** = the one new idea
 
 ### 2.1 Stack (proposal — see open questions)
 - **Vite + TypeScript + pnpm**, framework-free (vanilla TS modules). Content pages are mostly static prose + interactive islands; no framework needed, keeps the bundle small.
-- **Rendering:** Canvas 2D for plots and sims (fast, 60 fps with thousands of points), SVG for block diagrams, s-plane and concept map (crisp, accessible, easy to make draggable). **Rough.js** for sketchy strokes (cached, not re-roughened each frame to avoid jitter); **KaTeX** for math; fonts **Caveat** (dialogue/margins) + **Atkinson Hyperlegible** or **Source Serif** (body). No D3 unless needed (own tiny scale helpers).
+- **Rendering:** Canvas 2D for plots and sims (fast, 60 fps with thousands of points), SVG for block diagrams, s-plane and concept map (crisp, accessible, easy to make draggable). **Rough.js** for sketchy strokes (cached, not re-roughened each frame to avoid jitter); **KaTeX** for math; fonts: see `AGENTS.md` (the built course uses Patrick Hand for dialogue, Caveat for display headings, Atkinson Hyperlegible for body). No D3 unless needed (own tiny scale helpers).
 - Deploy target: static site (any host).
 - Tooling per your global rules: oxlint, oxfmt, Vitest, Playwright/agent-browser.
 

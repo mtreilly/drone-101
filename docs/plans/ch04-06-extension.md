@@ -201,7 +201,7 @@ and screenshots pass.
 - Glossary additions per locale, recorded like the existing terms (definition, choice, rejected
   alternatives, source): *side trip*, *critical damping*, *damped frequency*, *mode*,
   *step response*, *settling time*, *compound/tiny steps*. Check against the per-locale
-  control sources in `CLAUDE.md`.
+  control sources in `AGENTS.md`.
 - CJK line-break and Arabic RTL passes on `play` sentences (numbers isolated, units on the
   intended side).
 - Native-speaker review queued for the new prose and quiz items.
@@ -259,19 +259,11 @@ Shift ×10, Home/End on playable numbers) and pointer drag checked.
 
 ### Glossary choices for the new terms
 
-| Term | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
-|---|---|---|---|---|---|---|---|---|---|
-| side trip | Petit détour | Desvío | Deviazione | Abstecher | Dygresja | Desvio | 寄り道 | 绕个小弯 | استطراد |
-| critical damping | amortissement critique | amortiguamiento crítico | smorzamento critico | kritische Dämpfung | tłumienie krytyczne | amortecimento crítico | 臨界減衰 | 临界阻尼 | التخميد الحرج |
-| damped frequency | pseudo-pulsation | frecuencia amortiguada | pulsazione smorzata | gedämpfte Eigenkreisfrequenz | pulsacja tłumiona | frequência amortecida | 減衰固有振動数 | 阻尼振荡频率 | التردد المخمَّد |
-| mode | mode | modo | modo | Modus (Modi) | mod (mody) | modo | モード | 模态 | نمط (أنماط) |
-| step response | réponse indicielle | respuesta al escalón | risposta al gradino | Sprungantwort | odpowiedź skokowa | resposta ao degrau | ステップ応答 | 阶跃响应 | استجابة الخطوة |
-| settling time | temps de réponse à 2 % | tiempo de establecimiento | tempo di assestamento | Einschwingzeit | czas ustalania | tempo de acomodação | 整定時間 | 稳定时间 | زمن الاستقرار |
-| natural logarithm | logarithme népérien | logaritmo natural | logaritmo naturale | natürlicher Logarithmus | logarytm naturalny | logaritmo natural | 自然対数 | 自然对数 | اللوغاريتم الطبيعي |
+Moved to `docs/glossary.md` (Chapter 4 and 6 terms).
 
 ### Still open (needs people, not code)
 
-- Native-speaker review with control knowledge for every new string, per CLAUDE.md. Flagged by
+- Native-speaker review with control knowledge for every new string, per AGENTS.md. Flagged by
   the translators: fr "temps de réponse" vs the widget's "stabilisé"; zh-CN 稳定时间 (ch06/08) vs
   调节时间 (ch09); de "Modi" vs "Moden"; es "tiempo de establecimiento" vs "asentamiento";
   ar Bernoulli spelling (ياكوب / يعقوب); ja pronouns and one polite-style paragraph in ch06.
@@ -280,7 +272,7 @@ Shift ×10, Home/End on playable numbers) and pointer drag checked.
 
 ### Delight pass (character, timing, small moments)
 
-Audited against the quality bar in CLAUDE.md ("Who Is Fourier?" warmth, no lecturing expert,
+Audited against the quality bar in AGENTS.md ("Who Is Fourier?" warmth, no lecturing expert,
 Pixar-level small things), not just tests:
 
 - **Voice share.** Dialogue blocks per chapter: Ch 3 30 %, Ch 4 29 %, Ch 5 22 %, but the extended
