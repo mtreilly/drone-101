@@ -8,7 +8,10 @@ import { LANGUAGES, DEFAULT_LANG } from './languages';
  * `{,}`), identical {placeholders}, colour markers and playable numbers, and untouched control fields.
  */
 const ROOT = join(process.cwd(), 'public/locales');
-const FIXED_KEYS = new Set(['t', 'who', 'mood', 'id', 'sketch', 'correct', 'gate', 'wide', 'think', 'aside', 'ordered']);
+// `on` names the bus event that swaps a math block to its `alt` form (wired to code)
+const FIXED_KEYS = new Set(['t', 'who', 'mood', 'id', 'sketch', 'correct', 'gate', 'wide', 'think', 'aside', 'ordered', 'on']);
+// display maths: a math block's first form and the fixed form it swaps to
+const TEX_KEYS = new Set(['tex', 'alt']);
 const files: string[] = readdirSync(join(ROOT, DEFAULT_LANG)).filter((f: string) => f.endsWith('.json'));
 const load = (lang: string, f: string) => JSON.parse(readFileSync(join(ROOT, lang, f), 'utf8'));
 
@@ -62,7 +65,7 @@ function compare(en: unknown, tr: unknown, path: string, key: string, problems: 
     return;
   }
   if (en.trim() && !s.trim()) problems.push(`${path}: empty translation`);
-  if (key === 'tex') {
+  if (TEX_KEYS.has(key)) {
     if (texOf(s) !== texOf(en)) problems.push(`${path}: maths changed`);
     return;
   }
@@ -71,6 +74,45 @@ function compare(en: unknown, tr: unknown, path: string, key: string, problems: 
   if (JSON.stringify(colours(s)) !== JSON.stringify(colours(en))) problems.push(`${path}: colour markers differ`);
   if (JSON.stringify(plays(s)) !== JSON.stringify(plays(en))) problems.push(`${path}: playable numbers differ`);
 }
+
+describe('math blocks that swap on a bus event', () => {
+  const en = { t: 'math', tex: 'm s^2 H = \\text{wrong}', alt: 'm(s^2 H - s\\,h(0)) = \\text{right}', on: 'ch7:ic' };
+  const check = (tr: unknown): string[] => {
+    const problems: string[] = [];
+    compare(en, tr, 'x', '', problems);
+    return problems;
+  };
+
+  it('accepts a translation that changes only the words', () => {
+    expect(check({ ...en, tex: 'm s^2 H = \\text{faux}', alt: 'm(s^2 H - s\\,h(0)) = \\text{juste}' })).toEqual([]);
+  });
+
+  it('rejects changed maths in either form, a changed event name and a missing form', () => {
+    expect(check({ ...en, tex: 'm s^2 H + 1 = \\text{wrong}' })).toEqual(['x.tex: maths changed']);
+    expect(check({ ...en, alt: 'm s^2 H = \\text{right}' })).toEqual(['x.alt: maths changed']);
+    expect(check({ ...en, on: 'ch7:other' })[0]).toMatch(/x\.on: control field changed/);
+    const { alt: _, ...noAlt } = en;
+    expect(check(noAlt)).toEqual(['x.alt: missing']);
+  });
+
+  it('every swapping block in English has both forms and an event', () => {
+    for (const f of files) {
+      const walk = (v: unknown, path: string): void => {
+        if (Array.isArray(v)) v.forEach((x, i) => walk(x, `${path}[${i}]`));
+        else if (v && typeof v === 'object') {
+          const o = v as Record<string, unknown>;
+          if (o.t === 'math' && ('alt' in o || 'on' in o)) {
+            expect(typeof o.alt, `${path}: alt`).toBe('string');
+            expect(typeof o.on, `${path}: on`).toBe('string');
+            expect(o.alt, `${path}: alt must differ from tex`).not.toBe(o.tex);
+          }
+          for (const [k, x] of Object.entries(o)) walk(x, `${path}.${k}`);
+        }
+      };
+      walk(load(DEFAULT_LANG, f), f);
+    }
+  });
+});
 
 describe('locales mirror English', () => {
   for (const { code } of LANGUAGES.filter((l) => l.code !== DEFAULT_LANG)) {

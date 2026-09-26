@@ -103,7 +103,7 @@ const twins: WidgetFactory = (host, ctx) => {
     zetaEq.innerHTML = tex(`\\zeta = \\frac{c}{2\\sqrt{m\\,\\eff{K_p}}} = \\frac{${fmt(c, 1)}}{2\\sqrt{${fmt(m, 1)}\\cdot \\eff{${fmt(kp, 0)}}}} = ${fmt(z, 3)}`, true);
     rZ.set(fmt(z, 3));
     rW.set(`${fmt(Math.sqrt(kp / m), 2)} rad/s`);
-    rR.set(t(`regime.${regime(z)}`));
+    rR.set(tc(`regime.${regime(z)}`));
   };
   let playT = 0;
   /** Shows both systems at time `tt`; the curves are drawn up to the same moment. */
@@ -277,7 +277,7 @@ const personality: WidgetFactory = (host, ctx) => {
     rRoots.set(rootsText);
     // the wiggle is a little slower than ωn: ωd = ωn√(1 − ζ²)
     rWd.set(zeta < 1 ? `${fmt(wn * Math.sqrt(1 - zeta * zeta), 2)} rad/s` : t('noWiggle'));
-    rReg.set(t(`regime.${regime(zeta)}`));
+    rReg.set(tc(`regime.${regime(zeta)}`));
     plot.describe(t('describe', { z: fmt(zeta, 2), w: fmt(wn, 1), r: rootsText }));
   };
   const sw = slider({ label: t('wn'), min: 0.5, max: 6, step: 0.1, value: wn, unit: 'rad/s', onInput: (v) => ((wn = v), update()) });

@@ -1,5 +1,5 @@
 import { clamp, h } from '../core/dom';
-import { fmt, type T } from '../core/i18n';
+import { fmt, type T, tc } from '../core/i18n';
 import { progress } from '../core/progress';
 import { plainText, setRich } from '../core/rich-text';
 import type { Bus } from './types';
@@ -29,8 +29,11 @@ export type PlayValues = Record<string, number>;
 
 export interface PlayModel {
   inputs: Record<string, PlayInput>;
-  /** each output is plain text; `t` reads strings under `plays.<id>` */
-  outputs: Record<string, (v: PlayValues, t: T) => string>;
+  /**
+   * each output is plain text; `t` reads strings under `plays.<id>` of the chapter, `tc` reads
+   * `common.json` (shared words such as `regime.under`)
+   */
+  outputs: Record<string, (v: PlayValues, t: T, tc?: T) => string>;
 }
 
 /**
@@ -125,7 +128,7 @@ export function renderPlay(el: HTMLElement, id: string, text: string, model: Pla
   const render = () => {
     for (const o of outs) {
       const fn = model.outputs[o.dataset.calc!];
-      const txt = fn ? fn(values, env.t) : '⟦?⟧';
+      const txt = fn ? fn(values, env.t, tc) : '⟦?⟧';
       if (o.textContent !== txt) o.textContent = txt;
     }
     for (const sEl of scrubs) {

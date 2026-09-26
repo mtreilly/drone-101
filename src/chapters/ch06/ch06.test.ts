@@ -73,7 +73,7 @@ describe('chapter 6 numbers', () => {
     // c_crit = 2√(mk) ≈ 6.32 N·s/m; our drag c = 1 gives ζ ≈ 0.16 (same as the drone at Kp = 20)
     expect(plays.zeta.outputs.ccrit({ c: 1 }, t)).toBe('6.32');
     expect(plays.zeta.outputs.zeta({ c: 1 }, t)).toBe('0.16');
-    expect(plays.zeta.outputs.regime({ c: 6.3 }, t)).toBe('regime.critical');
+    expect(plays.zeta.outputs.regime({ c: 6.3 }, t, t)).toBe('regime.critical');
     // relabelling: 2ζωn = c/m and ωn² = k/m
     const k = 20;
     const z = c / (2 * Math.sqrt(m * k));

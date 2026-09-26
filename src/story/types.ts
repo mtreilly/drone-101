@@ -15,7 +15,12 @@ export type Block =
   | { t: 'h3'; text: string }
   | { t: 'say'; who: Who; mood?: Mood; text: string; think?: boolean }
   | { t: 'note'; text: string; aside?: boolean }
-  | { t: 'math'; tex: string }
+  /**
+   * display maths; with `alt` and `on`, an on-page mistake that gets fixed: `tex` shows first,
+   * `alt` replaces it when bus event `on` fires (payload `false` swaps back), and `?reveal`
+   * shows `alt` straight away
+   */
+  | { t: 'math'; tex: string; alt?: string; on?: string }
   | { t: 'widget'; id: string; caption?: string; wide?: boolean }
   | {
       t: 'predict';
