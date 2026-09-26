@@ -57,6 +57,21 @@ export function unspinLimit(w0: number, s: C): C {
   return { re: d.re / m, im: -d.im / m };
 }
 
+/** Bounding box of the running total from 0 to `T1` together with its limit: what the unspin frame must show. */
+export function unspinExtent(w0: number, s: C, T1: number, n = 200): { x: [number, number]; y: [number, number] } {
+  const L = unspinLimit(w0, s);
+  const x: [number, number] = [L.re, L.re];
+  const y: [number, number] = [L.im, L.im];
+  for (let i = 0; i <= n; i++) {
+    const I = unspinIntegral(w0, s, (T1 * i) / n);
+    x[0] = Math.min(x[0], I.re);
+    x[1] = Math.max(x[1], I.re);
+    y[0] = Math.min(y[0], I.im);
+    y[1] = Math.max(y[1], I.im);
+  }
+  return { x, y };
+}
+
 export const DRAW_T = 8;
 const N = 400;
 const DT = DRAW_T / N;
@@ -131,4 +146,21 @@ export function derivativeRule(d: Drawn, s: number): { lhs: number; rhs: number;
   const F = trap(d.xs, d.f, s) + (tail * Math.exp(-s * DRAW_T)) / s;
   const lhs = trap(d.xs, d.df, s);
   return { lhs, rhs: s * F - d.f[0], F };
+}
+
+/**
+ * How many of the traced s values are at least `gap` apart (sorted, greedy). The probe's
+ * "reveal the formula" unlocks on 5 spread-out measurements, not on 5 neighbouring arrow presses.
+ */
+export function spreadCount(xs: readonly number[], gap = 0.25): number {
+  const sorted = [...xs].sort((a, b) => a - b);
+  let n = 0;
+  let last = -Infinity;
+  for (const x of sorted) {
+    if (x - last >= gap - 1e-9) {
+      n++;
+      last = x;
+    }
+  }
+  return n;
 }

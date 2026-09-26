@@ -1,4 +1,4 @@
-import { h } from '../../core/dom';
+import { h, uid } from '../../core/dom';
 import { fmt, tc } from '../../core/i18n';
 import { tex } from '../../core/rich-text';
 import { c as cx } from '../../math/complex';
@@ -7,21 +7,23 @@ import { DRONE, DroneSim, P_ONLY, defaultDroneConfig } from '../../sim/drone-mod
 import type { WidgetFactory } from '../../story/types';
 import './ch07.css';
 import { color, withAlpha } from '../../ui/colors';
-import { readout, segmented, slider, toggle } from '../../ui/controls';
+import { onSettle, readout, segmented, slider, toggle } from '../../ui/controls';
 import { Loop } from '../../ui/loop';
 import { prefersReducedMotion } from '../../core/dom';
 import { Plot } from '../../ui/plot';
+import { niceTicks } from '../../ui/plot-layout';
 import { iconButton, mark, nameMathOptions, onInteractStart, sample } from '../ch06/helpers';
-import { DRAW_T, dampedCos, derivativeRule, fromFunction, fromPoints, solveDrone, unspinIntegral, unspinLimit } from './tools';
+import { DRAW_T, dampedCos, derivativeRule, fromFunction, fromPoints, solveDrone, spreadCount, unspinExtent, unspinIntegral, unspinLimit } from './tools';
 
-type Sig = { f: (t: number) => number; F: (s: number) => number; a: number; yMin: number; yMax: number };
+/** `osc`: the signal swings both ways, so for s ≤ a its area sloshes back and forth instead of running off. */
+type Sig = { f: (t: number) => number; F: (s: number) => number; a: number; yMin: number; yMax: number; osc?: boolean };
 
 /** Signals used by the probe. `a` = the abscissa of convergence (area is finite only for s > a). */
 const SIGNALS: Record<string, Sig> = {
   step: { f: () => 1, F: (s) => 1 / s, a: 0, yMin: -0.2, yMax: 1.6 },
   decay: { f: (t) => Math.exp(-t), F: (s) => 1 / (s + 1), a: -1, yMin: -0.2, yMax: 1.6 },
   grow: { f: (t) => Math.exp(0.5 * t), F: (s) => 1 / (s - 0.5), a: 0.5, yMin: -0.2, yMax: 4 },
-  wiggle: { f: (t) => Math.sin(2 * t), F: (s) => 2 / (s * s + 4), a: 0, yMin: -1.3, yMax: 1.6 },
+  wiggle: { f: (t) => Math.sin(2 * t), F: (s) => 2 / (s * s + 4), a: 0, yMin: -1.3, yMax: 1.6, osc: true },
 };
 
 const PROBE_T = 8;
@@ -94,8 +96,9 @@ const probe: WidgetFactory = (host, ctx) => {
     y: { label: '', min: -0.2, max: 1.6 },
     series: [
       { id: 'f', color: 'out', label: t('f') },
-      { id: 'probe', color: 'ink3', label: t('probe'), dash: [6, 4], width: 1.8 },
       { id: 'prod', color: 'ink', label: t('product'), width: 2.6 },
+      // drawn on top: for the step the probe and the product are the same curve
+      { id: 'probe', color: 'ink3', label: t('probe'), dash: [6, 4], width: 1.8 },
     ],
     height: 240,
     label: t('plotAria'),
@@ -136,7 +139,7 @@ const probe: WidgetFactory = (host, ctx) => {
       trace.ys.push(v);
     }
     fplot.set('trace', trace.xs, trace.ys);
-    if (trace.xs.length >= 5) showFormula.disabled = false;
+    if (spreadCount(trace.xs) >= 5) showFormula.disabled = false;
   };
   const draw = () => {
     const sig = SIGNALS[key];
@@ -149,10 +152,20 @@ const probe: WidgetFactory = (host, ctx) => {
     plot.set('prod', q.xs, q.ys);
     rArea.set(fmt(runningAreaAt(product(), tc0), 3));
     const tot = total();
-    rTotal.set(Number.isFinite(tot) ? fmt(tot, 3) : '∞');
-    status.textContent = Number.isFinite(tot) ? t('finite', { s: fmt(s, 2), F: fmt(tot, 3) }) : t('infinite');
+    const fin = Number.isFinite(tot);
+    // an oscillating signal has no single answer at s ≤ a: its area sloshes, it doesn't run off
+    const none = sig.osc ? '—' : '∞';
+    rTotal.set(fin ? fmt(tot, 3) : none);
+    const rest = fin ? tot - runningAreaAt(product(), PROBE_T) : 0;
+    status.textContent = fin
+      ? t('finite', { s: fmt(s, 2), F: fmt(tot, 3) }) + (Math.abs(rest) >= 0.0005 ? ` ${t('window', { rest: fmt(rest, 3) })}` : '')
+      : sig.osc
+        ? t('sloshes')
+        : t('infinite');
     fplot.setLines([{ kind: 'v', at: s, color: 'ink3', dash: [2, 3] }]);
-    plot.describe(t('describe', { s: fmt(s, 2), A: Number.isFinite(tot) ? fmt(tot, 3) : '∞' }));
+    fplot.setBands(sig.a > -1 ? [{ kind: 'v', from: -1, to: sig.a, color: withAlpha(color('ink3'), 0.12), label: t('noArea') }] : []);
+    fplot.setMarkers(fin ? [{ x: s, y: tot, color: 'ink', shape: 'diamond', clamp: true, offLabel: `↑ ${fmt(tot, 2)}` }] : []);
+    plot.describe(t('describe', { s: fmt(s, 2), A: fin ? fmt(tot, 3) : none }));
   };
   const loop = new Loop((dt) => {
     tc0 = Math.min(PROBE_T, tc0 + dt * 3);
@@ -189,7 +202,8 @@ const probe: WidgetFactory = (host, ctx) => {
       draw();
     },
   });
-  sl.input.addEventListener('change', () => addTrace());
+  // one dot per deliberate choice: on release, or after a pause in arrow presses (not one per key)
+  const offSettle = onSettle(sl.input, () => addTrace());
   const sweep = iconButton('play', t('sweep'));
   sweep.addEventListener('click', () => {
     tc0 = 0;
@@ -220,6 +234,7 @@ const probe: WidgetFactory = (host, ctx) => {
   });
   return () => {
     off();
+    offSettle();
     loop.destroy();
   };
 };
@@ -247,11 +262,11 @@ const explode: WidgetFactory = (host, ctx) => {
   const F = new Plot(right, {
     x: { label: 's', min: -2.5, max: 4 },
     y: { label: 'F(s)', min: 0, max: 6 },
-    series: [{ id: 'F', color: 'ink', label: '1/(s − a)' }],
+    series: [{ id: 'F', color: 'ink', label: t('curve') }],
     height: 220,
     label: t('fAria'),
   });
-  const rF = readout('F(s)');
+  const rF = readout(t('readF'));
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
   const eq = h('div', { class: 'math-block' });
   const update = () => {
@@ -265,11 +280,16 @@ const explode: WidgetFactory = (host, ctx) => {
     }
     F.set('F', xs, ys);
     F.setBands([{ kind: 'v', from: -2.5, to: a, color: withAlpha(color('ink3'), 0.12), label: t('noArea') }]);
-    F.setLines([{ kind: 'v', at: a, color: 'ink', dash: [5, 4], label: t('lives', { a: fmt(a, 2) }) }]);
+    // the label sits beside its line, halfway up, clear of the band's corner label
+    F.setLines([{ kind: 'v', at: a, color: 'ink', dash: [5, 4], label: t('lives', { a: fmt(a, 2) }), labelSide: 'right', labelAt: 'middle', avoid: ['F'] }]);
     const val = s > a ? 1 / (s - a) : Infinity;
-    F.setMarkers(Number.isFinite(val) && val < 6 ? [{ x: s, y: val, color: 'ink', label: `s = ${fmt(s, 2)}` }] : []);
+    // near a the value leaves the frame: pin it to the top edge with an arrow and the number
+    F.setMarkers(Number.isFinite(val) ? [{ x: s, y: val, color: 'ink', label: `s = ${fmt(s, 2)}`, clamp: true, offLabel: `↑ ${fmt(val, 2)}` }] : []);
     rF.set(Number.isFinite(val) ? fmt(val, 2) : '∞');
-    status.textContent = s <= a ? t('never') : s - a < 0.3 ? t('close') : t('calm');
+    // the product plot stops at 10 s; say how much of the area is still to come beyond it
+    const later = Number.isFinite(val) ? Math.exp(-10 * (s - a)) : 0;
+    const main = s <= a ? t('never') : s - a < 0.3 ? t('close', { F: fmt(val, 2) }) : t('calm');
+    status.textContent = later >= 0.01 ? `${main} ${t('window', { pct: fmt(100 * later, 0) })}` : main;
     eq.innerHTML = tex(`\\int_0^\\infty e^{${fmt(a, 2)}t}\\,e^{-st}\\,dt = \\frac{1}{s - (${fmt(a, 2)})} ${Number.isFinite(val) ? `= ${fmt(val, 2)}` : '\\to \\infty'}`, true);
     F.describe(status.textContent);
   };
@@ -294,16 +314,56 @@ const unspin: WidgetFactory = (host, ctx) => {
   const side = h('div');
   grid.append(pbox, side);
   host.append(grid);
+  // the frame grows to fit the whole run and its final total (up to 1/σ = 20 when the spins match),
+  // snapping after keyboard steps and easing after a drag; `extent` is an invisible stand-in for it
   const plot = new Plot(pbox, {
-    x: { label: t('re'), min: -1, max: 4.5 },
-    y: { label: t('im'), min: -2, max: 2 },
-    series: [{ id: 'path', color: 'ink', label: t('path'), width: 3.6 }],
-    height: 460,
+    x: { label: t('re'), min: -0.5, max: 1.5, autoMin: -24, autoMax: 24 },
+    y: { label: t('im'), min: -1, max: 1, autoMin: -24, autoMax: 24 },
+    series: [
+      { id: 'path', color: 'ink', label: t('path'), width: 3.6 },
+      { id: 'extent', color: 'transparent', width: 0 },
+    ],
+    height: 360,
     label: t('plotAria'),
   });
+  // each quarter second of area is one arrow, laid head to tail along the path (Chapter 5's arrows)
+  const PIECE = 0.25;
+  plot.overlay = (g, px, py) => {
+    const s = cx(sig, om);
+    const n = Math.floor(tNow / PIECE + 1e-9);
+    g.strokeStyle = color('ink');
+    g.lineWidth = 2;
+    g.lineCap = 'round';
+    g.setLineDash([]);
+    let prev = unspinIntegral(W0, s, 0);
+    for (let k = 1; k <= n; k++) {
+      const cur = unspinIntegral(W0, s, k * PIECE);
+      const x0 = px(prev.re);
+      const y0 = py(prev.im);
+      const x1 = px(cur.re);
+      const y1 = py(cur.im);
+      prev = cur;
+      const len = Math.hypot(x1 - x0, y1 - y0);
+      if (len < 6) continue;
+      const ux = (x1 - x0) / len;
+      const uy = (y1 - y0) / len;
+      const hd = Math.min(7, len * 0.6);
+      g.beginPath();
+      g.moveTo(x1 - hd * ux + hd * 0.6 * uy, y1 - hd * uy - hd * 0.6 * ux);
+      g.lineTo(x1, y1);
+      g.lineTo(x1 - hd * ux - hd * 0.6 * uy, y1 - hd * uy + hd * 0.6 * ux);
+      g.stroke();
+    }
+  };
   const rMag = readout(t('mag'));
   const rSpin = readout(t('spin'));
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  let said = '';
+  const fit = () => {
+    // the whole run to T1 plus the final total, so the frame is settled before the path is drawn
+    const e = unspinExtent(W0, cx(sig, om), T1);
+    plot.set('extent', e.x, e.y);
+  };
   const draw = () => {
     const s = cx(sig, om);
     const xs: number[] = [];
@@ -318,15 +378,21 @@ const unspin: WidgetFactory = (host, ctx) => {
     const L = unspinLimit(W0, s);
     const cur = unspinIntegral(W0, s, tNow);
     plot.setMarkers([
-      { x: L.re, y: L.im, color: 'ink', shape: 'cross', label: t('limit') },
+      // not a pole: × and ○ are kept for poles and zeros (Chapter 8)
+      { x: L.re, y: L.im, color: 'ink', shape: 'diamond', label: t('limit'), clamp: true, avoid: ['path'] },
       { x: cur.re, y: cur.im, color: 'ink', shape: 'dot' },
     ]);
     const mag = Math.hypot(L.re, L.im);
     rMag.set(fmt(mag, 2));
     const rel = W0 - om;
     rSpin.set(`${fmt(rel, 2)} rad/s`);
-    status.textContent = Math.abs(rel) < 0.05 ? t('matched', { m: fmt(mag, 1) }) : t('spinning');
-    plot.describe(status.textContent);
+    const text = Math.abs(rel) < 0.05 ? t('matched', { m: fmt(mag, 1) }) : t('spinning');
+    // drawn every frame while it runs; the live region only hears about real changes
+    if (text !== said) {
+      said = text;
+      status.textContent = text;
+      plot.describe(text);
+    }
   };
   const loop = new Loop((dt) => {
     tNow = Math.min(T1, tNow + dt * 3);
@@ -334,6 +400,7 @@ const unspin: WidgetFactory = (host, ctx) => {
     if (tNow >= T1) loop.pause();
   }, host);
   const restart = () => {
+    fit();
     if (Loop.autoplay) {
       tNow = 0;
       loop.play();
@@ -385,7 +452,8 @@ const derivRule: WidgetFactory = (host, ctx) => {
     y: { label: '', min: -2, max: 2 },
     series: [
       { id: 'lhs', color: 'ink', label: t('lhs'), width: 3.2 },
-      { id: 'rhs', color: 'eff', label: t('rhs'), dash: [6, 5], width: 2 },
+      // neutral ink: orange is kept for control effort
+      { id: 'rhs', color: 'ink2', label: t('rhs'), dash: [6, 5], width: 2 },
     ],
     height: 250,
     label: t('sAria'),
@@ -408,6 +476,8 @@ const derivRule: WidgetFactory = (host, ctx) => {
     const lo = Math.min(...L, ...R);
     const hi = Math.max(...L, ...R);
     const pad = Math.max(0.2, (hi - lo) * 0.15);
+    // at least three labelled ticks, even on a phone
+    sp.opts.y.ticks = niceTicks(lo - pad, hi + pad, 4);
     sp.setY(lo - pad, hi + pad);
     sp.set('lhs', ss, L);
     sp.set('rhs', ss, R);
@@ -416,7 +486,7 @@ const derivRule: WidgetFactory = (host, ctx) => {
     rL.set(fmt(r.lhs, 3));
     rR.set(fmt(r.rhs, 3));
     const ok = Math.abs(r.lhs - r.rhs) < 0.01;
-    status.textContent = ok ? t('match', { s: fmt(s, 2) }) : t('nomatch');
+    status.textContent = ok ? t('match', { s: fmt(s, 2), v: fmt(r.lhs, 3) }) : t('nomatch');
     status.className = `w-status${ok ? ' good' : ''}`;
     fp.describe(t('describe', { l: fmt(r.lhs, 3), r: fmt(r.rhs, 3) }));
   };
@@ -511,31 +581,27 @@ const tableW: WidgetFactory = (host, ctx) => {
     label: t('plotAria'),
   });
   shadeOverlay(plot, () => (tt) => rows[cur].f(tt) * Math.exp(-s * tt), () => PROBE_T);
-  const steps = h('div', { class: 'derivation' });
+  const steps = h('div', { class: 'derivation', id: uid('derivation') });
   const rNum = readout(t('numeric'));
   const rFor = readout(t('formulaVal'));
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
   right.append(h('div', { class: 'readouts' }, rNum.el, rFor.el), status);
-  const render = () => {
+  const render = (focusRow = -1) => {
     tbody.replaceChildren();
     rows.forEach((_, i) => {
       const done = derived.has(i);
-      const btn = h('button', { class: 'btn small', type: 'button', 'aria-pressed': String(i === cur) }, done ? t('show') : t('derive'));
+      // not a toggle: the button opens that row's derivation below, and marks the row being shown
+      const btn = h('button', { class: 'btn small', type: 'button', 'aria-current': i === cur ? 'true' : undefined, 'aria-controls': steps.id }, done ? t('show') : t('derive'));
       btn.addEventListener('click', () => {
         derived.add(i);
         cur = i;
-        render();
+        render(i);
         update();
       });
-      tbody.append(
-        h(
-          'tr',
-          { class: i === cur ? 'current' : '' },
-          h('td', { html: tex(t(`rows.${i}.f`)) }),
-          h('td', { html: done ? tex(t(`rows.${i}.F`)) : '<span aria-label="' + t('unknown') + '">?</span>' }),
-          h('td', null, btn),
-        ),
-      );
+      const F = done ? h('td', { html: tex(t(`rows.${i}.F`)) }) : h('td', null, h('span', { 'aria-hidden': 'true' }, '?'), h('span', { class: 'visually-hidden' }, t('unknown')));
+      tbody.append(h('tr', { class: i === cur ? 'current' : '' }, h('td', { html: tex(t(`rows.${i}.f`)) }), F, h('td', null, btn)));
+      // the row is re-drawn, so keep keyboard focus on the button that was pressed
+      if (i === focusRow) btn.focus();
     });
   };
   const update = () => {
@@ -547,9 +613,11 @@ const tableW: WidgetFactory = (host, ctx) => {
     const num = laplaceReal(r.f, s, Math.min(200, 40 / (s - r.a)), 20000);
     const form = r.F(s);
     rNum.set(fmt(num, 4));
-    rFor.set(fmt(form, 4), Math.abs(num - form) < 1e-3 ? 'good' : 'bad');
+    const ok = Math.abs(num - form) < 1e-3;
+    rFor.set(fmt(form, 4), ok ? 'good' : 'bad');
     const ex = extra[cur];
-    status.textContent = ex ? t('twinCheck', { n: fmt(laplaceReal(ex.f, s, Math.min(200, 40 / (s - r.a)), 20000), 4), f: fmt(ex.F(s), 4) }) : t('agree');
+    // the words follow the same test as the readout's colour
+    status.textContent = !ok ? t('differ') : ex ? t('twinCheck', { n: fmt(laplaceReal(ex.f, s, Math.min(200, 40 / (s - r.a)), 20000), 4), f: fmt(ex.F(s), 4) }) : t('agree');
     const list = (t(`rows.${cur}.steps`) || '').split('||');
     if (shownRow !== cur) {
       shownRow = cur;
@@ -587,6 +655,7 @@ const solve: WidgetFactory = (host, ctx) => {
   const eqT = h('div', { class: 'math-block' });
   const rGap = readout(t('gap'));
   const rZero = readout(t('atZero'));
+  const rSettle = readout(t('settle'));
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
   // when the h(0) fix is switched on/off the formula curve glides onto its new shape
   let shownF: number[] = [];
@@ -629,19 +698,28 @@ const solve: WidgetFactory = (host, ctx) => {
     xs.forEach((_, i) => (gap = Math.max(gap, Math.abs(ys[i] - f[i]))));
     rGap.set(`${fmt(gap, gap < 0.01 ? 6 : 2)} m`, gap < 1e-3 ? 'good' : 'bad');
     rZero.set(`${fmt(ys[0], 2)} / ${fmt(f[0], 2)} m`);
-    const num = ic ? `${fmt(DRONE.m * h0, 2)}s^2 + ${fmt(DRONE.c * h0, 2)}s + ${fmt(kp * 2 - DRONE.m * DRONE.g, 3)}` : `${fmt(kp * 2 - DRONE.m * DRONE.g, 3)}`;
+    // Chapter 2's look: dotted blue "settles here" line at A, red droop band up to the target
+    const droop = 2 - sol.A;
+    plot.setDroop({ target: 2, settle: sol.A, label: t('droop', { d: fmt(droop, 3) }), labelAt: 'end', labelSide: 'below', avoid: ['sim', 'formula'] });
+    rSettle.set(`${fmt(sol.A, 3)} m`);
+    // numerator terms that are zero (from the ground, or with the fix switched off) are left out
+    const terms = ic ? [DRONE.m * h0 !== 0 ? `${fmt(DRONE.m * h0, 2)}s^2` : '', DRONE.c * h0 !== 0 ? `${fmt(DRONE.c * h0, 2)}s` : ''].filter(Boolean) : [];
+    const num = [...terms, fmt(kp * 2 - DRONE.m * DRONE.g, 3)].join(' + ');
     eqH.innerHTML = tex(
       `\\begin{aligned} \\out{H}(s) &= \\frac{${num}}{s\\,(${fmt(DRONE.m, 1)}s^2 + s + \\eff{${fmt(kp, 0)}})} \\\\[4pt] &= \\frac{${fmt(sol.A, 3)}}{s} + \\frac{${fmt(sol.B, 3)}\\,s ${sol.C >= 0 ? '+' : '-'} ${fmt(Math.abs(sol.C), 3)}}{${fmt(DRONE.m, 1)}s^2 + s + \\eff{${fmt(kp, 0)}}} \\end{aligned}`,
       true,
     );
-    const osc = `e^{-t}\\big(${fmt(sol.K1, 3)}\\cos ${fmt(sol.wd, 2)}t ${sol.K2 >= 0 ? '+' : '-'} ${fmt(Math.abs(sol.K2), 3)}\\sin ${fmt(sol.wd, 2)}t\\big)`;
+    const decay = sol.sigma === 1 ? '-t' : `-${fmt(sol.sigma, 2)}t`;
+    const osc = `e^{${decay}}\\big(${fmt(sol.K1, 3)}\\cos ${fmt(sol.wd, 2)}t ${sol.K2 >= 0 ? '+' : '-'} ${fmt(Math.abs(sol.K2), 3)}\\sin ${fmt(sol.wd, 2)}t\\big)`;
     // on narrow screens the solution breaks onto two aligned lines instead of scrolling sideways
     eqT.innerHTML = tex(
       host.clientWidth < 560 ? `\\begin{aligned} \\out{h}(t) &= ${fmt(sol.A, 3)} \\\\ &\\quad + ${osc} \\end{aligned}` : `\\out{h}(t) = ${fmt(sol.A, 3)} + ${osc}`,
       true,
     );
-    status.textContent = gap < 1e-3 ? t('match') : ic ? t('odd') : t('mismatch', { h: fmt(h0, 1) });
-    status.className = `w-status${gap < 1e-3 ? ' good' : ' bad'}`;
+    // from the ground the forgotten terms are zero, so the mistake hides: say so rather than "perfect"
+    const text = gap < 1e-3 ? (ic ? `${t('match')} ${t('fixed')}` : t('hidden')) : ic ? t('odd') : t('mismatch', { h: fmt(h0, 1) });
+    status.textContent = text;
+    status.className = `w-status${gap < 1e-3 && ic ? ' good' : gap < 1e-3 ? '' : ' bad'}`;
     plot.describe(status.textContent);
   };
   const sk = slider({ label: t('kp'), min: 5, max: 60, step: 1, value: kp, unit: 'N/m', color: 'eff', onInput: (v) => ((kp = v), update()) });
@@ -659,8 +737,9 @@ const solve: WidgetFactory = (host, ctx) => {
     eqT,
     h('div', { class: 'w-row fix-row' }, tg.el),
     h('div', { class: 'w-controls' }, sk.el, sh.el),
-    h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rGap.el, rZero.el)),
+    h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rGap.el, rZero.el, rSettle.el)),
     status,
+    h('p', { class: 'w-help' }, t('rk4')),
   );
   update();
   return () => cancelAnimationFrame(morphing);

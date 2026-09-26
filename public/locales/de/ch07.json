@@ -27,7 +27,7 @@
         },
         {
           "t": "p",
-          "text": "Gibt es, und wir können sie aus Dingen bauen, die wir schon haben. Die Idee: Nimm irgendein Signal $f(t)$. Multiplizier es mit einer **Sonde**, der schrumpfenden Exponentialfunktion $e^{-st}$ aus Kapitel 4. Dann miss die **Gesamtfläche** unter dem Produkt (die aufsummierte Fläche aus Kapitel 3)."
+          "text": "Gibt es, und wir können sie aus Dingen bauen, die wir schon haben. Die Idee: Nimm irgendein **Signal**, also irgendeine Kurve, die sich mit der Zeit ändert, $f(t)$. Multiplizier es mit einer **Sonde**, der Exponentialfunktion $e^{-st}$ aus Kapitel 4 (für positives $s$ schrumpft sie). Dann miss die **Gesamtfläche** unter dem Produkt (die aufsummierte Fläche aus Kapitel 3), ganz bis hinaus zu $t = \\infty$."
         },
         {
           "t": "math",
@@ -35,7 +35,33 @@
         },
         {
           "t": "p",
-          "text": "Das ist alles. Eine Zahl $s$ geht rein, eine Fläche kommt raus. Probier verschiedene $s$-Werte aus, und du bekommst eine ganz neue Kurve $F(s)$. Diese Kurve ist die **Laplace-Transformation** von $f$: ein Fingerabdruck des Signals."
+          "text": "Das ist alles. Eine Zahl $s$ geht rein, eine Fläche kommt raus. Probier verschiedene $s$-Werte aus, und du bekommst eine ganz neue Kurve $F(s)$. Diese Kurve ist die **Laplace-Transformation** von $f$: ein Fingerabdruck des Signals. Zwei verschiedene (vernünftige) Signale haben nie dasselbe $F(s)$. Deshalb können wir Antworten später auch rückwärts nachschlagen."
+        },
+        {
+          "t": "callout",
+          "title": "Warum diese Sonde?",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Warum *diese* Kurve? Warum kein Buckel oder ein Sinus?"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "happy",
+              "text": "Zwei Gründe, die kann ich an den Fingern abzählen. Eins: Es ist die besondere Kurve aus Kapitel 4. Ihre Steigung ist einfach $-s$ mal sie selbst. Wenn also Steigungen auftauchen, werden sie zu einer Multiplikation mit $s$. Zwei: Sie ist das genaue Gegenteil des $e^{st}$, das wir ständig geraten haben. Halt sie gegen $e^{at}$, und die beiden heben sich bei $s = a$ auf."
+            },
+            {
+              "t": "math",
+              "tex": "\\frac{d}{dt}\\,e^{-st} = -s\\,e^{-st} \\qquad e^{at}\\cdot e^{-st} = e^{(a-s)t}"
+            },
+            {
+              "t": "p",
+              "text": "Beide Aufgaben sehen wir auf dieser Seite passieren: das Aufheben im nächsten Abschnitt, die Steigungen im übernächsten."
+            }
+          ]
         },
         {
           "t": "predict",
@@ -50,7 +76,7 @@
             {
               "text": "Sie schrumpft",
               "correct": true,
-              "why": "Richtig. Ein größeres $s$ drückt die Sonde schneller zusammen, also gibt es weniger Fläche. Genau genommen ist die Fläche exakt $1/s$."
+              "why": "Richtig. Ein größeres $s$ drückt die Sonde schneller zusammen, also gibt es weniger Fläche. Genau genommen ist die Fläche exakt $1/s$ (das beweisen wir, wenn wir unsere Tabelle bauen)."
             },
             {
               "text": "Sie bleibt gleich",
@@ -63,12 +89,48 @@
           "id": "probe"
         },
         {
-          "t": "p",
-          "text": "Fahr $s$ durch, und die Punkte zeichnen beim Sprung $1/s$ nach. Probier auch die anderen Signale aus. Ein wachsendes Signal $e^{0{,}5t}$ hat nur dann eine endliche Fläche, wenn die Sonde **schneller** schrumpft, als das Signal wächst, also bei $s > 0{,}5$. Darunter läuft die Fläche ins Unendliche."
+          "t": "play",
+          "id": "stepArea",
+          "text": "Taste den Sprung bei s = {scrub|s} ab: Die Fläche ist 1 ÷ {calc|s} = {calc|F}. Verdopple s, und die Fläche halbiert sich."
         },
         {
           "t": "p",
-          "text": "Die Gesamtfläche muss sich einem endlichen Wert nähern. Klingt die Sonde zu langsam ab, wächst die Fläche weiter und dieser Wert von s liefert keine endliche Antwort. Bei komplexem s steuert der waagerechte Teil das Abklingen, der senkrechte Teil das Zurückdrehen."
+          "text": "Fahr $s$ im Widget durch, und die Punkte zeichnen genau dieses $1/s$ nach. Probier auch die anderen Signale aus. Ein wachsendes Signal $e^{0{,}5t}$ hat nur dann eine endliche Fläche, wenn die Sonde **schneller** schrumpft, als das Signal wächst, also bei $s > 0{,}5$. Darunter läuft die Fläche ins Unendliche. Das Wackeln $\\sin 2t$ scheitert anders: Bei $s = 0$ schwappt seine Fläche nur zwischen 0 und 1 hin und her (die negative Fläche aus Kapitel 3 hebt die positive auf) und kommt nie auf eine einzige Zahl."
+        },
+        {
+          "t": "callout",
+          "title": "Eine endlose Fläche, die aufhört zu wachsen",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "worried",
+              "text": "Moment. Die Sonde geht ewig weiter. Wie kann „ewig“ eine endliche Fläche haben?"
+            },
+            {
+              "t": "p",
+              "text": "Weil das meiste von „ewig“ fast nichts ist. Jede weitere Sekunde bringt weniger als die davor. Nach einer Sekunde hat die Fläche unter $e^{-t}$ schon 63 % der Gesamtfläche (wieder das τ-Lineal aus Kapitel 3). Nach fünf sind es über 99 %."
+            },
+            {
+              "t": "math",
+              "tex": "\\int_0^{T} e^{-t}\\,dt = 1 - e^{-T} \\;\\to\\; 1"
+            },
+            {
+              "t": "play",
+              "id": "longArea",
+              "text": "Hör bei t = {scrub|T} s auf, die Fläche von $e^{-t}$ aufzusummieren, und du hast schon {calc|A}. Alles danach bringt nur noch {calc|left}."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "happy",
+              "text": "„Ewig“ ist also kein Problem, solange der Schwanz schnell genug dünn wird. Genau dafür ist die Sonde da."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Die Gesamtfläche muss sich einem endlichen Wert nähern, damit jedes $s$ eine Zahl bekommt. Klingt die Sonde zu langsam ab, wächst die Fläche immer weiter, und dieses $s$ hat keine Antwort."
         },
         {
           "t": "note",
@@ -83,7 +145,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Schauen wir uns $f(t) = e^{at}$ genauer an. Tasten wir es mit $e^{-st}$ ab, ist das Produkt $e^{(a-s)t}$, eine schlichte Exponentialfunktion. Ihre Fläche ist $\\frac{1}{s-a}$ (das leiten wir unten in der Tabelle richtig her)."
+          "text": "Schauen wir uns $f(t) = e^{at}$ genauer an. Tasten wir es mit $e^{-st}$ ab, ist das Produkt $e^{(a-s)t}$, eine schlichte Exponentialfunktion. Solange $s > a$ ist, klingt sie ab, und ihre Fläche ist $\\frac{1}{s-a}$ (das leiten wir unten in der Tabelle richtig her)."
         },
         {
           "t": "widget",
@@ -102,8 +164,19 @@
           "text": "Die Transformation **explodiert also genau bei dem** $s$**, wo das Signal wohnt**. Wenn du mir nur $F(s)$ geben würdest, könnte ich das $a$ des Signals finden, indem ich suche, wo sie explodiert."
         },
         {
+          "t": "play",
+          "id": "scream",
+          "text": "Signal $e^{at}$ mit a = {scrub|a|out}, Sonde s = {scrub|s}: Das Produkt klingt mit s − a = {calc|gap} pro Sekunde ab, also ist seine Fläche {calc|F}. {calc|verdict}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Wie ein Rauchmelder. Geh mit $s$ auf $a$ zu, und er wird lauter und lauter. Tritt auf $a$, und er hört nie mehr auf."
+        },
+        {
           "t": "p",
-          "text": "Jetzt machen wir $s$ komplex, $s = \\sigma + i\\omega$, genau wie unsere drehenden Zahlen aus Kapitel 5. Nimm ein drehendes Signal $e^{2it}$. Die Sonde $e^{-st}$ schrumpft es (das ist der $\\sigma$-Teil) **und dreht es rückwärts** (das ist der $\\omega$-Teil). Unten werden die kleinen Flächenstücke des Produkts als Pfeile Spitze an Ende aneinandergehängt. Schau auf die laufende Summe."
+          "text": "Jetzt machen wir $s$ komplex, $s = \\sigma + i\\omega$, genau wie unsere drehenden Zahlen aus Kapitel 5. Nimm als Signal den Dreher der Feder aus Kapitel 5, $e^{2it}$ (eine Hälfte seines Zwillingspaars). Die Sonde $e^{-st}$ schrumpft ihn (das ist der waagerechte Teil, $\\sigma$) **und dreht ihn rückwärts** (das ist der senkrechte Teil, $\\omega$). Unten werden die kleinen Flächenstücke des Produkts als Pfeile Spitze an Ende aneinandergehängt, ein Pfeil pro Viertelsekunde. Schau auf die laufende Summe."
         },
         {
           "t": "widget",
@@ -135,6 +208,30 @@
       "title": "Aus Steigungen wird Multiplikation",
       "blocks": [
         {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Erinnerst du dich an den Klebezettel aus Kapitel 4? Bei $e^{at}$ war eine Steigung nehmen einfach $\\times\\, a$. Jetzt schau, was die Sonde mit einer Steigung macht."
+        },
+        {
+          "t": "vocab",
+          "title": "Kurzschrift für dieses Kapitel",
+          "items": [
+            {
+              "term": "$f'$ und $f''$",
+              "def": "Kurz für $\\frac{df}{dt}$, die Steigung von $f$, und die Steigung dieser Steigung. Kapitel 6 hat sie mit Punkten geschrieben, $\\dot x$ und $\\ddot x$."
+            },
+            {
+              "term": "$\\mathcal{L}\\{f\\}$",
+              "def": "„Die Transformation von $f$“: dasselbe wie $F(s)$, praktisch, wenn $f$ ein ganzer Ausdruck ist."
+            },
+            {
+              "term": "Großbuchstaben",
+              "def": "Ein Großbuchstabe ist die Transformation seines Kleinbuchstabens: $F$ zu $f$, $H$ zur Höhe $h$, $X$ zu $x$."
+            }
+          ]
+        },
+        {
           "t": "p",
           "text": "Jetzt die Eigenschaft, für die sich das Ganze lohnt. Was passiert mit der Transformation, wenn wir die **Steigung** des Signals nehmen? Probier’s mit $f = e^{at}$. Seine Steigung ist $a e^{at}$ (Kapitel 4), also"
         },
@@ -145,6 +242,11 @@
         {
           "t": "p",
           "text": "Aus der Steigung wurde **Multiplizieren mit** $s$, minus der Startwert $f(0)$. Aus Analysis wurde Algebra!"
+        },
+        {
+          "t": "play",
+          "id": "ruleExp",
+          "text": "Mit a = {scrub|a} und s = {scrub|s}: Die Fläche der Steigung ist {calc|lhs}, und s·F − f(0) = {calc|rhs}. Dieselbe Zahl."
         },
         {
           "t": "say",
@@ -160,7 +262,7 @@
         },
         {
           "t": "p",
-          "text": "Zeichne links ein beliebiges Signal (oder wähl eine Vorlage). Wir berechnen seine Steigung und dann mit der Flächenmaschine **beide Seiten** der Regel: die Transformation der Steigung und $s\\,F(s) - f(0)$. Die zwei Kurven rechts sind diese zwei Seiten für jedes $s$."
+          "text": "Zeichne im ersten Diagramm ein beliebiges Signal (oder wähl eine Vorlage). Wir berechnen seine Steigung und dann mit der Flächenmaschine **beide Seiten** der Regel: die Transformation der Steigung und $s\\,F(s) - f(0)$. Das zweite Diagramm zeigt diese zwei Seiten für jedes $s$."
         },
         {
           "t": "widget",
@@ -170,23 +272,81 @@
           "t": "say",
           "who": "theo",
           "mood": "surprised",
-          "text": "Sie passen, sogar bei meinem wackeligen Gekritzel. Das ist also eine allgemeine Regel für glatte Signale, deren gewichtete Flächen sich einpendeln; die Zeichnung liefert eine numerische Prüfung."
+          "text": "Sie passen, sogar bei meinem wackligen Gekritzel. Also doch keine Nachschlageregel: Das macht die Flächenmaschine mit jeder Steigung."
+        },
+        {
+          "t": "callout",
+          "title": "Und was ist mit einem Sprung?",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "surprised",
+              "text": "Ich hab auf „Sprung“ gedrückt, und es passt *trotzdem*. Aber ein Sprung ist nicht glatt. An einer Klippe gibt es keine Steigung!"
+            },
+            {
+              "t": "p",
+              "text": "Schau dir die Steigung im ersten Diagramm an: Bei $t = 2$ steht eine hohe, dünne Spitze. Die Steigung des Computers hat den Sprung als einen sehr steilen Anstieg gesehen. Lass diese Spitze weg, und die beiden Seiten unterscheiden sich um $1{,}4\\,e^{-2s}$ (der Sprung ist 1,4 hoch, bei $t = 2$), etwa 0,19 bei $s = 1$."
+            },
+            {
+              "t": "math",
+              "tex": "\\text{Lücke ohne die Spitze} = 1{,}4\\,e^{-2s}"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "think",
+              "text": "Ein plötzlicher Sprung ist also trotzdem eine Änderung, nur in einen Augenblick gequetscht, und die Regel zählt jede Änderung mit. Ich hab so ein Gefühl, dass diese Spitze wiederkommt."
+            }
+          ]
         },
         {
           "t": "p",
-          "text": "Hier ist die fehlende Rechnung. Die Steigung von $f$ auf die abklingende Sonde zu übertragen heißt **partielle Integration**. Klingt das gewichtete Signal am fernen Ende ab, bleibt am Rand nur sein Anfangswert:"
+          "text": "Hier ist die fehlende Rechnung. Die Steigung von $f$ auf die abklingende Sonde zu übertragen heißt **partielle Integration**. Die Klammer $\\big[\\,\\cdot\\,\\big]_0^\\infty$ bedeutet „Wert am fernen Ende minus Wert am Anfang“. Klingt das gewichtete Signal am fernen Ende ab (dieselbe Bedingung wie vorhin: $s$ muss das Wachstum des Signals schlagen), bleibt am Rand nur sein Anfangswert:"
         },
         {
           "t": "math",
           "tex": "\\int_0^\\infty f'(t)e^{-st}\\,dt = \\big[f(t)e^{-st}\\big]_0^\\infty + s\\!\\int_0^\\infty f(t)e^{-st}\\,dt = -f(0)+sF(s)"
         },
         {
+          "t": "callout",
+          "title": "Fläche macht Steigung rückgängig, auch bei einem Produkt",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Ein Produkt ändert sich aus zwei Gründen. $f$ ändert sich, während die Sonde stillhält, und die Sonde ändert sich, während $f$ stillhält. Stell dir ein Rechteck mit den Seiten $f$ und $e^{-st}$ vor: Es wächst entlang der einen Seite, dann entlang der anderen."
+            },
+            {
+              "t": "math",
+              "tex": "\\big(f\\,e^{-st}\\big)' = f'\\,e^{-st} - s\\,f\\,e^{-st}"
+            },
+            {
+              "t": "p",
+              "text": "Summier diese Änderungen von 0 bis ∞ auf (Kapitel 3: Fläche macht Steigung rückgängig), und du bekommst den Wert am Ende minus den Wert am Anfang:"
+            },
+            {
+              "t": "math",
+              "tex": "\\big[f\\,e^{-st}\\big]_0^\\infty = \\int_0^\\infty f'\\,e^{-st}\\,dt - s\\,F(s)"
+            },
+            {
+              "t": "p",
+              "text": "Am fernen Ende hat die Sonde alles auf null gedrückt, also ist die linke Seite einfach $0 - f(0)$. Bring $s\\,F(s)$ auf die andere Seite, und da ist die Regel."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "happy",
+              "text": "$f(0)$ ist also kein Trick. Es ist das Rechteck, mit dem wir angefangen haben."
+            }
+          ]
+        },
+        {
           "t": "p",
-          "text": "Wende dieselbe Regel noch einmal auf $f'$ an, dann folgt die Formel für die zweite Steigung:"
+          "text": "Wende dieselbe Regel noch einmal an, diesmal auf $f'$, dessen Anfangswert $f'(0)$ ist, die **Startgeschwindigkeit**:"
         },
         {
           "t": "math",
-          "tex": "\\mathcal{L}\\{f''\\} = s^2 F(s) - s\\,f(0) - f'(0)"
+          "tex": "\\begin{aligned} \\mathcal{L}\\{f''\\} &= s\\,\\mathcal{L}\\{f'\\} - f'(0) \\\\ &= s\\big(s\\,F(s) - f(0)\\big) - f'(0) \\\\ &= s^2 F(s) - s\\,f(0) - f'(0) \\end{aligned}"
         },
         {
           "t": "note",
@@ -210,11 +370,30 @@
           "t": "say",
           "who": "mika",
           "mood": "happy",
-          "text": "Die Sinuszeile ist meine liebste. Ein Sinus ist einfach zwei Zwillingsdreher, und die Transformation jedes Drehers ist die Exponentialzeile mit $a = \\pm i\\omega$."
+          "text": "Die Sinuszeile ist meine liebste. Ein Sinus ist einfach zwei Zwillingsdreher, und die Transformation jedes Drehers ist die Exponentialzeile mit $a = \\pm i\\omega$. Kapitel 5 hat die Zwillinge *addiert*, um einen Kosinus zu bekommen. *Subtrahier* sie stattdessen, und die waagerechten Teile heben sich auf, übrig bleibt $2i\\sin\\omega t$. Daher kommt das $2i$!"
         },
         {
           "t": "p",
-          "text": "Und die letzte Zeile brauchte überhaupt keine neue Arbeit: Multiplizieren mit $e^{-\\sigma t}$ **verschiebt** einfach $s$ zu $s+\\sigma$. Vier Zeilen, alle hergeleitet, alle geprüft. Jetzt setzen wir sie ein."
+          "text": "(Für ein komplexes $a$ funktioniert die Exponentialzeile auch, solange der waagerechte Teil von $s$ den waagerechten Teil von $a$ schlägt. Für die Zwillinge heißt das einfach $\\sigma > 0$.)"
+        },
+        {
+          "t": "p",
+          "text": "Und die letzte Zeile brauchte überhaupt keine neue Arbeit: Multiplizieren mit $e^{-\\sigma t}$ **verschiebt** einfach $s$ zu $s+\\sigma$. Vier Zeilen, alle hergeleitet, alle geprüft."
+        },
+        {
+          "t": "p",
+          "text": "Noch eine Regel, die wir still und leise benutzt haben. Die Flächenmaschine ist fair: Mach ein Signal 3-mal so hoch, und jede Scheibe seiner Fläche ist 3-mal so hoch, also auch die ganze Fläche. Addier zwei Signale, und ihre Flächen addieren sich. Mathematiker nennen das **Linearität**."
+        },
+        {
+          "t": "play",
+          "id": "scale",
+          "text": "Nimm {scrub|k}-mal $e^{-rt}$ mit r = {scrub|r}, abgetastet bei s = {scrub|s}: Seine Fläche ist k ÷ (s + r) = {calc|eq}."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Deshalb dürfen wir eine Gleichung Term für Term transformieren, samt Zahlen davor. Und die Gleichung der Drohne ist genau so eine Summe. Setzen wir die Tabelle ein!"
         }
       ]
     },
@@ -224,7 +403,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Hier ist die Drohne aus Kapitel 2 mit P-Regelung, anfangs auf einem **1 m hohen Sims**. Bei $t=0$ lassen wir sie los und verlangen 2 m. In der Rechnung ab diesem Zeitpunkt werden der neue Sollwert und die konstante Schwerkraft jeweils wie ein Sprung transformiert:"
+          "text": "Hier ist die Drohne aus Kapitel 2 mit P-Regelung, diesmal ohne geschenkten Schwebeschub, anfangs auf einem **1 m hohen Sims**. Bei $t=0$ lassen wir sie los und verlangen 2 m. In der Rechnung ab diesem Zeitpunkt werden der neue Sollwert und die konstante Schwerkraft jeweils wie ein Sprung transformiert:"
         },
         {
           "t": "math",
@@ -232,19 +411,29 @@
         },
         {
           "t": "p",
-          "text": "**Schritt 1:** Transformier jeden Term. Ein Sprung der Größe $r$ wird zu $r/s$, und Steigungen werden zu Multiplikation mit $s$:"
+          "text": "**Schritt 1:** Transformier jeden Term. Weil Flächen skalieren und sich addieren (der Tabellenabschnitt), dürfen wir jeden Term für sich transformieren. Ein Sprung der Größe $r$ wird zu $r/s$, und Steigungen werden zu Multiplikation mit $s$. Das haben wir geschrieben:"
         },
         {
           "t": "math",
-          "tex": "\\begin{aligned} & m\\big(s^2\\out{H} - s\\,h(0) - h'(0)\\big) \\\\ &\\quad + c\\big(s\\,\\out{H} - h(0)\\big) \\\\ &= \\eff{K_p}\\Big(\\frac{\\sp{2}}{s} - \\out{H}\\Big) - \\frac{\\dis{m g}}{s} \\end{aligned}"
+          "on": "ch7:ic",
+          "tex": "m\\,s^2\\out{H} + c\\,s\\,\\out{H} = \\eff{K_p}\\Big(\\frac{\\sp{2}}{s} - \\out{H}\\Big) - \\frac{\\dis{m g}}{s}",
+          "alt": "\\begin{aligned} & m\\big(s^2\\out{H} - s\\,h(0) - h'(0)\\big) \\\\ &\\quad + c\\big(s\\,\\out{H} - h(0)\\big) \\\\ &= \\eff{K_p}\\Big(\\frac{\\sp{2}}{s} - \\out{H}\\Big) - \\frac{\\dis{m g}}{s} \\end{aligned}"
         },
         {
           "t": "p",
-          "text": "**Schritt 2:** Jetzt ist es Algebra. Sammle $\\out{H}$ auf einer Seite:"
+          "text": "**Schritt 2:** Jetzt ist es Algebra. Sammle $\\out{H}$ auf einer Seite und teile dann:"
         },
         {
           "t": "math",
-          "tex": "\\begin{aligned} \\out{H}(s) &= \\frac{N(s)}{s\\,\\big(m s^2 + c s + \\eff{K_p}\\big)} \\\\[6pt] N(s) &= m\\,h(0)\\,s^2 \\\\ &\\quad + \\big(m\\,h'(0) + c\\,h(0)\\big)\\,s \\\\ &\\quad + (\\eff{K_p}\\,\\sp{2} - \\dis{m g}) \\end{aligned}"
+          "on": "ch7:ic",
+          "tex": "\\begin{gathered} \\begin{aligned} &(m s^2 + c s + \\eff{K_p})\\,\\out{H} \\\\ &\\quad = \\frac{\\eff{K_p}\\,\\sp{2} - \\dis{m g}}{s} \\end{aligned} \\\\[8pt] \\out{H}(s) = \\frac{N(s)}{s\\,\\big(m s^2 + c s + \\eff{K_p}\\big)} \\\\[8pt] N(s) = \\eff{K_p}\\,\\sp{2} - \\dis{m g} \\end{gathered}",
+          "alt": "\\begin{gathered} \\begin{aligned} &(m s^2 + c s + \\eff{K_p})\\,\\out{H} \\\\ &\\quad = m\\,h(0)\\,s + m\\,h'(0) + c\\,h(0) \\\\ &\\qquad + \\frac{\\eff{K_p}\\,\\sp{2} - \\dis{m g}}{s} \\end{aligned} \\\\[8pt] \\out{H}(s) = \\frac{N(s)}{s\\,\\big(m s^2 + c s + \\eff{K_p}\\big)} \\\\[8pt] \\begin{aligned} N(s) &= m\\,h(0)\\,s^2 \\\\ &\\quad + \\big(m\\,h'(0) + c\\,h(0)\\big)\\,s \\\\ &\\quad + (\\eff{K_p}\\,\\sp{2} - \\dis{m g}) \\end{aligned} \\end{gathered}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Schau dir das an. Keine Steigungen mehr, nur Buchstaben, die herumgeschoben werden. Theo, dein Notizheft raucht nicht mehr."
         },
         {
           "t": "p",
@@ -256,25 +445,115 @@
         },
         {
           "t": "p",
-          "text": "Wie finden wir $A$, $B$ und $C$? Multipliziere beide Seiten mit dem gemeinsamen Nenner und vergleiche die konstanten Terme sowie die Terme mit $s$ und $s^2$:"
+          "text": "Wie finden wir $A$, $B$ und $C$? Multiplizier beide Seiten mit dem gemeinsamen Nenner $s\\,(m s^2 + c s + \\eff{K_p})$:"
         },
         {
           "t": "math",
-          "tex": "N(s)=A(ms^2+cs+K_p)+s(Bs+C)"
+          "tex": "\\begin{aligned} N(s) &= A\\,(ms^2+cs+\\eff{K_p}) \\\\ &\\quad + s\\,(Bs+C) \\end{aligned}"
+        },
+        {
+          "t": "callout",
+          "title": "Der Zuhalte-Trick",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Für $A$ gibt es eine Abkürzung. Multiplizier $\\out{H}$ mit $s$, und jedes Stück außer $A/s$ hat oben noch ein $s$. Setz $s = 0$, und sie verschwinden alle. Nur $A$ überlebt:"
+            },
+            {
+              "t": "math",
+              "tex": "A = \\Big[s\\,\\out{H}(s)\\Big]_{s=0} = \\frac{N(0)}{\\eff{K_p}} = \\sp{2} - \\frac{\\dis{mg}}{\\eff{K_p}}"
+            },
+            {
+              "t": "p",
+              "text": "Und $s\\,\\out{H}$ nahe $s = 0$ ist genau da, wo die Drohne auf lange Sicht landet. Die Endhöhe fällt direkt aus der Algebra heraus, ganz ohne Simulation."
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "surprised",
+              "text": "Moment mal. Wir können ablesen, wo sie sich *einpendelt*, ohne irgendwas zu lösen? Das fühlt sich an wie Schummeln."
+            }
+          ]
         },
         {
           "t": "p",
-          "text": "Die konstanten Terme ergeben $A = 2 - mg/K_p$; die anderen beiden liefern $B$ und $C$. Hier kommt keine neue Physik hinzu: Wir haben nur einen gemeinsamen Nenner aufgelöst, damit unsere Tabelle die Teile zurück in die Zeit übersetzen kann. Die Anfangshöhe muss dabei erhalten bleiben."
+          "text": "Dann vergleich beide Seiten, eine Potenz von $s$ nach der anderen. Die reinen Zahlen liefern $A$, die $s^2$-Terme liefern $B$ und die $s$-Terme liefern $C$:"
+        },
+        {
+          "t": "math",
+          "on": "ch7:ic",
+          "tex": "\\begin{gathered} A = \\sp{2} - \\frac{\\dis{mg}}{\\eff{K_p}} \\\\ B = -m\\,A, \\qquad C = -c\\,A \\end{gathered}",
+          "alt": "\\begin{gathered} A = \\sp{2} - \\frac{\\dis{mg}}{\\eff{K_p}} \\\\ B = m\\,\\big(h(0) - A\\big) \\\\ C = m\\,h'(0) + c\\,\\big(h(0) - A\\big) \\end{gathered}"
         },
         {
           "t": "p",
-          "text": "**Schritt 4:** Schlag jedes Stück in der Tabelle nach, die wir gerade hergeleitet haben: $A/s$ ist ein Sprung, und das zweite Stück ist ein abklingender Kosinus plus ein abklingender Sinus. Lies $h(t)$ ab."
+          "text": "Hier kommt keine neue Physik ins Spiel: Wir haben nur einen Hauptnenner rückgängig gemacht, um Stücke zu bekommen, die unsere Tabelle in die Zeit zurückholen kann. Beachte, dass es $A$ egal ist, wo die Drohne gestartet ist."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Und wir mussten kein einziges Mal $e^{st}$ raten. Das Raten hat die Tabelle für uns erledigt."
+        },
+        {
+          "t": "p",
+          "text": "**Schritt 4:** Schlag jedes Stück in der Tabelle nach, die wir gerade hergeleitet haben: $A/s$ ist ein Sprung, und das zweite Stück ist ein abklingender Kosinus plus ein abklingender Sinus (der Abstecher unten zeigt, wie es zu diesen Zeilen passt). Lies $h(t)$ ab."
+        },
+        {
+          "t": "callout",
+          "title": "Quadratische Ergänzung: Kapitel 6 hat sich im Nenner versteckt",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Das zweite Stück steht noch nicht in unserer Tabelle: Sein Nenner ist ein schlichtes quadratisches Polynom. Bring es in die Form $(s+\\sigma)^2 + \\omega^2$ (die quadratische Ergänzung aus Kapitel 6), und es passt genau zu den Zeilen mit dem abklingenden Sinus. Der Zähler teilt sich genauso auf, ein Teil für die Kosinuszeile und einer für die Sinuszeile:"
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{gathered} 0{,}5\\,s^2 + s + \\eff{K_p} = 0{,}5\\,\\big((s+1)^2 + \\omega_d^2\\big) \\\\ \\omega_d^2 = 2\\eff{K_p} - 1 \\\\[6pt] B\\,s + C = B\\,(s+1) + (C - B) \\end{gathered}"
+            },
+            {
+              "t": "p",
+              "text": "Also ist $\\sigma = 1$, das ist $\\zeta\\omega_n$ aus Kapitel 6 für unsere Drohne, und $\\omega$ ist das gedämpfte Wackeln $\\omega_d$."
+            },
+            {
+              "t": "play",
+              "id": "square",
+              "text": "Mit $\\eff{K_p}$ = {scrub|kp|eff} N/m ist $\\omega_d^2$ = {calc|wd2}, also ist der Nenner null bei s = {calc|roots}."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "surprised",
+              "text": "Moment. Der Nenner ist genau bei den zwei Punkten null, die wir in Kapitel 6 auf die Karte gesetzt haben! Merk dir diesen Gedanken."
+            }
+          ]
         },
         {
           "t": "say",
           "who": "june",
           "mood": "excited",
           "text": "Vergleichen wir’s mit der Simulation!"
+        },
+        {
+          "t": "predict",
+          "id": "ch7-ledge",
+          "gate": true,
+          "q": "Wir starten die Drohne auf einem 1 m hohen Sims und lassen unsere Formel neben der Simulation laufen. Was werden wir sehen?",
+          "options": [
+            {
+              "text": "Sie passen vom allerersten Moment an",
+              "why": "Das werden sie, sobald die Formel vom Sims weiß. Unser erster Versuch weiß es nicht: Schau, was wir in Schritt 1 geschrieben haben."
+            },
+            {
+              "text": "Sie starten getrennt, landen aber auf derselben Höhe",
+              "correct": true,
+              "why": "Richtig. Wir haben die $h(0)$-Terme weggelassen, also startet die Formel bei 0 m, während die Drohne bei 1 m startet. Beide pendeln sich trotzdem bei denselben 1,755 m ein, weil das Stück $A$ nicht vom Sims abhängt."
+            },
+            {
+              "text": "Sie stimmen nie überein, nicht mal am Ende",
+              "why": "Die Endhöhe kommt vom Stück $A = 2 - mg/K_p$, und das hängt nicht von $h(0)$ ab. Am Ende treffen sie sich also; nur der Anfang ist falsch."
+            }
+          ]
         },
         {
           "t": "widget",
@@ -290,15 +569,22 @@
           "t": "say",
           "who": "theo",
           "mood": "think",
-          "text": "Die Algebra ist in Ordnung. *Wir* haben gelogen. Als wir Schritt 1 in den Prüfer getippt haben, haben wir $\\mathcal{L}\\{h'\\} = s\\,H$ geschrieben und die $-h(0)$-Teile weggelassen. Genau das Stück, das sich an den Sims erinnert."
+          "text": "Die Algebra ist in Ordnung. *Wir* haben gelogen. Schau dir Schritt 1 an: Wir haben $\\mathcal{L}\\{h''\\} = s^2 H$ und $\\mathcal{L}\\{h'\\} = s\\,H$ geschrieben und jedes $h(0)$ weggelassen. Genau das Stück, das sich an den Sims erinnert."
         },
         {
           "t": "p",
-          "text": "Leg den Schalter um, um die Starthöhen-Terme zurückzuholen. Die gestrichelte Formel und die blaue Simulation liegen jetzt genau übereinander: Die größte Lücke sind Millionstel Meter, reine Rundung. Ändere $\\eff{K_p}$ oder die Höhe des Simses, und sie stimmen immer noch überein."
+          "text": "Leg den Schalter um, um die Starthöhen-Terme zurückzuholen, und schau, wie sich Schritt 1 und 2 und die Koeffizienten oben mitändern. Die gestrichelte Formel und die blaue Simulation liegen jetzt genau übereinander: Die größte Lücke ist kleiner als ein Millionstel Meter, reine Rundung. Ändere $\\eff{K_p}$ oder die Höhe des Simses, und sie stimmen immer noch überein."
         },
         {
-          "t": "p",
-          "text": "Schau dir Stück $A$ an: Es ist $\\sp{2} - \\dis{mg}/\\eff{K_p}$, das Durchhängen aus Kapitel 2, das direkt aus der Algebra herausspringt. Ganz ohne Raten."
+          "t": "play",
+          "id": "residues",
+          "text": "Mit $\\eff{K_p}$ = {scrub|kp|eff} N/m von einem {scrub|h0|out} m hohen Sims: A = {calc|A|out} m, also pendelt sich die Drohne {calc|droop|err} m unter dem Ziel von 2 m ein. Das ist das Durchhängen aus Kapitel 2, $\\dis{mg}/\\eff{K_p}$, und der Sims ändert daran nichts. Der Rest ist $e^{-t}$ × ({calc|wiggle}), ein Wackeln, das abklingt."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "In Kapitel 2 mussten wir die Drohne fliegen lassen, um ihr Durchhängen zu finden. Hier ist es einfach aus einem Bruch gefallen."
         },
         {
           "t": "note",
@@ -315,9 +601,9 @@
           "items": [
             "Die Laplace-Transformation ist eine **Sonde**: mit $e^{-st}$ multiplizieren und die Gesamtfläche messen. $F(s) = \\int_0^\\infty f(t)e^{-st}dt$.",
             "Sie **explodiert genau dort, wo das Signal wohnt**: $e^{at}$ ergibt $1/(s-a)$, und das explodiert bei $s = a$. Bei komplexem $s$ dreht die Sonde drehende Signale zurück. All das zeichnen wir in die **s-Ebene**.",
-            "Aus Steigungen wird Multiplikation: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. Bei glatten Signalen mit konvergierender Transformation zählt der Anfangswert.",
-            "Wir haben unsere eigene Tabelle hergeleitet: $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$ und die verschobene Version für abklingende Sinusse.",
-            "Transformieren, Algebra machen, in Tabellenstücke zerlegen, Antwort ablesen. Das passt exakt zur Simulation, **solange du die Startwerte mitnimmst**."
+            "Aus Steigungen wird Multiplikation: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. Das $f(0)$ merkt sich, wo das Signal angefangen hat. Vergiss es, und deine Antwort startet an der falschen Stelle.",
+            "Wir haben unsere eigene Tabelle hergeleitet: $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$ und die verschobene Version für abklingende Sinusse. Flächen skalieren und addieren sich, also dürfen wir eine Gleichung Term für Term transformieren.",
+            "Transformieren, Algebra machen, in Tabellenstücke zerlegen, Antwort ablesen. Das Stück $A/s$ zeigt, wo sich die Drohne einpendelt, samt Durchhängen. Das passt exakt zur Simulation, **solange du die Startwerte mitnimmst**."
           ]
         },
         {
@@ -360,45 +646,45 @@
                 {
                   "text": "Ein Wackeln",
                   "sketch": "decaying-wiggle",
-                  "why": "Wackeln braucht ein Paar komplexer Explosionspunkte (wie bei $s^2+\\omega^2$ unten). Hier gibt es einen einzigen reellen bei $-4$."
+                  "why": "Wackeln braucht ein Paar komplexer Explosionspunkte (wie bei $s^2+\\omega^2$ in unserer Tabelle). Hier gibt es einen einzigen reellen bei $-4$."
                 }
               ]
             },
             {
-              "id": "ch7-q3",
-              "q": "Löse $x' + 2x = 0$ mit $x(0) = 1$ mithilfe der Transformation.",
+              "id": "ch7-q5",
+              "q": "$f(t) = e^{-t}$, also $F(s) = \\frac{1}{s+1}$ und $f(0) = 1$. Was ist die Transformation seiner Steigung $f'$?",
               "options": [
                 {
-                  "text": "$X = \\frac{1}{s+2}$, also $x = e^{-2t}$",
+                  "text": "$\\frac{s}{s+1} - 1 = -\\frac{1}{s+1}$",
                   "correct": true,
-                  "why": "$sX - 1 + 2X = 0 \\Rightarrow X(s+2) = 1 \\Rightarrow X = 1/(s+2)$, und das ist die Exponentialzeile mit $a=-2$."
+                  "why": "$s\\,F - f(0)$. Und die Probe stimmt: Die Steigung von $e^{-t}$ ist $-e^{-t}$, und deren Transformation ist $-\\frac{1}{s+1}$."
                 },
                 {
-                  "text": "$X = 0$, also $x = 0$",
-                  "why": "Das kommt raus, wenn du $-x(0)$ vergisst, derselbe Fehler wie unserer mit dem Sims. Der Startwert ist genau das, was es von null unterscheidet."
+                  "text": "$\\frac{s}{s+1}$",
+                  "why": "Das ist $s\\,F$ mit vergessenem Startwert: wieder der Sims-Fehler."
                 },
                 {
-                  "text": "$X = \\frac{1}{s-2}$, also $x = e^{2t}$",
-                  "why": "Vorzeichenfehler: $X(s+2) = 1$, also liegt die Explosion bei $s=-2$, und das Signal klingt ab."
+                  "text": "$\\frac{1}{(s+1)^2}$",
+                  "why": "Steigungen werden zu einer *Multiplikation* mit $s$, nicht zu einer Division durch ein weiteres $(s+1)$."
                 }
               ]
             },
             {
-              "id": "ch7-q4",
-              "q": "Warum explodiert $\\dfrac{1}{s-a}$ bei $s = a$?",
+              "id": "ch7-q6",
+              "q": "Mit $\\eff{K_p}$ = 10 N/m: Wo pendelt sich die Drohne laut Stück $A/s$ ein (Ziel 2 m, $\\dis{mg} \\approx 4{,}9$ N)?",
               "options": [
                 {
-                  "text": "Die Sonde hebt das Wachstum des Signals genau auf, also ist das Produkt für immer flach und seine Fläche unendlich",
+                  "text": "Bei etwa 1,51 m",
                   "correct": true,
-                  "why": "$e^{at}\\cdot e^{-at} = 1$ für alle Zeit, und die Fläche unter 1 von 0 bis ∞ hört nie auf zu wachsen."
+                  "why": "$A = 2 - 4{,}9/10 \\approx 1{,}51$ m. Die Drohne hängt 0,49 m zu tief: das Durchhängen aus Kapitel 2."
                 },
                 {
-                  "text": "Division durch null ist einfach eine Macke der Algebra",
-                  "why": "Die Algebra spiegelt etwas Echtes: Die Fläche wächst wirklich ohne Grenze, wenn $s \\to a$ geht. Schau’s dir im Explosions-Widget an."
+                  "text": "Bei genau 2 m",
+                  "why": "Nur ohne Schwerkraft. Der Term $-\\dis{mg}/s$ zieht $A$ um $\\dis{mg}/\\eff{K_p}$ nach unten."
                 },
                 {
-                  "text": "Weil das Signal dort null ist",
-                  "why": "Das Signal $e^{at}$ ist nie null. Das Problem ist, dass die Sonde es überhaupt nicht mehr schrumpft."
+                  "text": "Bei etwa 0,49 m",
+                  "why": "Das ist das Durchhängen selbst, die Lücke unter dem Ziel, nicht die Höhe."
                 }
               ]
             }
@@ -436,29 +722,35 @@
       "s": "Sondenrate $s$",
       "sweep": "Fläche nochmal abfahren",
       "showFormula": "Formelkurve aufdecken",
-      "help": "Beweg s und lass los: Die Fläche wird gemessen, und rechts kommt ein Punkt dazu. Nach 5 Punkten kannst du die Formel aufdecken.",
+      "help": "Beweg s und lass los (oder warte kurz nach den Pfeiltasten): Die Fläche wird gemessen, und im F(s)-Diagramm kommt ein Punkt dazu. Nach 5 Punkten, verteilt auf verschiedene s, kannst du die Formel aufdecken.",
       "finite": "Bei s = {s} ist die Gesamtfläche {F}.",
       "infinite": "Hier schrumpft die Sonde nicht schneller als das Signal. Die Fläche kommt nie zur Ruhe: Sie ist unendlich.",
-      "describe": "Sondenrate s = {s}; Gesamtfläche {A}."
+      "describe": "Sondenrate s = {s}; Gesamtfläche {A}.",
+      "sloshes": "Hier kommt die Fläche nie zur Ruhe. Sie schwappt immer weiter hin und her, also hat dieses s keine eindeutige Antwort.",
+      "window": "Das Bild zeigt die ersten 8 s; der Rest bringt noch {rest}.",
+      "noArea": "keine endliche Fläche"
     },
     "explode": {
       "title": "Wo explodiert es?",
       "product": "e^(at)·e^(−st)",
       "prodAria": "Das Produkt aus e hoch a t und der Sonde, mit schattierter Fläche.",
       "fAria": "Die Transformation 1 durch s minus a, mit einer senkrechten Linie, wo sie explodiert.",
-      "noArea": "unendliche Fläche",
+      "noArea": "keine endliche Fläche",
       "lives": "Signal wohnt bei s = {a}",
       "a": "Rate des Signals $a$ in $e^{at}$",
       "s": "Sonde $s$",
       "never": "s ist bei oder unter a: Das Produkt schrumpft nie, also ist die Fläche unendlich.",
-      "close": "Nah an a: Die Fläche explodiert!",
-      "calm": "Weit weg von a: eine schöne endliche Fläche."
+      "close": "Nah an a: Die Fläche ist {F} und steigt weiter!",
+      "calm": "Weit weg von a: eine schöne endliche Fläche.",
+      "window": "Das Bild zeigt nur die ersten 10 s; {pct} % der Fläche kommen erst noch.",
+      "readF": "F(s)",
+      "curve": "1/(s − a)"
     },
     "unspin": {
       "title": "Eine Sonde, die zurückdreht",
       "re": "Realteil",
       "im": "Imaginärteil",
-      "path": "laufende Summe der Fläche",
+      "path": "laufende Summe (ein Pfeil pro ¼ s)",
       "plotAria": "Die laufende Summe der komplexen Fläche als Pfad in der Ebene, auf dem Weg zu ihrem Endwert.",
       "limit": "Endsumme",
       "mag": "Größe der Summe |F|",
@@ -466,7 +758,7 @@
       "sigma": "Sonden-Schrumpfen $\\sigma$",
       "omega": "Sonden-Drehung $\\omega$ (Signal dreht mit 2)",
       "again": "Nochmal abspielen",
-      "matched": "Drehungen passen! Jedes Stück zeigt in dieselbe Richtung. Die Summe ist {m} und läuft für σ → 0 ins Unendliche.",
+      "matched": "Drehungen passen! Jedes Stück zeigt in dieselbe Richtung. Die Summe ist {m} = 1/⁠σ und läuft für σ → 0 ins Unendliche.",
       "spinning": "Die Stücke rollen sich ein und heben sich größtenteils auf. Die Summe bleibt klein."
     },
     "derivRule": {
@@ -482,11 +774,11 @@
       "s": "Sonde $s$",
       "draw": "Eigenes Signal zeichnen",
       "preset": "Andere Vorlage probieren",
-      "help": "Wähl ein Signal, oder drück auf „Eigenes Signal zeichnen“ und zieh im linken Diagramm von links nach rechts. Nach 8 s bleibt das Signal flach.",
-      "drawing": "Zieh im linken Diagramm von links nach rechts…",
+      "help": "Wähl eine Vorlage (der Weg mit der Tastatur), oder drück auf „Eigenes Signal zeichnen“ und zieh im Signal-Diagramm von links nach rechts. Nach 8 s bleibt das Signal flach.",
+      "drawing": "Zieh im Signal-Diagramm von links nach rechts…",
       "tooShort": "Zeichne ein bisschen weiter (mindestens 3 Sekunden lang).",
       "drawn": "Hab’s! Beide Seiten wurden aus deiner Zeichnung neu berechnet. Zieh nochmal, um sie zu ersetzen.",
-      "match": "Bei s = {s} stimmen beide Seiten überein. Die Regel gilt für dein Signal.",
+      "match": "Bei s = {s} sind beide Seiten {v}. Die Regel gilt für dein Signal.",
       "nomatch": "Hier weichen sie etwas ab. Rundungsfehler bei einer sehr scharfen Zeichnung.",
       "describe": "Transformation der Steigung {l}, s F minus f von null {r}.",
       "stopDraw": "Zeichnen beenden",
@@ -533,16 +825,17 @@
           "steps": "\\begin{gathered} \\sin\\omega t=\\frac{e^{i\\omega t}-e^{-i\\omega t}}{2i} \\\\ \\text{(Zwillingsdreher)} \\end{gathered}||\\begin{gathered} \\mathcal{L}\\{e^{\\pm i\\omega t}\\}=\\frac{1}{s\\mp i\\omega} \\\\ \\text{(Exponentialzeile, } a=\\pm i\\omega) \\end{gathered}||\\begin{aligned} &\\frac{1}{2i}\\Big(\\frac{1}{s-i\\omega}-\\frac{1}{s+i\\omega}\\Big) \\\\ &=\\frac{1}{2i}\\cdot\\frac{2i\\omega}{s^2+\\omega^2}=\\frac{\\omega}{s^2+\\omega^2} \\end{aligned}||\\begin{gathered} \\cos\\omega t=\\frac{e^{i\\omega t}+e^{-i\\omega t}}{2}\\ \\Rightarrow\\ \\frac{s}{s^2+\\omega^2} \\\\ (\\text{hier }\\omega=2) \\end{gathered}"
         },
         "3": {
-          "f": "e^{-\\sigma t}\\sin\\omega t,\\ e^{-\\sigma t}\\cos\\omega t",
-          "F": "\\dfrac{\\omega}{(s+\\sigma)^2+\\omega^2},\\ \\dfrac{s+\\sigma}{(s+\\sigma)^2+\\omega^2}",
+          "f": "\\begin{gathered} e^{-\\sigma t}\\sin\\omega t \\\\ e^{-\\sigma t}\\cos\\omega t \\end{gathered}",
+          "F": "\\begin{gathered} \\dfrac{\\omega}{(s+\\sigma)^2+\\omega^2} \\\\[4pt] \\dfrac{s+\\sigma}{(s+\\sigma)^2+\\omega^2} \\end{gathered}",
           "steps": "e^{-\\sigma t}\\sin\\omega t\\cdot e^{-st}=\\sin\\omega t\\cdot e^{-(s+\\sigma)t}||\\text{also nimm die Sinuszeile und setz } s+\\sigma \\text{ statt } s \\text{ ein}||\\begin{gathered} \\frac{\\omega}{(s+\\sigma)^2+\\omega^2}\\quad\\text{ und }\\quad\\frac{s+\\sigma}{(s+\\sigma)^2+\\omega^2} \\\\ (\\text{hier }\\sigma=0{,}5,\\ \\omega=2) \\end{gathered}"
         }
       },
-      "colCheck": "Mit der gemessenen Fläche geprüft"
+      "colCheck": "Mit der gemessenen Fläche geprüft",
+      "differ": "Gemessene Fläche und Formel stimmen hier nicht überein. Probier ein größeres s."
     },
     "solve": {
       "title": "Formel gegen Simulation",
-      "sim": "RK4-Simulation",
+      "sim": "Simulation (winzige Schritte)",
       "formula": "unsere Laplace-Formel",
       "target": "Ziel",
       "plotAria": "Höhe der Drohne über die Zeit aus der Simulation und aus der Laplace-Formel.",
@@ -553,7 +846,43 @@
       "toggle": "Starthöhen-Terme $-h(0)$ mitnehmen",
       "mismatch": "Sie passen nicht! Die Sim startet auf dem {h}-m-Sims, die Formel bei 0.",
       "odd": "Immer noch eine Lücke. Prüf die Zahlen.",
-      "match": "Passt perfekt: Formel und Simulation stimmen auf ein Millionstel Meter überein."
+      "match": "Passt perfekt: Formel und Simulation stimmen auf weniger als ein Millionstel Meter überein.",
+      "settle": "pendelt sich bei A ein",
+      "droop": "Durchhängen mg/Kp = {d} m",
+      "hidden": "Vom Boden aus sind die fehlenden Terme null, also versteckt sich der Fehler. Setz die Drohne auf einen Sims, um ihn zu erwischen.",
+      "fixed": "Die −h(0)-Terme sind oben in Schritt 1 und 2 zurück.",
+      "rk4": "Die Simulation macht Schritte von 1 ms, wie die winzigen Schritte aus Kapitel 4, aber jeder Schritt schaut viermal hin, um besser zu zielen. Dieses Rezept nennt man RK4."
+    }
+  },
+  "plays": {
+    "stepArea": {
+      "s": "Sondenrate s"
+    },
+    "longArea": {
+      "T": "Stoppzeit T, Sekunden"
+    },
+    "scream": {
+      "a": "Signalrate a, pro Sekunde",
+      "s": "Sondenrate s, pro Sekunde",
+      "none": "Es klingt nie ab, also gibt es überhaupt keine endliche Fläche.",
+      "loud": "Es schreit!",
+      "calm": "Eine ruhige, endliche Fläche."
+    },
+    "ruleExp": {
+      "a": "Signalrate a, pro Sekunde",
+      "s": "Sondenrate s, pro Sekunde"
+    },
+    "scale": {
+      "k": "wie viel mal höher, k",
+      "r": "Schrumpfrate r, pro Sekunde",
+      "s": "Sondenrate s, pro Sekunde"
+    },
+    "square": {
+      "kp": "Verstärkung Kp, Newton pro Meter"
+    },
+    "residues": {
+      "kp": "Verstärkung Kp, Newton pro Meter",
+      "h0": "Höhe des Simses, Meter"
     }
   }
 }
