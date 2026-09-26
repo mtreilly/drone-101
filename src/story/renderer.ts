@@ -1,9 +1,10 @@
-import { h, prefersReducedMotion } from '../core/dom';
+import { h, prefersReducedMotion, uid } from '../core/dom';
 import { tc, translator } from '../core/i18n';
 import { progress } from '../core/progress';
 import { plainText, setRich, tex } from '../core/rich-text';
 import { avatar } from './characters';
 import { conceptMap } from './concept-map';
+import { type PlayModel, renderPlay } from './play';
 import { hasSketch, sketch } from './sketches';
 import type { Block, Bus, ChapterContent, Option, WidgetFactory } from './types';
 
@@ -12,8 +13,11 @@ export interface RenderEnv {
   ns: string;
   content: ChapterContent;
   widgets: Record<string, WidgetFactory>;
+  plays: Record<string, PlayModel>;
   bus: Bus;
   cleanups: (() => void)[];
+  /** set once the chapter's first playable sentence has its "drag me" hint */
+  hinted?: boolean;
 }
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -142,8 +146,23 @@ function renderBlock(b: Block, env: RenderEnv): HTMLElement {
       return quizCard(b.title ?? tc('story.check'), b.items, env);
     case 'cliff':
       return setRich(h('p', { class: 'cliff' }), b.text);
-    case 'callout':
-      return h('div', { class: 'card callout' }, setRich(h('div', { class: 'card-title' }), b.title), setRich(h('p'), b.text));
+    case 'play': {
+      // only the chapter's first playable sentence says "drag me"
+      const hint = !env.hinted ? tc('story.dragHint') : undefined;
+      env.hinted = true;
+      return renderPlay(h('p'), b.id, b.text, env.plays[b.id], { t: translator(env.ns, `plays.${b.id}`), bus: env.bus, cleanups: env.cleanups, hint });
+    }
+    case 'callout': {
+      const id = uid('trip');
+      const box = h(
+        'div',
+        { class: 'side-trip', role: 'note', 'aria-labelledby': id },
+        h('div', { class: 'side-trip-kicker', 'aria-hidden': 'true' }, tc('story.sideTrip')),
+        setRich(h('div', { class: 'side-trip-title', id }), b.title),
+      );
+      for (const inner of b.blocks) box.append(renderBlock(inner, env));
+      return box;
+    }
     case 'map':
       return h('div', { class: 'widget wide' }, conceptMap({ upTo: env.chapter, highlight: env.chapter, compact: true }));
   }

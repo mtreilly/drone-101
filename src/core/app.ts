@@ -368,9 +368,9 @@ async function route(opts: { keepScroll?: boolean } | Event = {}): Promise<void>
 async function showChapter(n: number, sectionId?: string, keepScroll = false): Promise<void> {
   const entry = CHAPTERS[n];
   main.append(h('p', { class: 'page loading', 'aria-live': 'polite' }, tc('app.loading')));
-  const [content, mod] = await Promise.all([loadNamespace(entry.ns) as Promise<unknown>, entry.load()]);
+  const [content, mod, playMod] = await Promise.all([loadNamespace(entry.ns) as Promise<unknown>, entry.load(), entry.plays?.()]);
   const bus = createBus();
-  const page = renderChapter({ chapter: n, ns: entry.ns, content: content as ChapterContent, widgets: mod.widgets, bus, cleanups });
+  const page = renderChapter({ chapter: n, ns: entry.ns, content: content as ChapterContent, widgets: mod.widgets, plays: playMod?.plays ?? {}, bus, cleanups });
   const navEl = h('nav', { class: 'chapter-nav', 'aria-label': tc('nav.chapterNav') });
   const rtl = languageOf(getLang()).dir === 'rtl';
   const backArrow = rtl ? '→' : '←';
@@ -401,6 +401,7 @@ async function showChapter(n: number, sectionId?: string, keepScroll = false): P
     const warm = () => {
       prefetchNamespace(next.ns);
       next.load().catch(() => {});
+      next.plays?.().catch(() => {});
     };
     if ('requestIdleCallback' in window) requestIdleCallback(warm, { timeout: 4000 });
     else setTimeout(warm, 1500);

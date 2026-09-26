@@ -30,7 +30,10 @@ export type Block =
   | { t: 'quiz'; title?: string; items: { id: string; q: string; options: Option[] }[] }
   | { t: 'cliff'; text: string }
   | { t: 'list'; items: string[]; ordered?: boolean }
-  | { t: 'callout'; title: string; text: string }
+  /** a sentence with draggable numbers; `id` names its model in the chapter's `plays` */
+  | { t: 'play'; id: string; text: string }
+  /** an optional "side trip": visible, but quieter than the main path */
+  | { t: 'callout'; title: string; blocks: Block[] }
   | { t: 'map' };
 
 export interface Section {

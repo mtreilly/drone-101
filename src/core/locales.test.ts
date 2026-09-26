@@ -5,7 +5,7 @@ import { LANGUAGES, DEFAULT_LANG } from './languages';
 /**
  * Every translation must mirror English exactly in structure; only the words change.
  * Checked per string: identical maths (ignoring words inside \text{…} and decimal-comma
- * `{,}`), identical {placeholders}, identical colour markers, and untouched control fields.
+ * `{,}`), identical {placeholders}, colour markers and playable numbers, and untouched control fields.
  */
 const ROOT = join(process.cwd(), 'public/locales');
 const FIXED_KEYS = new Set(['t', 'who', 'mood', 'id', 'sketch', 'correct', 'gate', 'wide', 'think', 'aside', 'ordered']);
@@ -23,6 +23,8 @@ const mathOf = (s: string): string[] =>
 const placeholders = (s: string): string[] =>
   (s.replace(/\$[^$]+\$/g, '').replace(/\\text\{[^{}]*\}/g, '').match(/\{\w+\}/g) ?? []).sort();
 const colours = (s: string): string[] => (s.match(/\{(sp|out|err|eff|dis)\|/g) ?? []).sort();
+// playable numbers ({scrub|n}, {calc|v|eff}) are wired to code, so they must survive translation untouched
+const plays = (s: string): string[] => (s.match(/\{(?:scrub|calc)\|[\w|]+\}/g) ?? []).sort();
 const texOf = (s: string): string =>
   s
     .replace(/\\text\{[^{}]*\}/g, '\\text{}')
@@ -67,6 +69,7 @@ function compare(en: unknown, tr: unknown, path: string, key: string, problems: 
   if (JSON.stringify(mathOf(s)) !== JSON.stringify(mathOf(en))) problems.push(`${path}: inline maths changed`);
   if (JSON.stringify(placeholders(s)) !== JSON.stringify(placeholders(en))) problems.push(`${path}: {placeholders} differ`);
   if (JSON.stringify(colours(s)) !== JSON.stringify(colours(en))) problems.push(`${path}: colour markers differ`);
+  if (JSON.stringify(plays(s)) !== JSON.stringify(plays(en))) problems.push(`${path}: playable numbers differ`);
 }
 
 describe('locales mirror English', () => {

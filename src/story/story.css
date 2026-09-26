@@ -638,3 +638,180 @@ html[dir='rtl'] .say.right .bubble::after {
     rotate: -18deg;
   }
 }
+
+/* ---------- playable numbers (drag or arrow-key the number; the sentence recomputes) ---------- */
+.play .scrub,
+.play .calc {
+  font-variant-numeric: tabular-nums;
+  unicode-bidi: isolate;
+  white-space: nowrap;
+}
+.play .scrub {
+  position: relative;
+  display: inline-block;
+  min-width: 1.6ch;
+  padding: 0 4px;
+  text-align: center;
+  font-weight: 700;
+  cursor: ew-resize;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  text-decoration: underline dashed 1.5px;
+  text-underline-offset: 4px;
+  border-radius: 6px;
+  transition:
+    background-color 150ms var(--ease-out),
+    scale 120ms var(--ease-out);
+}
+/* little ‹ › handles appear when the number can be grabbed */
+.play .scrub::before,
+.play .scrub::after {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  font-size: 0.8em;
+  font-weight: 400;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms var(--ease-out);
+}
+.play .scrub::before {
+  content: '‹';
+  inset-inline-end: 100%;
+}
+.play .scrub::after {
+  content: '›';
+  inset-inline-start: 100%;
+}
+.play .scrub:is(:hover, :focus-visible, .active)::before,
+.play .scrub:is(:hover, :focus-visible, .active)::after {
+  opacity: 0.7;
+}
+.play .scrub:is(:hover, .active) {
+  background-color: color-mix(in srgb, currentColor 10%, transparent);
+}
+.play .scrub.active {
+  scale: 0.96;
+}
+.play.scrubbing,
+.play.scrubbing * {
+  cursor: ew-resize;
+}
+.play .calc {
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 0 2px;
+  transition: background-color 150ms var(--ease-out);
+}
+/* while a number is held, what it drives lights up: linked representations in one sentence */
+.play:has(.scrub:is(:hover, :focus-visible, .active)) .calc {
+  background-color: var(--c-highlight);
+}
+@media (forced-colors: active) {
+  .play .scrub {
+    color: LinkText;
+  }
+  .play:has(.scrub:is(:hover, :focus-visible, .active)) .calc {
+    background: Highlight;
+    color: HighlightText;
+  }
+}
+
+/* ---------- side trip: always visible, quieter than the main path ---------- */
+.side-trip {
+  margin-block: 1.4em;
+  margin-inline: 1.25rem 0;
+  padding-block: 0.2em 0.1em;
+  padding-inline: 16px 4px;
+  border-inline-start: 2px dashed var(--ink-3);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+}
+.side-trip-kicker {
+  font-family: var(--font-hand);
+  font-size: 0.95rem;
+  line-height: 1.2;
+  color: var(--ink-3);
+  letter-spacing: 0.02em;
+}
+.side-trip-kicker::before {
+  content: '↪ ';
+}
+html[dir='rtl'] .side-trip-kicker::before {
+  content: '↩ ';
+}
+.side-trip-title {
+  font-family: var(--font-hand);
+  font-size: 1.3rem;
+  line-height: 1.2;
+  color: var(--ink);
+  margin: 0 0 0.25em;
+}
+.side-trip > p,
+.side-trip > ul,
+.side-trip > ol {
+  margin: 0.45em 0;
+}
+.side-trip .math-block {
+  font-size: 1em;
+  margin: 0.2em 0 0.6em;
+}
+@media (max-width: 520px) {
+  .side-trip {
+    margin-inline: 0.25rem 0;
+    padding-inline-start: 12px;
+  }
+}
+@media (prefers-contrast: more) {
+  .side-trip {
+    border-inline-start-style: solid;
+    border-inline-start-color: var(--ink);
+  }
+}
+@media (forced-colors: active) {
+  .side-trip {
+    border-inline-start: 2px dashed CanvasText;
+  }
+}
+.play .scrub {
+  background-color: color-mix(in srgb, currentColor 7%, transparent);
+}
+.scrub-wrap {
+  position: relative;
+  display: inline-block;
+}
+/* a pencilled "drag me" above the first number, until the reader has tried one */
+.play-hint {
+  position: absolute;
+  bottom: calc(100% + 2px);
+  inset-inline-start: 50%;
+  translate: -50% 0;
+  rotate: -5deg;
+  font-family: var(--font-hand);
+  font-size: 0.85rem;
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--ink-3);
+  pointer-events: none;
+  transition: opacity 250ms var(--ease-out);
+}
+html[dir='rtl'] .play-hint {
+  translate: 50% 0;
+  rotate: 5deg;
+}
+.play-hint::before {
+  content: '↔ ';
+}
+.play-hint.gone {
+  opacity: 0;
+}
+
+.math-punct {
+  white-space: nowrap;
+}
+/* the sentence with the "drag me" hint keeps room above it, so the hint never touches the line before */
+.play.has-hint {
+  padding-top: 0.8em;
+}

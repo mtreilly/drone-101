@@ -40,15 +40,29 @@ const COLOR_CLASS: Record<string, string> = {
 /**
  * Inline markup used in the locale files:
  *   $…$ inline maths · **bold** · *italic* · ==highlight== · {out|coloured text} · [text](#/ch/3)
+ *   {scrub|n} / {calc|n} playable numbers (see story/play.ts), {scrub|k|eff} coloured
  * Everything else is escaped.
  */
 export function rich(src: string): string {
   const parts = src.split(/(\$[^$]+\$)/g);
   return parts
-    .map((part) => {
-      if (part.length > 2 && part.startsWith('$') && part.endsWith('$')) return tex(part.slice(1, -1));
-      // keep numbers and their units together on one line ("38 °C", "0,245 m", "2.5 s")
-      let out = escapeHtml(part).replace(/(\d) (°C|°|%|m\/s|m|s|N·s\/m|N\/m|N|kg|rad\/s|Hz|cm|min)(?![\p{L}])/gu, '$1\u00a0$2');
+    .map((part, i) => {
+      if (part.length > 2 && part.startsWith('$') && part.endsWith('$')) {
+        // punctuation right after a formula stays with it instead of starting the next line
+        const punct = /^[.,;:!?)。，、；：！？]+/.exec(parts[i + 1] ?? '')?.[0];
+        if (!punct) return tex(part.slice(1, -1));
+        parts[i + 1] = parts[i + 1].slice(punct.length);
+        return `<span class="math-punct">${tex(part.slice(1, -1))}${escapeHtml(punct)}</span>`;
+      }
+      let out = escapeHtml(part)
+        // playable numbers: {scrub|name} inputs and {calc|name} outputs, optionally coloured
+        .replace(/\{(scrub|calc)\|(\w+)(?:\|(sp|out|err|eff|dis))?\}/g, (_m, kind: string, name: string, col?: string) =>
+          `<span data-${kind}="${name}" class="${kind}${col ? ` ${COLOR_CLASS[col]}` : ''}" dir="ltr"></span>`,
+        )
+        // keep short arithmetic ("1.41 × 1.41 ≈ 2") on one line
+        .replace(/(\d) ([×÷=≈]) (?=[\d√−-])/g, '$1\u00a0$2\u00a0')
+        // keep numbers and their units together on one line ("38 °C", "0,245 m", "2.5 s")
+        .replace(/(\d|(?:scrub|calc)[^"]*" dir="ltr"><\/span>) (°C|°|%|m\/s|m|s|N·s\/m|N\/m|N|kg|rad\/s|Hz|cm|min)(?![\p{L}])/gu, '$1\u00a0$2');
       out = out.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
       out = out.replace(/(^|[^*])\*(?!\s)(.+?)\*/g, '$1<em>$2</em>');
       out = out.replace(/==(.+?)==/g, '<mark>$1</mark>');
