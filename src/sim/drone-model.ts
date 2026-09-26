@@ -33,6 +33,9 @@ export const DRONE: DroneParams = {
 
 export const HOVER_THRUST = DRONE.m * DRONE.g;
 
+/** Landing faster than this (m/s, downwards) is a crash. */
+export const CRASH_SPEED = 1.5;
+
 export interface PID {
   kp: number;
   ki: number;
@@ -110,7 +113,10 @@ export class DroneSim {
   x = new Float64Array(5);
   /** values from the most recent derivative evaluation at the start of a step */
   thrust = 0;
+  /** what the motors are told: the controller's request, clipped to [tMin, tMax] when `saturate` */
   command = 0;
+  /** what the controller asked for, before any clipping (equals `command` without limits) */
+  request = 0;
   error = 0;
   measured = 0;
   crashed = false;
@@ -159,11 +165,12 @@ export class DroneSim {
   }
 
   /** Controller output (before motor lag) for a given state. */
-  private controller(t: number, x: Float64Array): { cmd: number; e: number; hm: number; sat: -1 | 0 | 1 } {
+  private controller(t: number, x: Float64Array): { cmd: number; req: number; e: number; hm: number; sat: -1 | 0 | 1 } {
     const { cfg } = this;
     const p = cfg.params;
     if (cfg.mode === 'open') {
-      return { cmd: cfg.openThrust(t), e: cfg.setpoint(t) - x[H], hm: x[H], sat: 0 };
+      const u = cfg.openThrust(t);
+      return { cmd: u, req: u, e: cfg.setpoint(t) - x[H], hm: x[H], sat: 0 };
     }
     const pid = cfg.pid;
     const hm = x[H] + this.noise;
@@ -177,7 +184,8 @@ export class DroneSim {
       // ideal derivative from the true vertical speed (setpoint changes produce no kick)
       d = -x[V];
     }
-    let cmd = pid.ff + pid.kp * e + pid.ki * x[I] + pid.kd * d;
+    const req = pid.ff + pid.kp * e + pid.ki * x[I] + pid.kd * d;
+    let cmd = req;
     let sat: -1 | 0 | 1 = 0;
     if (p.saturate) {
       if (cmd > p.tMax) {
@@ -188,7 +196,7 @@ export class DroneSim {
         sat = -1;
       }
     }
-    return { cmd, e, hm, sat };
+    return { cmd, req, e, hm, sat };
   }
 
   private deriv(t: number, x: Float64Array, dx: Float64Array): void {
@@ -215,12 +223,18 @@ export class DroneSim {
   }
 
   private sampleOutputs(): void {
-    const { cmd, hm } = this.controller(this.t, this.x);
+    const { cmd, req, hm } = this.controller(this.t, this.x);
     const p = this.cfg.params;
     this.command = cmd;
+    this.request = req;
     this.thrust = this.stalled ? 0 : p.motorTau > 0 ? this.x[TM] : cmd;
     this.error = this.cfg.setpoint(this.t) - this.x[H];
     this.measured = hm;
+  }
+
+  /** Recomputes the outputs (thrust, command, request, …) after the state `x` was set by hand. */
+  sync(): void {
+    this.sampleOutputs();
   }
 
   step(): void {
@@ -231,7 +245,7 @@ export class DroneSim {
     this.stepIndex++;
     this.t = this.stepIndex * this.dt;
     if (this.x[H] < 0) {
-      if (this.x[V] < -1.5) this.crashed = true;
+      if (this.x[V] < -CRASH_SPEED) this.crashed = true;
       this.x[H] = 0;
       this.x[V] = 0;
     }

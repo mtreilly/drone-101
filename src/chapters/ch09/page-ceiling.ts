@@ -1,5 +1,5 @@
 import { DroneSim, type DroneConfig } from '../../sim/drone-model';
-import type { Trace } from './pid-tools';
+import { emptyTrace, sampleTrace, type Trace } from './pid-tools';
 
 export interface CeilingTrace extends Trace {
   /** when the drone first touched the ceiling, s; null if it never did */
@@ -16,17 +16,8 @@ export interface CeilingTrace extends Trace {
  */
 export function runUnderCeiling(cfg: DroneConfig, T: number, ceiling: number | null, every = 10): CeilingTrace {
   const sim = new DroneSim({ ...cfg, ceiling: ceiling === null ? undefined : { h: ceiling, stall: false } });
-  const tr: CeilingTrace = { t: [], h: [], thrust: [], integral: [], r: [], wind: [], pkg: [], measured: [], crashed: false, hitAt: null, hits: 0 };
-  const sample = () => {
-    tr.t.push(sim.t);
-    tr.h.push(sim.h);
-    tr.thrust.push(sim.thrust);
-    tr.integral.push(sim.integral);
-    tr.r.push(cfg.setpoint(sim.t));
-    tr.wind.push(cfg.wind(sim.t));
-    tr.pkg.push(cfg.extraMass(sim.t));
-    tr.measured.push(sim.measured);
-  };
+  const tr: CeilingTrace = { ...emptyTrace(), hitAt: null, hits: 0 };
+  const sample = () => sampleTrace(sim, tr);
   sample();
   const n = Math.round(T / sim.dt);
   let touching = false;

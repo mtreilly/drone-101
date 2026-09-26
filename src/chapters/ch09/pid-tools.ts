@@ -20,7 +20,15 @@ export const pid = (kp: number, ki: number, kd: number, over: Partial<PID> = {})
 export interface Trace {
   t: number[];
   h: number[];
+  /** thrust the propellers deliver (after the clip and the motor lag), N */
   thrust: number[];
+  /**
+   * what the motors are told: the controller's request clipped to the motor limits (0–20 N with
+   * `LIMITED`), before the motor lag. Chapter 11's "asked for" line; equals `request` without limits.
+   */
+  command: number[];
+  /** what the controller asked for, unclipped (can be 400 N or negative), N. Chapter 9's "D asks for". */
+  request: number[];
   integral: number[];
   r: number[];
   wind: number[];
@@ -29,20 +37,29 @@ export interface Trace {
   crashed: boolean;
 }
 
+/** A trace with nothing in it yet (fill it with `sampleTrace`). */
+export const emptyTrace = (): Trace => ({ t: [], h: [], thrust: [], command: [], request: [], integral: [], r: [], wind: [], pkg: [], measured: [], crashed: false });
+
+/** Appends the sim's current state to `tr` (every trace in the course is sampled the same way). */
+export function sampleTrace(sim: DroneSim, tr: Trace): void {
+  const { cfg } = sim;
+  tr.t.push(sim.t);
+  tr.h.push(sim.h);
+  tr.thrust.push(sim.thrust);
+  tr.command.push(sim.command);
+  tr.request.push(sim.request);
+  tr.integral.push(sim.integral);
+  tr.r.push(cfg.setpoint(sim.t));
+  tr.wind.push(cfg.wind(sim.t));
+  tr.pkg.push(cfg.extraMass(sim.t));
+  tr.measured.push(sim.measured);
+}
+
 /** Runs a drone configuration for `T` seconds and samples every `every` ms. */
 export function runDrone(cfg: DroneConfig, T: number, every = 10): Trace {
   const sim = new DroneSim(cfg);
-  const tr: Trace = { t: [], h: [], thrust: [], integral: [], r: [], wind: [], pkg: [], measured: [], crashed: false };
-  const sample = () => {
-    tr.t.push(sim.t);
-    tr.h.push(sim.h);
-    tr.thrust.push(sim.thrust);
-    tr.integral.push(sim.integral);
-    tr.r.push(cfg.setpoint(sim.t));
-    tr.wind.push(cfg.wind(sim.t));
-    tr.pkg.push(cfg.extraMass(sim.t));
-    tr.measured.push(sim.measured);
-  };
+  const tr = emptyTrace();
+  const sample = () => sampleTrace(sim, tr);
   sample();
   sim.advance(T, sample, every);
   tr.crashed = sim.crashed;
@@ -118,17 +135,9 @@ export function hoverStep(p: PID, r0: number, r1: number, T: number, noiseStd = 
   // derivative filter starts settled on its input (the error, or the measurement)
   sim.x[3] = p.dOnMeasurement ? sim.x[0] : r0 - sim.x[0];
   sim.x[4] = MG;
-  const tr: Trace = { t: [], h: [], thrust: [], integral: [], r: [], wind: [], pkg: [], measured: [], crashed: false };
-  const sample = () => {
-    tr.t.push(sim.t);
-    tr.h.push(sim.h);
-    tr.thrust.push(sim.thrust);
-    tr.integral.push(sim.integral);
-    tr.r.push(cfg.setpoint(sim.t));
-    tr.wind.push(0);
-    tr.pkg.push(0);
-    tr.measured.push(sim.measured);
-  };
+  sim.sync();
+  const tr = emptyTrace();
+  const sample = () => sampleTrace(sim, tr);
   sample();
   sim.advance(T, sample, 10);
   return tr;

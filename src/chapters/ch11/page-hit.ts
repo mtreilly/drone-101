@@ -1,6 +1,6 @@
 import { DroneSim, type DroneConfig, type PID } from '../../sim/drone-model';
 import type { DroneView } from '../../ui/drone-view';
-import type { Trace } from '../ch09/pid-tools';
+import { emptyTrace, sampleTrace } from '../ch09/pid-tools';
 import { MISSION, missionConfig, type MissionTrace } from './mission';
 
 /**
@@ -11,24 +11,15 @@ import { MISSION, missionConfig, type MissionTrace } from './mission';
  */
 export const withCeiling = (cfg: DroneConfig, h: number | null): DroneConfig => (h === null ? cfg : { ...cfg, ceiling: { h, stall: true } });
 
-/** Samples a mission sim exactly like `runDrone` (every 10 ms), so the live flight and "Fly instantly" match. */
-export function sample(sim: DroneSim, tr: Trace): void {
-  tr.t.push(sim.t);
-  tr.h.push(sim.h);
-  tr.thrust.push(sim.thrust);
-  tr.integral.push(sim.integral);
-  tr.r.push(sim.cfg.setpoint(sim.t));
-  tr.wind.push(sim.cfg.wind(sim.t));
-  tr.pkg.push(sim.cfg.extraMass(sim.t));
-  tr.measured.push(sim.measured);
-}
-
-/** The whole mission under a ceiling (`null` = open sky), plus the finished sim (`ceilingAt` says whether it hit). */
+/**
+ * The whole mission under a ceiling (`null` = open sky), sampled every 10 ms exactly like `runDrone`
+ * (so the live flight and "Fly instantly" match), plus the finished sim (`ceilingAt` says whether it hit).
+ */
 export function flyMission(p: PID, ceiling: number | null, seed = 7): { tr: MissionTrace; sim: DroneSim } {
   const sim = new DroneSim(withCeiling(missionConfig(p, seed), ceiling));
-  const tr: MissionTrace = { t: [], h: [], thrust: [], integral: [], r: [], wind: [], pkg: [], measured: [], crashed: false };
-  sample(sim, tr);
-  sim.advance(MISSION.duration, () => sample(sim, tr), 10);
+  const tr: MissionTrace = emptyTrace();
+  sampleTrace(sim, tr);
+  sim.advance(MISSION.duration, () => sampleTrace(sim, tr), 10);
   tr.crashed = sim.crashed;
   if (sim.stalled) tr.stalledAt = sim.ceilingAt;
   return { tr, sim };

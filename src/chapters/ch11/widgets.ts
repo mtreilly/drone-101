@@ -10,7 +10,7 @@ import { Loop } from '../../ui/loop';
 import { Plot } from '../../ui/plot';
 import { SPlane } from '../../ui/s-plane';
 import '../ch09/ch09.css';
-import { pid } from '../ch09/pid-tools';
+import { emptyTrace, pid } from '../ch09/pid-tools';
 import { starRow } from '../ch09/stars';
 import { CRITERIA, LIMITS, MISSION, evaluate, missionConfig, missionPoles, type MissionResult, type MissionTrace } from './mission';
 import { flyMission, pageCeiling, withCeiling } from './page-hit';
@@ -28,8 +28,6 @@ interface Best {
   dTau: number;
   dOnMeasurement: boolean;
 }
-
-const emptyTrace = (): MissionTrace => ({ t: [], h: [], thrust: [], integral: [], r: [], wind: [], pkg: [], measured: [], crashed: false });
 
 /** The final mission sandbox. */
 const mission: WidgetFactory = (host, ctx) => {
@@ -108,7 +106,7 @@ const mission: WidgetFactory = (host, ctx) => {
 
   // live simulation
   let sim = new DroneSim(missionConfig(gains()));
-  let tr = emptyTrace();
+  let tr: MissionTrace = emptyTrace();
   let acc = 0;
   let finished = false;
   let lastPhase = '';
