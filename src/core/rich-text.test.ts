@@ -15,5 +15,16 @@ describe('texToPlain', () => {
     ['1{,}5\\,\\text{s}', '1,5 s'],
     ['G_{\\circ}(s)', 'G∘(s)'],
     ['\\left( a \\right)', '( a )'],
+    ['\\frac{1}{s^{2}}', '1/(s²)'],
+    ['\\frac{\\frac{1}{s}}{1+\\frac{1}{s}}', '(1/s)/(1+1/s)'],
+    ['\\tfrac{1}{\\omega}', '1/ω'],
+    ['\\dfrac{a}{b}', 'a/b'],
+    ['x > 0 \\Rightarrow y', 'x > 0 ⇒ y'],
+    ['A \\Longrightarrow B', 'A ⇒ B'],
+    ['\\angle G = -180^\\circ', '∠ G = -180^(∘)'],
+    ['\\dot{h} + \\ddot h', 'ḣ + ḧ'],
+    ['\\underbrace{e^{-st}}_{\\text{probe}}', 'e^(-st) (probe)'],
+    ['\\begin{aligned} a &= 1 \\\\ b &= 2 \\end{aligned}', 'a = 1; b = 2'],
+    ['\\cancel{s}\\,F', 's F'],
   ])('%s → %s', (src, want) => expect(texToPlain(src)).toBe(want));
 });
