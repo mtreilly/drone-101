@@ -1,7 +1,8 @@
 import rough from 'roughjs';
 import { h, prefersReducedMotion } from '../core/dom';
 import { canvasHandFont } from '../core/font';
-import { fmt } from '../core/i18n';
+import { canvasBidi } from '../core/bidi';
+import { fmt, isRtl } from '../core/i18n';
 import { onThemeChange } from '../core/theme';
 import { type ColorKey, color, withAlpha } from './colors';
 import {
@@ -612,14 +613,15 @@ export class Plot {
     ctx.font = canvasHandFont(15);
     ctx.textAlign = 'right';
     ctx.textBaseline = 'bottom';
-    ctx.fillText(x.label, x1, this.hgt - 4);
+    ctx.fillText(canvasBidi(ctx, x.label, isRtl()), x1, this.hgt - 4);
     ctx.save();
     ctx.translate(13, (y0 + y1) / 2);
     ctx.rotate(-Math.PI / 2);
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(y.label, 0, 0);
+    ctx.fillText(canvasBidi(ctx, y.label, isRtl()), 0, 0);
     ctx.restore();
+    ctx.direction = 'ltr';
     this.axesDirty = false;
   }
 
@@ -680,7 +682,8 @@ export class Plot {
           ctx.textBaseline = 'bottom';
           const bx = b.labelAt === 'center' ? (left + right - tw) / 2 : left + 4;
           const by = b.kind === 'h' ? this.py(b.to) - 1 : b.labelAt === 'center' ? PAD.t + fr.h / 2 + px / 2 : PAD.t + 14;
-          ctx.fillText(b.label, bx, by);
+          ctx.fillText(canvasBidi(ctx, b.label, isRtl()), bx, by);
+          ctx.direction = 'ltr';
           boxes.push({ x: bx, y: by - px, w: tw, h: px });
         }
       }
@@ -925,9 +928,11 @@ export class Plot {
       const x = s.align === 'left' ? s.rect.x : s.align === 'right' ? s.rect.x + s.rect.w : s.rect.x + s.rect.w / 2;
       fit.lines.forEach((line, k) => {
         const y = s.rect.y + k * lh;
-        ctx.strokeText(line, x, y);
-        ctx.fillText(line, x, y);
+        const txt = canvasBidi(ctx, line, isRtl());
+        ctx.strokeText(txt, x, y);
+        ctx.fillText(txt, x, y);
       });
+      ctx.direction = 'ltr';
     }
   }
 

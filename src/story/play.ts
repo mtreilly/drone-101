@@ -1,7 +1,8 @@
 import { clamp, h } from '../core/dom';
-import { fmt, type T, tc } from '../core/i18n';
+import { fmt, type T, tc, unitLabel } from '../core/i18n';
 import { progress } from '../core/progress';
-import { plainText, setRich } from '../core/rich-text';
+import { valueDir } from '../core/bidi';
+import { glueUnits, plainText, setRich } from '../core/rich-text';
 import type { Bus } from './types';
 
 /**
@@ -102,6 +103,7 @@ const HINT_KEY = 'play-hint-seen';
 export function renderPlay(el: HTMLElement, id: string, text: string, model: PlayModel | undefined, env: PlayEnv): HTMLElement {
   setRich(el, text);
   el.classList.add('play');
+  el.dataset.play = id;
   if (!model) {
     console.error(`Missing play model: ${id}`);
     return el;
@@ -128,8 +130,12 @@ export function renderPlay(el: HTMLElement, id: string, text: string, model: Pla
   const render = () => {
     for (const o of outs) {
       const fn = model.outputs[o.dataset.calc!];
-      const txt = fn ? fn(values, env.t, tc) : '⟦?⟧';
-      if (o.textContent !== txt) o.textContent = txt;
+      const txt = fn ? glueUnits(fn(values, env.t, tc)) : '⟦?⟧';
+      if (o.textContent === txt) continue;
+      o.textContent = txt;
+      // a number reads left to right; a verdict in words takes its own direction and may wrap
+      o.dir = valueDir(txt);
+      o.classList.toggle('words', /\p{L}\p{L}/u.test(txt));
     }
     for (const sEl of scrubs) {
       const k = sEl.dataset.scrub!;
@@ -138,7 +144,7 @@ export function renderPlay(el: HTMLElement, id: string, text: string, model: Pla
       const shown = formatInput(inp, values[k]);
       sEl.textContent = shown;
       sEl.setAttribute('aria-valuenow', String(values[k]));
-      sEl.setAttribute('aria-valuetext', inp.unit ? `${shown} ${inp.unit}` : shown);
+      sEl.setAttribute('aria-valuetext', inp.unit ? `${shown} ${unitLabel(inp.unit)}` : shown);
     }
   };
 

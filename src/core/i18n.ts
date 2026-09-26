@@ -1,3 +1,4 @@
+import { isolateRuns } from './bidi';
 import { DEFAULT_LANG, isSupported, languageOf, matchLanguage } from './languages';
 
 /**
@@ -17,6 +18,9 @@ let lang = detectLang();
 const listeners = new Set<(lang: string) => void>();
 
 export const getLang = (): string => lang;
+
+/** The current language is written right to left (Arabic). */
+export const isRtl = (): boolean => languageOf(lang).dir === 'rtl';
 
 /** ?lang= in the URL, then the saved choice, then the browser's preferences, then English. */
 function detectLang(): string {
@@ -128,13 +132,20 @@ export function translator(ns: string, prefix = ''): T {
       if (import.meta.env.DEV) console.warn(`[i18n] missing ${lang}/${ns}:${path}`);
       return `⟦${key}⟧`;
     }
-    return interpolate(v, vars);
+    // right-to-left text: each little expression ("σ = −0.50", "× 1.4") becomes one LTR isolate
+    return isRtl() ? isolateRuns(interpolate(v, vars)) : interpolate(v, vars);
   };
 }
 
 /** Raw (possibly structured) value, for arrays of strings etc. */
 export function raw<V = unknown>(ns: string, key: string): V | undefined {
   return find(ns, key) as V | undefined;
+}
+
+/** A unit as the language writes it ("N/m" → "نيوتن/م" in Arabic); unknown units stay as given. */
+export function unitLabel(unit: string): string {
+  const v = find('common', `units.${unit}`);
+  return typeof v === 'string' ? v : unit;
 }
 
 /** Locale-aware number formatting and a true minus sign. */

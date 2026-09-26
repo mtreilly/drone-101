@@ -1,6 +1,7 @@
 import rough from 'roughjs';
 import { h, s, prefersReducedMotion } from '../core/dom';
-import { fmt, tc } from '../core/i18n';
+import { inLtrBox } from '../core/bidi';
+import { fmt, tc, unitLabel } from '../core/i18n';
 import { ceilingHit, docBox, impactBurst, pageSolids, wobble, type Box } from './page-physics';
 
 export interface DroneViewOptions {
@@ -141,7 +142,7 @@ export class DroneView {
         const y = this.y(m);
         const major = Number.isInteger(m);
         scale.append(s('line', { x1: 38, x2: major ? 50 : 45, y1: y, y2: y, stroke: 'var(--ink-3)', 'stroke-width': 1.2 }));
-        if (major) scale.append(this.text(s('text', { x: 33, y: y + 5, 'text-anchor': 'end', 'font-size': 15, fill: 'var(--ink-3)' }, `${m} m`), 15));
+        if (major) scale.append(this.text(s('text', { x: 33, y: y + 5, 'text-anchor': 'end', 'font-size': 15, fill: 'var(--ink-3)' }, inLtrBox(`${m} ${unitLabel('m')}`)), 15));
       }
       scale.append(s('line', { x1: 38, x2: 38, y1: this.y(this.hMax), y2: GROUND, stroke: 'var(--ink-3)', 'stroke-width': 1.2 }));
     }
@@ -239,7 +240,7 @@ export class DroneView {
       const y1 = y0 - len;
       const dir = len > 0 ? 1 : -1;
       this.thrustArrow.setAttribute('d', `M${x} ${y0} L${x} ${y1} M${x - 6} ${y1 + 8 * dir} L${x} ${y1} L${x + 6} ${y1 + 8 * dir}`);
-      this.thrustLabel.textContent = `${fmt(T, 1)} N`;
+      this.thrustLabel.textContent = inLtrBox(`${fmt(T, 1)} ${unitLabel('N')}`);
       this.placeThrustLabel(gy, y0, y1, st.r);
       this.thrustArrow.style.display = this.thrustLabel.style.display = '';
       thrustBox = this.thrustBoxes(gy, y0, y1);
@@ -254,10 +255,7 @@ export class DroneView {
     this.pkgG.setAttribute('transform', hangRoom < 52 ? `translate(-50, ${hangRoom - 50})` : '');
     this.drawWind(st.wind ?? 0, this.y(hClamped));
     this.crash.setAttribute('opacity', st.crashed ? '1' : '0');
-    const height = `${fmt(Math.max(0, st.h), 2)} m`;
-    this.readout.textContent = document.documentElement.dir === 'rtl'
-      ? `\u2067${tc('drone.height')}\u2069: \u2066${height}\u2069`
-      : `${tc('drone.height')}: ${height}`;
+    this.readout.textContent = inLtrBox(`${tc('drone.height')}: ${fmt(Math.max(0, st.h), 2)} ${unitLabel('m')}`);
     if (this.o.showSensor && st.measured !== undefined) {
       this.sensor.setAttribute('opacity', '1');
       this.sensor.setAttribute('cy', String(this.y(st.measured) - 6));

@@ -1,4 +1,6 @@
 import katex from 'katex';
+import { BIDI_MARKS, markRuns } from './bidi';
+import { isRtl } from './i18n';
 
 /**
  * KaTeX macros for the colour language, so equations match the plots:
@@ -44,8 +46,10 @@ const COLOR_CLASS: Record<string, string> = {
  * Everything else is escaped.
  */
 export function rich(src: string): string {
+  // right-to-left text: every little expression ("$K_p$ = 20", "−0.2", "× 1.4") is one LTR run
+  src = isRtl() ? markRuns(src, RUN_MARKS) : src.replace(BIDI_MARKS, '');
   const parts = src.split(/(\$[^$]+\$)/g);
-  return parts
+  const html = parts
     .map((part, i) => {
       if (part.length > 2 && part.startsWith('$') && part.endsWith('$')) {
         // punctuation right after a formula stays with it instead of starting the next line
@@ -57,12 +61,12 @@ export function rich(src: string): string {
       let out = escapeHtml(part)
         // playable numbers: {scrub|name} inputs and {calc|name} outputs, optionally coloured
         .replace(/\{(scrub|calc)\|(\w+)(?:\|(sp|out|err|eff|dis))?\}/g, (_m, kind: string, name: string, col?: string) =>
-          `<span data-${kind}="${name}" class="${kind}${col ? ` ${COLOR_CLASS[col]}` : ''}" dir="ltr"></span>`,
+          `<span data-${kind}="${name}" class="${kind}${col ? ` ${COLOR_CLASS[col]}` : ''}"${kind === 'scrub' ? ' dir="ltr"' : ''}></span>`,
         )
         // keep short arithmetic ("1.41 × 1.41 ≈ 2") on one line
         .replace(/(\d) ([×÷=≈]) (?=[\d√−-])/g, '$1\u00a0$2\u00a0')
         // keep numbers and their units together on one line ("38 °C", "0,245 m", "2.5 s")
-        .replace(/(\d|(?:scrub|calc)[^"]*" dir="ltr"><\/span>) (°C|°|%|m\/s|m|s|N·s\/m|N\/m|N|kg|rad\/s|Hz|cm|min)(?![\p{L}])/gu, '$1\u00a0$2');
+        .replace(/(\d|(?:scrub|calc)[^>]*><\/span>) (°C|°|%|m\/s|m|s|N·s\/m|N\/m|N|kg|rad\/s|Hz|cm|min)(?![\p{L}])/gu, '$1\u00a0$2');
       out = out.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
       out = out.replace(/(^|[^*])\*(?!\s)(.+?)\*/g, '$1<em>$2</em>');
       out = out.replace(/==(.+?)==/g, '<mark>$1</mark>');
@@ -71,7 +75,21 @@ export function rich(src: string): string {
       return out;
     })
     .join('');
+  return html
+    .replace(/\uE010([^\uE010\uE011]*)\uE011([.,;:!?،؛؟]+)/g, '<span class="math-punct">\uE010$1\uE011$2</span>')
+    .replace(/\uE010/g, '<span class="ltr" dir="ltr">')
+    .replace(/\uE011/g, '</span>');
 }
+
+/** Units that stay on the line of their number ("3.5 s", "0,245 m", "2 سم"). */
+const UNIT = String.raw`(?:°C|°|%|m\/s|m|s|N·s\/m|N\/m|N|kg|rad\/s|Hz|cm|min|سم|م|ث|ثانية|ثوانٍ|نيوتن|راديان)(?![\p{L}])`;
+const NUMBER_UNIT = new RegExp(String.raw`(\d) (?=${UNIT})`, 'gu');
+
+/** Plain text with a no-break space between each number and its unit. */
+export const glueUnits = (s: string): string => s.replace(NUMBER_UNIT, '$1\u00a0');
+
+/** Markers for a left-to-right run inside rich text (turned into `<span dir="ltr">` at the end). */
+const RUN_MARKS = { open: '\uE010', close: '\uE011' };
 
 /** Sets rich content on an element. */
 export function setRich(el: HTMLElement, src: string): HTMLElement {

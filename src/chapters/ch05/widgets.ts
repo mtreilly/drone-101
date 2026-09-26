@@ -77,7 +77,7 @@ const rotate: WidgetFactory = (host, ctx) => {
     anim = requestAnimationFrame(step);
   };
   const btn = (label: string, k: C, key: string) => {
-    const b = h('button', { class: 'btn small', type: 'button' }, label);
+    const b = h('button', { class: 'btn small', type: 'button', dir: 'ltr' }, label);
     b.addEventListener('click', () => {
       if (abs(mul(z, k)) > 6.5 || abs(mul(z, k)) < 0.2) {
         status.textContent = t('tooBig');

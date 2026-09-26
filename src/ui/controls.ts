@@ -1,5 +1,6 @@
+import { isolateRuns, valueDir } from '../core/bidi';
 import { h, uid } from '../core/dom';
-import { fmt, tc } from '../core/i18n';
+import { fmt, isRtl, tc, unitLabel } from '../core/i18n';
 import { plainText, setRich } from '../core/rich-text';
 import type { Loop } from './loop';
 
@@ -33,11 +34,6 @@ export interface Slider {
   setDisabled(d: boolean): void;
 }
 
-/**
- * Numbers with units or operators ("1.00 s", "× 2", "−0.90 ± 2.86i") read left to right even in
- * Arabic; a value written in right-to-left words keeps the page direction.
- */
-export const valueDir = (v: string): 'ltr' | 'rtl' => (/[\u0590-\u08ff]/.test(v) ? 'rtl' : 'ltr');
 
 /** Labelled range slider with a live numeric value and unit. Native input ⇒ keyboard + screen reader support. */
 export function slider(o: SliderOptions): Slider {
@@ -51,10 +47,10 @@ export function slider(o: SliderOptions): Slider {
     step: o.step,
     value: o.value,
   });
-  const text = (v: number) => (o.format ? o.format(v) : `${fmt(v, o.digits ?? decimals(o.step))}${o.unit ? ` ${o.unit}` : ''}`);
+  const text = (v: number) => (o.format ? o.format(v) : `${fmt(v, o.digits ?? decimals(o.step))}${o.unit ? ` ${unitLabel(o.unit)}` : ''}`);
   const sync = () => {
     const v = Number(input.value);
-    out.textContent = text(v);
+    out.textContent = isRtl() ? isolateRuns(text(v)) : text(v);
     out.dir = valueDir(out.textContent);
     input.setAttribute('aria-valuetext', text(v));
     const f = (v - o.min) / (o.max - o.min);
@@ -141,7 +137,8 @@ export function transport(o: TransportOptions): HTMLElement {
       const id = uid('sp');
       const input = h('input', { type: 'radio', name: group, id, value: sp, checked: sp === o.loop.speed });
       input.addEventListener('change', () => (o.loop.speed = sp));
-      return h('span', null, input, h('label', { for: id }, `${fmt(sp, sp < 1 ? 2 : 0)}×`));
+      // "0.25×" reads left to right in every language
+      return h('span', null, input, h('label', { for: id, dir: 'ltr' }, `${fmt(sp, sp < 1 ? 2 : 0)}×`));
     }),
   );
   return h('div', { class: 'transport', role: 'group', 'aria-label': tc('transport.label') }, play, reset, step, speedEl);
@@ -157,12 +154,12 @@ export const ICON = {
 /** Small read-out chip: label + value (e.g. "overshoot 23 %"). */
 export function readout(label: string, colorKey?: string): { el: HTMLElement; set: (v: string, state?: 'good' | 'bad' | '') => void } {
   const val = h('span', { class: 'readout-val' }, '—');
-  const el = h('div', { class: 'readout' }, h('span', { class: 'readout-label' }, label), val);
+  const el = h('div', { class: 'readout' }, h('span', { class: 'readout-label' }, isRtl() ? isolateRuns(label) : label), val);
   if (colorKey) el.style.setProperty('--accent', `var(--c-${cssKey(colorKey)})`);
   return {
     el,
     set(v, state = '') {
-      val.textContent = v;
+      val.textContent = isRtl() ? isolateRuns(v) : v;
       val.dir = valueDir(v);
       el.dataset.state = state;
     },

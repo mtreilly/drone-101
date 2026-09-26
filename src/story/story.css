@@ -676,6 +676,11 @@ html[dir='rtl'] .say.right .bubble::after {
   unicode-bidi: isolate;
   white-space: nowrap;
 }
+/* a verdict in words ("Stable, but only a 25° phase margin") wraps like the sentence around it */
+.play .calc.words {
+  white-space: normal;
+  overflow-wrap: break-word;
+}
 .play .scrub {
   position: relative;
   display: inline-block;

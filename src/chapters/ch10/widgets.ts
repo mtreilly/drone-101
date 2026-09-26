@@ -1,7 +1,7 @@
 import '../ch09/ch09.css';
 import { h } from '../../core/dom';
 import { canvasHandFont } from '../../core/font';
-import { fmt, tc } from '../../core/i18n';
+import { fmt, tc, unitLabel } from '../../core/i18n';
 import { progress } from '../../core/progress';
 import { logspace, loopMargins, sweep, type LoopMargins, type TF } from '../../math/bode';
 import { SHOWER, ShowerSim } from '../../sim/shower-model';
@@ -230,7 +230,7 @@ const bode: WidgetFactory = (host, ctx) => {
     step: BODE_STEP,
     value: v0,
     // each number + unit is its own left-to-right run, so the words around them can read right to left
-    format: (v) => `\u2066${fmt(wFromSlider(v), 2)} rad/s\u2069 (${t('period')} \u2066${fmt((2 * Math.PI) / wFromSlider(v), 1)} s\u2069)`,
+    format: (v) => `${fmt(wFromSlider(v), 2)} ${unitLabel('rad/s')} (${t('period')} ${fmt((2 * Math.PI) / wFromSlider(v), 1)} ${unitLabel('s')})`,
     color: 'eff',
     onInput: (v) => (w = wFromSlider(v)),
     // one measurement per deliberate choice (pointer release, or a pause in arrow presses)
@@ -293,7 +293,7 @@ function marginPlots(host: HTMLElement, t: WidgetCtx['t'], { withGain = true, he
       ]);
       // like the phase plot: the arrow is the margin and carries the only label ("gain margin × 1.40")
       gain.setMarkers(has180 ? [{ x: m.w180, y: 1 / m.gm, color: 'err', clamp: true }] : []);
-      gain.setArrows(has180 ? [{ at: m.w180, from: 1 / m.gm, to: 1, color: 'err', label: `${t('gm')} \u2066× ${fmt(m.gm, 2)}\u2069` }] : []);
+      gain.setArrows(has180 ? [{ at: m.w180, from: 1 / m.gm, to: 1, color: 'err', label: `${t('gm')} × ${fmt(m.gm, 2)}` }] : []);
     }
     phase.clear(fresh);
     phase.set('L', LOOP_WS, pts.map((q) => q.phase));
@@ -304,7 +304,7 @@ function marginPlots(host: HTMLElement, t: WidgetCtx['t'], { withGain = true, he
     // one label for the point and its arrow ("phase margin 22°"): two labels a few pixels apart collide on a phone.
     // Past the cliff there is no margin (the readout shows —), only how far over it the loop is.
     phase.setMarkers(hasCross ? [{ x: m.wc, y: -180 + m.pm, color: 'out', clamp: true }] : []);
-    phase.setArrows(hasCross ? [{ at: m.wc, from: -180 + m.pm, to: -180, color: m.pm > 0 ? 'out' : 'err', label: m.pm > 0 ? `${t('atCross')} \u2066${fmt(m.pm, 0)}°\u2069` : `${fmt(m.pm, 0)}°` }] : []);
+    phase.setArrows(hasCross ? [{ at: m.wc, from: -180 + m.pm, to: -180, color: m.pm > 0 ? 'out' : 'err', label: m.pm > 0 ? `${t('atCross')} ${fmt(m.pm, 0)}°` : `${fmt(m.pm, 0)}°` }] : []);
     return m;
   };
   return { gain, phase, show };

@@ -6,7 +6,7 @@ import { stepMetrics } from '../../math/metrics';
 import { DRONE, DroneSim, defaultDroneConfig } from '../../sim/drone-model';
 import { followPlay } from '../../story/play';
 import type { WidgetFactory } from '../../story/types';
-import { readout, segmented, slider, toggle, valueDir } from '../../ui/controls';
+import { readout, segmented, slider, toggle } from '../../ui/controls';
 import { DroneView } from '../../ui/drone-view';
 import { Loop } from '../../ui/loop';
 import { Plot } from '../../ui/plot';
@@ -37,22 +37,6 @@ import {
 } from './poles';
 
 const { m, c } = DRONE;
-
-/**
- * Readout labels that mix words and a little formula ("يستقر، قاعدة 4/σ", "ωn = |p|"): each formula
- * stays one left-to-right run, so right-to-left text never turns 4/σ into σ/4.
- */
-function isolateLabels(root: HTMLElement): void {
-  root.querySelectorAll<HTMLElement>('.readout-label').forEach((l) => {
-    const txt = l.textContent ?? '';
-    if (!/[/=|]/.test(txt)) return;
-    // each formula-ish token ("4/σ") is one unbreakable left-to-right run
-    const parts = txt.split(/([^\s\u0590-\u08ff()،,（）、，]*[/=|][^\s\u0590-\u08ff()،,（）、，]*)/);
-    const nodes = parts.map((part, i) => (i % 2 ? h('bdi', { dir: 'ltr', class: 'label-math' }, part) : part));
-    // a label with no right-to-left letters at all ("ωn = |p|") is left-to-right as a whole
-    l.replaceChildren(...(valueDir(txt) === 'ltr' ? [h('bdi', { dir: 'ltr' }, ...nodes)] : nodes));
-  });
-}
 
 /** 8a — G(s) maps setpoint changes to height changes around the 1 m hover. */
 const recipe: WidgetFactory = (host, ctx) => {
@@ -314,7 +298,6 @@ const playground: WidgetFactory = (host, ctx) => {
     status.className = 'w-status bad';
     plot.describe(status.textContent);
   }
-  isolateLabels(host);
   const loop = new Loop((dt) => {
     if (fall) {
       fall.carry += dt;
@@ -598,7 +581,6 @@ const limit: WidgetFactory = (host, ctx) => {
   const sl = slider({ label: t('sigma'), min: 1, max: 8, step: 0.5, value: sig, unit: '', format: (v) => `−${fmt(v, 1)} ± ${fmt(v, 1)}i`, onInput: (v) => ((sig = v), update()) });
   const tg = toggle(t('toggle'), real, (v) => ((real = v), update()));
   host.append(h('div', { class: 'w-controls limit-controls' }, sl.el, tg.el), h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rPeak.el, rTsI.el, rTsR.el, rOsR.el)), status);
-  isolateLabels(host);
   update();
 };
 
