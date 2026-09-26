@@ -33,7 +33,7 @@ is up to 46 % optimistic at ζ = 1; more Kd makes noise-driven chatter *worse*; 
 pole" of a PI loop does not make the step slow). The chapter tests to add are listed with their
 expected values, so an implementer can copy them into `chNN.test.ts`.
 
-**Where the evidence lives** (`$SCRATCH` =
+**Where the evidence lives** (copied from the review session into the gitignored `scratch/ch07-11-evidence/`; original `$SCRATCH` =
 `/private/tmp/claude-501/-Users-micheal-Development-animations/ad47549a-62e8-48b3-821f-378548ccb79c/scratchpad`):
 
 | What | Path |
