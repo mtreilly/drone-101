@@ -148,6 +148,10 @@ html[dir='rtl'] .plot-legend-item {
   background: linear-gradient(to right, var(--accent) var(--fill, 50%), var(--paper-3) var(--fill, 50%));
   border: 1px solid color-mix(in srgb, var(--ink) 25%, transparent);
 }
+/* right to left the thumb starts at the right, so the fill grows from the right too */
+.slider input[type='range']:dir(rtl)::-webkit-slider-runnable-track {
+  background: linear-gradient(to left, var(--accent) var(--fill, 50%), var(--paper-3) var(--fill, 50%));
+}
 .slider input[type='range']::-moz-range-track {
   height: 6px;
   border-radius: 3px;
