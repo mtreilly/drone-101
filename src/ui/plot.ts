@@ -594,6 +594,17 @@ export class Plot {
     }
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
+    // y ticks stay clear of the rotated axis name: wider digits (CJK fonts) get a smaller size
+    const yLabelRight = 13 + 15 * 0.62;
+    const widest = (px: number) => {
+      ctx.font = canvasHandFont(px);
+      return Math.max(0, ...yt.map((t) => ctx.measureText(tickLabel(t, y)).width));
+    };
+    let tickPx = 14;
+    while (tickPx > 11 && x0 - 7 - widest(tickPx) < yLabelRight + 2) tickPx--;
+    // if the ticks are still too wide, the axis name moves a little further left
+    const yNameX = Math.max(8, Math.min(13, x0 - 7 - widest(tickPx) - 2 - 15 * 0.62));
+    ctx.font = canvasHandFont(tickPx);
     for (const t of yt) {
       const Y = this.py(t);
       if (Y > y0 + 0.5 || Y < y1 - 0.5) continue;
@@ -615,7 +626,7 @@ export class Plot {
     ctx.textBaseline = 'bottom';
     ctx.fillText(canvasBidi(ctx, x.label, isRtl()), x1, this.hgt - 4);
     ctx.save();
-    ctx.translate(13, (y0 + y1) / 2);
+    ctx.translate(yNameX, (y0 + y1) / 2);
     ctx.rotate(-Math.PI / 2);
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
