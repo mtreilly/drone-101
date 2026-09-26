@@ -124,9 +124,11 @@ export class SPlane {
 
   constructor(host: HTMLElement, public o: SPlaneOptions) {
     this.H = Math.round((W * 2 * o.imMax) / (o.reMax - o.reMin));
+    // physical coordinates: text anchors stay left-to-right even in Arabic UI (as in DroneView)
     this.svg = s('svg', {
       viewBox: `0 0 ${W} ${this.H}`,
       class: 's-plane',
+      direction: 'ltr',
       role: 'group',
       'aria-label': o.label,
     });
