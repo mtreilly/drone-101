@@ -100,7 +100,7 @@ export function renderPlay(el: HTMLElement, id: string, text: string, model: Pla
   el.append(live);
   const sentence = () => {
     const clone = el.cloneNode(true) as HTMLElement;
-    clone.querySelector('[aria-live]')?.remove();
+    clone.querySelectorAll('[aria-live], [aria-hidden="true"]').forEach((n) => n.remove());
     return plainText(clone);
   };
   let timer = 0;

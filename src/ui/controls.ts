@@ -28,6 +28,12 @@ export interface Slider {
   setDisabled(d: boolean): void;
 }
 
+/**
+ * Numbers with units or operators ("1.00 s", "× 2", "−0.90 ± 2.86i") read left to right even in
+ * Arabic; a value written in right-to-left words keeps the page direction.
+ */
+export const valueDir = (v: string): 'ltr' | 'rtl' => (/[\u0590-\u08ff]/.test(v) ? 'rtl' : 'ltr');
+
 /** Labelled range slider with a live numeric value and unit. Native input ⇒ keyboard + screen reader support. */
 export function slider(o: SliderOptions): Slider {
   const id = uid('sl');
@@ -44,6 +50,7 @@ export function slider(o: SliderOptions): Slider {
   const sync = () => {
     const v = Number(input.value);
     out.textContent = text(v);
+    out.dir = valueDir(out.textContent);
     input.setAttribute('aria-valuetext', text(v));
     const f = (v - o.min) / (o.max - o.min);
     input.style.setProperty('--fill', `${f * 100}%`);
@@ -150,6 +157,7 @@ export function readout(label: string, colorKey?: string): { el: HTMLElement; se
     el,
     set(v, state = '') {
       val.textContent = v;
+      val.dir = valueDir(v);
       el.dataset.state = state;
     },
   };
@@ -176,7 +184,7 @@ export function segmented<V extends string>(
         const input = h('input', { type: 'radio', name, id, value: o.value, checked: o.value === value });
         inputs.push(input);
         input.addEventListener('change', () => onChange(o.value));
-        const lab = h('label', { for: id });
+        const lab = h('label', { for: id, dir: 'auto' });
         setRich(lab, o.label);
         if (lab.querySelector('.katex')) input.setAttribute('aria-label', plainText(lab));
         return h('span', null, input, lab);

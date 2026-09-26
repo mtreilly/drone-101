@@ -160,7 +160,11 @@ function renderBlock(b: Block, env: RenderEnv): HTMLElement {
         h('div', { class: 'side-trip-kicker', 'aria-hidden': 'true' }, tc('story.sideTrip')),
         setRich(h('div', { class: 'side-trip-title', id }), b.title),
       );
+      // the "drag me" hint belongs on the main path, never inside a side trip
+      const hinted = env.hinted;
+      env.hinted = true;
       for (const inner of b.blocks) box.append(renderBlock(inner, env));
+      env.hinted = hinted;
       return box;
     }
     case 'map':
