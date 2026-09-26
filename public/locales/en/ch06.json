@@ -44,6 +44,18 @@
           "tex": "m\\,\\ddot{x} = -\\eff{k}\\,x - c\\,\\dot{x} \\quad\\Longrightarrow\\quad m\\,\\ddot{x} + c\\,\\dot{x} + \\eff{k}\\,x = 0"
         },
         {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "So the damper is basically air that hates speed?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Pretty much. And for our drone, the damper *is* the air."
+        },
+        {
           "t": "p",
           "text": "In the widget, the {eff|orange arrow} on the mass is the spring's pull and the grey one is the damper's push. Watch how the damper's arrow vanishes whenever the mass stops for an instant at the top or bottom of a swing."
         },
@@ -124,8 +136,20 @@
           "text": "With k = {scrub|k|eff} N/m and m = 0.5 kg, $\\omega_n$ ≈ {calc|wn} rad/s: one full swing every {calc|period} s."
         },
         {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Stiffer spring, faster swing. So I just crank $\\eff{k}$ and everything gets better!"
+        },
+        {
           "t": "p",
           "text": "A stiffer spring pulls harder, so it swings faster. A heavier mass is harder to shove around, so it swings slower. (Radians per second is Chapter 5's spinning speed: one full turn is 2π radians.)"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Careful. In Chapter 2, cranking $\\eff{K_p}$ made the drone faster *and* bouncier. Let's hear what the damper has to say first."
         },
         {
           "t": "h3",
@@ -147,6 +171,18 @@
           "t": "play",
           "id": "zeta",
           "text": "With c = {scrub|c} N·s/m on a k = 20 N/m spring, $c_{\\text{crit}}$ = {calc|ccrit} N·s/m, so ζ = {calc|zeta}: {calc|regime}."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Wait. 0.16? That's exactly the drone's ζ from the first widget!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Same mass, same drag, same stiffness, so the same ζ. The spring and the drone really are twins."
         },
         {
           "t": "h3",

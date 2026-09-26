@@ -44,6 +44,18 @@
           "tex": "m\\,\\ddot{x} = -\\eff{k}\\,x - c\\,\\dot{x} \\quad\\Longrightarrow\\quad m\\,\\ddot{x} + c\\,\\dot{x} + \\eff{k}\\,x = 0"
         },
         {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "¿O sea que el amortiguador es aire que odia la velocidad?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Más o menos. Y en nuestro dron, el amortiguador *es* el aire."
+        },
+        {
           "t": "p",
           "text": "En el widget, la {eff|flecha naranja} sobre la masa es el tirón del resorte y la gris es el empuje del amortiguador. Fíjate en cómo la flecha del amortiguador desaparece cada vez que la masa se para un instante arriba o abajo de una oscilación."
         },
@@ -124,8 +136,20 @@
           "text": "Con k = {scrub|k|eff} N/m y m = 0,5 kg, $\\omega_n$ ≈ {calc|wn} rad/s: una oscilación completa cada {calc|period} s."
         },
         {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Resorte más rígido, oscilación más rápida. ¡Pues subo $\\eff{k}$ al máximo y todo mejora!"
+        },
+        {
           "t": "p",
           "text": "Un resorte más rígido tira más fuerte, así que oscila más rápido. Una masa más pesada cuesta más de mover, así que oscila más despacio. (Los radianes por segundo son la velocidad de giro del capítulo 5: una vuelta completa son 2π radianes.)"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Cuidado. En el capítulo 2, subir $\\eff{K_p}$ hizo el dron más rápido *y* más rebotón. Primero escuchemos qué dice el amortiguador."
         },
         {
           "t": "h3",
@@ -147,6 +171,18 @@
           "t": "play",
           "id": "zeta",
           "text": "Con c = {scrub|c} N·s/m en un resorte de k = 20 N/m, $c_{\\text{crit}}$ = {calc|ccrit} N·s/m, así que ζ = {calc|zeta}: {calc|regime}."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Espera. ¿0,16? ¡Es justo el ζ del dron en el primer widget!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Misma masa, mismo rozamiento, misma rigidez: mismo ζ. El resorte y el dron son gemelos de verdad."
         },
         {
           "t": "h3",

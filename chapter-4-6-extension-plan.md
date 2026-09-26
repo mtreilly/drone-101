@@ -277,3 +277,27 @@ Shift ×10, Home/End on playable numbers) and pointer drag checked.
   ar Bernoulli spelling (ياكوب / يعقوب); ja pronouns and one polite-style paragraph in ch06.
 - Mika's grammatical gender differs by locale (masculine in it/ar, feminine in pl, neutral
   phrasing chosen in es/pt-BR); the cast sheet should settle it for every language.
+
+### Delight pass (character, timing, small moments)
+
+Audited against the quality bar in CLAUDE.md ("Who Is Fourier?" warmth, no lecturing expert,
+Pixar-level small things), not just tests:
+
+- **Voice share.** Dialogue blocks per chapter: Ch 3 30 %, Ch 4 29 %, Ch 5 22 %, but the extended
+  Ch 6 had dropped to 19 %, with a ~20-block stretch of prose in "Two personality knobs". Added
+  three short exchanges where the story turns, in every locale: Mika's "air that hates speed?"
+  after the force equation; Mika's "crank k and everything gets better!" answered by Theo's
+  warning from Chapter 2 (sets up ζ); June spotting that the play's ζ = 0.16 *is* the drone's
+  number from the first widget ("the spring and the drone really are twins").
+- **Character beats by design, per new section.** Ch 4: June names the "simplest multiplying
+  machine"; Mika's "infinite fortune" boast and its deflation when the total stalls at 2.718;
+  June's frozen coffee called back; Mika's "2.718 *again*, two hunts, one number"; Theo's "one
+  wish wearing two costumes". Ch 6: Theo doubts 2ζωn, June multiplies it out; the damper arrow
+  that vanishes at the top of each swing, which the prose invites you to catch.
+- **Small moments.** The lock-in pop the course already uses (Ch 3/4) now fires once when the
+  compounding readout lands within 0.1 % of e (or 1/e) and when the ladder reaches its tiny step
+  (reduced motion: none). Playable numbers press at scale 0.96, light up what they drive while
+  held, and a pencilled "↔ drag me" tilts above the first one, fading after the first try.
+- **Nothing collides, nothing lies.** Hint moved off the line above; stray "both here" label in
+  the race removed for complex pairs; force key keeps each swatch with its word at 375 px; the
+  Arabic equation stays in reading order; the ζ = 0.7 claim is only the one that is true (5 %).

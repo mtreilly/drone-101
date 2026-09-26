@@ -44,6 +44,18 @@
           "tex": "m\\,\\ddot{x} = -\\eff{k}\\,x - c\\,\\dot{x} \\quad\\Longrightarrow\\quad m\\,\\ddot{x} + c\\,\\dot{x} + \\eff{k}\\,x = 0"
         },
         {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Quindi lo smorzatore è aria che odia la velocità?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Più o meno. E per il nostro drone lo smorzatore *è* l'aria."
+        },
+        {
           "t": "p",
           "text": "Nella simulazione, la {eff|freccia arancione} sulla massa è la trazione della molla e quella grigia è la spinta dello smorzatore. Guarda come la freccia dello smorzatore sparisce ogni volta che la massa si ferma per un istante in cima o in fondo a un'oscillazione."
         },
@@ -124,8 +136,20 @@
           "text": "Con k = {scrub|k|eff} N/m e m = 0,5 kg, $\\omega_n$ ≈ {calc|wn} rad/s: un'oscillazione completa ogni {calc|period} s."
         },
         {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Molla più rigida, oscillazione più veloce. Allora alzo $\\eff{k}$ al massimo e migliora tutto!"
+        },
+        {
           "t": "p",
           "text": "Una molla più rigida tira più forte, quindi oscilla più in fretta. Una massa più pesante è più difficile da spostare, quindi oscilla più lentamente. (I radianti al secondo sono la velocità di rotazione del Capitolo 5: un giro completo è 2π radianti.)"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Piano. Nel capitolo 2 alzare $\\eff{K_p}$ ha reso il drone più veloce *e* più rimbalzante. Sentiamo prima cosa ne pensa lo smorzatore."
         },
         {
           "t": "h3",
@@ -147,6 +171,18 @@
           "t": "play",
           "id": "zeta",
           "text": "Con c = {scrub|c} N·s/m su una molla da k = 20 N/m, $c_{\\text{crit}}$ = {calc|ccrit} N·s/m, quindi ζ = {calc|zeta}: {calc|regime}."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Aspetta. 0,16? È proprio lo ζ del drone nel primo widget!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Stessa massa, stesso attrito, stessa rigidezza: stesso ζ. La molla e il drone sono davvero gemelli."
         },
         {
           "t": "h3",

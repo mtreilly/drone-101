@@ -44,6 +44,18 @@
           "tex": "m\\,\\ddot{x} = -\\eff{k}\\,x - c\\,\\dot{x} \\quad\\Longrightarrow\\quad m\\,\\ddot{x} + c\\,\\dot{x} + \\eff{k}\\,x = 0"
         },
         {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Donc l'amortisseur, c'est de l'air qui déteste la vitesse ?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "En gros, oui. Et pour notre drone, l'amortisseur, *c'est* l'air."
+        },
+        {
           "t": "p",
           "text": "Dans la simulation, la {eff|flèche orange} sur la masse est la traction du ressort, et la grise la poussée de l'amortisseur. Regarde : la flèche de l'amortisseur disparaît chaque fois que la masse s'arrête un instant en haut ou en bas d'une oscillation."
         },
@@ -124,8 +136,20 @@
           "text": "Avec k = {scrub|k|eff} N/m et m = 0,5 kg, $\\omega_n$ ≈ {calc|wn} rad/s : une oscillation complète toutes les {calc|period} s."
         },
         {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Ressort plus raide, oscillation plus rapide. Il suffit de pousser $\\eff{k}$ à fond et tout s'améliore !"
+        },
+        {
           "t": "p",
           "text": "Un ressort plus raide tire plus fort, donc il oscille plus vite. Une masse plus lourde est plus dure à bousculer, donc elle oscille plus lentement. (Les radians par seconde, c'est la vitesse de rotation du chapitre 5 : un tour complet fait 2π radians.)"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "worried",
+          "text": "Doucement. Au chapitre 2, pousser $\\eff{K_p}$ a rendu le drone plus rapide *et* plus rebondissant. Écoutons d'abord ce que l'amortisseur a à dire."
         },
         {
           "t": "h3",
@@ -147,6 +171,18 @@
           "t": "play",
           "id": "zeta",
           "text": "Avec c = {scrub|c} N·s/m sur un ressort k = 20 N/m, $c_{\\text{crit}}$ = {calc|ccrit} N·s/m, donc ζ = {calc|zeta} : {calc|regime}."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Attends. 0,16 ? C'est exactement le ζ du drone dans le premier widget !"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Même masse, même frottement, même raideur, donc même ζ. Le ressort et le drone sont vraiment jumeaux."
         },
         {
           "t": "h3",

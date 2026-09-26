@@ -55,6 +55,7 @@ const ladder: WidgetFactory = (host, ctx) => {
   const T1 = 4;
   let dt = 1;
   let at = 1;
+  let wasTiny = false;
   const plot = new Plot(host, {
     x: { label: t('xAxis'), min: T0, max: T1 },
     y: { label: t('yAxis'), min: 0, max: 16 },
@@ -138,6 +139,8 @@ const ladder: WidgetFactory = (host, ctx) => {
     rMul.set(`× ${nice(mul, 3)}`);
     rRise.set(t('pct', { v: nice(stepRise(2, dt) * 100, 1) }));
     rRate.set(fmt(stepRate(2, dt), 3), tiny ? 'good' : '');
+    lockIn(rRate.el, tiny && !wasTiny);
+    wasTiny = tiny;
     const msg = t('status', { pct: nice(stepRise(2, dt) * 100, 1), r: fmt(stepRate(2, dt), 3) });
     if (status.textContent !== msg) status.textContent = msg;
     plot.describe(t('describe', { t: fmt(at, 2), h: nice(2 ** at, 3), m: nice(mul, 3), pct: nice(stepRise(2, dt) * 100, 1) }));
@@ -184,6 +187,7 @@ const compoundWidget: WidgetFactory = (host, ctx) => {
   let n = 1;
   let r: 1 | -1 = 1;
   let smooth = false;
+  let wasClose = false;
   const plot = new Plot(host, {
     x: { label: t('xAxis'), min: 0, max: 1, ticks: [0, 0.25, 0.5, 0.75, 1] },
     y: { label: t('yAxis'), min: 0, max: 3 },
@@ -208,7 +212,11 @@ const compoundWidget: WidgetFactory = (host, ctx) => {
     plot.setLines(r > 0 ? [{ kind: 'h', at: Math.E, color: 'ink3', dash: [5, 4], width: 1.4, label: t('eLine') }] : [{ kind: 'h', at: Math.exp(-1), color: 'ink3', dash: [5, 4], width: 1.4, label: t('invLine') }]);
     const total = compound(n, r);
     rEach.set(`× ${nice(1 + r / n, 5)}`);
-    rTotal.set(nice(total, 5), Math.abs(total - Math.exp(r)) / Math.exp(r) < 0.001 ? 'good' : '');
+    const close = Math.abs(total - Math.exp(r)) / Math.exp(r) < 0.001;
+    rTotal.set(nice(total, 5), close ? 'good' : '');
+    // the readout pops once when it lands within 0.1 % of e (or 1/e)
+    lockIn(rTotal.el, close && !wasClose);
+    wasClose = close;
     let msg: string;
     if (r > 0) msg = n === 1 ? t('growOne') : t('grow', { n: fmt(n, 0), v: nice(total, 5), gap: nice(Math.E - total, 4) });
     else msg = n === 1 ? t('shrinkOne') : t('shrink', { n: fmt(n, 0), v: nice(total, 5), pct: nice((1 - total) * 100, 1) });
