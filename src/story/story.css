@@ -204,6 +204,30 @@ html[dir='rtl'] .say.right .bubble::after {
   direction: ltr;
   unicode-bidi: isolate;
 }
+/* a mistake on the page that gets fixed: both forms share one cell, so the height never jumps */
+.math-block.swaps {
+  display: grid;
+}
+.math-block.swaps > .math-form {
+  grid-area: 1 / 1;
+  align-self: center;
+}
+.math-block.swaps > .math-form[hidden] {
+  display: block;
+  visibility: hidden;
+}
+/* the fixed form settles in (a state change, so a short cue) */
+@media (prefers-reduced-motion: no-preference) {
+  .math-block .math-form.swapped {
+    animation: math-swap 260ms var(--ease-out);
+  }
+}
+@keyframes math-swap {
+  from {
+    opacity: 0.2;
+    translate: 0 6px;
+  }
+}
 .katex .c-sp,
 .katex .c-out,
 .katex .c-err,
@@ -496,6 +520,12 @@ html[dir='rtl'] .say.right .bubble::after {
 }
 .concept-map.focus-mode .edge.hot {
   opacity: 1;
+}
+/* the finale's links wait, unseen, until the map scrolls into view and they draw in */
+@media (prefers-reduced-motion: no-preference) {
+  .concept-map-wrap.drawing .edge {
+    visibility: hidden;
+  }
 }
 .concept-map .hidden-edge {
   opacity: 0.1;

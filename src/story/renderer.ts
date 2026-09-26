@@ -104,18 +104,8 @@ function renderBlock(b: Block, env: RenderEnv): HTMLElement {
     }
     case 'note':
       return setRich(h('p', { class: `note${b.aside ? ' aside' : ''}` }), b.text);
-    case 'math': {
-      const el = h('div', { class: 'math-block', html: tex(b.tex, true) });
-      // only a block that actually scrolls needs to be focusable (keyboard scrolling)
-      requestAnimationFrame(() => {
-        if (el.scrollWidth > el.clientWidth + 1) {
-          el.tabIndex = 0;
-          el.setAttribute('role', 'region');
-          el.setAttribute('aria-label', plainText(el));
-        }
-      });
-      return el;
-    }
+    case 'math':
+      return mathBlock(b, env);
     case 'widget':
       return mountWidget(b.id, b.caption, b.wide ?? true, env);
     case 'predict':
@@ -170,6 +160,57 @@ function renderBlock(b: Block, env: RenderEnv): HTMLElement {
     case 'map':
       return h('div', { class: 'widget wide' }, conceptMap({ upTo: env.chapter, highlight: env.chapter, compact: true }));
   }
+}
+
+/**
+ * A display formula. With `alt` + `on` it is an on-page mistake that gets fixed: the first form
+ * shows until bus event `on` fires, then `alt` (a `false` payload swaps back, as a toggle does).
+ * `?reveal` shows the fixed form straight away, like it opens the prediction gates. Both forms
+ * share one grid cell, so the block keeps the taller one's height and the page never jumps
+ * under the reader's hand. The widget that fires the event says what changed in its status line.
+ */
+function mathBlock(b: Extract<Block, { t: 'math' }>, env: RenderEnv): HTMLElement {
+  const swappable = b.alt !== undefined && !!b.on;
+  const el = h('div', { class: `math-block${swappable ? ' swaps' : ''}` });
+  const forms = swappable ? [b.tex, b.alt!].map((src) => h('div', { class: 'math-form', html: tex(src, true) })) : [];
+  if (swappable) el.append(...forms);
+  else el.innerHTML = tex(b.tex, true);
+  // only a block that actually scrolls needs to be focusable (keyboard scrolling)
+  const fitFocus = () =>
+    requestAnimationFrame(() => {
+      if (el.scrollWidth > el.clientWidth + 1) {
+        el.tabIndex = 0;
+        el.setAttribute('role', 'region');
+        el.setAttribute('aria-label', plainText(swappable ? forms[fixed ? 1 : 0] : el));
+      } else {
+        el.removeAttribute('tabindex');
+        el.removeAttribute('role');
+        el.removeAttribute('aria-label');
+      }
+    });
+  let fixed = swappable && new URLSearchParams(location.search).has('reveal');
+  const show = () => {
+    forms.forEach((f, i) => (f.hidden = (i === 1) !== fixed));
+    el.dataset.form = fixed ? 'alt' : 'first';
+  };
+  if (swappable) {
+    show();
+    env.cleanups.push(
+      env.bus.on(b.on!, (payload) => {
+        const next = payload !== false;
+        if (next === fixed) return;
+        fixed = next;
+        show();
+        fitFocus();
+        const f = forms[fixed ? 1 : 0];
+        f.classList.remove('swapped');
+        void f.offsetWidth; // restart the short "this changed" cue
+        f.classList.add('swapped');
+      }),
+    );
+  }
+  fitFocus();
+  return el;
 }
 
 function mountWidget(id: string, caption: string | undefined, wide: boolean, env: RenderEnv): HTMLElement {

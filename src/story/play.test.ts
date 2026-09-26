@@ -68,6 +68,12 @@ describe('every playable sentence is wired to a model, in every language', () =>
               expect(typeof v, `${code} ${entry.ns}: plays.${b.id}.${k} missing`).toBe('string');
               return interpolate(String(v), vars);
             };
+            const common = JSON.parse(readFileSync(join(ROOT, code, 'common.json'), 'utf8'));
+            const tc = (k: string, vars?: Record<string, string | number>) => {
+              const v = lookup(common, k);
+              expect(typeof v, `${code} common: ${k} missing`).toBe('string');
+              return interpolate(String(v), vars);
+            };
             const values = Object.fromEntries(Object.entries(model.inputs).map(([k, inp]) => [k, inp.value]));
             for (const tok of playTokens(b.text)) {
               const [kind, name] = tok.slice(1, -1).split('|');
@@ -76,14 +82,14 @@ describe('every playable sentence is wired to a model, in every language', () =>
                 t(name); // accessible name
               } else {
                 expect(model.outputs[name], `${b.id}.${name}`).toBeDefined();
-                const out = model.outputs[name](values, t);
+                const out = model.outputs[name](values, t, tc);
                 expect(out).not.toMatch(/NaN|⟦|undefined/);
               }
             }
             // every output renders at the ends of every input's range too
             for (const [k, inp] of Object.entries(model.inputs)) {
               for (const v of inp.values ?? [inp.min, inp.max]) {
-                for (const fn of Object.values(model.outputs)) expect(fn({ ...values, [k]: v }, t)).not.toMatch(/NaN|⟦|undefined/);
+                for (const fn of Object.values(model.outputs)) expect(fn({ ...values, [k]: v }, t, tc)).not.toMatch(/NaN|⟦|undefined/);
               }
             }
           }

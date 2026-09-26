@@ -1,5 +1,5 @@
 import { clamp, h } from '../core/dom';
-import { fmt, type T } from '../core/i18n';
+import { fmt, type T, tc } from '../core/i18n';
 import { progress } from '../core/progress';
 import { plainText, setRich } from '../core/rich-text';
 import type { Bus } from './types';
@@ -29,8 +29,23 @@ export type PlayValues = Record<string, number>;
 
 export interface PlayModel {
   inputs: Record<string, PlayInput>;
-  /** each output is plain text; `t` reads strings under `plays.<id>` */
-  outputs: Record<string, (v: PlayValues, t: T) => string>;
+  /**
+   * each output is plain text; `t` reads strings under `plays.<id>` of the chapter, `tc` reads
+   * `common.json` (shared words such as `regime.under`)
+   */
+  outputs: Record<string, (v: PlayValues, t: T, tc?: T) => string>;
+}
+
+/**
+ * Lets a widget follow a playable sentence: `fn` gets the sentence's current values every time
+ * the reader changes one of its numbers (the renderer emits `play:<id>` on the chapter bus).
+ * Returns the unsubscribe function; return it from the widget (or add it to its cleanups).
+ * The sentence emits only on change, so the widget keeps its own defaults until then.
+ */
+export function followPlay(bus: Bus, id: string, fn: (values: PlayValues) => void): () => void {
+  return bus.on(`play:${id}`, (payload) => {
+    if (payload && typeof payload === 'object') fn({ ...(payload as PlayValues) });
+  });
 }
 
 const decimals = (step: number): number => {
@@ -113,7 +128,7 @@ export function renderPlay(el: HTMLElement, id: string, text: string, model: Pla
   const render = () => {
     for (const o of outs) {
       const fn = model.outputs[o.dataset.calc!];
-      const txt = fn ? fn(values, env.t) : '⟦?⟧';
+      const txt = fn ? fn(values, env.t, tc) : '⟦?⟧';
       if (o.textContent !== txt) o.textContent = txt;
     }
     for (const sEl of scrubs) {

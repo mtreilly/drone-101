@@ -1,4 +1,4 @@
-import { fmt } from '../../core/i18n';
+import { fmt, tc } from '../../core/i18n';
 import { DRONE, HOVER_THRUST } from '../../sim/drone-model';
 import type { PlayModel } from '../../story/play';
 import { regime, secondOrderRoots } from './helpers';
@@ -29,7 +29,7 @@ export const plays: Record<string, PlayModel> = {
     outputs: {
       ccrit: () => fmt(2 * Math.sqrt(m * K), 2),
       zeta: ({ c: cc }) => fmt(cc / (2 * Math.sqrt(m * K)), 2),
-      regime: ({ c: cc }, t) => t(`regime.${regime(cc / (2 * Math.sqrt(m * K)))}`),
+      regime: ({ c: cc }, _t, common = tc) => common(`regime.${regime(cc / (2 * Math.sqrt(m * K)))}`),
     },
   },
   // "With ωn = 3 and ζ = {z}, the dots sit at {roots}: distance {r} from 0."
