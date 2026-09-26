@@ -11,13 +11,17 @@
           "t": "say",
           "who": "june",
           "mood": "worried",
-          "text": "Le puse el PID de nuestro dron a la ducha. Oscilaba caliente, fría, caliente… exactamente como Mika en el capítulo 0. ¡El dron nunca hizo eso!"
+          "text": "Puse el PID de nuestro dron en la ducha (la misma respuesta ágil, escalada a unidades de mando). Osciló caliente, fría, caliente… igual que Mika en el capítulo 0. ¡El dron nunca hizo eso!"
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "think",
           "text": "El dron no tiene un retardo grande. La ducha tiene 2,5 segundos de tubería. Averigüemos de una vez qué *hace* un retardo."
+        },
+        {
+          "t": "p",
+          "text": "La ducha tiene dos partes lentas: la **tubería**, un retardo puro de 2,5 s, y el **suavizador**, el cabezal y las paredes de la tubería calentándose con la constante de tiempo del capítulo 3, $\\tau = 1$ s (al cabo de 1 s ha cerrado el 63 % de la distancia hasta una temperatura nueva)."
         },
         {
           "t": "p",
@@ -54,20 +58,41 @@
           "id": "phase"
         },
         {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Espera. Con una oscilación de 5 segundos, el agua caliente llega justo cuando el mando pide fría. Eso no es *más lento*. Es *al revés*."
+        },
+        {
           "t": "p",
-          "text": "El retardo de la tubería sigue siendo de 2,5 s, pero su **desfase** depende de la rapidez de la oscilación. Llamemos $\\phi$ a ese desfase. Si una oscilación dura $T$ segundos, su velocidad angular es $\\omega=2\\pi/T$ radianes por segundo. Con un retardo de $L$ segundos, podemos expresar el mismo desfase en grados o en radianes:"
+          "text": "El retardo de la tubería sigue siendo de 2,5 s, pero su **desfase** depende de lo rápido que oscile la onda. Llamemos $\\phi$ al desfase y $L$ al retardo. Si una oscilación dura $T$ segundos (aquí $T$ es un tiempo, no una temperatura), su velocidad angular es $\\omega=2\\pi/T$ radianes por segundo. Un desfase positivo significa que la salida va por detrás de la entrada. Los ingenieros escriben el desfase como un ángulo negativo, por eso las gráficas de abajo bajan."
+        },
+        {
+          "t": "p",
+          "text": "Una oscilación entera es una vuelta completa de la flecha giratoria del capítulo 5: 360°, o 2π radianes. Así que lo que importa es **qué fracción de una oscilación** cubre el retardo: $L/T$."
         },
         {
           "t": "math",
-          "tex": "\\begin{aligned}\\phi_{\\mathrm{deg}} &= 360^\\circ\\frac{L}{T} \\\\ \\phi_{\\mathrm{rad}} &= \\omega L,\\qquad \\omega=\\frac{2\\pi}{T}\\end{aligned}"
+          "tex": "\\phi = \\underbrace{\\frac{L}{T}}_{\\text{fracción de oscilación}}\\cdot 360^\\circ = \\omega L \\text{ radianes},\\qquad \\omega = \\frac{2\\pi}{T}"
+        },
+        {
+          "t": "play",
+          "id": "delaylag",
+          "text": "Un retardo de {scrub|L|dis} s en una oscilación que se repite cada {scrub|T} s cubre {calc|frac} de oscilación, así que la salida va {calc|deg}° por detrás, o {calc|rad} radianes."
         },
         {
           "t": "p",
-          "text": "Si una oscilación lenta dura 30 segundos, 2,5 s equivalen a solo 30°: un pequeño desplazamiento. Si dura 5 segundos, equivalen a 180°: en este modelo de retardo puro, cada cresta de la salida coincide con un valle de la entrada. La respuesta térmica de la ducha también suaviza las oscilaciones rápidas; la añadiremos ahora."
+          "text": "Para una oscilación de 5 segundos, 2,5 s es media oscilación: 180°. En este modelo de retardo puro, cada cresta de la salida coincide con un valle de la entrada. El suavizador de la ducha además encoge las oscilaciones rápidas\\; eso lo añadimos enseguida."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "O sea, los mismos 2,5 s son un empujoncito para una oscilación perezosa y una vuelta completa del revés para una rápida. La tubería no cambia nunca. ¡La que cambia es la oscilación!"
         },
         {
           "t": "note",
-          "text": "Es la flecha giratoria del capítulo 5: un retardo $L$ gira la flecha $e^{i\\omega t}$ hacia atrás un ángulo $\\omega L$. Por eso la función de transferencia de un retardo puro es $e^{-Ls}$."
+          "text": "Es la flecha giratoria del capítulo 5. Retrasarla en $L$ da $e^{i\\omega(t-L)} = e^{-i\\omega L}\\,e^{i\\omega t}$: la misma flecha, girada hacia atrás un ángulo $\\omega L$. Con $s = i\\omega$ ese factor es $e^{-Ls}$, y por eso la función de transferencia de un retardo puro es $e^{-Ls}$."
         }
       ]
     },
@@ -77,13 +102,13 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Añadamos ahora la respuesta térmica de la ducha al retardo de la tubería. La temperatura del agua tarda en estabilizarse, así que la ducha completa retrasa y suaviza los cambios del mando. El plan es mover el mando a un ritmo, esperar a que la oscilación se estabilice y medir dos números:"
+          "text": "Ahora añade el suavizador al retardo de la tubería. El cabezal y las paredes de la tubería tardan en calentarse, así que la ducha completa retrasa *y* suaviza los cambios del mando. El plan: mover el mando en vaivén a una velocidad, esperar a que el ritmo se asiente y medir dos números:"
         },
         {
           "t": "list",
           "items": [
-            "**Ganancia:** lo grande que es la oscilación de temperatura comparada con la oscilación de la mezcla de agua que pedimos.",
-            "**Fase:** cuánto va por detrás, como un ángulo."
+            "**Ganancia** (la misma palabra que la ganancia del controlador: tamaño que sale ÷ tamaño que entra): lo grande que es la oscilación de temperatura comparada con la oscilación de la mezcla de agua que pedimos.",
+            "**Fase:** cuánto va por detrás, como ángulo: su fracción de una oscilación entera, por 360°."
           ]
         },
         {
@@ -95,12 +120,64 @@
           "id": "bode"
         },
         {
+          "t": "callout",
+          "title": "La regla aplastada",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "En estas gráficas, cada ×10 es un mismo paso a lo largo del eje: de 0,1 a 1 ocupa lo mismo que de 1 a 10. El punto medio entre 0,1 y 1 está en torno a 0,3, no en 0,55. La regla está aplastada para que una oscilación de 100 segundos y una de 3 quepan en la misma gráfica. Fíjate en la ganancia del suavizador en esta regla: plana para las oscilaciones lentas y luego bajando por una línea casi recta para las rápidas, con un codo cerca de $\\omega = 1/\\tau$."
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "excited",
+              "text": "Pasos iguales son *veces* iguales, no *sumas* iguales. ¡Como las octavas de un piano!"
+            }
+          ]
+        },
+        {
           "t": "p",
-          "text": "La respuesta térmica de la ducha atenúa las oscilaciones rápidas, mientras que la tubería sigue añadiendo desfase. Las curvas de ganancia y fase según la velocidad de oscilación forman un **diagrama de Bode**. Aquí la entrada es la **temperatura del agua mezclada**, así que las oscilaciones lentas tienen ganancia 1. Si usáramos como entrada la posición del mando entre 0 y 1, la ganancia sería 45 veces mayor. Para esta gráfica de temperatura a temperatura, sustituimos $s=i\\omega$ en la respuesta normalizada de la ducha:"
+          "text": "El suavizador encoge las oscilaciones rápidas, mientras la tubería sigue añadiendo desfase. Estas curvas de ganancia y fase frente a la velocidad de oscilación forman un **diagrama de Bode**. Juntas son la **respuesta en frecuencia** de la ducha: cómo trata cada velocidad de oscilación. Aquí la entrada es la **temperatura del agua mezclada**, así que las oscilaciones lentas tienen ganancia 1. Si usáramos como entrada la fracción de mando, la ganancia sería 45 veces mayor. Para sacar la respuesta en frecuencia de la fórmula, pon $s = i\\omega$: el mismo truco que encontró el borde del capítulo 9."
+        },
+        {
+          "t": "callout",
+          "title": "Lo que el suavizador le hace a una flecha giratoria",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Otra vez el truco del capítulo 4: supongamos que la respuesta es la misma flecha giratoria, solo que con otro tamaño y otro ángulo."
+            },
+            {
+              "t": "math",
+              "tex": "\\tau\\,\\dot y + y = u,\\quad u = e^{i\\omega t},\\ y = A\\,e^{i\\omega t} \\;\\Rightarrow\\; (1 + i\\omega\\tau)\\,A = 1 \\;\\Rightarrow\\; A = \\frac{1}{1+i\\omega\\tau}"
+            },
+            {
+              "t": "p",
+              "text": "Mete la flecha giratoria $e^{i\\omega t}$ en la regla del suavizador y la flecha $A$ tiene que cumplir $(1 + i\\omega\\tau)A = 1$. La flecha $1 + i\\omega\\tau$ mide $\\sqrt{1+\\omega^2\\tau^2}$ y apunta hacia arriba con el ángulo $\\arctan(\\omega\\tau)$. Dividir entre ella encoge en esa longitud y gira hacia atrás ese ángulo. Las oscilaciones lentas casi ni lo notan. Las rápidas quedan aplastadas y se retrasan hasta casi un cuarto de vuelta, pero nunca más."
+            },
+            {
+              "t": "play",
+              "id": "smoother",
+              "text": "Con ω = {scrub|w} rad/s, el suavizador (τ = 1 s) conserva {calc|g} de la oscilación y la retrasa {calc|lag}°."
+            }
+          ]
         },
         {
           "t": "math",
           "tex": "G(i\\omega) = \\frac{e^{-i\\omega L}}{1 + i\\omega\\tau}, \\qquad |G| = \\frac{1}{\\sqrt{1+\\omega^2\\tau^2}}, \\qquad \\angle G = -\\arctan(\\omega\\tau) - \\omega L"
+        },
+        {
+          "t": "play",
+          "id": "total",
+          "text": "Con ω = {scrub|w} rad/s, la tubería retrasa {calc|pipe}° y el suavizador {calc|lag}°: {calc|total}° en total. {calc|verdict}"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "¡Lo encontré! Cerca de 0,95 rad/s, la ducha por sí sola pone una oscilación del revés. Hay que recordar esa velocidad."
         },
         {
           "t": "note",
@@ -114,15 +191,35 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Ahora cierra el lazo: mano → mando → tubería → piel → mano. Sigue una oscilación en toda la vuelta. Para la mano del capítulo 0, el viaje alrededor del lazo es"
+          "text": "Ahora cerremos el lazo: mano → mando → tubería → piel → mano. Sigue una oscilación en toda su vuelta. Para la mano del capítulo 0, el viaje alrededor del lazo es $G_{\\circ}$ (un circulito por *lazo*, porque $L$ ya es el retardo):"
         },
         {
           "t": "math",
-          "tex": "L(s) = \\underbrace{\\frac{k}{s}}_{\\text{mano}}\\cdot\\underbrace{\\frac{45\\,e^{-2.5s}}{s+1}}_{\\text{ducha}}"
+          "tex": "G_{\\circ}(s) = \\underbrace{\\frac{k}{s}}_{\\text{mano}}\\cdot\\underbrace{\\frac{45\\,e^{-2.5s}}{s+1}}_{\\text{ducha}}"
+        },
+        {
+          "t": "callout",
+          "title": "El montón de una oscilación",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "think",
+              "text": "Mi mano va amontonando error. ¿Qué le hace un montón a una oscilación?"
+            },
+            {
+              "t": "math",
+              "tex": "\\int \\cos(\\omega t)\\,dt = \\frac{\\sin(\\omega t)}{\\omega} \\qquad\\Longleftrightarrow\\qquad \\frac{1}{i\\omega}:\\ \\text{un cuarto de vuelta atrás, } \\tfrac{1}{\\omega}\\text{ de tamaño}"
+            },
+            {
+              "t": "p",
+              "text": "El área bajo un coseno es un seno, un cuarto de oscilación por detrás: 90° de desfase, a *cualquier* velocidad. Y el montón es mayor para las oscilaciones lentas, porque cada joroba dura más antes de compensarse: el tamaño va como $1/\\omega$. El capítulo 5 decía que la velocidad es $i\\omega$ veces la posición. Amontonar es lo contrario: dividir entre $i\\omega$. Ese es el $k/s$ del lazo."
+            }
+          ]
         },
         {
           "t": "p",
-          "text": "La realimentación resta (error = objetivo − temperatura), lo que da la vuelta a la onda una vez. Si el viaje alrededor del lazo *también* la retrasa exactamente 180°, las dos vueltas se cancelan y cada corrección llega **perfectamente sincronizada** con la oscilación, como empujar un columpio justo en el momento preciso. Si además el lazo no encoge la onda (ganancia ≥ 1), la oscilación crece sola."
+          "text": "La realimentación resta (error = objetivo − temperatura). Eso es un ×(−1), la media vuelta del capítulo 5, así que la onda se invierte una vez. Si el viaje alrededor del lazo *además* la retrasa exactamente 180°, las dos inversiones se anulan y cada corrección llega **perfectamente a compás** con la oscilación, como cuando empujas un columpio justo en el momento adecuado. Si el lazo devuelve la onda a tamaño completo (ganancia 1), la oscilación se mantiene sola\\; con más de 1, crece."
         },
         {
           "t": "say",
@@ -131,8 +228,13 @@
           "text": "En este lazo sencillo de ducha, la fase cruza −180° a una velocidad de oscilación relevante. Busca esa velocidad en la gráfica de fase y lee la ganancia del lazo a la misma velocidad en la gráfica de ganancia. ¿Está por debajo o por encima de 1?"
         },
         {
+          "t": "play",
+          "id": "handloop",
+          "text": "Con ω = {scrub|w} rad/s, el montón de la mano retrasa 90°, el suavizador {calc|lag}° y la tubería {calc|pipe}°: {calc|total}° en total. Ahí el lazo de la mano normal devuelve una oscilación {calc|g} veces más grande."
+        },
+        {
           "t": "p",
-          "text": "Por ejemplo, cerca de 0,457 rad/s, la mano que acumula se retrasa 90°, la mezcla añade unos 25° y la tubería unos 65°: en total, 180°. La mano normal devuelve una oscilación de solo unas 0,72 veces el tamaño original. Podría ser unas 1 ÷ 0,72 ≈ 1,4 veces más enérgica antes de llegar al borde."
+          "text": "Desliza hasta que el total pase de 180°, entre 0,45 y 0,46 rad/s. En el cruce exacto, hacia 0,457 rad/s, la oscilación vuelve 0,72 veces más grande, así que la mano podría ser unas 1 ÷ 0,72 ≈ 1,4 veces más fuerte antes de llegar al borde."
         },
         {
           "t": "vocab",
@@ -143,13 +245,29 @@
             },
             {
               "term": "Margen de fase",
-              "def": "A la velocidad en la que la ganancia del lazo es exactamente 1, cuánto desfase *extra* haría falta para llegar a −180°. Cuanto más, más seguro; 45°–60° es un objetivo habitual."
+              "def": "A la velocidad en que la ganancia del lazo vale exactamente 1, cuánto desfase *extra* haría falta para llegar a −180°. Más es más seguro\\; 45°–60° es un objetivo habitual (el desvío de abajo explica por qué)."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "El margen de fase es amortiguamiento disfrazado",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "think",
+              "text": "¿Por qué de 45° a 60°? ¿Quién eligió eso?"
+            },
+            {
+              "t": "p",
+              "text": "En los lazos sencillos del capítulo 6, el margen de fase y el coeficiente de amortiguamiento van de la mano. Unos 43° corresponden a ζ = 0,4 (25 % de sobreimpulso), 52° a ζ = 0,5 (16 %) y 59° a ζ = 0,6 (menos del 10 %). Un margen de 45°–60° es el punto óptimo ζ ≈ 0,4–0,6 del capítulo 6, medido en grados. Con una tubería en el lazo es una buena guía, no una ley exacta."
             }
           ]
         },
         {
           "t": "p",
-          "text": "Para nuestra ducha, la fase de $L$ llega a −180° en $\\omega \\approx 0.457$ rad/s, un periodo de oscilación de unos **13,8 s**. La mano normal ($k = 0{,}008$) tiene un margen de ganancia de solo **1,4**, más o menos, y un margen de fase de unos 22°. ¡Muy cerca del borde! La mano enérgica duplica la ganancia: 1,4 ÷ 2 = 0,7, **por el abismo abajo**. Justo por eso no se estabilizaba nunca."
+          "text": "En nuestra ducha, la fase de $G_{\\circ}$ llega a −180° en $\\omega \\approx 0.457$ rad/s, un periodo de oscilación de unos **13,8 s**. La mano normal ($k = 0.008$) tiene un margen de ganancia de solo unos **1,4**, y un margen de fase de unos 22° (donde su ganancia del lazo vale 1, a 0,34 rad/s, la fase es −158°). ¡Muy cerca del borde! La mano más brusca duplica la ganancia: 1,4 ÷ 2 = 0,7, **abismo abajo**. Justo por eso no se estabilizaba nunca."
         },
         {
           "t": "predict",
@@ -177,6 +295,17 @@
           "id": "margins"
         },
         {
+          "t": "play",
+          "id": "double",
+          "text": "Con una tubería de {scrub|L|dis} s, el borde de la mano de velocidad está en k = {calc|k} %/(°C·s), y en el borde oscila cada {calc|T} s."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "El doble de tubería, más o menos la mitad de mano. Y las oscilaciones en el borde también se vuelven más lentas: ¡casi 24 segundos!"
+        },
+        {
           "t": "say",
           "who": "theo",
           "mood": "surprised",
@@ -198,7 +327,18 @@
         },
         {
           "t": "p",
-          "text": "Una **mano de velocidad** (girar el mando mientras se nota mal) es un controlador I: su borde está en oscilaciones de 13,8 s. Una **mano de posición** (\"está demasiado caliente, pon el mando *aquí*\") actúa como un controlador P: $L(s) = 45K\\,e^{-2.5s}/(s+1)$, cuya fase llega a −180° en $\\omega \\approx 0.95$ rad/s, oscilaciones de **6,6 s**, para cualquier $K$ por encima de unos 0,031 de mando por °C. La mayoría de la gente es una mezcla. (La mano robótica normal oscila algo más despacio que 13,8 s, unos 15,5 s, porque está justo dentro del borde; las oscilaciones de la mano enérgica, de unos 11,6 s, quedan aplastadas porque el mando llega a sus topes.)"
+          "text": "Una **mano de velocidad** (girar el mando mientras el agua se sienta mal) es un controlador I: su borde está en oscilaciones de 13,8 s. Una **mano de posición** (\"está demasiado caliente, pon el mando *aquí*\") actúa como un controlador P: $G_{\\circ}(s) = 45K\\,e^{-2.5s}/(s+1)$. Una mano de posición no tiene montón, así que tampoco sus propios 90°: la tubería y el suavizador solos tienen que llegar a 180°, y eso ocurre con una oscilación más rápida, $\\omega \\approx 0.95$ rad/s (la velocidad del revés de June). Eso da oscilaciones de **6,6 s**, para cualquier $K$ por encima de unos 0,031 de mando por °C. La mayoría de la gente es una mezcla. (La mano robot normal oscila algo más despacio que 13,8 s, unos 15,5 s, porque está justo por dentro del borde\\; las oscilaciones de la mano brusca, de unos 11,6 s, quedan aplastadas porque el mando choca con sus topes.)"
+        },
+        {
+          "t": "play",
+          "id": "pgain",
+          "text": "Una mano de posición con K = {scrub|K|eff} de mando por °C: a la velocidad de −180° (0,95 rad/s) su lazo devuelve una oscilación {calc|g} veces más grande. {calc|verdict}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Así que cuando daba tirones al mando directo a un punto, yo era una mano de posición. Mis oscilaciones de seis segundos eran la tubería y el suavizador, no unos dedos torpes."
         }
       ]
     },
@@ -208,17 +348,17 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Ahora ganemos a nuestras propias manos. El robot usa PI: **P responde al error de temperatura actual** e **I recuerda el error acumulado**. Juntos permiten que el mando reaccione pronto mientras I encuentra el ajuste duradero. Frente a I solo, P puede añadir adelanto de fase. Busca un **margen de fase superior a 45°** y **10 segundos en la franja cómoda, comenzando antes de 12 s**."
+          "text": "Ahora vamos a ganarles a nuestras propias manos. El robot usa PI: **P reacciona al error de temperatura actual**, e **I recuerda el error acumulado**. Juntos dejan que el mando responda enseguida mientras I encuentra el ajuste duradero correcto."
         },
         {
           "t": "note",
-          "text": "El código del robot escribe PI como **velocidad** del mando: I sigue moviéndolo mientras haya error y P responde a un *cambio* del error. Al arrancar, P también da un primer movimiento según el error actual. Esto coincide con la regla en posición, salvo cuando el mando llega a un tope."
+          "text": "El objetivo: un **margen de fase por encima de 45°**, y **10 segundos en la franja de confort que empiecen antes de 12 s**. Los números de los deslizadores son porcentajes del recorrido completo del mando: $K_p$ en % por °C de error actual, $K_i$ en % por °C·segundo de error acumulado. Las ecuaciones del lazo usan fracciones de mando, así que divide entre 100 los números que ves."
         },
         {
           "t": "say",
           "who": "june",
           "mood": "excited",
-          "text": "Fácil. Pondré ganancias grandes, como en el dron: rápido y con chispa."
+          "text": "Fácil. Usaré ganancias grandes, como en el dron: rápido y ágil. Ya están puestas. ¡Mira esto!"
         },
         {
           "t": "widget",
@@ -228,25 +368,72 @@
           "t": "say",
           "who": "june",
           "mood": "worried",
-          "text": "…oscila exactamente como nosotros. Las ganancias grandes empujaron la velocidad de −180° más allá del punto en el que la ganancia del lazo es 1. Nada de margen de fase."
+          "text": "…oscila sin parar, caliente–fría–caliente, cada 6 segundos, como una mano de posición en el capítulo 0. Las ganancias grandes empujaron la velocidad de ganancia 1 más allá de la velocidad de −180°. Nada de margen de fase."
+        },
+        {
+          "t": "callout",
+          "title": "10 s en el papel, 6 s en la ducha",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Las ganancias de June tienen $K_i/K_p = 1$ por segundo, que es justo $1/\\tau$. El cero del PI cae sobre el polo del suavizador y lo cancela, y queda $2.25\\,e^{-2.5s}/s$. En el papel, ese lazo llega a −180° en $\\omega = \\pi/5$, una oscilación de 10 s. Pero su lazo está muy pasado el borde, así que el mando va de tope a tope, y esas oscilaciones a golpes llegan cada 6,3 s más o menos: cerca de los 6,6 s de la mano de posición."
+            }
+          ]
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "happy",
-          "text": "El dron aguantaba ganancias grandes porque casi no tenía retraso. Aquí, **robusto** significa suave: deja margen para el retardo. Prueba con $K_p \\approx 1$ y $K_i \\approx 0.6$."
+          "text": "El dron aguantaba ganancias grandes porque casi no tenía retardo. Aquí, **robusto** significa suave: deja margen para el retardo. Prueba mis ganancias suaves, más o menos $K_p \\approx 1$ y $K_i \\approx 0.6$."
         },
         {
-          "t": "note",
-          "text": "Estos números del deslizador son porcentajes del recorrido completo del mando: P ≈ 1 % por °C de error actual e I ≈ 0,6 % por °C-segundo de error acumulado. Las ecuaciones del lazo usan fracciones del recorrido: divide entre 100 los números mostrados."
+          "t": "p",
+          "text": "P reacciona al *ahora*\\; I, al montón. Añadir un poco de *ahora* mueve el mando un poco antes, y eso devuelve fase: **adelanto de fase**, unos 37° a la antigua velocidad de −180° con las ganancias de Theo."
         },
         {
           "t": "p",
           "text": "Un PI con buen margen se pone a gusto en unos 9,4 segundos, sin grandes oscilaciones repetidas. Eso le gana a la mano normal (que se pasó casi un minuto oscilando antes de calmarse) y a la mayoría de los humanos. Pero no puede ganarle a la física: nada puede reaccionar a un agua que aún no ha llegado. Los ingenieros sí tienen un truco para retardos largos, el **predictor de Smith**, que ejecuta una pequeña simulación de la tubería dentro del controlador. Pero eso es historia para otro cuaderno."
         },
         {
-          "t": "note",
-          "text": "La robustez es la verdadera lección. Tu modelo de la ducha nunca es perfecto: la tubería podría ser más larga, el calentador más débil. Los márgenes son el seguro de que tu controlador siga funcionando cuando el mundo no es exactamente como suponías."
+          "t": "p",
+          "text": "La robustez es la verdadera lección. Tu modelo de la ducha nunca es perfecto: la tubería podría ser más larga, el calentador más débil. Un margen dice cuánto puede equivocarse el modelo, con un número que se puede sentir. El margen de fase (en radianes) dividido entre la velocidad de ganancia 1 es un **margen de retardo**: cuántos segundos de tubería extra aguanta el lazo."
+        },
+        {
+          "t": "play",
+          "id": "delaymargin",
+          "text": "Con $K_p$ = {scrub|kp|eff} %/°C y $K_i$ = {scrub|ki|eff} %/(°C·s), {calc|verdict}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "La mano normal solo aguanta 1,1 s de tubería extra, más o menos. Mi robot suave aguanta 3,5 s. Eso es ser robusto."
+        },
+        {
+          "t": "callout",
+          "title": "¿Tubería más corta o calentador más rápido?",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "excited",
+              "text": "¿Y si compramos un calentador más rápido y ya?"
+            },
+            {
+              "t": "p",
+              "text": "Reducir a la mitad el tiempo de suavizado (τ = 0,5 s) solo sube el borde de la mano de velocidad de 1,12 a 1,21 %/(°C·s). Reducir a la mitad la tubería (1,25 s) lo sube a 2,06. Para una mano de posición, el calentador más rápido es incluso *peor*: su borde baja de 0,031 a 0,025 de mando por °C, porque el suavizador estaba encogiendo en silencio las oscilaciones rápidas. El enemigo es el retardo, no la lentitud."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "Cómo gira de verdad el mando el robot",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "El código del robot escribe PI como **velocidad** del mando: I sigue moviéndolo mientras haya error y P responde a un *cambio* del error. Al arrancar, P también da un primer movimiento según el error actual. Esto coincide con la regla en posición, salvo cuando el mando llega a un tope."
+            }
+          ]
         }
       ]
     },
@@ -258,6 +445,7 @@
           "t": "recap",
           "items": [
             "Un retardo $L$ desfasa una oscilación en $\\omega L$: nada para las oscilaciones lentas, mucho para las rápidas.",
+            "Un montón (I) retrasa cualquier oscilación 90°\\; un suavizador, hasta 90°\\; una tubería, $\\omega L$, sin límite.",
             "Meter ondas senoidales y medir ganancia y fase da la **respuesta en frecuencia**; dibujada, es un **diagrama de Bode**, y no es más que $G(i\\omega)$.",
             "En este lazo sencillo de ducha, una oscilación sostenida empieza cuando la fase del lazo llega a −180° con ganancia 1; con más ganancia, las oscilaciones crecen hasta que intervienen los límites.",
             "Los **márgenes de ganancia y de fase** miden la distancia a ese abismo. Más retardo significa menos margen, así que necesitas un control más suave.",
@@ -287,21 +475,21 @@
               ]
             },
             {
-              "id": "ch10-q2",
-              "q": "A la velocidad en la que la fase del lazo es −180°, la ganancia del lazo es 0,5. ¿Cuál es el margen de ganancia?",
+              "id": "ch10-q2b",
+              "q": "En el diagrama de Bode de un lazo, la fase llega a −180° a 0,5 rad/s, donde la ganancia del lazo es 0,25. A la velocidad en que la ganancia del lazo vale 1, la fase es −130°. ¿Cuáles son los márgenes de ganancia y de fase?",
               "options": [
                 {
-                  "text": "× 2",
+                  "text": "× 4 y 50°",
                   "correct": true,
-                  "why": "Podrías duplicar la ganancia antes de que la ganancia del lazo a −180° llegue a 1."
+                  "why": "La ganancia podría crecer 1 ÷ 0,25 = 4 veces antes de llegar a 1 en −180°, y a −130° le faltan 50° para −180°."
                 },
                 {
-                  "text": "× 0,5",
-                  "why": "Esa es la propia ganancia del lazo. El margen es lo que le falta para llegar a 1: 1 ÷ 0,5 = 2."
+                  "text": "× 0,25 y 130°",
+                  "why": "Esas son las lecturas en bruto. Los márgenes son las *distancias* al abismo: 1 ÷ 0,25 y 180° − 130°."
                 },
                 {
-                  "text": "180°",
-                  "why": "El margen de ganancia es un factor, no un ángulo. La versión en ángulo es el margen de fase."
+                  "text": "× 4 y 130°",
+                  "why": "El margen de ganancia está bien, pero el margen de fase es el desfase extra que podrías añadir antes de llegar a −180°: 180° − 130° = 50°."
                 }
               ]
             },
@@ -366,11 +554,14 @@
       "lag": "desfase",
       "status": {
         "small": "Un desfase diminuto: el retardo apenas importa para las oscilaciones lentas.",
-        "middle": "Un desfase de {d}°: el agua va claramente descompasada.",
+        "middle": "Un desfase de {d}°: el agua va {f} de oscilación por detrás.",
         "flipped": "¡Al revés! Llega agua caliente justo cuando el mando dice fría.",
-        "full": "Más de una oscilación entera por detrás: parece que vuelve a ir a compás, pero llega un ciclo entero tarde."
+        "full": "Más de una oscilación entera por detrás: parece que vuelve a ir a compás, pero llega un ciclo entero tarde.",
+        "over": "Un desfase de {d}°: más de una oscilación entera tarde."
       },
-      "describe": "Periodo de oscilación de {p} segundos; el retardo de 2,5 segundos la desfasa {d} grados."
+      "describe": "Periodo de oscilación de {p} segundos; el retardo de 2,5 segundos la desfasa {d} grados.",
+      "w": "velocidad de oscilación ω",
+      "share": "fracción de oscilación"
     },
     "bode": {
       "title": "Construye un diagrama de Bode, oscilación a oscilación",
@@ -394,14 +585,16 @@
       "status": {
         "start": "Elige una velocidad de oscilación y pulsa Medir.",
         "measured": "En ω = {w} rad/s (una oscilación de {p} s): ganancia {g}, fase {ph}°.",
-        "formula": "La fórmula pasa justo por tus puntos."
+        "formula": "La fórmula pasa justo por tus puntos. Cruza −180° en {w} rad/s: una oscilación de {p} s vuelve del revés."
       },
-      "describe": "{n} medidas dibujadas."
+      "describe": "{n} medidas dibujadas.",
+      "cross": "del revés en {w} rad/s",
+      "help": "Suelta el deslizador, o haz una pausa con las flechas del teclado, y mide esa velocidad. Medir otra vez una velocidad sustituye su punto."
     },
     "margins": {
       "title": "La mano y el borde del abismo",
       "w": "velocidad de oscilación ω (rad/s)",
-      "gain": "ganancia del lazo |L|",
+      "gain": "ganancia del lazo",
       "phase": "fase del lazo (°)",
       "loop": "lazo mano + ducha",
       "gainAria": "Diagrama de Bode de ganancia del lazo mano más ducha, con la línea de ganancia uno.",
@@ -419,10 +612,12 @@
       "delay": "Retardo de la tubería",
       "status": {
         "safe": "Segura de sobra: mucho margen.",
-        "edge": "Cerca del borde (margen de fase de {p}°): espera oscilaciones largas y perezosas.",
-        "over": "Por el abismo abajo: las oscilaciones crecen hasta que el mando llega a sus topes."
+        "edge": "Cerca del borde: margen de fase {p}°, margen de ganancia × {g}. Espera oscilaciones largas y perezosas cada {T} s más o menos.",
+        "over": "Abismo abajo (margen de ganancia × {g}): las oscilaciones crecen hasta que el mando choca con sus topes."
       },
-      "describe": "Margen de ganancia {gm}, margen de fase {pm} grados."
+      "describe": "Margen de ganancia {gm}, margen de fase {pm} grados.",
+      "w180": "velocidad de −180°",
+      "period": "periodo de la oscilación sostenida"
     },
     "replay": {
       "title": "Tus oscilaciones del capítulo 0",
@@ -439,7 +634,7 @@
         "calm": "No hay suficientes oscilaciones para medir: ¡fuiste paciente (o tuviste suerte)!",
         "speed": "Oscilaciones cada {p} s: te comportaste como una mano de velocidad, un controlador I cerca de su borde.",
         "position": "Oscilaciones cada {p} s: te comportaste como una mano de posición, un controlador P cerca de su borde.",
-        "robot": "La mano robótica oscila cada {p} s: una mano de velocidad (un controlador I) justo dentro de su borde, como se predijo."
+        "robot": "La mano robot oscila cada {p} s. Algo más despacio que el borde de {e} s, porque está justo por dentro: una mano de velocidad (un controlador I)."
       }
     },
     "designer": {
@@ -458,7 +653,7 @@
       "ki": "Ganancia I $K_i$",
       "presetHand": "La mano normal",
       "presetJune": "Las ganancias de dron de June",
-      "goal": "Objetivo: margen de fase por encima de 45° y a gusto (en la franja 10 s seguidos) en menos de 12 s.",
+      "goal": "Objetivo: margen de fase por encima de 45° y a gusto (10 s seguidos en la franja) antes de 12 s. Empieza con las ganancias de June.",
       "pm": "margen de fase",
       "gm": "margen de ganancia",
       "comfort": "a gusto tras",
@@ -466,12 +661,53 @@
       "never": "nunca",
       "notPlayed": "sin jugar",
       "status": {
-        "unstable": "Por el abismo abajo: sin margen, oscilaciones sin fin.",
-        "edge": "Estable pero demasiado cerca del borde: más margen, por favor.",
+        "unstable": "Abismo abajo (margen de ganancia × {g}): oscilaciones sin fin, cada {p} s más o menos.",
+        "edge": "Estable, pero con solo {pm}° de margen de fase: más margen, por favor.",
         "slow": "Seguro, pero lento. ¿Puedes ponerte a gusto antes?",
         "win": "¡Robusto y rápido! Este robot les gana a tus manos del capítulo 0.",
-        "winButYou": "¡Robusto y rápido! (Tú fuiste más rápido en el capítulo 0. ¡Impresionante! Pero el robot nunca se cansa.)"
-      }
+        "winButYou": "¡Robusto y rápido! (Tú fuiste más rápido en el capítulo 0. ¡Impresionante! Pero el robot nunca se cansa.)",
+        "unstableSlow": "Abismo abajo (margen de ganancia × {g}): sin margen, oscilaciones sin fin."
+      },
+      "presetTheo": "Las ganancias suaves de Theo",
+      "w": "velocidad de oscilación ω (rad/s)",
+      "phase": "fase del lazo (°)",
+      "loop": "lazo robot + ducha",
+      "phaseAria": "Diagrama de Bode de fase del lazo robot más ducha, con la línea de −180 grados y el margen de fase.",
+      "cliff": "−180°: el abismo",
+      "atCross": "margen de fase"
+    }
+  },
+  "plays": {
+    "delaylag": {
+      "L": "retardo de la tubería",
+      "T": "periodo de oscilación"
+    },
+    "smoother": {
+      "w": "velocidad de oscilación ω"
+    },
+    "total": {
+      "w": "velocidad de oscilación ω",
+      "before": "Todavía no está del revés.",
+      "flip": "Del revés: una cresta sale como un valle.",
+      "past": "Más allá del revés."
+    },
+    "handloop": {
+      "w": "velocidad de oscilación ω"
+    },
+    "pgain": {
+      "K": "fuerza de la mano de posición K",
+      "dies": "Las oscilaciones se apagan.",
+      "edge": "Justo en el borde: oscilaciones que ni crecen ni menguan.",
+      "grows": "Las oscilaciones crecen."
+    },
+    "double": {
+      "L": "retardo de la tubería"
+    },
+    "delaymargin": {
+      "kp": "ganancia P Kp",
+      "ki": "ganancia I Ki",
+      "margin": "el margen de fase es de {pm}° a {wc} rad/s, así que la tubería podría alargarse {dm} s antes de que este robot empiece a oscilar sin parar.",
+      "none": "no hay nada de margen de fase: este robot ya oscila sin parar."
     }
   }
 }

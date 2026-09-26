@@ -11,13 +11,17 @@
           "t": "say",
           "who": "june",
           "mood": "worried",
-          "text": "J'ai mis le PID de notre drone sur la douche. Elle a oscillé chaud, froid, chaud… exactement comme Mika au chapitre 0. Le drone n'a jamais fait ça !"
+          "text": "J'ai mis le PID de notre drone sur la douche (le même côté nerveux, remis à l'échelle du robinet). Elle a oscillé chaud, froid, chaud… exactement comme Mika au chapitre 0. Le drone n'a jamais fait ça !"
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "think",
           "text": "Le drone n'a pas de gros retard. La douche a 2,5 secondes de tuyau. Découvrons enfin ce que *fait* un retard."
+        },
+        {
+          "t": "p",
+          "text": "La douche a deux parties lentes : le **tuyau**, un retard pur de 2,5 s, et le **lisseur** : le pommeau et les parois du tuyau qui se réchauffent, avec la constante de temps du chapitre 3, $\\tau = 1$ s (au bout d'1 s, il a comblé 63 % de l'écart vers une nouvelle température)."
         },
         {
           "t": "p",
@@ -54,20 +58,41 @@
           "id": "phase"
         },
         {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Attends. Pour une oscillation de 5 secondes, l'eau chaude arrive pile quand le robinet demande du froid. Ce n'est pas *plus lent*. C'est *à l'envers*."
+        },
+        {
           "t": "p",
-          "text": "Le retard du tuyau reste de 2,5 s, mais son **déphasage** dépend de la vitesse d'oscillation. Appelons ce déphasage $\\phi$. Si une oscillation dure $T$ secondes, sa pulsation vaut $\\omega=2\\pi/T$ radians par seconde. Ici, un déphasage positif signifie que la sortie suit l'entrée avec du retard ; sur un diagramme de phase, cela apparaît comme un angle négatif. Pour un retard de $L$ secondes, on peut exprimer le même déphasage en degrés ou en radians :"
+          "text": "Le retard du tuyau reste de 2,5 s, mais son **déphasage** dépend de la vitesse d'oscillation. Appelons ce déphasage $\\phi$ et le retard $L$. Si une oscillation dure $T$ secondes (ici, $T$ est une durée, pas une température), sa pulsation vaut $\\omega=2\\pi/T$ radians par seconde. Un déphasage positif signifie que la sortie suit l'entrée avec du retard. Les ingénieurs l'écrivent comme un angle négatif : les courbes ci-dessous descendent donc."
+        },
+        {
+          "t": "p",
+          "text": "Une oscillation complète, c'est un tour entier du tourniquet du chapitre 5 : 360°, soit 2π radians. Ce qui compte, c'est donc **quelle fraction d'oscillation** le retard recouvre : $L/T$."
         },
         {
           "t": "math",
-          "tex": "\\begin{aligned}\\phi_{\\mathrm{deg}} &= 360^\\circ\\frac{L}{T} \\\\ \\phi_{\\mathrm{rad}} &= \\omega L,\\qquad \\omega=\\frac{2\\pi}{T}\\end{aligned}"
+          "tex": "\\phi = \\underbrace{\\frac{L}{T}}_{\\text{fraction d'oscillation}}\\cdot 360^\\circ = \\omega L \\text{ radians},\\qquad \\omega = \\frac{2\\pi}{T}"
+        },
+        {
+          "t": "play",
+          "id": "delaylag",
+          "text": "Un retard de {scrub|L|dis} s sur une oscillation qui se répète toutes les {scrub|T} s en recouvre {calc|frac} : la sortie est en retard de {calc|deg}°, soit {calc|rad} radians."
         },
         {
           "t": "p",
-          "text": "Pour une oscillation lente de 30 secondes, 2,5 s ne représentent que 30° : un petit décalage. Pour une oscillation de 5 secondes, ils représentent 180° : dans ce modèle de retard pur, chaque sommet de la sortie coïncide avec un creux de l'entrée. La réponse thermique de la douche lisse aussi les oscillations rapides ; ajoutons-la maintenant."
+          "text": "Pour une oscillation de 5 secondes, 2,5 s, c'est une demi-oscillation : 180°. Dans ce modèle de retard pur, chaque sommet de la sortie coïncide avec un creux de l'entrée. Le lisseur de la douche rétrécit aussi les oscillations rapides ; ajoutons-le juste après."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Donc les mêmes 2,5 s, c'est une pichenette pour une oscillation paresseuse et un retournement complet pour une rapide. Le tuyau ne change jamais. C'est l'oscillation qui change !"
         },
         {
           "t": "note",
-          "text": "C'est la flèche qui tourne du chapitre 5 : un retard $L$ fait tourner la flèche $e^{i\\omega t}$ en arrière d'un angle $\\omega L$. C'est pour ça que la fonction de transfert d'un retard pur est $e^{-Ls}$."
+          "text": "C'est la flèche tournante du chapitre 5. Retarder le tourniquet de $L$ donne $e^{i\\omega(t-L)} = e^{-i\\omega L}\\,e^{i\\omega t}$ : la même flèche, tournée en arrière de l'angle $\\omega L$. Avec $s = i\\omega$, ce facteur vaut $e^{-Ls}$ : voilà pourquoi la fonction de transfert d'un retard pur est $e^{-Ls}$."
         }
       ]
     },
@@ -77,13 +102,13 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Ajoutons maintenant la réponse thermique de la douche au retard du tuyau. La température de l'eau met du temps à se stabiliser : la douche complète retarde et lisse donc les changements du robinet. Voici le plan : faire osciller le robinet à une fréquence, attendre un rythme stable, puis mesurer deux nombres :"
+          "text": "Ajoutons maintenant le lisseur au retard du tuyau. Le pommeau et les parois du tuyau mettent du temps à se réchauffer : la douche complète retarde donc et lisse les changements du robinet. Voici le plan : faire osciller le robinet à une vitesse, attendre un rythme stable, puis mesurer deux nombres :"
         },
         {
           "t": "list",
           "items": [
-            "**Gain :** la taille de l'oscillation de température, comparée à l'oscillation du mélange d'eau qu'on a demandée.",
-            "**Phase :** de combien elle est en retard, sous forme d'angle."
+            "**Gain** (le même mot que le gain du correcteur : taille en sortie ÷ taille en entrée) : la taille de l'oscillation de température, comparée à l'oscillation du mélange d'eau qu'on a demandée.",
+            "**Phase :** de combien elle est en retard, sous forme d'angle : sa fraction d'une oscillation complète, fois 360°."
           ]
         },
         {
@@ -95,12 +120,64 @@
           "id": "bode"
         },
         {
+          "t": "callout",
+          "title": "La règle écrasée",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Sur ces graphiques, chaque ×10 est un pas égal le long de l'axe : de 0,1 à 1 prend autant de place que de 1 à 10. Le milieu entre 0,1 et 1 est environ 0,3, pas 0,55. La règle est écrasée pour qu'une oscillation de 100 secondes et une de 3 secondes tiennent sur le même graphique. Regarde le gain du lisseur sur cette règle : plat pour les oscillations lentes, puis il glisse le long d'une droite presque parfaite pour les rapides, avec un coude vers $\\omega = 1/\\tau$."
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "excited",
+              "text": "Des pas égaux, ce sont des *fois* égaux, pas des *plus* égaux. Comme les octaves d'un piano !"
+            }
+          ]
+        },
+        {
           "t": "p",
-          "text": "L'inertie thermique de la douche atténue les oscillations rapides, tandis que le tuyau continue d'ajouter du déphasage. Les courbes de gain et de phase selon la fréquence d'oscillation forment un **diagramme de Bode**. Ici, l'entrée est la **température de l'eau mélangée** : les oscillations lentes ont donc un gain de 1. Avec la position du robinet en entrée, le gain serait 45 fois plus grand. Pour ce diagramme température vers température, on pose $s=i\\omega$ dans la réponse normalisée de la douche :"
+          "text": "Le lisseur rétrécit les oscillations rapides, pendant que le tuyau continue d'ajouter du déphasage. Ces courbes de gain et de phase en fonction de la vitesse d'oscillation forment un **diagramme de Bode**. Ensemble, elles sont la **réponse en fréquence** de la douche : la façon dont elle traite chaque vitesse d'oscillation. Ici, l'entrée est la **température de l'eau mélangée**, donc les oscillations lentes ont un gain de 1. Si on prenait la fraction de robinet comme entrée, le gain serait 45 fois plus grand. Pour obtenir la réponse en fréquence à partir de la formule, on pose $s = i\\omega$ : la même astuce qui a trouvé le bord au chapitre 9."
+        },
+        {
+          "t": "callout",
+          "title": "Ce que le lisseur fait à un tourniquet",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "L'astuce du chapitre 4, encore : on devine que la réponse est le même tourniquet, juste avec une autre taille et un autre angle."
+            },
+            {
+              "t": "math",
+              "tex": "\\tau\\,\\dot y + y = u,\\quad u = e^{i\\omega t},\\ y = A\\,e^{i\\omega t} \\;\\Rightarrow\\; (1 + i\\omega\\tau)\\,A = 1 \\;\\Rightarrow\\; A = \\frac{1}{1+i\\omega\\tau}"
+            },
+            {
+              "t": "p",
+              "text": "Mets le tourniquet $e^{i\\omega t}$ dans la règle du lisseur : la flèche $A$ doit vérifier $(1 + i\\omega\\tau)A = 1$. La flèche $1 + i\\omega\\tau$ a pour longueur $\\sqrt{1+\\omega^2\\tau^2}$ et pointe vers le haut avec l'angle $\\arctan(\\omega\\tau)$. Diviser par elle rétrécit de cette longueur et fait tourner en arrière de cet angle. Les oscillations lentes le remarquent à peine. Les rapides sont écrasées et prennent un retard qui tend vers un quart de tour, sans jamais le dépasser."
+            },
+            {
+              "t": "play",
+              "id": "smoother",
+              "text": "À ω = {scrub|w} rad/s, le lisseur (τ = 1 s) garde {calc|g} de l'oscillation et la retarde de {calc|lag}°."
+            }
+          ]
         },
         {
           "t": "math",
           "tex": "G(i\\omega) = \\frac{e^{-i\\omega L}}{1 + i\\omega\\tau}, \\qquad |G| = \\frac{1}{\\sqrt{1+\\omega^2\\tau^2}}, \\qquad \\angle G = -\\arctan(\\omega\\tau) - \\omega L"
+        },
+        {
+          "t": "play",
+          "id": "total",
+          "text": "À ω = {scrub|w} rad/s, le tuyau retarde de {calc|pipe}° et le lisseur de {calc|lag}° : {calc|total}° en tout. {calc|verdict}"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Trouvé ! Vers 0,95 rad/s, la douche toute seule met une oscillation à l'envers. Retenons cette vitesse."
         },
         {
           "t": "note",
@@ -114,15 +191,35 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Maintenant, fermons la boucle : main → robinet → tuyau → peau → main. Suis une oscillation sur tout le tour. Pour la main du chapitre 0, le tour de la boucle donne"
+          "text": "Maintenant, fermons la boucle : main → robinet → tuyau → peau → main. Suis une oscillation sur tout le tour. Pour la main du chapitre 0, le tour de la boucle donne $G_{\\circ}$ (un petit rond pour *boucle*, parce que $L$ est déjà le retard) :"
         },
         {
           "t": "math",
-          "tex": "L(s) = \\underbrace{\\frac{k}{s}}_{\\text{main}}\\cdot\\underbrace{\\frac{45\\,e^{-2{,}5s}}{s+1}}_{\\text{douche}}"
+          "tex": "G_{\\circ}(s) = \\underbrace{\\frac{k}{s}}_{\\text{main}}\\cdot\\underbrace{\\frac{45\\,e^{-2{,}5s}}{s+1}}_{\\text{douche}}"
+        },
+        {
+          "t": "callout",
+          "title": "Le tas d'une oscillation",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "think",
+              "text": "Ma main empile de l'erreur. Qu'est-ce qu'un tas fait à une oscillation ?"
+            },
+            {
+              "t": "math",
+              "tex": "\\int \\cos(\\omega t)\\,dt = \\frac{\\sin(\\omega t)}{\\omega} \\qquad\\Longleftrightarrow\\qquad \\frac{1}{i\\omega}:\\ \\text{un quart de tour en arrière, } \\tfrac{1}{\\omega}\\text{ fois la taille}"
+            },
+            {
+              "t": "p",
+              "text": "L'aire sous un cosinus est un sinus, en retard d'un quart d'oscillation : 90° de retard, à *toutes* les vitesses. Et le tas est plus gros pour les oscillations lentes, parce que chaque bosse dure plus longtemps avant d'être compensée : la taille varie comme $1/\\omega$. Le chapitre 5 disait que la vitesse, c'est $i\\omega$ fois la position. Empiler, c'est l'inverse : diviser par $i\\omega$. C'est le $k/s$ de la boucle."
+            }
+          ]
         },
         {
           "t": "p",
-          "text": "La rétroaction soustrait (erreur = cible − température), ce qui retourne la vague une fois. Si le tour de la boucle la retarde *aussi* d'exactement 180°, les deux retournements s'annulent, et chaque correction arrive **parfaitement en rythme** avec l'oscillation, comme quand on pousse une balançoire pile au bon moment. Si en plus la boucle ne rétrécit pas la vague (gain ≥ 1), l'oscillation grandit toute seule."
+          "text": "La rétroaction soustrait (erreur = cible − température). C'est un ×(−1), le demi-tour du chapitre 5 : la vague est retournée une fois. Si le tour de la boucle la retarde *aussi* d'exactement 180°, les deux retournements s'annulent, et chaque correction arrive **parfaitement en rythme** avec l'oscillation, comme quand on pousse une balançoire pile au bon moment. Si la boucle rend la vague à sa taille d'origine (gain 1), l'oscillation s'entretient toute seule ; au-delà de 1, elle grandit."
         },
         {
           "t": "say",
@@ -131,8 +228,13 @@
           "text": "Pour cette boucle de douche simple, la phase traverse −180° à une vitesse d’oscillation qui nous intéresse. Repère cette vitesse sur le graphique de phase, puis lis le gain de boucle à la même vitesse sur le graphique de gain. Est-il inférieur ou supérieur à 1 ?"
         },
         {
+          "t": "play",
+          "id": "handloop",
+          "text": "À ω = {scrub|w} rad/s, le tas de la main retarde de 90°, le lisseur de {calc|lag}°, le tuyau de {calc|pipe}° : {calc|total}° en tout. À cette vitesse, la boucle de la main normale renvoie une oscillation {calc|g} fois plus grande."
+        },
+        {
           "t": "p",
-          "text": "Par exemple, vers 0,457 rad/s, la main qui accumule retarde de 90°, le mélange ajoute environ 25° et le tuyau environ 65° : au total, 180°. La main normale renvoie une oscillation d’une taille d’environ 0,72 fois l’originale. Elle pourrait être environ 1 ÷ 0,72 ≈ 1,4 fois plus énergique avant la limite."
+          "text": "Fais glisser jusqu'à ce que le total dépasse 180°, entre 0,45 et 0,46 rad/s. Au croisement exact, vers 0,457 rad/s, l'oscillation revient 0,72 fois aussi grande : la main pourrait donc être environ 1 ÷ 0,72 ≈ 1,4 fois plus forte avant d'atteindre le bord."
         },
         {
           "t": "vocab",
@@ -143,13 +245,29 @@
             },
             {
               "term": "Marge de phase",
-              "def": "À la vitesse où le gain de boucle vaut exactement 1, combien de retard *en plus* il faudrait pour atteindre −180°. Plus, c'est plus sûr ; 45° à 60° est une cible courante."
+              "def": "À la vitesse où le gain de boucle vaut exactement 1, combien de retard *en plus* il faudrait pour atteindre −180°. Plus, c'est plus sûr ; 45° à 60° est une cible courante (le détour ci-dessous explique pourquoi)."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "La marge de phase, c'est de l'amortissement déguisé",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "think",
+              "text": "Pourquoi 45° à 60° ? Qui a choisi ça ?"
+            },
+            {
+              "t": "p",
+              "text": "Pour les boucles simples du chapitre 6, la marge de phase et le taux d'amortissement bougent ensemble. Environ 43° va avec ζ = 0,4 (25 % de dépassement), 52° avec ζ = 0,5 (16 %), et 59° avec ζ = 0,6 (moins de 10 %). Une marge de 45° à 60°, c'est le juste milieu ζ ≈ 0,4 à 0,6 du chapitre 6, mesuré en degrés. Avec un tuyau dans la boucle, c'est un bon repère, pas une loi exacte."
             }
           ]
         },
         {
           "t": "p",
-          "text": "Pour notre douche, la phase de $L$ atteint −180° à $\\omega \\approx 0{,}457$ rad/s, soit une période d'oscillation d'environ **13,8 s**. La main normale ($k = 0{,}008$) n'a qu'une marge de gain d'environ **1,4**, et une marge de phase d'environ 22°. Tout près du bord ! La main énergique double le gain : 1,4 ÷ 2 = 0,7, **tombée de la falaise**. C'est exactement pour ça qu'elle ne se stabilisait jamais."
+          "text": "Pour notre douche, la phase de $G_{\\circ}$ atteint −180° à $\\omega \\approx 0{,}457$ rad/s, soit une période d'oscillation d'environ **13,8 s**. La main normale ($k = 0{,}008$) n'a qu'une marge de gain d'environ **1,4**, et une marge de phase d'environ 22° (là où son gain de boucle vaut 1, à 0,34 rad/s, la phase est de −158°). Tout près du bord ! La main énergique double le gain : 1,4 ÷ 2 = 0,7, **tombée de la falaise**. C'est exactement pour ça qu'elle ne se stabilisait jamais."
         },
         {
           "t": "predict",
@@ -177,6 +295,17 @@
           "id": "margins"
         },
         {
+          "t": "play",
+          "id": "double",
+          "text": "Avec un tuyau de {scrub|L|dis} s, le bord de la main vitesse est à k = {calc|k} %/(°C·s), et au bord elle oscille toutes les {calc|T} s."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Deux fois plus de tuyau, environ deux fois moins de main. Et au bord, les oscillations ralentissent aussi : presque 24 secondes !"
+        },
+        {
           "t": "say",
           "who": "theo",
           "mood": "surprised",
@@ -198,7 +327,18 @@
         },
         {
           "t": "p",
-          "text": "Une **main qui commande une vitesse** (tourner le robinet tant que ça semble faux) est un correcteur I : son bord correspond à des oscillations de 13,8 s. Une **main qui commande une position** (« c'est trop chaud, mets le robinet *ici* ») agit comme un correcteur P : $L(s) = 45K\\,e^{-2{,}5s}/(s+1)$, dont la phase atteint −180° à $\\omega \\approx 0{,}95$ rad/s, soit des oscillations de **6,6 s**, pour tout $K$ au-dessus d'environ 0,031 robinet par °C. La plupart des gens sont un mélange. (La main robot normale oscille un peu plus lentement que 13,8 s, environ 15,5 s, parce qu'elle est juste à l'intérieur du bord ; les oscillations de la main énergique, environ 11,6 s, sont écrasées par le robinet qui arrive en butée.)"
+          "text": "Une **main vitesse** (tourner le robinet tant que ça semble faux) est un correcteur I : son bord correspond à des oscillations de 13,8 s. Une **main position** (« c'est trop chaud, mets le robinet *ici* ») agit comme un correcteur P : $G_{\\circ}(s) = 45K\\,e^{-2{,}5s}/(s+1)$. Une main position n'a pas de tas, donc pas de 90° à elle : le tuyau et le lisseur doivent atteindre 180° tout seuls, ce qui arrive pour une oscillation plus rapide, $\\omega \\approx 0{,}95$ rad/s (la vitesse « à l'envers » de June). Cela donne des oscillations de **6,6 s**, pour tout $K$ au-dessus d'environ 0,031 robinet par °C. La plupart des gens sont un mélange. (La main robot normale oscille un peu plus lentement que 13,8 s, environ 15,5 s, parce qu'elle est juste à l'intérieur du bord ; les oscillations de la main énergique, environ 11,6 s, sont écrasées par le robinet qui arrive en butée.)"
+        },
+        {
+          "t": "play",
+          "id": "pgain",
+          "text": "Une main position avec K = {scrub|K|eff} robinet par °C : à la vitesse du −180° (0,95 rad/s), sa boucle renvoie une oscillation {calc|g} fois plus grande. {calc|verdict}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Donc quand je donnais un coup sec au robinet vers une position précise, j'étais une main position. Mes oscillations de six secondes, c'était le tuyau et le lisseur, pas des doigts maladroits."
         }
       ]
     },
@@ -208,17 +348,17 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Essayons maintenant de battre nos mains. Le robot utilise PI : **P réagit à l’erreur de température actuelle**, et **I garde en mémoire l’erreur accumulée**. Ensemble, ils font réagir vite le robinet tandis que I trouve le réglage durable. Par rapport à I seul, P peut ajouter de l’avance de phase. Vise une **marge de phase supérieure à 45°** et **10 secondes dans la zone de confort, en commençant avant 12 s**."
+          "text": "Essayons maintenant de battre nos mains. Le robot utilise PI : **P réagit à l’erreur de température actuelle**, et **I garde en mémoire l’erreur accumulée**. Ensemble, ils font réagir vite le robinet tandis que I trouve le réglage durable."
         },
         {
           "t": "note",
-          "text": "Le code du robot écrit PI comme une **vitesse** du robinet : I continue de le déplacer tant que l’erreur persiste, et P répond à un *changement* d’erreur. Au départ, P donne aussi un premier mouvement selon l’erreur actuelle. Cela correspond à la règle de position, sauf quand le robinet atteint une butée."
+          "text": "L'objectif : une **marge de phase supérieure à 45°**, et **10 secondes dans la zone de confort, en commençant avant 12 s**. Les nombres des curseurs sont des pourcentages de la course du robinet : $K_p$ en % par °C d’erreur actuelle, $K_i$ en % par °C-seconde d’erreur accumulée. Les équations de boucle utilisent des fractions de course : divise donc les nombres affichés par 100."
         },
         {
           "t": "say",
           "who": "june",
           "mood": "excited",
-          "text": "Facile. Je vais mettre de gros gains, comme sur le drone : rapide et nerveux."
+          "text": "Facile. Je vais mettre de gros gains, comme sur le drone : rapide et nerveux. Ils sont déjà réglés. Regardez ça !"
         },
         {
           "t": "widget",
@@ -228,25 +368,72 @@
           "t": "say",
           "who": "june",
           "mood": "worried",
-          "text": "…elle oscille exactement comme nous. Les gros gains ont poussé la vitesse du −180° au-delà du point où le gain de boucle vaut 1. Aucune marge de phase."
+          "text": "…elle pompe (c'est le mot des automaticiens) : chaud–froid–chaud, toutes les 6 secondes, comme une main position au chapitre 0. Les gros gains ont poussé la vitesse de gain 1 au-delà de la vitesse du −180°. Plus aucune marge de phase."
+        },
+        {
+          "t": "callout",
+          "title": "10 s sur le papier, 6 s sous la douche",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Les gains de June ont $K_i/K_p = 1$ par seconde, exactement $1/\\tau$. Le zéro du PI tombe sur le pôle du lisseur et l'annule, ce qui laisse $2{,}25\\,e^{-2{,}5s}/s$. Sur le papier, cette boucle atteint −180° à $\\omega = \\pi/5$, une oscillation de 10 s. Mais la boucle est loin au-delà du bord, donc le robinet claque d'une butée à l'autre, et ces oscillations en butée reviennent environ toutes les 6,3 s : tout près des 6,6 s de la main position."
+            }
+          ]
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "happy",
-          "text": "Le drone supportait de gros gains parce qu'il n'avait presque pas de retard. Ici, **robuste** veut dire doux : il faut laisser de la marge pour le retard. Essaie environ $K_p \\approx 1$ et $K_i \\approx 0{,}6$."
+          "text": "Le drone supportait de gros gains parce qu'il n'avait presque pas de retard. Ici, **robuste** veut dire doux : il faut laisser de la marge pour le retard. Essaie mes gains doux, environ $K_p \\approx 1$ et $K_i \\approx 0{,}6$."
         },
         {
-          "t": "note",
-          "text": "Ces nombres de curseur sont des pourcentages de la course du robinet : P ≈ 1 % par °C d’erreur actuelle et I ≈ 0,6 % par °C-seconde d’erreur accumulée. Les équations de boucle utilisent des fractions de course : divise donc les nombres affichés par 100."
+          "t": "p",
+          "text": "P réagit à *maintenant*, I au tas. Ajouter un peu de *maintenant* fait bouger le robinet un peu plus tôt, ce qui rend de la phase : c'est l'**avance de phase**, environ 37° à l'ancienne vitesse du −180° avec les gains de Theo."
         },
         {
           "t": "p",
           "text": "Un PI avec de bonnes marges devient confortable en environ 9,4 secondes, sans grandes oscillations répétées. C'est mieux que la main normale (qui a passé presque une minute à osciller avant de se calmer) et que la plupart des humains. Mais il ne peut pas battre la physique : rien ne peut réagir à de l'eau qui n'est pas encore arrivée. Les ingénieurs ont bien une astuce pour les longs retards, le **prédicteur de Smith**, qui fait tourner une petite simulation du tuyau à l'intérieur du correcteur. Mais c'est une histoire pour un autre carnet."
         },
         {
-          "t": "note",
-          "text": "La robustesse, c'est la vraie leçon. Ton modèle de la douche n'est jamais parfait : le tuyau est peut-être plus long, le chauffe-eau plus faible. Les marges sont l'assurance que ton correcteur marche encore quand le monde n'est pas tout à fait ce que tu croyais."
+          "t": "p",
+          "text": "La robustesse, c'est la vraie leçon. Ton modèle de la douche n'est jamais parfait : le tuyau est peut-être plus long, le chauffe-eau plus faible. Une marge dit à quel point le modèle peut se tromper, avec un nombre qu'on peut sentir. La marge de phase (en radians) divisée par la vitesse de gain 1 donne une **marge de retard** : combien de secondes de tuyau en plus la boucle peut encaisser."
+        },
+        {
+          "t": "play",
+          "id": "delaymargin",
+          "text": "Avec $K_p$ = {scrub|kp|eff} %/°C et $K_i$ = {scrub|ki|eff} %/(°C·s), {calc|verdict}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "La main normale ne supporte qu'environ 1,1 s de tuyau en plus. Mon robot tout doux en supporte 3,5 s. Voilà ce que veut dire robuste."
+        },
+        {
+          "t": "callout",
+          "title": "Tuyau plus court ou chauffe-eau plus rapide ?",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "excited",
+              "text": "On ne pourrait pas juste acheter un chauffe-eau plus rapide ?"
+            },
+            {
+              "t": "p",
+              "text": "Diviser par deux le temps de lissage (τ = 0,5 s) ne fait monter le bord de la main vitesse que de 1,12 à 1,21 %/(°C·s). Diviser le tuyau par deux (1,25 s) le fait monter à 2,06. Pour une main position, le chauffe-eau plus rapide est même *pire* : son bord descend de 0,031 à 0,025 robinet par °C, parce que le lisseur rétrécissait discrètement les oscillations rapides. L'ennemi, c'est le retard, pas la lenteur."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "Comment le robot tourne vraiment le robinet",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Le code du robot écrit PI comme une **vitesse** du robinet : I continue de le déplacer tant que l’erreur persiste, et P répond à un *changement* d’erreur. Au départ, P donne aussi un premier mouvement selon l’erreur actuelle. Cela correspond à la règle de position, sauf quand le robinet atteint une butée."
+            }
+          ]
         }
       ]
     },
@@ -258,6 +445,7 @@
           "t": "recap",
           "items": [
             "Un retard $L$ décale une oscillation de $\\omega L$ : rien pour les oscillations lentes, beaucoup pour les rapides.",
+            "Un tas (I) retarde chaque oscillation de 90° ; un lisseur, de 90° au plus ; un tuyau, de $\\omega L$, sans limite.",
             "Envoyer des sinusoïdes et mesurer gain et phase donne la **réponse en fréquence** ; tracée, c'est un **diagramme de Bode**, et c'est simplement $G(i\\omega)$.",
             "Dans cette boucle de douche simple, une oscillation entretenue commence quand la phase de boucle atteint −180° avec un gain de 1 ; un gain plus grand fait croître les oscillations jusqu’à l’intervention des limites.",
             "Les **marges de gain et de phase** mesurent la distance à cette falaise. Plus de retard veut dire moins de marge, donc il faut une commande plus douce.",
@@ -287,21 +475,21 @@
               ]
             },
             {
-              "id": "ch10-q2",
-              "q": "À la vitesse où la phase de la boucle vaut −180°, le gain de boucle vaut 0,5. Quelle est la marge de gain ?",
+              "id": "ch10-q2b",
+              "q": "Sur le diagramme de Bode d'une boucle, la phase atteint −180° à 0,5 rad/s, où le gain de boucle vaut 0,25. À la vitesse où le gain de boucle vaut 1, la phase est de −130°. Quelles sont les marges de gain et de phase ?",
               "options": [
                 {
-                  "text": "× 2",
+                  "text": "× 4 et 50°",
                   "correct": true,
-                  "why": "On pourrait doubler le gain avant que le gain de boucle à −180° atteigne 1."
+                  "why": "Le gain pourrait être multiplié par 1 ÷ 0,25 = 4 avant d'atteindre 1 à −180°, et −130° est à 50° de −180°."
                 },
                 {
-                  "text": "× 0,5",
-                  "why": "Ça, c'est le gain de boucle lui-même. La marge, c'est la distance jusqu'à 1 : 1 ÷ 0,5 = 2."
+                  "text": "× 0,25 et 130°",
+                  "why": "Ce sont les lectures brutes. Les marges sont les *distances* jusqu'à la falaise : 1 ÷ 0,25 et 180° − 130°."
                 },
                 {
-                  "text": "180°",
-                  "why": "La marge de gain est un facteur, pas un angle. La version en angle, c'est la marge de phase."
+                  "text": "× 4 et 130°",
+                  "why": "La marge de gain est juste, mais la marge de phase, c'est le retard en plus qu'on pourrait ajouter avant d'atteindre −180° : 180° − 130° = 50°."
                 }
               ]
             },
@@ -366,11 +554,14 @@
       "lag": "retard de phase",
       "status": {
         "small": "Un tout petit décalage : le retard compte à peine pour les oscillations lentes.",
-        "middle": "Un décalage de {d}° : l'eau est nettement désynchronisée.",
+        "middle": "Un décalage de {d}° : l'eau est en retard de {f} d'oscillation.",
         "flipped": "À l'envers ! Le chaud arrive pile quand le robinet dit froid.",
-        "full": "Plus d'une oscillation complète de retard : ça semble de nouveau en rythme, mais avec un cycle entier de retard."
+        "full": "Plus d'une oscillation complète de retard : ça semble de nouveau en rythme, mais avec un cycle entier de retard.",
+        "over": "Un décalage de {d}° : plus d'une oscillation entière de retard."
       },
-      "describe": "Période d'oscillation de {p} secondes ; le retard de 2,5 secondes la décale de {d} degrés."
+      "describe": "Période d'oscillation de {p} secondes ; le retard de 2,5 secondes la décale de {d} degrés.",
+      "w": "vitesse d'oscillation ω",
+      "share": "fraction d'oscillation"
     },
     "bode": {
       "title": "Construire un diagramme de Bode, une oscillation à la fois",
@@ -394,14 +585,16 @@
       "status": {
         "start": "Choisis une vitesse d'oscillation et appuie sur Mesurer.",
         "measured": "À ω = {w} rad/s (une oscillation de {p} s) : gain {g}, phase {ph}°.",
-        "formula": "La formule passe pile par tes points."
+        "formula": "La formule passe pile par tes points. Elle croise −180° à {w} rad/s : une oscillation de {p} s revient à l'envers."
       },
-      "describe": "{n} mesures tracées."
+      "describe": "{n} mesures tracées.",
+      "cross": "à l'envers à {w} rad/s",
+      "help": "Lâche le curseur, ou fais une pause sur les flèches du clavier, et la vitesse est mesurée. Mesurer une vitesse à nouveau remplace son point."
     },
     "margins": {
       "title": "La main et le bord de la falaise",
       "w": "vitesse d'oscillation ω (rad/s)",
-      "gain": "gain de boucle |L|",
+      "gain": "gain de boucle",
       "phase": "phase de boucle (°)",
       "loop": "boucle main + douche",
       "gainAria": "Diagramme de Bode en gain de la boucle main plus douche, avec la ligne de gain égal à un.",
@@ -419,10 +612,12 @@
       "delay": "Retard du tuyau",
       "status": {
         "safe": "Largement en sécurité : beaucoup de marge.",
-        "edge": "Près du bord (marge de phase {p}°) : attends-toi à de longues oscillations paresseuses.",
-        "over": "Tombé de la falaise : les oscillations grandissent jusqu'à ce que le robinet arrive en butée."
+        "edge": "Près du bord : marge de phase {p}°, marge de gain × {g}. Attends-toi à de longues oscillations paresseuses, environ toutes les {T} s.",
+        "over": "Tombé de la falaise (marge de gain × {g}) : les oscillations grandissent jusqu'à ce que le robinet arrive en butée."
       },
-      "describe": "Marge de gain {gm}, marge de phase {pm} degrés."
+      "describe": "Marge de gain {gm}, marge de phase {pm} degrés.",
+      "w180": "vitesse du −180°",
+      "period": "période de pompage"
     },
     "replay": {
       "title": "Tes oscillations du chapitre 0",
@@ -439,7 +634,7 @@
         "calm": "Pas assez d'oscillations pour mesurer : tu as été patient·e (ou chanceux·se) !",
         "speed": "Une oscillation toutes les {p} s : tu t'es comporté·e comme une main vitesse, un correcteur I près de son bord.",
         "position": "Une oscillation toutes les {p} s : tu t'es comporté·e comme une main position, un correcteur P près de son bord.",
-        "robot": "La main robot oscille toutes les {p} s : une main vitesse (un correcteur I) juste à l'intérieur de son bord, comme prévu."
+        "robot": "La main robot oscille toutes les {p} s. C'est un peu plus lent que les {e} s du bord, parce qu'elle est juste à l'intérieur : une main vitesse (un correcteur I)."
       }
     },
     "designer": {
@@ -458,7 +653,7 @@
       "ki": "Gain I $K_i$",
       "presetHand": "La main normale",
       "presetJune": "Les gains façon drone de June",
-      "goal": "Objectif : marge de phase au-dessus de 45° et confortable (dans la bande 10 s d'affilée) en moins de 12 s.",
+      "goal": "Objectif : marge de phase au-dessus de 45° et confortable (dans la bande 10 s d'affilée) en moins de 12 s. On démarre avec les gains de June.",
       "pm": "marge de phase",
       "gm": "marge de gain",
       "comfort": "confortable après",
@@ -466,12 +661,53 @@
       "never": "jamais",
       "notPlayed": "pas joué",
       "status": {
-        "unstable": "Tombé de la falaise : aucune marge, oscillations sans fin.",
-        "edge": "Stable mais trop près du bord : plus de marge, s'il te plaît.",
+        "unstable": "Tombé de la falaise (marge de gain × {g}) : oscillations sans fin, environ toutes les {p} s.",
+        "edge": "Stable, mais seulement {pm}° de marge de phase : plus de marge, s'il te plaît.",
         "slow": "Sûr, mais lent. Peux-tu devenir confortable plus tôt ?",
         "win": "Robuste et rapide ! Ce robot bat tes mains du chapitre 0.",
-        "winButYou": "Robuste et rapide ! (Tu étais plus rapide au chapitre 0. Impressionnant ! Mais le robot, lui, ne se fatigue jamais.)"
-      }
+        "winButYou": "Robuste et rapide ! (Tu étais plus rapide au chapitre 0. Impressionnant ! Mais le robot, lui, ne se fatigue jamais.)",
+        "unstableSlow": "Tombé de la falaise (marge de gain × {g}) : aucune marge, oscillations sans fin."
+      },
+      "presetTheo": "Les gains doux de Theo",
+      "w": "vitesse d'oscillation ω (rad/s)",
+      "phase": "phase de boucle (°)",
+      "loop": "boucle robot + douche",
+      "phaseAria": "Diagramme de Bode en phase de la boucle robot plus douche, avec la ligne à −180 degrés et la marge de phase.",
+      "cliff": "−180° : la falaise",
+      "atCross": "marge de phase"
+    }
+  },
+  "plays": {
+    "delaylag": {
+      "L": "retard du tuyau",
+      "T": "période d'oscillation"
+    },
+    "smoother": {
+      "w": "vitesse d'oscillation ω"
+    },
+    "total": {
+      "w": "vitesse d'oscillation ω",
+      "before": "Pas encore à l'envers.",
+      "flip": "À l'envers : un sommet ressort en creux.",
+      "past": "Au-delà de l'envers."
+    },
+    "handloop": {
+      "w": "vitesse d'oscillation ω"
+    },
+    "pgain": {
+      "K": "force de la main position K",
+      "dies": "Les oscillations s'éteignent.",
+      "edge": "Pile sur le bord : des oscillations qui ne grandissent ni ne rétrécissent.",
+      "grows": "Les oscillations grandissent."
+    },
+    "double": {
+      "L": "retard du tuyau"
+    },
+    "delaymargin": {
+      "kp": "gain P Kp",
+      "ki": "gain I Ki",
+      "margin": "la marge de phase vaut {pm}° à {wc} rad/s : le tuyau pourrait s'allonger de {dm} s avant que ce robot se mette à pomper.",
+      "none": "il n'y a plus aucune marge de phase : ce robot pompe déjà."
     }
   }
 }

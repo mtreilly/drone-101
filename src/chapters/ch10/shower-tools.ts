@@ -27,6 +27,23 @@ export function criticalHandGain(delay = SHOWER.delay, tau = SHOWER.tau, hand: '
   return { k: gain / KNOB_GAIN, w, period };
 }
 
+/** The `bode` widget's wiggle-speed slider: a 0–1 log scale from 0.05 to 3 rad/s, in steps of 0.01. */
+export const BODE_W_MIN = 0.05;
+export const BODE_W_MAX = 3;
+export const BODE_STEP = 0.01;
+export const wFromSlider = (v: number): number => BODE_W_MIN * (BODE_W_MAX / BODE_W_MIN) ** v;
+/** The slider position closest to `w`, snapped to the slider's own step (so slider and status agree). */
+export const sliderFromW = (w: number): number => Number((Math.round(Math.log(w / BODE_W_MIN) / Math.log(BODE_W_MAX / BODE_W_MIN) / BODE_STEP) * BODE_STEP).toFixed(2));
+
+/**
+ * Where the shower alone (pipe + smoother, temperature in, temperature out) first lags a wiggle
+ * 180°: 0.952 rad/s with a gain of 0.724, a 6.6 s wiggle. It is also the position hand's edge.
+ */
+export function showerFlip(delay = SHOWER.delay, tau = SHOWER.tau): { w: number; gain: number; period: number } {
+  const { w, period } = criticalGain(0, delay, tau);
+  return { w, gain: 1 / Math.hypot(1, w * tau), period };
+}
+
 /** What a pure delay's lag of `deg` degrees does to a wiggle (the `phase` widget's status keys). */
 export type LagStatus = 'small' | 'middle' | 'flipped' | 'full' | 'over';
 
@@ -41,6 +58,11 @@ export function lagStatus(deg: number): LagStatus {
   if (Math.abs(wrapped - 180) < 5) return 'flipped';
   return deg > 360 ? 'over' : 'middle';
 }
+
+/** June's drone-style gains (5 %/°C, 5 %/(°C·s)): the designer opens on her mistake. */
+export const JUNE_PI = { kp: 0.05, ki: 0.05 };
+/** Theo's gentle gains (1 %/°C, 0.6 %/(°C·s)): PM 58°, comfortable by about 9.4 s. */
+export const THEO_PI = { kp: 0.01, ki: 0.006 };
 
 export const handPolicy = (k: number): ShowerPolicy => ({ kind: 'rate', rate: (_t, felt) => k * (SHOWER.target - felt) });
 
@@ -90,6 +112,15 @@ export function comfortTime(tr: ShowerTrace, hold = 10): number {
     if (inBand && Number.isNaN(start)) start = tr.t[i];
     if (!inBand) start = Number.NaN;
     if (!Number.isNaN(start) && tr.t[i] - start >= hold) return start;
+  }
+  return Number.NaN;
+}
+
+/** The first time in [from, to] the head temperature rises through 38 °C (NaN if it never does). */
+export function firstUpCrossing(tr: ShowerTrace, from = 0, to = Infinity): number {
+  for (let i = 1; i < tr.t.length; i++) {
+    if (tr.t[i] < from || tr.t[i] > to) continue;
+    if (tr.T[i - 1] < SHOWER.target && tr.T[i] >= SHOWER.target) return tr.t[i];
   }
   return Number.NaN;
 }

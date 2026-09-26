@@ -11,13 +11,17 @@
           "t": "say",
           "who": "june",
           "mood": "worried",
-          "text": "Ich hab unseren Drohnen-PID an die Dusche gehängt. Sie schwang heiß, kalt, heiß… genau wie Mika in Kapitel 0. Die Drohne hat so was nie gemacht!"
+          "text": "Ich hab unseren Drohnen-PID an die Dusche gehängt (dasselbe zackige Gefühl, umgerechnet auf Knopfeinheiten). Sie schwang heiß, kalt, heiß… genau wie Mika in Kapitel 0. Die Drohne hat so was nie gemacht!"
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "think",
           "text": "Die Drohne hat keine große Verzögerung. Die Dusche hat 2,5 Sekunden Rohr. Finden wir endlich heraus, was eine Verzögerung *anrichtet*."
+        },
+        {
+          "t": "p",
+          "text": "Die Dusche hat zwei langsame Teile: das **Rohr**, eine reine Totzeit von 2,5 s, und den **Glätter**: Duschkopf und Rohrwände wärmen sich mit der Zeitkonstante aus Kapitel 3 auf, $\\tau = 1$ s (nach 1 s sind 63 % des Abstands zu einer neuen Temperatur geschafft)."
         },
         {
           "t": "p",
@@ -54,20 +58,41 @@
           "id": "phase"
         },
         {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Moment. Bei einem 5-Sekunden-Wackler kommt das heiße Wasser genau dann an, wenn der Knopf kalt verlangt. Das ist nicht *langsamer*. Das ist *verkehrt herum*."
+        },
+        {
           "t": "p",
-          "text": "Die Totzeit des Rohrs bleibt bei 2,5 s, doch ihr **Phasenverzug** hängt davon ab, wie schnell die Welle schwingt. Nennen wir den Winkelversatz $\\phi$. Dauert eine Schwingung $T$ Sekunden, dann beträgt ihre Kreisfrequenz $\\omega=2\\pi/T$ Radiant pro Sekunde. Bei einer Verzögerung von $L$ Sekunden lässt sich derselbe Versatz in Grad oder Radiant ausdrücken:"
+          "text": "Die Totzeit des Rohrs bleibt bei 2,5 s, doch ihr **Phasenverzug** hängt davon ab, wie schnell die Welle schwingt. Nennen wir den Versatz $\\phi$ und die Verzögerung $L$. Dauert ein Wackler $T$ Sekunden (hier ist $T$ eine Zeit, keine Temperatur), dann beträgt seine Kreisfrequenz $\\omega=2\\pi/T$ Radiant pro Sekunde. Ein positiver Verzug heißt, dass der Ausgang dem Eingang hinterherläuft. Ingenieure schreiben einen Verzug als negativen Winkel, deshalb gehen die Diagramme unten nach unten."
+        },
+        {
+          "t": "p",
+          "text": "Ein ganzer Wackler ist eine volle Umdrehung des Drehpfeils aus Kapitel 5: 360° oder 2π Radiant. Es kommt also darauf an, **welchen Anteil eines Wacklers** die Verzögerung abdeckt: $L/T$."
         },
         {
           "t": "math",
-          "tex": "\\begin{aligned}\\phi_{\\mathrm{deg}} &= 360^\\circ\\frac{L}{T} \\\\ \\phi_{\\mathrm{rad}} &= \\omega L,\\qquad \\omega=\\frac{2\\pi}{T}\\end{aligned}"
+          "tex": "\\phi = \\underbrace{\\frac{L}{T}}_{\\text{Anteil eines Wacklers}}\\cdot 360^\\circ = \\omega L \\text{ Radiant},\\qquad \\omega = \\frac{2\\pi}{T}"
+        },
+        {
+          "t": "play",
+          "id": "delaylag",
+          "text": "Eine Verzögerung von {scrub|L|dis} s deckt bei einem Wackler, der sich alle {scrub|T} s wiederholt, {calc|frac} eines Wacklers ab. Der Ausgang hinkt also um {calc|deg}° hinterher, oder um {calc|rad} Radiant."
         },
         {
           "t": "p",
-          "text": "Bei einer langsamen Schwingung mit 30 s Periodendauer sind 2,5 s nur 30°: eine kleine Verschiebung. Bei 5 s sind es 180°: Im Modell der reinen Totzeit trifft jeder Wellenberg am Ausgang auf ein Wellental am Eingang. Die thermische Antwort der Dusche glättet schnelle Schwingungen zusätzlich; die nehmen wir gleich dazu."
+          "text": "Bei einem 5-Sekunden-Wackler sind 2,5 s ein halber Wackler: 180°. Im Modell der reinen Totzeit trifft jeder Wellenberg am Ausgang auf ein Wellental am Eingang. Der Glätter der Dusche staucht schnelle Wackler zusätzlich; den nehmen wir als Nächstes dazu."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Dieselben 2,5 s sind also ein Stupser für einen trägen Wackler und eine volle Umkehr für einen schnellen. Das Rohr ändert sich nie. Der Wackler schon!"
         },
         {
           "t": "note",
-          "text": "Das ist der drehende Pfeil aus Kapitel 5: Eine Verzögerung um $L$ dreht den Pfeil $e^{i\\omega t}$ um den Winkel $\\omega L$ zurück. Deshalb ist die Übertragungsfunktion einer reinen Totzeit $e^{-Ls}$."
+          "text": "Das ist der drehende Pfeil aus Kapitel 5. Verzögert man den Drehpfeil um $L$, ergibt das $e^{i\\omega(t-L)} = e^{-i\\omega L}\\,e^{i\\omega t}$: derselbe Pfeil, um den Winkel $\\omega L$ zurückgedreht. Mit $s = i\\omega$ ist dieser Faktor $e^{-Ls}$. Deshalb ist die Übertragungsfunktion einer reinen Totzeit $e^{-Ls}$."
         }
       ]
     },
@@ -77,13 +102,13 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Jetzt nehmen wir zur Totzeit des Rohrs die thermische Antwort der Dusche hinzu. Die Wassertemperatur braucht nach einer Änderung Zeit, um sich einzupendeln. Die ganze Dusche verzögert und glättet also Änderungen am Knopf. Unser Plan: Wir wackeln mit dem Knopf in einem Tempo, warten auf einen gleichmäßigen Rhythmus und messen zwei Zahlen:"
+          "text": "Jetzt nehmen wir zur Totzeit des Rohrs den Glätter hinzu. Duschkopf und Rohrwände brauchen Zeit, um warm zu werden, also verzögert die ganze Dusche Änderungen am Knopf und glättet sie. Unser Plan: Wir wackeln mit dem Knopf in einem Tempo, warten auf einen gleichmäßigen Rhythmus und messen zwei Zahlen:"
         },
         {
           "t": "list",
           "items": [
-            "**Verstärkung:** wie groß das Temperaturwackeln ist, verglichen mit dem Wackeln in der Wassermischung, die wir verlangt haben.",
-            "**Phase:** wie weit es hinterherhinkt, als Winkel."
+            "**Verstärkung** (dasselbe Wort wie bei der Reglerverstärkung: Größe raus ÷ Größe rein): wie groß das Temperaturwackeln ist, verglichen mit dem Wackeln in der Wassermischung, die wir verlangt haben.",
+            "**Phase:** wie weit es hinterherhinkt, als Winkel: sein Anteil an einem ganzen Wackler, mal 360°."
           ]
         },
         {
@@ -95,12 +120,64 @@
           "id": "bode"
         },
         {
+          "t": "callout",
+          "title": "Das gestauchte Lineal",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "In diesen Diagrammen ist jedes ×10 ein gleich großer Schritt auf der Achse: Von 0,1 bis 1 braucht genauso viel Platz wie von 1 bis 10. Die Mitte zwischen 0,1 und 1 liegt bei etwa 0,3, nicht bei 0,55. Das Lineal ist gestaucht, damit ein 100-Sekunden-Wackler und ein 3-Sekunden-Wackler ins selbe Diagramm passen. Schau dir die Verstärkung des Glätters auf diesem Lineal an: flach für langsame Wackler, dann eine fast gerade Linie abwärts für schnelle, mit einem Knick nahe $\\omega = 1/\\tau$."
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "excited",
+              "text": "Gleiche Schritte sind gleiche *Faktoren*, nicht gleiche *Summanden*. Wie die Oktaven auf einem Klavier!"
+            }
+          ]
+        },
+        {
           "t": "p",
-          "text": "Die thermische Trägheit der Dusche dämpft schnelle Wellen, während das Rohr immer mehr Phasenverzug hinzufügt. Die Verstärkungs- und Phasenkurven über dem Schwingungstempo bilden ein **Bode-Diagramm**. Hier ist der Eingang die **Temperatur des gemischten Wassers**, deshalb haben langsame Wellen die Verstärkung 1. Bei der Knopfstellung als Eingang wäre sie 45-mal größer. Für dieses Temperatur-zu-Temperatur-Diagramm setzen wir $s=i\\omega$ in die normierte Duschantwort ein:"
+          "text": "Der Glätter staucht schnelle Wackler, während das Rohr immer mehr Phasenverzug hinzufügt. Die Verstärkungs- und Phasenkurven über dem Wackeltempo bilden ein **Bode-Diagramm**. Zusammen sind sie der **Frequenzgang** der Dusche: wie sie jedes Wackeltempo behandelt. Hier ist der Eingang die **Temperatur des gemischten Wassers**, deshalb haben langsame Wackler die Verstärkung 1. Bei der Knopfstellung als Eingang wäre sie 45-mal größer. Um den Frequenzgang aus der Formel zu bekommen, setz $s = i\\omega$: derselbe Trick, mit dem wir die Kante in Kapitel 9 gefunden haben."
+        },
+        {
+          "t": "callout",
+          "title": "Was der Glätter mit einem Drehpfeil macht",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Wieder der Trick aus Kapitel 4: Raten wir, dass die Antwort derselbe Drehpfeil ist, nur mit anderer Größe und anderem Winkel."
+            },
+            {
+              "t": "math",
+              "tex": "\\tau\\,\\dot y + y = u,\\quad u = e^{i\\omega t},\\ y = A\\,e^{i\\omega t} \\;\\Rightarrow\\; (1 + i\\omega\\tau)\\,A = 1 \\;\\Rightarrow\\; A = \\frac{1}{1+i\\omega\\tau}"
+            },
+            {
+              "t": "p",
+              "text": "Setz den Drehpfeil $e^{i\\omega t}$ in die Regel des Glätters ein, dann muss der Pfeil $A$ die Gleichung $(1 + i\\omega\\tau)A = 1$ erfüllen. Der Pfeil $1 + i\\omega\\tau$ hat die Länge $\\sqrt{1+\\omega^2\\tau^2}$ und zeigt im Winkel $\\arctan(\\omega\\tau)$ nach oben. Teilen durch ihn staucht um diese Länge und dreht um diesen Winkel zurück. Langsame Wackler merken kaum etwas. Schnelle werden gestaucht und hinken fast eine Vierteldrehung hinterher, aber nie mehr."
+            },
+            {
+              "t": "play",
+              "id": "smoother",
+              "text": "Bei ω = {scrub|w} rad/s behält der Glätter (τ = 1 s) {calc|g} des Wacklers und lässt ihn um {calc|lag}° nachhinken."
+            }
+          ]
         },
         {
           "t": "math",
           "tex": "G(i\\omega) = \\frac{e^{-i\\omega L}}{1 + i\\omega\\tau}, \\qquad |G| = \\frac{1}{\\sqrt{1+\\omega^2\\tau^2}}, \\qquad \\angle G = -\\arctan(\\omega\\tau) - \\omega L"
+        },
+        {
+          "t": "play",
+          "id": "total",
+          "text": "Bei ω = {scrub|w} rad/s hinkt das Rohr um {calc|pipe}° nach und der Glätter um {calc|lag}°: zusammen {calc|total}°. {calc|verdict}"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Gefunden! Nahe 0,95 rad/s stellt die Dusche allein einen Wackler auf den Kopf. Merkt euch dieses Tempo."
         },
         {
           "t": "note",
@@ -114,15 +191,35 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Jetzt schließen wir den Kreis: Hand → Knopf → Rohr → Haut → Hand. Folg einem Wackler einmal ganz herum. Für die Hand aus Kapitel 0 ist die Runde durch den Kreis"
+          "text": "Jetzt schließen wir den Kreis: Hand → Knopf → Rohr → Haut → Hand. Folg einem Wackler einmal ganz herum. Für die Hand aus Kapitel 0 ist die Runde durch den Kreis $G_{\\circ}$ (ein kleiner Kreis für den *Kreis*, weil $L$ schon die Verzögerung ist):"
         },
         {
           "t": "math",
-          "tex": "L(s) = \\underbrace{\\frac{k}{s}}_{\\text{Hand}}\\cdot\\underbrace{\\frac{45\\,e^{-2{,}5s}}{s+1}}_{\\text{Dusche}}"
+          "tex": "G_{\\circ}(s) = \\underbrace{\\frac{k}{s}}_{\\text{Hand}}\\cdot\\underbrace{\\frac{45\\,e^{-2{,}5s}}{s+1}}_{\\text{Dusche}}"
+        },
+        {
+          "t": "callout",
+          "title": "Der Haufen eines Wacklers",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "think",
+              "text": "Meine Hand häuft Fehler an. Was macht ein Haufen mit einem Wackler?"
+            },
+            {
+              "t": "math",
+              "tex": "\\int \\cos(\\omega t)\\,dt = \\frac{\\sin(\\omega t)}{\\omega} \\qquad\\Longleftrightarrow\\qquad \\frac{1}{i\\omega}:\\ \\text{eine Vierteldrehung zurück, } \\tfrac{1}{\\omega}\\text{-mal so groß}"
+            },
+            {
+              "t": "p",
+              "text": "Die Fläche unter einem Kosinus ist ein Sinus, einen Viertelwackler hinterher: 90° Nachhinken, bei *jedem* Tempo. Und der Haufen ist bei langsamen Wacklern größer, weil jeder Buckel länger dauert, bevor er sich aufhebt: Die Größe geht wie $1/\\omega$. In Kapitel 5 war die Geschwindigkeit $i\\omega$ mal die Position. Anhäufen ist das Umgekehrte: durch $i\\omega$ teilen. Das ist das $k/s$ im Kreis."
+            }
+          ]
         },
         {
           "t": "p",
-          "text": "Die Rückkopplung zieht ab (Fehler = Ziel − Temperatur), und das dreht die Welle einmal um. Wenn die Runde durch den Kreis sie *zusätzlich* um genau 180° verzögert, heben sich die zwei Umdrehungen auf. Dann kommt jede Korrektur **perfekt im Takt** mit dem Schwung an, wie beim Anschubsen einer Schaukel im genau richtigen Moment. Wenn der Kreis die Welle außerdem nicht staucht (Verstärkung ≥ 1), wächst der Schwung von selbst."
+          "text": "Die Rückkopplung zieht ab (Fehler = Ziel − Temperatur). Das ist ein ×(−1), die halbe Drehung aus Kapitel 5, also dreht sich die Welle einmal um. Wenn die Runde durch den Kreis sie *zusätzlich* um genau 180° verzögert, heben sich die zwei Umdrehungen auf. Dann kommt jede Korrektur **perfekt im Takt** mit dem Schwung an, wie beim Anschubsen einer Schaukel im genau richtigen Moment. Bringt der Kreis die Welle in voller Größe zurück (Verstärkung 1), hält sich der Schwung von selbst am Laufen; bei mehr als 1 wächst er."
         },
         {
           "t": "say",
@@ -131,8 +228,13 @@
           "text": "Bei diesem einfachen Duschkreis durchläuft die Phase −180° bei einem wichtigen Wackeltempo. Finde es im Phasendiagramm und lies dann bei demselben Tempo die Kreisverstärkung im Verstärkungsdiagramm ab. Liegt sie unter oder über 1?"
         },
         {
+          "t": "play",
+          "id": "handloop",
+          "text": "Bei ω = {scrub|w} rad/s hinkt der Haufen der Hand um 90° nach, der Glätter um {calc|lag}°, das Rohr um {calc|pipe}°: zusammen {calc|total}°. Dort bringt der Kreis der normalen Hand einen Schwung {calc|g}-mal so groß zurück."
+        },
+        {
           "t": "p",
-          "text": "Zum Beispiel hinkt die sammelnde Hand bei etwa 0,457 rad/s um 90° nach, die Mischung fügt rund 25° hinzu und das Rohr rund 65°: zusammen 180°. Die normale Hand schickt eine Welle mit nur etwa 0,72 der ursprünglichen Größe zurück. Sie könnte ungefähr 1 ÷ 0,72 ≈ 1,4-mal stärker sein, bevor sie die Grenze erreicht."
+          "text": "Schieb, bis die Summe 180° überschreitet, zwischen 0,45 und 0,46 rad/s. Genau am Übergang, bei etwa 0,457 rad/s, kommt der Schwung 0,72-mal so groß zurück. Die Hand könnte also etwa 1 ÷ 0,72 ≈ 1,4-mal stärker sein, bevor sie die Kante erreicht."
         },
         {
           "t": "vocab",
@@ -143,13 +245,29 @@
             },
             {
               "term": "Phasenreserve",
-              "def": "Beim Tempo, bei dem die Kreisverstärkung genau 1 ist: wie viel *zusätzliches* Nachhinken es bräuchte, um −180° zu erreichen. Mehr ist sicherer; 45°–60° ist ein übliches Ziel."
+              "def": "Beim Tempo, bei dem die Kreisverstärkung genau 1 ist: wie viel *zusätzliches* Nachhinken es bräuchte, um −180° zu erreichen. Mehr ist sicherer; 45°–60° ist ein übliches Ziel (der Abstecher unten sagt, warum)."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "Phasenreserve ist verkleidete Dämpfung",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "think",
+              "text": "Warum 45° bis 60°? Wer hat das ausgesucht?"
+            },
+            {
+              "t": "p",
+              "text": "Bei den einfachen Kreisen aus Kapitel 6 gehen Phasenreserve und Dämpfungsgrad Hand in Hand. Etwa 43° gehören zu ζ = 0,4 (25 % Überschwingen), 52° zu ζ = 0,5 (16 %) und 59° zu ζ = 0,6 (unter 10 %). Eine Reserve von 45°–60° ist der Wohlfühlbereich ζ ≈ 0,4–0,6 aus Kapitel 6, gemessen in Grad. Mit einem Rohr im Kreis ist das eine gute Richtschnur, kein exaktes Gesetz."
             }
           ]
         },
         {
           "t": "p",
-          "text": "Bei unserer Dusche erreicht die Phase von $L$ bei $\\omega \\approx 0{,}457$ rad/s −180°, eine Wackelperiode von etwa **13,8 s**. Die normale Hand ($k = 0{,}008$) hat eine Amplitudenreserve von nur etwa **1,4** und eine Phasenreserve von etwa 22°. Knapp an der Kante! Die eifrige Hand verdoppelt die Verstärkung: 1,4 ÷ 2 = 0,7, **über die Klippe**. Genau deshalb kam sie nie zur Ruhe."
+          "text": "Bei unserer Dusche erreicht die Phase von $G_{\\circ}$ bei $\\omega \\approx 0{,}457$ rad/s −180°, eine Wackelperiode von etwa **13,8 s**. Die normale Hand ($k = 0{,}008$) hat eine Amplitudenreserve von nur etwa **1,4** und eine Phasenreserve von etwa 22° (wo ihre Kreisverstärkung 1 ist, bei 0,34 rad/s, liegt die Phase bei −158°). Knapp an der Kante! Die eifrige Hand verdoppelt die Verstärkung: 1,4 ÷ 2 = 0,7, **über die Klippe**. Genau deshalb kam sie nie zur Ruhe."
         },
         {
           "t": "predict",
@@ -177,6 +295,17 @@
           "id": "margins"
         },
         {
+          "t": "play",
+          "id": "double",
+          "text": "Mit einem Rohr von {scrub|L|dis} s liegt die Kante der Tempo-Hand bei k = {calc|k} %/(°C·s), und an der Kante schwingt sie alle {calc|T} s."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Doppeltes Rohr, etwa halbe Hand. Und die Schwünge an der Kante werden auch langsamer: fast 24 Sekunden!"
+        },
+        {
           "t": "say",
           "who": "theo",
           "mood": "surprised",
@@ -198,7 +327,18 @@
         },
         {
           "t": "p",
-          "text": "Eine **Tempo-Hand** (dreht den Knopf, solange es sich falsch anfühlt) ist ein I-Regler: Ihre Kante liegt bei Schwüngen von 13,8 s. Eine **Stellungs-Hand** („zu heiß, Knopf *hierhin*“) verhält sich wie ein P-Regler: $L(s) = 45K\\,e^{-2{,}5s}/(s+1)$. Deren Phase erreicht bei $\\omega \\approx 0{,}95$ rad/s −180°, also Schwünge von **6,6 s**, für jedes $K$ über etwa 0,031 Knopf pro °C. Die meisten Menschen sind eine Mischung. (Die normale Roboterhand schwingt etwas langsamer als 13,8 s, etwa 15,5 s, weil sie knapp innerhalb der Kante sitzt; die Schwünge der eifrigen Hand, etwa 11,6 s, werden gestaucht, weil der Knopf an seine Anschläge stößt.)"
+          "text": "Eine **Tempo-Hand** (dreht den Knopf, solange es sich falsch anfühlt) ist ein I-Regler: Ihre Kante liegt bei Schwüngen von 13,8 s. Eine **Stellungs-Hand** („zu heiß, Knopf *hierhin*“) verhält sich wie ein P-Regler: $G_{\\circ}(s) = 45K\\,e^{-2{,}5s}/(s+1)$. Eine Stellungs-Hand hat keinen Haufen, also auch keine eigenen 90°: Rohr und Glätter allein müssen 180° erreichen, und das passiert bei einem schnelleren Wackler, $\\omega \\approx 0{,}95$ rad/s (Junes Auf-den-Kopf-Tempo). Das heißt Schwünge von **6,6 s**, für jedes $K$ über etwa 0,031 Knopf pro °C. Die meisten Menschen sind eine Mischung. (Die normale Roboterhand schwingt etwas langsamer als 13,8 s, etwa 15,5 s, weil sie knapp innerhalb der Kante sitzt; die Schwünge der eifrigen Hand, etwa 11,6 s, werden gestaucht, weil der Knopf an seine Anschläge stößt.)"
+        },
+        {
+          "t": "play",
+          "id": "pgain",
+          "text": "Eine Stellungs-Hand mit K = {scrub|K|eff} Knopf pro °C: Beim −180°-Tempo (0,95 rad/s) bringt ihr Kreis einen Schwung {calc|g}-mal so groß zurück. {calc|verdict}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Als ich den Knopf direkt auf eine Stelle gerissen hab, war ich also eine Stellungs-Hand. Meine Sechs-Sekunden-Schwünge kamen vom Rohr und vom Glätter, nicht von ungeschickten Fingern."
         }
       ]
     },
@@ -208,17 +348,17 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Jetzt wollen wir unsere eigenen Hände schlagen. Der Roboter nutzt PI: **P reagiert auf den aktuellen Temperaturfehler**, **I merkt sich den angesammelten Fehler**. So reagiert der Knopf sofort, während I die dauerhafte Einstellung findet. Gegenüber I allein kann P Phasenvorsprung bringen. Ziel sind **mehr als 45° Phasenreserve** und **10 Sekunden im angenehmen Band, beginnend vor 12 s**."
+          "text": "Jetzt wollen wir unsere eigenen Hände schlagen. Der Roboter nutzt PI: **P reagiert auf den aktuellen Temperaturfehler**, **I merkt sich den angesammelten Fehler**. So reagiert der Knopf sofort, während I die dauerhafte Einstellung findet."
         },
         {
           "t": "note",
-          "text": "Im Robotercode steht PI als **Drehgeschwindigkeit** des Knopfs: I bewegt ihn weiter, solange ein Fehler besteht, und P reagiert auf eine *Änderung* des Fehlers. Beim Start gibt P dem Knopf auch eine erste Bewegung entsprechend dem aktuellen Fehler. Das entspricht der Stellungsregel, außer wenn der Knopf an einen Anschlag kommt."
+          "text": "Das Ziel: **mehr als 45° Phasenreserve** und **10 Sekunden im angenehmen Band, beginnend vor 12 s**. Die Schieberzahlen sind Prozent des vollen Knopfbereichs: $K_p$ in % pro °C aktuellem Fehler, $K_i$ in % pro °C-Sekunde angesammeltem Fehler. Die Kreisgleichungen nutzen Bruchteile des Bereichs; teile die angezeigten Zahlen daher durch 100."
         },
         {
           "t": "say",
           "who": "june",
           "mood": "excited",
-          "text": "Einfach. Ich nehm große Verstärkungen, wie bei der Drohne: schnell und zackig."
+          "text": "Einfach. Ich nehm große Verstärkungen, wie bei der Drohne: schnell und zackig. Sind schon eingestellt. Pass auf!"
         },
         {
           "t": "widget",
@@ -228,25 +368,72 @@
           "t": "say",
           "who": "june",
           "mood": "worried",
-          "text": "…sie schwingt genau wie wir damals. Große Verstärkungen haben das −180°-Tempo über den Punkt geschoben, an dem die Kreisverstärkung 1 ist. Überhaupt keine Phasenreserve."
+          "text": "…sie pendelt, heiß–kalt–heiß, alle 6 Sekunden, wie eine Stellungs-Hand in Kapitel 0. Große Verstärkungen haben das Tempo, bei dem die Kreisverstärkung 1 ist, über das −180°-Tempo hinausgeschoben. Überhaupt keine Phasenreserve."
+        },
+        {
+          "t": "callout",
+          "title": "10 s auf dem Papier, 6 s in der Dusche",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Junes Verstärkungen haben $K_i/K_p = 1$ pro Sekunde, genau $1/\\tau$. Die Nullstelle des PI sitzt auf dem Pol des Glätters und hebt ihn auf, übrig bleibt $2{,}25\\,e^{-2{,}5s}/s$. Auf dem Papier erreicht dieser Kreis −180° bei $\\omega = \\pi/5$, ein Schwung von 10 s. Aber ihr Kreis ist weit über der Kante, also knallt der Knopf von Anschlag zu Anschlag, und diese Knall-Schwünge kommen etwa alle 6,3 s: nah an den 6,6 s der Stellungs-Hand."
+            }
+          ]
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "happy",
-          "text": "Die Drohne hat große Verstärkungen vertragen, weil sie fast kein Nachhinken hatte. Hier heißt **robust** sanft: Lass Reserve für die Verzögerung. Probier ungefähr $K_p \\approx 1$ und $K_i \\approx 0{,}6$."
+          "text": "Die Drohne hat große Verstärkungen vertragen, weil sie fast kein Nachhinken hatte. Hier heißt **robust** sanft: Lass Reserve für die Verzögerung. Probier meine sanften Verstärkungen, ungefähr $K_p \\approx 1$ und $K_i \\approx 0{,}6$."
         },
         {
-          "t": "note",
-          "text": "Die Schieberzahlen sind Prozent des vollen Knopfbereichs: P ≈ 1 % pro °C aktuellem Fehler und I ≈ 0,6 % pro °C-Sekunde angesammeltem Fehler. Die Kreisgleichungen nutzen Bruchteile des Bereichs; teile die angezeigten Zahlen daher durch 100."
+          "t": "p",
+          "text": "P reagiert auf das *Jetzt*, I auf den Haufen. Ein bisschen *Jetzt* dazu bewegt den Knopf ein bisschen früher, und das gibt Phase zurück: **Phasenvorsprung**, etwa 37° beim alten −180°-Tempo mit Theos Verstärkungen."
         },
         {
           "t": "p",
           "text": "Ein PI-Regler mit guter Reserve ist in etwa 9,4 Sekunden angenehm, ohne wiederholte große Schwingungen. Das schlägt die normale Hand (die fast eine Minute geschwungen hat, bevor sie sich beruhigte) und die meisten Menschen. Die Physik schlagen kann er aber nicht: Nichts kann auf Wasser reagieren, das noch nicht angekommen ist. Für lange Verzögerungen haben Ingenieurinnen und Ingenieure einen Trick, den **Smith-Prädiktor**, der eine kleine Simulation des Rohrs im Regler laufen lässt. Aber das ist eine Geschichte für ein anderes Notizheft."
         },
         {
-          "t": "note",
-          "text": "Robustheit ist die eigentliche Lektion. Dein Modell der Dusche ist nie perfekt: Das Rohr könnte länger sein, der Boiler schwächer. Reserven sind die Versicherung, dass dein Regler auch dann noch funktioniert, wenn die Welt nicht ganz so ist, wie du angenommen hast."
+          "t": "p",
+          "text": "Robustheit ist die eigentliche Lektion. Dein Modell der Dusche ist nie perfekt: Das Rohr ist vielleicht länger, die Heizung schwächer. Eine Reserve sagt, wie falsch das Modell sein darf, als Zahl, die man spüren kann. Die Phasenreserve (in Radiant) geteilt durch das Tempo mit Kreisverstärkung 1 ist eine **Totzeitreserve**: wie viele Sekunden zusätzliches Rohr der Kreis verkraftet."
+        },
+        {
+          "t": "play",
+          "id": "delaymargin",
+          "text": "Mit $K_p$ = {scrub|kp|eff} %/°C und $K_i$ = {scrub|ki|eff} %/(°C·s): {calc|verdict}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Die normale Hand verkraftet nur etwa 1,1 s zusätzliches Rohr. Mein sanfter Roboter verkraftet 3,5 s. Das heißt robust."
+        },
+        {
+          "t": "callout",
+          "title": "Kürzeres Rohr oder schnellere Heizung?",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "excited",
+              "text": "Können wir nicht einfach eine schnellere Heizung kaufen?"
+            },
+            {
+              "t": "p",
+              "text": "Halbiert man die Glättungszeit (τ = 0,5 s), steigt die Kante der Tempo-Hand nur von 1,12 auf 1,21 %/(°C·s). Halbiert man das Rohr (1,25 s), steigt sie auf 2,06. Für eine Stellungs-Hand ist die schnellere Heizung sogar *schlechter*: Ihre Kante fällt von 0,031 auf 0,025 Knopf pro °C, weil der Glätter schnelle Wackler heimlich gestaucht hat. Der Feind ist die Verzögerung, nicht die Trägheit."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "Wie der Roboter den Knopf wirklich dreht",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Im Robotercode steht PI als **Drehgeschwindigkeit** des Knopfs: I bewegt ihn weiter, solange ein Fehler besteht, und P reagiert auf eine *Änderung* des Fehlers. Beim Start gibt P dem Knopf auch eine erste Bewegung entsprechend dem aktuellen Fehler. Das entspricht der Stellungsregel, außer wenn der Knopf an einen Anschlag kommt."
+            }
+          ]
         }
       ]
     },
@@ -258,6 +445,7 @@
           "t": "recap",
           "items": [
             "Eine Verzögerung $L$ lässt einen Wackler um $\\omega L$ nachhinken: nichts bei langsamen Wacklern, viel bei schnellen.",
+            "Ein Haufen (I) lässt jeden Wackler um 90° nachhinken, ein Glätter um bis zu 90°, ein Rohr um $\\omega L$, ohne Grenze.",
             "Sinuswellen einspeisen und Verstärkung und Phase messen ergibt den **Frequenzgang**; aufgezeichnet ist das ein **Bode-Diagramm**, und es ist einfach $G(i\\omega)$.",
             "In diesem einfachen Duschkreis beginnt eine anhaltende Schwingung, wenn die Kreisphase −180° bei Verstärkung 1 erreicht; bei größerer Verstärkung wachsen die Schwingungen, bis Grenzen eingreifen.",
             "**Amplituden- und Phasenreserve** messen den Abstand zu dieser Klippe. Längere Verzögerung heißt weniger Reserve, also brauchst du eine sanftere Regelung.",
@@ -287,21 +475,21 @@
               ]
             },
             {
-              "id": "ch10-q2",
-              "q": "Beim Tempo, bei dem die Phase des Kreises −180° ist, beträgt die Kreisverstärkung 0,5. Wie groß ist die Amplitudenreserve?",
+              "id": "ch10-q2b",
+              "q": "Im Bode-Diagramm eines Kreises erreicht die Phase −180° bei 0,5 rad/s, wo die Kreisverstärkung 0,25 ist. Beim Tempo, bei dem die Kreisverstärkung 1 ist, liegt die Phase bei −130°. Wie groß sind Amplituden- und Phasenreserve?",
               "options": [
                 {
-                  "text": "× 2",
+                  "text": "× 4 und 50°",
                   "correct": true,
-                  "why": "Du könntest die Verstärkung verdoppeln, bevor die Kreisverstärkung bei −180° 1 erreicht."
+                  "why": "Die Verstärkung könnte 1 ÷ 0,25 = 4-mal wachsen, bevor sie bei −180° 1 erreicht, und −130° liegt 50° vor −180°."
                 },
                 {
-                  "text": "× 0,5",
-                  "why": "Das ist die Kreisverstärkung selbst. Die Reserve ist der Abstand bis 1: 1 ÷ 0,5 = 2."
+                  "text": "× 0,25 und 130°",
+                  "why": "Das sind die rohen Ablesewerte. Reserven sind die *Abstände* zur Klippe: 1 ÷ 0,25 und 180° − 130°."
                 },
                 {
-                  "text": "180°",
-                  "why": "Die Amplitudenreserve ist ein Faktor, kein Winkel. Die Winkelversion ist die Phasenreserve."
+                  "text": "× 4 und 130°",
+                  "why": "Die Amplitudenreserve stimmt, aber die Phasenreserve ist das zusätzliche Nachhinken, das du hinzufügen könntest, bevor −180° erreicht sind: 180° − 130° = 50°."
                 }
               ]
             },
@@ -366,11 +554,14 @@
       "lag": "Phasenverzug",
       "status": {
         "small": "Ein winziges Nachhinken: Bei langsamen Wacklern spielt die Verzögerung kaum eine Rolle.",
-        "middle": "Ein Nachhinken von {d}°: Das Wasser ist deutlich aus dem Takt.",
+        "middle": "Ein Nachhinken von {d}°: Das Wasser läuft {f} eines Wacklers hinterher.",
         "flipped": "Verkehrt herum! Heiß kommt genau dann an, wenn der Knopf kalt sagt.",
-        "full": "Mehr als einen ganzen Wackler hinterher: Es sieht wieder im Takt aus, ist aber einen vollen Durchgang zu spät."
+        "full": "Mehr als einen ganzen Wackler hinterher: Es sieht wieder im Takt aus, ist aber einen vollen Durchgang zu spät.",
+        "over": "Ein Nachhinken von {d}°: mehr als einen ganzen Wackler zu spät."
       },
-      "describe": "Wackelperiode {p} Sekunden; die Verzögerung von 2,5 Sekunden lässt sie um {d} Grad nachhinken."
+      "describe": "Wackelperiode {p} Sekunden; die Verzögerung von 2,5 Sekunden lässt sie um {d} Grad nachhinken.",
+      "w": "Wackeltempo ω",
+      "share": "Anteil eines Wacklers"
     },
     "bode": {
       "title": "Ein Bode-Diagramm bauen, ein Wackler nach dem anderen",
@@ -394,14 +585,16 @@
       "status": {
         "start": "Wähl ein Wackeltempo und drück auf Messen.",
         "measured": "Bei ω = {w} rad/s (ein {p}-s-Wackler): Verstärkung {g}, Phase {ph}°.",
-        "formula": "Die Formel läuft genau durch deine Punkte."
+        "formula": "Die Formel läuft genau durch deine Punkte. Sie kreuzt −180° bei {w} rad/s: Ein {p}-s-Wackler kommt verkehrt herum zurück."
       },
-      "describe": "{n} Messungen eingezeichnet."
+      "describe": "{n} Messungen eingezeichnet.",
+      "cross": "verkehrt herum bei {w} rad/s",
+      "help": "Lass den Schieberegler los oder halte bei den Pfeiltasten kurz inne, dann wird dieses Tempo gemessen. Misst du ein Tempo erneut, ersetzt das seinen Punkt."
     },
     "margins": {
       "title": "Die Hand und die Klippe",
       "w": "Wackeltempo ω (rad/s)",
-      "gain": "Kreisverstärkung |L|",
+      "gain": "Kreisverstärkung",
       "phase": "Kreisphase (°)",
       "loop": "Kreis aus Hand + Dusche",
       "gainAria": "Bode-Verstärkungsdiagramm des Kreises aus Hand und Dusche mit der Linie für Verstärkung eins.",
@@ -419,10 +612,12 @@
       "delay": "Rohrverzögerung",
       "status": {
         "safe": "Bequem sicher: reichlich Reserve.",
-        "edge": "Nah an der Kante (Phasenreserve {p}°): Rechne mit langen, trägen Schwüngen.",
-        "over": "Über die Klippe: Die Schwünge wachsen, bis der Knopf an seine Anschläge stößt."
+        "edge": "Nah an der Kante: Phasenreserve {p}°, Amplitudenreserve × {g}. Rechne mit langen, trägen Schwüngen etwa alle {T} s.",
+        "over": "Über die Klippe (Amplitudenreserve × {g}): Die Schwünge wachsen, bis der Knopf an seine Anschläge stößt."
       },
-      "describe": "Amplitudenreserve {gm}, Phasenreserve {pm} Grad."
+      "describe": "Amplitudenreserve {gm}, Phasenreserve {pm} Grad.",
+      "w180": "−180°-Tempo",
+      "period": "Pendelperiode"
     },
     "replay": {
       "title": "Deine Schwünge aus Kapitel 0",
@@ -439,7 +634,7 @@
         "calm": "Nicht genug Schwünge zum Messen: Du warst geduldig (oder hattest Glück)!",
         "speed": "Schwünge alle {p} s: Du hast dich wie eine Tempo-Hand verhalten, ein I-Regler nah an seiner Kante.",
         "position": "Schwünge alle {p} s: Du hast dich wie eine Stellungs-Hand verhalten, ein P-Regler nah an seiner Kante.",
-        "robot": "Die Roboterhand schwingt alle {p} s: eine Tempo-Hand (ein I-Regler), die knapp innerhalb ihrer Kante sitzt, genau wie vorhergesagt."
+        "robot": "Die Roboterhand schwingt alle {p} s. Das ist etwas langsamer als die Kante bei {e} s, weil sie knapp innerhalb davon sitzt: eine Tempo-Hand (ein I-Regler)."
       }
     },
     "designer": {
@@ -458,7 +653,7 @@
       "ki": "I-Verstärkung $K_i$",
       "presetHand": "Die normale Hand",
       "presetJune": "Junes Drohnen-Verstärkungen",
-      "goal": "Ziel: Phasenreserve über 45° und angenehm (10 s am Stück im Band) innerhalb von 12 s.",
+      "goal": "Ziel: Phasenreserve über 45° und angenehm (10 s am Stück im Band) innerhalb von 12 s. Es startet mit Junes Verstärkungen.",
       "pm": "Phasenreserve",
       "gm": "Amplitudenreserve",
       "comfort": "angenehm nach",
@@ -466,12 +661,53 @@
       "never": "nie",
       "notPlayed": "nicht gespielt",
       "status": {
-        "unstable": "Über die Klippe: keine Reserve, endlose Schwünge.",
-        "edge": "Stabil, aber zu nah an der Kante: bitte mehr Reserve.",
+        "unstable": "Über die Klippe (Amplitudenreserve × {g}): endlose Schwünge, etwa alle {p} s.",
+        "edge": "Stabil, aber nur {pm}° Phasenreserve: bitte mehr Reserve.",
         "slow": "Sicher, aber langsam. Schaffst du es, früher angenehm zu werden?",
         "win": "Robust und schnell! Dieser Roboter schlägt deine Hände aus Kapitel 0.",
-        "winButYou": "Robust und schnell! (In Kapitel 0 warst du schneller. Beeindruckend! Aber der Roboter wird nie müde.)"
-      }
+        "winButYou": "Robust und schnell! (In Kapitel 0 warst du schneller. Beeindruckend! Aber der Roboter wird nie müde.)",
+        "unstableSlow": "Über die Klippe (Amplitudenreserve × {g}): keine Reserve, endlose Schwünge."
+      },
+      "presetTheo": "Theos sanfte Verstärkungen",
+      "w": "Wackeltempo ω (rad/s)",
+      "phase": "Kreisphase (°)",
+      "loop": "Kreis aus Roboter + Dusche",
+      "phaseAria": "Bode-Phasendiagramm des Kreises aus Roboter und Dusche, mit der Linie bei −180 Grad und der Phasenreserve.",
+      "cliff": "−180°: die Klippe",
+      "atCross": "Phasenreserve"
+    }
+  },
+  "plays": {
+    "delaylag": {
+      "L": "Rohrverzögerung",
+      "T": "Wackelperiode"
+    },
+    "smoother": {
+      "w": "Wackeltempo ω"
+    },
+    "total": {
+      "w": "Wackeltempo ω",
+      "before": "Noch nicht verkehrt herum.",
+      "flip": "Verkehrt herum: Ein Wellenberg kommt als Wellental heraus.",
+      "past": "Schon über verkehrt herum hinaus."
+    },
+    "handloop": {
+      "w": "Wackeltempo ω"
+    },
+    "pgain": {
+      "K": "Stärke der Stellungs-Hand K",
+      "dies": "Die Schwünge klingen ab.",
+      "edge": "Genau auf der Kante: Schwünge, die weder wachsen noch schrumpfen.",
+      "grows": "Die Schwünge wachsen."
+    },
+    "double": {
+      "L": "Rohrverzögerung"
+    },
+    "delaymargin": {
+      "kp": "P-Verstärkung Kp",
+      "ki": "I-Verstärkung Ki",
+      "margin": "Die Phasenreserve beträgt {pm}° bei {wc} rad/s, also könnte das Rohr {dm} s länger werden, bevor dieser Roboter zu pendeln beginnt.",
+      "none": "Es gibt überhaupt keine Phasenreserve: Dieser Roboter pendelt schon."
     }
   }
 }

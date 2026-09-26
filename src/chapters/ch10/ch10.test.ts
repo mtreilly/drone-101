@@ -1,6 +1,6 @@
 import { loopMargins, sweep } from '../../math/bode';
 import { SHOWER } from '../../sim/shower-model';
-import { comfortTime, handLoop, handPolicy, measureSine, piLoop, piPolicy, runShower, swingPeriod, unwrapNear } from './shower-tools';
+import { comfortTime, handLoop, handPolicy, measureSine, piLoop, piPolicy, runShower, showerFlip, sliderFromW, swingPeriod, unwrapNear, wFromSlider } from './shower-tools';
 
 describe('Chapter 10 numbers', () => {
   it('hand (integral) loop: phase crossover 0.457 rad/s, period 13.75 s (shown as 13.8 s), critical k 0.0112', () => {
@@ -48,11 +48,29 @@ describe('Chapter 10 numbers', () => {
   });
 
   it('measured sine response matches the Bode formula', () => {
-    for (const w of [0.1, 0.4, 1, 2]) {
+    for (const w of [0.05, 0.1, 0.4, 0.628, 1, 2, 3]) {
       const meas = measureSine(w);
       const [ex] = sweep([1], [SHOWER.tau, 1], SHOWER.delay, [w]);
       expect(meas.gain).toBeCloseTo(ex.mag, 2);
       expect(unwrapNear(meas.phase, ex.phase)).toBeCloseTo(ex.phase, 0);
     }
+  });
+
+  it('bode slider: the first measurement uses the snapped slider value (0.34 → 0.2012 rad/s, a 31.2 s wiggle)', () => {
+    const v0 = sliderFromW(0.2);
+    expect(v0).toBe(0.34);
+    const w = wFromSlider(v0);
+    expect(w).toBeCloseTo(0.2012, 4);
+    // slider text and status both come from this w
+    expect(((2 * Math.PI) / w).toFixed(1)).toBe('31.2');
+    expect(sliderFromW(wFromSlider(0.57))).toBe(0.57);
+  });
+
+  it('the shower alone turns a wiggle upside down at 0.952 rad/s (gain 0.724, a 6.6 s wiggle)', () => {
+    const f = showerFlip();
+    expect(f.w).toBeCloseTo(0.9523, 4);
+    expect(f.gain).toBeCloseTo(0.724, 3);
+    expect(f.period).toBeCloseTo(6.6, 1);
+    expect(sweep([1], [SHOWER.tau, 1], SHOWER.delay, [f.w])[0].phase).toBeCloseTo(-180, 6);
   });
 });
