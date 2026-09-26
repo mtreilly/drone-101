@@ -1,7 +1,7 @@
 import { h, uid } from '../../core/dom';
 import { canvasHandFont } from '../../core/font';
 import { BIDI_MARKS } from '../../core/bidi';
-import { fmt, isRtl, tc } from '../../core/i18n';
+import { fmt, isRtl, tc, unitLabel } from '../../core/i18n';
 import { tex } from '../../core/rich-text';
 import { c as cx } from '../../math/complex';
 import { laplaceReal, table as T } from '../../math/laplace';
@@ -442,7 +442,7 @@ const unspin: WidgetFactory = (host, ctx) => {
     const mag = Math.hypot(L.re, L.im);
     rMag.set(fmt(mag, 2));
     const rel = W0 - om;
-    rSpin.set(`${fmt(rel, 2)} rad/s`);
+    rSpin.set(`${fmt(rel, 2)} ${unitLabel('rad/s')}`);
     const text = Math.abs(rel) < 0.05 ? t('matched', { m: fmt(mag, 1) }) : t('spinning');
     // drawn every frame while it runs; the live region only hears about real changes
     if (text !== said) {
@@ -754,12 +754,12 @@ const solve: WidgetFactory = (host, ctx) => {
     morphFormula(xs, f);
     let gap = 0;
     xs.forEach((_, i) => (gap = Math.max(gap, Math.abs(ys[i] - f[i]))));
-    rGap.set(`${fmt(gap, gap < 0.01 ? 6 : 2)} m`, gap < 1e-3 ? 'good' : 'bad');
-    rZero.set(`${fmt(ys[0], 2)} / ${fmt(f[0], 2)} m`);
+    rGap.set(`${fmt(gap, gap < 0.01 ? 6 : 2)} ${unitLabel('m')}`, gap < 1e-3 ? 'good' : 'bad');
+    rZero.set(`${fmt(ys[0], 2)} / ${fmt(f[0], 2)} ${unitLabel('m')}`);
     // Chapter 2's look: dotted blue "settles here" line at A, red droop band up to the target
     const droop = 2 - sol.A;
     plot.setDroop({ target: 2, settle: sol.A, label: t('droop', { d: fmt(droop, 3) }), labelAt: 'end', labelSide: 'below', avoid: ['sim', 'formula'] });
-    rSettle.set(`${fmt(sol.A, 3)} m`);
+    rSettle.set(`${fmt(sol.A, 3)} ${unitLabel('m')}`);
     // numerator terms that are zero (from the ground, or with the fix switched off) are left out
     const terms = ic ? [DRONE.m * h0 !== 0 ? `${fmt(DRONE.m * h0, 2)}s^2` : '', DRONE.c * h0 !== 0 ? `${fmt(DRONE.c * h0, 2)}s` : ''].filter(Boolean) : [];
     const num = [...terms, fmt(kp * 2 - DRONE.m * DRONE.g, 3)].join(' + ');
