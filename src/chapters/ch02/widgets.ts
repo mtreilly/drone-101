@@ -48,10 +48,8 @@ const pcontrol: WidgetFactory = (host, ctx) => {
       status.textContent = t('status.flies', { h: fmt(run.final, 2), d: fmt(run.droop * 100, 0), o: fmt(run.overshoot, 0), p: fmt(run.peak, 2) });
     }
     rig.hPlot.describe(status.textContent ?? '');
-    rig.hPlot.setLines([
-      { kind: 'h', at: TARGET, color: 'sp', label: t('plot.target') },
-      ...(run.tookOff ? [{ kind: 'h' as const, at: run.final, color: 'out', dash: [2, 4], label: TARGET - run.final > 0.3 ? t('plot.hovers', { h: fmt(run.final, 2) }) : undefined }] : []),
-    ]);
+    rig.hPlot.setLines([{ kind: 'h', at: TARGET, color: 'sp', label: t('plot.target') }]);
+    rig.hPlot.setDroop(run.tookOff ? { target: TARGET, settle: run.final, band: false, label: TARGET - run.final > 0.3 ? t('plot.hovers', { h: fmt(run.final, 2) }) : undefined } : null);
     const lo = Math.min(-5, ...run.T);
     const hi = Math.max(12, ...run.T);
     rig.tPlot.setY(Math.floor(lo * 1.1), Math.ceil(hi * 1.1));

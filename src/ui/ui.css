@@ -359,6 +359,12 @@ html[dir='rtl'] .plot-legend-item {
   color: var(--ink-3);
   font-weight: 700;
 }
+/* readout labels wrap at spaces only: "Phasenreser-ve" split mid-word is hard to read, so the
+   chip grows to its longest word instead (and wraps to the next row when there is no room).
+   A word wider than the whole row still breaks rather than overflow (break-word keeps min-content). */
+.readout .readout-label {
+  hyphens: manual;
+}
 .readout-val {
   font-family: var(--font-hand);
   font-variant-numeric: tabular-nums;
@@ -556,7 +562,8 @@ html[dir='rtl'] .plot-legend-item {
   }
   .readout {
     flex: 1 1 5.5rem;
-    min-width: 0;
+    min-width: min-content;
+    max-width: 100%;
     padding: 5px 9px 6px;
   }
   .readout-label {
