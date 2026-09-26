@@ -191,7 +191,18 @@ export class ShowerView {
     const top = THERMO.bottom - ((t - TMIN) / (TMAX - TMIN)) * (THERMO.bottom - THERMO.top);
     this.mercury.setAttribute('y', String(top));
     this.mercury.setAttribute('height', String(THERMO.bottom + 8 - top));
-    this.tempText.textContent = `${fmt(st.temp, 1)} °C`;
+    const temp = `${fmt(st.temp, 1)} °C`;
+    if (this.tempText.textContent !== temp) {
+      this.tempText.textContent = temp;
+      // centred over the thermometer, but never past the picture's right edge (wider CJK and Arabic digits)
+      let len = 0;
+      try {
+        len = this.tempText.getComputedTextLength();
+      } catch {
+        /* not rendered yet */
+      }
+      this.tempText.setAttribute('x', String(Math.min(THERMO.x, W - 3 - len / 2)));
+    }
     this.drawDrops(st.temp, dt);
   }
 
