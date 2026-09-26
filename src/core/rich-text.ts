@@ -58,6 +58,8 @@ export function rich(src: string): string {
         parts[i + 1] = parts[i + 1].slice(punct.length);
         return `<span class="math-punct">${tex(part.slice(1, -1))}${escapeHtml(punct)}</span>`;
       }
+      // "$K_i$ = 10": the sign stays on the formula's line
+      if (i > 0) part = part.replace(/^(\uE011?) ([=≈<>≤≥]) /, '$1\u00a0$2 ');
       let out = escapeHtml(part)
         // playable numbers: {scrub|name} inputs and {calc|name} outputs, optionally coloured
         .replace(/\{(scrub|calc)\|(\w+)(?:\|(sp|out|err|eff|dis))?\}/g, (_m, kind: string, name: string, col?: string) =>

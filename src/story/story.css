@@ -846,7 +846,10 @@ html[dir='rtl'] .play-hint {
 .math-punct {
   white-space: nowrap;
 }
-/* the sentence with the "drag me" hint keeps room above it, so the hint never touches the line before */
-.play.has-hint {
-  padding-top: 0.8em;
+/*
+ * the line with the "drag me" hint grows taller, so the hint never touches the line before, on
+ * whichever line the number wraps to (an inline-block's margin makes its own line box taller)
+ */
+.play.has-hint .scrub-wrap {
+  margin-top: 0.9em;
 }
