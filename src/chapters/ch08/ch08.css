@@ -12,12 +12,38 @@
   stroke: var(--c-output);
   stroke-opacity: 0.6;
 }
-.readouts.stack {
-  flex-direction: column;
+/* the 20 N thrust budget for a 1 m step: a faint orange circle of radius 5.49 around 0 */
+.s-plane .budget {
+  fill: none;
+  stroke: var(--c-effort);
+  stroke-opacity: 0.55;
+  stroke-width: 1.5;
+  stroke-dasharray: 2 5;
+  stroke-linecap: round;
 }
-.readouts.stack .readout {
+.s-plane .budget-label {
+  fill: var(--c-effort);
+}
+/* the map readouts beside the drone: two columns, so the widget stays short on a phone */
+.readouts.map-readouts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+.readouts.map-readouts .readout {
   min-width: 0;
-  flex: 0 0 auto;
+  padding: 5px 9px 6px;
+}
+/* phones: the readouts get the wider share, and the pole pair (the longest value) a whole row */
+@media (max-width: 560px) {
+  .pair-grid.map-pair {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 8px;
+  }
+  .readouts.map-readouts .readout:first-child,
+  .readouts.map-readouts .readout:last-child {
+    grid-column: span 2;
+  }
 }
 .s-plane .pole-trail {
   fill: none;
@@ -34,4 +60,12 @@
 }
 .s-plane .wiggle-label {
   fill: var(--c-output);
+}
+/* the limit widget: the motor toggle shares the slider's row when there is room */
+.limit-controls {
+  align-items: center;
+}
+.limit-controls > .toggle,
+.limit-controls > label {
+  flex: 0 0 auto;
 }

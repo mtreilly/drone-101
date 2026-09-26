@@ -1,8 +1,10 @@
 import { h, s as svg } from '../../core/dom';
 import { fmt, tc } from '../../core/i18n';
 import { tex } from '../../core/rich-text';
+import { regionPath } from '../../math/region';
 import { stepMetrics } from '../../math/metrics';
-import { DRONE, DroneSim, HOVER_THRUST, defaultDroneConfig, type PID } from '../../sim/drone-model';
+import { DRONE, DroneSim, defaultDroneConfig } from '../../sim/drone-model';
+import { followPlay } from '../../story/play';
 import type { WidgetFactory } from '../../story/types';
 import { readout, segmented, slider, toggle } from '../../ui/controls';
 import { DroneView } from '../../ui/drone-view';
@@ -12,10 +14,29 @@ import { SPlane, formatS } from '../../ui/s-plane';
 import { caption, mark, sample } from '../ch06/helpers';
 import './ch08.css';
 import { fallSim, fallTrace } from './fall';
-import { gainsFromPoles, noZeroResponse, overshootOf, settleOf, stepFromPoles, zeroResponse, zetaOf } from './poles';
+import { LIMIT_T, bestRealSettling, limitRun, pd } from './limit';
+import {
+  CHALLENGE,
+  PLAY_T,
+  budgetRadius,
+  challengeOk,
+  challengeZone,
+  firstPush,
+  gainsFromPoles,
+  measuredMetrics,
+  noZeroResponse,
+  noZeroSlope,
+  overshootOf,
+  playgroundTrace,
+  recipeGain,
+  settleOf,
+  stateAt,
+  verdictOf,
+  zeroResponse,
+  zetaOf,
+} from './poles';
 
 const { m, c } = DRONE;
-const pd = (kp: number, kd: number): PID => ({ kp, ki: 0, kd, ff: HOVER_THRUST, dTau: 0, dOnMeasurement: true, antiWindup: false });
 
 /** 8a — G(s) maps setpoint changes to height changes around the 1 m hover. */
 const recipe: WidgetFactory = (host, ctx) => {
@@ -30,10 +51,16 @@ const recipe: WidgetFactory = (host, ctx) => {
     pulse: (tt) => 2 - Math.exp(-2 * tt),
     wave: (tt) => 1 + 0.5 * Math.sin(2 * tt),
   };
+  // each input's change from the 1 m hover, in time and in s-land (Chapter 7's table)
   const R: Record<In, string> = {
     step: '\\frac{1}{s}',
     pulse: '\\frac{1}{s} - \\frac{1}{s+2}',
     wave: `\\frac{${fmt(0.5, 1)}\\cdot 2}{s^2 + 4}`,
+  };
+  const r: Record<In, string> = {
+    step: '1',
+    pulse: '1 - e^{-2t}',
+    wave: `${fmt(0.5, 1)}\\sin 2t`,
   };
   host.append(h('p', { class: 'w-title' }, t('title')));
   const seg = segmented(
@@ -63,7 +90,8 @@ const recipe: WidgetFactory = (host, ctx) => {
   right.append(caption(t('droneCap')));
   const view = new DroneView(right, { hMax: 3, width: 200 });
   const eq = h('div', { class: 'math-block' });
-  host.append(eq);
+  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  host.append(eq, status);
   let hs: number[] = [];
   let rs: number[] = [];
   let ts: number[] = [];
@@ -84,16 +112,23 @@ const recipe: WidgetFactory = (host, ctx) => {
     hs = [sim.h];
     rs = [sp(0)];
     thr = [sim.thrust];
+    let peak = sim.h;
+    let k = 0;
     sim.advance(T1, () => {
+      peak = Math.max(peak, sim.h);
+      if (++k % 20) return;
       ts.push(sim.t);
       hs.push(sim.h);
       rs.push(sp(sim.t));
       thr.push(sim.thrust);
-    }, 20);
+    }, 1);
     plot.set('r', ts, rs);
     plot.set('h', ts, hs);
-    eq.innerHTML = tex(`\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{20}}{${fmt(0.5, 1)}s^2 + s + \\eff{20}}}_{G(s)\\ \\text{${t('same')}}} \\cdot \\underbrace{${R[input]}}_{\\Delta\\sp{R}(s)\\ \\text{${t('changes')}}}`, true);
-    plot.describe(t(`describe.${input}`));
+    const under = `\\substack{\\Delta\\sp{R}(s)\\ \\text{${t('changes')}} \\\\ \\Delta\\sp{r}(t) = ${r[input]}}`;
+    eq.innerHTML = tex(`\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{20}}{${fmt(0.5, 1)}s^2 + s + \\eff{20}}}_{G(s)\\ \\text{${t('same')}}} \\cdot \\underbrace{${R[input]}}_{${under}}`, true);
+    // the wave's steady output amplitude is 0.5·|G(2i)|; the steps report their measured peak
+    status.textContent = input === 'wave' ? t('status.wave', { a: fmt(0.5, 2), b: fmt(0.5 * recipeGain(2), 2) }) : t(`status.${input}`, { p: fmt(peak, 2) });
+    plot.describe(`${t(`describe.${input}`)} ${status.textContent}`);
     playT = 0;
     if (Loop.autoplay) loop.play();
     else view.update({ h: hs[hs.length - 1], r: rs[rs.length - 1], thrust: thr[thr.length - 1] });
@@ -102,11 +137,36 @@ const recipe: WidgetFactory = (host, ctx) => {
   return () => loop.destroy();
 };
 
+let zoneCache: string | null = null;
+
+/**
+ * Where the ωn circle's label goes (degrees, for `SPlane.setCircle`): the first spot that stays on the
+ * playground's map (σ −10…4, ω ±8) and keeps well away from both poles, which ride the circle.
+ * Below the positive real axis first (the right half is otherwise empty), then above the negative
+ * one; `undefined` puts it under the circle's lowest point. 195° is the budget circle's label.
+ */
+function circleLabelAt(r: number, re: number, im: number): number | undefined {
+  const pole = (Math.atan2(im, re) * 180) / Math.PI;
+  const far = (a: number) => [pole, -pole].every((p) => Math.abs(((a - p + 540) % 360) - 180) > 35);
+  const room = 2.4; // label width in plane units, roughly
+  const fits = (a: number) => {
+    const x = r * Math.cos((a * Math.PI) / 180);
+    const y = r * Math.sin((a * Math.PI) / 180);
+    // anchored away from the circle: to the right of the point on the right, to the left on the left
+    const x0 = x > 0 ? x : x - room;
+    const x1 = x > 0 ? x + room : x;
+    return x0 > -10 && x1 < 4 && Math.abs(y) < 7.2;
+  };
+  // 205° is below the budget circle's label (195°): skip it when the two circles nearly meet
+  const spots = [-25, 155, 205, 135].filter((a) => a !== 205 || Math.abs(r - budgetRadius(1)) > 1);
+  return spots.find((a) => far(a) && fits(a));
+}
+
 /** 8b — the centrepiece: drag the poles, everything else follows. */
 const playground: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
   mark(host);
-  const T1 = 6;
+  const T1 = PLAY_T;
   let re = -1;
   let im = Math.sqrt(39);
   host.append(h('p', { class: 'w-title' }, t('title')));
@@ -135,9 +195,17 @@ const playground: WidgetFactory = (host, ctx) => {
       update();
     },
   });
-  // guides: settling-time lines, overshoot rays, the challenge zone
-  const zone = svg('polygon', { class: 'challenge-zone' });
-  plane.deco.append(zone);
+  // built-in guides (locale-aware labels): settling lines, constant-ζ rays with their overshoot
+  plane.setSettleLines([1, 2, 4]);
+  plane.setRays([0.2, 0.5, 0.7]);
+  // our own guides: the challenge zone, the 20 N budget circle, the wiggle line and the trail
+  const zone = svg('path', { class: 'challenge-zone', 'fill-rule': 'evenodd' });
+  const R20 = budgetRadius(1);
+  const budget = svg('circle', { class: 'budget', cx: plane.sx(0), cy: plane.sy(0), r: plane.sx(R20) - plane.sx(0) });
+  // its label sits just outside it, below the negative real axis (the wiggle line only lives above)
+  const ba = (195 * Math.PI) / 180;
+  const budgetLabel = svg('text', { class: 'guide-label budget-label', x: plane.sx(R20 * Math.cos(ba)) - 5, y: plane.sy(R20 * Math.sin(ba)), dy: '0.9em', 'text-anchor': 'end' }, t('budget'));
+  plane.deco.append(zone, budget, budgetLabel);
   {
     // keep guides inside the plane
     const clipId = `clip-${Math.random().toString(36).slice(2, 8)}`;
@@ -145,33 +213,6 @@ const playground: WidgetFactory = (host, ctx) => {
     plane.svg.prepend(svg('defs', null, svg('clipPath', { id: clipId }, svg('rect', { x: 0, y: 0, width: box.width, height: box.height }))));
     plane.deco.setAttribute('clip-path', `url(#${clipId})`);
   }
-  for (const [r, lab] of [
-    [-1, '4 s'],
-    [-2, '2 s'],
-    [-4, '1 s'],
-  ] as [number, string][]) {
-    const x = plane.sx(r);
-    const y = plane.sy(-4.2);
-    plane.deco.append(
-      svg('line', { class: 'guide', x1: x, x2: x, y1: plane.sy(8), y2: plane.sy(-8) }),
-      svg('text', { class: 'guide-label', x: x - 4, y, transform: `rotate(-90 ${x - 4} ${y})`, 'text-anchor': 'middle' }, `${t('settles')} ≈ ${lab}`),
-    );
-  }
-  for (const [z, lab] of [
-    [0.2, '53%'],
-    [0.5, '16%'],
-    [0.7, '5%'],
-  ] as [number, string][]) {
-    const th = Math.acos(z);
-    const L = 14;
-    const x2 = -L * Math.cos(th);
-    const y2 = L * Math.sin(th);
-    for (const sgn of [1, -1]) plane.deco.append(svg('line', { class: 'guide ray', x1: plane.sx(0), y1: plane.sy(0), x2: plane.sx(x2), y2: plane.sy(sgn * y2) }));
-    const yl = 7.4;
-    const xl = -yl / Math.tan(th);
-    plane.deco.append(svg('text', { class: 'guide-label', x: plane.sx(xl) - 4, y: plane.sy(yl), 'text-anchor': 'end' }, lab));
-  }
-  plane.deco.append(svg('text', { class: 'guide-label', x: plane.sx(-9.8), y: plane.sy(-5.6) }, t('raysLegend')));
   const wLine = svg('line', { class: 'guide wiggle' });
   const wLabel = svg('text', { class: 'guide-label wiggle-label', 'text-anchor': 'start' });
   // a faint trail of where the poles have just been; it fades once you let go
@@ -196,7 +237,7 @@ const playground: WidgetFactory = (host, ctx) => {
   }
   plane.set([{ id: 'p', re, im, kind: 'pole', mirror: true, draggable: true }]);
 
-  const top = h('div', { class: 'pair-grid' });
+  const top = h('div', { class: 'pair-grid map-pair' });
   const vbox = h('div');
   const rbox = h('div');
   top.append(vbox, rbox);
@@ -204,11 +245,15 @@ const playground: WidgetFactory = (host, ctx) => {
   // an unstable drone can fly out of its picture into the page; the hit stalls it and it falls (see fall.ts)
   const view = new DroneView(vbox, { hMax: 3, width: 180, onCeiling: () => hitPage() });
   const rP = readout(t('poles'));
-  const rTs = readout(t('settle'));
+  const rZ = readout(t('zeta'));
+  const rW = readout(t('wn'));
   const rOs = readout(t('overshoot'));
+  const rTs = readout(t('settle'));
+  const rTm = readout(t('settleReal'));
   const rKp = readout('Kp', 'eff');
   const rKd = readout('Kd', 'eff');
-    rbox.append(h('div', { class: 'readouts stack' }, rP.el, rTs.el, rOs.el, rKp.el, rKd.el));
+  const rPush = readout(t('push'), 'eff');
+  rbox.append(h('div', { class: 'readouts map-readouts' }, rP.el, rZ.el, rW.el, rOs.el, rTs.el, rTm.el));
   const plot = new Plot(right, {
     x: { label: tc('plots.time'), min: 0, max: T1 },
     y: { label: tc('plots.height'), min: -0.5, max: 4 },
@@ -220,49 +265,36 @@ const playground: WidgetFactory = (host, ctx) => {
   const eq = h('div', { class: 'math-block' });
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
   const challengeStatus = h('p', { class: 'w-status', 'aria-live': 'polite' });
-  host.append(eq, status);
+  host.append(h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rKp.el, rKd.el, rPush.el)), eq, status);
   const chal = toggle(t('challenge'), false, (v) => {
     zone.style.display = v ? '' : 'none';
     challengeStatus.hidden = !v;
-    update();
+    if (v && !zoneCache) {
+      // worked out once, the first time the challenge is switched on (a fraction of a second)
+      zoneCache = regionPath(challengeZone(0.1), (x) => plane.sx(x), (y) => plane.sy(y));
+    }
+    if (zoneCache) zone.setAttribute('d', zoneCache);
+    update(false);
   });
   host.append(h('div', { class: 'w-row fix-row' }, chal.el), challengeStatus, h('p', { class: 'w-help' }, t('help')));
   zone.style.display = 'none';
   challengeStatus.hidden = true;
-  {
-    // overshoot < 10% ⇔ ζ > 0.591; settling < 2 s ⇔ σ > 2
-    const tanT = Math.tan(Math.acos(0.591));
-    const y1 = 2 * tanT;
-    const xClip = -8 / tanT;
-    const pts: [number, number][] = [
-      [-2, y1],
-      [xClip, 8],
-      [-10, 8],
-      [-10, -8],
-      [xClip, -8],
-      [-2, -y1],
-    ];
-    zone.setAttribute('points', pts.map(([x, y]) => `${plane.sx(x)},${plane.sy(y)}`).join(' '));
-  }
-  let resp = { xs: [] as number[], ys: [] as number[] };
-  let f = stepFromPoles(re, im);
+  let trace = playgroundTrace(re, im);
   let playT = 0;
   // the state at the latest frame, and (after hitting the page) the stalled fall that replaces the formula
   let now = { t: 0, h: 0, v: 0 };
   let fall: { sim: DroneSim; t0: number; carry: number } | null = null;
-  // once it has hit the ground in this replay, it stays crashed until the replay restarts
-  let downThisCycle = false;
-  let verdict: 'stable' | 'unstable' | 'marginal' = 'stable';
+  let verdict = verdictOf(re);
   function hitPage(): void {
     if (fall) return;
     fall = { sim: fallSim(now.h, now.v), t0: now.t, carry: 0 };
     // the plot shows what really happened: the formula up to the hit, then the fall
     const tr = fallTrace(now.h, now.v);
-    const keep = resp.xs.findIndex((x) => x > now.t);
-    const xs = [...resp.xs.slice(0, keep < 0 ? undefined : keep), ...tr.t.map((x) => now.t + x)];
-    const ys = [...resp.ys.slice(0, keep < 0 ? undefined : keep), ...tr.h];
+    const keep = trace.xs.findIndex((x) => x > now.t);
+    const xs = [...trace.xs.slice(0, keep < 0 ? undefined : keep), ...tr.t.map((x) => now.t + x)];
+    const ys = [...trace.ys.slice(0, keep < 0 ? undefined : keep), ...tr.h];
     plot.set('h', xs, ys);
-    status.textContent = `${t(`verdict.${verdict}`)} ${t('verdict.hitPage')}`;
+    status.textContent = `${t(`verdict.${verdict}`)} ${t(verdict === 'marginal' ? 'verdict.hitPageMarginal' : 'verdict.hitPage')}`;
     status.className = 'w-status bad';
     plot.describe(status.textContent);
   }
@@ -279,18 +311,12 @@ const playground: WidgetFactory = (host, ctx) => {
       return;
     }
     playT += dt;
-    if (playT > T1 + 1) {
-      playT = 0;
-      downThisCycle = false;
-    }
+    if (playT > T1 + 1) playT = 0;
     const tt = Math.min(playT, T1);
-    const hNow = f(tt);
-    const v = (f(tt + 1e-4) - f(Math.max(0, tt - 1e-4))) / (tt > 0 ? 2e-4 : 1e-4);
-    now = { t: tt, h: hNow, v };
-    const { kp, kd } = gainsFromPoles(re, im);
-    downThisCycle ||= hNow <= 0 && tt > 0;
-    const crashed = downThisCycle;
-    view.update({ h: crashed ? 0 : hNow, r: 2, thrust: crashed ? 0 : HOVER_THRUST + kp * (2 - hNow) - kd * v, crashed });
+    // down on the ground from the touchdown on (the plot is cut there too), until the replay restarts
+    const st = stateAt(trace, tt, re, im);
+    now = { t: tt, h: st.h, v: st.v };
+    view.update({ h: st.h, r: 2, thrust: st.thrust, crashed: st.crashed });
     plot.setCursor(tt);
   }, host);
   const svgEl = plane.svg;
@@ -300,23 +326,36 @@ const playground: WidgetFactory = (host, ctx) => {
     if (performance.now() - lastKey > 700) plot.clear(true);
     lastKey = performance.now();
   });
-  function update(): void {
-    fall = null;
-    downThisCycle = false;
-    if (Loop.autoplay && !loop.playing) loop.play();
-    f = stepFromPoles(re, im);
-    resp = sample(f, T1, 400);
-    plot.set('h', resp.xs, resp.ys);
+  /** `restart` false: only the words change (the challenge switched), the replay keeps going */
+  function update(restart = true): void {
+    if (restart) {
+      fall = null;
+      if (Loop.autoplay && !loop.playing) loop.play();
+      trace = playgroundTrace(re, im);
+      plot.set('h', trace.xs, trace.ys);
+      playT = 0;
+    }
     const { kp, kd } = gainsFromPoles(re, im);
     const ts = settleOf(re);
     const os = overshootOf(re, im);
+    const zeta = zetaOf(re, im);
+    const wn = Math.hypot(re, im);
+    const mm = measuredMetrics(re, im);
+    const push = firstPush(re, im);
+    verdict = verdictOf(re);
     rP.set(formatS(re, im, true));
+    rZ.set(fmt(zeta, 2));
+    rW.set(fmt(wn, 2));
     rTs.set(Number.isFinite(ts) ? `≈ ${fmt(ts, 1)} s` : t('never'));
-    rOs.set(Number.isFinite(os) ? `${fmt(os, 0)} %` : '∞');
+    rTm.set(verdict !== 'stable' ? t('never') : Number.isNaN(mm.settlingTime) ? t('notIn', { T: fmt(T1, 0) }) : `${fmt(mm.settlingTime, 2)} s`);
+    rOs.set(Number.isFinite(os) ? t('pct', { v: fmt(os, 0) }) : '∞');
     rKp.set(`${fmt(kp, 1)} N/m`);
     rKd.set(`${fmt(kd, 2)} N·s/m`);
+    rPush.set(`${fmt(push, 1)} N`, push > 20 ? 'bad' : '');
+    // the ωn circle through the pole (Chapter 6): every point on it has the same |p|
+    plane.setCircle(wn > 0.3 ? wn : null, t('wnCircle', { w: fmt(wn, 2) }), circleLabelAt(wn, re, im));
     const cd = c + kd;
-    const lhs = `\\frac{\\out{H}(s)}{\\sp{R}(s)}`;
+    const lhs = `\\frac{\\Delta\\out{H}(s)}{\\Delta\\sp{R}(s)}`;
     const general = `\\frac{\\eff{K_p}}{m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p}}`;
     const numeric = `\\frac{\\eff{${fmt(kp, 1)}}}{${fmt(m, 1)}s^2 ${cd >= 0 ? '+' : '-'} ${fmt(Math.abs(cd), 2)}s + \\eff{${fmt(kp, 1)}}}`;
     const factored = `\\frac{${fmt(kp / m, 1)}}{(s - p)(s - \\bar p)},\\quad p = ${formatS(re, im).replace('i', '\\,i')}`;
@@ -333,36 +372,64 @@ const playground: WidgetFactory = (host, ctx) => {
     wLine.setAttribute('y1', String(plane.sy(w)));
     wLine.setAttribute('y2', String(plane.sy(w)));
     wLine.style.display = w > 0.05 ? '' : 'none';
-    // sit the label at the left edge, below the line, clear of the pole marker and axis names
+    // sit the label at the left edge, clear of the pole marker and axis names; high up it hangs
+    // under the line, out of the ray labels along the top edge
     wLabel.setAttribute('x', String(plane.sx(-10) + 6));
-    wLabel.setAttribute('y', String(plane.sy(w) + (w > 7 ? 16 : -6)));
+    // (and never inside the band the ray labels hang in along the top edge)
+    wLabel.setAttribute('y', String(w > 5.2 ? Math.max(plane.sy(w) + 16, plane.sy(8) + 56) : plane.sy(w) - 6));
     wLabel.textContent = w > 0.05 ? t('wiggle', { T: fmt((2 * Math.PI) / w, 2) }) : '';
-    verdict = re < -0.02 ? 'stable' : re > 0.02 ? 'unstable' : 'marginal';
-    status.textContent = t(`verdict.${verdict}`);
-    status.className = `w-status${verdict === 'stable' ? ' good' : verdict === 'unstable' ? ' bad' : ''}`;
-    const zeta = zetaOf(re, im);
+    // the status tells the whole story of this replay: where it lives, the ground, odd gains, thrust
+    const words = [t(`verdict.${verdict}`)];
+    if (trace.at !== null) words.push(t('verdict.hitGround'));
+    if (kd < -1e-9) words.push(t('negKd'));
+    if (push > 20) words.push(t('pushWarn'));
+    if (!fall) {
+      status.textContent = words.join(' ');
+      status.className = `w-status${verdict === 'stable' ? ' good' : verdict === 'unstable' ? ' bad' : ''}`;
+    }
     if (!challengeStatus.hidden) {
-      const tsReal = stepMetrics(resp.xs, resp.ys, 1, 2).settlingTime;
-      const osReal = stepMetrics(resp.xs, resp.ys, 1, 2).overshoot;
-      const ok = verdict === 'stable' && osReal < 10 && tsReal < 2;
-      challengeStatus.textContent = ok ? t('chalOk', { o: fmt(osReal, 1), s: fmt(tsReal, 2) }) : t('chalNo', { o: fmt(osReal, 0), s: Number.isNaN(tsReal) ? '—' : fmt(tsReal, 2) });
+      const ok = challengeOk(re, im);
+      const s = Number.isNaN(mm.settlingTime) ? '—' : fmt(mm.settlingTime, 2);
+      challengeStatus.textContent = ok ? t('chalOk', { o: fmt(mm.overshoot, 1), s }) : t('chalNo', { o: fmt(mm.overshoot, 0), s, O: fmt(CHALLENGE.os, 0), S: fmt(CHALLENGE.ts, 0) });
       challengeStatus.className = `w-status${ok ? ' good' : ''}`;
     }
     plane.describe();
     plot.describe(t('describe', { p: formatS(re, im, true), s: Number.isFinite(ts) ? fmt(ts, 1) : '∞', o: Number.isFinite(os) ? fmt(os, 0) : '∞', z: fmt(zeta, 2) }));
-    playT = 0;
+    // reduced motion: no replay, so the picture pins the state at the end of the plotted window
+    // (clipped to its frame, the readout still true) and agrees with the plot's last point
+    if (!Loop.autoplay) {
+      const st = stateAt(trace, T1, re, im);
+      view.update({ h: st.h, r: 2, thrust: st.thrust, crashed: st.crashed });
+    }
   }
   update();
   if (Loop.autoplay) loop.play();
-  const off = ctx.bus.on('predict:ch8-rhp', () => {
-    plane.move('p', 0.6, 3);
-    re = 0.6;
-    im = 3;
-    plot.clear(true);
+  const moveTo = (r: number, i: number) => {
+    plane.move('p', r, i);
+    re = r;
+    im = i;
     update();
-  });
+  };
+  const offs = [
+    ctx.bus.on('predict:ch8-rhp', () => {
+      plot.clear(true);
+      moveTo(0.6, 3);
+    }),
+    // "straight up": the pair at σ = 2 moves from ±4i to ±8i, the old one stays as a ghost
+    ctx.bus.on('predict:ch8-up', () => {
+      moveTo(-2, 4);
+      plane.ghost();
+      plot.clear(true);
+      moveTo(-2, 8);
+    }),
+    // the "gains" sentence moves the poles it talks about
+    followPlay(ctx.bus, 'gains', ({ sig, w }) => {
+      plot.clear(true);
+      moveTo(-sig, w);
+    }),
+  ];
   return () => {
-    off();
+    offs.forEach((off) => off());
     clearTimeout(trailTimer);
     loop.destroy();
   };
@@ -398,17 +465,20 @@ const zero: WidgetFactory = (host, ctx) => {
     { id: 'p', re: -2, im: 3, kind: 'pole', mirror: true },
     { id: 'z', re: z, im: 0, kind: 'zero', draggable: true, realOnly: true },
   ]);
+  // the y-axis grows to fit the kick (a zero near 0 overshoots over 500 %), so the curve never leaves its plot
   const plot = new Plot(right, {
     x: { label: tc('plots.time'), min: 0, max: T1 },
-    y: { label: t('y'), min: 0, max: 2.5 },
+    y: { label: t('y'), min: 0, max: 2.5, autoMax: true, autoMin: true },
     series: [
       { id: 'ref', color: 'pencil', label: t('noZero'), dash: [6, 4], width: 2 },
+      { id: 'slope', color: 'out', label: t('slope', { g: fmt(1 / 3, 2) }), dash: [1, 5], width: 2 },
       { id: 'y', color: 'out', label: t('withZero'), ghost: true },
     ],
     height: 240,
     label: t('plotAria'),
   });
   plot.setLines([{ kind: 'h', at: 1, color: 'sp' }]);
+  const slopeLegend = plot.el.querySelectorAll('.plot-legend-item')[1]?.lastChild ?? null;
   const ref = sample(noZeroResponse, T1, 400);
   plot.set('ref', ref.xs, ref.ys);
   const rA = readout(t('osNo'));
@@ -418,15 +488,22 @@ const zero: WidgetFactory = (host, ctx) => {
   right.append(h('div', { class: 'readouts' }, rA.el, rB.el), status);
   host.append(eq, h('p', { class: 'w-help' }, t('help')));
   const osNo = stepMetrics(ref.xs, ref.ys, 0, 1).overshoot;
-  rA.set(`${fmt(osNo, 1)} %`);
+  rA.set(t('pct', { v: fmt(osNo, 1) }));
   plane.svg.addEventListener('pointerdown', () => plot.clear(true));
+  const trim = (v: number) => fmt(v, Math.abs(v * 10 - Math.round(v * 10)) < 1e-9 ? (Number.isInteger(v) ? 0 : 1) : 2);
   function update(): void {
+    const g = -1 / z;
     const d = sample(zeroResponse(z), T1, 400);
     plot.set('y', d.xs, d.ys);
+    // the with-zero curve is the no-zero curve plus (1/|z|) × its slope: draw that slope part
+    const sl = sample((tt) => g * noZeroSlope(tt), T1, 400);
+    plot.set('slope', sl.xs, sl.ys);
+    if (slopeLegend) slopeLegend.textContent = t('slope', { g: fmt(g, 2) });
     const os = stepMetrics(d.xs, d.ys, 0, 1).overshoot;
-    rB.set(`${fmt(os, 1)} %`, os > osNo + 1 ? 'bad' : '');
-    eq.innerHTML = tex(`T(s) = \\frac{13}{${fmt(-z, 2)}}\\cdot\\frac{s + ${fmt(-z, 2)}}{s^2 + 4s + 13}\\qquad(\\text{${t('zeroAt')}}\\ s = ${fmt(z, 2)})`, true);
-    status.textContent = z > -1.5 ? t('near') : z < -8 ? t('far') : t('mid');
+    rB.set(t('pct', { v: fmt(os, 1) }), os > osNo + 1 ? 'bad' : '');
+    const zz = trim(-z);
+    eq.innerHTML = tex(`G(s) = \\frac{13}{${zz}}\\cdot\\frac{s + ${zz}}{s^2 + 4s + 13}\\qquad(\\text{${t('zeroAt')}}\\ s = ${trim(z)};\\ \\text{${t('scaled')}})`, true);
+    status.textContent = t(z > -1.5 ? 'near' : z < -8 ? 'far' : 'mid', { g: fmt(g, 2) });
     plot.describe(t('describe', { z: fmt(z, 2), o: fmt(os, 0) }));
   }
   update();
@@ -436,7 +513,7 @@ const zero: WidgetFactory = (host, ctx) => {
 const limit: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
   mark(host);
-  const T1 = 3;
+  const T1 = LIMIT_T;
   let sig = 2;
   let real = true;
   host.append(h('p', { class: 'w-title' }, t('title')));
@@ -458,7 +535,7 @@ const limit: WidgetFactory = (host, ctx) => {
   hp.setLines([{ kind: 'h', at: 2, color: 'sp' }]);
   const tp = new Plot(b, {
     x: { label: tc('plots.time'), min: 0, max: T1 },
-    y: { label: tc('plots.thrust'), min: -40, max: 80 },
+    y: { label: tc('plots.thrust'), min: -40, max: 80, extraTicks: [20] },
     series: [
       { id: 'ideal', color: 'pencil', label: t('idealT'), dash: [6, 4], width: 2 },
       { id: 'real', color: 'eff', label: t('realT') },
@@ -466,47 +543,41 @@ const limit: WidgetFactory = (host, ctx) => {
     height: 230,
     label: t('tAria'),
   });
+  // "can't pull down" sits under the 0 N line, in the band no curve reaches unless the maths goes negative
   tp.setLines([
-    { kind: 'h', at: 20, color: 'ink3', label: t('max') },
-    { kind: 'h', at: 0, color: 'ink3', label: t('min') },
+    { kind: 'h', at: 20, color: 'ink3', label: t('max'), avoid: ['real', 'ideal'] },
+    { kind: 'h', at: 0, color: 'ink3', label: t('min'), labelAt: 'start', labelSide: 'below', avoid: ['real', 'ideal'] },
   ]);
   const rPeak = readout(t('peak'), 'eff');
   const rTsI = readout(t('tsIdeal'));
   const rTsR = readout(t('tsReal'));
+  const rOsR = readout(t('osReal'));
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
-  const run = (sat: boolean, kp: number, kd: number) => {
-    const sim = new DroneSim(defaultDroneConfig({ params: { ...DRONE, saturate: sat }, pid: pd(kp, kd), h0: 1 }));
-    const xs = [0];
-    const hs = [sim.h];
-    const th = [sim.thrust];
-    sim.advance(T1, () => {
-      xs.push(sim.t);
-      hs.push(sim.h);
-      th.push(sim.thrust);
-    }, 10);
-    return { xs, hs, th };
-  };
   const update = () => {
-    const { kp, kd } = gainsFromPoles(-sig, sig);
-    const I = run(false, kp, kd);
-    const R = run(real, kp, kd);
+    const I = limitRun(sig, false);
+    const R = limitRun(sig, real);
     hp.set('ideal', I.xs, I.hs);
     hp.set('real', R.xs, R.hs);
     tp.set('ideal', I.xs, I.th);
     tp.set('real', R.xs, R.th);
     const peak = Math.max(...I.th);
     rPeak.set(`${fmt(peak, 0)} N`, peak > 20 ? 'bad' : 'good');
-    const mi = stepMetrics(I.xs, I.hs, 1, 2);
-    const mr = stepMetrics(R.xs, R.hs, 1, 2);
-    rTsI.set(Number.isNaN(mi.settlingTime) ? '—' : `${fmt(mi.settlingTime, 2)} s`);
-    rTsR.set(Number.isNaN(mr.settlingTime) ? t('notYet') : `${fmt(mr.settlingTime, 2)} s`);
-    status.textContent = real && peak > 20 ? t('capped', { p: fmt(peak, 0) }) : peak > 20 ? t('fantasy', { p: fmt(peak, 0) }) : t('fine');
+    rTsI.set(Number.isNaN(I.m.settlingTime) ? '—' : `${fmt(I.m.settlingTime, 2)} s`);
+    rTsR.set(Number.isNaN(R.m.settlingTime) ? t('notYet') : `${fmt(R.m.settlingTime, 2)} s`);
+    rOsR.set(t('pct', { v: fmt(R.m.overshoot, 1) }), R.m.overshoot > I.m.overshoot + 1 ? 'bad' : '');
+    const best = bestRealSettling();
+    status.textContent =
+      real && peak > 20
+        ? t('capped', { p: fmt(peak, 0), s: fmt(R.m.settlingTime, 2), b: fmt(best.ts, 2) })
+        : peak > 20
+          ? t('fantasy', { p: fmt(peak, 0) })
+          : t('fine');
     status.className = `w-status${real && peak > 20 ? ' bad' : ''}`;
     hp.describe(status.textContent);
   };
   const sl = slider({ label: t('sigma'), min: 1, max: 8, step: 0.5, value: sig, unit: '', format: (v) => `−${fmt(v, 1)} ± ${fmt(v, 1)}i`, onInput: (v) => ((sig = v), update()) });
   const tg = toggle(t('toggle'), real, (v) => ((real = v), update()));
-  host.append(h('div', { class: 'w-controls' }, sl.el), h('div', { class: 'w-row fix-row' }, tg.el), h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rPeak.el, rTsI.el, rTsR.el)), status);
+  host.append(h('div', { class: 'w-controls limit-controls' }, sl.el, tg.el), h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rPeak.el, rTsI.el, rTsR.el, rOsR.el)), status);
   update();
 };
 

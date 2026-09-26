@@ -14,8 +14,38 @@
           "text": "Partiamo con il drone in volo stazionario a 1 m, con 4,9 N di spinta di base che bilanciano la gravità. Misuriamo sia il cambiamento richiesto sia quello reale di quota rispetto a quel riferimento. Appena prima di una nuova richiesta entrambi sono zero. Nell’esempio del gradino il riferimento salta a 2 m a $t=0$: il cambiamento richiesto diventa 1 m, mentre il drone è ancora a 1 m."
         },
         {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Bene, perché nel capitolo scorso abbiamo buttato via i pezzi $-h(0)$ e la formula ha mentito. Misurati dal volo stazionario, quei valori di partenza **sono** davvero zero, quindi stavolta spariscono onestamente."
+        },
+        {
           "t": "math",
           "tex": "\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\Delta\\sp{R}(s)"
+        },
+        {
+          "t": "callout",
+          "title": "Da dove viene la ricetta",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "La spinta di hovering annulla la gravità, quindi nell'equazione del drone restano solo i *cambiamenti*. Ora usa la regola del Capitolo 7: ogni pendenza diventa × $s$, meno il suo valore di partenza. Dal volo stazionario ogni valore di partenza è zero, quindi non si sottrae niente:"
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{gathered} m\\,\\Delta\\out{h}'' + c\\,\\Delta\\out{h}' = \\eff{K_p}\\,(\\Delta\\sp{r} - \\Delta\\out{h}) \\\\[2pt] \\Big\\downarrow\\ {\\scriptstyle \\Delta h(0)\\,=\\,\\Delta h'(0)\\,=\\,0} \\\\[2pt] (m s^2 + c s + \\eff{K_p})\\,\\Delta\\out{H}(s) = \\eff{K_p}\\,\\Delta\\sp{R}(s) \\end{gathered}"
+            },
+            {
+              "t": "p",
+              "text": "Dividi per $m s^2 + c s + \\eff{K_p}$ ed ecco $G(s)$. Il suo denominatore è proprio l'equazione che nei Capitoli dal 4 al 6 avevamo ottenuto tirando a indovinare $e^{st}$."
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "happy",
+              "text": "Quindi non è magia. È l'equazione stessa del drone, con ogni pendenza trasformata in una $s$."
+            }
+          ]
         },
         {
           "t": "p",
@@ -29,7 +59,7 @@
           "t": "say",
           "who": "mika",
           "mood": "excited",
-          "text": "Quindi $G(s)$ è come la **ricetta** del drone. Ci metti dentro qualsiasi ingrediente e ti dice cosa esce!"
+          "text": "June aveva ragione: la frazione **è** il drone. È come la sua **ricetta**. Ci metti dentro qualsiasi ingrediente e ti dice cosa esce!"
         },
         {
           "t": "p",
@@ -45,6 +75,10 @@
             {
               "term": "Funzione di trasferimento $G(s)$",
               "def": "Spostamento in uscita trasformato ÷ spostamento in ingresso trasformato, partendo dallo stesso stato di quiete. Per questo drone lineare è un rapporto di polinomi in $s$."
+            },
+            {
+              "term": "Partire da fermo (condizioni iniziali nulle)",
+              "def": "Ogni cambiamento e la sua velocità valgono zero a $t = 0$, come quando misuriamo dal volo stazionario. Allora anche i termini dei valori di partenza del Capitolo 7, come $-h(0)$, sono zero, e $G(s)$ racconta tutta la storia."
             }
           ]
         }
@@ -56,15 +90,54 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Dove **esplode** $G(s)$? Dove il denominatore si annulla, dopo aver cancellato eventuali fattori comuni. Questi punti sono i **poli**, disegnati come ×. Il drone ne ha due, corrispondenti ai due moti naturali $e^{st}$ del Capitolo 6."
+          "text": "Dove **esplode** $G(s)$? Dove il denominatore si annulla. Questi punti sono i **poli**, disegnati come ×. Questo drone ne ha due, uno per ciascuno dei due moti naturali $e^{st}$ del Capitolo 6."
+        },
+        {
+          "t": "p",
+          "text": "Nel Capitolo 7, la trasformata di $e^{at}$ urlava in $s = a$. Leggilo al contrario: dovunque $G$ urla, si nasconde un moto $e^{pt}$."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Quindi i poli sono i **modi** del Capitolo 6, seduti sulla mappa!"
+        },
+        {
+          "t": "callout",
+          "title": "Perché i poli sono i moti",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Una risposta al gradino è $G(s)$ per l'$\\frac{1}{s}$ del gradino. Spezzala in pezzi semplici, come nel Capitolo 7: il polo del gradino in 0 dà il cambiamento finale $A$, e ogni polo di $G$ dà un pezzo $\\frac{B}{s-p}$."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} \\Delta\\out{H}(s) = G(s)\\cdot\\frac{1}{s} &= \\frac{A}{s} + \\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\\\[4pt] \\Longrightarrow\\quad \\Delta\\out{h}(t) &= A + B e^{pt} + \\bar B e^{\\bar p t} \\end{aligned}"
+            },
+            {
+              "t": "p",
+              "text": "La tabella del Capitolo 7 riporta ogni pezzo a un moto. Non può comparire nient'altro: i poli sono tutto il cast."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "E un polo con $\\sigma > 0$ è un pezzo che cresce. Per forza la metà destra esplode."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Ora rovesciamo la cosa. Invece di scegliere i guadagni e trovare i poli, **trasciniamo i poli** e vediamo che drone otteniamo. Serve una seconda manopola, $\\eff{K_d}$: una spinta contro la velocità, che conosceremo per bene nel Capitolo 9. Si somma all'attrito $c$, e le due radici sono $p$ e la sua gemella allo specchio $\\bar p$ (la barra cambia segno alla parte immaginaria, come le gemelle del Capitolo 5):"
         },
         {
           "t": "math",
           "tex": "\\begin{aligned} & m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p} = 0 \\\\ \\Longrightarrow\\quad & s = p,\\ \\bar p \\qquad \\text{(i poli)} \\end{aligned}"
         },
         {
-          "t": "p",
-          "text": "Ora rovesciamo la cosa. Invece di scegliere i guadagni e trovare i poli, **trasciniamo i poli** e vediamo che drone otteniamo. (Dietro le quinte calcoliamo il controllore che li mette lì. Serve una manopola nuova $\\eff{K_d}$, una spinta contro la velocità, che conosceremo per bene nel Capitolo 9.)"
+          "t": "play",
+          "id": "gains",
+          "text": "Per mettere i poli in −{scrub|sig} ± {scrub|w}i, il controllore ha bisogno di $\\eff{K_p} = m(\\sigma^2+\\omega^2)$ = {calc|kp|eff} N/m e di $c + \\eff{K_d} = 2m|\\sigma|$ = {calc|damp} N·s/m, quindi $\\eff{K_d}$ = {calc|kd|eff} N·s/m. Il parco giochi qui sotto segue questi numeri. {calc|note}"
         },
         {
           "t": "predict",
@@ -95,16 +168,20 @@
           "id": "playground"
         },
         {
+          "t": "h3",
+          "text": "Leggere la mappa"
+        },
+        {
           "t": "p",
-          "text": "Giocaci. Saltano fuori alcune regole, e sono i Capitoli 5 e 6 travestiti:"
+          "text": "Giocaci. Saltano fuori alcune regole, e ognuna è una vecchia amica travestita:"
         },
         {
           "t": "list",
           "items": [
-            "**Metà sinistra = si calma, metà destra = esplode.** La parte reale $\\sigma$ è il tasso con cui si restringe o cresce.",
-            "**Più a sinistra = più rapido.** Assestarsi richiede circa $4/|\\sigma|$ secondi (le linee verticali tratteggiate).",
-            "**Più in alto = più oscillante.** L'altezza $\\omega$ è la velocità dell'oscillazione; un'oscillazione dura $2\\pi/\\omega$ secondi.",
-            "**L'angolo fissa la sovraelongazione.** I poli vicini all'asse reale vanno oltre pochissimo, quelli vicini all'asse verticale moltissimo (i raggi tratteggiati)."
+            "**Metà sinistra = si calma, metà destra = esplode.** La parte reale $\\sigma$ è il tasso con cui $e^{\\sigma t}$ si restringe o cresce.",
+            "**Più a sinistra = più rapido.** Assestarsi richiede circa $4/|\\sigma|$ secondi (le linee verticali tratteggiate): le quattro costanti di tempo del Capitolo 6, perché $e^{-|\\sigma| t}$ scende sotto il 2% dopo $\\ln 50/|\\sigma| \\approx 3{,}9/|\\sigma|$ secondi.",
+            "**Più in alto = più oscillante.** L'altezza $\\omega$ è la pulsazione smorzata del Capitolo 6, quindi un'oscillazione dura $2\\pi/\\omega$ secondi.",
+            "**L'angolo fissa la sovraelongazione.** L'angolo $\\theta$ dal semiasse reale negativo dà $\\zeta = \\cos\\theta$ (il cerchio del Capitolo 6), e la sovraelongazione è $e^{-\\pi|\\sigma|/\\omega}$ (i raggi tratteggiati). Vicino all'asse reale va oltre pochissimo, vicino all'asse verticale moltissimo."
           ]
         },
         {
@@ -120,8 +197,114 @@
           "text": "Ti ricordi le trottole gemelle del Capitolo 5? Un drone reale ha un moto reale, quindi ogni $e^{st}$ che gira ha bisogno della sua gemella allo specchio per annullare le parti immaginarie. I poli complessi arrivano **sempre** in coppie allo specchio."
         },
         {
+          "t": "callout",
+          "title": "Perché l'angolo fissa la sovraelongazione",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Il drone supera l'obiettivo e torna indietro dopo mezza oscillazione, a $t = \\pi/\\omega$. A quel punto l'$e^{-|\\sigma| t}$ che si restringe ha lavorato per tutto quel tempo, e quello che resta dell'escursione è la sovraelongazione. Conta solo il rapporto $|\\sigma|/\\omega$, e quel rapporto è l'*angolo* del polo. Sul cerchio del Capitolo 6, il coseno di quell'angolo è $\\zeta$."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} t_{\\text{picco}} &= \\frac{\\pi}{\\omega} \\\\[4pt] \\text{sovraelongazione} &= e^{-|\\sigma|\\,t_{\\text{picco}}} = e^{-\\pi|\\sigma|/\\omega} \\\\[4pt] &= e^{-\\pi\\zeta/\\sqrt{1-\\zeta^2}}, \\qquad \\zeta = \\cos\\theta \\end{aligned}"
+            },
+            {
+              "t": "play",
+              "id": "poleRead",
+              "text": "Poli in −{scrub|sig} ± {scrub|w}i: le oscillazioni si riducono come $e^{-|\\sigma| t}$, quindi si assesta in circa {calc|ts} s. Un'oscillazione dura {calc|period} s. Il primo picco arriva dopo metà oscillazione, a {calc|tp} s, e a quel punto il restringimento ha lasciato questa sovraelongazione: {calc|os}."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "happy",
+              "text": "Quindi ogni raggio che parte da 0 è un solo $\\zeta$, e una sola sovraelongazione."
+            }
+          ]
+        },
+        {
+          "t": "predict",
+          "id": "ch8-up",
+          "gate": true,
+          "q": "Tieni $\\sigma = -2$ e fai scorrere i poli **dritti in su**, da $\\pm 4i$ a $\\pm 8i$. Cosa cambia?",
+          "options": [
+            {
+              "text": "Si assesta due volte più in fretta",
+              "why": "L'assestamento segue il tasso di restringimento $\\sigma$, che non si è mosso. Misurato: 1,87 s diventano 1,72 s, quasi uguale."
+            },
+            {
+              "text": "Oscillazioni più rapide e più sovraelongazione; l'assestamento resta più o meno uguale",
+              "correct": true,
+              "why": "Un'oscillazione passa da 1,57 s a 0,79 s e la sovraelongazione sale dal 21% al 46%, ma l'inviluppo $e^{-2t}$ non cambia, quindi l'assestamento resta vicino a $4/2 = 2$ s."
+            },
+            {
+              "text": "Diventa instabile",
+              "why": "Lo decide solo la posizione sinistra-destra. Su e giù non si passa mai nella metà destra."
+            }
+          ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Il parco giochi è saltato quando abbiamo risposto: la coppia fantasma sta in $\\pm 4i$, quella nuova in $\\pm 8i$. Stesso inviluppo, il doppio delle oscillazioni, e una prima escursione molto più grande."
+        },
+        {
           "t": "note",
           "text": "Il nostro drone partiva da $-1 \\pm 6{,}24i$: è il drone con $K_p = 20$ del Capitolo 2. Molto in alto (molto oscillante) e vicino all'asse (lento ad assestarsi). Ora puoi *vedere* perché rimbalzava."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "E se entrambi i poli stessero sull'asse reale, uno in $-0{,}2$ e uno in $-5$?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Quello veloce sparisce in un secondo. Quello lento è il capo."
+        },
+        {
+          "t": "play",
+          "id": "dominant",
+          "text": "Poli reali in −0,2 e −5. Dopo {scrub|time} s, al moto veloce $e^{-5t}$ resta {calc|fast} del suo inizio, e a quello lento $e^{-0{,}2t}$ resta ancora {calc|slow}. Quindi decide il polo lento: l'assestamento richiede circa $4/0{,}2 = 20$ s."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Polo",
+              "def": "Un valore di $s$ in cui la funzione di trasferimento esplode. Ogni polo $p$ è un moto $e^{pt}$ del sistema."
+            },
+            {
+              "term": "Coppia allo specchio $p,\\ \\bar p$",
+              "def": "Due poli con la stessa parte reale e parti immaginarie opposte. I poli complessi di un sistema reale arrivano sempre così."
+            },
+            {
+              "term": "Polo dominante",
+              "def": "Il polo più vicino all'asse verticale. Il suo moto lento dura più degli altri, quindi decide il tempo di assestamento."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "Quanto è buono 4/|σ|?",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Quattro è il $\\ln 50 \\approx 3{,}9$ del Capitolo 6, arrotondato: il tempo in cui l'*inviluppo* scende al 2%. La curva vera sta dentro il suo inviluppo, quindi spesso si assesta un po' prima. Si assesta più tardi quando i poli stanno sull'asse reale o vicino, perché un polo doppio ha una parte $t\\,e^{-|\\sigma| t}$ che indugia."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{array}{c|ccccc} \\zeta & 0{,}3 & 0{,}5 & 0{,}8 & 0{,}95 & 1 \\\\ \\hline |\\sigma|\\,T_s & 3{,}37 & 4{,}04 & 3{,}01 & 5{,}00 & 5{,}83 \\end{array}"
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "think",
+              "text": "Ho provato $\\sigma = -1$: la regola diceva 4 s, e i tempi veri andavano da 3,0 s a 5,8 s a seconda di $\\zeta$. Abbastanza per prendere la mira, non abbastanza per fare promesse."
+            }
+          ]
         }
       ]
     },
@@ -131,11 +314,11 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Anche il numeratore può annullarsi. Questi punti sono gli **zeri**, disegnati come ○. Di solito cambiano **quanto** del moto di ogni polo appare in uscita. Se uno zero cade esattamente su un polo, il fattore comune si semplifica e quel polo sparisce da questa funzione di trasferimento ingresso-uscita. Un moto interno può comunque restare nascosto a quell’ingresso e a quell’uscita particolari."
+          "text": "Anche il numeratore può annullarsi. Questi punti sono gli **zeri**, disegnati come ○. Di solito cambiano **quanto** del moto di ogni polo appare in uscita. Se uno zero cade esattamente su un polo, il fattore comune si semplifica e quel polo sparisce da questa ricetta ingresso-uscita."
         },
         {
           "t": "p",
-          "text": "Ecco un sistema con poli fissi in $-2 \\pm 3i$ e uno zero che puoi far scorrere. (Questa forma la ottieni esattamente da un controllore che reagisce a quanto in fretta cambia l'*errore*: un assaggio del Capitolo 9.)"
+          "text": "Ecco un sistema con poli fissi in $-2 \\pm 3i$ e uno zero che puoi far scorrere. (Il $\\eff{K_d}$ del nostro parco giochi spinge contro la *velocità* del drone, quindi la sua ricetta non ha zeri. Spingi invece contro la velocità dell'*errore*, come farà il Capitolo 9, e compare uno zero in $-\\eff{K_p}/\\eff{K_d}$: per questi poli è $-6{,}5$, con il 15% di sovraelongazione invece del 12%.)"
         },
         {
           "t": "widget",
@@ -148,8 +331,48 @@
           "text": "Stessi poli, ma quando lo zero si avvicina all'origine la risposta schizza su molto più in fretta e va più oltre!"
         },
         {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Stessi poli vuol dire stessi moti. Quindi lo zero non può aggiungerne uno nuovo. Deve aggiungere un po' di qualcosa che abbiamo già."
+        },
+        {
+          "t": "play",
+          "id": "zeroKick",
+          "text": "Con lo zero in −{scrub|z}, l'uscita è la curva senza zero **più {calc|gain} × la sua pendenza**, e la sua sovraelongazione è del {calc|os} (12% senza lo zero)."
+        },
+        {
           "t": "p",
-          "text": "Uno zero vicino all'origine fa reagire il sistema con forza ai **cambiamenti** dell'ingresso. La sovraelongazione cresce, anche se i poli non si sono mossi. Da lontano, lo zero conta pochissimo. Per ora sugli zeri non ci serve altro."
+          "text": "Moltiplicare per $s$ prende la pendenza (Capitolo 7), quindi il fattore $(1 + s/|z|)$ aggiunge $1/|z|$ volte la pendenza. Ecco perché uno zero vicino all'origine fa reagire il sistema con tanta forza ai **cambiamenti**: la sovraelongazione cresce, anche se i poli non si sono mossi. Da lontano, lo zero conta pochissimo. Per ora sugli zeri non ci serve altro."
+        },
+        {
+          "t": "callout",
+          "title": "Cosa blocca uno zero",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Un polo è un moto che il sistema *produce*; uno zero è un moto che *si rifiuta di far passare*. Dai a questo sistema (zero in $-3$) esattamente $e^{-3t}$ e non ne esce niente: solo l'oscillazione propria del sistema, che si spegne. Senza lo zero, $1{,}3\\,e^{-3t}$ passerebbe dritto."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} G(s) &= \\tfrac{13}{3}\\,\\frac{s+3}{s^2+4s+13}, \\qquad u = e^{-3t} \\\\[4pt] Y(s) &= \\tfrac{13}{3}\\,\\frac{\\cancel{s+3}}{(s^2+4s+13)\\,\\cancel{(s+3)}} \\\\[4pt] \\Longrightarrow\\quad y(t) &= \\tfrac{13}{9}\\,e^{-2t}\\sin 3t \\end{aligned}"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "excited",
+              "text": "Come delle cuffie con cancellazione del rumore per un solo ronzio."
+            }
+          ]
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Zero",
+              "def": "Un valore di $s$ in cui la funzione di trasferimento vale zero: un moto $e^{zt}$ che il sistema non fa passare."
+            }
+          ]
         }
       ]
     },
@@ -171,15 +394,32 @@
         },
         {
           "t": "p",
-          "text": "È ora di essere onesti. I nostri motori possono spingere tra **0 N** e **20 N** (circa quattro volte il peso del drone). Qui sotto, i poli si spostano a sinistra lungo una linea a 45°. Le curve tratteggiate sono la matematica con motori immaginari e illimitati; quelle continue sono i motori veri."
+          "text": "È ora di essere onesti. I nostri motori possono spingere tra **0 N** e **20 N** (circa quattro volte il peso del drone). Qui sotto, i poli si spostano a sinistra lungo una linea a 45° (cioè $\\zeta \\approx 0{,}71$, il punto ideale del Capitolo 6). Le curve tratteggiate sono la matematica con motori immaginari e illimitati; quelle continue sono i motori veri."
         },
         {
           "t": "widget",
           "id": "limit"
         },
         {
+          "t": "play",
+          "id": "push",
+          "text": "Nel primo istante di un gradino di 1 m l'errore è il metro intero e il drone non si muove ancora, quindi la matematica chiede la spinta di hovering più $\\eff{K_p}$ × 1 m. Con i poli in {scrub|sig} fanno {calc|sum|eff} N: {calc|verdict}."
+        },
+        {
           "t": "p",
-          "text": "Oltre un certo punto la matematica pretende 50, 60, 70 newton che i motori semplicemente non hanno. La {eff|spinta arancione} si appiattisce contro i limiti, il drone vero smette di seguire la bella previsione lineare, e va oltre *di più* di quanto farebbe con poli più tranquilli."
+          "text": "Oltre circa $-3{,}9 \\pm 3{,}9i$ la matematica chiede più di 20 N. La {eff|spinta arancione} si appiattisce contro il limite, e oltre circa $-6 \\pm 6i$ la matematica vorrebbe persino tirare il drone *in giù*, cosa che le eliche non sanno fare. Il drone vero smette di seguire la bella previsione lineare. Il suo assestamento smette di migliorare a circa 0,7 s, vicino a $-6{,}5 \\pm 6{,}5i$, e più a sinistra *peggiora*, con sovraelongazione in più."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "L'ho fatto scorrere fino a $-8 \\pm 8i$. La matematica dice 0,53 s. Il drone vero ci mette 0,77 s: più lento che a $-6{,}5$!"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "E la sua sovraelongazione è passata dal 4% al 16%. Tutta quella spinta in più non è mai stata disponibile."
         },
         {
           "t": "say",
@@ -188,8 +428,44 @@
           "text": "Quindi \"più a sinistra\" è meglio solo finché non finisci il motore. Piazzare i poli è un compromesso, non una gara."
         },
         {
+          "t": "callout",
+          "title": "Un budget di spinta è un cerchio",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Nel primissimo istante il drone non si è mosso, quindi spinge solo $\\eff{K_p}$, e $\\eff{K_p} = m|p|^2$: il quadrato della distanza dei poli da 0. Raddoppia la distanza e ti serve una spinta quattro volte più grande, in qualunque direzione tu sia andato. Per un gradino di 1 m i nostri motori permettono poli fino a circa 5,5 da 0 (il cerchio arancione tenue nel parco giochi). Chiedi un gradino di 2 m e il cerchio si restringe a 3,9."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} T(0^+) &= mg + \\eff{K_p}\\,\\Delta\\sp{r} \\\\[4pt] &= mg + m\\,|p|^2\\,\\Delta\\sp{r} \\le 20\\ \\text{N} \\\\[4pt] \\Longrightarrow\\quad |p| &\\le \\sqrt{\\frac{20\\ \\text{N} - mg}{m\\,\\Delta\\sp{r}}} \\end{aligned}"
+            },
+            {
+              "t": "play",
+              "id": "budget",
+              "text": "Per un gradino di {scrub|dr} m, la prima spinta resta sotto i 20 N solo se i poli stanno entro {calc|r} da 0, in qualsiasi direzione."
+            }
+          ]
+        },
+        {
           "t": "note",
           "text": "D'ora in poi il limite di 20 N resta acceso."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Prima spinta",
+              "def": "La spinta richiesta nel primo istante di un gradino: $mg + \\eff{K_p}\\,\\Delta r$, prima che il drone si sia mosso."
+            },
+            {
+              "term": "Budget di spinta",
+              "def": "Le posizioni dei poli che i motori si possono permettere per un dato gradino: un cerchio attorno a 0."
+            },
+            {
+              "term": "Limite dei motori (saturazione)",
+              "def": "La spinta vera viene tagliata a 0–20 N, qualunque cosa chieda la matematica."
+            }
+          ]
         }
       ]
     },
@@ -200,12 +476,12 @@
         {
           "t": "recap",
           "items": [
-            "La **funzione di trasferimento** $G(s)$ = uscita ÷ ingresso nel mondo di s. È la ricetta del sistema: $\\out{H} = G\\cdot\\sp{R}$.",
-            "I **poli** (×) sono dove $G(s)$ esplode: i termini $e^{st}$ di cui è fatto il sistema.",
-            "Metà sinistra = stabile, metà destra = esplode, più a sinistra = più rapido (≈ 4/|σ| s), più in alto = più oscillante, angolo = sovraelongazione.",
+            "Sì, basta una frazione. La **funzione di trasferimento** $G(s)$ = cambiamento dell'uscita ÷ cambiamento dell'ingresso nel mondo di s, partendo da fermo. È la ricetta del sistema, $\\Delta\\out{H} = G\\cdot\\Delta\\sp{R}$, e viene dritta dall'equazione del drone.",
+            "I **poli** (×) sono dove $G(s)$ esplode: i modi $e^{pt}$ di cui è fatto il sistema.",
+            "Metà sinistra = stabile, metà destra = esplode. Più a sinistra = più rapido (si assesta in circa $4/|\\sigma|$ s, una regola pratica), più in alto = più oscillante (un'oscillazione = $2\\pi/\\omega$ s), angolo = smorzamento $\\zeta$ = sovraelongazione $e^{-\\pi|\\sigma|/\\omega}$. Il polo più vicino all'asse è il capo.",
             "I poli complessi arrivano sempre in coppie allo specchio.",
-            "Gli **zeri** (○) cambiano quanto ottieni di ciascun termine. Vicini all'origine aggiungono uno scatto.",
-            "I poli molto a sinistra richiedono una spinta che i motori non hanno."
+            "Gli **zeri** (○) cambiano quanto ottieni di ciascun modo. Vicini all'origine aggiungono uno scatto: $1/|z|$ volte la pendenza.",
+            "La prima spinta è $mg + m|p|^2$ per un gradino di 1 m, quindi i poli lontani richiedono una spinta che i motori non hanno."
           ]
         },
         {
@@ -241,7 +517,7 @@
                 },
                 {
                   "text": "$+1 \\pm 3i$: instabile",
-                  "why": "Errore di segno. Per $s^2 + bs + c$ la parte reale è $-b/2 = -1$, che sta nella metà sinistra."
+                  "why": "Errore di segno. Per $s^2 + bs + q$ la parte reale è $-b/2 = -1$, che sta nella metà sinistra."
                 },
                 {
                   "text": "$-2$ e $-10$: niente oscillazioni",
@@ -256,7 +532,7 @@
                 {
                   "text": "Dritti verso l'asse reale (tieni σ, riduci ω)",
                   "correct": true,
-                  "why": "Stessa distanza dall'asse vuol dire stesso tempo di assestamento. Un angolo più piccolo rispetto all'asse reale vuol dire più smorzamento, quindi meno sovraelongazione."
+                  "why": "La stessa distanza dall'asse mantiene uguale l'*inviluppo*, quindi l'assestamento resta più o meno uguale (la regola $4/|\\sigma|$; vicino all'asse reale è approssimativa). Un angolo più piccolo rispetto all'asse reale vuol dire più smorzamento, quindi meno sovraelongazione."
                 },
                 {
                   "text": "Dritti in su (ω più grande)",
@@ -270,23 +546,20 @@
             },
             {
               "id": "ch8-q4",
-              "q": "Poli in $+0{,}5 \\pm 2i$. Cosa vedi?",
+              "q": "Un sistema ha poli reali in $-0{,}2$ e $-5$. Dopo due secondi, quale dei due dà ancora forma alla risposta?",
               "options": [
                 {
-                  "text": "Oscillazioni che crescono a ogni ciclo",
-                  "sketch": "growing-wiggle",
+                  "text": "Quello in $-0{,}2$, vicino all'asse",
                   "correct": true,
-                  "why": "$\\sigma = +0{,}5 > 0$ vuol dire crescita, $\\omega = 2$ vuol dire rotazione: un'oscillazione che cresce."
+                  "why": "$e^{-0{,}2t}$ è ancora al 67% dopo 2 s; $e^{-5t}$ è sceso allo 0,005%. Comanda il polo lento, quindi l'assestamento richiede circa $4/0{,}2 = 20$ s."
                 },
                 {
-                  "text": "Oscillazioni che si riducono",
-                  "sketch": "decaying-wiggle",
-                  "why": "Per ridursi serve $\\sigma < 0$ (metà sinistra). Questi poli sono a destra."
+                  "text": "Quello in $-5$, più a sinistra",
+                  "why": "Più a sinistra vuol dire che si spegne *più in fretta*. Dopo appena 1 s è sotto l'1% del suo inizio (0,67%)."
                 },
                 {
-                  "text": "Oscillazioni costanti per sempre",
-                  "sketch": "steady-wiggle",
-                  "why": "Quello è esattamente sull'asse ($\\sigma = 0$). A $+0{,}5$ cresce."
+                  "text": "Tutti e due allo stesso modo",
+                  "why": "Uno si restringe 25 volte più in fretta dell'altro ($5 \\div 0{,}2$). Dopo mezzo secondo quello veloce è all'8%, quello lento ancora al 90%."
                 }
               ]
             }
@@ -321,29 +594,44 @@
         "pulse": "Il riferimento scivola da 1 a 2 metri; il drone lo segue con un rimbalzo più piccolo.",
         "wave": "Il riferimento ondeggia su e giù; il drone segue l'onda."
       },
-      "droneCap": "il drone che lo segue"
+      "droneCap": "il drone che lo segue",
+      "status": {
+        "step": "Va oltre fino a {p} m prima di assestarsi a 2 m.",
+        "pulse": "Una partenza più dolce: il picco arriva solo a {p} m.",
+        "wave": "La ricetta trasforma un'onda di {a} m in un'onda di {b} m."
+      }
     },
     "playground": {
       "title": "Il parco giochi dei poli",
       "planeAria": "Il piano s con una coppia di poli trascinabili. La metà sinistra si calma, la metà destra esplode. Usa le frecce per spostare il polo selezionato.",
       "pole": "p",
-      "poles": "poli",
-      "settle": "si assesta (≈4/σ)",
+      "poles": "poles",
+      "zeta": "smorzamento ζ",
+      "wn": "ωn = |p|",
+      "settle": "si assesta, regola 4/σ",
+      "settleReal": "si assesta (misurato)",
       "overshoot": "sovraelongazione",
+      "push": "prima spinta (gradino di 1 m)",
+      "pct": "{v}%",
       "response": "altezza dopo un gradino di 1 m",
       "target": "obiettivo",
       "plotAria": "Risposta al gradino del drone per i poli scelti, con la risposta precedente mostrata come fantasma.",
-      "settles": "si assesta",
       "over": "sovraelongazione",
-      "raysLegend": "raggi tratteggiati: sovraelongazione %",
       "never": "mai",
+      "notIn": "non entro {T} s",
       "wiggle": "un'oscillazione ≈ {T} s",
+      "wnCircle": "ωn = {w}",
+      "budget": "budget di 20 N",
       "verdict": {
         "stable": "Metà sinistra: si calma.",
         "unstable": "Metà destra: esplode!",
         "marginal": "Proprio sull'asse: oscilla per sempre.",
-        "hitPage": "È volato fuori dal disegno, ha sbattuto contro la pagina ed è caduto. Sposta un polo per riprovare."
+        "hitPage": "È volato fuori dal disegno, ha sbattuto contro la pagina ed è caduto. Sposta un polo per riprovare.",
+        "hitGround": "Si è schiantato al suolo. Sposta un polo per riprovare.",
+        "hitPageMarginal": "Ogni escursione arrivava a 3 m, appena abbastanza per toccare la pagina; i motori si sono bloccati ed è caduto."
       },
+      "negKd": "Qui Kd è negativo: l'attrito smorza già più di quanto questi poli consentano, quindi il controllore deve spingere nel verso del moto.",
+      "pushWarn": "La prima spinta supera i 20 N, più di quanto abbiano i motori veri. Tra poco vedremo quanto costa.",
       "challenge": "Mini-sfida: sovraelongazione sotto il 10% e assestato entro 2 s",
       "chalOk": "Sfida superata! Sovraelongazione {o}%, assestato in {s} s.",
       "chalNo": "Non ancora: sovraelongazione {o}%, si assesta in {s} s. Punta alla zona evidenziata.",
@@ -359,13 +647,16 @@
       "y": "uscita",
       "noZero": "senza zero (stessi poli)",
       "withZero": "con lo zero",
+      "slope": "+ {g} × la sua pendenza",
       "plotAria": "Risposte al gradino con e senza lo zero.",
       "osNo": "sovraelongazione senza zero",
       "osYes": "sovraelongazione con zero",
+      "pct": "{v}%",
       "zeroAt": "zero in",
-      "near": "Vicino all'origine: un grande scatto iniziale e sovraelongazione in più.",
-      "mid": "Uno scatto in più moderato.",
-      "far": "Lontano: lo zero non cambia quasi niente.",
+      "scaled": "scalata in modo che finisca ancora a 1",
+      "near": "Vicino all'origine: la parte di pendenza è {g} × la vecchia pendenza, quindi la partenza dà uno scatto forte.",
+      "mid": "Uno scatto moderato: {g} × la pendenza.",
+      "far": "Lontano: solo {g} × la pendenza. Quasi non si vede.",
       "describe": "Zero in {z}, sovraelongazione {o} per cento.",
       "re": "σ",
       "im": "ω",
@@ -384,12 +675,47 @@
       "peak": "spinta massima che vuole la matematica",
       "tsIdeal": "si assesta (matematica)",
       "tsReal": "si assesta (reale)",
+      "osReal": "sovraelongazione (reale)",
+      "pct": "{v}%",
       "notYet": "non entro 3 s",
       "sigma": "Posizione dei poli (verso sinistra lungo i 45°)",
       "toggle": "Motori veri: 0–20 N",
-      "capped": "La matematica vuole {p} N, ma i motori arrivano al massimo a 20 N. La realtà smette di seguire il disegno lineare.",
+      "capped": "La matematica vuole {p} N; i motori si fermano a 20 N. Assestamento reale {s} s, e nessun \"più a sinistra\" lo porta sotto circa {b} s.",
       "fantasy": "I motori immaginari forniscono tranquillamente {p} N. Riaccendi i limiti.",
       "fine": "Dentro il range dei motori: matematica e realtà concordano."
+    }
+  },
+  "plays": {
+    "poleRead": {
+      "sig": "distanza dei poli a sinistra dell'asse",
+      "w": "altezza dei poli, omega",
+      "noWiggle": "niente (nessuna oscillazione)",
+      "never": "mai",
+      "noOvershoot": "niente (nessuna sovraelongazione)",
+      "pct": "{v}%"
+    },
+    "gains": {
+      "sig": "distanza dei poli a sinistra dell'asse",
+      "w": "altezza dei poli, omega",
+      "negKd": "È un Kd *negativo*: l'attrito da solo smorza già più di quanto vogliano questi poli, quindi il controllore deve spingere *nel verso* del moto."
+    },
+    "dominant": {
+      "time": "tempo, in secondi",
+      "almostNothing": "quasi niente",
+      "pct": "il {v}%"
+    },
+    "push": {
+      "sig": "coppia di poli sulla linea a 45°",
+      "canDo": "i motori ce la fanno",
+      "justOver": "appena sopra i 20 N che hanno i motori",
+      "farBeyond": "molto oltre le capacità dei motori"
+    },
+    "budget": {
+      "dr": "ampiezza del gradino, in metri"
+    },
+    "zeroKick": {
+      "z": "distanza dello zero da 0",
+      "pct": "{v}%"
     }
   }
 }

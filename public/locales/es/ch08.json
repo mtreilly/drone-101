@@ -14,8 +14,38 @@
           "text": "Empecemos con el dron en vuelo estacionario a 1 m, con 4,9 N de empuje base que equilibran la gravedad. Midamos el cambio solicitado y el cambio real de altura desde esa referencia. Justo antes de una nueva orden, ambos cambios valen cero. En el ejemplo del escalón, la consigna salta a 2 m en $t=0$: su cambio pasa a ser 1 m mientras el dron sigue a 1 m."
         },
         {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Menos mal, porque en el capítulo anterior quitamos los trocitos $-h(0)$ y la fórmula mintió. Medidos desde el vuelo estacionario, esos valores iniciales **son** cero de verdad, así que esta vez desaparecen honradamente."
+        },
+        {
           "t": "math",
           "tex": "\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\Delta\\sp{R}(s)"
+        },
+        {
+          "t": "callout",
+          "title": "De dónde sale la receta",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "El empuje de vuelo estacionario anula la gravedad, así que en la ecuación del dron solo quedan los *cambios*. Ahora usa la regla del capítulo 7: cada pendiente se convierte en × $s$, menos su valor inicial. Desde el vuelo estacionario todos los valores iniciales son cero, así que no se resta nada:"
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{gathered} m\\,\\Delta\\out{h}'' + c\\,\\Delta\\out{h}' = \\eff{K_p}\\,(\\Delta\\sp{r} - \\Delta\\out{h}) \\\\[2pt] \\Big\\downarrow\\ {\\scriptstyle \\Delta h(0)\\,=\\,\\Delta h'(0)\\,=\\,0} \\\\[2pt] (m s^2 + c s + \\eff{K_p})\\,\\Delta\\out{H}(s) = \\eff{K_p}\\,\\Delta\\sp{R}(s) \\end{gathered}"
+            },
+            {
+              "t": "p",
+              "text": "Divide por $m s^2 + c s + \\eff{K_p}$ y ahí está $G(s)$. Su denominador es la misma ecuación que obtuvimos en los capítulos 4 a 6 suponiendo $e^{st}$."
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "happy",
+              "text": "Así que no es magia. Es la propia ecuación del dron, con cada pendiente convertida en una $s$."
+            }
+          ]
         },
         {
           "t": "p",
@@ -29,7 +59,7 @@
           "t": "say",
           "who": "mika",
           "mood": "excited",
-          "text": "¡O sea que $G(s)$ es como la **receta** del dron! Le echas cualquier ingrediente y te dice lo que sale."
+          "text": "June tenía razón: la fracción **es** el dron. Es como su **receta**. ¡Le metes cualquier ingrediente y te dice lo que sale!"
         },
         {
           "t": "p",
@@ -45,6 +75,10 @@
             {
               "term": "Función de transferencia $G(s)$",
               "def": "Cambio de salida transformado ÷ cambio de entrada transformado, partiendo del mismo estado de reposo. Para este dron lineal es un cociente de polinomios en $s$."
+            },
+            {
+              "term": "Partir del reposo (condiciones iniciales nulas)",
+              "def": "Todos los cambios y sus velocidades valen cero en $t = 0$, como cuando medimos desde el vuelo estacionario. Entonces los términos de valor inicial del capítulo 7, como $-h(0)$, también son cero, y $G(s)$ lo cuenta todo."
             }
           ]
         }
@@ -56,15 +90,54 @@
       "blocks": [
         {
           "t": "p",
-          "text": "¿Dónde **explota** $G(s)$? En los ceros de su denominador, una vez cancelados los factores comunes. Esos puntos son los **polos**, dibujados como ×. Este dron tiene dos, que corresponden a los dos movimientos naturales $e^{st}$ del capítulo 6."
+          "text": "¿Dónde **explota** $G(s)$? Donde su denominador vale cero. Esos puntos son los **polos**, dibujados como ×. En este dron hay dos, uno por cada uno de los dos movimientos naturales $e^{st}$ del capítulo 6."
+        },
+        {
+          "t": "p",
+          "text": "En el capítulo 7, la transformada de $e^{at}$ chillaba en $s = a$. Léelo al revés: dondequiera que $G$ chille, se esconde un movimiento $e^{pt}$."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "¡O sea que los polos son los **modos** del capítulo 6, sentados en el mapa!"
+        },
+        {
+          "t": "callout",
+          "title": "Por qué los polos son los movimientos",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Una respuesta al escalón es $G(s)$ por el $\\frac{1}{s}$ del escalón. Divídela en trozos sencillos, como en el capítulo 7: el propio polo del escalón en 0 da el cambio final $A$, y cada polo de $G$ da un trozo $\\frac{B}{s-p}$."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} \\Delta\\out{H}(s) = G(s)\\cdot\\frac{1}{s} &= \\frac{A}{s} + \\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\\\[4pt] \\Longrightarrow\\quad \\Delta\\out{h}(t) &= A + B e^{pt} + \\bar B e^{\\bar p t} \\end{aligned}"
+            },
+            {
+              "t": "p",
+              "text": "La tabla del capítulo 7 convierte cada trozo de nuevo en un movimiento. No puede aparecer nada más: los polos son todo el reparto."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Y un polo con $\\sigma > 0$ es un trozo que crece. Con razón la mitad derecha se dispara."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Ahora dale la vuelta. En lugar de elegir ganancias y buscar los polos, vamos a **arrastrar los polos** y ver qué dron sale. Para eso hace falta un segundo mando, $\\eff{K_d}$: un empuje contra la velocidad, que conoceremos como es debido en el capítulo 9. Se suma al rozamiento $c$, y las dos raíces son $p$ y su gemela reflejada $\\bar p$ (la barra cambia el signo de la parte imaginaria, como los gemelos del capítulo 5):"
         },
         {
           "t": "math",
           "tex": "\\begin{aligned} & m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p} = 0 \\\\ \\Longrightarrow\\quad & s = p,\\ \\bar p \\qquad \\text{(los polos)} \\end{aligned}"
         },
         {
-          "t": "p",
-          "text": "Ahora démosle la vuelta. En vez de elegir ganancias y buscar los polos, **arrastremos los polos** y veamos qué dron nos sale. (Entre bastidores calculamos el controlador que los pone ahí. Necesita un mando nuevo, $\\eff{K_d}$, un empuje en contra de la velocidad, que conoceremos como es debido en el capítulo 9.)"
+          "t": "play",
+          "id": "gains",
+          "text": "Para poner los polos en −{scrub|sig} ± {scrub|w}i, el controlador necesita $\\eff{K_p} = m(\\sigma^2+\\omega^2)$ = {calc|kp|eff} N/m y $c + \\eff{K_d} = 2m|\\sigma|$ = {calc|damp} N·s/m, así que $\\eff{K_d}$ = {calc|kd|eff} N·s/m. El patio de abajo sigue estos números. {calc|note}"
         },
         {
           "t": "predict",
@@ -95,16 +168,20 @@
           "id": "playground"
         },
         {
+          "t": "h3",
+          "text": "Cómo leer el mapa"
+        },
+        {
           "t": "p",
-          "text": "Juega con él. Saltan a la vista unas cuantas reglas, y todas son los capítulos 5 y 6 disfrazados:"
+          "text": "Juega con él. Saltan a la vista unas cuantas reglas, y cada una es una vieja amiga disfrazada:"
         },
         {
           "t": "list",
           "items": [
-            "**Mitad izquierda = se calma, mitad derecha = se dispara.** La parte real $\\sigma$ es el ritmo al que se encoge o crece.",
-            "**Más a la izquierda = más rápido.** Estabilizarse lleva unos $4/|\\sigma|$ segundos (las líneas verticales discontinuas).",
-            "**Más arriba = más oscilante.** La altura $\\omega$ es la velocidad de oscilación; una oscilación dura $2\\pi/\\omega$ segundos.",
-            "**El ángulo fija el sobreimpulso.** Los polos cerca del eje real apenas se pasan; los polos cerca del eje vertical se pasan mucho (los rayos discontinuos)."
+            "**Mitad izquierda = se calma, mitad derecha = se dispara.** La parte real $\\sigma$ es el ritmo al que se encoge o crece $e^{\\sigma t}$.",
+            "**Más a la izquierda = más rápido.** Estabilizarse lleva unos $4/|\\sigma|$ segundos (las líneas verticales discontinuas): las cuatro constantes de tiempo del capítulo 6, ya que $e^{-|\\sigma| t}$ baja del 2 % tras $\\ln 50/|\\sigma| \\approx 3.9/|\\sigma|$ segundos.",
+            "**Más arriba = más oscilante.** La altura $\\omega$ es la frecuencia amortiguada del capítulo 6, así que una oscilación dura $2\\pi/\\omega$ segundos.",
+            "**El ángulo fija el sobreimpulso.** El ángulo $\\theta$ medido desde el eje real negativo da $\\zeta = \\cos\\theta$ (el círculo del capítulo 6), y el sobreimpulso es $e^{-\\pi|\\sigma|/\\omega}$ (los rayos discontinuos). Cerca del eje real apenas se pasa; cerca del eje vertical, muchísimo."
           ]
         },
         {
@@ -120,8 +197,114 @@
           "text": "¿Te acuerdas de los giradores gemelos del capítulo 5? Un dron real tiene un movimiento real, así que cada $e^{st}$ que gira necesita su gemelo reflejado para cancelar las partes imaginarias. Los polos complejos **siempre** vienen en parejas reflejadas."
         },
         {
+          "t": "callout",
+          "title": "Por qué el ángulo fija el sobreimpulso",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "El dron pasa el objetivo y da la vuelta tras media oscilación, en $t = \\pi/\\omega$. Para entonces el $e^{-|\\sigma| t}$ que se encoge lleva ese tiempo trabajando, y lo que queda de la oscilación es el sobreimpulso. Solo importa la razón $|\\sigma|/\\omega$, y esa razón es el *ángulo* del polo. En el círculo del capítulo 6, el coseno de ese ángulo es $\\zeta$."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} t_{\\text{pico}} &= \\frac{\\pi}{\\omega} \\\\[4pt] \\text{sobreimpulso} &= e^{-|\\sigma|\\,t_{\\text{pico}}} = e^{-\\pi|\\sigma|/\\omega} \\\\[4pt] &= e^{-\\pi\\zeta/\\sqrt{1-\\zeta^2}}, \\qquad \\zeta = \\cos\\theta \\end{aligned}"
+            },
+            {
+              "t": "play",
+              "id": "poleRead",
+              "text": "Polos en −{scrub|sig} ± {scrub|w}i: las oscilaciones se encogen como $e^{-|\\sigma| t}$, así que se estabiliza en unos {calc|ts} s. Una oscilación dura {calc|period} s. El primer pico llega tras media oscilación, en {calc|tp} s, y para entonces el encogimiento ha dejado un sobreimpulso de {calc|os}."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "happy",
+              "text": "Así que cada rayo que sale de 0 es un $\\zeta$, y un sobreimpulso."
+            }
+          ]
+        },
+        {
+          "t": "predict",
+          "id": "ch8-up",
+          "gate": true,
+          "q": "Mantén $\\sigma = -2$ y desliza los polos **en vertical hacia arriba**, de $\\pm 4i$ a $\\pm 8i$. ¿Qué cambia?",
+          "options": [
+            {
+              "text": "Se estabiliza el doble de rápido",
+              "why": "El tiempo de establecimiento sigue al ritmo de encogimiento $\\sigma$, que no se ha movido. Medido: 1,87 s pasa a 1,72 s, casi lo mismo."
+            },
+            {
+              "text": "Oscilaciones más rápidas y más sobreimpulso; el tiempo de establecimiento sigue más o menos igual",
+              "correct": true,
+              "why": "Una oscilación baja de 1,57 s a 0,79 s y el sobreimpulso sube del 21 % al 46 %, pero la envolvente $e^{-2t}$ no cambia, así que el tiempo de establecimiento se queda cerca de $4/2 = 2$ s."
+            },
+            {
+              "text": "Se vuelve inestable",
+              "why": "Eso solo lo decide la posición izquierda-derecha. Subir y bajar nunca cruza a la mitad derecha."
+            }
+          ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "El patio saltó cuando respondimos: la pareja fantasma está en $\\pm 4i$, la nueva en $\\pm 8i$. La misma envolvente, el doble de oscilaciones y una primera oscilación mucho más grande."
+        },
+        {
           "t": "note",
           "text": "Nuestro dron empezaba en $-1 \\pm 6.24i$: es el dron con $K_p = 20$ del capítulo 2. Muy arriba (muy oscilante) y cerca del eje (lento en estabilizarse). Ahora puedes *ver* por qué rebotaba."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "¿Y si los dos polos están sobre el eje real, uno en $-0.2$ y otro en $-5$?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "El rápido desaparece en un segundo. El lento es el que manda."
+        },
+        {
+          "t": "play",
+          "id": "dominant",
+          "text": "Polos reales en −0,2 y −5. Tras {scrub|time} s, al movimiento rápido $e^{-5t}$ le queda {calc|fast} de su valor inicial, y al lento $e^{-0.2t}$ todavía le queda {calc|slow}. Así que decide el polo lento: estabilizarse lleva unos $4/0.2 = 20$ s."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Polo",
+              "def": "Un valor de $s$ donde la función de transferencia explota. Cada polo $p$ es un movimiento $e^{pt}$ del sistema."
+            },
+            {
+              "term": "Pareja reflejada $p,\\ \\bar p$",
+              "def": "Dos polos con la misma parte real y partes imaginarias opuestas. Los polos complejos de un sistema real siempre vienen así."
+            },
+            {
+              "term": "Polo dominante",
+              "def": "El polo más cercano al eje vertical. Su movimiento lento dura más que los demás, así que decide el tiempo de establecimiento."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "¿Qué tan buena es 4/|σ|?",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "El cuatro es el $\\ln 50 \\approx 3.9$ del capítulo 6, redondeado: el tiempo que tarda la *envolvente* en encogerse al 2 %. La curva real va por dentro de su envolvente, así que a menudo se estabiliza un poco antes. Se estabiliza más tarde cuando los polos están sobre el eje real o cerca de él, porque un polo doble tiene una parte $t\\,e^{-|\\sigma| t}$ que se entretiene."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{array}{c|ccccc} \\zeta & 0.3 & 0.5 & 0.8 & 0.95 & 1 \\\\ \\hline |\\sigma|\\,T_s & 3.37 & 4.04 & 3.01 & 5.00 & 5.83 \\end{array}"
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "think",
+              "text": "Probé con $\\sigma = -1$: la regla decía 4 s, y los tiempos reales iban de 3,0 s a 5,8 s según $\\zeta$. Suficiente para apuntar, no para prometer."
+            }
+          ]
         }
       ]
     },
@@ -131,11 +314,11 @@
       "blocks": [
         {
           "t": "p",
-          "text": "El numerador también puede valer cero. Esos puntos son **ceros**, dibujados como ○. Normalmente cambian **cuánto** del movimiento de cada polo aparece en la salida. Si un cero cae exactamente sobre un polo, el factor común se cancela y ese polo desaparece de esta función de transferencia entre entrada y salida. Un movimiento interno aún puede quedar oculto para esa entrada y esa salida concretas."
+          "text": "El numerador también puede valer cero. Esos puntos son los **ceros**, dibujados como ○. Normalmente cambian **cuánto** del movimiento de cada polo aparece en la salida. Si un cero cae justo sobre un polo, el factor común se cancela y ese polo desaparece de esta receta de entrada a salida."
         },
         {
           "t": "p",
-          "text": "Aquí tienes un sistema con polos fijos en $-2 \\pm 3i$ y un cero que puedes deslizar. (Esta forma exacta sale de un controlador que reacciona a lo rápido que cambia el *error*: un adelanto del capítulo 9.)"
+          "text": "Aquí tienes un sistema con polos fijos en $-2 \\pm 3i$ y un cero que puedes deslizar. (El $\\eff{K_d}$ de nuestro patio empuja contra la *velocidad* del dron, así que su receta no tiene cero. Empuja en cambio contra la velocidad del *error*, como hará el capítulo 9, y aparece un cero en $-\\eff{K_p}/\\eff{K_d}$: para estos polos eso es $-6.5$, con un sobreimpulso del 15 % en vez del 12 %.)"
         },
         {
           "t": "widget",
@@ -148,8 +331,48 @@
           "text": "Mismos polos, pero cuando el cero se acerca al origen la respuesta sube muchísimo más rápido ¡y se pasa más!"
         },
         {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Mismos polos significa mismos movimientos. Así que el cero no puede añadir uno nuevo. Tiene que estar añadiendo un poco de algo que ya tenemos."
+        },
+        {
+          "t": "play",
+          "id": "zeroKick",
+          "text": "Con el cero en −{scrub|z}, la salida es la curva sin cero **más {calc|gain} × su pendiente**, y se pasa un {calc|os} (12 % sin el cero)."
+        },
+        {
           "t": "p",
-          "text": "Un cero cerca del origen hace que el sistema reaccione con fuerza a los **cambios** de la entrada. El sobreimpulso crece, aunque los polos no se hayan movido. Lejos, el cero apenas importa. Es todo lo que necesitamos saber de los ceros por ahora."
+          "text": "Multiplicar por $s$ toma la pendiente (capítulo 7), así que el factor $(1 + s/|z|)$ añade $1/|z|$ veces la pendiente. Por eso un cero cerca del origen hace que el sistema reaccione con tanta fuerza a los **cambios**: el sobreimpulso crece, aunque los polos no se hayan movido. Lejos, el cero apenas importa. Es todo lo que necesitamos saber de los ceros por ahora."
+        },
+        {
+          "t": "callout",
+          "title": "Lo que bloquea un cero",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Un polo es un movimiento que el sistema *hace*; un cero es un movimiento que *se niega a dejar pasar*. Alimenta este sistema (cero en $-3$) exactamente con $e^{-3t}$ y no sale nada de él: solo la oscilación propia del sistema, que se apaga. Sin el cero, $1.3\\,e^{-3t}$ pasaría directamente."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} G(s) &= \\tfrac{13}{3}\\,\\frac{s+3}{s^2+4s+13}, \\qquad u = e^{-3t} \\\\[4pt] Y(s) &= \\tfrac{13}{3}\\,\\frac{\\cancel{s+3}}{(s^2+4s+13)\\,\\cancel{(s+3)}} \\\\[4pt] \\Longrightarrow\\quad y(t) &= \\tfrac{13}{9}\\,e^{-2t}\\sin 3t \\end{aligned}"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "excited",
+              "text": "Como unos auriculares con cancelación de ruido para un zumbido concreto."
+            }
+          ]
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Cero",
+              "def": "Un valor de $s$ donde la función de transferencia vale cero: un movimiento $e^{zt}$ que el sistema no deja pasar."
+            }
+          ]
         }
       ]
     },
@@ -171,15 +394,32 @@
         },
         {
           "t": "p",
-          "text": "Hora de ser honestos. Nuestros motores pueden empujar entre **0 N** y **20 N** (unas cuatro veces el peso del dron). Abajo, los polos se mueven a la izquierda por una línea de 45°. Las curvas discontinuas son las matemáticas con motores imaginarios e ilimitados; las continuas, motores reales."
+          "text": "Hora de ser honestos. Nuestros motores pueden empujar entre **0 N** y **20 N** (unas cuatro veces el peso del dron). Abajo, los polos se mueven a la izquierda por una línea de 45° (eso es $\\zeta \\approx 0.71$, el punto ideal del capítulo 6). Las curvas discontinuas son las matemáticas con motores imaginarios e ilimitados; las continuas son motores reales."
         },
         {
           "t": "widget",
           "id": "limit"
         },
         {
+          "t": "play",
+          "id": "push",
+          "text": "En el primer instante de un escalón de 1 m, el error es el metro entero y el dron todavía no se mueve, así que las matemáticas piden el empuje de vuelo estacionario más $\\eff{K_p}$ × 1 m. Con los polos en {scrub|sig} eso son {calc|sum|eff} N: {calc|verdict}."
+        },
+        {
           "t": "p",
-          "text": "A partir de cierto punto, las matemáticas exigen 50, 60, 70 newtons que los motores sencillamente no tienen. El {eff|empuje naranja} se aplana contra los límites, el dron real deja de seguir la bonita predicción lineal y se pasa *más* de lo que se pasaría con polos más suaves."
+          "text": "Más allá de unos $-3.9 \\pm 3.9i$ las matemáticas piden más de 20 N. El {eff|empuje naranja} se aplasta contra el límite, y más allá de unos $-6 \\pm 6i$ las matemáticas llegan a querer tirar del dron *hacia abajo*, cosa que las hélices no pueden hacer. El dron real deja de seguir la bonita predicción lineal. Su tiempo de establecimiento deja de mejorar en unos 0,7 s, cerca de $-6.5 \\pm 6.5i$, y más a la izquierda *empeora*, con sobreimpulso extra."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Lo deslicé hasta $-8 \\pm 8i$. Las matemáticas dicen 0,53 s. El dron real tarda 0,77 s: ¡más lento que en $-6.5$!"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Y su sobreimpulso pasó del 4 % al 16 %. Todo ese empuje extra nunca estuvo disponible."
         },
         {
           "t": "say",
@@ -188,8 +428,44 @@
           "text": "Así que \"más a la izquierda\" solo es mejor hasta que te quedas sin motor. Colocar polos es un compromiso, no una carrera."
         },
         {
+          "t": "callout",
+          "title": "Un presupuesto de empuje es un círculo",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "En el primerísimo instante el dron no se ha movido, así que solo empuja $\\eff{K_p}$, y $\\eff{K_p} = m|p|^2$: el cuadrado de la distancia de los polos a 0. Duplica la distancia y necesitas cuatro veces más empuje, vayas en la dirección que vayas. Para un escalón de 1 m, nuestros motores permiten polos hasta unos 5,5 de 0 (el círculo naranja tenue del patio). Pide un escalón de 2 m y el círculo se encoge a 3,9."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} T(0^+) &= mg + \\eff{K_p}\\,\\Delta\\sp{r} \\\\[4pt] &= mg + m\\,|p|^2\\,\\Delta\\sp{r} \\le 20\\ \\text{N} \\\\[4pt] \\Longrightarrow\\quad |p| &\\le \\sqrt{\\frac{20\\ \\text{N} - mg}{m\\,\\Delta\\sp{r}}} \\end{aligned}"
+            },
+            {
+              "t": "play",
+              "id": "budget",
+              "text": "Para un escalón de {scrub|dr} m, el primer empujón se queda por debajo de 20 N solo si los polos están a menos de {calc|r} de 0, en cualquier dirección."
+            }
+          ]
+        },
+        {
           "t": "note",
           "text": "A partir de ahora, el límite de 20 N se queda activado."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Primer empujón",
+              "def": "El empuje pedido en el primer instante de un escalón: $mg + \\eff{K_p}\\,\\Delta r$, antes de que el dron se haya movido."
+            },
+            {
+              "term": "Presupuesto de empuje",
+              "def": "Las posiciones de los polos que los motores pueden permitirse para un escalón dado: un círculo alrededor de 0."
+            },
+            {
+              "term": "Límite del motor (saturación)",
+              "def": "El empuje real se recorta a 0–20 N, pidan lo que pidan las matemáticas."
+            }
+          ]
         }
       ]
     },
@@ -200,12 +476,12 @@
         {
           "t": "recap",
           "items": [
-            "La **función de transferencia** $G(s)$ = salida ÷ entrada en el mundo de s. Es la receta del sistema: $\\out{H} = G\\cdot\\sp{R}$.",
-            "Los **polos** (×) son donde $G(s)$ explota: los términos $e^{st}$ de los que está hecho el sistema.",
-            "Mitad izquierda = estable, mitad derecha = explota, más a la izquierda = más rápido (≈ 4/|σ| s), más arriba = más oscilante, ángulo = sobreimpulso.",
+            "Sí, basta con una fracción. La **función de transferencia** $G(s)$ = cambio de la salida ÷ cambio de la entrada en el mundo de s, partiendo del reposo. Es la receta del sistema, $\\Delta\\out{H} = G\\cdot\\Delta\\sp{R}$, y sale directamente de la ecuación del dron.",
+            "Los **polos** (×) son donde $G(s)$ explota: los modos $e^{pt}$ de los que está hecho el sistema.",
+            "Mitad izquierda = estable, mitad derecha = explota. Más a la izquierda = más rápido (se estabiliza en unos $4/|\\sigma|$ s, una regla práctica), más arriba = más oscilante (una oscilación = $2\\pi/\\omega$ s), ángulo = amortiguamiento $\\zeta$ = sobreimpulso $e^{-\\pi|\\sigma|/\\omega}$. El polo más cercano al eje es el que manda.",
             "Los polos complejos siempre vienen en parejas reflejadas.",
-            "Los **ceros** (○) cambian cuánto hay de cada término. Cerca del origen añaden un empujón.",
-            "Los polos muy a la izquierda necesitan un empuje que los motores no tienen."
+            "Los **ceros** (○) cambian cuánto obtienes de cada modo. Cerca del origen añaden un empujón: $1/|z|$ veces la pendiente.",
+            "El primer empujón es $mg + m|p|^2$ para un escalón de 1 m, así que los polos lejanos necesitan un empuje que los motores no tienen."
           ]
         },
         {
@@ -217,12 +493,12 @@
               "options": [
                 {
                   "text": "$-1 \\pm 2i$",
-                  "why": "Estabilización ≈ $4/1 = 4$ s. La altura (2) solo afecta a la oscilación, no a la estabilización."
+                  "why": "Tiempo de establecimiento ≈ $4/1 = 4$ s. La altura (2) solo afecta a la oscilación, no al tiempo de establecimiento."
                 },
                 {
                   "text": "$-4 \\pm 2i$",
                   "correct": true,
-                  "why": "La que está más a la izquierda: estabilización ≈ $4/4 = 1$ s."
+                  "why": "La que está más a la izquierda: tiempo de establecimiento ≈ $4/4 = 1$ s."
                 },
                 {
                   "text": "$-0.5 \\pm 5i$",
@@ -241,7 +517,7 @@
                 },
                 {
                   "text": "$+1 \\pm 3i$: inestable",
-                  "why": "Despiste de signo. Para $s^2 + bs + c$ la parte real es $-b/2 = -1$, que está en la mitad izquierda."
+                  "why": "Un despiste con el signo. Para $s^2 + bs + q$ la parte real es $-b/2 = -1$, que está en la mitad izquierda."
                 },
                 {
                   "text": "$-2$ y $-10$: sin oscilaciones",
@@ -251,12 +527,12 @@
             },
             {
               "id": "ch8-q3",
-              "q": "Quieres **menos sobreimpulso** pero el **mismo tiempo de estabilización**. ¿Cómo mueves los polos?",
+              "q": "Quieres **menos sobreimpulso** pero el **mismo tiempo de establecimiento**. ¿Cómo mueves los polos?",
               "options": [
                 {
                   "text": "Directamente hacia el eje real (mantener σ, reducir ω)",
                   "correct": true,
-                  "why": "La misma distancia al eje significa el mismo tiempo de estabilización. Un ángulo menor respecto al eje real significa más amortiguamiento, y por tanto menos sobreimpulso."
+                  "why": "La misma distancia al eje mantiene la misma *envolvente*, así que el tiempo de establecimiento sigue más o menos igual (la regla de $4/|\\sigma|$; es aproximada cerca del eje real). Un ángulo menor respecto al eje real significa más amortiguamiento, y por tanto menos sobreimpulso."
                 },
                 {
                   "text": "Directamente hacia arriba (ω más grande)",
@@ -270,23 +546,20 @@
             },
             {
               "id": "ch8-q4",
-              "q": "Polos en $+0.5 \\pm 2i$. ¿Qué ves?",
+              "q": "Un sistema tiene polos reales en $-0.2$ y $-5$. Pasados dos segundos, ¿cuál sigue dando forma a la respuesta?",
               "options": [
                 {
-                  "text": "Oscilaciones que crecen en cada ciclo",
-                  "sketch": "growing-wiggle",
+                  "text": "El de $-0.2$, cerca del eje",
                   "correct": true,
-                  "why": "$\\sigma = +0.5 > 0$ significa crecimiento y $\\omega = 2$ significa giro: una oscilación que crece."
+                  "why": "$e^{-0.2t}$ sigue al 67 % tras 2 s; $e^{-5t}$ ha bajado al 0,005 %. Manda el polo lento, así que estabilizarse lleva unos $4/0.2 = 20$ s."
                 },
                 {
-                  "text": "Oscilaciones que se encogen",
-                  "sketch": "decaying-wiggle",
-                  "why": "Para encogerse hace falta $\\sigma < 0$ (mitad izquierda). Estos polos están a la derecha."
+                  "text": "El de $-5$, más a la izquierda",
+                  "why": "Más a la izquierda significa que se apaga *más rápido*. Tras solo 1 s ya está por debajo del 1 % de su valor inicial (0,67 %)."
                 },
                 {
-                  "text": "Oscilación constante para siempre",
-                  "sketch": "steady-wiggle",
-                  "why": "Eso es justo sobre el eje ($\\sigma = 0$). En $+0.5$ crece."
+                  "text": "Los dos por igual",
+                  "why": "Uno se encoge 25 veces más rápido que el otro ($5 \\div 0.2$). Tras medio segundo el rápido está al 8 % y el lento todavía al 90 %."
                 }
               ]
             }
@@ -321,29 +594,44 @@
         "pulse": "La consigna se desliza de 1 a 2 metros; el dron la sigue con un rebote más pequeño.",
         "wave": "La consigna sube y baja como una onda; el dron sigue la onda."
       },
-      "droneCap": "el dron siguiéndola"
+      "droneCap": "el dron siguiéndola",
+      "status": {
+        "step": "Se pasa hasta {p} m antes de quedarse en 2 m.",
+        "pulse": "Un arranque más suave: el pico solo llega a {p} m.",
+        "wave": "La receta convierte una onda de {a} m en una onda de {b} m."
+      }
     },
     "playground": {
       "title": "El patio de los polos",
       "planeAria": "El plano s con una pareja de polos arrastrables. La mitad izquierda se calma, la mitad derecha se dispara. Usa las flechas para mover el polo seleccionado.",
       "pole": "p",
       "poles": "polos",
-      "settle": "se estabiliza (≈4/σ)",
+      "zeta": "amortiguamiento ζ",
+      "wn": "ωn = |p|",
+      "settle": "se estabiliza, regla 4/σ",
+      "settleReal": "se estabiliza (medido)",
       "overshoot": "sobreimpulso",
+      "push": "primer empujón (escalón de 1 m)",
+      "pct": "{v}%",
       "response": "altura tras un escalón de 1 m",
       "target": "objetivo",
       "plotAria": "Respuesta al escalón del dron para los polos elegidos; la respuesta anterior aparece como fantasma.",
-      "settles": "se estabiliza",
       "over": "sobreimpulso",
-      "raysLegend": "rayos discontinuos: % de sobreimpulso",
       "never": "nunca",
+      "notIn": "no en {T} s",
       "wiggle": "una oscilación ≈ {T} s",
+      "wnCircle": "ωn = {w}",
+      "budget": "presupuesto de 20 N",
       "verdict": {
         "stable": "Mitad izquierda: se calma.",
         "unstable": "Mitad derecha: ¡se dispara!",
         "marginal": "Justo sobre el eje: oscila para siempre.",
-        "hitPage": "Salió volando del dibujo, chocó con la página y se cayó. Mueve un polo para volver a intentarlo."
+        "hitPage": "Salió volando del dibujo, chocó con la página y se cayó. Mueve un polo para volver a intentarlo.",
+        "hitGround": "Se estrelló contra el suelo. Mueve un polo para volver a intentarlo.",
+        "hitPageMarginal": "Cada oscilación llegaba a 3 m, justo lo necesario para tocar la página; los motores se pararon y se cayó."
       },
+      "negKd": "Aquí Kd es negativa: el rozamiento ya amortigua más de lo que permiten estos polos, así que el controlador tiene que empujar a favor del movimiento.",
+      "pushWarn": "El primer empujón pasa de 20 N, más de lo que tienen los motores reales. Enseguida veremos lo que cuesta eso.",
       "challenge": "Minidesafío: sobreimpulso menor del 10 % y estabilizado en 2 s",
       "chalOk": "¡Desafío superado! Sobreimpulso del {o} %, estabilizado en {s} s.",
       "chalNo": "Todavía no: sobreimpulso del {o} %, se estabiliza en {s} s. Apunta a la zona resaltada.",
@@ -359,13 +647,16 @@
       "y": "salida",
       "noZero": "sin cero (mismos polos)",
       "withZero": "con el cero",
+      "slope": "+ {g} × su pendiente",
       "plotAria": "Respuestas al escalón con y sin el cero.",
       "osNo": "sobreimpulso sin cero",
       "osYes": "sobreimpulso con cero",
+      "pct": "{v}%",
       "zeroAt": "cero en",
-      "near": "Cerca del origen: un gran empujón inicial y sobreimpulso extra.",
-      "mid": "Un empujón extra moderado.",
-      "far": "Lejos: el cero apenas cambia nada.",
+      "scaled": "escalada para que siga terminando en 1",
+      "near": "Cerca del origen: la parte de la pendiente es {g} × la pendiente de antes, así que el arranque da un buen empujón.",
+      "mid": "Un empujón moderado: {g} × la pendiente.",
+      "far": "Lejos: solo {g} × la pendiente. Apenas se nota.",
       "describe": "Cero en {z}, sobreimpulso del {o} por ciento.",
       "re": "σ",
       "im": "ω",
@@ -384,12 +675,47 @@
       "peak": "empuje máximo que piden las matemáticas",
       "tsIdeal": "se estabiliza (matemáticas)",
       "tsReal": "se estabiliza (real)",
+      "osReal": "sobreimpulso (real)",
+      "pct": "{v}%",
       "notYet": "no en 3 s",
       "sigma": "Posición de los polos (moviéndose a la izquierda a 45°)",
       "toggle": "Motores reales: 0–20 N",
-      "capped": "Las matemáticas piden {p} N, pero los motores no pasan de 20 N. La realidad deja de seguir el dibujo lineal.",
+      "capped": "Las matemáticas piden {p} N; los motores se quedan en 20 N. Tiempo de establecimiento real: {s} s, y por mucho que vayas «más a la izquierda» no baja de unos {b} s.",
       "fantasy": "Los motores imaginarios dan {p} N tan tranquilos. Vuelve a activar los límites.",
       "fine": "Dentro del rango de los motores: matemáticas y realidad coinciden."
+    }
+  },
+  "plays": {
+    "poleRead": {
+      "sig": "distancia de los polos a la izquierda del eje",
+      "w": "altura de los polos, omega",
+      "noWiggle": "nada (no oscila en absoluto)",
+      "never": "nunca",
+      "noOvershoot": "nada (sin sobreimpulso)",
+      "pct": "{v}%"
+    },
+    "gains": {
+      "sig": "distancia de los polos a la izquierda del eje",
+      "w": "altura de los polos, omega",
+      "negKd": "Eso es una Kd *negativa*: el rozamiento por sí solo ya amortigua más de lo que quieren estos polos, así que el controlador tiene que empujar *a favor* del movimiento."
+    },
+    "dominant": {
+      "time": "tiempo, en segundos",
+      "almostNothing": "casi nada",
+      "pct": "{v}%"
+    },
+    "push": {
+      "sig": "pareja de polos sobre la línea de 45°",
+      "canDo": "los motores pueden con eso",
+      "justOver": "justo por encima de los 20 N que tienen los motores",
+      "farBeyond": "muy por encima de lo que dan los motores"
+    },
+    "budget": {
+      "dr": "tamaño del escalón, en metros"
+    },
+    "zeroKick": {
+      "z": "distancia del cero a 0",
+      "pct": "{v}%"
     }
   }
 }

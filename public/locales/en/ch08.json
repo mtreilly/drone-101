@@ -14,8 +14,38 @@
           "text": "Start the drone hovering at 1 m, with 4.9 N of base thrust balancing gravity. Measure both the requested change and the actual height change from that baseline. Just before a new request, both changes are zero. In the step example the request jumps to 2 m at $t=0$, so its change becomes 1 m while the drone is still at 1 m."
         },
         {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Good, because last chapter we dropped the $-h(0)$ bits and the formula lied. Measured from the hover, those starting values really **are** zero, so this time they vanish honestly."
+        },
+        {
           "t": "math",
           "tex": "\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\Delta\\sp{R}(s)"
+        },
+        {
+          "t": "callout",
+          "title": "Where the recipe comes from",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Hover thrust cancels gravity, so only the *changes* are left in the drone's equation. Now use Chapter 7's rule: every slope becomes × $s$, minus its starting value. From the hover every starting value is zero, so nothing is subtracted:"
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{gathered} m\\,\\Delta\\out{h}'' + c\\,\\Delta\\out{h}' = \\eff{K_p}\\,(\\Delta\\sp{r} - \\Delta\\out{h}) \\\\[2pt] \\Big\\downarrow\\ {\\scriptstyle \\Delta h(0)\\,=\\,\\Delta h'(0)\\,=\\,0} \\\\[2pt] (m s^2 + c s + \\eff{K_p})\\,\\Delta\\out{H}(s) = \\eff{K_p}\\,\\Delta\\sp{R}(s) \\end{gathered}"
+            },
+            {
+              "t": "p",
+              "text": "Divide by $m s^2 + c s + \\eff{K_p}$ and there is $G(s)$. Its bottom is the very equation we got in Chapters 4 to 6 by guessing $e^{st}$."
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "happy",
+              "text": "So it's not magic. It's the drone's own equation, with every slope turned into an $s$."
+            }
+          ]
         },
         {
           "t": "p",
@@ -29,7 +59,7 @@
           "t": "say",
           "who": "mika",
           "mood": "excited",
-          "text": "So $G(s)$ is like the drone's **recipe**. Feed in any ingredient and it tells you what comes out!"
+          "text": "June was right: the fraction **is** the drone. It's like its **recipe**. Feed in any ingredient and it tells you what comes out!"
         },
         {
           "t": "p",
@@ -45,6 +75,10 @@
             {
               "term": "Transfer function $G(s)$",
               "def": "Transformed output change ÷ transformed input change, starting from the same resting state. For this linear drone it is a fraction of polynomials in $s$."
+            },
+            {
+              "term": "Starting from rest (zero initial conditions)",
+              "def": "Every change and its speed is zero at $t = 0$, as when we measure from the hover. Then Chapter 7's starting-value terms like $-h(0)$ are zero too, and $G(s)$ is the whole story."
             }
           ]
         }
@@ -56,15 +90,54 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Where does $G(s)$ **blow up**? At a zero of its denominator, after any common factors have been canceled. Those points are the **poles**, drawn as ×. In this drone there are two, matching the two natural $e^{st}$ motions from Chapter 6."
+          "text": "Where does $G(s)$ **blow up**? Where its denominator is zero. Those points are the **poles**, drawn as ×. In this drone there are two, one for each of the two natural $e^{st}$ motions from Chapter 6."
+        },
+        {
+          "t": "p",
+          "text": "In Chapter 7, the transform of $e^{at}$ screamed at $s = a$. Read it backwards: wherever $G$ screams, a motion $e^{pt}$ is hiding."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "So the poles are Chapter 6's **modes**, sitting on the map!"
+        },
+        {
+          "t": "callout",
+          "title": "Why poles are the motions",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "A step response is $G(s)$ times the step's $\\frac{1}{s}$. Split it into simple pieces, as Chapter 7 did: the step's own pole at 0 gives the final change $A$, and each pole of $G$ gives one piece $\\frac{B}{s-p}$."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} \\Delta\\out{H}(s) = G(s)\\cdot\\frac{1}{s} &= \\frac{A}{s} + \\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\\\[4pt] \\Longrightarrow\\quad \\Delta\\out{h}(t) &= A + B e^{pt} + \\bar B e^{\\bar p t} \\end{aligned}"
+            },
+            {
+              "t": "p",
+              "text": "Chapter 7's table turns each piece back into a motion. Nothing else can appear: the poles are the whole cast."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "And a pole with $\\sigma > 0$ is a piece that grows. No wonder the right half blows up."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Now flip it around. Instead of choosing gains and finding the poles, let's **drag the poles** and see what drone we get. That needs a second knob, $\\eff{K_d}$: a push against speed, which we'll meet properly in Chapter 9. It adds to the drag $c$, and the two roots are $p$ and its mirror twin $\\bar p$ (the bar flips the sign of the imaginary part, like Chapter 5's twins):"
         },
         {
           "t": "math",
           "tex": "\\begin{aligned} & m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p} = 0 \\\\ \\Longrightarrow\\quad & s = p,\\ \\bar p \\qquad \\text{(the poles)} \\end{aligned}"
         },
         {
-          "t": "p",
-          "text": "Now flip it around. Instead of choosing gains and finding the poles, let's **drag the poles** and see what drone we get. (Behind the scenes we work out the controller that puts them there. It needs a new knob $\\eff{K_d}$, a push against speed, which we'll meet properly in Chapter 9.)"
+          "t": "play",
+          "id": "gains",
+          "text": "To put the poles at −{scrub|sig} ± {scrub|w}i, the controller needs $\\eff{K_p} = m(\\sigma^2+\\omega^2)$ = {calc|kp|eff} N/m and $c + \\eff{K_d} = 2m|\\sigma|$ = {calc|damp} N·s/m, so $\\eff{K_d}$ = {calc|kd|eff} N·s/m. The playground below follows these numbers. {calc|note}"
         },
         {
           "t": "predict",
@@ -95,16 +168,20 @@
           "id": "playground"
         },
         {
+          "t": "h3",
+          "text": "Reading the map"
+        },
+        {
           "t": "p",
-          "text": "Play with it. A few rules jump out, and they're all Chapter 5 and 6 in disguise:"
+          "text": "Play with it. A few rules jump out, and each one is an old friend in disguise:"
         },
         {
           "t": "list",
           "items": [
-            "**Left half = calms down, right half = blows up.** The real part $\\sigma$ is the shrink or grow rate.",
-            "**Further left = faster.** Settling takes about $4/|\\sigma|$ seconds (the dashed vertical lines).",
-            "**Further up = more wiggly.** The height $\\omega$ is the wiggle speed; one wiggle takes $2\\pi/\\omega$ seconds.",
-            "**The angle sets the overshoot.** Poles near the real axis barely overshoot, poles near the vertical axis overshoot a lot (the dashed rays)."
+            "**Left half = calms down, right half = blows up.** The real part $\\sigma$ is the shrink or grow rate of $e^{\\sigma t}$.",
+            "**Further left = faster.** Settling takes about $4/|\\sigma|$ seconds (the dashed vertical lines): Chapter 6's four time constants, since $e^{-|\\sigma| t}$ is below 2 % after $\\ln 50/|\\sigma| \\approx 3.9/|\\sigma|$ seconds.",
+            "**Further up = more wiggly.** The height $\\omega$ is Chapter 6's damped frequency, so one wiggle takes $2\\pi/\\omega$ seconds.",
+            "**The angle sets the overshoot.** The angle $\\theta$ from the negative real axis gives $\\zeta = \\cos\\theta$ (Chapter 6's circle), and the overshoot is $e^{-\\pi|\\sigma|/\\omega}$ (the dashed rays). Near the real axis it barely overshoots, near the vertical axis a lot."
           ]
         },
         {
@@ -120,8 +197,114 @@
           "text": "Remember the twin spinners from Chapter 5? A real drone has real motion, so every spinning $e^{st}$ needs its mirror twin to cancel the imaginary parts. Complex poles **always** come in mirror pairs."
         },
         {
+          "t": "callout",
+          "title": "Why the angle sets the overshoot",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The drone passes the target and turns round after half a wiggle, at $t = \\pi/\\omega$. By then the shrinking $e^{-|\\sigma| t}$ has been at work for that long, and what's left of the swing is the overshoot. Only the ratio $|\\sigma|/\\omega$ matters, and that ratio is the pole's *angle*. On Chapter 6's circle, the cosine of that angle is $\\zeta$."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} t_{\\text{peak}} &= \\frac{\\pi}{\\omega} \\\\[4pt] \\text{overshoot} &= e^{-|\\sigma|\\,t_{\\text{peak}}} = e^{-\\pi|\\sigma|/\\omega} \\\\[4pt] &= e^{-\\pi\\zeta/\\sqrt{1-\\zeta^2}}, \\qquad \\zeta = \\cos\\theta \\end{aligned}"
+            },
+            {
+              "t": "play",
+              "id": "poleRead",
+              "text": "Poles at −{scrub|sig} ± {scrub|w}i: the wiggles shrink like $e^{-|\\sigma| t}$, so it settles in about {calc|ts} s. One wiggle takes {calc|period} s. The first peak comes after half of one, at {calc|tp} s, and by then the shrinking has left an overshoot of {calc|os}."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "happy",
+              "text": "So every ray from 0 is one $\\zeta$, and one overshoot."
+            }
+          ]
+        },
+        {
+          "t": "predict",
+          "id": "ch8-up",
+          "gate": true,
+          "q": "Keep $\\sigma = -2$ and slide the poles **straight up**, from $\\pm 4i$ to $\\pm 8i$. What changes?",
+          "options": [
+            {
+              "text": "It settles twice as fast",
+              "why": "Settling follows the shrink rate $\\sigma$, which didn't move. Measured: 1.87 s becomes 1.72 s, nearly the same."
+            },
+            {
+              "text": "Faster wiggles and more overshoot; settling stays about the same",
+              "correct": true,
+              "why": "One wiggle drops from 1.57 s to 0.79 s and the overshoot rises from 21 % to 46 %, but the envelope $e^{-2t}$ is unchanged, so settling stays near $4/2 = 2$ s."
+            },
+            {
+              "text": "It becomes unstable",
+              "why": "Only the left-right position decides that. Up and down never crosses into the right half."
+            }
+          ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "The playground jumped when we answered: the ghost pair sits at $\\pm 4i$, the new one at $\\pm 8i$. Same envelope, twice as many wiggles, and a much bigger first swing."
+        },
+        {
           "t": "note",
           "text": "Our drone started at $-1 \\pm 6.24i$: that's the $K_p = 20$ drone from Chapter 2. Far up (very wiggly) and close to the axis (slow to settle). Now you can *see* why it bounced."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "What if both poles sit on the real axis, one at $-0.2$ and one at $-5$?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "The fast one's gone in a second. The slow one is the boss."
+        },
+        {
+          "t": "play",
+          "id": "dominant",
+          "text": "Real poles at −0.2 and −5. After {scrub|time} s, the fast motion $e^{-5t}$ has {calc|fast} of its start left, and the slow one $e^{-0.2t}$ still has {calc|slow}. So the slow pole decides: settling takes about $4/0.2 = 20$ s."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Pole",
+              "def": "A value of $s$ where the transfer function blows up. Each pole $p$ is one motion $e^{pt}$ of the system."
+            },
+            {
+              "term": "Mirror pair $p,\\ \\bar p$",
+              "def": "Two poles with the same real part and opposite imaginary parts. Complex poles of a real system always come this way."
+            },
+            {
+              "term": "Dominant pole",
+              "def": "The pole nearest the vertical axis. Its slow motion outlasts the others, so it decides the settling time."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "How good is 4/|σ|?",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Four is Chapter 6's $\\ln 50 \\approx 3.9$, rounded: the time for the *envelope* to shrink to 2 %. The real curve sits inside its envelope, so it often settles a bit sooner. It settles later when the poles sit on or near the real axis, because a double pole has a $t\\,e^{-|\\sigma| t}$ part that lingers."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{array}{c|ccccc} \\zeta & 0.3 & 0.5 & 0.8 & 0.95 & 1 \\\\ \\hline |\\sigma|\\,T_s & 3.37 & 4.04 & 3.01 & 5.00 & 5.83 \\end{array}"
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "think",
+              "text": "I tried $\\sigma = -1$: the rule said 4 s, and the real times ran from 3.0 s to 5.8 s depending on $\\zeta$. Good enough to aim with, not good enough to promise."
+            }
+          ]
         }
       ]
     },
@@ -131,11 +314,11 @@
       "blocks": [
         {
           "t": "p",
-          "text": "The numerator can be zero too. Those points are **zeros**, drawn as ○. Usually they change **how much** of each pole’s motion appears in the output. If a zero sits exactly on a pole, the shared factor cancels and that pole disappears from this input-to-output transfer function. An internal motion can still remain hidden from that particular input and output."
+          "text": "The numerator can be zero too. Those points are **zeros**, drawn as ○. Usually they change **how much** of each pole's motion appears in the output. If a zero sits exactly on a pole, the shared factor cancels and that pole disappears from this input-to-output recipe."
         },
         {
           "t": "p",
-          "text": "Here's a system with fixed poles at $-2 \\pm 3i$ and one zero you can slide. (You get exactly this shape from a controller that reacts to how fast the *error* changes, which is a teaser for Chapter 9.)"
+          "text": "Here's a system with fixed poles at $-2 \\pm 3i$ and one zero you can slide. (Our playground's $\\eff{K_d}$ pushes against the drone's *speed*, so its recipe has no zero. Push against the *error's* speed instead, as Chapter 9 will, and a zero appears at $-\\eff{K_p}/\\eff{K_d}$: for these poles that's $-6.5$, with 15 % overshoot instead of 12 %.)"
         },
         {
           "t": "widget",
@@ -148,8 +331,48 @@
           "text": "Same poles, but when the zero gets close to the origin the response jumps up way faster and overshoots more!"
         },
         {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Same poles means the same motions. So the zero can't add a new one. It must be adding a bit of something we already have."
+        },
+        {
+          "t": "play",
+          "id": "zeroKick",
+          "text": "With the zero at −{scrub|z}, the output is the no-zero curve **plus {calc|gain} × its slope**, and it overshoots by {calc|os} (12% without the zero)."
+        },
+        {
           "t": "p",
-          "text": "A zero near the origin makes the system react strongly to **changes** in the input. The overshoot grows, even though the poles didn't move. Far away, the zero hardly matters. That's all we need about zeros for now."
+          "text": "Multiplying by $s$ takes the slope (Chapter 7), so the factor $(1 + s/|z|)$ adds $1/|z|$ times the slope. That's why a zero near the origin makes the system react so strongly to **changes**: the overshoot grows, even though the poles didn't move. Far away, the zero hardly matters. That's all we need about zeros for now."
+        },
+        {
+          "t": "callout",
+          "title": "What a zero blocks",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "A pole is a motion the system *makes*; a zero is a motion it *refuses to pass on*. Feed this system (zero at $-3$) exactly $e^{-3t}$ and none of it comes out: only the system's own wiggle, which dies away. Without the zero, $1.3\\,e^{-3t}$ would come straight through."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} G(s) &= \\tfrac{13}{3}\\,\\frac{s+3}{s^2+4s+13}, \\qquad u = e^{-3t} \\\\[4pt] Y(s) &= \\tfrac{13}{3}\\,\\frac{\\cancel{s+3}}{(s^2+4s+13)\\,\\cancel{(s+3)}} \\\\[4pt] \\Longrightarrow\\quad y(t) &= \\tfrac{13}{9}\\,e^{-2t}\\sin 3t \\end{aligned}"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "excited",
+              "text": "Like noise-cancelling headphones for one particular hum."
+            }
+          ]
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Zero",
+              "def": "A value of $s$ where the transfer function is zero: a motion $e^{zt}$ the system does not pass on."
+            }
+          ]
         }
       ]
     },
@@ -171,15 +394,32 @@
         },
         {
           "t": "p",
-          "text": "Time to be honest. Our motors can push between **0 N** and **20 N** (about four times the drone's weight). Below, the poles move left along a 45° line. The dashed curves are the maths with imaginary, unlimited motors; the solid ones are real motors."
+          "text": "Time to be honest. Our motors can push between **0 N** and **20 N** (about four times the drone's weight). Below, the poles move left along a 45° line (that's $\\zeta \\approx 0.71$, Chapter 6's sweet spot). The dashed curves are the maths with imaginary, unlimited motors; the solid ones are real motors."
         },
         {
           "t": "widget",
           "id": "limit"
         },
         {
+          "t": "play",
+          "id": "push",
+          "text": "At the first instant of a 1 m step the error is the whole metre and the drone isn't moving yet, so the maths asks for hover plus $\\eff{K_p}$ × 1 m. With the poles at {scrub|sig} that's {calc|sum|eff} N: {calc|verdict}."
+        },
+        {
           "t": "p",
-          "text": "Past a certain point the maths demands 50, 60, 70 newtons that the motors simply don't have. The {eff|orange thrust} flattens against the limits, the real drone stops following the pretty linear prediction, and it overshoots *more* than it would with gentler poles."
+          "text": "Past about $-3.9 \\pm 3.9i$ the maths asks for more than 20 N. The {eff|orange thrust} flattens against the limit, and past about $-6 \\pm 6i$ the maths even wants to pull the drone *down*, which propellers can't. The real drone stops following the pretty linear prediction. Its settling stops improving at about 0.7 s, near $-6.5 \\pm 6.5i$, and further left it gets *worse*, with extra overshoot."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "I slid it all the way to $-8 \\pm 8i$. The maths says 0.53 s. The real drone takes 0.77 s: slower than at $-6.5$!"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "And its overshoot went from 4 % to 16 %. All that extra thrust was never there to be had."
         },
         {
           "t": "say",
@@ -188,8 +428,44 @@
           "text": "So \"further left\" is only better until you run out of motor. Placing poles is a trade-off, not a race."
         },
         {
+          "t": "callout",
+          "title": "A thrust budget is a circle",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "At the very first instant the drone hasn't moved, so only $\\eff{K_p}$ pushes, and $\\eff{K_p} = m|p|^2$: the square of the poles' distance from 0. Double the distance and you need four times the push, whichever direction you went. For a 1 m step our motors allow poles out to about 5.5 from 0 (the faint orange circle in the playground). Ask for a 2 m step and the circle shrinks to 3.9."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} T(0^+) &= mg + \\eff{K_p}\\,\\Delta\\sp{r} \\\\[4pt] &= mg + m\\,|p|^2\\,\\Delta\\sp{r} \\le 20\\ \\text{N} \\\\[4pt] \\Longrightarrow\\quad |p| &\\le \\sqrt{\\frac{20\\ \\text{N} - mg}{m\\,\\Delta\\sp{r}}} \\end{aligned}"
+            },
+            {
+              "t": "play",
+              "id": "budget",
+              "text": "For a {scrub|dr} m step, the first push stays under 20 N only if the poles sit within {calc|r} of 0, in any direction."
+            }
+          ]
+        },
+        {
           "t": "note",
           "text": "From now on the 20 N limit stays switched on."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "First push",
+              "def": "The thrust asked for at the first instant of a step: $mg + \\eff{K_p}\\,\\Delta r$, before the drone has moved."
+            },
+            {
+              "term": "Thrust budget",
+              "def": "The pole positions the motors can afford for a given step: a circle around 0."
+            },
+            {
+              "term": "Motor limit (saturation)",
+              "def": "Real thrust is clipped to 0–20 N, whatever the maths asks for."
+            }
+          ]
         }
       ]
     },
@@ -200,12 +476,12 @@
         {
           "t": "recap",
           "items": [
-            "The **transfer function** $G(s)$ = output ÷ input in s-land. It's the system's recipe: $\\out{H} = G\\cdot\\sp{R}$.",
-            "**Poles** (×) are where $G(s)$ explodes: the $e^{st}$ terms the system is made of.",
-            "Left half = stable, right half = explodes, further left = faster (≈ 4/|σ| s), higher = wigglier, angle = overshoot.",
+            "Yes, one fraction does it. The **transfer function** $G(s)$ = output change ÷ input change in s-land, starting from rest. It's the system's recipe, $\\Delta\\out{H} = G\\cdot\\Delta\\sp{R}$, and it comes straight from the drone's equation.",
+            "**Poles** (×) are where $G(s)$ explodes: the $e^{pt}$ modes the system is made of.",
+            "Left half = stable, right half = explodes. Further left = faster (settles in about $4/|\\sigma|$ s, a rule of thumb), higher = wigglier (one wiggle = $2\\pi/\\omega$ s), angle = damping $\\zeta$ = overshoot $e^{-\\pi|\\sigma|/\\omega}$. The pole nearest the axis is the boss.",
             "Complex poles always come in mirror pairs.",
-            "**Zeros** (○) change how much of each term you get. Near the origin they add a kick.",
-            "Far-left poles need thrust the motors don't have."
+            "**Zeros** (○) change how much of each mode you get. Near the origin they add a kick: $1/|z|$ times the slope.",
+            "The first push is $mg + m|p|^2$ for a 1 m step, so far-away poles need thrust the motors don't have."
           ]
         },
         {
@@ -241,7 +517,7 @@
                 },
                 {
                   "text": "$+1 \\pm 3i$: unstable",
-                  "why": "Sign slip. For $s^2 + bs + c$ the real part is $-b/2 = -1$, which is in the left half."
+                  "why": "Sign slip. For $s^2 + bs + q$ the real part is $-b/2 = -1$, which is in the left half."
                 },
                 {
                   "text": "$-2$ and $-10$: no wiggles",
@@ -256,7 +532,7 @@
                 {
                   "text": "Straight towards the real axis (keep σ, shrink ω)",
                   "correct": true,
-                  "why": "Same distance from the axis means same settling time. A smaller angle from the real axis means more damping, so less overshoot."
+                  "why": "Same distance from the axis keeps the *envelope* the same, so settling stays about the same (the $4/|\\sigma|$ rule; it's rough near the real axis). A smaller angle from the real axis means more damping, so less overshoot."
                 },
                 {
                   "text": "Straight up (bigger ω)",
@@ -270,23 +546,20 @@
             },
             {
               "id": "ch8-q4",
-              "q": "Poles at $+0.5 \\pm 2i$. What do you see?",
+              "q": "A system has real poles at $-0.2$ and $-5$. After two seconds, which one is still shaping the response?",
               "options": [
                 {
-                  "text": "Swings that grow every cycle",
-                  "sketch": "growing-wiggle",
+                  "text": "The one at $-0.2$, near the axis",
                   "correct": true,
-                  "why": "$\\sigma = +0.5 > 0$ means growth, $\\omega = 2$ means spinning: a growing wiggle."
+                  "why": "$e^{-0.2t}$ is still at 67 % after 2 s; $e^{-5t}$ is down to 0.005 %. The slow pole is in charge, so settling takes about $4/0.2 = 20$ s."
                 },
                 {
-                  "text": "Swings that shrink",
-                  "sketch": "decaying-wiggle",
-                  "why": "Shrinking needs $\\sigma < 0$ (left half). These poles are on the right."
+                  "text": "The one at $-5$, further left",
+                  "why": "Further left means it dies *faster*. After just 1 s it's below 1 % of its start (0.67 %)."
                 },
                 {
-                  "text": "Steady swinging forever",
-                  "sketch": "steady-wiggle",
-                  "why": "That's exactly on the axis ($\\sigma = 0$). At $+0.5$ it grows."
+                  "text": "Both equally",
+                  "why": "One shrinks 25 times faster than the other ($5 \\div 0.2$). After half a second the fast one is at 8 %, the slow one still at 90 %."
                 }
               ]
             }
@@ -321,29 +594,44 @@
         "pulse": "The setpoint glides from 1 to 2 metres; the drone follows with a smaller bounce.",
         "wave": "The setpoint waves up and down; the drone follows the wave."
       },
-      "droneCap": "the drone following it"
+      "droneCap": "the drone following it",
+      "status": {
+        "step": "It overshoots to {p} m before it settles at 2 m.",
+        "pulse": "A softer start: it only peaks at {p} m.",
+        "wave": "The recipe turns a {a} m wave into a {b} m wave."
+      }
     },
     "playground": {
       "title": "The pole playground",
       "planeAria": "The s-plane with a draggable pair of poles. Left half calms down, right half blows up. Use arrow keys to move the selected pole.",
       "pole": "p",
       "poles": "poles",
-      "settle": "settles (≈4/σ)",
+      "zeta": "damping ζ",
+      "wn": "ωn = |p|",
+      "settle": "settles, rule 4/σ",
+      "settleReal": "settles (measured)",
       "overshoot": "overshoot",
+      "push": "first push (1 m step)",
+      "pct": "{v}%",
       "response": "height after a 1 m step",
       "target": "target",
       "plotAria": "Step response of the drone for the chosen poles, previous response shown as a ghost.",
-      "settles": "settles",
       "over": "overshoot",
-      "raysLegend": "dashed rays: overshoot %",
       "never": "never",
+      "notIn": "not within {T} s",
       "wiggle": "one wiggle ≈ {T} s",
+      "wnCircle": "ωn = {w}",
+      "budget": "20 N budget",
       "verdict": {
         "stable": "Left half: it calms down.",
         "unstable": "Right half: it blows up!",
         "marginal": "Right on the axis: it swings forever.",
-        "hitPage": "It flew out of its picture, hit the page, and fell. Move a pole to try again."
+        "hitPage": "It flew out of its picture, hit the page, and fell. Move a pole to try again.",
+        "hitGround": "It crashed into the ground. Move a pole to try again.",
+        "hitPageMarginal": "Each swing reached 3 m, just enough to touch the page; the motors stalled and it fell."
       },
+      "negKd": "Kd is negative here: the drag already damps more than these poles allow, so the controller has to push along with the motion.",
+      "pushWarn": "The first push is over 20 N, more than real motors have. We’ll see what that costs in a moment.",
       "challenge": "Mini-challenge: overshoot under 10% and settled within 2 s",
       "chalOk": "Challenge met! Overshoot {o}%, settled in {s} s.",
       "chalNo": "Not yet: overshoot {o}%, settles in {s} s. Aim for the highlighted zone.",
@@ -359,13 +647,16 @@
       "y": "output",
       "noZero": "no zero (same poles)",
       "withZero": "with the zero",
+      "slope": "+ {g} × its slope",
       "plotAria": "Step responses with and without the zero.",
       "osNo": "overshoot without zero",
       "osYes": "overshoot with zero",
+      "pct": "{v}%",
       "zeroAt": "zero at",
-      "near": "Near the origin: a big early kick and extra overshoot.",
-      "mid": "A moderate extra kick.",
-      "far": "Far away: the zero barely changes anything.",
+      "scaled": "scaled so it still ends at 1",
+      "near": "Near the origin: the slope part is {g} × the old slope, so the start kicks hard.",
+      "mid": "A moderate kick: {g} × the slope.",
+      "far": "Far away: only {g} × the slope. It hardly shows.",
       "describe": "Zero at {z}, overshoot {o} percent.",
       "re": "σ",
       "im": "ω",
@@ -384,12 +675,47 @@
       "peak": "peak thrust the maths wants",
       "tsIdeal": "settles (maths)",
       "tsReal": "settles (real)",
+      "osReal": "overshoot (real)",
+      "pct": "{v}%",
       "notYet": "not within 3 s",
       "sigma": "Pole position (moving left along 45°)",
       "toggle": "Real motors: 0–20 N",
-      "capped": "The maths wants {p} N, but the motors top out at 20 N. Reality stops following the linear picture.",
+      "capped": "The maths wants {p} N; the motors stop at 20 N. Real settling {s} s, and no amount of “further left” gets it under about {b} s.",
       "fantasy": "Imaginary motors happily deliver {p} N. Switch the limits back on.",
       "fine": "Within the motors' range: maths and reality agree."
+    }
+  },
+  "plays": {
+    "poleRead": {
+      "sig": "distance of the poles left of the axis",
+      "w": "height of the poles, omega",
+      "noWiggle": "nothing (no wiggle at all)",
+      "never": "never",
+      "noOvershoot": "nothing (no overshoot)",
+      "pct": "{v}%"
+    },
+    "gains": {
+      "sig": "distance of the poles left of the axis",
+      "w": "height of the poles, omega",
+      "negKd": "That's a *negative* Kd: the drag alone already damps more than these poles want, so the controller has to push *with* the motion."
+    },
+    "dominant": {
+      "time": "time, seconds",
+      "almostNothing": "almost nothing",
+      "pct": "{v}%"
+    },
+    "push": {
+      "sig": "pole pair on the 45° line",
+      "canDo": "the motors can do that",
+      "justOver": "just over the 20 N the motors have",
+      "farBeyond": "far beyond the motors"
+    },
+    "budget": {
+      "dr": "step size, metres"
+    },
+    "zeroKick": {
+      "z": "distance of the zero from 0",
+      "pct": "{v}%"
     }
   }
 }

@@ -14,8 +14,38 @@
           "text": "Comece o drone pairando a 1 m, com 4,9 N de empuxo base equilibrando a gravidade. Meça tanto a mudança solicitada quanto a mudança real de altura em relação a essa linha de base. Imediatamente antes de uma nova solicitação, ambas as mudanças são zero. No exemplo de degrau, a solicitação salta para 2 m em $t=0$, então sua mudança se torna 1 m enquanto o drone ainda está a 1 m."
         },
         {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Ótimo, porque no capítulo passado jogamos fora os pedaços $-h(0)$ e a fórmula mentiu. Medidos a partir do pairar, esses valores iniciais **são** mesmo zero, então desta vez eles somem honestamente."
+        },
+        {
           "t": "math",
           "tex": "\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\Delta\\sp{R}(s)"
+        },
+        {
+          "t": "callout",
+          "title": "De onde vem a receita",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "O empuxo de pairar cancela a gravidade, então só as *mudanças* sobram na equação do drone. Agora use a regra do Capítulo 7: cada inclinação vira × $s$, menos o seu valor inicial. A partir do pairar, todo valor inicial é zero, então nada é subtraído:"
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{gathered} m\\,\\Delta\\out{h}'' + c\\,\\Delta\\out{h}' = \\eff{K_p}\\,(\\Delta\\sp{r} - \\Delta\\out{h}) \\\\[2pt] \\Big\\downarrow\\ {\\scriptstyle \\Delta h(0)\\,=\\,\\Delta h'(0)\\,=\\,0} \\\\[2pt] (m s^2 + c s + \\eff{K_p})\\,\\Delta\\out{H}(s) = \\eff{K_p}\\,\\Delta\\sp{R}(s) \\end{gathered}"
+            },
+            {
+              "t": "p",
+              "text": "Divida por $m s^2 + c s + \\eff{K_p}$ e aí está $G(s)$. O denominador é exatamente a equação que achamos nos Capítulos 4 a 6 chutando $e^{st}$."
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "happy",
+              "text": "Então não é mágica. É a própria equação do drone, com cada inclinação transformada em um $s$."
+            }
+          ]
         },
         {
           "t": "p",
@@ -29,7 +59,7 @@
           "t": "say",
           "who": "mika",
           "mood": "excited",
-          "text": "Então $G(s)$ é como a **receita** do drone. Coloque qualquer ingrediente e ela te diz o que sai!"
+          "text": "June tinha razão: a fração **é** o drone. É como a sua **receita**. Coloque qualquer ingrediente e ela diz o que sai!"
         },
         {
           "t": "p",
@@ -45,6 +75,10 @@
             {
               "term": "Função de transferência $G(s)$",
               "def": "Transformada da mudança na saída ÷ transformada da mudança na entrada, partindo do mesmo estado de repouso. Para este drone linear, é uma fração de polinômios em $s$."
+            },
+            {
+              "term": "Partindo do repouso (condições iniciais nulas)",
+              "def": "Toda mudança e a sua velocidade são zero em $t = 0$, como quando medimos a partir do pairar. Aí os termos de valor inicial do Capítulo 7, como $-h(0)$, também são zero, e $G(s)$ conta a história inteira."
             }
           ]
         }
@@ -56,15 +90,54 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Onde é que $G(s)$ **explode**? Em um zero do seu denominador, depois que quaisquer fatores comuns forem cancelados. Esses pontos são os **polos**, desenhados como ×. Neste drone há dois, correspondendo aos dois movimentos naturais $e^{st}$ do Capítulo 6."
+          "text": "Onde $G(s)$ **explode**? Onde o denominador é zero. Esses pontos são os **polos**, desenhados como ×. Neste drone há dois, um para cada um dos dois movimentos naturais $e^{st}$ do Capítulo 6."
+        },
+        {
+          "t": "p",
+          "text": "No Capítulo 7, a transformada de $e^{at}$ gritava em $s = a$. Leia ao contrário: onde quer que $G$ grite, há um movimento $e^{pt}$ escondido."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Então os polos são os **modos** do Capítulo 6, sentados no mapa!"
+        },
+        {
+          "t": "callout",
+          "title": "Por que os polos são os movimentos",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Uma resposta ao degrau é $G(s)$ vezes o $\\frac{1}{s}$ do degrau. Quebre em pedaços simples, como no Capítulo 7: o polo do próprio degrau, em 0, dá a mudança final $A$, e cada polo de $G$ dá um pedaço $\\frac{B}{s-p}$."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} \\Delta\\out{H}(s) = G(s)\\cdot\\frac{1}{s} &= \\frac{A}{s} + \\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\\\[4pt] \\Longrightarrow\\quad \\Delta\\out{h}(t) &= A + B e^{pt} + \\bar B e^{\\bar p t} \\end{aligned}"
+            },
+            {
+              "t": "p",
+              "text": "A tabela do Capítulo 7 transforma cada pedaço de volta em um movimento. Nada mais pode aparecer: os polos são o elenco inteiro."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "E um polo com $\\sigma > 0$ é um pedaço que cresce. Não é à toa que a metade direita explode."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Agora vamos inverter. Em vez de escolher ganhos e achar os polos, vamos **arrastar os polos** e ver que drone sai. Para isso precisamos de um segundo botão, $\\eff{K_d}$: um empurrão contra a velocidade, que vamos conhecer direito no Capítulo 9. Ele se soma ao arrasto $c$, e as duas raízes são $p$ e o seu gêmeo espelhado $\\bar p$ (a barra troca o sinal da parte imaginária, como os gêmeos do Capítulo 5):"
         },
         {
           "t": "math",
           "tex": "\\begin{aligned} & m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p} = 0 \\\\ \\Longrightarrow\\quad & s = p,\\ \\bar p \\qquad \\text{(os polos)} \\end{aligned}"
         },
         {
-          "t": "p",
-          "text": "Agora inverta. Em vez de escolher ganhos e encontrar os polos, vamos **arrastar os polos** e ver que drone obtemos. (Nos bastidores, calculamos o controlador que os coloca lá. Ele precisa de um novo botão $\\eff{K_d}$, um empurrão contra a velocidade, que vamos conhecer direito no Capítulo 9.)"
+          "t": "play",
+          "id": "gains",
+          "text": "Para pôr os polos em −{scrub|sig} ± {scrub|w}i, o controlador precisa de $\\eff{K_p} = m(\\sigma^2+\\omega^2)$ = {calc|kp|eff} N/m e $c + \\eff{K_d} = 2m|\\sigma|$ = {calc|damp} N·s/m, então $\\eff{K_d}$ = {calc|kd|eff} N·s/m. O playground abaixo segue esses números. {calc|note}"
         },
         {
           "t": "predict",
@@ -95,16 +168,20 @@
           "id": "playground"
         },
         {
+          "t": "h3",
+          "text": "Lendo o mapa"
+        },
+        {
           "t": "p",
-          "text": "Brinque com isso. Algumas regras saltam aos olhos, e todas são os Capítulos 5 e 6 disfarçados:"
+          "text": "Brinque com ele. Algumas regras saltam aos olhos, e cada uma é uma velha amiga disfarçada:"
         },
         {
           "t": "list",
           "items": [
-            "**Metade esquerda = acalma, metade direita = explode.** A parte real $\\sigma$ é a taxa de encolhimento ou crescimento.",
-            "**Mais para a esquerda = mais rápido.** O assentamento leva cerca de $4/|\\sigma|$ segundos (as linhas verticais tracejadas).",
-            "**Mais para cima = mais oscilatório.** A altura $\\omega$ é a velocidade de oscilação; uma oscilação leva $2\\pi/\\omega$ segundos.",
-            "**O ângulo define o sobressinal.** Polos próximos ao eixo real quase não ultrapassam o alvo, polos próximos ao eixo vertical ultrapassam muito (as linhas tracejadas)."
+            "**Metade esquerda = acalma, metade direita = explode.** A parte real $\\sigma$ é a taxa com que $e^{\\sigma t}$ encolhe ou cresce.",
+            "**Mais à esquerda = mais rápido.** O tempo de acomodação é de cerca de $4/|\\sigma|$ segundos (as linhas verticais tracejadas): as quatro constantes de tempo do Capítulo 6, já que $e^{-|\\sigma| t}$ fica abaixo de 2 % depois de $\\ln 50/|\\sigma| \\approx 3{,}9/|\\sigma|$ segundos.",
+            "**Mais para cima = mais oscilação.** A altura $\\omega$ é a frequência amortecida do Capítulo 6, então uma oscilação leva $2\\pi/\\omega$ segundos.",
+            "**O ângulo define o sobressinal.** O ângulo $\\theta$ medido a partir do eixo real negativo dá $\\zeta = \\cos\\theta$ (o círculo do Capítulo 6), e o sobressinal é $e^{-\\pi|\\sigma|/\\omega}$ (os raios tracejados). Perto do eixo real quase não há sobressinal; perto do eixo vertical, muito."
           ]
         },
         {
@@ -120,8 +197,114 @@
           "text": "Lembra dos giradores gêmeos do Capítulo 5? Um drone real tem movimento real, então cada $e^{st}$ girante precisa do seu gêmeo espelhado para cancelar as partes imaginárias. Polos complexos **sempre** vêm em pares espelhados."
         },
         {
+          "t": "callout",
+          "title": "Por que o ângulo define o sobressinal",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "O drone passa do alvo e dá meia-volta depois de meia oscilação, em $t = \\pi/\\omega$. Até lá, o $e^{-|\\sigma| t}$ que encolhe já trabalhou esse tempo todo, e o que sobra do balanço é o sobressinal. Só a razão $|\\sigma|/\\omega$ importa, e essa razão é o *ângulo* do polo. No círculo do Capítulo 6, o cosseno desse ângulo é $\\zeta$."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} t_{\\text{pico}} &= \\frac{\\pi}{\\omega} \\\\[4pt] \\text{sobressinal} &= e^{-|\\sigma|\\,t_{\\text{pico}}} = e^{-\\pi|\\sigma|/\\omega} \\\\[4pt] &= e^{-\\pi\\zeta/\\sqrt{1-\\zeta^2}}, \\qquad \\zeta = \\cos\\theta \\end{aligned}"
+            },
+            {
+              "t": "play",
+              "id": "poleRead",
+              "text": "Polos em −{scrub|sig} ± {scrub|w}i: as oscilações encolhem como $e^{-|\\sigma| t}$, então ele se acomoda em cerca de {calc|ts} s. Uma oscilação leva {calc|period} s. O primeiro pico vem depois de meia oscilação, em {calc|tp} s, e até lá o encolhimento deixou um sobressinal de {calc|os}."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "happy",
+              "text": "Então cada raio saindo de 0 é um $\\zeta$, e um sobressinal."
+            }
+          ]
+        },
+        {
+          "t": "predict",
+          "id": "ch8-up",
+          "gate": true,
+          "q": "Mantenha $\\sigma = -2$ e deslize os polos **direto para cima**, de $\\pm 4i$ para $\\pm 8i$. O que muda?",
+          "options": [
+            {
+              "text": "Ele se acomoda duas vezes mais rápido",
+              "why": "A acomodação segue a taxa de encolhimento $\\sigma$, que não mudou. Medido: 1,87 s vira 1,72 s, quase a mesma coisa."
+            },
+            {
+              "text": "Oscilações mais rápidas e mais sobressinal; o tempo de acomodação fica mais ou menos igual",
+              "correct": true,
+              "why": "Uma oscilação cai de 1,57 s para 0,79 s e o sobressinal sobe de 21 % para 46 %, mas a envoltória $e^{-2t}$ não muda, então a acomodação fica perto de $4/2 = 2$ s."
+            },
+            {
+              "text": "Ele fica instável",
+              "why": "Só a posição esquerda-direita decide isso. Para cima e para baixo nunca entra na metade direita."
+            }
+          ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "O playground pulou quando respondemos: o par fantasma está em $\\pm 4i$, o novo em $\\pm 8i$. Mesma envoltória, o dobro de oscilações e um primeiro balanço bem maior."
+        },
+        {
           "t": "note",
-          "text": "Nosso drone começou em $-1 \\pm 6.24i$: esse é o drone $K_p = 20$ do Capítulo 2. Lá em cima (muito oscilatório) e perto do eixo (lento para estabilizar). Agora você pode *ver* por que ele quicou."
+          "text": "Nosso drone começou em $-1 \\pm 6{,}24i$: esse é o drone $K_p = 20$ do Capítulo 2. Lá em cima (muito oscilatório) e perto do eixo (lento para se acomodar). Agora você pode *ver* por que ele quicou."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "E se os dois polos ficarem no eixo real, um em $-0{,}2$ e outro em $-5$?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "O rápido some em um segundo. O lento é quem manda."
+        },
+        {
+          "t": "play",
+          "id": "dominant",
+          "text": "Polos reais em −0,2 e −5. Depois de {scrub|time} s, o movimento rápido $e^{-5t}$ tem {calc|fast} do seu começo, e o lento $e^{-0{,}2t}$ ainda tem {calc|slow}. Então o polo lento decide: a acomodação leva cerca de $4/0{,}2 = 20$ s."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Polo",
+              "def": "Um valor de $s$ onde a função de transferência explode. Cada polo $p$ é um movimento $e^{pt}$ do sistema."
+            },
+            {
+              "term": "Par espelhado $p,\\ \\bar p$",
+              "def": "Dois polos com a mesma parte real e partes imaginárias opostas. Os polos complexos de um sistema real sempre vêm assim."
+            },
+            {
+              "term": "Polo dominante",
+              "def": "O polo mais perto do eixo vertical. Seu movimento lento dura mais que os outros, então é ele que decide o tempo de acomodação."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "Quão boa é a regra 4/|σ|?",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "O quatro é o $\\ln 50 \\approx 3{,}9$ do Capítulo 6, arredondado: o tempo para a *envoltória* encolher até 2 %. A curva real fica dentro da envoltória, então muitas vezes se acomoda um pouco antes. Ela se acomoda mais tarde quando os polos estão sobre o eixo real ou perto dele, porque um polo duplo tem uma parte $t\\,e^{-|\\sigma| t}$ que demora a sumir."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{array}{c|ccccc} \\zeta & 0{,}3 & 0{,}5 & 0{,}8 & 0{,}95 & 1 \\\\ \\hline |\\sigma|\\,T_s & 3{,}37 & 4{,}04 & 3{,}01 & 5{,}00 & 5{,}83 \\end{array}"
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "think",
+              "text": "Testei $\\sigma = -1$: a regra dizia 4 s, e os tempos reais foram de 3,0 s a 5,8 s, dependendo de $\\zeta$. Bom o bastante para mirar, não para prometer."
+            }
+          ]
         }
       ]
     },
@@ -131,11 +314,11 @@
       "blocks": [
         {
           "t": "p",
-          "text": "O numerador também pode ser zero. Esses pontos são **zeros**, desenhados como ○. Normalmente eles mudam **quanto** do movimento de cada polo aparece na saída. Se um zero fica exatamente sobre um polo, o fator compartilhado se cancela e aquele polo desaparece desta função de transferência de entrada para saída. Um movimento interno ainda pode permanecer escondido daquela entrada e saída específicas."
+          "text": "O numerador também pode ser zero. Esses pontos são os **zeros**, desenhados como ○. Em geral eles mudam **quanto** do movimento de cada polo aparece na saída. Se um zero cai exatamente em cima de um polo, o fator comum se cancela e esse polo some desta receita de entrada para saída."
         },
         {
           "t": "p",
-          "text": "Aqui está um sistema com polos fixos em $-2 \\pm 3i$ e um zero que você pode deslizar. (Você obtém exatamente esta forma de um controlador que reage à rapidez com que o *erro* muda, o que é uma prévia do Capítulo 9.)"
+          "text": "Aqui está um sistema com polos fixos em $-2 \\pm 3i$ e um zero que você pode deslizar. (O $\\eff{K_d}$ do nosso playground empurra contra a *velocidade* do drone, então a sua receita não tem zero. Empurre contra a velocidade do *erro*, como o Capítulo 9 vai fazer, e aparece um zero em $-\\eff{K_p}/\\eff{K_d}$: para estes polos isso dá $-6{,}5$, com 15 % de sobressinal em vez de 12 %.)"
         },
         {
           "t": "widget",
@@ -145,11 +328,51 @@
           "t": "say",
           "who": "june",
           "mood": "surprised",
-          "text": "Mesmos polos, mas quando o zero se aproxima da origem a resposta sobe muito mais rápido e ultrapassa mais o alvo!"
+          "text": "Mesmos polos, mas quando o zero se aproxima da origem a resposta sobe muito mais rápido e tem mais sobressinal!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Mesmos polos significam os mesmos movimentos. Então o zero não pode acrescentar um movimento novo. Ele deve estar acrescentando um pouco de algo que já temos."
+        },
+        {
+          "t": "play",
+          "id": "zeroKick",
+          "text": "Com o zero em −{scrub|z}, a saída é a curva sem zero **mais {calc|gain} × a sua inclinação**, e o sobressinal é de {calc|os} (12% sem o zero)."
         },
         {
           "t": "p",
-          "text": "Um zero perto da origem faz o sistema reagir fortemente a **mudanças** na entrada. O sobressinal cresce, mesmo que os polos não tenham se movido. Longe, o zero quase não importa. Isso é tudo que precisamos sobre zeros por enquanto."
+          "text": "Multiplicar por $s$ tira a inclinação (Capítulo 7), então o fator $(1 + s/|z|)$ acrescenta $1/|z|$ vezes a inclinação. Por isso um zero perto da origem faz o sistema reagir tão forte a **mudanças**: o sobressinal cresce, mesmo que os polos não tenham se mexido. Longe, o zero quase não importa. Por enquanto, é tudo o que precisamos saber sobre zeros."
+        },
+        {
+          "t": "callout",
+          "title": "O que um zero bloqueia",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Um polo é um movimento que o sistema *faz*; um zero é um movimento que ele *se recusa a repassar*. Alimente este sistema (zero em $-3$) com exatamente $e^{-3t}$ e nada disso sai: só a oscilação própria do sistema, que vai morrendo. Sem o zero, $1{,}3\\,e^{-3t}$ passaria direto."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} G(s) &= \\tfrac{13}{3}\\,\\frac{s+3}{s^2+4s+13}, \\qquad u = e^{-3t} \\\\[4pt] Y(s) &= \\tfrac{13}{3}\\,\\frac{\\cancel{s+3}}{(s^2+4s+13)\\,\\cancel{(s+3)}} \\\\[4pt] \\Longrightarrow\\quad y(t) &= \\tfrac{13}{9}\\,e^{-2t}\\sin 3t \\end{aligned}"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "excited",
+              "text": "Como fones com cancelamento de ruído para um zumbido específico."
+            }
+          ]
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Zero",
+              "def": "Um valor de $s$ onde a função de transferência é zero: um movimento $e^{zt}$ que o sistema não repassa."
+            }
+          ]
         }
       ]
     },
@@ -161,7 +384,7 @@
           "t": "say",
           "who": "june",
           "mood": "excited",
-          "text": "Fácil: arraste os polos *bem* para a esquerda. Estabiliza num piscar. Melhor drone de todos!"
+          "text": "Fácil: arraste os polos *bem* para a esquerda. Acomoda num piscar. Melhor drone de todos!"
         },
         {
           "t": "say",
@@ -171,15 +394,32 @@
         },
         {
           "t": "p",
-          "text": "Hora de ser honesto. Nossos motores podem empurrar entre **0 N** e **20 N** (cerca de quatro vezes o peso do drone). Abaixo, os polos se movem para a esquerda ao longo de uma linha de 45°. As curvas tracejadas são a matemática com motores imaginários e ilimitados; as curvas sólidas são motores reais."
+          "text": "Hora de ser honesto. Nossos motores conseguem empurrar entre **0 N** e **20 N** (cerca de quatro vezes o peso do drone). Abaixo, os polos andam para a esquerda ao longo de uma linha de 45° (isso é $\\zeta \\approx 0{,}71$, o ponto ideal do Capítulo 6). As curvas tracejadas são a matemática com motores imaginários, sem limite; as contínuas são motores reais."
         },
         {
           "t": "widget",
           "id": "limit"
         },
         {
+          "t": "play",
+          "id": "push",
+          "text": "No primeiro instante de um degrau de 1 m, o erro é o metro inteiro e o drone ainda não está se movendo, então a matemática pede o pairar mais $\\eff{K_p}$ × 1 m. Com os polos em {scrub|sig}, isso dá {calc|sum|eff} N: {calc|verdict}."
+        },
+        {
           "t": "p",
-          "text": "Depois de certo ponto, a matemática exige 50, 60, 70 newtons que os motores simplesmente não têm. O {eff|empuxo laranja} achata contra os limites, o drone real para de seguir a bela previsão linear e ultrapassa o alvo *mais* do que ultrapassaria com polos mais suaves."
+          "text": "Depois de cerca de $-3{,}9 \\pm 3{,}9i$, a matemática pede mais de 20 N. O {eff|empuxo laranja} achata contra o limite, e depois de cerca de $-6 \\pm 6i$ a matemática quer até puxar o drone *para baixo*, o que hélices não conseguem. O drone real para de seguir a bela previsão linear. O tempo de acomodação para de melhorar em cerca de 0,7 s, perto de $-6{,}5 \\pm 6{,}5i$, e mais à esquerda ele *piora*, com sobressinal extra."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Deslizei até $-8 \\pm 8i$. A matemática diz 0,53 s. O drone real leva 0,77 s: mais lento do que em $-6{,}5$!"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "E o sobressinal foi de 4 % para 16 %. Todo aquele empuxo extra nunca esteve disponível."
         },
         {
           "t": "say",
@@ -188,8 +428,44 @@
           "text": "Então \"mais para a esquerda\" só é melhor até você ficar sem motor. Posicionar polos é um compromisso, não uma corrida."
         },
         {
+          "t": "callout",
+          "title": "Um orçamento de empuxo é um círculo",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "No primeiro instante o drone ainda não se moveu, então só $\\eff{K_p}$ empurra, e $\\eff{K_p} = m|p|^2$: o quadrado da distância dos polos até 0. Dobre a distância e você precisa de quatro vezes o empurrão, seja qual for a direção. Para um degrau de 1 m, nossos motores permitem polos até cerca de 5,5 de distância de 0 (o círculo laranja claro no playground). Peça um degrau de 2 m e o círculo encolhe para 3,9."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} T(0^+) &= mg + \\eff{K_p}\\,\\Delta\\sp{r} \\\\[4pt] &= mg + m\\,|p|^2\\,\\Delta\\sp{r} \\le 20\\ \\text{N} \\\\[4pt] \\Longrightarrow\\quad |p| &\\le \\sqrt{\\frac{20\\ \\text{N} - mg}{m\\,\\Delta\\sp{r}}} \\end{aligned}"
+            },
+            {
+              "t": "play",
+              "id": "budget",
+              "text": "Para um degrau de {scrub|dr} m, o empurrão inicial só fica abaixo de 20 N se os polos estiverem a até {calc|r} de 0, em qualquer direção."
+            }
+          ]
+        },
+        {
           "t": "note",
           "text": "De agora em diante, o limite de 20 N fica ligado."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Empurrão inicial",
+              "def": "O empuxo pedido no primeiro instante de um degrau: $mg + \\eff{K_p}\\,\\Delta r$, antes de o drone se mover."
+            },
+            {
+              "term": "Orçamento de empuxo",
+              "def": "As posições de polo que os motores conseguem bancar para um dado degrau: um círculo em torno de 0."
+            },
+            {
+              "term": "Limite do motor (saturação)",
+              "def": "O empuxo real é cortado em 0–20 N, não importa o que a matemática peça."
+            }
+          ]
         }
       ]
     },
@@ -200,12 +476,12 @@
         {
           "t": "recap",
           "items": [
-            "A **função de transferência** $G(s)$ = saída ÷ entrada no mundo s. É a receita do sistema: $\\out{H} = G\\cdot\\sp{R}$.",
-            "Os **polos** (×) são onde $G(s)$ explode: os termos $e^{st}$ dos quais o sistema é feito.",
-            "Metade esquerda = estável, metade direita = explode, mais para a esquerda = mais rápido (≈ 4/|σ| s), mais para cima = mais oscilante, ângulo = sobressinal.",
+            "Sim, uma fração dá conta. A **função de transferência** $G(s)$ = mudança na saída ÷ mudança na entrada no mundo de s, partindo do repouso. É a receita do sistema, $\\Delta\\out{H} = G\\cdot\\Delta\\sp{R}$, e ela sai direto da equação do drone.",
+            "Os **polos** (×) são onde $G(s)$ explode: os modos $e^{pt}$ de que o sistema é feito.",
+            "Metade esquerda = estável, metade direita = explode. Mais à esquerda = mais rápido (acomoda em cerca de $4/|\\sigma|$ s, uma regra prática), mais alto = mais oscilação (uma oscilação = $2\\pi/\\omega$ s), ângulo = amortecimento $\\zeta$ = sobressinal $e^{-\\pi|\\sigma|/\\omega}$. O polo mais perto do eixo é quem manda.",
             "Polos complexos sempre vêm em pares espelhados.",
-            "Os **zeros** (○) mudam quanto você recebe de cada termo. Perto da origem, eles adicionam um empurrão.",
-            "Polos muito à esquerda exigem um empuxo que os motores não têm."
+            "Os **zeros** (○) mudam quanto de cada modo você recebe. Perto da origem eles dão um tranco: $1/|z|$ vezes a inclinação.",
+            "O empurrão inicial é $mg + m|p|^2$ para um degrau de 1 m, então polos muito distantes precisam de um empuxo que os motores não têm."
           ]
         },
         {
@@ -241,7 +517,7 @@
                 },
                 {
                   "text": "$+1 \\pm 3i$: instável",
-                  "why": "Erro de sinal. Para $s^2 + bs + c$ a parte real é $-b/2 = -1$, que está na metade esquerda."
+                  "why": "Erro de sinal. Para $s^2 + bs + q$, a parte real é $-b/2 = -1$, que fica na metade esquerda."
                 },
                 {
                   "text": "$-2$ e $-10$: sem oscilações",
@@ -256,7 +532,7 @@
                 {
                   "text": "Diretamente em direção ao eixo real (mantenha σ, diminua ω)",
                   "correct": true,
-                  "why": "A mesma distância do eixo significa o mesmo tempo de acomodação. Um ângulo menor em relação ao eixo real significa mais amortecimento, portanto menos sobressinal."
+                  "why": "A mesma distância até o eixo mantém a *envoltória* igual, então o tempo de acomodação fica mais ou menos o mesmo (a regra $4/|\\sigma|$; ela é grosseira perto do eixo real). Um ângulo menor em relação ao eixo real significa mais amortecimento, então menos sobressinal."
                 },
                 {
                   "text": "Diretamente para cima (ω maior)",
@@ -270,23 +546,20 @@
             },
             {
               "id": "ch8-q4",
-              "q": "Polos em $+0.5 \\pm 2i$. O que você vê?",
+              "q": "Um sistema tem polos reais em $-0{,}2$ e $-5$. Depois de dois segundos, qual deles ainda está moldando a resposta?",
               "options": [
                 {
-                  "text": "Oscilações que crescem a cada ciclo",
-                  "sketch": "growing-wiggle",
+                  "text": "O de $-0{,}2$, perto do eixo",
                   "correct": true,
-                  "why": "$\\sigma = +0.5 > 0$ significa crescimento, $\\omega = 2$ significa rotação: uma oscilação crescente."
+                  "why": "$e^{-0{,}2t}$ ainda está em 67 % depois de 2 s; $e^{-5t}$ caiu para 0,005 %. O polo lento está no comando, então a acomodação leva cerca de $4/0{,}2 = 20$ s."
                 },
                 {
-                  "text": "Oscilações que diminuem",
-                  "sketch": "decaying-wiggle",
-                  "why": "Diminuir exige $\\sigma < 0$ (metade esquerda). Esses polos estão à direita."
+                  "text": "O de $-5$, mais à esquerda",
+                  "why": "Mais à esquerda significa que ele morre *mais rápido*. Depois de só 1 s ele está abaixo de 1 % do começo (0,67 %)."
                 },
                 {
-                  "text": "Oscilando para sempre",
-                  "sketch": "steady-wiggle",
-                  "why": "Isso é exatamente sobre o eixo ($\\sigma = 0$). Em $+0.5$ ela cresce."
+                  "text": "Os dois igualmente",
+                  "why": "Um encolhe 25 vezes mais rápido que o outro ($5 \\div 0{,}2$). Depois de meio segundo o rápido está em 8 %, e o lento ainda em 90 %."
                 }
               ]
             }
@@ -321,34 +594,49 @@
         "pulse": "O valor de referência desliza de 1 para 2 metros; o drone acompanha com uma oscilação menor.",
         "wave": "O valor de referência oscila para cima e para baixo; o drone acompanha a onda."
       },
-      "droneCap": "o drone acompanhando-o"
+      "droneCap": "o drone acompanhando-o",
+      "status": {
+        "step": "Ele tem sobressinal até {p} m antes de se acomodar em 2 m.",
+        "pulse": "Um começo mais suave: o pico fica só em {p} m.",
+        "wave": "A receita transforma uma onda de {a} m em uma onda de {b} m."
+      }
     },
     "playground": {
       "title": "Experimente os polos",
       "planeAria": "O plano s com um par de polos arrastável. A metade esquerda acalma, a metade direita explode. Use as setas do teclado para mover o polo selecionado.",
       "pole": "p",
       "poles": "polos",
-      "settle": "estabiliza (≈4/σ)",
+      "zeta": "amortecimento ζ",
+      "wn": "ωn = |p|",
+      "settle": "acomoda, regra 4/σ",
+      "settleReal": "acomoda (medido)",
       "overshoot": "sobressinal",
+      "push": "empurrão inicial (degrau de 1 m)",
+      "pct": "{v}%",
       "response": "altura após um degrau de 1 m",
       "target": "alvo",
       "plotAria": "Resposta ao degrau do drone para os polos escolhidos, com a resposta anterior mostrada como fantasma.",
-      "settles": "estabiliza",
       "over": "sobressinal",
-      "raysLegend": "raios tracejados: % de sobressinal",
       "never": "nunca",
+      "notIn": "não em até {T} s",
       "wiggle": "uma oscilação ≈ {T} s",
+      "wnCircle": "ωn = {w}",
+      "budget": "orçamento de 20 N",
       "verdict": {
         "stable": "Metade esquerda: ele se acalma.",
         "unstable": "Metade direita: ele explode!",
         "marginal": "Bem sobre o eixo: ele oscila para sempre.",
-        "hitPage": "O drone saiu da ilustração, bateu na página e caiu. Mova um polo para tentar de novo."
+        "hitPage": "O drone saiu da ilustração, bateu na página e caiu. Mova um polo para tentar de novo.",
+        "hitGround": "Ele bateu no chão. Mova um polo para tentar de novo.",
+        "hitPageMarginal": "Cada balanço chegava a 3 m, bem o suficiente para encostar na página; os motores pararam e ele caiu."
       },
-      "challenge": "Mini-desafio: sobressinal abaixo de 10% e estabilizado em até 2 s",
-      "chalOk": "Desafio cumprido! Sobressinal de {o}%, estabilizado em {s} s.",
-      "chalNo": "Ainda não: sobressinal de {o}%, estabiliza em {s} s. Mire na zona destacada.",
+      "negKd": "Aqui o Kd é negativo: o arrasto já amortece mais do que estes polos permitem, então o controlador tem que empurrar junto com o movimento.",
+      "pushWarn": "O empurrão inicial passa de 20 N, mais do que motores reais têm. Já, já vamos ver quanto isso custa.",
+      "challenge": "Mini-desafio: sobressinal abaixo de 10% e acomodação em até 2 s",
+      "chalOk": "Desafio cumprido! Sobressinal de {o}%, acomodação em {s} s.",
+      "chalNo": "Ainda não: sobressinal de {o}%, acomoda em {s} s. Mire na zona destacada.",
       "help": "Arraste qualquer um dos × (ou use Tab para chegar até ele e as setas do teclado, Shift para passos grandes). O drone repete sua resposta ao degrau a cada ajuste.",
-      "describe": "Polos em {p}. Razão de amortecimento {z}. Estabiliza em cerca de {s} segundos, ultrapassa o alvo em cerca de {o} por cento.",
+      "describe": "Polos em {p}. Razão de amortecimento {z}. Acomoda em cerca de {s} segundos, com sobressinal de cerca de {o} por cento.",
       "re": "σ",
       "im": "ω"
     },
@@ -359,13 +647,16 @@
       "y": "saída",
       "noZero": "sem zero (mesmos polos)",
       "withZero": "com o zero",
+      "slope": "+ {g} × a sua inclinação",
       "plotAria": "Respostas ao degrau com e sem o zero.",
       "osNo": "sobressinal sem zero",
       "osYes": "sobressinal com zero",
+      "pct": "{v}%",
       "zeroAt": "zero em",
-      "near": "Perto da origem: um grande empurrão inicial e sobressinal extra.",
-      "mid": "Um empurrão extra moderado.",
-      "far": "Longe: o zero quase não muda nada.",
+      "scaled": "em escala para ainda terminar em 1",
+      "near": "Perto da origem: a parte da inclinação é {g} × a inclinação antiga, então o começo dá um tranco forte.",
+      "mid": "Um tranco moderado: {g} × a inclinação.",
+      "far": "Longe: só {g} × a inclinação. Quase não aparece.",
       "describe": "Zero em {z}, sobressinal de {o} por cento.",
       "re": "σ",
       "im": "ω",
@@ -382,14 +673,49 @@
       "max": "motor máx 20 N",
       "min": "motores não podem puxar para baixo",
       "peak": "pico de empuxo que a matemática quer",
-      "tsIdeal": "estabiliza (matemática)",
-      "tsReal": "estabiliza (real)",
+      "tsIdeal": "acomoda (matemática)",
+      "tsReal": "acomoda (real)",
+      "osReal": "sobressinal (real)",
+      "pct": "{v}%",
       "notYet": "não dentro de 3 s",
       "sigma": "Posição do polo (movendo para a esquerda ao longo de 45°)",
       "toggle": "Motores reais: 0–20 N",
-      "capped": "A matemática quer {p} N, mas os motores chegam no máximo a 20 N. A realidade para de seguir o quadro linear.",
+      "capped": "A matemática quer {p} N; os motores param em 20 N. Acomodação real em {s} s, e nenhum “mais à esquerda” baixa isso de cerca de {b} s.",
       "fantasy": "Motores imaginários entregam {p} N sem problema. Ligue os limites de novo.",
       "fine": "Dentro da faixa dos motores: matemática e realidade concordam."
+    }
+  },
+  "plays": {
+    "poleRead": {
+      "sig": "distância dos polos à esquerda do eixo",
+      "w": "altura dos polos, ômega",
+      "noWiggle": "nada (nenhuma oscilação)",
+      "never": "nunca",
+      "noOvershoot": "nada (sem sobressinal)",
+      "pct": "{v}%"
+    },
+    "gains": {
+      "sig": "distância dos polos à esquerda do eixo",
+      "w": "altura dos polos, ômega",
+      "negKd": "Isso é um Kd *negativo*: só o arrasto já amortece mais do que estes polos querem, então o controlador tem que empurrar *junto com* o movimento."
+    },
+    "dominant": {
+      "time": "tempo, em segundos",
+      "almostNothing": "quase nada",
+      "pct": "{v}%"
+    },
+    "push": {
+      "sig": "par de polos na linha de 45°",
+      "canDo": "os motores dão conta",
+      "justOver": "um pouco acima dos 20 N que os motores têm",
+      "farBeyond": "muito além dos motores"
+    },
+    "budget": {
+      "dr": "tamanho do degrau, metros"
+    },
+    "zeroKick": {
+      "z": "distância do zero até 0",
+      "pct": "{v}%"
     }
   }
 }

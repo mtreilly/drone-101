@@ -14,8 +14,38 @@
           "text": "Wir beginnen mit der Drohne im Schwebeflug auf 1 m; ein Grundschub von 4,9 N gleicht die Schwerkraft aus. Die gewünschte und die tatsächliche Höhenänderung messen wir relativ zu diesem Ausgangswert. Unmittelbar vor einem neuen Befehl sind beide Änderungen null. Beim Sprungbeispiel steigt der Sollwert bei $t=0$ auf 2 m: Die gewünschte Änderung ist nun 1 m, während die Drohne noch auf 1 m steht."
         },
         {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Gut, denn letztes Kapitel haben wir die $-h(0)$-Teile weggelassen, und die Formel hat gelogen. Vom Schweben aus gemessen **sind** diese Startwerte wirklich null, also verschwinden sie diesmal ehrlich."
+        },
+        {
           "t": "math",
           "tex": "\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\Delta\\sp{R}(s)"
+        },
+        {
+          "t": "callout",
+          "title": "Woher das Rezept kommt",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Der Schwebeschub hebt die Schwerkraft auf, also bleiben in der Gleichung der Drohne nur die *Änderungen* übrig. Jetzt nimm die Regel aus Kapitel 7: Jede Steigung wird zu × $s$, minus ihrem Startwert. Vom Schweben aus ist jeder Startwert null, also wird nichts abgezogen:"
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{gathered} m\\,\\Delta\\out{h}'' + c\\,\\Delta\\out{h}' = \\eff{K_p}\\,(\\Delta\\sp{r} - \\Delta\\out{h}) \\\\[2pt] \\Big\\downarrow\\ {\\scriptstyle \\Delta h(0)\\,=\\,\\Delta h'(0)\\,=\\,0} \\\\[2pt] (m s^2 + c s + \\eff{K_p})\\,\\Delta\\out{H}(s) = \\eff{K_p}\\,\\Delta\\sp{R}(s) \\end{gathered}"
+            },
+            {
+              "t": "p",
+              "text": "Teile durch $m s^2 + c s + \\eff{K_p}$, und da ist $G(s)$. Sein Nenner ist genau die Gleichung, die wir in den Kapiteln 4 bis 6 durch Raten von $e^{st}$ bekommen haben."
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "happy",
+              "text": "Es ist also keine Zauberei. Es ist die eigene Gleichung der Drohne, in der jede Steigung zu einem $s$ geworden ist."
+            }
+          ]
         },
         {
           "t": "p",
@@ -29,7 +59,7 @@
           "t": "say",
           "who": "mika",
           "mood": "excited",
-          "text": "$G(s)$ ist also wie das **Rezept** der Drohne. Wirf irgendeine Zutat rein, und es sagt dir, was rauskommt!"
+          "text": "June hatte recht: Der Bruch **ist** die Drohne. Er ist so was wie ihr **Rezept**. Gib irgendeine Zutat rein, und er sagt dir, was rauskommt!"
         },
         {
           "t": "p",
@@ -45,6 +75,10 @@
             {
               "term": "Übertragungsfunktion $G(s)$",
               "def": "Transformierte Ausgangsänderung ÷ transformierte Eingangsänderung, ausgehend vom selben Ruhezustand. Für diese lineare Drohne ist sie ein Quotient aus Polynomen in $s$."
+            },
+            {
+              "term": "Start aus der Ruhe (Anfangswerte null)",
+              "def": "Jede Änderung und ihre Geschwindigkeit ist bei $t = 0$ null, so wie wenn wir vom Schweben aus messen. Dann sind auch die Startwert-Terme aus Kapitel 7 wie $-h(0)$ null, und $G(s)$ erzählt die ganze Geschichte."
             }
           ]
         }
@@ -56,15 +90,54 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Wo wird $G(s)$ **unendlich groß**? An Nullstellen des Nenners, nachdem gemeinsame Faktoren gekürzt wurden. Diese Punkte heißen **Pole** und werden als × gezeichnet. Diese Drohne hat zwei, passend zu den zwei natürlichen $e^{st}$-Bewegungen aus Kapitel 6."
+          "text": "Wo wird $G(s)$ **unendlich groß**? Wo sein Nenner null ist. Diese Punkte heißen **Pole** und werden als × gezeichnet. Diese Drohne hat zwei, einen für jede der zwei natürlichen $e^{st}$-Bewegungen aus Kapitel 6."
+        },
+        {
+          "t": "p",
+          "text": "In Kapitel 7 hat die Transformation von $e^{at}$ bei $s = a$ geschrien. Lies das rückwärts: Wo auch immer $G$ schreit, versteckt sich eine Bewegung $e^{pt}$."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Die Pole sind also die **Modi** aus Kapitel 6, und sie sitzen auf der Karte!"
+        },
+        {
+          "t": "callout",
+          "title": "Warum Pole die Bewegungen sind",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Eine Sprungantwort ist $G(s)$ mal das $\\frac{1}{s}$ des Sprungs. Zerleg sie in einfache Stücke, wie in Kapitel 7: Der eigene Pol des Sprungs bei 0 liefert die Endänderung $A$, und jeder Pol von $G$ liefert ein Stück $\\frac{B}{s-p}$."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} \\Delta\\out{H}(s) = G(s)\\cdot\\frac{1}{s} &= \\frac{A}{s} + \\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\\\[4pt] \\Longrightarrow\\quad \\Delta\\out{h}(t) &= A + B e^{pt} + \\bar B e^{\\bar p t} \\end{aligned}"
+            },
+            {
+              "t": "p",
+              "text": "Die Tabelle aus Kapitel 7 verwandelt jedes Stück zurück in eine Bewegung. Etwas anderes kann nicht auftauchen: Die Pole sind die ganze Besetzung."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Und ein Pol mit $\\sigma > 0$ ist ein Stück, das wächst. Kein Wunder, dass die rechte Hälfte explodiert."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Jetzt drehen wir den Spieß um. Statt Verstärkungen zu wählen und die Pole zu suchen, **ziehen wir die Pole** und schauen, was für eine Drohne wir bekommen. Dafür braucht es einen zweiten Knopf, $\\eff{K_d}$: ein Gegendrücken gegen die Geschwindigkeit, das wir in Kapitel 9 richtig kennenlernen. Es kommt zur Luftreibung $c$ dazu, und die zwei Lösungen sind $p$ und sein Spiegelzwilling $\\bar p$ (der Strich dreht das Vorzeichen des Imaginärteils um, wie bei den Zwillingen aus Kapitel 5):"
         },
         {
           "t": "math",
           "tex": "\\begin{aligned} & m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p} = 0 \\\\ \\Longrightarrow\\quad & s = p,\\ \\bar p \\qquad \\text{(die Pole)} \\end{aligned}"
         },
         {
-          "t": "p",
-          "text": "Jetzt drehen wir den Spieß um. Statt Verstärkungen zu wählen und die Pole zu suchen, **ziehen wir die Pole** und schauen, was für eine Drohne wir bekommen. (Im Hintergrund rechnen wir den Regler aus, der sie dorthin setzt. Dafür braucht es einen neuen Knopf $\\eff{K_d}$, ein Gegendrücken gegen das Tempo, den wir in Kapitel 9 richtig kennenlernen.)"
+          "t": "play",
+          "id": "gains",
+          "text": "Damit die Pole bei −{scrub|sig} ± {scrub|w}i sitzen, braucht der Regler $\\eff{K_p} = m(\\sigma^2+\\omega^2)$ = {calc|kp|eff} N/m und $c + \\eff{K_d} = 2m|\\sigma|$ = {calc|damp} N·s/m, also $\\eff{K_d}$ = {calc|kd|eff} N·s/m. Der Spielplatz unten folgt diesen Zahlen. {calc|note}"
         },
         {
           "t": "predict",
@@ -95,16 +168,20 @@
           "id": "playground"
         },
         {
+          "t": "h3",
+          "text": "Die Karte lesen"
+        },
+        {
           "t": "p",
-          "text": "Spiel damit. Ein paar Regeln springen ins Auge, und alle sind Kapitel 5 und 6 in Verkleidung:"
+          "text": "Spiel damit. Ein paar Regeln springen sofort ins Auge, und jede ist ein alter Bekannter in Verkleidung:"
         },
         {
           "t": "list",
           "items": [
-            "**Linke Hälfte = beruhigt sich, rechte Hälfte = explodiert.** Der Realteil $\\sigma$ ist die Schrumpf- oder Wachstumsrate.",
-            "**Weiter links = schneller.** Das Einschwingen dauert etwa $4/|\\sigma|$ Sekunden (die gestrichelten senkrechten Linien).",
-            "**Weiter oben = wackeliger.** Die Höhe $\\omega$ ist das Wackeltempo; ein Wackler dauert $2\\pi/\\omega$ Sekunden.",
-            "**Der Winkel bestimmt das Überschwingen.** Pole nahe der reellen Achse schwingen kaum über, Pole nahe der senkrechten Achse schwingen stark über (die gestrichelten Strahlen)."
+            "**Linke Hälfte = beruhigt sich, rechte Hälfte = explodiert.** Der Realteil $\\sigma$ ist die Schrumpf- oder Wachstumsrate von $e^{\\sigma t}$.",
+            "**Weiter links = schneller.** Das Einschwingen dauert etwa $4/|\\sigma|$ Sekunden (die gestrichelten senkrechten Linien): die vier Zeitkonstanten aus Kapitel 6, denn $e^{-|\\sigma| t}$ liegt nach $\\ln 50/|\\sigma| \\approx 3{,}9/|\\sigma|$ Sekunden unter 2 %.",
+            "**Weiter oben = wackeliger.** Die Höhe $\\omega$ ist die gedämpfte Eigenkreisfrequenz aus Kapitel 6, also dauert ein Wackler $2\\pi/\\omega$ Sekunden.",
+            "**Der Winkel bestimmt das Überschwingen.** Der Winkel $\\theta$ zur negativen reellen Achse liefert $\\zeta = \\cos\\theta$ (der Kreis aus Kapitel 6), und das Überschwingen ist $e^{-\\pi|\\sigma|/\\omega}$ (die gestrichelten Strahlen). Nahe der reellen Achse schwingt sie kaum über, nahe der senkrechten Achse stark."
           ]
         },
         {
@@ -120,8 +197,114 @@
           "text": "Erinnerst du dich an die Zwillingsdreher aus Kapitel 5? Eine echte Drohne macht echte Bewegungen, also braucht jedes drehende $e^{st}$ seinen Spiegelzwilling, damit sich die imaginären Teile aufheben. Komplexe Pole kommen **immer** in Spiegelpaaren."
         },
         {
+          "t": "callout",
+          "title": "Warum der Winkel das Überschwingen bestimmt",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Die Drohne fliegt am Ziel vorbei und kehrt nach einem halben Wackler um, bei $t = \\pi/\\omega$. Bis dahin hat das schrumpfende $e^{-|\\sigma| t}$ so lange gearbeitet, und was vom Schwung übrig ist, ist das Überschwingen. Nur das Verhältnis $|\\sigma|/\\omega$ zählt, und dieses Verhältnis ist der *Winkel* des Pols. Auf dem Kreis aus Kapitel 6 ist der Kosinus dieses Winkels $\\zeta$."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} t_{\\text{Spitze}} &= \\frac{\\pi}{\\omega} \\\\[4pt] \\text{Überschwingen} &= e^{-|\\sigma|\\,t_{\\text{Spitze}}} = e^{-\\pi|\\sigma|/\\omega} \\\\[4pt] &= e^{-\\pi\\zeta/\\sqrt{1-\\zeta^2}}, \\qquad \\zeta = \\cos\\theta \\end{aligned}"
+            },
+            {
+              "t": "play",
+              "id": "poleRead",
+              "text": "Pole bei −{scrub|sig} ± {scrub|w}i: Die Wackler schrumpfen wie $e^{-|\\sigma| t}$, also schwingt sie in etwa {calc|ts} s ein. Ein Wackler dauert {calc|period} s. Die erste Spitze kommt nach einem halben, bei {calc|tp} s, und bis dahin hat das Schrumpfen ein Überschwingen von {calc|os} übrig gelassen."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "happy",
+              "text": "Jeder Strahl von 0 aus ist also ein $\\zeta$ und ein Überschwingen."
+            }
+          ]
+        },
+        {
+          "t": "predict",
+          "id": "ch8-up",
+          "gate": true,
+          "q": "Lass $\\sigma = -2$ und schieb die Pole **senkrecht nach oben**, von $\\pm 4i$ auf $\\pm 8i$. Was ändert sich?",
+          "options": [
+            {
+              "text": "Sie schwingt doppelt so schnell ein",
+              "why": "Das Einschwingen folgt der Schrumpfrate $\\sigma$, und die hat sich nicht bewegt. Gemessen: Aus 1,87 s werden 1,72 s, fast dasselbe."
+            },
+            {
+              "text": "Schnellere Wackler und mehr Überschwingen; das Einschwingen bleibt etwa gleich",
+              "correct": true,
+              "why": "Ein Wackler schrumpft von 1,57 s auf 0,79 s, und das Überschwingen steigt von 21 % auf 46 %, aber die Hüllkurve $e^{-2t}$ bleibt gleich, also bleibt das Einschwingen bei etwa $4/2 = 2$ s."
+            },
+            {
+              "text": "Sie wird instabil",
+              "why": "Das entscheidet nur die Position links oder rechts. Hoch und runter führt nie in die rechte Hälfte."
+            }
+          ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Der Spielplatz ist gesprungen, als wir geantwortet haben: Das Geisterpaar sitzt bei $\\pm 4i$, das neue bei $\\pm 8i$. Gleiche Hüllkurve, doppelt so viele Wackler und ein viel größerer erster Schwung."
+        },
+        {
           "t": "note",
           "text": "Unsere Drohne startete bei $-1 \\pm 6{,}24i$: Das ist die Drohne mit $K_p = 20$ aus Kapitel 2. Weit oben (sehr wackelig) und nah an der Achse (schwingt langsam ein). Jetzt kannst du *sehen*, warum sie gehüpft ist."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Was, wenn beide Pole auf der reellen Achse sitzen, einer bei $-0{,}2$ und einer bei $-5$?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Der Schnelle ist in einer Sekunde weg. Der Langsame ist der Boss."
+        },
+        {
+          "t": "play",
+          "id": "dominant",
+          "text": "Reelle Pole bei −0,2 und −5. Nach {scrub|time} s ist von der schnellen Bewegung $e^{-5t}$ noch {calc|fast} ihres Anfangs übrig, von der langsamen $e^{-0{,}2t}$ noch {calc|slow}. Also entscheidet der langsame Pol: Das Einschwingen dauert etwa $4/0{,}2 = 20$ s."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Pol",
+              "def": "Ein Wert von $s$, bei dem die Übertragungsfunktion unendlich groß wird. Jeder Pol $p$ ist eine Bewegung $e^{pt}$ des Systems."
+            },
+            {
+              "term": "Spiegelpaar $p,\\ \\bar p$",
+              "def": "Zwei Pole mit gleichem Realteil und entgegengesetztem Imaginärteil. Komplexe Pole eines reellen Systems kommen immer so."
+            },
+            {
+              "term": "Dominanter Pol",
+              "def": "Der Pol, der der senkrechten Achse am nächsten liegt. Seine langsame Bewegung überdauert die anderen, also bestimmt er die Einschwingzeit."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "Wie gut ist 4/|σ|?",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Die Vier ist das $\\ln 50 \\approx 3{,}9$ aus Kapitel 6, gerundet: die Zeit, bis die *Hüllkurve* auf 2 % geschrumpft ist. Die echte Kurve liegt innerhalb ihrer Hüllkurve, also schwingt sie oft etwas früher ein. Später schwingt sie ein, wenn die Pole auf oder nahe der reellen Achse sitzen, denn ein doppelter Pol hat einen Anteil $t\\,e^{-|\\sigma| t}$, der nachhängt."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{array}{c|ccccc} \\zeta & 0{,}3 & 0{,}5 & 0{,}8 & 0{,}95 & 1 \\\\ \\hline |\\sigma|\\,T_s & 3{,}37 & 4{,}04 & 3{,}01 & 5{,}00 & 5{,}83 \\end{array}"
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "think",
+              "text": "Ich hab $\\sigma = -1$ ausprobiert: Die Regel sagte 4 s, und die echten Zeiten lagen je nach $\\zeta$ zwischen 3,0 s und 5,8 s. Gut genug zum Zielen, nicht gut genug für ein Versprechen."
+            }
+          ]
         }
       ]
     },
@@ -131,11 +314,11 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Auch der Zähler kann null werden. Diese Punkte heißen **Nullstellen**, gezeichnet als ○. Meist ändern sie, **wie stark** die Bewegung jedes Pols am Ausgang erscheint. Liegt eine Nullstelle genau auf einem Pol, kürzt sich der gemeinsame Faktor und dieser Pol verschwindet aus dieser Eingangs-Ausgangs-Übertragungsfunktion. Eine innere Bewegung kann für genau diesen Eingang und Ausgang trotzdem verborgen bleiben."
+          "text": "Auch der Zähler kann null werden. Diese Punkte heißen **Nullstellen**, gezeichnet als ○. Meist ändern sie, **wie stark** die Bewegung jedes Pols am Ausgang erscheint. Liegt eine Nullstelle genau auf einem Pol, kürzt sich der gemeinsame Faktor, und dieser Pol verschwindet aus diesem Rezept von Eingang zu Ausgang."
         },
         {
           "t": "p",
-          "text": "Hier ist ein System mit festen Polen bei $-2 \\pm 3i$ und einer Nullstelle, die du verschieben kannst. (Genau diese Form bekommst du von einem Regler, der darauf reagiert, wie schnell sich der *Fehler* ändert. Ein kleiner Vorgeschmack auf Kapitel 9.)"
+          "text": "Hier ist ein System mit festen Polen bei $-2 \\pm 3i$ und einer Nullstelle, die du verschieben kannst. (Das $\\eff{K_d}$ unseres Spielplatzes drückt gegen die *Geschwindigkeit* der Drohne, also hat sein Rezept keine Nullstelle. Drück stattdessen gegen die Geschwindigkeit des *Fehlers*, wie in Kapitel 9, und eine Nullstelle taucht bei $-\\eff{K_p}/\\eff{K_d}$ auf: Für diese Pole ist das $-6{,}5$, mit 15 % Überschwingen statt 12 %.)"
         },
         {
           "t": "widget",
@@ -148,8 +331,48 @@
           "text": "Gleiche Pole, aber wenn die Nullstelle nah an den Ursprung kommt, springt die Antwort viel schneller hoch und schwingt stärker über!"
         },
         {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Gleiche Pole heißt gleiche Bewegungen. Die Nullstelle kann also keine neue hinzufügen. Sie muss ein bisschen von etwas dazugeben, das wir schon haben."
+        },
+        {
+          "t": "play",
+          "id": "zeroKick",
+          "text": "Mit der Nullstelle bei −{scrub|z} ist der Ausgang die Kurve ohne Nullstelle **plus {calc|gain} × ihre Steigung**, und er schwingt um {calc|os} über (12 % ohne die Nullstelle)."
+        },
+        {
           "t": "p",
-          "text": "Eine Nullstelle nahe am Ursprung lässt das System stark auf **Änderungen** des Eingangs reagieren. Das Überschwingen wächst, obwohl sich die Pole nicht bewegt haben. Weit weg spielt die Nullstelle kaum eine Rolle. Mehr brauchen wir über Nullstellen vorerst nicht."
+          "text": "Multiplizieren mit $s$ nimmt die Steigung (Kapitel 7), also gibt der Faktor $(1 + s/|z|)$ das $1/|z|$-Fache der Steigung dazu. Deshalb lässt eine Nullstelle nahe am Ursprung das System so stark auf **Änderungen** reagieren: Das Überschwingen wächst, obwohl sich die Pole nicht bewegt haben. Weit weg spielt die Nullstelle kaum eine Rolle. Mehr brauchen wir über Nullstellen vorerst nicht."
+        },
+        {
+          "t": "callout",
+          "title": "Was eine Nullstelle blockiert",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Ein Pol ist eine Bewegung, die das System *macht*; eine Nullstelle ist eine Bewegung, die es *nicht weitergibt*. Füttere dieses System (Nullstelle bei $-3$) mit genau $e^{-3t}$, und nichts davon kommt heraus: nur das eigene Wackeln des Systems, das abklingt. Ohne die Nullstelle käme $1{,}3\\,e^{-3t}$ direkt durch."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} G(s) &= \\tfrac{13}{3}\\,\\frac{s+3}{s^2+4s+13}, \\qquad u = e^{-3t} \\\\[4pt] Y(s) &= \\tfrac{13}{3}\\,\\frac{\\cancel{s+3}}{(s^2+4s+13)\\,\\cancel{(s+3)}} \\\\[4pt] \\Longrightarrow\\quad y(t) &= \\tfrac{13}{9}\\,e^{-2t}\\sin 3t \\end{aligned}"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "excited",
+              "text": "Wie Kopfhörer mit Geräuschunterdrückung für ein ganz bestimmtes Brummen."
+            }
+          ]
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Nullstelle",
+              "def": "Ein Wert von $s$, bei dem die Übertragungsfunktion null ist: eine Bewegung $e^{zt}$, die das System nicht weitergibt."
+            }
+          ]
         }
       ]
     },
@@ -171,15 +394,32 @@
         },
         {
           "t": "p",
-          "text": "Zeit für Ehrlichkeit. Unsere Motoren können zwischen **0 N** und **20 N** drücken (etwa das Vierfache des Drohnengewichts). Unten wandern die Pole auf einer 45°-Linie nach links. Die gestrichelten Kurven sind die Mathematik mit ausgedachten, unbegrenzten Motoren; die durchgezogenen sind echte Motoren."
+          "text": "Zeit für Ehrlichkeit. Unsere Motoren können zwischen **0 N** und **20 N** drücken (etwa das Vierfache des Drohnengewichts). Unten wandern die Pole auf einer 45°-Linie nach links (das ist $\\zeta \\approx 0{,}71$, der Sweet Spot aus Kapitel 6). Die gestrichelten Kurven sind die Mathematik mit ausgedachten, unbegrenzten Motoren; die durchgezogenen sind echte Motoren."
         },
         {
           "t": "widget",
           "id": "limit"
         },
         {
+          "t": "play",
+          "id": "push",
+          "text": "Im ersten Augenblick eines Sprungs um 1 m ist der Fehler der ganze Meter, und die Drohne bewegt sich noch nicht. Also verlangt die Mathematik Schwebeschub plus $\\eff{K_p}$ × 1 m. Mit den Polen bei {scrub|sig} sind das {calc|sum|eff} N: {calc|verdict}."
+        },
+        {
           "t": "p",
-          "text": "Ab einem bestimmten Punkt verlangt die Mathematik 50, 60, 70 Newton, die die Motoren einfach nicht haben. Der {eff|orange Schub} klatscht gegen die Grenzen, die echte Drohne folgt der hübschen linearen Vorhersage nicht mehr, und sie schwingt *stärker* über, als sie es mit sanfteren Polen täte."
+          "text": "Ab etwa $-3{,}9 \\pm 3{,}9i$ verlangt die Mathematik mehr als 20 N. Der {eff|orange Schub} klatscht gegen die Grenze, und ab etwa $-6 \\pm 6i$ will die Mathematik die Drohne sogar *nach unten ziehen*, was Propeller nicht können. Die echte Drohne folgt der hübschen linearen Vorhersage nicht mehr. Ihr Einschwingen wird ab etwa 0,7 s nicht mehr besser, nahe $-6{,}5 \\pm 6{,}5i$, und weiter links wird es sogar *schlechter*, mit zusätzlichem Überschwingen."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Ich hab ihn ganz bis $-8 \\pm 8i$ geschoben. Die Mathematik sagt 0,53 s. Die echte Drohne braucht 0,77 s: langsamer als bei $-6{,}5$!"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Und ihr Überschwingen ist von 4 % auf 16 % gestiegen. Den ganzen zusätzlichen Schub gab es nie."
         },
         {
           "t": "say",
@@ -188,8 +428,44 @@
           "text": "„Weiter links“ ist also nur besser, bis dir der Motor ausgeht. Pole setzen ist ein Abwägen, kein Wettrennen."
         },
         {
+          "t": "callout",
+          "title": "Ein Schubbudget ist ein Kreis",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Im allerersten Augenblick hat sich die Drohne nicht bewegt, also drückt nur $\\eff{K_p}$, und $\\eff{K_p} = m|p|^2$: das Quadrat des Abstands der Pole von 0. Doppelter Abstand heißt vierfacher Schub, egal in welche Richtung. Für einen Sprung um 1 m erlauben unsere Motoren Pole bis etwa 5,5 von 0 entfernt (der blasse orange Kreis im Spielplatz). Verlang einen Sprung um 2 m, und der Kreis schrumpft auf 3,9."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} T(0^+) &= mg + \\eff{K_p}\\,\\Delta\\sp{r} \\\\[4pt] &= mg + m\\,|p|^2\\,\\Delta\\sp{r} \\le 20\\ \\text{N} \\\\[4pt] \\Longrightarrow\\quad |p| &\\le \\sqrt{\\frac{20\\ \\text{N} - mg}{m\\,\\Delta\\sp{r}}} \\end{aligned}"
+            },
+            {
+              "t": "play",
+              "id": "budget",
+              "text": "Bei einem Sprung um {scrub|dr} m bleibt der erste Schub nur dann unter 20 N, wenn die Pole innerhalb von {calc|r} um 0 liegen, in jeder Richtung."
+            }
+          ]
+        },
+        {
           "t": "note",
           "text": "Ab jetzt bleibt die 20-N-Grenze eingeschaltet."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Erster Schub",
+              "def": "Der Schub, der im ersten Augenblick eines Sprungs verlangt wird: $mg + \\eff{K_p}\\,\\Delta r$, bevor sich die Drohne bewegt hat."
+            },
+            {
+              "term": "Schubbudget",
+              "def": "Die Polpositionen, die sich die Motoren für einen bestimmten Sprung leisten können: ein Kreis um 0."
+            },
+            {
+              "term": "Motorgrenze (Sättigung)",
+              "def": "Der echte Schub wird auf 0–20 N begrenzt, egal was die Mathematik verlangt."
+            }
+          ]
         }
       ]
     },
@@ -200,12 +476,12 @@
         {
           "t": "recap",
           "items": [
-            "Die **Übertragungsfunktion** $G(s)$ = Ausgang ÷ Eingang im s-Land. Sie ist das Rezept des Systems: $\\out{H} = G\\cdot\\sp{R}$.",
-            "**Pole** (×) sind die Stellen, an denen $G(s)$ explodiert: die $e^{st}$-Terme, aus denen das System besteht.",
-            "Linke Hälfte = stabil, rechte Hälfte = explodiert, weiter links = schneller (≈ 4/|σ| s), weiter oben = wackeliger, Winkel = Überschwingen.",
+            "Ja, ein Bruch reicht. Die **Übertragungsfunktion** $G(s)$ = Änderung am Ausgang ÷ Änderung am Eingang im s-Land, Start aus der Ruhe. Sie ist das Rezept des Systems, $\\Delta\\out{H} = G\\cdot\\Delta\\sp{R}$, und sie kommt direkt aus der Gleichung der Drohne.",
+            "**Pole** (×) sind die Stellen, an denen $G(s)$ explodiert: die $e^{pt}$-Modi, aus denen das System besteht.",
+            "Linke Hälfte = stabil, rechte Hälfte = explodiert. Weiter links = schneller (schwingt in etwa $4/|\\sigma|$ s ein, eine Faustregel), weiter oben = wackeliger (ein Wackler = $2\\pi/\\omega$ s), Winkel = Dämpfung $\\zeta$ = Überschwingen $e^{-\\pi|\\sigma|/\\omega}$. Der Pol, der der Achse am nächsten liegt, ist der Boss.",
             "Komplexe Pole kommen immer in Spiegelpaaren.",
-            "**Nullstellen** (○) ändern, wie viel du von jedem Term bekommst. Nahe am Ursprung geben sie einen Tritt dazu.",
-            "Pole weit links brauchen Schub, den die Motoren nicht haben."
+            "**Nullstellen** (○) ändern, wie viel du von jedem Modus bekommst. Nahe am Ursprung geben sie einen Tritt dazu: das $1/|z|$-Fache der Steigung.",
+            "Der erste Schub ist $mg + m|p|^2$ bei einem Sprung um 1 m, also brauchen weit entfernte Pole Schub, den die Motoren nicht haben."
           ]
         },
         {
@@ -241,7 +517,7 @@
                 },
                 {
                   "text": "$+1 \\pm 3i$: instabil",
-                  "why": "Vorzeichenfehler. Bei $s^2 + bs + c$ ist der Realteil $-b/2 = -1$, und das liegt in der linken Hälfte."
+                  "why": "Vorzeichenfehler. Bei $s^2 + bs + q$ ist der Realteil $-b/2 = -1$, und das liegt in der linken Hälfte."
                 },
                 {
                   "text": "$-2$ und $-10$: kein Wackeln",
@@ -256,7 +532,7 @@
                 {
                   "text": "Direkt auf die reelle Achse zu (σ behalten, ω verkleinern)",
                   "correct": true,
-                  "why": "Gleicher Abstand zur Achse heißt gleiche Einschwingzeit. Ein kleinerer Winkel zur reellen Achse heißt mehr Dämpfung, also weniger Überschwingen."
+                  "why": "Gleicher Abstand zur Achse lässt die *Hüllkurve* gleich, also bleibt das Einschwingen etwa gleich (die $4/|\\sigma|$-Regel; nahe der reellen Achse ist sie grob). Ein kleinerer Winkel zur reellen Achse heißt mehr Dämpfung, also weniger Überschwingen."
                 },
                 {
                   "text": "Direkt nach oben (größeres ω)",
@@ -270,23 +546,20 @@
             },
             {
               "id": "ch8-q4",
-              "q": "Pole bei $+0{,}5 \\pm 2i$. Was siehst du?",
+              "q": "Ein System hat reelle Pole bei $-0{,}2$ und $-5$. Welcher prägt nach zwei Sekunden noch die Antwort?",
               "options": [
                 {
-                  "text": "Schwünge, die mit jedem Durchgang wachsen",
-                  "sketch": "growing-wiggle",
+                  "text": "Der bei $-0{,}2$, nahe der Achse",
                   "correct": true,
-                  "why": "$\\sigma = +0{,}5 > 0$ heißt Wachstum, $\\omega = 2$ heißt Drehen: ein wachsendes Wackeln."
+                  "why": "$e^{-0{,}2t}$ steht nach 2 s noch bei 67 %; $e^{-5t}$ ist auf 0,005 % gefallen. Der langsame Pol hat das Sagen, also dauert das Einschwingen etwa $4/0{,}2 = 20$ s."
                 },
                 {
-                  "text": "Schwünge, die kleiner werden",
-                  "sketch": "decaying-wiggle",
-                  "why": "Kleiner werden braucht $\\sigma < 0$ (linke Hälfte). Diese Pole liegen rechts."
+                  "text": "Der bei $-5$, weiter links",
+                  "why": "Weiter links heißt, er stirbt *schneller*. Schon nach 1 s liegt er unter 1 % seines Anfangs (0,67 %)."
                 },
                 {
-                  "text": "Gleichmäßiges Schwingen für immer",
-                  "sketch": "steady-wiggle",
-                  "why": "Das gibt’s genau auf der Achse ($\\sigma = 0$). Bei $+0{,}5$ wächst es."
+                  "text": "Beide gleich",
+                  "why": "Einer schrumpft 25-mal schneller als der andere ($5 \\div 0{,}2$). Nach einer halben Sekunde steht der schnelle bei 8 %, der langsame noch bei 90 %."
                 }
               ]
             }
@@ -321,29 +594,44 @@
         "pulse": "Der Sollwert gleitet von 1 auf 2 Meter; die Drohne folgt mit einem kleineren Hüpfer.",
         "wave": "Der Sollwert wellt sich auf und ab; die Drohne folgt der Welle."
       },
-      "droneCap": "die Drohne, die folgt"
+      "droneCap": "die Drohne, die folgt",
+      "status": {
+        "step": "Sie schwingt auf {p} m über, bevor sie sich bei 2 m einpendelt.",
+        "pulse": "Ein sanfterer Start: Die Spitze liegt nur bei {p} m.",
+        "wave": "Das Rezept macht aus einer Welle von {a} m eine Welle von {b} m."
+      }
     },
     "playground": {
       "title": "Der Pol-Spielplatz",
       "planeAria": "Die s-Ebene mit einem verschiebbaren Polpaar. Die linke Hälfte beruhigt sich, die rechte explodiert. Mit den Pfeiltasten bewegst du den gewählten Pol.",
       "pole": "p",
-      "poles": "Pole",
-      "settle": "Einschwingen (≈4/σ)",
+      "poles": "poles",
+      "zeta": "Dämpfung ζ",
+      "wn": "ωn = |p|",
+      "settle": "Einschwingen, Regel 4/σ",
+      "settleReal": "Einschwingen (gemessen)",
       "overshoot": "Überschwingen",
+      "push": "erster Schub (1-m-Sprung)",
+      "pct": "{v} %",
       "response": "Höhe nach einem Sprung um 1 m",
       "target": "Ziel",
       "plotAria": "Sprungantwort der Drohne für die gewählten Pole, die vorherige Antwort als Geist.",
-      "settles": "eingeschwungen",
       "over": "Überschwingen",
-      "raysLegend": "gestrichelte Strahlen: Überschwingen in %",
       "never": "nie",
+      "notIn": "nicht innerhalb von {T} s",
       "wiggle": "ein Wackler ≈ {T} s",
+      "wnCircle": "ωn = {w}",
+      "budget": "20-N-Budget",
       "verdict": {
         "stable": "Linke Hälfte: Sie beruhigt sich.",
         "unstable": "Rechte Hälfte: Sie explodiert!",
         "marginal": "Genau auf der Achse: Sie schwingt ewig.",
-        "hitPage": "Die Drohne flog aus dem Bild, prallte gegen das, was darüber steht, und stürzte ab. Verschieb einen Pol, um es nochmal zu versuchen."
+        "hitPage": "Die Drohne flog aus dem Bild, prallte gegen das, was darüber steht, und stürzte ab. Verschieb einen Pol, um es nochmal zu versuchen.",
+        "hitGround": "Sie ist auf den Boden gekracht. Verschieb einen Pol, um es nochmal zu versuchen.",
+        "hitPageMarginal": "Jeder Schwung reichte bis 3 m, gerade genug, um die Seite zu berühren; die Motoren setzten aus, und sie fiel."
       },
+      "negKd": "Kd ist hier negativ: Die Luftreibung dämpft schon stärker, als diese Pole erlauben, also muss der Regler mit der Bewegung mitdrücken.",
+      "pushWarn": "Der erste Schub liegt über 20 N, mehr als echte Motoren haben. Was das kostet, sehen wir gleich.",
       "challenge": "Mini-Challenge: Überschwingen unter 10 % und in 2 s eingeschwungen",
       "chalOk": "Challenge geschafft! Überschwingen {o} %, eingeschwungen in {s} s.",
       "chalNo": "Noch nicht: Überschwingen {o} %, eingeschwungen in {s} s. Ziel auf die markierte Zone.",
@@ -355,17 +643,20 @@
     "zero": {
       "title": "Verschieb die Nullstelle",
       "planeAria": "Die s-Ebene mit zwei festen Polen bei minus 2 plus minus 3 i und einer verschiebbaren Nullstelle auf der reellen Achse.",
-      "zero": "Nullstelle",
+      "zero": "zero",
       "y": "Ausgang",
       "noZero": "ohne Nullstelle (gleiche Pole)",
       "withZero": "mit der Nullstelle",
+      "slope": "+ {g} × ihre Steigung",
       "plotAria": "Sprungantworten mit und ohne Nullstelle.",
       "osNo": "Überschwingen ohne Nullstelle",
       "osYes": "Überschwingen mit Nullstelle",
+      "pct": "{v} %",
       "zeroAt": "Nullstelle bei",
-      "near": "Nahe am Ursprung: ein kräftiger Tritt am Anfang und zusätzliches Überschwingen.",
-      "mid": "Ein mäßiger zusätzlicher Tritt.",
-      "far": "Weit weg: Die Nullstelle ändert kaum etwas.",
+      "scaled": "so skaliert, dass sie trotzdem bei 1 endet",
+      "near": "Nahe am Ursprung: Der Steigungsanteil ist {g} × die alte Steigung, also tritt der Start kräftig zu.",
+      "mid": "Ein mäßiger Tritt: {g} × die Steigung.",
+      "far": "Weit weg: nur {g} × die Steigung. Man sieht es kaum.",
       "describe": "Nullstelle bei {z}, Überschwingen {o} Prozent.",
       "re": "σ",
       "im": "ω",
@@ -384,12 +675,47 @@
       "peak": "Spitzenschub, den die Mathematik will",
       "tsIdeal": "eingeschwungen (Mathematik)",
       "tsReal": "eingeschwungen (echt)",
+      "osReal": "Überschwingen (echt)",
+      "pct": "{v} %",
       "notYet": "nicht innerhalb von 3 s",
       "sigma": "Polposition (wandert auf 45° nach links)",
       "toggle": "Echte Motoren: 0–20 N",
-      "capped": "Die Mathematik will {p} N, aber bei 20 N ist für die Motoren Schluss. Die Wirklichkeit folgt dem linearen Bild nicht mehr.",
+      "capped": "Die Mathematik will {p} N; bei 20 N ist für die Motoren Schluss. Echtes Einschwingen {s} s, und kein „weiter links“ bringt es unter etwa {b} s.",
       "fantasy": "Ausgedachte Motoren liefern fröhlich {p} N. Schalte die Grenzen wieder ein.",
       "fine": "Im Bereich der Motoren: Mathematik und Wirklichkeit stimmen überein."
+    }
+  },
+  "plays": {
+    "poleRead": {
+      "sig": "Abstand der Pole links von der Achse",
+      "w": "Höhe der Pole, Omega",
+      "noWiggle": "nichts (gar kein Wackeln)",
+      "never": "nie",
+      "noOvershoot": "nichts (kein Überschwingen)",
+      "pct": "{v} %"
+    },
+    "gains": {
+      "sig": "Abstand der Pole links von der Achse",
+      "w": "Höhe der Pole, Omega",
+      "negKd": "Das ist ein *negatives* Kd: Die Luftreibung allein dämpft schon stärker, als diese Pole wollen, also muss der Regler *mit* der Bewegung drücken."
+    },
+    "dominant": {
+      "time": "Zeit in Sekunden",
+      "almostNothing": "fast nichts",
+      "pct": "{v} %"
+    },
+    "push": {
+      "sig": "Polpaar auf der 45°-Linie",
+      "canDo": "das schaffen die Motoren",
+      "justOver": "knapp über den 20 N, die die Motoren haben",
+      "farBeyond": "weit jenseits der Motoren"
+    },
+    "budget": {
+      "dr": "Sprunghöhe, Meter"
+    },
+    "zeroKick": {
+      "z": "Abstand der Nullstelle von 0",
+      "pct": "{v} %"
     }
   }
 }
