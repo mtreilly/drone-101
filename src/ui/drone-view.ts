@@ -273,15 +273,19 @@ export class DroneView {
     return [{ x: CX - 7, y: gy + Math.min(y0, y1), w: 14, h: Math.abs(y1 - y0) }, ...(lb ? [lb] : [])];
   }
 
-  /** Spots for the thrust label: beside the arrow tip (left, right), then beside its middle. */
+  /**
+   * Spots for the thrust label: beside the arrow tip (left, right), beside its middle, then one line
+   * further past the tip (a short arrow's tip sits right on a target line the drone hovers at).
+   */
   private thrustLabelBox(gy: number, i: number, y0: number, y1: number, fs: number): Box | null {
     const w = estWidth(this.thrustLabel.textContent ?? '', fs);
     const up = y1 < y0;
     // baselines: just past the tip (as it always was), or level with the arrow's middle
     const tip = up ? y1 - 4 : y1 + 16;
     const mid = (y0 + y1) / 2 + fs * 0.35;
-    const base = i < 2 ? tip : mid;
-    if (i > 3) return null;
+    const past = up ? tip - fs * 1.1 : tip + fs * 1.1;
+    const base = i < 2 ? tip : i < 4 ? mid : past;
+    if (i > 5) return null;
     const right = i % 2 === 1;
     return { x: right ? CX + 9 : CX - 9 - w, y: gy + base - fs * 0.8, w, h: fs };
   }
@@ -289,9 +293,10 @@ export class DroneView {
   /** Keeps the thrust label off the dashed target line and the height readout. */
   private placeThrustLabel(gy: number, y0: number, y1: number, r: number | null | undefined): void {
     const fs = this.fontSize(16);
-    const cands = [0, 1, 2, 3].map((i) => this.thrustLabelBox(gy, i, y0, y1, fs));
+    const cands = [0, 1, 2, 3, 4, 5].map((i) => this.thrustLabelBox(gy, i, y0, y1, fs));
     const obstacles: Box[] = [{ x: 0, y: 0, w: W, h: 24 }, ...droneBoxes(gy)];
-    if (r !== null && r !== undefined) obstacles.push({ x: 52, y: this.y(r) - 1.5, w: W - 58, h: 3 });
+    // the dashed target line, with room for its "target" label above it on the left
+    if (r !== null && r !== undefined) obstacles.push({ x: 52, y: this.y(r) - 1.5, w: W - 58, h: 3 }, { x: 52, y: this.y(r) - 6 - fs, w: (this.targetW || estWidth(this.targetLabel.textContent ?? '', fs)) + 4, h: fs + 4 });
     this.thrustSpot = pickSpot(cands, obstacles, this.thrustSpot);
     const c = cands[this.thrustSpot]!;
     const right = this.thrustSpot % 2 === 1;
