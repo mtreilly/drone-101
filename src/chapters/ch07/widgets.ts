@@ -1,7 +1,6 @@
 import { h, uid } from '../../core/dom';
 import { canvasHandFont } from '../../core/font';
-import { BIDI_MARKS } from '../../core/bidi';
-import { fmt, isRtl, tc, unitLabel } from '../../core/i18n';
+import { fmt, tc, unitLabel } from '../../core/i18n';
 import { tex } from '../../core/rich-text';
 import { c as cx } from '../../math/complex';
 import { laplaceReal, table as T } from '../../math/laplace';
@@ -16,17 +15,6 @@ import { Plot } from '../../ui/plot';
 import { niceTicks } from '../../ui/plot-layout';
 import { iconButton, mark, nameMathOptions, onInteractStart, sample } from '../ch06/helpers';
 import { DRAW_T, dampedCos, derivativeRule, fromFunction, fromPoints, solveDrone, spreadCount, unspinExtent, unspinIntegral, unspinLimit } from './tools';
-
-/** A TeX source from the locale file: right-to-left pages isolate its little runs, which KaTeX must not see. */
-const texSrc = (t: (key: string) => string, key: string): string => t(key).replace(BIDI_MARKS, '');
-
-/**
- * A legend key on a right-to-left page: its HTML caption follows the page direction, and
- * "f(t)·e^(−st)" has no operator the shared run finder knows between "e" and "^", so each stretch
- * without Arabic letters that holds Latin symbols becomes one left-to-right isolate.
- */
-const legend = (s: string): string =>
-  isRtl() ? s.replace(BIDI_MARKS, '').replace(/[^\s\u0590-\u08ff](?:[^\u0590-\u08ff]*[^\s\u0590-\u08ff])?/g, (m) => (/[A-Za-z]/.test(m) ? `\u2066${m}\u2069` : m)) : s;
 
 /** `osc`: the signal swings both ways, so for s ≤ a its area sloshes back and forth instead of running off. */
 type Sig = { f: (t: number) => number; F: (s: number) => number; a: number; yMin: number; yMax: number; osc?: boolean };
@@ -108,10 +96,10 @@ const probe: WidgetFactory = (host, ctx) => {
     x: { label: tc('plots.time'), min: 0, max: PROBE_T },
     y: { label: '', min: -0.2, max: 1.6 },
     series: [
-      { id: 'f', color: 'out', label: legend(t('f')) },
-      { id: 'prod', color: 'ink', label: legend(t('product')), width: 2.6 },
+      { id: 'f', color: 'out', label: t('f') },
+      { id: 'prod', color: 'ink', label: t('product'), width: 2.6 },
       // drawn on top: for the step the probe and the product are the same curve
-      { id: 'probe', color: 'ink3', label: legend(t('probe')), dash: [6, 4], width: 1.8 },
+      { id: 'probe', color: 'ink3', label: t('probe'), dash: [6, 4], width: 1.8 },
     ],
     height: 240,
     label: t('plotAria'),
@@ -120,8 +108,8 @@ const probe: WidgetFactory = (host, ctx) => {
     x: { label: 's', min: -1, max: 4 },
     y: { label: 'F(s)', min: 0, max: 4 },
     series: [
-      { id: 'formula', color: 'ink3', label: legend(t('formula')), dash: [4, 4], width: 1.6 },
-      { id: 'trace', color: 'ink', label: legend(t('traced')), dots: true },
+      { id: 'formula', color: 'ink3', label: t('formula'), dash: [4, 4], width: 1.6 },
+      { id: 'trace', color: 'ink', label: t('traced'), dots: true },
     ],
     height: 240,
     label: t('fAria'),
@@ -267,7 +255,7 @@ const explode: WidgetFactory = (host, ctx) => {
   const prod = new Plot(left, {
     x: { label: tc('plots.time'), min: 0, max: 10 },
     y: { label: '', min: 0, max: 1.3 },
-    series: [{ id: 'p', color: 'ink', label: legend(t('product')) }],
+    series: [{ id: 'p', color: 'ink', label: t('product') }],
     height: 220,
     label: t('prodAria'),
   });
@@ -275,7 +263,7 @@ const explode: WidgetFactory = (host, ctx) => {
   const F = new Plot(right, {
     x: { label: 's', min: -2.5, max: 4 },
     y: { label: 'F(s)', min: 0, max: 6 },
-    series: [{ id: 'F', color: 'ink', label: legend(t('curve')) }],
+    series: [{ id: 'F', color: 'ink', label: t('curve') }],
     height: 220,
     label: t('fAria'),
   });
@@ -333,7 +321,7 @@ const unspin: WidgetFactory = (host, ctx) => {
     x: { label: t('re'), min: -0.5, max: 1.5, autoMin: -24, autoMax: 24 },
     y: { label: t('im'), min: -1, max: 1, autoMin: -24, autoMax: 24 },
     series: [
-      { id: 'path', color: 'ink', label: legend(t('path')), width: 3.6 },
+      { id: 'path', color: 'ink', label: t('path'), width: 3.6 },
       { id: 'extent', color: 'transparent', width: 0 },
     ],
     height: 360,
@@ -498,8 +486,8 @@ const derivRule: WidgetFactory = (host, ctx) => {
     x: { label: tc('plots.time'), min: 0, max: DRAW_T },
     y: { label: '', min: -1.5, max: 2.5 },
     series: [
-      { id: 'f', color: 'out', label: legend(t('f')) },
-      { id: 'df', color: 'ink2', label: legend(t('df')), width: 1.6, dash: [3, 3] },
+      { id: 'f', color: 'out', label: t('f') },
+      { id: 'df', color: 'ink2', label: t('df'), width: 1.6, dash: [3, 3] },
     ],
     height: 250,
     label: t('plotAria'),
@@ -508,9 +496,9 @@ const derivRule: WidgetFactory = (host, ctx) => {
     x: { label: 's', min: 0.2, max: 3 },
     y: { label: '', min: -2, max: 2 },
     series: [
-      { id: 'lhs', color: 'ink', label: legend(t('lhs')), width: 3.2 },
+      { id: 'lhs', color: 'ink', label: t('lhs'), width: 3.2 },
       // neutral ink: orange is kept for control effort
-      { id: 'rhs', color: 'ink2', label: legend(t('rhs')), dash: [6, 5], width: 2 },
+      { id: 'rhs', color: 'ink2', label: t('rhs'), dash: [6, 5], width: 2 },
     ],
     height: 250,
     label: t('sAria'),
@@ -591,7 +579,7 @@ const derivRule: WidgetFactory = (host, ctx) => {
       update();
     },
   );
-  const eq = h('div', { class: 'math-block', html: tex('\\underbrace{\\int_0^\\infty f\'(t)\\,e^{-st}\\,dt}_{\\text{' + texSrc(t, 'lhsShort') + '}} \\;\\overset{?}{=}\\; \\underbrace{s\\,F(s) - f(0)}_{\\text{' + texSrc(t, 'rhsBrace') + '}}', true) });
+  const eq = h('div', { class: 'math-block', html: tex('\\underbrace{\\int_0^\\infty f\'(t)\\,e^{-st}\\,dt}_{\\text{' + t('lhsShort') + '}} \\;\\overset{?}{=}\\; \\underbrace{s\\,F(s) - f(0)}_{\\text{' + t('rhsBrace') + '}}', true) });
   host.append(
     eq,
     h('div', { class: 'w-controls' }, sl.el),
@@ -631,8 +619,8 @@ const tableW: WidgetFactory = (host, ctx) => {
     x: { label: tc('plots.time'), min: 0, max: PROBE_T },
     y: { label: '', min: -1.2, max: 1.4 },
     series: [
-      { id: 'f', color: 'out', label: legend(t('f')) },
-      { id: 'prod', color: 'ink', label: legend(t('product')), width: 2.4 },
+      { id: 'f', color: 'out', label: t('f') },
+      { id: 'prod', color: 'ink', label: t('product'), width: 2.4 },
     ],
     height: 220,
     label: t('plotAria'),
@@ -655,8 +643,8 @@ const tableW: WidgetFactory = (host, ctx) => {
         render(i);
         update();
       });
-      const F = done ? h('td', { html: tex(texSrc(t, `rows.${i}.F`)) }) : h('td', null, h('span', { 'aria-hidden': 'true' }, '?'), h('span', { class: 'visually-hidden' }, t('unknown')));
-      tbody.append(h('tr', { class: i === cur ? 'current' : '' }, h('td', { html: tex(texSrc(t, `rows.${i}.f`)) }), F, h('td', null, btn)));
+      const F = done ? h('td', { html: tex(t(`rows.${i}.F`)) }) : h('td', null, h('span', { 'aria-hidden': 'true' }, '?'), h('span', { class: 'visually-hidden' }, t('unknown')));
+      tbody.append(h('tr', { class: i === cur ? 'current' : '' }, h('td', { html: tex(t(`rows.${i}.f`)) }), F, h('td', null, btn)));
       // the row is re-drawn, so keep keyboard focus on the button that was pressed
       if (i === focusRow) btn.focus();
     });
@@ -675,7 +663,7 @@ const tableW: WidgetFactory = (host, ctx) => {
     const ex = extra[cur];
     // the words follow the same test as the readout's colour
     status.textContent = !ok ? t('differ') : ex ? t('twinCheck', { n: fmt(laplaceReal(ex.f, s, Math.min(200, 40 / (s - r.a)), 20000), 4), f: fmt(ex.F(s), 4) }) : t('agree');
-    const list = (texSrc(t, `rows.${cur}.steps`) || '').split('||');
+    const list = (t(`rows.${cur}.steps`) || '').split('||');
     if (shownRow !== cur) {
       shownRow = cur;
       steps.replaceChildren(h('p', { class: 'w-subtitle' }, t('how')), ...list.map((st) => h('div', { class: 'math-block', html: tex(st, true) })));
@@ -702,8 +690,8 @@ const solve: WidgetFactory = (host, ctx) => {
     x: { label: tc('plots.time'), min: 0, max: T1 },
     y: { label: tc('plots.height'), min: 0, max: 3.6 },
     series: [
-      { id: 'sim', color: 'out', label: legend(t('sim')), width: 4, ghost: true },
-      { id: 'formula', color: 'ink', label: legend(t('formula')), dash: [7, 5], width: 2 },
+      { id: 'sim', color: 'out', label: t('sim'), width: 4, ghost: true },
+      { id: 'formula', color: 'ink', label: t('formula'), dash: [7, 5], width: 2 },
     ],
     height: 260,
     label: t('plotAria'),

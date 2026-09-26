@@ -72,7 +72,10 @@ export function firstFree<C>(cands: C[], box: (c: C) => LabelBox | null, obstacl
     const hit = obstacles.filter((o) => overlaps(b, o, 3));
     if (!out && !hit.length) return c;
     const cost = (out ? 1e6 : 0) + hit.reduce((sum, o) => sum + area(b, o, 3), 0);
-    if (cost < bestCost) (bestCost = cost), (best = c);
+    if (cost < bestCost) {
+      bestCost = cost;
+      best = c;
+    }
   }
   return best;
 }
@@ -702,7 +705,10 @@ export class SPlane {
         let bestW = Infinity;
         for (let i = 1; i < words.length; i++) {
           const w = Math.max(words.slice(0, i).join(' ').length, words.slice(i).join(' ').length);
-          if (w < bestW) (bestW = w), (best = i);
+          if (w < bestW) {
+            bestW = w;
+            best = i;
+          }
         }
         el.replaceChildren(
           s('tspan', { x: r.anchor, dy: '-1.1em' }, words.slice(0, best).join(' ')),

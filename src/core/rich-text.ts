@@ -17,6 +17,8 @@ const macros = {
 
 export function tex(src: string, display = false): string {
   // decimal commas (fr/es/it/de/pl formatting) must be {,} in TeX or they typeset as "1, 00"
+  // direction marks from translated strings on right-to-left pages break TeX commands (\\omega → "omega")
+  src = src.replace(BIDI_MARKS, '');
   src = src.replace(/(\d),(?=\d)/g, '$1{,}');
   return katex.renderToString(src, {
     displayMode: display,

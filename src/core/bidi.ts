@@ -121,3 +121,10 @@ export function canvasBidi(ctx: CanvasRenderingContext2D, s: string, rtlPage: bo
   ctx.direction = valueDir(s);
   return rtlPage ? isolateRuns(s) : s;
 }
+
+/**
+ * A short label (plot legend key, caption) on a right-to-left page: each stretch without Arabic
+ * letters that holds Latin symbols, such as "f(t)·e^(−st)", becomes one left-to-right isolate.
+ */
+export const isolateLatin = (s: string): string =>
+  s.replace(BIDI_MARKS, '').replace(/[^\s\u0590-\u08ff](?:[^\u0590-\u08ff]*[^\s\u0590-\u08ff])?/g, (m) => (/[A-Za-z]/.test(m) ? `\u2066${m}\u2069` : m));

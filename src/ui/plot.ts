@@ -1,7 +1,7 @@
 import rough from 'roughjs';
 import { h, prefersReducedMotion } from '../core/dom';
 import { canvasHandFont } from '../core/font';
-import { canvasBidi } from '../core/bidi';
+import { canvasBidi, isolateLatin } from '../core/bidi';
 import { fmt, isRtl } from '../core/i18n';
 import { onThemeChange } from '../core/theme';
 import { type ColorKey, color, withAlpha } from './colors';
@@ -289,7 +289,7 @@ export class Plot {
               borderTop: `3px ${s.dash ? 'dashed' : 'solid'} ${swatchColor(s.color)}`,
             },
           }),
-          s.label,
+          isRtl() ? isolateLatin(s.label!) : s.label,
         ),
       ),
     );
