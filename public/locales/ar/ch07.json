@@ -812,12 +812,12 @@
         "0": {
           "f": "1\\ \\ (\\text{خطوة})",
           "F": "\\dfrac{1}{s}",
-          "steps": "\\text{المنحنى الذي ميله هو } e^{-st} \\text{ هو } -\\tfrac{1}{s}e^{-st}||\\begin{aligned} \\int_0^\\infty e^{-st}\\,dt &=\\Big[-\\tfrac{1}{s}e^{-st}\\Big]_0^\\infty \\\\ &= 0-\\big(-\\tfrac{1}{s}\\big)=\\frac{1}{s}\\quad (s>0) \\end{aligned}"
+          "steps": "\\text{} e^{-st} \\text{ هو المنحنى الذي ميله } -\\tfrac{1}{s}e^{-st}||\\begin{aligned} \\int_0^\\infty e^{-st}\\,dt &=\\Big[-\\tfrac{1}{s}e^{-st}\\Big]_0^\\infty \\\\ &= 0-\\big(-\\tfrac{1}{s}\\big)=\\frac{1}{s}\\quad (s>0) \\end{aligned}"
         },
         "1": {
           "f": "e^{at}",
           "F": "\\dfrac{1}{s-a}",
-          "steps": "e^{at}\\,e^{-st}=e^{-(s-a)t}||\\text{إنه صف الخطوة مع } s \\text{ استُبدل بـ } s-a||\\begin{gathered} \\int_0^\\infty e^{-(s-a)t}\\,dt=\\frac{1}{s-a} \\\\ (s>a;\\ \\text{هنا } a=-1) \\end{gathered}"
+          "steps": "e^{at}\\,e^{-st}=e^{-(s-a)t}||\\text{في صف الخطوة } s \\text{ يحلّ محلّ } s-a||\\begin{gathered} \\int_0^\\infty e^{-(s-a)t}\\,dt=\\frac{1}{s-a} \\\\ (s>a;\\ \\text{هنا } a=-1) \\end{gathered}"
         },
         "2": {
           "f": "\\sin\\omega t,\\ \\cos\\omega t",
@@ -827,7 +827,7 @@
         "3": {
           "f": "\\begin{gathered} e^{-\\sigma t}\\sin\\omega t \\\\ e^{-\\sigma t}\\cos\\omega t \\end{gathered}",
           "F": "\\begin{gathered} \\dfrac{\\omega}{(s+\\sigma)^2+\\omega^2} \\\\[4pt] \\dfrac{s+\\sigma}{(s+\\sigma)^2+\\omega^2} \\end{gathered}",
-          "steps": "e^{-\\sigma t}\\sin\\omega t\\cdot e^{-st}=\\sin\\omega t\\cdot e^{-(s+\\sigma)t}||\\text{لذا خذ صف الجيب واستبدل } s \\text{ بـ } s+\\sigma||\\begin{gathered} \\frac{\\omega}{(s+\\sigma)^2+\\omega^2}\\quad\\text{و}\\quad\\frac{s+\\sigma}{(s+\\sigma)^2+\\omega^2} \\\\ (\\text{هنا }\\sigma=0.5,\\ \\omega=2) \\end{gathered}"
+          "steps": "e^{-\\sigma t}\\sin\\omega t\\cdot e^{-st}=\\sin\\omega t\\cdot e^{-(s+\\sigma)t}||\\text{في صف الجيب } s \\text{ يحلّ محلّ } s+\\sigma||\\begin{gathered} \\frac{\\omega}{(s+\\sigma)^2+\\omega^2}\\quad\\text{و}\\quad\\frac{s+\\sigma}{(s+\\sigma)^2+\\omega^2} \\\\ (\\text{هنا }\\sigma=0.5,\\ \\omega=2) \\end{gathered}"
         }
       },
       "colCheck": "تم التحقق منها مقابل المساحة المقيسة",
