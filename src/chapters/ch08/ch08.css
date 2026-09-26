@@ -34,10 +34,12 @@
   min-width: 0;
   padding: 5px 9px 6px;
 }
-/* phones: the readouts get the wider share, and the pole pair (the longest value) a whole row */
+/* phones: the drone gets its own row at full size (beside the readouts it shrank to a thumbnail and
+   squeezed labels like "Überschwingen" into mid-word breaks); the pole pair (the longest value) and
+   the measured settling time each take a whole row */
 @media (max-width: 560px) {
   .pair-grid.map-pair {
-    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: 8px;
   }
   .readouts.map-readouts .readout:first-child,
@@ -68,4 +70,18 @@
 .limit-controls > .toggle,
 .limit-controls > label {
   flex: 0 0 auto;
+}
+/* sentence-long play outputs (a verdict, a warning) wrap like the words around them */
+.play .calc[data-calc='verdict'],
+.play .calc[data-calc='note'] {
+  white-space: normal;
+}
+/* the zero widget's words, under its formula */
+.zero-note {
+  margin: -0.4em 0 0.9em;
+  font-size: 0.95rem;
+  text-align: center;
+}
+.readout-label .label-math {
+  white-space: nowrap;
 }

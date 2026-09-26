@@ -1,12 +1,12 @@
 import { h, s as svg } from '../../core/dom';
 import { fmt, tc } from '../../core/i18n';
-import { tex } from '../../core/rich-text';
+import { setRich, tex } from '../../core/rich-text';
 import { regionPath } from '../../math/region';
 import { stepMetrics } from '../../math/metrics';
 import { DRONE, DroneSim, defaultDroneConfig } from '../../sim/drone-model';
 import { followPlay } from '../../story/play';
 import type { WidgetFactory } from '../../story/types';
-import { readout, segmented, slider, toggle } from '../../ui/controls';
+import { readout, segmented, slider, toggle, valueDir } from '../../ui/controls';
 import { DroneView } from '../../ui/drone-view';
 import { Loop } from '../../ui/loop';
 import { Plot } from '../../ui/plot';
@@ -37,6 +37,22 @@ import {
 } from './poles';
 
 const { m, c } = DRONE;
+
+/**
+ * Readout labels that mix words and a little formula ("يستقر، قاعدة 4/σ", "ωn = |p|"): each formula
+ * stays one left-to-right run, so right-to-left text never turns 4/σ into σ/4.
+ */
+function isolateLabels(root: HTMLElement): void {
+  root.querySelectorAll<HTMLElement>('.readout-label').forEach((l) => {
+    const txt = l.textContent ?? '';
+    if (!/[/=|]/.test(txt)) return;
+    // each formula-ish token ("4/σ") is one unbreakable left-to-right run
+    const parts = txt.split(/([^\s\u0590-\u08ff()،,（）、，]*[/=|][^\s\u0590-\u08ff()،,（）、，]*)/);
+    const nodes = parts.map((part, i) => (i % 2 ? h('bdi', { dir: 'ltr', class: 'label-math' }, part) : part));
+    // a label with no right-to-left letters at all ("ωn = |p|") is left-to-right as a whole
+    l.replaceChildren(...(valueDir(txt) === 'ltr' ? [h('bdi', { dir: 'ltr' }, ...nodes)] : nodes));
+  });
+}
 
 /** 8a — G(s) maps setpoint changes to height changes around the 1 m hover. */
 const recipe: WidgetFactory = (host, ctx) => {
@@ -298,6 +314,7 @@ const playground: WidgetFactory = (host, ctx) => {
     status.className = 'w-status bad';
     plot.describe(status.textContent);
   }
+  isolateLabels(host);
   const loop = new Loop((dt) => {
     if (fall) {
       fall.carry += dt;
@@ -376,7 +393,7 @@ const playground: WidgetFactory = (host, ctx) => {
     // under the line, out of the ray labels along the top edge
     wLabel.setAttribute('x', String(plane.sx(-10) + 6));
     // (and never inside the band the ray labels hang in along the top edge)
-    wLabel.setAttribute('y', String(w > 5.2 ? Math.max(plane.sy(w) + 16, plane.sy(8) + 56) : plane.sy(w) - 6));
+    wLabel.setAttribute('y', String(w > 5.2 ? Math.max(plane.sy(w) + 16, plane.sy(8) + 62) : plane.sy(w) - 6));
     wLabel.textContent = w > 0.05 ? t('wiggle', { T: fmt((2 * Math.PI) / w, 2) }) : '';
     // the status tells the whole story of this replay: where it lives, the ground, odd gains, thrust
     const words = [t(`verdict.${verdict}`)];
@@ -483,10 +500,11 @@ const zero: WidgetFactory = (host, ctx) => {
   plot.set('ref', ref.xs, ref.ys);
   const rA = readout(t('osNo'));
   const rB = readout(t('osYes'));
-  const eq = h('div', { class: 'math-block' });
+  const eq = h('div', { class: 'math-block zero-eq' });
+  const note = h('p', { class: 'w-cap zero-note' });
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
   right.append(h('div', { class: 'readouts' }, rA.el, rB.el), status);
-  host.append(eq, h('p', { class: 'w-help' }, t('help')));
+  host.append(eq, note, h('p', { class: 'w-help' }, t('help')));
   const osNo = stepMetrics(ref.xs, ref.ys, 0, 1).overshoot;
   rA.set(t('pct', { v: fmt(osNo, 1) }));
   plane.svg.addEventListener('pointerdown', () => plot.clear(true));
@@ -502,7 +520,9 @@ const zero: WidgetFactory = (host, ctx) => {
     const os = stepMetrics(d.xs, d.ys, 0, 1).overshoot;
     rB.set(t('pct', { v: fmt(os, 1) }), os > osNo + 1 ? 'bad' : '');
     const zz = trim(-z);
-    eq.innerHTML = tex(`G(s) = \\frac{13}{${zz}}\\cdot\\frac{s + ${zz}}{s^2 + 4s + 13}\\qquad(\\text{${t('zeroAt')}}\\ s = ${trim(z)};\\ \\text{${t('scaled')}})`, true);
+    eq.innerHTML = tex(`G(s) = \\frac{13}{${zz}}\\cdot\\frac{s + ${zz}}{s^2 + 4s + 13}`, true);
+    // the words live outside the formula, so they wrap on a phone and read in the page's direction
+    setRich(note, t('note', { z: `$s = ${trim(z)}$` }));
     status.textContent = t(z > -1.5 ? 'near' : z < -8 ? 'far' : 'mid', { g: fmt(g, 2) });
     plot.describe(t('describe', { z: fmt(z, 2), o: fmt(os, 0) }));
   }
@@ -578,6 +598,7 @@ const limit: WidgetFactory = (host, ctx) => {
   const sl = slider({ label: t('sigma'), min: 1, max: 8, step: 0.5, value: sig, unit: '', format: (v) => `−${fmt(v, 1)} ± ${fmt(v, 1)}i`, onInput: (v) => ((sig = v), update()) });
   const tg = toggle(t('toggle'), real, (v) => ((real = v), update()));
   host.append(h('div', { class: 'w-controls limit-controls' }, sl.el, tg.el), h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rPeak.el, rTsI.el, rTsR.el, rOsR.el)), status);
+  isolateLabels(host);
   update();
 };
 
