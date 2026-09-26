@@ -1,4 +1,5 @@
 import { h, uid } from '../../core/dom';
+import { canvasHandFont } from '../../core/font';
 import { fmt, tc } from '../../core/i18n';
 import { tex } from '../../core/rich-text';
 import { c as cx } from '../../math/complex';
@@ -354,6 +355,50 @@ const unspin: WidgetFactory = (host, ctx) => {
       g.lineTo(x1 - hd * ux - hd * 0.6 * uy, y1 - hd * uy + hd * 0.6 * ux);
       g.stroke();
     }
+    labelOutside(g, px, py, s);
+  };
+  // When the spiral winds round its final total, every corner next to the diamond is on the path,
+  // so the label moves out beside the spiral with a short arrow pointing in at the diamond. The
+  // frame always holds the starting range [−0.5, 1.5], so the room measured against it is real.
+  let outside = false;
+  const labelOutside = (g: CanvasRenderingContext2D, px: (x: number) => number, py: (y: number) => number, s: ReturnType<typeof cx>) => {
+    const L = unspinLimit(W0, s);
+    const e = unspinExtent(W0, s, T1);
+    const X = px(L.re);
+    const Y = py(L.im);
+    const l = px(e.x[0]);
+    const r = px(e.x[1]);
+    const M = 14;
+    const wraps = X - l > M && r - X > M && Y - py(e.y[1]) > M && py(e.y[0]) - Y > M;
+    const text = t('limit');
+    g.font = canvasHandFont(15);
+    const need = g.measureText(text).width + 30;
+    const roomL = l - px(-0.5);
+    const roomR = px(1.5) - r;
+    const side = !wraps || Math.max(roomL, roomR) < need ? 0 : roomL >= roomR ? -1 : 1;
+    if ((side !== 0) !== outside) {
+      outside = side !== 0;
+      requestAnimationFrame(draw);
+    }
+    if (!side) return;
+    const edge = side < 0 ? l - 5 : r + 5;
+    const tail = edge + side * 14;
+    g.strokeStyle = g.fillStyle = color('ink');
+    g.lineWidth = 1.8;
+    g.beginPath();
+    g.moveTo(tail, Y);
+    g.lineTo(edge, Y);
+    g.moveTo(edge + side * 6, Y - 4);
+    g.lineTo(edge, Y);
+    g.lineTo(edge + side * 6, Y + 4);
+    g.stroke();
+    g.textAlign = side < 0 ? 'right' : 'left';
+    g.textBaseline = 'middle';
+    g.lineJoin = 'round';
+    g.strokeStyle = color('card');
+    g.lineWidth = 3;
+    g.strokeText(text, tail + side * 4, Y);
+    g.fillText(text, tail + side * 4, Y);
   };
   const rMag = readout(t('mag'));
   const rSpin = readout(t('spin'));
@@ -379,7 +424,7 @@ const unspin: WidgetFactory = (host, ctx) => {
     const cur = unspinIntegral(W0, s, tNow);
     plot.setMarkers([
       // not a pole: × and ○ are kept for poles and zeros (Chapter 8)
-      { x: L.re, y: L.im, color: 'ink', shape: 'diamond', label: t('limit'), clamp: true, avoid: ['path'] },
+      { x: L.re, y: L.im, color: 'ink', shape: 'diamond', label: outside ? undefined : t('limit'), clamp: true, avoid: ['path'] },
       { x: cur.re, y: cur.im, color: 'ink', shape: 'dot' },
     ]);
     const mag = Math.hypot(L.re, L.im);
@@ -637,7 +682,8 @@ const solve: WidgetFactory = (host, ctx) => {
   mark(host);
   let kp = 20;
   let h0 = 1;
-  let ic = false;
+  // ?reveal shows the page's swap maths in their fixed form, so the widget starts fixed too
+  let ic = new URLSearchParams(location.search).has('reveal');
   const T1 = 6;
   host.append(h('p', { class: 'w-title' }, t('title')));
   const plot = new Plot(host, {
