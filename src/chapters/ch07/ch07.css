@@ -7,7 +7,7 @@
 .ltable td {
   border-bottom: 1.5px dashed var(--paper-3);
   padding: 8px 6px;
-  text-align: left;
+  text-align: start;
   vertical-align: middle;
 }
 .ltable th {
@@ -16,6 +16,11 @@
   font-size: 1.05rem;
   white-space: nowrap;
   color: var(--ink-2);
+}
+.ltable .btn.small {
+  /* a button label never breaks mid-word ("Herlei-ten") */
+  white-space: nowrap;
+  hyphens: manual;
 }
 .ltable tr {
   transition: background-color 200ms ease;
