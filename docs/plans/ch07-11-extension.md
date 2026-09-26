@@ -9,8 +9,9 @@
 > (`docs/plans/ch04-06-extension.md`, commits `7e76684`, `16c2598`, `af4d4f8`, `ffc8acf`).
 > **Chapters 0–6 are unchanged** except where a shared component (plot labels, s-plane, drone
 > view, concept map) is fixed for everyone.
-> **Baseline:** `0.1.0` at `9815e60` (main, 2026-09-26). Nothing in this document has been
-> implemented; it is research and planning only.
+> **Baseline:** `0.1.0` at `9815e60` (main, 2026-09-26).
+> **Status (2026-09-26): built.** See "Status: built" before the appendix for what changed from
+> this plan and what is still open.
 
 Every phase follows the project rules (`AGENTS.md`): all text in `public/locales/{lang}/chNN.json`
 for all 10 locales in the same commit, `locales.test.ts` green, every stated number verified in
@@ -3077,6 +3078,70 @@ new sentences. Each chapter's own detailed order is at the end of its phase.
   are long prose runs), one lock-in pop per chapter's "aha" (Ch 7 matched spins → 1/σ; Ch 8
   challenge met; Ch 10 first stable robot shower), and character beats for the new mistakes
   (June's "if 4 is good, 10 is better" in Ch 9; June's −8 ± 8i slide in Ch 8).
+
+---
+
+## Status: built
+
+All seven phases are implemented. Shared building blocks landed first (Phase 1), then each
+chapter's English, code and number tests, then all nine translations, then a per-chapter check in
+`de`, `ar`, `ja` (and `pl`/`es` for HUDs) at 375 and 1280 px, light and dark, and one pass of
+shared fixes that came out of it. Deviations from the plan, and why:
+
+**Shared (Phase 1)**
+- `Trace` has both `command` (clipped: what the motors deliver, used by Ch 11's "asked for" line)
+  and `request` (unclipped: Ch 9's "D asks for 209 N"). The plan used one name for both.
+- The mirror-pair split into two real poles (1e, optional) and the Ch 7 `pf` map node were not
+  built: both need their own design.
+- The concept map was re-laid out so every node fits its widest translation (the plan's positions
+  did not fit `de`/`pl`); on phones every chapter's map starts scrolled to its own cluster.
+- Added after the check pass: one central right-to-left rule (`src/core/bidi.ts`) that keeps
+  little expressions, negative numbers, number + unit and play outputs in one left-to-right run
+  in Arabic, replacing the per-string marks the chapter checks had added; units in
+  `common:units.*`; readable accessible names for maths labels (`texToPlain`).
+
+**Chapters**
+- Ch 7: quiz is q1, q2, q5, q6 (q3, q4 removed to keep 2–4 items; their numbers stay tested).
+  Skipped: unspin s-plane link, spinner inset, × pole seed in explode, P8 twin readouts.
+- Ch 8: with the ground a real event, 0.6 ± 3i climbs to about 3.85 m, so it hits the page only
+  when the top bar is close; otherwise the status reports the ground crash. Skipped: the mini
+  s-plane in the limit widget (a 45° pair needs a plane ~1.8× taller than wide). The challenge
+  zone's steps at the 2 s edge are real (settling time jumps as a peak leaves the band).
+- Ch 9: the kick sentence starts at 0.5 m to match the widget (200 N); q5 (too much D) replaces
+  q2. Pinned time stops at a crash; a crashed drone stays down. Skipped: the playground mini
+  s-plane and an inline "flip it on" link.
+- Ch 10: the loop symbol is `G_{\circ}(s)` (L stays the delay); "smoother" is the one term for
+  the first-order lag. q2 became the read-the-margins item q2b; the optional q5 was left out
+  (side trip E carries its numbers).
+- Ch 11: the fix is "lengthen the filter to 0.04 s, Kd about 7" (six stars on 30/30 noise
+  seeds; Kd 6 fails one, Kd 8 fails seven), and the "Stuck?" aside nudges Ki (the arrival star,
+  not the drop star, was the one failing). The D-from-measurement toggle is gone; old saves still
+  load. The old q3 (a Ch 10 shower item) was replaced by the finale's own q4/q5. A crash now
+  stops the motors in the live mission, so a crashed drone can no longer climb again.
+
+**Translations (Phase 7):** every new string in all nine locales; terms and decisions in
+`docs/glossary.md` ("Chapters 7–11 terms", "Settled decisions", per-locale doubts, cast gender).
+Settled across all chapters: settling time and droop in fr/es/zh-CN/ja, overshoot and "map of s"
+in pt-BR/zh-CN/ja, sensor/block diagram/gain in ar, controller/sensor spellings in ja.
+
+**Validation:** `pnpm test` (611+ tests: every stated number, plays in every locale, locale
+structure, map overlaps), `tsc`, oxlint, `pnpm a11y` (154 pages) and `pnpm a11y --full` (280 pages,
+every language × both themes): 0 violations, screenshots of every changed widget at 1280/375 × light/dark in en, de, ar, ja
+(evidence in the gitignored `scratch/ch07-11-evidence/after/` and `qa/`).
+
+**Still open**
+- Native-speaker review with control knowledge for every new string (glossary lists the doubts),
+  and an Arabic reviewer's call on numeral style.
+- Some readout values are built in chapter code with Latin units ("0.49 m·s", "4.89 N"): they
+  should read `common:units.*` like the sliders now do.
+- Arabic text under `\underbrace` is small; Ch 10's Arabic `1/(iω)` note has its text pieces
+  swapped for visual order, so a screen reader hears them reversed.
+- One side-trip formula scrolls sideways by ~54 px at 375 px (it is a focusable scroll box).
+- ja uses different words for thrust chatter / sensor jitter in Ch 9 and Ch 11 (native review).
+- Small visual items: `setDroop`'s label can lie across a settling curve (Ch 7 solve, worst in
+  Arabic); rotated y-axis names in Japanese draw sideways glyphs; Arabic canvas ticks show "-1"
+  with a hyphen instead of "−1"; the unspin "final total" label can sit on the arrow path
+  mid-replay.
 
 ---
 
