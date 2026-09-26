@@ -79,12 +79,53 @@ export function setRich(el: HTMLElement, src: string): HTMLElement {
   return el;
 }
 
-/** Plain-text version of rich content (maths replaced by its TeX source), for accessible names. */
+const GREEK: Record<string, string> = {
+  alpha: 'α', beta: 'β', gamma: 'γ', delta: 'δ', epsilon: 'ε', varepsilon: 'ε', zeta: 'ζ', eta: 'η',
+  theta: 'θ', kappa: 'κ', lambda: 'λ', mu: 'μ', nu: 'ν', xi: 'ξ', pi: 'π', rho: 'ρ', sigma: 'σ',
+  tau: 'τ', phi: 'φ', varphi: 'φ', chi: 'χ', psi: 'ψ', omega: 'ω',
+  Gamma: 'Γ', Delta: 'Δ', Theta: 'Θ', Lambda: 'Λ', Pi: 'Π', Sigma: 'Σ', Phi: 'Φ', Psi: 'Ψ', Omega: 'Ω',
+};
+const SYMBOL: Record<string, string> = {
+  cdot: '·', times: '×', div: '÷', pm: '±', mp: '∓', approx: '≈', ne: '≠', neq: '≠', le: '≤', leq: '≤',
+  ge: '≥', geq: '≥', infty: '∞', to: '→', rightarrow: '→', leftarrow: '←', circ: '∘', degree: '°',
+  partial: '∂', int: '∫', sum: 'Σ', sqrt: '√', ldots: '…', dots: '…', cdots: '…', prime: '′',
+};
+const SUP: Record<string, string> = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻', '−': '⁻' };
+
+/**
+ * Readable text for a TeX formula, for accessible names and announcements: "K_p" → "Kp",
+ * "\tau_f" → "τf", "\frac{a}{b}" → "a/b", "\text{gain}" → "gain", colour macros dropped.
+ */
+export function texToPlain(src: string): string {
+  // escaped braces are literal text: park them so the group handling below leaves them alone
+  let s = src.replace(/\\\{/g, '\uE000').replace(/\\\}/g, '\uE001');
+  // groups that only change style or colour keep their content
+  for (let i = 0; i < 4; i++) {
+    s = s.replace(/\\(?:text|mathrm|mathbf|mathit|operatorname|textbf|boldsymbol|sp|out|err|eff|dis|htmlClass\{[^}]*\})\s*\{([^{}]*)\}/g, '$1');
+    s = s.replace(/\\frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/g, (_m, a: string, b: string) => `${a.length > 1 ? `(${a})` : a}/${b.length > 1 ? `(${b})` : b}`);
+    s = s.replace(/\\sqrt\s*\{([^{}]*)\}/g, '√($1)');
+    s = s.replace(/\\mathcal\s*\{L\}/g, '𝓛');
+  }
+  s = s.replace(/\\(?:left|right|big|Big|bigg|Bigg)(?![a-zA-Z])/g, '');
+  s = s.replace(/\\[,;:! ]|\\quad|\\qquad|~/g, ' ');
+  s = s.replace(/\\([{}%$&#_])/g, '$1');
+  s = s.replace(/\\([a-zA-Z]+)/g, (_m, name: string) => GREEK[name] ?? SYMBOL[name] ?? name);
+  // superscripts: digits become ², others read "^(…)"; subscripts join the base ("K_p" → "Kp")
+  s = s.replace(/\^\{([^{}]*)\}|\^(.)/g, (_m, g?: string, c?: string) => {
+    const v = g ?? c ?? '';
+    return [...v].every((ch) => SUP[ch]) ? [...v].map((ch) => SUP[ch]).join('') : `^(${v})`;
+  });
+  s = s.replace(/_\{([^{}]*)\}|_(.)/g, (_m, g?: string, c?: string) => g ?? c ?? '');
+  s = s.replace(/\{,\}/g, ',').replace(/[{}]/g, '').replace(/\uE000/g, '{').replace(/\uE001/g, '}');
+  return s.replace(/\s+/g, ' ').trim();
+}
+
+/** Plain-text version of rich content (maths turned into readable text), for accessible names. */
 export function plainText(el: Element): string {
   const clone = el.cloneNode(true) as Element;
   clone.querySelectorAll('.katex').forEach((k) => {
     const src = k.querySelector('annotation')?.textContent ?? '';
-    k.replaceWith(src);
+    k.replaceWith(texToPlain(src));
   });
   return (clone.textContent ?? '').replace(/\s+/g, ' ').trim();
 }

@@ -57,6 +57,7 @@ export interface Axis {
 
 export interface SeriesDef {
   id: string;
+  /** a colour key, or `key@alpha` for a faint line drawn behind the others (e.g. `eff@0.45`) */
   color: ColorKey | string;
   width?: number;
   dash?: number[];
@@ -284,7 +285,7 @@ export class Plot {
           { class: 'plot-legend-item' },
           h('i', {
             style: {
-              borderTop: `3px ${s.dash ? 'dashed' : 'solid'} ${s.color.startsWith('#') ? s.color : `var(--${cssName(s.color)})`}`,
+              borderTop: `3px ${s.dash ? 'dashed' : 'solid'} ${swatchColor(s.color)}`,
             },
           }),
           s.label,
@@ -718,12 +719,12 @@ export class Plot {
     for (const s of this.series.values()) {
       if (!s.gx || !s.gy) continue;
       ctx.globalAlpha = 0.3;
-      this.stroke(s.gx, s.gy, color(s.color), s.width ?? 2.2, [4, 4]);
+      this.stroke(s.gx, s.gy, seriesColor(s.color), s.width ?? 2.2, [4, 4]);
       ctx.globalAlpha = 1;
     }
     for (const s of this.series.values()) {
-      if (s.dots) this.dots(s.xs, s.ys, color(s.color));
-      else this.stroke(s.xs, s.ys, color(s.color), s.width ?? 2.4, s.dash ?? []);
+      if (s.dots) this.dots(s.xs, s.ys, seriesColor(s.color));
+      else this.stroke(s.xs, s.ys, seriesColor(s.color), s.width ?? 2.4, s.dash ?? []);
     }
 
     if (this.overlay) this.overlay(ctx, this.px, this.py);
@@ -1076,6 +1077,19 @@ function drawDistanceArrow(ctx: CanvasRenderingContext2D, A: Pt, B: Pt, c: strin
 function bandColor(c: string): string {
   const m = /^(\w+)@([\d.]+)$/.exec(c);
   return m ? withAlpha(color(m[1]), Number(m[2])) : c;
+}
+
+/** A series colour: a key (resolved per theme), `key@alpha` for a faint series, or literal CSS. */
+function seriesColor(c: string): string {
+  const m = /^(\w+)@([\d.]+)$/.exec(c);
+  return m ? withAlpha(color(m[1]), Number(m[2])) : color(c);
+}
+
+/** CSS for a legend swatch: a colour key, `key@alpha` (a faint series) or a literal colour. */
+function swatchColor(c: string): string {
+  if (c.startsWith('#')) return c;
+  const m = /^(\w+)@([\d.]+)$/.exec(c);
+  return m ? `color-mix(in srgb, var(--${cssName(m[1])}) ${Math.round(Number(m[2]) * 100)}%, transparent)` : `var(--${cssName(c)})`;
 }
 
 function cssName(k: string): string {
