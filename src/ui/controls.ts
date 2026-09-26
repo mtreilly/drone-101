@@ -18,6 +18,11 @@ export interface SliderOptions {
   onInput: (v: number) => void;
   /** optional helper text under the slider */
   hint?: string;
+  /**
+   * Called once per deliberate choice: on pointer release, and for the keyboard after a pause in
+   * arrow presses (or on Enter), not on every step. See `onSettle`.
+   */
+  onSettle?: (v: number) => void;
 }
 
 export interface Slider {
@@ -61,7 +66,8 @@ export function slider(o: SliderOptions): Slider {
   });
   const label = h('label', { for: id, class: 'slider-label' });
   setRich(label, o.label);
-  if (label.querySelector('.katex')) input.setAttribute('aria-label', plainText(label));
+  nameFromMath(input, label);
+  if (o.onSettle) onSettle(input, o.onSettle);
   const el = h(
     'div',
     { class: `slider${o.color ? ` c-${o.color}-slider` : ''}` },
@@ -186,7 +192,7 @@ export function segmented<V extends string>(
         input.addEventListener('change', () => onChange(o.value));
         const lab = h('label', { for: id, dir: 'auto' });
         setRich(lab, o.label);
-        if (lab.querySelector('.katex')) input.setAttribute('aria-label', plainText(lab));
+        nameFromMath(input, lab);
         return h('span', null, input, lab);
       }),
     ),
@@ -206,5 +212,66 @@ export function toggle(label: string, checked: boolean, onChange: (v: boolean) =
   input.addEventListener('change', () => onChange(input.checked));
   const lab = h('label', { for: id });
   setRich(lab, label);
+  // "Mika's big $K_i$ = 50" would be announced as "Mika's big = 50" without this
+  nameFromMath(input, lab);
   return { el: h('div', { class: 'toggle' }, input, lab), input };
+}
+
+/**
+ * Gives a control whose label contains maths a plain-text accessible name (KaTeX output is not
+ * read reliably by screen readers). Labels without maths keep their native `<label for>` name.
+ */
+export function nameFromMath(input: HTMLElement, label: HTMLElement): void {
+  if (label.querySelector('.katex')) input.setAttribute('aria-label', plainText(label));
+}
+
+/** Keys that change a range input's value. */
+const VALUE_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End']);
+
+/**
+ * Keyboard-settle helper for sliders that record one result per deliberate choice (a dot per
+ * probe value, a measurement per frequency). `fn` runs on pointer release straight away; for the
+ * keyboard it runs once the reader has stopped pressing arrows for `idle` ms, at once on Enter,
+ * and on leaving the slider with a choice pending, so 60 arrow presses make one dot, not 60.
+ * Returns a function that removes the listeners.
+ */
+export function onSettle(input: HTMLInputElement, fn: (v: number) => void, idle = 600): () => void {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let keyed = false;
+  let pending = false;
+  const fire = () => {
+    clearTimeout(timer);
+    timer = undefined;
+    pending = false;
+    fn(Number(input.value));
+  };
+  const onKey = (e: Event) => {
+    const key = (e as KeyboardEvent).key;
+    if (key === 'Enter') {
+      e.preventDefault();
+      fire();
+    } else if (VALUE_KEYS.has(key)) keyed = true;
+  };
+  const onPointer = () => (keyed = false);
+  const onChange = () => {
+    if (!keyed) return fire();
+    keyed = false;
+    pending = true;
+    clearTimeout(timer);
+    timer = setTimeout(fire, idle);
+  };
+  const onBlur = () => {
+    if (pending) fire();
+  };
+  input.addEventListener('keydown', onKey);
+  input.addEventListener('pointerdown', onPointer);
+  input.addEventListener('change', onChange);
+  input.addEventListener('blur', onBlur);
+  return () => {
+    clearTimeout(timer);
+    input.removeEventListener('keydown', onKey);
+    input.removeEventListener('pointerdown', onPointer);
+    input.removeEventListener('change', onChange);
+    input.removeEventListener('blur', onBlur);
+  };
 }

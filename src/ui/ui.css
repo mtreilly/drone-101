@@ -589,3 +589,45 @@ html[dir='rtl'] .plot-legend-item {
   pointer-events: none;
   z-index: 40;
 }
+
+/* ---------- s-plane: guides, ghosts, off-edge arrows, label floors ---------- */
+/* --u is viewBox units per CSS pixel: labels never render below 11 px however narrow the plane */
+.s-plane .tick {
+  font-size: max(calc(13px * var(--k, 1)), calc(11px * var(--u, 1)));
+}
+.s-plane .guide-label {
+  font-size: max(calc(15px * var(--k, 1)), calc(11px * var(--u, 1)));
+}
+.s-plane .guides .guide.ray {
+  stroke-opacity: 0.6;
+}
+.s-plane .pt .edge {
+  display: none;
+  fill: currentColor;
+  stroke: var(--card);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+.s-plane .pt.off .mark {
+  display: none;
+}
+.s-plane .pt.off .edge {
+  display: inline;
+}
+.s-plane .pt .off-value {
+  font-family: var(--font-hand);
+  font-size: 16px;
+  font-weight: 700;
+  fill: currentColor;
+  paint-order: stroke;
+  stroke: var(--card);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+.s-plane .pt.ghost {
+  opacity: 0.28;
+  pointer-events: none;
+}
+.s-plane .pt.ghost.twin {
+  opacity: 0.24;
+}

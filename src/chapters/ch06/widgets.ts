@@ -199,10 +199,6 @@ const personality: WidgetFactory = (host, ctx) => {
   planeCell.append(caption(t('planeCap')));
   const plane = new SPlane(planeCell, { reMin: -10, reMax: 2, imMax: 6, label: t('planeAria'), reLabel: t('re'), imLabel: t('im'), maxWidth: 360 });
   plane.svg.style.overflow = 'hidden';
-  const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  circle.setAttribute('class', 'guide');
-  plane.deco.append(circle);
-  const circleLabel = planeLabel(plane, 'pt-note muted');
   const offLabel = planeLabel(plane, 'pt-note');
   springCell.append(caption(t('springCap')));
   const msd = new MsdView(springCell, t('msdAria'), 50);
@@ -261,10 +257,8 @@ const personality: WidgetFactory = (host, ctx) => {
       }),
     );
     offLabel(off, plane.o.reMin, 0, 6, -12, 'start');
-    circle.setAttribute('cx', String(plane.sx(0)));
-    circle.setAttribute('cy', String(plane.sy(0)));
-    circle.setAttribute('r', String(plane.sx(wn) - plane.sx(0)));
-    circleLabel(t('radius', { w: fmt(wn, 1) }), 0, -Math.min(wn, plane.o.imMax * 0.92), -6, 18, 'end');
+    // every point on this circle has the same ωn
+    plane.setCircle(wn, t('radius', { w: fmt(wn, 1) }));
     panelZ.forEach((z, i) => {
       const d = sample(secondOrderSolution(m, 2 * z * wn * m, k, k, 0, 0), T1, 300);
       panelPlots[i].p.set('y', d.xs, d.ys);

@@ -70,6 +70,18 @@ Chosen during the Chapter 4/6 extension (`docs/plans/ch04-06-extension.md`).
 | settling time | temps de réponse à 2 % | tiempo de establecimiento | tempo di assestamento | Einschwingzeit | czas ustalania | tempo de acomodação | 整定時間 | 稳定时间 | زمن الاستقرار |
 | natural logarithm | logarithme népérien | logaritmo natural | logaritmo naturale | natürlicher Logarithmus | logarytm naturalny | logaritmo natural | 自然対数 | 自然对数 | اللوغاريتم الطبيعي |
 
+## Shared s-plane labels (Chapters 7–11 extension, Phase 1)
+
+Short labels the s-plane draws or announces itself (`common:splane.*`), used from Chapter 8 on.
+
+| Term | Definition | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
+|---|---|---|---|---|---|---|---|---|---|---|
+| double (pole) | a mirror pair that has met on the real axis: two poles at one spot | double | doble | doppio | doppelt | podwójny | duplo | 重根 | 重根 | مزدوج |
+| off the map | a pole too far out to draw; the arrow at the edge points at it | hors de la carte | fuera del mapa | fuori dalla mappa | außerhalb der Karte | poza mapą | fora do mapa | マップの外 | 超出图外 | خارج الخريطة |
+
+"Settles ≈ … s" on the s-plane's settling lines reuses each locale's Chapter 8 wording
+(`ch08:widgets.playground.settles`); fr/es/zh-CN inherit the open settling-time question below.
+
 ## Open terminology questions
 
 Places where one concept currently has two words. Found by comparing the locale files on

@@ -41,6 +41,59 @@ const TOP = 25;
 const CX = 135;
 /** the drone's own drawing (props, arms, legs) in view units, relative to its group origin */
 const ART = { x: CX - 62, y: -16, w: 124, h: 34 };
+/** smallest on-screen text size (CSS px), however small the picture is drawn */
+const MIN_TEXT_PX = 11;
+/** the drawing's parts that labels must not cover, relative to the drone group: props, arm and posts, body and legs */
+export const DRONE_PARTS: Box[] = [
+  { x: CX - 63, y: -15, w: 42, h: 10 },
+  { x: CX + 21, y: -15, w: 42, h: 10 },
+  { x: CX - 44, y: -9, w: 88, h: 11 },
+  { x: CX - 20, y: -11, w: 40, h: 29 },
+];
+/** the hanging package, when there is one */
+const PACKAGE: Box = { x: CX - 14, y: 8, w: 28, h: 40 };
+
+/** the height readout's corner */
+const READOUT: Box = { x: W * 0.35, y: 0, w: W * 0.65, h: 24 };
+
+/** The drone drawing's parts for the group placed at view y `gy`. */
+export const droneBoxes = (gy: number, pkg = false): Box[] => (pkg ? [...DRONE_PARTS, PACKAGE] : DRONE_PARTS).map((p) => ({ ...p, y: p.y + gy }));
+
+/**
+ * Where the "target" label may go, in order: above the line on the left, below it, the same on the
+ * right, and last a little further from the line on the left (for a drone hovering just under it,
+ * as a drooping P controller does). Boxes run from the cap height to just under the baseline.
+ */
+export function targetSpots(lineY: number, w: number, fs: number): Box[] {
+  const box = (x: number, base: number): Box => ({ x, y: base - fs * 0.75, w, h: fs * 0.95 });
+  const above = lineY - 6;
+  const below = lineY + 4 + fs * 0.75;
+  return [box(54, above), box(54, below), box(W - 6 - w, above), box(W - 6 - w, below), box(54, above - fs * 0.9), box(54, below + fs * 0.9)];
+}
+
+/** Do two boxes overlap (with a margin)? */
+export const overlaps = (a: Box, b: Box, m = 0): boolean => a.x < b.x + b.w + m && a.x + a.w + m > b.x && a.y < b.y + b.h + m && a.y + a.h + m > b.y;
+
+/**
+ * Picks a label spot, with hysteresis so a label doesn't jump about while the drone wobbles: go back
+ * to the first (usual) spot once it is clear by `back`; otherwise keep the current spot while it is
+ * free (only among the first `sticky` spots; later ones are last resorts); otherwise take the first
+ * free one; if none is free, stay put.
+ */
+export function pickSpot(cands: (Box | null)[], obstacles: Box[], current: number, margin = 2, back = 10, sticky = 4): number {
+  const free = (i: number, m = margin) => {
+    const c = cands[i];
+    return !!c && !obstacles.some((o) => overlaps(c, o, m));
+  };
+  if (current !== 0 && free(0, back)) return 0;
+  if (current >= 0 && current < Math.min(sticky, cands.length) && free(current)) return current;
+  for (let i = 0; i < cands.length; i++) if (free(i)) return i;
+  return current >= 0 && current < cands.length && cands[current] ? current : cands.findIndex((c) => !!c);
+}
+
+/** Rough width of hand-written text in view units (the font's average glyph is about half an em). */
+export const estWidth = (text: string, size: number): number =>
+  [...text].reduce((w, ch) => w + (/[\u3000-\u9fff\uff00-\uffef]/.test(ch) ? 1 : ch === ' ' ? 0.3 : 0.52), 0) * size;
 
 /** Side view of the drone. Drawn once with Rough.js; updates only move things. */
 export class DroneView {
@@ -55,6 +108,15 @@ export class DroneView {
   private crash: SVGTextElement;
   private readout: SVGTextElement;
   private sensor: SVGCircleElement;
+  private targetLabel: SVGTextElement;
+  /** texts and their design size, lifted to MIN_TEXT_PX on screen when the picture is small */
+  private texts: [SVGTextElement, number][] = [];
+  /** view units per CSS pixel */
+  private u = 1;
+  private targetW = 0;
+  private targetSpot = 0;
+  private thrustSpot = 0;
+  private last: DroneState | null = null;
   private desc: HTMLElement;
   private hMax: number;
   private lastDesc = 0;
@@ -79,7 +141,7 @@ export class DroneView {
         const y = this.y(m);
         const major = Number.isInteger(m);
         scale.append(s('line', { x1: 38, x2: major ? 50 : 45, y1: y, y2: y, stroke: 'var(--ink-3)', 'stroke-width': 1.2 }));
-        if (major) scale.append(s('text', { x: 33, y: y + 5, 'text-anchor': 'end', 'font-size': 15, fill: 'var(--ink-3)' }, `${m} m`));
+        if (major) scale.append(this.text(s('text', { x: 33, y: y + 5, 'text-anchor': 'end', 'font-size': 15, fill: 'var(--ink-3)' }, `${m} m`), 15));
       }
       scale.append(s('line', { x1: 38, x2: 38, y1: this.y(this.hMax), y2: GROUND, stroke: 'var(--ink-3)', 'stroke-width': 1.2 }));
     }
@@ -89,10 +151,8 @@ export class DroneView {
     ground.append(rc.rectangle(0, GROUND + 2, W, H - GROUND, { stroke: 'none', fill: 'var(--paper-3)', fillStyle: 'hachure', hachureGap: 7, hachureAngle: 60, seed: 3 }));
     // setpoint
     this.setLine = s('g', { class: 'setpoint' });
-    this.setLine.append(
-      s('line', { x1: 52, x2: W - 6, y1: 0, y2: 0, stroke: 'var(--c-setpoint)', 'stroke-width': 2, 'stroke-dasharray': '7 5' }),
-      s('text', { x: 54, y: -6, 'font-size': 16, fill: 'var(--c-setpoint)' }, tc('drone.target')),
-    );
+    this.targetLabel = this.text(s('text', { x: 54, y: -6, 'font-size': 16, fill: 'var(--c-setpoint)' }, tc('drone.target')), 16);
+    this.setLine.append(s('line', { x1: 52, x2: W - 6, y1: 0, y2: 0, stroke: 'var(--c-setpoint)', 'stroke-width': 2, 'stroke-dasharray': '7 5' }), this.targetLabel);
     // drone
     this.drone = s('g', { class: 'drone' });
     const cx = CX;
@@ -108,7 +168,7 @@ export class DroneView {
       body.append(prop);
     }
     this.thrustArrow = s('path', { fill: 'none', stroke: 'var(--c-effort)', 'stroke-width': 3.5, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
-    this.thrustLabel = s('text', { 'font-size': 16, fill: 'var(--c-effort)', x: cx - 9, 'text-anchor': 'end' });
+    this.thrustLabel = this.text(s('text', { 'font-size': 16, fill: 'var(--c-effort)', x: cx - 9, 'text-anchor': 'end' }), 16);
     this.pkgG = s('g', { class: 'package' });
     this.pkgG.append(
       s('line', { x1: cx, x2: cx, y1: 10, y2: 26, stroke: ink, 'stroke-width': 1.5 }),
@@ -119,12 +179,35 @@ export class DroneView {
     this.sensor = s('circle', { r: 4, cx: 60, fill: 'none', stroke: 'var(--c-output)', 'stroke-width': 2, 'stroke-dasharray': '2 2', opacity: 0 });
     this.windG = s('g', { class: 'wind' });
     this.crash = s('text', { x: W / 2 + 10, y: GROUND - 120, 'text-anchor': 'middle', 'font-size': 34, 'font-weight': 700, fill: 'var(--c-error)', opacity: 0 }, tc('drone.crash'));
-    this.readout = s('text', { x: W - 6, y: 18, 'text-anchor': 'end', 'font-size': 17, fill: 'var(--c-output)', 'font-weight': 700 });
+    this.readout = this.text(s('text', { x: W - 6, y: 18, 'text-anchor': 'end', 'font-size': 17, fill: 'var(--c-output)', 'font-weight': 700 }), 17);
     this.svg.append(scale, ground, this.setLine, this.windG, this.drone, this.sensor, this.crash, this.readout);
     this.desc = h('p', { class: 'visually-hidden', 'aria-live': 'off' });
     this.el = h('div', { class: `drone-wrap${this.free ? ' free' : ''}`, style: { maxWidth: `${o.width ?? 300}px`, margin: '0 auto' } }, this.svg, this.desc);
     host.append(this.el);
+    new ResizeObserver(() => this.resize()).observe(this.svg);
+    document.fonts?.ready.then(() => (this.targetW = 0));
     this.update({ h: 0, r: 2, thrust: 0 });
+  }
+
+  private text(el: SVGTextElement, size: number): SVGTextElement {
+    this.texts.push([el, size]);
+    return el;
+  }
+
+  /** Lifts small text back to a readable size when the picture is drawn narrow (phones, side columns). */
+  private resize(): void {
+    const w = this.svg.clientWidth;
+    if (!w) return;
+    const u = W / w;
+    if (Math.abs(u - this.u) < 0.01) return;
+    this.u = u;
+    for (const [el, size] of this.texts) el.setAttribute('font-size', this.fontSize(size).toFixed(1));
+    this.targetW = 0;
+    if (this.last) this.update(this.last);
+  }
+
+  private fontSize(size: number): number {
+    return Math.max(size, MIN_TEXT_PX * this.u);
   }
 
   y(m: number): number {
@@ -145,7 +228,9 @@ export class DroneView {
       this.setLine.style.display = '';
       this.setLine.setAttribute('transform', `translate(0, ${this.y(st.r)})`);
     }
+    this.last = st;
     const T = st.thrust ?? 0;
+    let thrustBox: Box[] = [];
     // out over the page the arrow and its label would draw over the text; the thrust plot still shows it
     if (this.o.showThrust !== false && Math.abs(T) > 0.05 && !outside) {
       const len = Math.max(-60, Math.min(90, T * 3.2));
@@ -154,12 +239,14 @@ export class DroneView {
       const y1 = y0 - len;
       const dir = len > 0 ? 1 : -1;
       this.thrustArrow.setAttribute('d', `M${x} ${y0} L${x} ${y1} M${x - 6} ${y1 + 8 * dir} L${x} ${y1} L${x + 6} ${y1 + 8 * dir}`);
-      this.thrustLabel.setAttribute('y', String(y1 - 4 * dir + (dir < 0 ? 12 : 0)));
       this.thrustLabel.textContent = `${fmt(T, 1)} N`;
+      this.placeThrustLabel(gy, y0, y1, st.r);
       this.thrustArrow.style.display = this.thrustLabel.style.display = '';
+      thrustBox = this.thrustBoxes(gy, y0, y1);
     } else {
       this.thrustArrow.style.display = this.thrustLabel.style.display = 'none';
     }
+    if (st.r !== null && st.r !== undefined) this.placeTargetLabel(gy, this.y(st.r), outside, thrustBox, st);
     this.svg.classList.toggle('spinning', T > 0.05 && !prefersReducedMotion());
     this.pkgG.style.display = (st.pkg ?? 0) > 0 ? '' : 'none';
     // near the ground the package rests on the grass instead of hanging through it
@@ -180,6 +267,66 @@ export class DroneView {
       this.lastDesc = now;
       this.desc.textContent = tc('drone.describe', { h: fmt(Math.max(0, st.h), 2), r: st.r != null ? fmt(st.r, 1) : '—', T: fmt(T, 1) });
     }
+  }
+
+  /** The thrust arrow and its label, in view units, for the drone group at `gy`. */
+  private thrustBoxes(gy: number, y0: number, y1: number): Box[] {
+    const lb = this.thrustLabelBox(gy, this.thrustSpot, y0, y1, this.fontSize(16));
+    return [{ x: CX - 7, y: gy + Math.min(y0, y1), w: 14, h: Math.abs(y1 - y0) }, ...(lb ? [lb] : [])];
+  }
+
+  /** Spots for the thrust label: beside the arrow tip (left, right), then beside its middle. */
+  private thrustLabelBox(gy: number, i: number, y0: number, y1: number, fs: number): Box | null {
+    const w = estWidth(this.thrustLabel.textContent ?? '', fs);
+    const up = y1 < y0;
+    // baselines: just past the tip (as it always was), or level with the arrow's middle
+    const tip = up ? y1 - 4 : y1 + 16;
+    const mid = (y0 + y1) / 2 + fs * 0.35;
+    const base = i < 2 ? tip : mid;
+    if (i > 3) return null;
+    const right = i % 2 === 1;
+    return { x: right ? CX + 9 : CX - 9 - w, y: gy + base - fs * 0.8, w, h: fs };
+  }
+
+  /** Keeps the thrust label off the dashed target line and the height readout. */
+  private placeThrustLabel(gy: number, y0: number, y1: number, r: number | null | undefined): void {
+    const fs = this.fontSize(16);
+    const cands = [0, 1, 2, 3].map((i) => this.thrustLabelBox(gy, i, y0, y1, fs));
+    const obstacles: Box[] = [{ x: 0, y: 0, w: W, h: 24 }, ...droneBoxes(gy)];
+    if (r !== null && r !== undefined) obstacles.push({ x: 52, y: this.y(r) - 1.5, w: W - 58, h: 3 });
+    this.thrustSpot = pickSpot(cands, obstacles, this.thrustSpot);
+    const c = cands[this.thrustSpot]!;
+    const right = this.thrustSpot % 2 === 1;
+    this.thrustLabel.setAttribute('x', String(right ? CX + 9 : CX - 9));
+    this.thrustLabel.setAttribute('text-anchor', right ? 'start' : 'end');
+    this.thrustLabel.setAttribute('y', (c.y - gy + fs * 0.8).toFixed(1));
+  }
+
+  /**
+   * Puts "target" where the drone, its thrust label and the height readout don't cover it: above
+   * the line on the left, else below it, else on the right.
+   */
+  private placeTargetLabel(gy: number, lineY: number, outside: boolean, thrust: Box[], st: DroneState): void {
+    const fs = this.fontSize(16);
+    if (!this.targetW) {
+      try {
+        this.targetW = this.targetLabel.getBBox().width;
+      } catch {
+        /* not rendered */
+      }
+      if (!this.targetW) this.targetW = estWidth(this.targetLabel.textContent ?? '', fs);
+    }
+    const cands = targetSpots(lineY, this.targetW, fs);
+    const obstacles: Box[] = [...thrust, READOUT];
+    // out over the page the drone is not in its picture, so it can't cover the label
+    if (!outside) obstacles.push(...droneBoxes(gy, (st.pkg ?? 0) > 0));
+    if (this.o.showSensor && st.measured !== undefined) obstacles.push({ x: 54, y: this.y(st.measured) - 12, w: 12, h: 12 });
+    this.targetSpot = pickSpot(cands, obstacles, this.targetSpot);
+    const c = cands[this.targetSpot];
+    const right = this.targetSpot === 2 || this.targetSpot === 3;
+    this.targetLabel.setAttribute('x', String(right ? W - 6 : 54));
+    this.targetLabel.setAttribute('text-anchor', right ? 'end' : 'start');
+    this.targetLabel.setAttribute('y', (c.y - lineY + fs * 0.75).toFixed(1));
   }
 
   /** The drone's drawing as a document-space box, for the group placed at view y `gy`. */
