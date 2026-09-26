@@ -63,8 +63,8 @@ export class TracePlayer {
       { id: 'r', color: 'sp', dash: [6, 5], width: 1.8 },
       { id: 'h', color: 'out', label: o.heightLabel, ghost: true },
     ];
-    // a touch wider than a hairline, so the grey reading stays visible next to the blue height
-    if (o.showMeasured) hs.unshift({ id: 'meas', color: 'pencil', label: o.measuredLabel ?? '', width: 1.3 });
+    // drawn over the blue height (it jitters only ±2 cm around it, so underneath it would vanish)
+    if (o.showMeasured) hs.push({ id: 'meas', color: 'pencil', label: o.measuredLabel ?? '', width: 1.2 });
     this.hPlot = new Plot(right, {
       x: { label: tc('plots.time'), min: 0, max: o.duration },
       y: { label: tc('plots.height'), min: o.heightRange?.[0] ?? 0, max: o.heightRange?.[1] ?? 3 },

@@ -61,6 +61,11 @@
   gap: 4px 0;
 }
 
+/* Japanese: break titles, readout names and status lines between phrases, not inside a word (ジャン|プ) */
+.pid-widget :is(.w-title, .readout-label, .w-status):lang(ja) {
+  word-break: auto-phrase;
+}
+
 /* on phones the drone shrinks so it stays in view next to the plots and sliders */
 @media (max-width: 520px) {
   .pid-widget .drone-wrap {
@@ -74,6 +79,11 @@
   }
   .pid-widget .w-controls.compact > .slider {
     flex: 1 1 130px;
+  }
+  /* the noise widget's two slider names ("Derivative filter τf", "Differenzialverstärkung Kd") are long in
+     every language: one per row, so they don't break into three hyphenated lines */
+  .pid-noise .w-controls.compact > .slider {
+    flex-basis: 100%;
   }
 }
 

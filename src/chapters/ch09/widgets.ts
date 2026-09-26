@@ -322,7 +322,7 @@ const playground: WidgetFactory = (host, ctx) => {
     extra: [h('div', { class: 'w-row' }, tg.el)],
     readouts: [rOs.el, rTs.el, rSse.el, rSat.el],
     status: starsEl,
-    help: h('p', { class: 'w-help' }, t('targets', { os: TARGETS.overshoot, ts: TARGETS.settling, sat: TARGETS.saturated })),
+    help: h('p', { class: 'w-help' }, t('targets', { os: fmt(TARGETS.overshoot, 0), ts: fmt(TARGETS.settling, 1), sat: fmt(TARGETS.saturated, 1) })),
   });
   run();
   // the page moved (scroll brings the sticky top bar closer, resize, fonts, a gate opening): measure again, recompute
@@ -400,6 +400,7 @@ const noise: WidgetFactory = (host, ctx) => {
   const sKd = slider({ label: t('kd'), min: 0, max: 8, step: 0.5, value: kd, unit: 'N·s/m', color: 'eff', onInput: (v) => { kd = v; run(true); } });
   sKd.input.setAttribute('aria-label', ctx.tch('widgets.gains.kd'));
   for (const s of [sl, sKd]) player.bind(s.input);
+  host.classList.add('pid-noise');
   layout(host, player, {
     controls: [sl.el, sKd.el, tg.el],
     readouts: [rJit.el, rMean.el],

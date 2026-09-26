@@ -639,7 +639,7 @@
         "slow": "La caída se está encogiendo, pero despacio. El montón tarda en acumularse.",
         "ringing": "Estable, pero por poco: a los 12 s todavía oscila. Cuanto más se acerca Ki a {lim}, más despacio se apagan las oscilaciones.",
         "gone": "¡Adiós a la caída! Ahora el montón sostiene todo el peso.",
-        "unstable": "Pasado el borde (Ki > {lim}): los rebotes crecen hasta que los motores tocan sus límites, y nunca se estabiliza."
+        "unstable": "Pasado el borde (Ki > {lim}): los rebotes crecen hasta que los motores tocan sus límites, y nunca se estabiliza."
       },
       "describe": "Ganancia integral {ki}. Caída tras 12 segundos: {droop} centímetros."
     },
@@ -658,7 +658,7 @@
         "bouncy": "Estable, pero saltarín. Añade más Kd.",
         "calm": "¡Calma! El amortiguador absorbe el rebote.",
         "tooMuch": "¡Más D lo empeoró! Ahora sube tan despacio que el montón se llena de más, y se pasa tarde. Prueba con menos Kd.",
-        "bigPile": "Estable, pero el gran montón de Mika todavía se pasa un {os} %. Ninguna cantidad de D lo arregla: quita la Ki de Mika."
+        "bigPile": "Estable, pero el gran montón de Mika todavía se pasa un {os} %. Ninguna cantidad de D lo arregla: quita la Ki de Mika."
       }
     },
     "poles": {
@@ -676,7 +676,7 @@
       },
       "stepAria": "Respuesta al escalón de 1,5 m a 2 m con las ganancias actuales",
       "status": {
-        "stable": "Estable: Ki tiene que quedarse por debajo de {lim}. El polo más lento está en σ = {s}.",
+        "stable": "Estable: Ki tiene que quedarse por debajo de {lim}. El polo más lento está en σ = {s}.",
         "unstable": "¡Inestable! Ki está por encima del borde ({lim}). Dos polos han cruzado a la mitad derecha.",
         "cancel": "(Un cero en {z} casi lo cancela, así que apenas se nota en el escalón.)"
       },
@@ -696,7 +696,7 @@
       "ki": "$K_i$",
       "kd": "$K_d$",
       "antiWindup": "Anti-windup",
-      "targets": "Estrellas por: sobreimpulso menor del {os} %, tiempo de establecimiento (banda del 2 %) de menos de {ts} s, sin caída (menos de 1 cm) y motores clavados en un límite menos de {sat} s.",
+      "targets": "Estrellas por: sobreimpulso menor del {os} %, tiempo de establecimiento (banda del 2 %) de menos de {ts} s, sin caída (menos de 1 cm) y motores clavados en un límite menos de {sat} s.",
       "readout": {
         "overshoot": "sobreimpulso",
         "settling": "tiempo de establecimiento",
@@ -712,11 +712,11 @@
         "wild": "¡Toc! Chocó con lo que tiene encima. Los motores siguen girando, pero con estas ganancias nunca se estabiliza.",
         "mark": "¡toc!"
       },
-      "crash": "¡Choque a los {t} s! Llegó al suelo a más de 1,5 m/s, y un dron estrellado se queda en el suelo.",
+      "crash": "¡Choque a los {t} s! Llegó al suelo a más de 1,5 m/s, y un dron estrellado se queda en el suelo.",
       "neverDroop": "nunca (cae)"
     },
     "kick": {
-      "title": "Salto de consigna: 1 m → 1,5 m",
+      "title": "Salto de consigna: 1 m → 1,5 m",
       "mode": "Calcular la derivada de…",
       "onError": "el error",
       "onMeasurement": "la altura medida",
@@ -724,8 +724,8 @@
       "peak": "pico entregado",
       "kickMark": "¡patada!",
       "status": {
-        "error": "El error salta, así que su pendiente es enorme: ¡el controlador pide {req} N! Los motores solo pueden ponerse de golpe a 20 N. Eso es una patada derivativa.",
-        "measurement": "La altura no puede saltar, así que no hay patada: lo máximo que llega a pedir son {req} N, y la subida es suave."
+        "error": "El error salta, así que su pendiente es enorme: ¡el controlador pide {req} N! Los motores solo pueden ponerse de golpe a 20 N. Eso es una patada derivativa.",
+        "measurement": "La altura no puede saltar, así que no hay patada: lo máximo que llega a pedir son {req} N, y la subida es suave."
       }
     },
     "noise": {
@@ -738,8 +738,8 @@
       "status": {
         "off": "Un sensor perfecto: motores tranquilos.",
         "chatter": "¡Los motores traquetean! D está amplificando el ruido. Prueba un filtro más largo.",
-        "calm": "Mucho más tranquilo. De los ±{j} N que quedan, P deja pasar unos {p} N tal cual; el resto sigue siendo D. El precio: ahora D reacciona unos {tau} s más tarde.",
-        "noD": "Sin D, nada amplifica el ruido: los ±{j} N que quedan son P dejándolo pasar tal cual. Motores tranquilos, pero ahora solo el rozamiento amortigua el dron."
+        "calm": "Mucho más tranquilo. De los ±{j} N que quedan, P deja pasar unos {p} N tal cual; el resto sigue siendo D. El precio: ahora D reacciona unos {tau} s más tarde.",
+        "noD": "Sin D, nada amplifica el ruido: los ±{j} N que quedan son P dejándolo pasar tal cual. Motores tranquilos, pero ahora solo el rozamiento amortigua el dron."
       },
       "kd": "Ganancia derivativa $K_d$",
       "mean": "altura media",

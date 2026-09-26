@@ -104,7 +104,11 @@ export function scoreTrace(tr: Trace, r = 2, y0 = 0, band = 0.02): Score {
   const m = stepMetrics(tr.t, tr.h, y0, r, band);
   let sat = 0;
   const dt = tr.t[1] - tr.t[0];
-  for (const T of tr.thrust) if (T >= LIMITED.tMax - 1e-9 || T <= LIMITED.tMin + 1e-9) sat += dt;
+  // a crashed drone's motors are off (0 N), not pinned: count only up to the crash
+  const end = tr.crashAt ?? Infinity;
+  tr.thrust.forEach((T, i) => {
+    if (tr.t[i] < end - 1e-9 && (T >= LIMITED.tMax - 1e-9 || T <= LIMITED.tMin + 1e-9)) sat += dt;
+  });
   return {
     overshoot: m.overshoot,
     settling: m.settlingTime,

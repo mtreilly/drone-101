@@ -639,7 +639,7 @@
         "slow": "L'abbassamento si sta riducendo, ma lentamente. La pila ha bisogno di tempo per crescere.",
         "ringing": "Stabile, ma appena: a 12 s oscilla ancora. Più Ki si avvicina a {lim}, più lentamente si spengono le oscillazioni.",
         "gone": "Abbassamento sparito! Ora la pila regge tutto il peso.",
-        "unstable": "Oltre il bordo (Ki > {lim}): i rimbalzi crescono finché i motori toccano i limiti, e non si assesta mai."
+        "unstable": "Oltre il bordo (Ki > {lim}): i rimbalzi crescono finché i motori toccano i limiti, e non si assesta mai."
       },
       "describe": "Guadagno integrale {ki}. Abbassamento dopo 12 secondi: {droop} centimetri."
     },
@@ -676,7 +676,7 @@
       },
       "stepAria": "Risposta al gradino da 1,5 m a 2 m per i guadagni attuali",
       "status": {
-        "stable": "Stabile: Ki deve restare sotto {lim}. Il polo più lento sta in σ = {s}.",
+        "stable": "Stabile: Ki deve restare sotto {lim}. Il polo più lento sta in σ = {s}.",
         "unstable": "Instabile! Ki è oltre il bordo ({lim}). Due poli sono passati nella metà destra.",
         "cancel": "(Uno zero in {z} lo cancella quasi, quindi nel gradino si vede appena.)"
       },
@@ -696,11 +696,11 @@
       "ki": "$K_i$",
       "kd": "$K_d$",
       "antiWindup": "Anti-windup",
-      "targets": "Stelle per: sovraelongazione sotto il {os} %, assestamento (entro il 2 %) sotto i {ts} s, niente abbassamento (sotto 1 cm), e motori inchiodati a un limite per meno di {sat} s.",
+      "targets": "Stelle per: sovraelongazione sotto il {os} %, assestamento (entro il 2 %) sotto i {ts} s, niente abbassamento (sotto 1 cm), e motori inchiodati a un limite per meno di {sat} s.",
       "readout": {
         "overshoot": "sovraelongazione",
         "settling": "tempo di assestamento",
-        "sse": "droop",
+        "sse": "abbassamento",
         "saturated": "motori inchiodati"
       },
       "never": "mai",
@@ -712,11 +712,11 @@
         "wild": "Toc! Ha sbattuto contro quello che ha sopra. I motori continuano a girare, ma con questi guadagni non si assesta mai.",
         "mark": "toc!"
       },
-      "crash": "Schianto a {t} s! Ha toccato terra a più di 1,5 m/s, e un drone schiantato resta giù.",
+      "crash": "Schianto a {t} s! Ha toccato terra a più di 1,5 m/s, e un drone schiantato resta giù.",
       "neverDroop": "mai (si abbassa)"
     },
     "kick": {
-      "title": "Salto del riferimento: 1 m → 1,5 m",
+      "title": "Salto del riferimento: 1 m → 1,5 m",
       "mode": "Prendi la derivata di…",
       "onError": "l'errore",
       "onMeasurement": "l'altezza misurata",
@@ -724,8 +724,8 @@
       "peak": "picco fornito",
       "kickMark": "calcio!",
       "status": {
-        "error": "L'errore salta, quindi la sua pendenza è enorme: il controllore chiede {req} N! I motori possono solo sbattere a 20 N. Questo è un calcio derivativo.",
-        "measurement": "L'altezza non può saltare, quindi niente calcio: il massimo che chiede è {req} N, e la salita è dolce."
+        "error": "L'errore salta, quindi la sua pendenza è enorme: il controllore chiede {req} N! I motori possono solo sbattere a 20 N. Questo è un calcio derivativo.",
+        "measurement": "L'altezza non può saltare, quindi niente calcio: il massimo che chiede è {req} N, e la salita è dolce."
       }
     },
     "noise": {
@@ -738,8 +738,8 @@
       "status": {
         "off": "Un sensore perfetto: motori tranquilli.",
         "chatter": "I motori vibrano! La D sta amplificando il rumore. Prova un filtro più lungo.",
-        "calm": "Molto più calmo. Dei ±{j} N rimasti, P ne lascia passare così come sono circa {p} N; il resto è ancora D. Il prezzo: ora la D reagisce circa {tau} s più tardi.",
-        "noD": "Niente D, niente che amplifichi il rumore: i ±{j} N rimasti sono P che lo lascia passare così com'è. Motori calmi, ma ora il drone è smorzato solo dall'attrito."
+        "calm": "Molto più calmo. Dei ±{j} N rimasti, P ne lascia passare così come sono circa {p} N; il resto è ancora D. Il prezzo: ora la D reagisce circa {tau} s più tardi.",
+        "noD": "Niente D, niente che amplifichi il rumore: i ±{j} N rimasti sono P che lo lascia passare così com'è. Motori calmi, ma ora il drone è smorzato solo dall'attrito."
       },
       "kd": "Guadagno derivativo $K_d$",
       "mean": "altezza media",

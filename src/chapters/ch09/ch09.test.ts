@@ -340,6 +340,13 @@ describe('Chapter 9: a crashed drone stays down (playground)', () => {
     // it never settles, so the status uses the "never settles" verdict, and it gets no settling star
     expect(Number.isFinite(scoreTrace(tr).settling)).toBe(false);
   });
+  it('"motors pinned" stops counting at the crash: the motors are off on the ground, not pinned', () => {
+    const tr = run(null);
+    const before = { ...tr, t: tr.t.filter((t) => t < tr.crashAt! - 1e-9), crashAt: null };
+    before.thrust = tr.thrust.slice(0, before.t.length);
+    expect(scoreTrace(tr).saturated).toBeCloseTo(scoreTrace(before).saturated, 6);
+    expect(scoreTrace(tr).saturated).toBeLessThan(tr.crashAt!);
+  });
   it('with the page at 3.9 m the bump caps the peak and it does not crash', () => {
     const tr = run(3.9);
     expect(tr.hitAt).not.toBeNull();

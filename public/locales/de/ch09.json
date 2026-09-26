@@ -639,7 +639,7 @@
         "slow": "Das Durchhängen schrumpft, aber langsam. Der Haufen braucht Zeit zum Aufbauen.",
         "ringing": "Stabil, aber nur knapp: Bei 12 s schwingt sie immer noch. Je näher Ki an {lim} kommt, desto langsamer klingen die Schwünge ab.",
         "gone": "Durchhängen weg! Der Haufen hält jetzt das ganze Gewicht.",
-        "unstable": "Über die Kante (Ki > {lim}): Die Hüpfer wachsen, bis die Motoren an ihre Grenzen stoßen, und sie kommt nie zur Ruhe."
+        "unstable": "Über die Kante (Ki > {lim}): Die Hüpfer wachsen, bis die Motoren an ihre Grenzen stoßen, und sie kommt nie zur Ruhe."
       },
       "describe": "Integralverstärkung {ki}. Durchhängen nach 12 Sekunden: {droop} Zentimeter."
     },
@@ -658,7 +658,7 @@
         "bouncy": "Stabil, aber hüpfig. Nimm mehr Kd dazu.",
         "calm": "Ruhe! Der Dämpfer schluckt das Hüpfen.",
         "tooMuch": "Mehr D hat es schlimmer gemacht! Jetzt kriecht sie so langsam hoch, dass der Haufen überläuft, und sie schwingt verspätet über. Probier weniger Kd.",
-        "bigPile": "Stabil, aber Mikas großer Haufen schwingt immer noch um {os} % über. Dagegen hilft kein D: Schalte Mikas Ki ab."
+        "bigPile": "Stabil, aber Mikas großer Haufen schwingt immer noch um {os} % über. Dagegen hilft kein D: Schalte Mikas Ki ab."
       }
     },
     "poles": {
@@ -676,7 +676,7 @@
       },
       "stepAria": "Sprungantwort von 1,5 m auf 2 m für die aktuellen Verstärkungen",
       "status": {
-        "stable": "Stabil: Ki muss unter {lim} bleiben. Der langsamste Pol sitzt bei σ = {s}.",
+        "stable": "Stabil: Ki muss unter {lim} bleiben. Der langsamste Pol sitzt bei σ = {s}.",
         "unstable": "Instabil! Ki liegt über der Kante ({lim}). Zwei Pole sind in die rechte Hälfte gewandert.",
         "cancel": "(Eine Nullstelle bei {z} hebt ihn fast auf, also zeigt er sich im Sprung kaum.)"
       },
@@ -696,11 +696,11 @@
       "ki": "$K_i$",
       "kd": "$K_d$",
       "antiWindup": "Anti-Windup",
-      "targets": "Sterne gibt’s für: Überschwingen unter {os} %, Einschwingen (auf 2 % genau) unter {ts} s, kein Durchhängen (unter 1 cm) und Motoren weniger als {sat} s am Anschlag.",
+      "targets": "Sterne gibt’s für: Überschwingen unter {os} %, Einschwingen (auf 2 % genau) unter {ts} s, kein Durchhängen (unter 1 cm) und Motoren weniger als {sat} s am Anschlag.",
       "readout": {
         "overshoot": "Überschwingen",
         "settling": "Einschwingzeit",
-        "sse": "droop",
+        "sse": "Durchhängen",
         "saturated": "Motoren am Anschlag"
       },
       "never": "nie",
@@ -712,11 +712,11 @@
         "wild": "Rums! Die Drohne prallte gegen das, was darüber steht. Die Motoren laufen weiter, aber mit diesen Verstärkungen kommt sie nie zur Ruhe.",
         "mark": "Rums!"
       },
-      "crash": "Absturz bei {t} s! Sie ist schneller als 1,5 m/s auf dem Boden aufgeschlagen, und eine abgestürzte Drohne bleibt unten.",
+      "crash": "Absturz bei {t} s! Sie ist schneller als 1,5 m/s auf dem Boden aufgeschlagen, und eine abgestürzte Drohne bleibt unten.",
       "neverDroop": "nie (hängt durch)"
     },
     "kick": {
-      "title": "Sollwertsprung: 1 m → 1,5 m",
+      "title": "Sollwertsprung: 1 m → 1,5 m",
       "mode": "Ableitung nehmen von…",
       "onError": "dem Fehler",
       "onMeasurement": "der gemessenen Höhe",
@@ -724,8 +724,8 @@
       "peak": "Spitze geliefert",
       "kickMark": "Stoß!",
       "status": {
-        "error": "Der Fehler springt, also ist seine Steigung riesig: Der Regler verlangt {req} N! Die Motoren können nur auf 20 N knallen. Das ist ein D-Stoß.",
-        "measurement": "Die Höhe kann nicht springen, also kein Stoß: Höchstens {req} N werden je verlangt, und der Anstieg ist sanft."
+        "error": "Der Fehler springt, also ist seine Steigung riesig: Der Regler verlangt {req} N! Die Motoren können nur auf 20 N knallen. Das ist ein D-Stoß.",
+        "measurement": "Die Höhe kann nicht springen, also kein Stoß: Höchstens {req} N werden je verlangt, und der Anstieg ist sanft."
       }
     },
     "noise": {
@@ -738,8 +738,8 @@
       "status": {
         "off": "Ein perfekter Sensor: ruhige Motoren.",
         "chatter": "Die Motoren rattern! D verstärkt das Rauschen. Probier einen längeren Filter.",
-        "calm": "Viel ruhiger. Von den ±{j} N, die bleiben, reicht P etwa {p} N direkt durch; der Rest ist immer noch D. Der Preis: D reagiert jetzt etwa {tau} s später.",
-        "noD": "Kein D, nichts verstärkt das Rauschen: Die ±{j} N, die bleiben, reicht P direkt durch. Ruhige Motoren, aber jetzt dämpft nur noch der Luftwiderstand die Drohne."
+        "calm": "Viel ruhiger. Von den ±{j} N, die bleiben, reicht P etwa {p} N direkt durch; der Rest ist immer noch D. Der Preis: D reagiert jetzt etwa {tau} s später.",
+        "noD": "Kein D, nichts verstärkt das Rauschen: Die ±{j} N, die bleiben, reicht P direkt durch. Ruhige Motoren, aber jetzt dämpft nur noch der Luftwiderstand die Drohne."
       },
       "kd": "Differenzialverstärkung $K_d$",
       "mean": "mittlere Höhe",

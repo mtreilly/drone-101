@@ -639,9 +639,9 @@
         "slow": "Zwis maleje, ale powoli. Stos potrzebuje czasu, żeby urosnąć.",
         "ringing": "Stabilny, ale ledwo: po 12 s wciąż się kołysze (dzwonienie). Im bliżej Ki do {lim}, tym wolniej gasną wahania.",
         "gone": "Zwis zniknął! Stos utrzymuje teraz cały ciężar.",
-        "unstable": "Za krawędzią (Ki > {lim}): podskoki rosną, aż silniki dojdą do ograniczeń, i nigdy się nie ustala."
+        "unstable": "Za krawędzią (Ki > {lim}): podskoki rosną, aż silniki dojdą do ograniczeń, i nigdy się nie ustala."
       },
-      "describe": "Wzmocnienie całkujące {ki}. Zwis po 12 sekundach: {droop} cm."
+      "describe": "Wzmocnienie całkujące {ki}. Zwis po 12 sekundach: {droop} cm."
     },
     "damper": {
       "title": "Dodajemy wirtualny tłumik",
@@ -658,7 +658,7 @@
         "bouncy": "Stabilny, ale skoczny. Dodaj więcej Kd.",
         "calm": "Spokój! Tłumik pochłania podskoki.",
         "tooMuch": "Więcej D pogorszyło sprawę! Teraz pełznie w górę tak powoli, że stos się przepełnia i przeregulowanie przychodzi późno. Zmniejsz Kd.",
-        "bigPile": "Stabilny, ale duży stos Miki wciąż daje przeregulowanie {os} %. Żadne D tego nie naprawi: wyłącz Ki Miki."
+        "bigPile": "Stabilny, ale duży stos Miki wciąż daje przeregulowanie {os} %. Żadne D tego nie naprawi: wyłącz Ki Miki."
       }
     },
     "poles": {
@@ -676,7 +676,7 @@
       },
       "stepAria": "Odpowiedź skokowa od 1,5 m do 2 m dla bieżących wzmocnień",
       "status": {
-        "stable": "Stabilny: Ki musi zostać poniżej {lim}. Najwolniejszy biegun siedzi w σ = {s}.",
+        "stable": "Stabilny: Ki musi zostać poniżej {lim}. Najwolniejszy biegun siedzi w σ = {s}.",
         "unstable": "Niestabilny! Ki jest powyżej krawędzi ({lim}). Dwa bieguny przeszły do prawej połowy.",
         "cancel": "(Zero w {z} prawie go skraca, więc ledwo widać go w odpowiedzi skokowej)."
       },
@@ -696,7 +696,7 @@
       "ki": "$K_i$",
       "kd": "$K_d$",
       "antiWindup": "Anti-windup",
-      "targets": "Gwiazdki za: przeregulowanie poniżej {os} %, czas ustalania (w granicach 2 %) poniżej {ts} s, brak zwisu (poniżej 1 cm) oraz silniki przyklejone do ograniczenia krócej niż {sat} s.",
+      "targets": "Gwiazdki za: przeregulowanie poniżej {os} %, czas ustalania (w granicach 2 %) poniżej {ts} s, brak zwisu (poniżej 1 cm) oraz silniki przyklejone do ograniczenia krócej niż {sat} s.",
       "readout": {
         "overshoot": "przeregulowanie",
         "settling": "czas ustalania",
@@ -712,11 +712,11 @@
         "wild": "Bum! Uderzył w to, co jest nad nim. Silniki dalej pracują, ale przy tych wzmocnieniach nigdy się nie ustala.",
         "mark": "bum!"
       },
-      "crash": "Rozbił się po {t} s! Uderzył w ziemię szybciej niż 1,5 m/s, a rozbity dron już nie wstaje.",
+      "crash": "Rozbił się po {t} s! Uderzył w ziemię szybciej niż 1,5 m/s, a rozbity dron już nie wstaje.",
       "neverDroop": "nigdy (zwis)"
     },
     "kick": {
-      "title": "Skok wartości zadanej: 1 m → 1,5 m",
+      "title": "Skok wartości zadanej: 1 m → 1,5 m",
       "mode": "Różniczkuj…",
       "onError": "uchyb",
       "onMeasurement": "zmierzoną wysokość",
@@ -724,8 +724,8 @@
       "peak": "szczyt dostarczonego ciągu",
       "kickMark": "szarp!",
       "status": {
-        "error": "Uchyb skacze, więc jego nachylenie jest ogromne: regulator żąda {req} N! Silniki mogą walnąć najwyżej na 20 N. To szarpnięcie różniczkujące.",
-        "measurement": "Wysokość nie może skakać, więc nie ma szarpnięcia: żądanie nigdy nie przekracza {req} N, a wznoszenie jest płynne."
+        "error": "Uchyb skacze, więc jego nachylenie jest ogromne: regulator żąda {req} N! Silniki mogą walnąć najwyżej na 20 N. To szarpnięcie różniczkujące.",
+        "measurement": "Wysokość nie może skakać, więc nie ma szarpnięcia: żądanie nigdy nie przekracza {req} N, a wznoszenie jest płynne."
       }
     },
     "noise": {
@@ -738,8 +738,8 @@
       "status": {
         "off": "Idealny czujnik: spokojne silniki.",
         "chatter": "Silniki terkoczą! D wzmacnia szum. Spróbuj dłuższego filtra.",
-        "calm": "Dużo spokojniej. Z pozostałych ±{j} N około {p} N przepuszcza wprost P; reszta to wciąż D. Cena: D reaguje teraz około {tau} s później.",
-        "noD": "Bez D nie ma czego wzmacniać szumu: pozostałe ±{j} N to P, który przepuszcza go wprost. Silniki spokojne, ale teraz drona tłumi już tylko opór powietrza."
+        "calm": "Dużo spokojniej. Z pozostałych ±{j} N około {p} N przepuszcza wprost P; reszta to wciąż D. Cena: D reaguje teraz około {tau} s później.",
+        "noD": "Bez D nie ma czego wzmacniać szumu: pozostałe ±{j} N to P, który przepuszcza go wprost. Silniki spokojne, ale teraz drona tłumi już tylko opór powietrza."
       },
       "kd": "Wzmocnienie różniczkujące $K_d$",
       "mean": "średnia wysokość",

@@ -639,7 +639,7 @@
         "slow": "The droop is shrinking, but slowly. The pile takes time to build.",
         "ringing": "Stable, but only just: at 12 s it is still swinging. The closer Ki gets to {lim}, the slower the swings die.",
         "gone": "Droop gone! The pile now holds up the whole weight.",
-        "unstable": "Past the edge (Ki > {lim}): the bounces grow until the motors hit their limits, and it never settles."
+        "unstable": "Past the edge (Ki > {lim}): the bounces grow until the motors hit their limits, and it never settles."
       },
       "describe": "Integral gain {ki}. Droop after 12 seconds: {droop} centimetres."
     },
@@ -658,7 +658,7 @@
         "bouncy": "Stable, but bouncy. Add more Kd.",
         "calm": "Calm! The damper soaks up the bounce.",
         "tooMuch": "More D made it worse! Now it creeps up so slowly that the pile overfills, and it overshoots late. Try less Kd.",
-        "bigPile": "Stable, but Mika's big pile still overshoots by {os} %. No amount of D fixes that: switch Mika's Ki off."
+        "bigPile": "Stable, but Mika's big pile still overshoots by {os} %. No amount of D fixes that: switch Mika's Ki off."
       }
     },
     "poles": {
@@ -676,7 +676,7 @@
       },
       "stepAria": "Step response from 1.5 m to 2 m for the current gains",
       "status": {
-        "stable": "Stable: Ki must stay below {lim}. The slowest pole sits at σ = {s}.",
+        "stable": "Stable: Ki must stay below {lim}. The slowest pole sits at σ = {s}.",
         "unstable": "Unstable! Ki is above the edge ({lim}). Two poles crossed into the right half.",
         "cancel": "(A zero at {z} nearly cancels it, so it barely shows in the step.)"
       },
@@ -696,7 +696,7 @@
       "ki": "$K_i$",
       "kd": "$K_d$",
       "antiWindup": "Anti-windup",
-      "targets": "Stars for: overshoot under {os} %, settling (within 2 %) under {ts} s, no droop (under 1 cm), and motors pinned at a limit for under {sat} s.",
+      "targets": "Stars for: overshoot under {os} %, settling (within 2 %) under {ts} s, no droop (under 1 cm), and motors pinned at a limit for under {sat} s.",
       "readout": {
         "overshoot": "overshoot",
         "settling": "settling time",
@@ -712,11 +712,11 @@
         "wild": "Bump! It hit what is above it. The motors keep running, but with these gains it never settles.",
         "mark": "bump!"
       },
-      "crash": "Crash at {t} s! It hit the ground faster than 1.5 m/s, and a crashed drone stays down.",
+      "crash": "Crash at {t} s! It hit the ground faster than 1.5 m/s, and a crashed drone stays down.",
       "neverDroop": "never (droops)"
     },
     "kick": {
-      "title": "Setpoint jump: 1 m → 1.5 m",
+      "title": "Setpoint jump: 1 m → 1.5 m",
       "mode": "Take the derivative of…",
       "onError": "the error",
       "onMeasurement": "the measured height",
@@ -724,8 +724,8 @@
       "peak": "peak delivered",
       "kickMark": "kick!",
       "status": {
-        "error": "The error jumps, so its slope is huge: the controller asks for {req} N! The motors can only slam to 20 N. That's a derivative kick.",
-        "measurement": "Height can't jump, so no kick: the most it ever asks for is {req} N, and the climb is smooth."
+        "error": "The error jumps, so its slope is huge: the controller asks for {req} N! The motors can only slam to 20 N. That's a derivative kick.",
+        "measurement": "Height can't jump, so no kick: the most it ever asks for is {req} N, and the climb is smooth."
       }
     },
     "noise": {
@@ -738,8 +738,8 @@
       "status": {
         "off": "A perfect sensor: calm motors.",
         "chatter": "The motors chatter! D is amplifying the noise. Try a longer filter.",
-        "calm": "Much calmer. Of the ±{j} N left, P passes about {p} N straight through; the rest is still D. The price: D now reacts about {tau} s later.",
-        "noD": "No D, nothing to amplify the noise: the ±{j} N left is P passing it straight through. Calm motors, but now only the drag damps the drone."
+        "calm": "Much calmer. Of the ±{j} N left, P passes about {p} N straight through; the rest is still D. The price: D now reacts about {tau} s later.",
+        "noD": "No D, nothing to amplify the noise: the ±{j} N left is P passing it straight through. Calm motors, but now only the drag damps the drone."
       },
       "kd": "Derivative gain $K_d$",
       "mean": "average height",

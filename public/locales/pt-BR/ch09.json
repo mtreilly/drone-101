@@ -639,7 +639,7 @@
         "slow": "O desvio residual está diminuindo, mas lentamente. A pilha leva tempo para se acumular.",
         "ringing": "Estável, mas por pouco: em 12 s ainda está balançando. Quanto mais Ki chega perto de {lim}, mais devagar os balanços morrem.",
         "gone": "Desvio residual eliminado! A pilha agora sustenta todo o peso.",
-        "unstable": "Passou do limite (Ki > {lim}): as oscilações crescem até os motores atingirem seus limites, e nunca estabiliza."
+        "unstable": "Passou do limite (Ki > {lim}): as oscilações crescem até os motores atingirem seus limites, e nunca estabiliza."
       },
       "describe": "Ganho integral {ki}. Desvio residual após 12 segundos: {droop} centímetros."
     },
@@ -658,7 +658,7 @@
         "bouncy": "Estável, mas com oscilação. Adicione mais Kd.",
         "calm": "Calmo! O amortecedor absorve a oscilação.",
         "tooMuch": "Mais D piorou! Agora ele sobe tão devagar que a pilha transborda, e o sobressinal chega atrasado. Tente menos Kd.",
-        "bigPile": "Estável, mas a grande pilha da Mika ainda dá {os} % de sobressinal. Nenhuma quantidade de D conserta isso: desligue o Ki da Mika."
+        "bigPile": "Estável, mas a grande pilha da Mika ainda dá {os} % de sobressinal. Nenhuma quantidade de D conserta isso: desligue o Ki da Mika."
       }
     },
     "poles": {
@@ -676,7 +676,7 @@
       },
       "stepAria": "Resposta ao degrau de 1,5 m para 2 m para os ganhos atuais",
       "status": {
-        "stable": "Estável: Ki deve ficar abaixo de {lim}. O polo mais lento fica em σ = {s}.",
+        "stable": "Estável: Ki deve ficar abaixo de {lim}. O polo mais lento fica em σ = {s}.",
         "unstable": "Instável! Ki está acima do limite ({lim}). Dois polos cruzaram para a metade direita.",
         "cancel": "(Um zero em {z} quase o cancela, então ele mal aparece no degrau.)"
       },
@@ -696,7 +696,7 @@
       "ki": "$K_i$",
       "kd": "$K_d$",
       "antiWindup": "Anti-windup",
-      "targets": "Estrelas para: sobressinal abaixo de {os} %, acomodação (dentro de 2 %) abaixo de {ts} s, sem desvio residual (abaixo de 1 cm) e motores no limite por menos de {sat} s.",
+      "targets": "Estrelas para: sobressinal abaixo de {os} %, acomodação (dentro de 2 %) abaixo de {ts} s, sem desvio residual (abaixo de 1 cm) e motores no limite por menos de {sat} s.",
       "readout": {
         "overshoot": "sobressinal",
         "settling": "tempo de acomodação",
@@ -712,11 +712,11 @@
         "wild": "Tum! O drone bateu no que está acima dele. Os motores continuam funcionando, mas, com esses ganhos, ele não se estabiliza.",
         "mark": "batida!"
       },
-      "crash": "Queda em {t} s! Ele bateu no chão a mais de 1,5 m/s, e um drone que caiu fica no chão.",
+      "crash": "Queda em {t} s! Ele bateu no chão a mais de 1,5 m/s, e um drone que caiu fica no chão.",
       "neverDroop": "nunca (desvio residual)"
     },
     "kick": {
-      "title": "Salto do valor de referência: 1 m → 1,5 m",
+      "title": "Salto do valor de referência: 1 m → 1,5 m",
       "mode": "Tire a derivada de…",
       "onError": "o erro",
       "onMeasurement": "a altura medida",
@@ -724,8 +724,8 @@
       "peak": "pico entregue",
       "kickMark": "chute!",
       "status": {
-        "error": "O erro salta, então sua inclinação é enorme: o controlador pede {req} N! Os motores só conseguem ir com tudo até 20 N. Isso é um chute derivativo.",
-        "measurement": "A altura não pode saltar, então não há chute: o máximo que ele chega a pedir é {req} N, e a subida é suave."
+        "error": "O erro salta, então sua inclinação é enorme: o controlador pede {req} N! Os motores só conseguem ir com tudo até 20 N. Isso é um chute derivativo.",
+        "measurement": "A altura não pode saltar, então não há chute: o máximo que ele chega a pedir é {req} N, e a subida é suave."
       }
     },
     "noise": {
@@ -738,8 +738,8 @@
       "status": {
         "off": "Um sensor perfeito: motores calmos.",
         "chatter": "Os motores vibram! O D está amplificando o ruído. Tente um filtro mais longo.",
-        "calm": "Bem mais calmo. Dos ±{j} N que sobram, o P repassa uns {p} N direto; o resto ainda é do D. O preço: agora o D reage cerca de {tau} s mais tarde.",
-        "noD": "Sem D, nada amplifica o ruído: os ±{j} N que sobram são o P repassando-o direto. Motores calmos, mas agora só o arrasto amortece o drone."
+        "calm": "Bem mais calmo. Dos ±{j} N que sobram, o P repassa uns {p} N direto; o resto ainda é do D. O preço: agora o D reage cerca de {tau} s mais tarde.",
+        "noD": "Sem D, nada amplifica o ruído: os ±{j} N que sobram são o P repassando-o direto. Motores calmos, mas agora só o arrasto amortece o drone."
       },
       "kd": "Ganho derivativo $K_d$",
       "mean": "altura média",
