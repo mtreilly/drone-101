@@ -170,6 +170,10 @@ Hard-won habits from extending chapters. They apply to any chapter, whatever the
 - **Automatic direction fails on text with no letters.** "× 2" or "100%" has no strong
   characters, so it takes the page's direction and flips. Choose the direction from the content
   (Arabic letters → right-to-left, otherwise left-to-right).
+- **One central rule, no marks in locale files.** `src/core/bidi.ts` keeps little expressions,
+  negative numbers, number + unit and play outputs in one left-to-right run (prose, readouts,
+  sliders, canvas labels, legends). Fix a reversed run there, never with invisible direction marks
+  in a translation; `tex()` strips any that slip in.
 
 **Translations with parallel agents**
 - One agent per locale, one shared written brief, and the locale validator for that language as
@@ -178,6 +182,9 @@ Hard-won habits from extending chapters. They apply to any chapter, whatever the
 - **Check grammatical gender against earlier chapters.** The cast's grammatical gender differs by
   language (Mika is masculine in Italian and Arabic, feminine in Polish). Grep earlier chapters in
   that language, or choose gender-neutral phrasing.
+- **Give every parallel agent its own scratch folder, browser session and port.** Shared
+  scratch files and sessions got overwritten mid-task. Watch for stalled agents (no new files for
+  a long time) and restart them with "already done, keep consistent" instructions.
 - **Read the translators' reports, not just the test result.** They surface real inconsistencies
   (two terms for one concept across chapters, a label that disagrees with the prose). Fix them or
   record them for native review.
