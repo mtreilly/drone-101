@@ -1,9 +1,10 @@
+import { loopMargins, pidTF, type LoopMargins } from '../../math/bode';
 import { polymul } from '../../math/poly';
 import { roots } from '../../math/poly';
 import type { C } from '../../math/complex';
 import { DRONE, defaultDroneConfig, type DroneConfig, type PID } from '../../sim/drone-model';
 import { seeds } from '../../sim/random';
-import { runDrone, type Trace } from '../ch09/pid-tools';
+import { dronePlant, runDrone, type Trace } from '../ch09/pid-tools';
 
 /** The finale's "real-world grit". */
 export const MISSION = {
@@ -152,6 +153,17 @@ export function starsOnSeeds(p: PID, n = 30, over: Partial<DroneConfig> = {}): S
     misses: results.flatMap((r, i) => (r.stars === 6 ? [] : [{ seed: list[i], failed: CRITERIA.filter((c) => !r.pass[c]) }])),
     range,
   };
+}
+
+/**
+ * The mission loop's margins, nominal like `missionPoles` (no noise, limits or package): PID with the
+ * filtered D, motor lag `tm`, drone 1/(m s² + c s). Adds `lag`, what the motor lag alone costs at the
+ * crossover, arctan(wc·tm) in degrees. Reference tune: tm 0 → wc 10.8 rad/s, PM 58.5°; tm 0.05 →
+ * wc 9.85 rad/s, lag 26.2°, PM 33.4°.
+ */
+export function missionMargins(p: PID, tm = MISSION.motorTau, m = DRONE.m, c = DRONE.c): LoopMargins & { lag: number } {
+  const lm = loopMargins(pidTF(p.kp, p.ki, p.kd, p.dTau), dronePlant(m, c), { lags: tm > 0 ? [tm] : [] });
+  return { ...lm, lag: (Math.atan(lm.wc * tm) * 180) / Math.PI };
 }
 
 /**

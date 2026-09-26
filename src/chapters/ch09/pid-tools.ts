@@ -1,3 +1,4 @@
+import type { TF } from '../../math/bode';
 import { roots } from '../../math/poly';
 import type { C } from '../../math/complex';
 import { stepMetrics } from '../../math/metrics';
@@ -69,6 +70,9 @@ export function runDrone(cfg: DroneConfig, T: number, every = 10): Trace {
 /** Take-off from the ground to 2 m with a PID and motor limits. */
 export const takeoff = (p: PID, over: Partial<DroneConfig> = {}): DroneConfig =>
   defaultDroneConfig({ params: LIMITED, pid: p, ...over });
+
+/** The drone as a transfer function from thrust change to height change: 1/(m s² + c s). */
+export const dronePlant = (m = DRONE.m, c = DRONE.c): TF => ({ num: [1], den: [m, c, 0] });
 
 /**
  * Closed-loop characteristic polynomial of the drone (1/(m s² + c s)) with an ideal PID:

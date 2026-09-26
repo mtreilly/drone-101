@@ -1,4 +1,4 @@
-import { margins, type Margins } from '../../math/bode';
+import { criticalGain } from '../../math/bode';
 import { SHOWER, ShowerSim, type ShowerParams, type ShowerPolicy } from '../../sim/shower-model';
 
 /** °C at the head per unit of knob, in steady state */
@@ -15,7 +15,32 @@ export const handLoop = (k: number): { num: number[]; den: number[] } => ({ num:
 /** PI controller C(s) = kp + ki/s around the shower: L(s) = 45(kp·s + ki)·e^(−Ls) / (s(τs + 1)). */
 export const piLoop = (kp: number, ki: number): { num: number[]; den: number[] } => ({ num: [KNOB_GAIN * kp, KNOB_GAIN * ki], den: [SHOWER.tau, 1, 0] });
 
-export const loopMargins = (l: { num: number[]; den: number[] }, delay: number): Margins => margins(l.num, l.den, delay, 1e-3, 1e2);
+/**
+ * The edge for a hand on the shower (pipe `delay`, smoother `tau`): at the wiggle speed `w` where
+ * pipe, smoother (and, for the speed hand, its pile's 90°) lag 180° in all, the hand strength `k`
+ * that returns that wiggle at full size, and the hunting period `period` = 2π/w.
+ * - `'speed'` (Chapter 0's hand, du/dt = k·e): k in knob per (°C·s); 2.5 s pipe → k 0.0112, 0.457 rad/s, 13.8 s.
+ * - `'position'` (u = K·e): K in knob per °C; 2.5 s pipe → K 0.0307, 0.952 rad/s, 6.6 s.
+ */
+export function criticalHandGain(delay = SHOWER.delay, tau = SHOWER.tau, hand: 'speed' | 'position' = 'speed'): { k: number; w: number; period: number } {
+  const { gain, w, period } = criticalGain(hand === 'speed' ? 1 : 0, delay, tau);
+  return { k: gain / KNOB_GAIN, w, period };
+}
+
+/** What a pure delay's lag of `deg` degrees does to a wiggle (the `phase` widget's status keys). */
+export type LagStatus = 'small' | 'middle' | 'flipped' | 'full' | 'over';
+
+/**
+ * Near a whole number of wiggles (within 45°): `small` below 300°, `full` above (a whole wiggle late,
+ * looks in step again). Within 5° of half a wiggle (180°, 540°…): `flipped`. Otherwise `over` past
+ * 360° and `middle` below.
+ */
+export function lagStatus(deg: number): LagStatus {
+  const wrapped = ((deg % 360) + 360) % 360;
+  if (wrapped < 45 || wrapped > 315) return deg > 300 ? 'full' : 'small';
+  if (Math.abs(wrapped - 180) < 5) return 'flipped';
+  return deg > 360 ? 'over' : 'middle';
+}
 
 export const handPolicy = (k: number): ShowerPolicy => ({ kind: 'rate', rate: (_t, felt) => k * (SHOWER.target - felt) });
 

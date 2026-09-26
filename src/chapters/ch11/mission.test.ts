@@ -1,6 +1,6 @@
 import { seeds } from '../../sim/random';
 import { pid } from '../ch09/pid-tools';
-import { evaluate, runMission, starsOnSeeds } from './mission';
+import { evaluate, missionMargins, missionPoles, runMission, starsOnSeeds } from './mission';
 
 const REF = pid(20, 15, 5, { dTau: 0.04 });
 const JUNE = pid(30, 15, 10, { dTau: 0.005 });
@@ -50,6 +50,44 @@ describe('noisy claims are checked on many seeds (starsOnSeeds)', () => {
     // no noise: every seed flies the same mission
     expect(calm.range.rise[0]).toBe(calm.range.rise[1]);
     expect(calm.range.rise[0]).toBeCloseTo(1.27, 2);
+  });
+});
+
+describe('motor lag costs phase margin (missionMargins, play P3)', () => {
+  it('reference tune: τm 0 → 10.8 rad/s, 58.5°; 0.02 → 10.6, 46.8°; 0.05 → 9.85, 33.4°; 0.1 → 8.54, 20.5°', () => {
+    const rows: [number, number, number, number][] = [
+      [0, 10.8, 58.5, 0],
+      [0.02, 10.6, 46.8, 12.0],
+      [0.05, 9.85, 33.4, 26.2],
+      [0.1, 8.54, 20.5, 40.5],
+    ];
+    for (const [tm, wc, pm, lag] of rows) {
+      const m = missionMargins(REF, tm);
+      expect(m.wc).toBeCloseTo(wc, 1);
+      expect(Math.abs(m.pm - pm)).toBeLessThan(0.5);
+      expect(Math.abs(m.lag - lag)).toBeLessThan(0.5);
+    }
+    // the default is the mission's own motor
+    expect(missionMargins(REF)).toEqual(missionMargins(REF, 0.05));
+  });
+
+  it('false-obvious: the drop (25.1°) is not arctan(ωc·τm) at the old crossover (28.4°), because the crossover moves', () => {
+    const drop = missionMargins(REF, 0).pm - missionMargins(REF, 0.05).pm;
+    expect(drop).toBeCloseTo(25.1, 0);
+    expect((Math.atan(missionMargins(REF, 0).wc * 0.05) * 180) / Math.PI).toBeCloseTo(28.4, 0);
+  });
+
+  it('a short lag is almost a delay: ωτ = 28.2° vs arctan(ωτ) = 26.2° at the crossover', () => {
+    const m = missionMargins(REF);
+    expect((m.wc * 0.05 * 180) / Math.PI).toBeCloseTo(28.2, 0);
+    expect(m.lag).toBeCloseTo(26.2, 0);
+  });
+
+  it('agrees with the nominal poles: a positive phase margin exactly when every pole is in the left half', () => {
+    for (const p of [REF, JUNE, pid(30, 15, 7, { dTau: 0.04 }), pid(20, 400, 0, { dTau: 0.04 }), pid(5, 20, 0, { dTau: 0.04 })]) {
+      const stable = missionPoles(p).every((z) => z.re < 0);
+      expect(missionMargins(p).pm > 0).toBe(stable);
+    }
   });
 });
 

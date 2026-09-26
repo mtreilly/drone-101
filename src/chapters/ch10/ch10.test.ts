@@ -1,6 +1,6 @@
-import { sweep } from '../../math/bode';
+import { loopMargins, sweep } from '../../math/bode';
 import { SHOWER } from '../../sim/shower-model';
-import { comfortTime, handLoop, handPolicy, loopMargins, measureSine, piLoop, piPolicy, runShower, swingPeriod, unwrapNear } from './shower-tools';
+import { comfortTime, handLoop, handPolicy, measureSine, piLoop, piPolicy, runShower, swingPeriod, unwrapNear } from './shower-tools';
 
 describe('Chapter 10 numbers', () => {
   it('hand (integral) loop: phase crossover 0.457 rad/s, period 13.75 s (shown as 13.8 s), critical k 0.0112', () => {

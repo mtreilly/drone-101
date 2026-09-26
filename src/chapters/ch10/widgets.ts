@@ -3,7 +3,7 @@ import { h } from '../../core/dom';
 import { canvasHandFont } from '../../core/font';
 import { fmt, tc } from '../../core/i18n';
 import { progress } from '../../core/progress';
-import { logspace, sweep } from '../../math/bode';
+import { logspace, loopMargins, sweep } from '../../math/bode';
 import { SHOWER, ShowerSim } from '../../sim/shower-model';
 import type { WidgetCtx, WidgetFactory } from '../../story/types';
 import { readout, slider, toggle, transport } from '../../ui/controls';
@@ -16,7 +16,6 @@ import {
   comfortTime,
   handLoop,
   handPolicy,
-  loopMargins,
   measureSine,
   piLoop,
   piPolicy,
