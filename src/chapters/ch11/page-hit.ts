@@ -1,5 +1,5 @@
 import { DroneSim, type DroneConfig, type PID } from '../../sim/drone-model';
-import type { DroneView } from '../../ui/drone-view';
+import { watchCeiling } from '../ch09/page-ceiling';
 import { emptyTrace, sampleTrace } from '../ch09/pid-tools';
 import { MISSION, missionConfig, type MissionTrace } from './mission';
 
@@ -26,33 +26,30 @@ export function flyMission(p: PID, ceiling: number | null, seed = 7): { tr: Miss
 }
 
 /**
- * Metres of open page above the drone's picture, re-measured after the layout settles (resize, content
- * above opening up). `null` under reduced motion or with nothing overhead. `onChange` gets the old value.
+ * Metres of open page above the drone's picture. `measure()` reads it now; after that it is re-measured
+ * when the layout settles (debounced `wait` ms) from a scroll (the sticky top bar is solid and moves over
+ * the content), a resize, content above opening up or fonts loading. `onChange` gets the old value, and
+ * only when the height really changed (more than 1 cm), so an unchanged replay is never restarted.
+ * `h` is `null` under reduced motion or with nothing overhead.
  */
-export function pageCeiling(view: DroneView, onChange: (old: number | null) => void, wait = 200): { measure: () => number | null; readonly h: number | null; destroy: () => void } {
+export function pageCeiling(view: { ceilingHeight(): number | null }, onChange: (old: number | null) => void, wait = 200): { measure: () => number | null; readonly h: number | null; destroy: () => void } {
   let h: number | null = null;
-  let timer = 0;
   const measure = () => (h = view.ceilingHeight());
-  const later = () => {
-    clearTimeout(timer);
-    timer = window.setTimeout(() => {
+  const destroy = watchCeiling(
+    view,
+    () => h,
+    (next) => {
       const old = h;
-      measure();
-      if ((old === null) !== (h === null) || (old !== null && h !== null && Math.abs(old - h) > 0.01)) onChange(old);
-    }, wait);
-  };
-  addEventListener('resize', later);
-  const ro = new ResizeObserver(later);
-  ro.observe(document.body);
+      h = next;
+      onChange(old);
+    },
+    wait,
+  );
   return {
     measure,
     get h() {
       return h;
     },
-    destroy: () => {
-      clearTimeout(timer);
-      removeEventListener('resize', later);
-      ro.disconnect();
-    },
+    destroy,
   };
 }
