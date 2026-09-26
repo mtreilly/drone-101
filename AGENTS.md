@@ -189,6 +189,52 @@ Shared building blocks (one owner: change them only with tests, never per chapte
   (verified to match where the view registers the hit). Re-measure and recompute on resize.
 - `DroneView({ ceilingResponse: 'bump' })`: a short knock instead of the tumble, for `stall: false`.
 
+## Lessons from past passes
+
+Hard-won habits from extending chapters. They apply to any chapter, whatever the code looks like.
+
+**Story and pedagogy**
+- **Measure the voice, don't trust the feel.** Count what share of a chapter's blocks are dialogue
+  and compare with its neighbours (roughly a quarter to a third). Adding explanations quietly turns
+  a chapter into a lecture; when the share drops, give the new material back to Mika, Theo and June.
+- **Compute a claim before you word it.** The obvious sentence is often only half true: ζ = 0.7 is
+  *not* faster than ζ = 1 to the 2 % band, only to 5 %. Run the numbers first, write the sentence
+  that is true, and pin it with a test, including the case where the tempting version fails.
+- **Build before you measure.** When a concept can be reached two ways (e built from tiny steps,
+  then found again by measuring slopes), put the construction first. Two routes meeting at the same
+  number is the "whoa" moment; a measurement followed by an explanation is not.
+- **Dialogue must survive interaction.** A character line that quotes a value the reader can change
+  is only true at the default. Tie it to the starting value or phrase it so it stays true.
+- **Every new section needs a character beat and a small moment**, not only correct prose: a
+  mistake, a doubt, a callback, a joke that lands on the widget's result.
+
+**Right-to-left and mixed scripts**
+- **A little equation must stay one text run.** Splitting "2 × 2 × 2" and "= 8" into separate live
+  pieces reorders them in Arabic. Keep a whole expression in one isolated left-to-right run.
+- **Automatic direction fails on text with no letters.** "× 2" or "100%" has no strong
+  characters, so it takes the page's direction and flips. Choose the direction from the content
+  (Arabic letters → right-to-left, otherwise left-to-right).
+
+**Translations with parallel agents**
+- One agent per locale, one shared written brief, and the locale validator for that language as
+  the finish line works well. If agents are interrupted, check which files already pass before
+  relaunching, and give the rest "already done, keep consistent with it" instructions.
+- **Check grammatical gender against earlier chapters.** The cast's grammatical gender differs by
+  language (Mika is masculine in Italian and Arabic, feminine in Polish). Grep earlier chapters in
+  that language, or choose gender-neutral phrasing.
+- **Read the translators' reports, not just the test result.** They surface real inconsistencies
+  (two terms for one concept across chapters, a label that disagrees with the prose). Fix them or
+  record them for native review.
+
+**Checking**
+- **Screenshots find what tests cannot:** clipped curves, a hint touching the line above, a stray
+  label, a legend swatch separated from its word. Always look at 375 px, one right-to-left language
+  and one long-word language, in light and dark, and look again after fixing.
+- **Pass URLs to axe as separate arguments.** A single string of space-separated URLs is tested as
+  one page and reports a false "0 violations".
+- **Keep every commit green.** Plan the commit order up front so shared building blocks land (with
+  their tests passing) before the chapter content and its translations.
+
 ## Commands
 
 ```sh
