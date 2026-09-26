@@ -79,8 +79,8 @@ Short labels the s-plane draws or announces itself (`common:splane.*`), used fro
 | double (pole) | a mirror pair that has met on the real axis: two poles at one spot | double | doble | doppio | doppelt | podwójny | duplo | 重根 | 重根 | مزدوج |
 | off the map | a pole too far out to draw; the arrow at the edge points at it | hors de la carte | fuera del mapa | fuori dalla mappa | außerhalb der Karte | poza mapą | fora do mapa | マップの外 | 超出图外 | خارج الخريطة |
 
-"Settles ≈ … s" on the s-plane's settling lines reuses each locale's Chapter 8 wording
-(`ch08:widgets.playground.settles`); fr/es/zh-CN inherit the open settling-time question below.
+"Settles ≈ … s" on the s-plane's settling lines (`common:splane.settles`) uses each
+locale's settling-time term (see the Chapter 4 and 6 table).
 
 ## Chapters 7–11 terms
 
@@ -96,9 +96,32 @@ concept-map label in `common.json` (`map.nodes.<id>`).
 | motor limits: the motors can only push between 0 and 20 N; a command outside is cut off (map `limits`) | ch08 | limites des moteurs | límites del motor | limiti dei motori | Motorgrenzen | ograniczenia silników | limites do motor | モーター限界 | 电机限制 | حدود المحرك |
 | motor lag: the thrust asked for arrives a moment later; a first-order lag with time constant τm (map `motorlag`) | ch11 | retard des moteurs | retraso de los motores | ritardo dei motori | Motorverzögerung | bezwładność silników | atraso do motor | モーターの遅れ | 电机滞后 | تأخر المحركات |
 | fast vs calm: the trade-off between a quick arrival and quiet motors under sensor noise (map `tradeoff`) | ch11 | rapide ou calme | rápido o tranquilo | veloce o calmo | schnell oder ruhig | szybko czy spokojnie | rápido ou calmo | 速さか落ち着きか | 快还是稳 | السرعة أم الهدوء |
+| smoother: the shower's first-order lag (head and pipe walls warming up, τ = 1 s); follows its input, shrinking and delaying fast wiggles, never past 90°. The one Ch 10 word for it (replaces "thermal response/lag", "mixing") | ch10 | | | | | | | | | |
+| loop symbol $G_{\circ}(s)$: the trip once around the loop (controller × shower). Chosen over $L(s)$ because $L$ is the delay; the small circle reads "loop". Maths, identical in every locale | ch10 | | | | | | | | | |
+| share of a wiggle: $L/T$, the fraction of one period a delay covers; × 360° gives the phase lag | ch10 | | | | | | | | | |
+| pile (of a wiggle): what an I controller / speed hand does: area under the error; lags every wiggle 90°, 1/ω as big | ch10 | | | | | | | | | |
+| speed hand / position hand: a hand that turns the knob at a speed ∝ error (I controller) vs. one that puts the knob at a spot ∝ error (P controller) | ch10 | | | | | | | | | |
+| squashed ruler: the course's word for a logarithmic axis (each ×10 is one equal step) | ch10 | | | | | | | | | |
+| hunting: a steady self-sustained oscillation of a control loop at its edge | ch10 | | | | | | | | | |
+| phase lead: reacting earlier (P or D mixed into I) gives back phase | ch10 | | | | | | | | | |
+| delay margin: how many seconds longer the delay could get before the loop starts to hunt (phase margin in radians ÷ gain-of-1 speed) | ch10 | | | | | | | | | |
+| −180° speed / gain-of-1 speed: the wiggle speeds where the loop phase is −180° and where the loop gain is 1 (phase and gain crossover) | ch10 | | | | | | | | | |
 | underdamped / critically damped / overdamped (`common:regime.*`, shared since the Ch 7–11 pass) | ch06 | sous-amorti / amortissement critique / sur-amorti | subamortiguado / con amortiguamiento crítico / sobreamortiguado | sottosmorzato / a smorzamento critico / sovrasmorzato | unterdämpft / kritisch gedämpft / überdämpft | niedotłumiony / tłumiony krytycznie / przetłumiony | subamortecido / criticamente amortecido / superamortecido | 不足減衰 / 臨界減衰 / 過減衰 | 欠阻尼 / 临界阻尼 / 过阻尼 | تحت التخميد / تخميد حرج / فوق التخميد |
+| integral action / the pile: the part of the controller that pushes in proportion to the accumulated past error | ch09 | | | | | | | | | |
+| integrator time constant τ_I ≈ Kp/Ki: how long the pile takes to get 63% of the way to holding the weight | ch09 | | | | | | | | | |
+| Routh–Hurwitz criterion: a test on the coefficients that tells whether all poles are in the left half | ch09 | | | | | | | | | |
+| derivative kick: a thrust spike caused by taking the slope of an error that jumps | ch09 | | | | | | | | | |
+| derivative on measurement: taking D from the measured height instead of from the error | ch09 | | | | | | | | | |
+| derivative filter τ_f: a first-order smoothing lag applied to the reading before taking its slope | ch09 | | | | | | | | | |
+| integrator windup / anti-windup: the pile growing while the motors are pinned, and the fix of pausing it | ch09 | | | | | | | | | |
+| motors pinned (saturated): the motor command sitting at 0 N or 20 N, with no room left to correct | ch09 | | | | | | | | | |
+| (near) pole–zero cancellation: a zero close to a pole, so that mode barely shows in the response | ch09 | | | | | | | | | |
+| ringing: still swinging (stable, but the swings die slowly) | ch09 | | | | | | | | | |
 
 Notes:
+- Chapter 10 rows with empty locale cells were added with the English text (Phase 5 of the
+  Ch 7–11 extension); translators fill them. Keep "gain" the same word as the controller's gain
+  (the chapter says so: size out ÷ size in).
 - The map labels were taken from the words the chapters already use (Ch 8's "motor limits"
   captions, Ch 10's "frequency response"/"Bode plot" sentence, Ch 11's "Motor lag" item and its
   "motors calm" star), so the map and the prose agree. pl keeps "bezwładność silników" because
