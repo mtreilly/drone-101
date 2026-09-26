@@ -2,6 +2,7 @@ import { polymul } from '../../math/poly';
 import { roots } from '../../math/poly';
 import type { C } from '../../math/complex';
 import { DRONE, defaultDroneConfig, type DroneConfig, type PID } from '../../sim/drone-model';
+import { seeds } from '../../sim/random';
 import { runDrone, type Trace } from '../ch09/pid-tools';
 
 /** The finale's "real-world grit". */
@@ -101,6 +102,56 @@ export function evaluate(tr: MissionTrace): MissionResult {
     calm: calm < LIMITS.calm,
   };
   return { rise, overshoot, gust, recover, ground, calm, pass, stars: Object.values(pass).filter(Boolean).length };
+}
+
+/** Measured values of a mission that `starsOnSeeds` reports the spread of. */
+export type MissionMetric = 'rise' | 'overshoot' | 'gust' | 'recover' | 'calm';
+const METRICS: MissionMetric[] = ['rise', 'overshoot', 'gust', 'recover', 'calm'];
+
+export interface SeedSummary {
+  /** the noise seeds flown */
+  seeds: number[];
+  /** one evaluation per seed, in the same order */
+  results: MissionResult[];
+  /** how many seeds earned all six stars */
+  gold: number;
+  /** the fewest / most stars on any seed */
+  minStars: number;
+  maxStars: number;
+  /** per criterion: on how many seeds it passed */
+  passes: Record<CriterionId, number>;
+  /** the seeds that missed a star, and which criteria they failed */
+  misses: { seed: number; failed: CriterionId[] }[];
+  /** per measured value: [smallest, largest] over the seeds (NaN values, e.g. "never settled", are skipped) */
+  range: Record<MissionMetric, [number, number]>;
+}
+
+/**
+ * Flies the mission once per noise seed (1…n) and summarises it, for any claim about a noisy tune
+ * ("gets 6 stars", "arrives in about 1.9 s", "chatters less"): the widget always uses seed 7, but a
+ * sentence in the prose must hold for any jitter. `over` changes the config (e.g. `{ noiseStd: 0 }`).
+ */
+export function starsOnSeeds(p: PID, n = 30, over: Partial<DroneConfig> = {}): SeedSummary {
+  const list = seeds(n);
+  const results = list.map((seed) => evaluate(runDrone({ ...missionConfig(p, seed), ...over }, MISSION.duration, 10)));
+  const passes = Object.fromEntries(CRITERIA.map((c) => [c, results.filter((r) => r.pass[c]).length])) as Record<CriterionId, number>;
+  const range = Object.fromEntries(
+    METRICS.map((k) => {
+      const xs = results.map((r) => r[k]).filter((x) => !Number.isNaN(x));
+      return [k, xs.length ? [Math.min(...xs), Math.max(...xs)] : [NaN, NaN]];
+    }),
+  ) as Record<MissionMetric, [number, number]>;
+  const stars = results.map((r) => r.stars);
+  return {
+    seeds: list,
+    results,
+    gold: stars.filter((s) => s === 6).length,
+    minStars: Math.min(...stars),
+    maxStars: Math.max(...stars),
+    passes,
+    misses: results.flatMap((r, i) => (r.stars === 6 ? [] : [{ seed: list[i], failed: CRITERIA.filter((c) => !r.pass[c]) }])),
+    range,
+  };
 }
 
 /**
