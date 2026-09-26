@@ -280,7 +280,7 @@ export class DroneView {
     const w = estWidth(this.thrustLabel.textContent ?? '', fs);
     const up = y1 < y0;
     // baselines: just past the tip (as it always was), or level with the arrow's middle
-    const tip = up ? y1 + 4 : y1 + 8;
+    const tip = up ? y1 - 4 : y1 + 16;
     const mid = (y0 + y1) / 2 + fs * 0.35;
     const base = i < 2 ? tip : mid;
     if (i > 3) return null;
@@ -292,7 +292,7 @@ export class DroneView {
   private placeThrustLabel(gy: number, y0: number, y1: number, r: number | null | undefined): void {
     const fs = this.fontSize(16);
     const cands = [0, 1, 2, 3].map((i) => this.thrustLabelBox(gy, i, y0, y1, fs));
-    const obstacles: Box[] = [{ x: 0, y: 0, w: W, h: 24 }];
+    const obstacles: Box[] = [{ x: 0, y: 0, w: W, h: 24 }, ...droneBoxes(gy)];
     if (r !== null && r !== undefined) obstacles.push({ x: 52, y: this.y(r) - 1.5, w: W - 58, h: 3 });
     this.thrustSpot = pickSpot(cands, obstacles, this.thrustSpot);
     const c = cands[this.thrustSpot]!;
