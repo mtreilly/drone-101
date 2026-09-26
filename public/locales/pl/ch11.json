@@ -23,7 +23,7 @@
           "t": "say",
           "who": "theo",
           "mood": "happy",
-          "text": "W tym cały sens. Regulator musi to zrobić sam. My tylko wybieramy trzy liczby. No, cztery."
+          "text": "W tym cały sens. Regulator musi to zrobić sam. My tylko wybieramy trzy liczby. No, cztery: jeszcze filtr."
         },
         {
           "t": "p",
@@ -41,15 +41,57 @@
         },
         {
           "t": "p",
-          "text": "Na finał nasz model drona robi się trochę uczciwszy. Każda z tych rzeczy to coś, z czym muszą żyć prawdziwe drony:"
+          "text": "Na finał nasz model drona robi się trochę uczciwszy. Każda z tych rzeczy to coś, z czym muszą żyć prawdziwe drony, i każda to stary znajomy z wcześniejszego rozdziału:"
         },
         {
           "t": "list",
           "items": [
-            "**Bezwładność silników:** śmigła potrzebują około 0,05 s, żeby się rozkręcić albo zwolnić. Ciąg, o który prosisz, przychodzi chwilę później.",
-            "**Zaszumiony czujnik:** każdy odczyt wysokości jest przekłamany o około 2 cm, losowo, tysiąc razy na sekundę.",
-            "**Ograniczone silniki:** od 0 do 20 N, nigdy ujemnie.",
-            "**D jest filtrowane:** ponieważ prawdziwa prędkość nie jest znana, D używa nachylenia przefiltrowanego odczytu czujnika, ze stałą czasową $\\tau_f$, którą wybierasz."
+            "**Bezwładność silników (τ ≈ 0,05 s):** śmigło nie zmieni prędkości w mgnieniu oka. Jego ciąg podąża za poleceniem jak stygnąca kawa z rozdziału 3, człon inercyjny pierwszego rzędu: po 0,05 s jest w 63 % drogi. Spóźnione pchnięcie to przebrane opóźnienie fazowe z rozdziału 10.",
+            "**Zaszumiony czujnik (σ ≈ 2 cm):** każdy odczyt wysokości jest przekłamany o około 2 cm, losowo, tysiąc razy na sekundę. Rozdział 9 ostrzegał: D zamienia to drżenie w wielkie skoki ciągu.",
+            "**Ograniczone silniki (od 0 do 20 N):** ograniczenie z rozdziału 8 zostaje. Z paczką dron waży 6,9 N, więc 20 N to tylko około trzy razy więcej niż jego ciężar, a silniki nigdy nie pociągną w dół. Dopóki są na ograniczeniu, stos czeka (anti-windup z rozdziału 9).",
+            "**D jest filtrowane:** poprawka z rozdziału 9. D bierze nachylenie wygładzonego odczytu czujnika, członu inercyjnego pierwszego rzędu ze stałą czasową $\\tau_f$, którą wybierasz. Dłuższe $\\tau_f$ to spokojniej, ale później."
+          ]
+        },
+        {
+          "t": "play",
+          "id": "limit",
+          "text": "Przy starcie $\\eff{K_p}$ = {scrub|kp|eff} N/m razy uchyb 2 m daje żądanie {calc|ask} N{calc|clip}. Z paczką dron waży {calc|w} N, więc 20 N to tylko {calc|ratio}× jego ciężar."
+        },
+        {
+          "t": "callout",
+          "title": "Krótka bezwładność to prawie opóźnienie",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Silnik, który potrzebuje 0,05 s, żeby się rozkręcić… czy to nie jest po prostu malutkie opóźnienie?"
+            },
+            {
+              "t": "math",
+              "tex": "\\angle \\frac{1}{1 + i\\omega\\tau_m} = -\\arctan(\\omega\\tau_m) \\approx -\\omega\\tau_m \\qquad (\\omega\\tau_m \\ll 1)"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "excited",
+              "text": "Prawie! Weź nastawy, które zdobywają wszystkie sześć gwiazdek (bez spoilerów). Ich wzmocnienie pętli wynosi dokładnie 1 przy około 10 rad/s, tam gdzie rozdział 10 odczytuje zapas fazy. Tam opóźnienie 0,05 s kosztowałoby 28°. Bezwładność kosztuje 26°."
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "happy",
+              "text": "Czyli znowu rozdział 10, tylko w mniejszej skali."
+            },
+            {
+              "t": "play",
+              "id": "lag",
+              "text": "Dla tych sześciogwiazdkowych nastaw wzmocnienie pętli wynosi 1 przy około {calc|wc} rad/s. Bezwładność silników $\\tau_m$ = {scrub|tm} s opóźnia to wahnięcie o {calc|lag}°, więc zapas fazy spada z 59° do {calc|pm}°."
+            },
+            {
+              "t": "p",
+              "text": "Z prawdziwymi silnikami około 25° zapasu znika, zanim w ogóle wkroczą szum czy ograniczenia. Dlatego zwycięskie nastawy w finale są łagodniejsze niż w rozdziale 9."
+            }
           ]
         },
         {
@@ -64,18 +106,29 @@
           "options": [
             {
               "text": "P: od razu reaguje na uchyb",
-              "why": "P reaguje pierwszy, ale sam P ustaliłby się po prostu przy *innym* zwisie, bo zmienił się ciąg zawisu."
+              "why": "P reaguje pierwsze, ale samo P ustaliłoby się po prostu przy *innym* zwisie, bo zmienił się ciąg potrzebny do zawisu: przy $K_p$ = 20 około 10 cm za wysoko."
             },
             {
               "text": "I: stos musi znaleźć nowy ciąg zawisu",
               "correct": true,
-              "why": "Dron potrzebuje teraz około 4,9 N zamiast 6,9 N. Tylko całka potrafi wytropić nowe stałe pchnięcie i mimo to skończyć z zerowym uchybem."
+              "why": "Dron potrzebuje teraz około 4,9 N zamiast 6,9 N. W spoczynku uchyb wynosi 0 i D wynosi 0, więc sam stos musi utrzymać nowy ciężar. Tylko całka potrafi wytropić nowe stałe pchnięcie i mimo to skończyć z zerowym uchybem."
             },
             {
               "text": "D: powstrzymuje podskok",
               "why": "D tłumi podskok, co się przydaje, ale milknie, gdy dron stoi w miejscu, więc nie utrzyma nowej równowagi."
             }
           ]
+        },
+        {
+          "t": "play",
+          "id": "drop",
+          "text": "Gdy spada paczka o masie {scrub|pkg} kg, pchnięcie do zawisu musi zmaleć o {calc|dN|eff} N. Na stałe utrzyma to tylko całka: przy $\\eff{K_i}$ = {scrub|ki|eff} N/(m·s) musi zgromadzić {calc|area} m·s uchybu, co przy średnim uchybie {scrub|e} cm zajmuje około {calc|time} s."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Chwila. Czyli po zrzucie dron *musi* przez jakiś czas wisieć trochę za wysoko? To z tego uchybu stos się oducza!"
         }
       ]
     },
@@ -85,11 +138,15 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Każda zmiana suwaka restartuje misję, a poprzedni lot zostaje jako duch. Mała płaszczyzna s pokazuje bieguny **nominalne** (idealny czujnik, bez paczki, bez ograniczeń), więc widzisz liniowy obrazek, podczas gdy obok toczy się prawdziwy, bałaganiarski lot. Zdobądź wszystkie sześć gwiazdek, żeby dostać złoto."
+          "text": "Każda zmiana suwaka restartuje misję, a poprzedni lot zostaje jako duch. Mała płaszczyzna s pokazuje bieguny **nominalne**: bezwładność silników i filtr są uwzględnione, pominięte zostają tylko szum, paczka i ograniczenia. Widzisz więc liniowy obrazek, podczas gdy obok toczy się prawdziwy, bałaganiarski lot. Zdobądź wszystkie sześć gwiazdek, żeby dostać złoto."
         },
         {
           "t": "p",
-          "text": "Aby dostać gwiazdkę za dolot, **rzeczywista wysokość musi pozostać** w granicach ±5 cm od chwili dotarcia aż do podmuchu w 6 s; jednorazowe przecięcie 2 m się nie liczy. Gwiazdka za spokojne silniki używa **odchylenia standardowego** ciągu od 3 do 6 s: typowego odchylenia od średniej, wraz z późnym uspokajaniem i szumem czujnika."
+          "text": "Progi to to, co zauważyłby klient czekający na przesyłkę: ustalenie w ciągu 3 s, nigdy więcej niż 10 % za wysoko, podmuch spycha najwyżej na szerokość dłoni (20 cm), powrót w 2 s po zrzucie, żadnego szorowania o ziemię i silniki, które nie bzyczą (poniżej 0,5 N terkotu)."
+        },
+        {
+          "t": "p",
+          "text": "Aby dostać gwiazdkę za dolot, **rzeczywista wysokość musi pozostać** w granicach ±5 cm od chwili dotarcia aż do podmuchu w 6 s; jednorazowe przecięcie 2 m się nie liczy. Gwiazdka za spokojne silniki używa **odchylenia standardowego** ciągu od 3 do 6 s, po starcie, a przed podmuchem: typowego odchylenia od średniej, wraz z późnym uspokajaniem i terkotem od czujnika. Wskaż wiersz listy kontrolnej (albo przejdź do niego klawiszem Tab), żeby zacieniować sekundy, które ocenia."
         },
         {
           "t": "widget",
@@ -97,8 +154,12 @@
         },
         {
           "t": "note",
+          "text": "Drżenie czujnika jest losowe, ale w każdym locie to *ten sam* los, więc gdy duch i nowy lot się różnią, to twoja zasługa. Prawdziwy dron co dzień dostaje nowy szum, a dobre nastawy wygrywają z każdym szumem: przepuściliśmy sześciogwiazdkowe nastawy przez 30 różnych wzorów drżenia i za każdym razem zdobyły sześć gwiazdek."
+        },
+        {
+          "t": "note",
           "aside": true,
-          "text": "Nie idzie? Zwycięskie nastawy z placu zabaw z rozdziału 9 to dobry początek. Potem wydłużaj $\\tau_f$, aż silniki przestaną terkotać."
+          "text": "Nie wiesz, od czego zacząć? Zacznij od spokojnych nastaw z rozdziału 9, na przykład $K_p$ = 20, $K_i$ = 10, $K_d$ = 4 i $\\tau_f$ = 0,04 s. To pięć gwiazdek. Potem podnoś $K_i$, aż zaświeci się gwiazdka za dolot."
         },
         {
           "t": "say",
@@ -116,11 +177,65 @@
           "t": "say",
           "who": "theo",
           "mood": "think",
-          "text": "Rozdział 9, ostrzeżenie 2. Duże $K_d$ razy malutki filtr zamienia każde 2 cm drżenia czujnika w szpilkę ciągu. A szpilki dużo częściej obcinają się na 0 N niż na 20 N, więc dodają krzywe, dodatkowe pchnięcie: stąd przeregulowanie. Było bez zarzutu tylko dlatego, że twoje wyobrażone spokojne powietrze miało w zestawie idealny czujnik."
+          "text": "Rozdział 9, ostrzeżenie 2. Duże $K_d$ razy malutki filtr zamienia każde 2 cm drżenia czujnika w skok ciągu. A skoki dużo częściej obcinają się na 0 N niż na 20 N (blada pomarańczowa linia pokazuje, o co regulator *prosił*: zobacz, jak często dobija do 0 N), więc dodają krzywe, jednostronne pchnięcie. Stąd przeregulowanie, ten sam dryf w górę, który przyłapaliśmy w rozdziale 9. Był bez zarzutu tylko dlatego, że twoje wyobrażone spokojne powietrze miało w pakiecie idealny czujnik."
+        },
+        {
+          "t": "play",
+          "id": "spike",
+          "text": "Przy $\\eff{K_d}$ = {scrub|kd|eff} N·s/m i filtrze $\\tau_f$ = {scrub|tf} s każde 2 cm drgnięcia czujnika to żądanie około {calc|spike|eff} N od silników ($K_d\\sigma/\\tau_f$). Do zawisu wystarczy 6,9 N."
+        },
+        {
+          "t": "callout",
+          "title": "Czemu po prostu nie więcej D?",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "think",
+              "text": "Silniki są nerwowe, więc potrzebują więcej tłumienia. Więcej D!"
+            },
+            {
+              "t": "p",
+              "text": "Theo próbuje z $K_p$ = 20, $K_i$ = 15 i $\\tau_f$ = 0,04 s. Puch robi się *gorszy*: 0,22 N terkotu przy $K_d$ = 5, 0,41 N przy $K_d$ = 10. Bez szumu to samo $K_d$ = 10 jest prawie ciche."
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "happy",
+              "text": "Czyli D nie uspokaja szumu, tylko go wzmacnia. Tłumienie uspokaja *ruch*, a szum to nie ruch: to czujnik, który zmyśla."
+            }
+          ]
         },
         {
           "t": "p",
-          "text": "Wypróbuj **nastawy June na spokojne powietrze** i zobacz, jak gwiazdka „spokojne silniki” przepada. Potem wydłuż filtr do około 0,04 s i zmniejsz $K_d$ do około 6. Oddajesz odrobinę szybkości, a dostajesz spokojne silniki. Ten kompromis, szybkość kontra szum i kontra odporność, *to właśnie* jest automatyka."
+          "text": "Wypróbuj **nastawy June na spokojne powietrze** i patrz, jak gwiazdka „spokojne silniki” gaśnie. Potem wydłuż filtr do 0,04 s i zmniejsz $K_d$ do około 7. Przy $K_d$ = 7 dron dociera w około 1,9 s zamiast wymarzonych przez June 1,3 s: to cena spokojnych silników. Ta wymiana, szybkość przeciw szumowi i przeciw odporności, *to właśnie* inżynieria sterowania."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Trochę wolniej, za to silniki przestają wyć. Zgoda. W mojej głowie powietrze było spokojne, *a* czujnik idealny."
+        },
+        {
+          "t": "callout",
+          "title": "Podmuch to robota dla P",
+          "blocks": [
+            {
+              "t": "play",
+              "id": "gust",
+              "text": "Stałe pchnięcie {scrub|F|dis} N przy wzmocnieniu P $\\eff{K_p}$ = {scrub|kp|eff} N/m przesuwa drona o $F/K_p$ = {calc|dev} cm, gdy odrobina D pozwoli mu się ustalić."
+            },
+            {
+              "t": "p",
+              "text": "Podmuch w misji trwa tylko 3 s, więc całka ledwo ma coś do powiedzenia: sześciogwiazdkowe nastawy z $K_p$ = 20 i tak zapadają się o około 7 cm. A bez żadnego D człon P chwieje się dalej na spóźnionych silnikach, zamiast się ustalić."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "happy",
+              "text": "Więc jeśli gwiazdka za podmuch nie wychodzi, nie sięgaj po $K_i$. Usztywnij sprężynę: więcej $K_p$."
+            }
+          ]
         }
       ]
     },
@@ -161,7 +276,7 @@
             "**Nieskrócone bieguny** transmitancji wskazują naturalne ruchy widoczne od wybranego wejścia do wyjścia: po lewej zanikają, po prawej rosną (rozdz. 8).",
             "**PID**: I eliminuje zwis, D dodaje tłumienia, a każdy z nich przesuwa bieguny (rozdz. 9).",
             "**Opóźnienie** dodaje opóźnienia fazowego; **zapasy** mówią, jak daleko jesteś od krawędzi urwiska (rozdz. 10).",
-            "Prawdziwy sprzęt dodaje ograniczenia, bezwładność i szum, więc dobre regulatory są nie tylko szybkie, ale i spokojne (rozdz. 11)."
+            "Prawdziwy sprzęt dodaje **ograniczenia** (rozdz. 8), **bezwładność**, która kosztuje zapas fazy (rozdz. 3 + rozdz. 10), i **szum**, który D wzmacnia (rozdz. 9), więc dobre regulatory są nie tylko szybkie, ale i spokojne (rozdz. 11)."
           ]
         },
         {
@@ -173,6 +288,16 @@
       "id": "final-check",
       "title": "Wytłumacz to znajomemu",
       "blocks": [
+        {
+          "t": "p",
+          "text": "Najpierw twoja misja: ile masz gwiazdek i która była najtrudniejsza? Powiedz na głos *dlaczego*, zanim zaczniesz czytać dalej."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "U mnie gwiazdka za spokojne silniki. Ciągle dodawałam D, żeby uspokoić silniki, a one tylko robiły się głośniejsze."
+        },
         {
           "t": "p",
           "text": "Najlepszym testem zrozumienia jest tłumaczenie. Przed każdą odpowiedzią spróbuj powiedzieć na głos *swoją* wersję. Potem wybierz wyjaśnienie, które najbardziej do niej pasuje."
@@ -220,21 +345,44 @@
               ]
             },
             {
-              "id": "ch11-q3",
-              "q": "„Dlaczego pod prysznicem ciągle mi przestrzeliwało?”",
+              "id": "ch11-q4",
+              "q": "Dron twojego kolegi wisi w miejscu, ale silniki bzyczą i się grzeją. Czujnik wysokości drży o 2 cm. Co wypróbować najpierw?",
               "options": [
                 {
-                  "text": "Reagowanie na spóźnione informacje było zbyt mocne: faza pętli doszła do −180°, gdy jej wzmocnienie wciąż przekraczało 1, więc każda poprawka napędzała wahanie",
+                  "text": "Wydłużyć filtr członu różniczkującego albo zmniejszyć $K_d$",
                   "correct": true,
-                  "why": "Dokładnie. Lekarstwem było mniejsze wzmocnienie albo większy zapas fazy, a nie więcej wysiłku."
+                  "why": "D zamienia drżenie czujnika w około $K_d\\sigma/\\tau_f$ niutonów polecenia: 40 N przy $K_d$ = 10 i $\\tau_f$ = 0,005 s, tylko 3,5 N przy $K_d$ = 7 i $\\tau_f$ = 0,04 s. Tracisz odrobinę szybkości dolotu."
                 },
                 {
-                  "text": "Prysznic był zepsuty",
-                  "why": "W rozdziale 0 szerokie wahania prawie się pokryły po przesunięciu krzywych, ale rura wygładzała gwałtowne zmiany. Prysznic nie był zepsuty: działał z opóźnieniem i wygładzaniem."
+                  "text": "Więcej $K_d$, dla większego tłumienia",
+                  "why": "Tłumienie uspokaja *ruch*, a nie zmyślenia czujnika. Przy $\\tau_f$ = 0,04 s terkot rośnie z 0,22 N przy $K_d$ = 5 do 0,41 N przy $K_d$ = 10."
                 },
                 {
-                  "text": "Reagowanie było za wolne",
-                  "why": "*Mocniejsze* reagowanie tylko pogarszało sprawę, co pokazały robotyczne ręce. Problemem jest pośpiech na podstawie starych wiadomości."
+                  "text": "Wyłączyć całkowanie",
+                  "why": "I sumuje uchyb powoli, więc drżenie ledwo przez nie przechodzi. Bez niego dron ma zwis i nie potrafi odrobić zrzutu paczki."
+                },
+                {
+                  "text": "Więcej $K_p$",
+                  "why": "P przepuszcza drżenie wprost ($K_p\\sigma$: 0,4 N przy $K_p$ = 20), więc więcej P to trochę *więcej* bzyczenia, a nie mniej."
+                }
+              ]
+            },
+            {
+              "id": "ch11-q5",
+              "q": "Silniki robią się wolniejsze: ich bezwładność rośnie z 0,05 s do 0,1 s. Co się dzieje z sześciogwiazdkowymi nastawami z dygresji?",
+              "options": [
+                {
+                  "text": "Ich zapas fazy maleje, z około 33° do około 21°, więc bardziej się chwieją",
+                  "correct": true,
+                  "why": "Bezwładność opóźnia każde wahnięcie o $\\arctan(\\omega\\tau)$: to opóźnienie fazowe z rozdziału 10, to samo, przez które prysznic przestrzeliwał. Dłuższa bezwładność zostawia mniej zapasu przed −180°."
+                },
+                {
+                  "text": "Nic: 0,1 s to drobiazg przy 20-sekundowej misji",
+                  "why": "Liczy się bezwładność w porównaniu z wahnięciem pętli, około 10 rad/s (jedno wahnięcie co 0,6 s), a nie długość misji."
+                },
+                {
+                  "text": "Zwis się zwiększa",
+                  "why": "Z włączonym I nie ma żadnego zwisu, a bezwładność zmienia *przebieg w czasie*, a nie końcową równowagę sił."
                 }
               ]
             }
@@ -253,13 +401,19 @@
         {
           "t": "list",
           "items": [
-            "**Linie pierwiastkowe (root locus):** zamiast przeciągać bieguny, przeciągaj *wzmocnienie* i patrz, jak bieguny rysują ścieżki na płaszczyźnie s.",
-            "**Sterowanie w przestrzeni stanów:** wiele czujników, wiele silników, wszystko naraz: przechył, obrót i położenie prawdziwego drona jednocześnie.",
-            "**Sterowanie cyfrowe:** prawdziwe regulatory działają na komputerach, które próbkują co kilka milisekund. Płaszczyzna s dostaje kuzynkę, płaszczyznę z.",
-            "**Filtry Kalmana:** sprytna walka z szumem przez łączenie przewidywania modelu z pomiarem czujnika.",
-            "**Predyktory Smitha i sterowanie predykcyjne (MPC):** regulatory, które noszą w sobie małą symulację, żeby zajrzeć za opóźnienia.",
-            "**Sterowanie nieliniowe i odporne:** co robić, gdy świat nie jest liniowy, i jak udowodnić, że wciąż masz zapas."
+            "**Linie pierwiastkowe (root locus):** zamiast przeciągać bieguny, przeciągaj *wzmocnienie* i patrz, jak bieguny rysują ścieżki. Od razu widać, które $K_p$ to już za dużo.",
+            "**Sterowanie w przestrzeni stanów:** wiele czujników i silników naraz. Prawdziwy dron musi jednocześnie trzymać przechył, obrót i położenie, a strojenie po jednym pokrętle przestaje działać.",
+            "**Sterowanie cyfrowe:** prawdziwe regulatory działają na komputerach, które próbkują co kilka milisekund. Próbkowanie to też małe opóźnienie, a płaszczyzna s dostaje kuzynkę, płaszczyznę z.",
+            "**Filtry Kalmana:** łączą to, co przewiduje model, z tym, co mówi czujnik, więc można używać zaszumionego czujnika bez powolnego filtra.",
+            "**Predyktory Smitha i sterowanie predykcyjne (MPC):** regulatory, które noszą w sobie małą symulację, żeby zajrzeć za opóźnienia. To prawdziwe lekarstwo na prysznic.",
+            "**Sterowanie nieliniowe i odporne:** co robić, gdy opór powietrza nie jest liniowy albo dron lata w 3D, i jak *udowodnić*, że wciąż masz zapas."
           ]
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Najpierw linie pierwiastkowe. Chcę *patrzeć*, jak bieguny się ruszają, kiedy kręcę jednym pokrętłem."
         },
         {
           "t": "cliff",
@@ -273,13 +427,15 @@
       "title": "Centrum kontroli misji",
       "measured": "odczyt czujnika",
       "hAria": "Wysokość w ciągu 20-sekundowej misji z pasem docelowym; zaznaczone chwile podmuchu i zrzutu paczki.",
-      "tAria": "Ciąg w trakcie misji z ograniczeniem silników 20 N.",
+      "tAria": "Ciąg w trakcie misji: o co prosił regulator (obcięte do zakresu silników od 0 do 20 N) i co dostarczyły spóźnione silniki.",
       "gust": "podmuch",
       "drop": "zrzut",
       "max": "maks. 20 N",
+      "min": "0 N: w dół nie pociągnie",
+      "asked": "żądany",
+      "delivered": "dostarczony",
       "splane": "Nominalne bieguny układu zamkniętego drona z bezwładnością silników i filtrowaną pochodną.",
       "filter": "Filtr D $\\tau_f$",
-      "dMeas": "D z pomiaru (bez szarpnięcia)",
       "presetJune": "Nastawy June na spokojne powietrze",
       "instant": "Leć natychmiast",
       "checklist": "Lista kontrolna misji",
@@ -289,15 +445,28 @@
         "gust": "Od podmuchu do zrzutu paczki utrzymać się w granicach {gustCm} cm",
         "recover": "Powrót do ± {bandCm} cm w mniej niż {recover} s po zrzucie",
         "ground": "Nigdy nie dotknij ziemi po starcie",
-        "calm": "Odchylenie standardowe ciągu od 3 do 6 s poniżej {calm} N"
+        "calm": "Odchylenie standardowe ciągu od 3 do 6 s poniżej {calm} N",
+        "neverRise": "nieustalony do {s} s",
+        "neverBack": "bez powrotu do {s} s"
       },
       "touched": "dotknął!",
       "clear": "czysto",
       "ready": "Gotowe. Ustaw wzmocnienia, a potem naciśnij Start (albo Leć natychmiast).",
       "flying": "Lecimy…",
       "hitPage": "Bum! Wyleciał poza rysunek i uderzył w to, co jest nad nim. Silniki stanęły i spadł. W prawdziwym pokoju przeregulowanie kończy się na suficie.",
+      "hitNoise": "Uniósł go szum czujnika: obcięty terkot pcha bardziej w górę niż w dół.",
       "gold": "ZŁOTO! Wszystkie sześć gwiazdek. Witaj w klubie inżynierów automatyków.",
       "stars": "{n} z 6 gwiazdek. Strój dalej!",
+      "hint": {
+        "ground": "Siedział na ziemi albo na nią spadł. Zacznij od większego Kp: to ono go podnosi.",
+        "noise": "Silniki terkoczą: D zamienia drżenie czujnika w skoki ciągu. Wydłuż τf albo zmniejsz Kd.",
+        "droop": "Wisi poniżej 2 m: to zwis. Trochę Ki to naprawi.",
+        "overshoot": "Przy starcie przestrzeliwuje. Więcej Kd albo mniej Ki.",
+        "rise": "Wspina się za wolno: do 3 s się nie ustalił. Spróbuj odrobinę większego Ki.",
+        "gust": "Podmuch spycha go za daleko. Większe Kp go usztywni.",
+        "recover": "Odrabianie zrzutu trwa za długo. To zadanie całki: spróbuj większego Ki.",
+        "swing": "Od 3 do 6 s ciąg wciąż się waha: dron się nie ustalił. Odrobina większego Kd uspokoi ruch."
+      },
       "best": "Dotychczasowy rekord: {n} z 6 gwiazdek (Kp {kp}, Ki {ki}, Kd {kd}, τf {tf} s).",
       "phase": {
         "takeoff": "{s} s: start z paczką",
@@ -309,9 +478,37 @@
       "poles": {
         "stable": "Bieguny nominalne: wszystkie w lewej połowie.",
         "unstable": "Jeden z biegunów nominalnych jest w prawej połowie: te nastawy nie wytrzymają!",
-        "off": "(Szybkie bieguny poza lewą krawędzią: {n}.)",
+        "off_one": "(1 szybki biegun poza lewą krawędzią.)",
+        "off_other": "(Szybkie bieguny poza lewą krawędzią: {n}.)",
         "marginal": "Bieguny nominalne: biegun leży na granicy stabilności."
+      },
+      "state": {
+        "pass": "zaliczone",
+        "fail": "niezaliczone",
+        "pending": "jeszcze nierozstrzygnięte"
       }
+    }
+  },
+  "plays": {
+    "limit": {
+      "kp": "wzmocnienie Kp, niutony na metr",
+      "clipped": ", a silniki dają 20"
+    },
+    "lag": {
+      "tm": "bezwładność silników, sekundy"
+    },
+    "drop": {
+      "pkg": "masa paczki, kilogramy",
+      "ki": "wzmocnienie Ki, niutony na metrosekundę",
+      "e": "średni uchyb, centymetry"
+    },
+    "spike": {
+      "kd": "wzmocnienie Kd, niutonosekundy na metr",
+      "tf": "stała czasowa filtra, sekundy"
+    },
+    "gust": {
+      "F": "stałe pchnięcie, niutony",
+      "kp": "wzmocnienie Kp, niutony na metr"
     }
   }
 }

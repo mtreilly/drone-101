@@ -1,39 +1,54 @@
 import './ch11.css';
 import { h } from '../../core/dom';
-import { fmt, tc } from '../../core/i18n';
+import { fmt, getLang, tc } from '../../core/i18n';
 import { progress } from '../../core/progress';
 import { DroneSim, type PID } from '../../sim/drone-model';
 import type { WidgetFactory } from '../../story/types';
-import { slider, toggle, transport } from '../../ui/controls';
+import { slider, transport } from '../../ui/controls';
 import { DroneView } from '../../ui/drone-view';
 import { Loop } from '../../ui/loop';
-import { Plot } from '../../ui/plot';
+import { Plot, type Band } from '../../ui/plot';
 import { SPlane } from '../../ui/s-plane';
 import '../ch09/ch09.css';
-import { emptyTrace, pid } from '../ch09/pid-tools';
+import { emptyTrace, pid, sampleTrace } from '../ch09/pid-tools';
 import { starRow } from '../ch09/stars';
-import { CRITERIA, LIMITS, MISSION, evaluate, missionConfig, missionPoles, type MissionResult, type MissionTrace } from './mission';
+import {
+  CRITERIA,
+  LIMITS,
+  MISSION,
+  evaluate,
+  hintFor,
+  missionConfig,
+  missionPoles,
+  neverBack,
+  neverSettled,
+  noiseLifted,
+  JUNE_TUNE,
+  WINDOWS,
+  type CriterionId,
+  type MissionResult,
+  type MissionTrace,
+} from './mission';
 import { flyMission, pageCeiling, withCeiling } from './page-hit';
 
 export const BEST_KEY = 'ch11.best';
 
-/** June's "perfect in calm air" tune: flawless with a perfect sensor, chattering with a real one. */
-export const JUNE_TUNE = { kp: 30, ki: 15, kd: 10, dTau: 0.005, dOnMeasurement: true };
+type Tune = typeof JUNE_TUNE;
 
-interface Best {
+interface Best extends Tune {
   stars: number;
-  kp: number;
-  ki: number;
-  kd: number;
-  dTau: number;
-  dOnMeasurement: boolean;
+  /**
+   * Saves from before the "D from measurement" switch was removed carry it. It is ignored: the
+   * target never jumps in this mission, so D on the error and D on the measurement fly the same.
+   */
+  dOnMeasurement?: boolean;
 }
 
 /** The final mission sandbox. */
 const mission: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
-  const g = { kp: 10, ki: 0, kd: 1, dTau: 0.02, dOnMeasurement: true };
-  const gains = (): PID => pid(g.kp, g.ki, g.kd, { dTau: g.dTau, dOnMeasurement: g.dOnMeasurement });
+  const g: Tune = { kp: 10, ki: 0, kd: 1, dTau: 0.02 };
+  const gains = (): PID => pid(g.kp, g.ki, g.kd, { dTau: g.dTau });
   host.classList.add('pid-widget', 'mission-widget');
   host.append(h('p', { class: 'w-title' }, t('title')));
 
@@ -83,7 +98,7 @@ const mission: WidgetFactory = (host, ctx) => {
     series: [
       { id: 'meas', color: 'pencil', label: t('measured'), width: 1 },
       { id: 'r', color: 'sp', dash: [6, 5], width: 1.8 },
-      { id: 'h', color: 'out', label: tc('drone.height'), ghost: true },
+      { id: 'h', color: 'out', label: tc('drone.height'), ghost: true, offArrows: true, offLabel: (v) => `↑ ${fmt(v, 1)} m` },
     ],
     fillBetween: ['r', 'h', 'err'],
     height: 190,
@@ -94,15 +109,31 @@ const mission: WidgetFactory = (host, ctx) => {
     { kind: 'v' as const, at: MISSION.dropAt, color: 'dis', label: t('drop') },
   ];
   hPlot.setLines(events);
-  hPlot.setBands([{ kind: 'h', from: MISSION.setpoint - LIMITS.band, to: MISSION.setpoint + LIMITS.band, color: 'sp@0.16' }]);
+  const targetBand: Band = { kind: 'h', from: MISSION.setpoint - LIMITS.band, to: MISSION.setpoint + LIMITS.band, color: 'sp@0.16' };
+  hPlot.setBands([targetBand]);
+  // what the controller asked for (clipped to what the motors can be told) behind what the lagging motors deliver
   const tPlot = new Plot(right, {
     x: { label: tc('plots.time'), min: 0, max: MISSION.duration },
-    y: { label: tc('plots.thrust'), min: 0, max: 22 },
-    series: [{ id: 'T', color: 'eff', label: tc('drone.thrust'), ghost: true, width: 1.6 }],
-    height: 140,
+    y: { label: tc('plots.thrust'), min: -2, max: 23 },
+    series: [
+      { id: 'cmd', color: 'eff@0.4', label: t('asked'), width: 1 },
+      { id: 'T', color: 'eff', label: t('delivered'), ghost: true, width: 1.8 },
+    ],
+    height: 150,
     label: t('tAria'),
   });
-  tPlot.setLines([{ kind: 'h', at: 20, color: 'ink3', dash: [2, 4], label: t('max') }, ...events.map((e) => ({ ...e, label: undefined }))]);
+  tPlot.setLines([
+    { kind: 'h', at: 20, color: 'ink3', dash: [2, 4], label: t('max'), labelAt: 'start', labelSide: 'above' },
+    { kind: 'h', at: 0, color: 'ink3', dash: [2, 4], label: t('min'), labelAt: 'start', labelSide: 'below' },
+    ...events.map((e) => ({ ...e, label: undefined })),
+  ]);
+  /** shade the time window a checklist item judges, on both plots (null: none) */
+  const showWindow = (id: CriterionId | null) => {
+    const shade = (from: number, to: number): Band => ({ kind: 'v', from, to, color: 'ink3@0.14' });
+    const w = id ? [shade(...WINDOWS[id])] : [];
+    hPlot.setBands([targetBand, ...w]);
+    tPlot.setBands(w);
+  };
 
   // live simulation
   let sim = new DroneSim(missionConfig(gains()));
@@ -110,24 +141,16 @@ const mission: WidgetFactory = (host, ctx) => {
   let acc = 0;
   let finished = false;
   let lastPhase = '';
-  /** next plot clear keeps the current run as the ghost */
-  let fresh = true;
-  const record = () => {
-    tr.t.push(sim.t);
-    tr.h.push(sim.h);
-    tr.thrust.push(sim.thrust);
-    tr.integral.push(sim.integral);
-    tr.r.push(MISSION.setpoint);
-    tr.wind.push(sim.cfg.wind(sim.t));
-    tr.pkg.push(sim.cfg.extraMass(sim.t));
-    tr.measured.push(sim.measured);
-  };
+  /** the run on screen is a finished tune: the next new run keeps it as the ghost (plots and poles) */
+  let fresh = false;
+  const record = () => sampleTrace(sim, tr);
   const phaseKey = (now: number, done: boolean) =>
     done ? 'done' : now < MISSION.gust.start ? 'takeoff' : now < MISSION.gust.end ? 'gust' : now < MISSION.dropAt ? 'hover' : 'drop';
   const draw = () => {
     hPlot.set('h', tr.t, tr.h);
     hPlot.set('r', tr.t, tr.r);
     hPlot.set('meas', tr.t, tr.measured);
+    tPlot.set('cmd', tr.t, tr.command);
     tPlot.set('T', tr.t, tr.thrust);
     const i = tr.t.length - 1;
     if (i >= 0) view.update({ h: tr.h[i], r: MISSION.setpoint, thrust: tr.thrust[i], wind: tr.wind[i], pkg: tr.pkg[i], crashed: tr.crashed, measured: tr.measured[i] });
@@ -161,11 +184,22 @@ const mission: WidgetFactory = (host, ctx) => {
     else showResult(evaluate(tr), false, true);
   }, host);
 
-  // checklist
+  // checklist: each item says pass/fail to screen readers too, and shows its time window on the plots
   const items = new Map<string, HTMLElement>();
   const list = h('ul', { class: 'checklist' });
   for (const id of CRITERIA) {
-    const li = h('li', { 'data-state': 'pending' }, h('span', { class: 'mark', 'aria-hidden': 'true' }, '○'), h('span', { class: 'crit-text' }, t(`crit.${id}`, criterionVars)), h('span', { class: 'crit-val' }));
+    const li = h(
+      'li',
+      { 'data-state': 'pending', tabindex: '0' },
+      h('span', { class: 'mark', 'aria-hidden': 'true' }, '○'),
+      h('span', { class: 'crit-text' }, t(`crit.${id}`, criterionVars)),
+      h('span', { class: 'crit-val' }),
+      h('span', { class: 'visually-hidden crit-state' }, t('state.pending')),
+    );
+    li.addEventListener('pointerenter', () => showWindow(id));
+    li.addEventListener('pointerleave', () => showWindow(li.contains(document.activeElement) ? id : null));
+    li.addEventListener('focus', () => showWindow(id));
+    li.addEventListener('blur', () => showWindow(null));
     items.set(id, li);
     list.append(li);
   }
@@ -175,10 +209,10 @@ const mission: WidgetFactory = (host, ctx) => {
   starsEl.append(row.el, starsText);
   const bestEl = h('p', { class: 'w-help' });
   const values = (r: MissionResult): Record<string, string> => ({
-    rise: Number.isFinite(r.rise) ? `${fmt(r.rise, 2)} s` : '—',
+    rise: !Number.isFinite(r.rise) ? '—' : neverSettled(r) ? t('crit.neverRise', { s: fmt(MISSION.gust.start, 0) }) : `${fmt(r.rise, 2)} s`,
     overshoot: `${fmt(r.overshoot, 1)} %`,
     gust: `${fmt(r.gust * 100, 1)} cm`,
-    recover: Number.isFinite(r.recover) ? `${fmt(r.recover, 2)} s` : '—',
+    recover: !Number.isFinite(r.recover) ? '—' : neverBack(r) ? t('crit.neverBack', { s: fmt(MISSION.duration, 0) }) : `${fmt(r.recover, 2)} s`,
     ground: r.ground ? t('touched') : t('clear'),
     calm: Number.isFinite(r.calm) ? `${fmt(r.calm, 2)} N` : '—',
   });
@@ -187,11 +221,19 @@ const mission: WidgetFactory = (host, ctx) => {
     if (el.dataset.state === state) return;
     el.dataset.state = state;
     mark.textContent = MARK[state];
+    const sr = el.querySelector('.crit-state');
+    if (sr) sr.textContent = t(`state.${state}`);
     mark.classList.remove('pop');
     if (animate && state !== 'pending') {
       void mark.offsetWidth;
       mark.classList.add('pop');
     }
+  };
+  /** the line under the score: why the drone hit the page, or what to fix first */
+  const advice = (r: MissionResult): string => {
+    if (sim.ceilingAt !== null) return `${t('hitPage')}${noiseLifted(g) ? ` ${t('hitNoise')}` : ''}`;
+    const hint = hintFor(r, g);
+    return hint ? t(`hint.${hint}`) : '';
   };
   /** @param animate pop marks as they are decided (live flights only) */
   function showResult(r: MissionResult, final: boolean, animate: boolean, save = final): void {
@@ -215,7 +257,8 @@ const mission: WidgetFactory = (host, ctx) => {
     }
     if (final) {
       row.set(CRITERIA.map((id) => r.pass[id]));
-      starsText.textContent = `${r.stars === 6 ? t('gold') : t('stars', { n: r.stars })}${sim.ceilingAt === null ? '' : ` ${t('hitPage')}`}`;
+      const more = advice(r);
+      starsText.textContent = `${r.stars === 6 ? t('gold') : t('stars', { n: r.stars })}${more ? ` ${more}` : ''}`;
       starsEl.className = `w-status score-line${r.stars === 6 ? ' good' : ''}`;
       if (save) {
         const best = progress.load<Best>(BEST_KEY);
@@ -252,11 +295,16 @@ const mission: WidgetFactory = (host, ctx) => {
       setState(minis.get(id)!, minis.get(id)!, 'pending', false);
     }
   };
-  const restart = (autoplay = Loop.autoplay) => {
+  /** a new run replaces the one on screen; a finished tune stays behind as the ghost */
+  const newRun = (committed: boolean) => {
     loop.pause();
     hPlot.clear(fresh);
     tPlot.clear(fresh);
-    fresh = false;
+    if (fresh) sp.ghost();
+    fresh = committed;
+  };
+  const restart = (autoplay = Loop.autoplay) => {
+    newRun(true);
     sim = new DroneSim(withCeiling(missionConfig(gains()), ceil.measure()));
     tr = emptyTrace();
     acc = 0;
@@ -269,12 +317,12 @@ const mission: WidgetFactory = (host, ctx) => {
     updatePoles();
     if (autoplay) loop.play();
   };
-  /** whole mission at once: used by "Fly instantly", slider drags, keyboard steps, reduced motion */
-  const instant = (save = true) => {
-    loop.pause();
-    hPlot.clear(fresh);
-    tPlot.clear(fresh);
-    fresh = false;
+  /**
+   * The whole mission at once: "Fly instantly", keyboard steps, reduced motion (`save`), and the
+   * preview while a slider is dragged (not saved, and not a finished tune yet).
+   */
+  const instant = (save = true, committed = save) => {
+    newRun(committed);
     ({ tr, sim } = flyMission(gains(), ceil.measure()));
     finished = true;
     draw();
@@ -283,7 +331,7 @@ const mission: WidgetFactory = (host, ctx) => {
     showResult(evaluate(tr), true, false, save);
   };
 
-  // nominal poles
+  // nominal poles, at their true values (a fast one off the left edge becomes an arrow with its value)
   const pRange = { reMin: -40, reMax: 5, imMax: 25 };
   const poleBox = h('div', { class: 'mission-poles' });
   const sp = new SPlane(poleBox, { ...pRange, label: t('splane'), regions: true, maxWidth: 340, reLabel: 'σ', imLabel: 'ω' });
@@ -291,19 +339,13 @@ const mission: WidgetFactory = (host, ctx) => {
   poleBox.append(poleNote);
   function updatePoles(): void {
     const ps = missionPoles(gains());
-    let off = 0;
-    sp.set(
-      ps.map((p, i) => {
-        const re = Math.max(pRange.reMin, Math.min(pRange.reMax, p.re));
-        const im = Math.max(-pRange.imMax, Math.min(pRange.imMax, p.im));
-        if (re !== p.re || im !== p.im) off++;
-        return { id: `p${i}`, re, im, kind: 'pole' as const };
-      }),
-    );
+    sp.set(ps.map((p, i) => ({ id: `p${i}`, re: p.re, im: p.im, kind: 'pole' as const })));
     sp.describe();
+    const off = ps.filter((p) => p.re < pRange.reMin).length;
     const unstable = ps.some((p) => p.re > 1e-9);
     const marginal = ps.some((p) => p.re >= -1e-9);
-    poleNote.textContent = `${unstable ? t('poles.unstable') : marginal ? t('poles.marginal') : t('poles.stable')}${off ? ` ${t('poles.off', { n: off })}` : ''}`;
+    const offText = off ? ` ${t(new Intl.PluralRules(getLang()).select(off) === 'one' ? 'poles.off_one' : 'poles.off_other', { n: fmt(off, 0) })}` : '';
+    poleNote.textContent = `${unstable ? t('poles.unstable') : marginal ? t('poles.marginal') : t('poles.stable')}${offText}`;
   }
 
   // dragging previews the whole mission instantly; letting go of a pointer drag flies it live
@@ -316,40 +358,26 @@ const mission: WidgetFactory = (host, ctx) => {
   for (const sl of [sKp, sKi, sKd, sTf]) {
     sl.input.addEventListener('pointerdown', () => (pointer = true));
     sl.input.addEventListener('change', () => {
-      fresh = true;
       if (pointer && Loop.autoplay) restart(true);
       else instant(true);
       pointer = false;
     });
   }
-  const tg = toggle(t('dMeas'), g.dOnMeasurement, (v) => {
-    g.dOnMeasurement = v;
-    fresh = true;
-    restart();
-  });
-  const setAll = (p: Omit<Best, 'stars'>) => {
+  const setAll = (p: Tune) => {
     Object.assign(g, p);
     sKp.value = p.kp;
     sKi.value = p.ki;
     sKd.value = p.kd;
     sTf.value = p.dTau;
-    tg.input.checked = p.dOnMeasurement;
-    fresh = true;
     restart();
   };
   const juneBtn = h('button', { class: 'btn small', type: 'button' }, t('presetJune'));
   juneBtn.addEventListener('click', () => setAll({ ...JUNE_TUNE }));
   const instantBtn = h('button', { class: 'btn small', type: 'button' }, t('instant'));
-  instantBtn.addEventListener('click', () => {
-    fresh = true;
-    instant(true);
-  });
+  instantBtn.addEventListener('click', () => instant(true));
   const controls = transport({
     loop,
-    onReset: () => {
-      fresh = true;
-      restart(true);
-    },
+    onReset: () => restart(true),
     onStep: () => {
       if (finished) return;
       aim();
@@ -363,24 +391,26 @@ const mission: WidgetFactory = (host, ctx) => {
   });
   // pressing play on a finished mission flies it again
   loop.onChange((playing) => {
-    if (playing && finished) {
-      fresh = true;
-      restart(true);
-    }
+    if (playing && finished) restart(true);
   });
   host.append(
     h('div', { class: 'w-controls compact' }, sKp.el, sKi.el, sKd.el, sTf.el),
-    h('div', { class: 'w-row' }, tg.el, instantBtn, juneBtn),
+    h('div', { class: 'w-row' }, instantBtn, juneBtn),
     h('div', { class: 'w-hud' }, starsEl, controls),
     h('div', { class: 'mission-bottom' }, h('div', { class: 'mission-card' }, h('p', { class: 'w-title' }, t('checklist')), list, bestEl), poleBox),
   );
   showBest();
-  restart(false);
-  if (Loop.autoplay) loop.play();
-  else instant(false);
+  if (Loop.autoplay) {
+    restart(false);
+    loop.play();
+  } else instant(false, true);
   /** the page moved: a finished flight whose hit depends on it is flown again under the new layout */
   function pageMoved(): void {
-    if (finished && (sim.ceilingAt !== null || (ceil.h !== null && Math.max(...tr.h) >= ceil.h))) instant(false);
+    if (!finished || (sim.ceilingAt === null && (ceil.h === null || Math.max(...tr.h) < ceil.h))) return;
+    // the same tune under the new layout: the ghost stays what it was
+    const keep = fresh;
+    fresh = false;
+    instant(false, keep);
   }
   return () => {
     loop.destroy();

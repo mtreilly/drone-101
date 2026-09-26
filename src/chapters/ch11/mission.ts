@@ -38,9 +38,22 @@ export type MissionTrace = Trace & { stalledAt?: number | null };
 
 export type CriterionId = 'rise' | 'overshoot' | 'gust' | 'recover' | 'ground' | 'calm';
 
+/** June's "perfect in calm air" tune: flawless with a perfect sensor, chattering with a real one. */
+export const JUNE_TUNE = { kp: 30, ki: 15, kd: 10, dTau: 0.005 };
+
 /** Pass limits: settled rise ≤ 3 s, overshoot < 10 %, gust deviation < 20 cm, recovery < 2 s, thrust variation < 0.5 N. */
 export const LIMITS = { rise: 3, overshoot: 10, gust: 0.2, recover: 2, calm: 0.5, band: 0.05 };
 export const CRITERIA: CriterionId[] = ['rise', 'overshoot', 'gust', 'recover', 'ground', 'calm'];
+
+/** The time window each checklist item judges, s (linked to the plots on hover and focus). */
+export const WINDOWS: Record<CriterionId, [number, number]> = {
+  rise: [0, MISSION.gust.start],
+  overshoot: [0, MISSION.gust.start],
+  gust: [MISSION.gust.start, MISSION.dropAt],
+  recover: [MISSION.dropAt, MISSION.dropAt + LIMITS.recover],
+  ground: [1, MISSION.duration],
+  calm: [3, 6],
+};
 
 export interface MissionResult {
   /** first time after which height stays within ±5 cm until the gust, s */
@@ -104,6 +117,43 @@ export function evaluate(tr: MissionTrace): MissionResult {
   };
   return { rise, overshoot, gust, recover, ground, calm, pass, stars: Object.values(pass).filter(Boolean).length };
 }
+
+/**
+ * `rise` falls back to the gust time when the height never settled in the band before the gust, and
+ * `recover` to the end of the mission when it never got back: those are verdicts, not measurements,
+ * and the checklist says so instead of showing "6.00 s" / "8.00 s".
+ */
+export const neverSettled = (r: MissionResult): boolean => r.rise >= MISSION.gust.start - 0.005;
+export const neverBack = (r: MissionResult): boolean => r.recover >= MISSION.duration - MISSION.dropAt - 0.005;
+
+/** Roughly how many newtons of command D makes from the sensor's jitter: Kd·σ/τf (play P2, about 15 % high at τf 0.005). */
+export const dSpike = (p: Pick<PID, 'kd' | 'dTau'>): number => (p.kd * MISSION.noiseStd) / Math.max(p.dTau, 1e-3);
+
+export type Hint = 'ground' | 'noise' | 'droop' | 'overshoot' | 'rise' | 'gust' | 'recover' | 'swing';
+
+/**
+ * One tip after the score, for the failure to fix first: the ground, then chatter that comes from
+ * the sensor (it spoils every other star), then take-off (droop, overshoot, a slow climb), the gust,
+ * the drop, and a thrust that is still swinging. `null` with six stars.
+ */
+export function hintFor(r: MissionResult, p: Pick<PID, 'ki' | 'kd' | 'dTau'>): Hint | null {
+  const f = r.pass;
+  if (!f.ground) return 'ground';
+  if (!f.calm && dSpike(p) > 5) return 'noise';
+  if (!f.rise && p.ki === 0) return 'droop';
+  if (!f.overshoot) return 'overshoot';
+  if (!f.rise) return 'rise';
+  if (!f.gust) return 'gust';
+  if (!f.recover) return 'recover';
+  if (!f.calm) return 'swing';
+  return null;
+}
+
+/**
+ * A page hit that the sensor noise caused: a big Kd on a tiny filter rectifies the jitter (the clip
+ * at 0 N cuts off the downward spikes), which lifts a weak-Kp tune far above its target.
+ */
+export const noiseLifted = (p: Pick<PID, 'kd' | 'dTau'>): boolean => p.dTau <= 0.01 && p.kd >= 8;
 
 /** Measured values of a mission that `starsOnSeeds` reports the spread of. */
 export type MissionMetric = 'rise' | 'overshoot' | 'gust' | 'recover' | 'calm';

@@ -23,7 +23,7 @@
           "t": "say",
           "who": "theo",
           "mood": "happy",
-          "text": "É exatamente esse o ponto. O controlador tem que fazer isso sozinho. Nós só escolhemos três números. Bem, quatro."
+          "text": "Essa é a graça. O controlador tem que fazer isso sozinho. A gente só escolhe três números. Quer dizer, quatro: o filtro também."
         },
         {
           "t": "p",
@@ -41,15 +41,57 @@
         },
         {
           "t": "p",
-          "text": "Nosso modelo de drone fica um pouco mais honesto para o final. Cada um destes é algo com que drones reais precisam conviver:"
+          "text": "Nosso modelo de drone fica um pouco mais honesto para o final. Cada item abaixo é algo com que drones de verdade precisam conviver, e cada um é um velho conhecido de um capítulo anterior:"
         },
         {
           "t": "list",
           "items": [
-            "**Atraso do motor:** as hélices levam cerca de 0,05 s para acelerar ou desacelerar. O empuxo que você pede chega um instante depois.",
-            "**Um sensor ruidoso:** cada leitura de altura erra cerca de 2 cm, aleatoriamente, mil vezes por segundo.",
-            "**Motores limitados:** 0 a 20 N, nunca negativo.",
-            "**O D é filtrado:** como a velocidade real não é conhecida, o D usa a inclinação da leitura filtrada do sensor, com a constante de tempo $\\tau_f$ que você escolher."
+            "**Atraso do motor (τ ≈ 0,05 s):** uma hélice não muda de velocidade instantaneamente. O empuxo segue o comando como o café esfriando do Capítulo 3, um atraso de primeira ordem: 63% do caminho depois de 0,05 s. Um empurrão atrasado é a defasagem do Capítulo 10 disfarçada.",
+            "**Um sensor ruidoso (σ ≈ 2 cm):** cada leitura de altura erra por uns 2 cm, ao acaso, mil vezes por segundo. O Capítulo 9 avisou: o D transforma esse tremor em grandes picos de empuxo.",
+            "**Motores limitados (de 0 a 20 N):** o limite do Capítulo 8 continua valendo. Com o pacote, o drone pesa 6,9 N, então 20 N é só cerca de três vezes o seu peso, e os motores nunca conseguem puxar para baixo. Enquanto eles estão no limite, a pilha fica pausada (o anti-windup do Capítulo 9).",
+            "**O D é filtrado:** a solução do Capítulo 9. O D pega a inclinação de uma leitura suavizada do sensor, um atraso de primeira ordem com a constante de tempo $\\tau_f$ que você escolher. $\\tau_f$ maior significa mais calma, mas mais atraso."
+          ]
+        },
+        {
+          "t": "play",
+          "id": "limit",
+          "text": "Na decolagem, $\\eff{K_p}$ = {scrub|kp|eff} N/m vezes o erro de 2 m pede {calc|ask} N{calc|clip}. Com o pacote, o drone pesa {calc|w} N, então 20 N é só {calc|ratio}× o seu peso."
+        },
+        {
+          "t": "callout",
+          "title": "Um atraso curto é quase um tempo morto",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Um motor que precisa de 0,05 s para acelerar… isso não é só um tempo morto minúsculo?"
+            },
+            {
+              "t": "math",
+              "tex": "\\angle \\frac{1}{1 + i\\omega\\tau_m} = -\\arctan(\\omega\\tau_m) \\approx -\\omega\\tau_m \\qquad (\\omega\\tau_m \\ll 1)"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "excited",
+              "text": "Quase! Pegue um ajuste que ganha as seis estrelas (sem spoilers). O ganho da malha dele vale exatamente 1 em cerca de 10 rad/s, onde o Capítulo 10 lê a margem de fase. Ali, um tempo morto de 0,05 s custaria 28°. O atraso do motor custa 26°."
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "happy",
+              "text": "Então é o Capítulo 10 de novo, só que menor."
+            },
+            {
+              "t": "play",
+              "id": "lag",
+              "text": "O ganho da malha desse ajuste de seis estrelas vale 1 em cerca de {calc|wc} rad/s. Um atraso do motor de $\\tau_m$ = {scrub|tm} s segura essa oscilação em {calc|lag}°, então a margem de fase cai de 59° para {calc|pm}°."
+            },
+            {
+              "t": "p",
+              "text": "Com os motores de verdade, uns 25° de margem somem antes mesmo de o ruído ou os limites entrarem em cena. É por isso que os ajustes vencedores do final são mais suaves que os do Capítulo 9."
+            }
           ]
         },
         {
@@ -64,18 +106,29 @@
           "options": [
             {
               "text": "P: ele reage ao erro imediatamente",
-              "why": "O P reage primeiro, mas o P sozinho apenas se estabilizaria em um *desvio residual* diferente, porque o empuxo de pairar mudou."
+              "why": "O P reage primeiro, mas sozinho ele só se acomodaria em um desvio residual *diferente*, porque o empuxo de pairar mudou: com $K_p$ = 20, uns 10 cm alto demais."
             },
             {
               "text": "I: a pilha precisa encontrar o novo empuxo de pairar",
               "correct": true,
-              "why": "O drone agora precisa de cerca de 4,9 N em vez de 6,9 N. Só o integral consegue caçar um novo empurrão constante e ainda terminar com erro zero."
+              "why": "Agora o drone precisa de uns 4,9 N em vez de 6,9 N. Em repouso, o erro é 0 e o D é 0, então só a pilha pode segurar o novo peso. Só o integral consegue ir atrás de um novo empurrão constante e ainda terminar com erro zero."
             },
             {
               "text": "D: ele impede o salto",
               "why": "D amortece o salto, o que é útil, mas fica quieto quando o drone está parado, então não consegue manter o novo equilíbrio."
             }
           ]
+        },
+        {
+          "t": "play",
+          "id": "drop",
+          "text": "Quando cai um pacote de {scrub|pkg} kg, o empurrão de pairar precisa diminuir {calc|dN|eff} N. Só o integral segura isso de vez: com $\\eff{K_i}$ = {scrub|ki|eff} N/(m·s), ele precisa acumular {calc|area} m·s de erro, o que, com um erro médio de {scrub|e} cm, leva cerca de {calc|time} s."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Peraí. Então, depois da queda, o drone *tem* que flutuar um pouco alto demais por um tempo? É desse erro que a pilha desaprende!"
         }
       ]
     },
@@ -85,11 +138,15 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Cada mudança de um controle deslizante reinicia a missão, e o voo anterior permanece como um fantasma. O pequeno plano s mostra os polos **nominais** (um sensor perfeito, sem pacote, sem limites), para que você possa ver o quadro linear enquanto o voo real e bagunçado acontece ao lado. Ganhe todas as seis estrelas para o ouro."
+          "text": "Cada mudança de controle deslizante reinicia a missão, e o voo anterior fica como fantasma. O pequeno plano s mostra os polos **nominais**: o atraso do motor e o filtro estão incluídos, e só o ruído, o pacote e os limites ficam de fora. Assim você vê o quadro linear enquanto o voo real, bagunçado, acontece ao lado. Ganhe as seis estrelas para levar o ouro."
         },
         {
           "t": "p",
-          "text": "A estrela de chegada significa que a **altura real permanece** dentro de ±5 cm desde sua chegada até a rajada em 6 s; apenas cruzar 2 m uma vez não conta. A estrela de motores calmos usa o **desvio padrão** do empuxo de 3 a 6 s: sua variação típica em torno de sua média, incluindo acomodação tardia e ruído do sensor."
+          "text": "Os limites são o que um cliente da entrega perceberia: acomodado em até 3 s, nunca mais de 10% alto demais, não empurrado mais que um palmo (20 cm) pela rajada, de volta em 2 s depois da queda, nunca raspando no chão, e motores que não zumbem (menos de 0,5 N de tremedeira)."
+        },
+        {
+          "t": "p",
+          "text": "A estrela de chegada significa que a **altura real fica** dentro de ±5 cm desde a chegada até a rajada aos 6 s; só cruzar 2 m uma vez não conta. A estrela dos motores calmos usa o **desvio padrão** do empuxo de 3 a 6 s, depois da decolagem e antes da rajada: a variação típica em torno da média, incluindo acomodação tardia e tremedeira do sensor. Aponte para uma linha da checklist (ou chegue nela com Tab) para sombrear os segundos que ela avalia."
         },
         {
           "t": "widget",
@@ -97,8 +154,12 @@
         },
         {
           "t": "note",
+          "text": "O tremor do sensor é aleatório, mas é o *mesmo* aleatório em todo voo, então, quando o fantasma e o voo novo diferem, foi você. Um drone de verdade pega ruído novo todo dia, e bons ajustes vencem com qualquer ruído: voamos um ajuste de seis estrelas com 30 tremores diferentes, e ele ganhou seis estrelas todas as vezes."
+        },
+        {
+          "t": "note",
           "aside": true,
-          "text": "Travado? Os vencedores do playground do Capítulo 9 são um bom começo. Então alongue $\\tau_f$ até que os motores parem de vibrar."
+          "text": "Travou? Comece de um ajuste calmo do Capítulo 9, como $K_p$ = 20, $K_i$ = 10, $K_d$ = 4 com $\\tau_f$ = 0,04 s. Isso dá cinco estrelas. Depois aumente $K_i$ aos poucos até a estrela de chegada acender."
         },
         {
           "t": "say",
@@ -110,17 +171,71 @@
           "t": "say",
           "who": "june",
           "mood": "surprised",
-          "text": "…por que os motores estão gritando? A linha laranja está toda borrada, e agora também ultrapassa o alvo!"
+          "text": "…por que os motores estão gritando? A linha laranja está toda borrada, e agora ainda tem sobressinal!"
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "think",
-          "text": "Capítulo 9, aviso 2. $K_d$ grande vezes um filtro minúsculo transforma cada 2 cm de oscilação do sensor em um pico de empuxo. E os picos são cortados em 0 N com muito mais frequência do que em 20 N, então eles adicionam um empurrão extra desequilibrado: é isso que causa a ultrapassagem do alvo. Só era impecável porque seu ar calmo imaginário vinha com um sensor perfeito."
+          "text": "Capítulo 9, aviso 2. $K_d$ grande vezes um filtro minúsculo transforma cada 2 cm de tremor do sensor em um pico de empuxo. E os picos são cortados em 0 N com muito mais frequência do que em 20 N (a linha laranja clara mostra o que o controlador *pediu*: veja quantas vezes ela bate em 0 N), então eles somam um empurrão extra desequilibrado. Esse é o sobressinal, a mesma deriva para cima que o Capítulo 9 flagrou. Só era impecável porque seu ar calmo imaginário vinha com um sensor perfeito."
+        },
+        {
+          "t": "play",
+          "id": "spike",
+          "text": "Com $\\eff{K_d}$ = {scrub|kd|eff} N·s/m e um filtro de $\\tau_f$ = {scrub|tf} s, cada tremida de 2 cm do sensor pede aos motores cerca de {calc|spike|eff} N ($K_d\\sigma/\\tau_f$). Para pairar, bastam 6,9 N."
+        },
+        {
+          "t": "callout",
+          "title": "Por que não simplesmente mais D?",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "think",
+              "text": "Os motores estão nervosos, então precisam de mais amortecimento. Mais D!"
+            },
+            {
+              "t": "p",
+              "text": "Theo testa com $K_p$ = 20, $K_i$ = 15 e $\\tau_f$ = 0,04 s. A tremedeira *piora*: 0,22 N com $K_d$ = 5, 0,41 N com $K_d$ = 10. Sem o ruído, o mesmo $K_d$ = 10 fica quase em silêncio."
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "happy",
+              "text": "Então o D não acalma o ruído, ele o amplifica. O amortecimento acalma o *movimento*, e o ruído não é movimento: é o sensor contando lorota."
+            }
+          ]
         },
         {
           "t": "p",
-          "text": "Experimente o **ajuste de ar calmo da June** e veja a estrela \"motores calmos\" falhar. Então alongue o filtro para cerca de 0,04 s e reduza $K_d$ para cerca de 6. Você abre mão de um pouco de velocidade e ganha motores calmos. Essa troca, velocidade contra ruído e contra robustez, *é* a engenharia de controle."
+          "text": "Experimente o **ajuste da June para ar calmo** e veja a estrela \"motores calmos\" falhar. Depois aumente o filtro para 0,04 s e baixe $K_d$ para cerca de 7. Com $K_d$ = 7 ele chega em cerca de 1,9 s, em vez do 1,3 s que a June sonhava: esse é o preço de motores calmos. Essa troca, velocidade contra ruído e contra robustez, *é* engenharia de controle."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Um pouco mais lento, e os motores param de gritar. Fechado. Na minha cabeça o ar era calmo *e* o sensor era perfeito."
+        },
+        {
+          "t": "callout",
+          "title": "A rajada é trabalho para o P",
+          "blocks": [
+            {
+              "t": "play",
+              "id": "gust",
+              "text": "Um empurrão constante de {scrub|F|dis} N contra um ganho P de $\\eff{K_p}$ = {scrub|kp|eff} N/m desloca o drone em $F/K_p$ = {calc|dev} cm, depois que um pouco de D o deixa se acomodar."
+            },
+            {
+              "t": "p",
+              "text": "A rajada da missão dura só 3 s, então o integral quase não tem vez: um ajuste de seis estrelas com $K_p$ = 20 ainda afunda uns 7 cm. E sem nenhum D, o P fica balançando com os motores atrasados em vez de se acomodar."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "happy",
+              "text": "Então, se a estrela da rajada falhar, não vá atrás de $K_i$. Endureça a mola: mais $K_p$."
+            }
+          ]
         }
       ]
     },
@@ -161,7 +276,7 @@
             "Os **polos não cancelados** de uma função de transferência marcam movimentos naturais visíveis da entrada escolhida até a saída: movimentos no semiplano esquerdo desaparecem, movimentos no semiplano direito crescem (Cap 8).",
             "**PID**: o I elimina o desvio residual, o D adiciona amortecimento, e cada um move os polos (Cap 9).",
             "O **atraso** adiciona defasagem de fase; as **margens** dizem o quão longe você está da beira do precipício (Cap 10).",
-            "O hardware real adiciona limites, atraso e ruído, então bons controladores são calmos além de rápidos (Cap 11)."
+            "O hardware real acrescenta **limites** (Cap 8), **atraso** que custa margem de fase (Cap 3 + Cap 10) e **ruído** que o D amplifica (Cap 9), então bons controladores são calmos além de rápidos (Cap 11)."
           ]
         },
         {
@@ -173,6 +288,16 @@
       "id": "final-check",
       "title": "Explique para um amigo",
       "blocks": [
+        {
+          "t": "p",
+          "text": "Primeiro, a sua missão: quantas estrelas você ganhou, e qual foi a mais difícil? Diga o *porquê* em voz alta antes de continuar lendo."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "A minha foi a estrela da calma. Eu ficava pondo mais D para acalmar os motores, e eles só ficavam mais barulhentos."
+        },
         {
           "t": "p",
           "text": "O melhor teste de compreensão é explicar. Antes de cada resposta, tente dizer *sua* versão em voz alta. Depois escolha a explicação que mais se aproxima dela."
@@ -220,21 +345,44 @@
               ]
             },
             {
-              "id": "ch11-q3",
-              "q": "\"Por que eu continuava passando do ponto no chuveiro?\"",
+              "id": "ch11-q4",
+              "q": "O drone de um amigo seu paira, mas os motores zumbem e esquentam. O sensor de altura treme uns 2 cm. Qual é a primeira coisa a tentar?",
               "options": [
                 {
-                  "text": "Você reagiu a uma informação atrasada com ganho demais: a fase da malha chegou a −180° enquanto o ganho ainda estava acima de 1, então cada correção alimentava a oscilação",
+                  "text": "Aumentar o filtro derivativo ou baixar $K_d$",
                   "correct": true,
-                  "why": "Exatamente. A cura foi menos ganho, ou mais margem de fase, não mais esforço."
+                  "why": "O D transforma o tremor do sensor em cerca de $K_d\\sigma/\\tau_f$ newtons de comando: 40 N com $K_d$ = 10 e $\\tau_f$ = 0,005 s, só 3,5 N com $K_d$ = 7 e $\\tau_f$ = 0,04 s. Você abre mão de um pouco de velocidade de chegada."
                 },
                 {
-                  "text": "O chuveiro estava com defeito",
-                  "why": "No Capítulo 0, deslocar as curvas quase alinhava as oscilações amplas, mas o cano também suavizava as mudanças bruscas. A resposta do chuveiro era atrasada e suavizada."
+                  "text": "Mais $K_d$, para ter mais amortecimento",
+                  "why": "O amortecimento acalma *movimento*, não as lorotas do sensor. Com $\\tau_f$ = 0,04 s, a tremedeira cresce de 0,22 N com $K_d$ = 5 para 0,41 N com $K_d$ = 10."
                 },
                 {
-                  "text": "Você não estava reagindo rápido o suficiente",
-                  "why": "Reagir com *mais força* piorou tudo, como as mãos do robô mostraram. O problema é a velocidade sobre uma informação velha."
+                  "text": "Desligar o integral",
+                  "why": "O I soma o erro devagar, então quase não repassa o tremor. Sem ele, o drone fica com desvio residual e não consegue desfazer a queda de um pacote."
+                },
+                {
+                  "text": "Mais $K_p$",
+                  "why": "O P repassa o tremor direto ($K_p\\sigma$: 0,4 N com $K_p$ = 20), então mais P significa um pouco *mais* zumbido, não menos."
+                }
+              ]
+            },
+            {
+              "id": "ch11-q5",
+              "q": "Os motores ficam mais lentos: o atraso deles vai de 0,05 s para 0,1 s. O que acontece com o ajuste de seis estrelas do desvio?",
+              "options": [
+                {
+                  "text": "A margem de fase encolhe, de cerca de 33° para cerca de 21°, então ele oscila mais",
+                  "correct": true,
+                  "why": "Um atraso segura cada oscilação em $\\arctan(\\omega\\tau)$: a defasagem do Capítulo 10, a mesma coisa que fez o chuveiro ter sobressinal. Um atraso maior deixa menos margem antes de −180°."
+                },
+                {
+                  "text": "Nada: 0,1 s é minúsculo perto dos 20 s da missão",
+                  "why": "O que importa é o atraso comparado com a oscilação da malha, cerca de 10 rad/s (um balanço a cada 0,6 s), não a duração da missão."
+                },
+                {
+                  "text": "O desvio residual aumenta",
+                  "why": "Com o I ligado não há desvio residual nenhum, e um atraso muda o *tempo*, não o equilíbrio final das forças."
                 }
               ]
             }
@@ -253,13 +401,19 @@
         {
           "t": "list",
           "items": [
-            "**Lugar das raízes:** em vez de arrastar polos, arraste o *ganho* e veja os polos traçarem caminhos pelo plano s.",
-            "**Controle em espaço de estados:** muitos sensores, muitos motores, tudo ao mesmo tempo: a inclinação, o giro e a posição de um drone real juntos.",
-            "**Controle digital:** controladores reais rodam em computadores que amostram a cada poucos milissegundos. O plano s ganha um primo, o plano z.",
-            "**Filtros de Kalman:** combatendo o ruído de forma inteligente ao misturar a previsão de um modelo com a medição do sensor.",
-            "**Preditores de Smith e controle preditivo baseado em modelo:** controladores que carregam uma pequena simulação dentro de si, para enxergar além dos atrasos.",
-            "**Controle não linear e robusto:** o que fazer quando o mundo não é linear, e como provar que você ainda tem margem."
+            "**Lugar das raízes:** em vez de arrastar polos, arraste o *ganho* e veja os polos traçarem caminhos. Você veria de relance qual $K_p$ é demais.",
+            "**Controle no espaço de estados:** muitos sensores e motores ao mesmo tempo. Um drone de verdade precisa segurar inclinação, giro e posição juntos, e ajustar um botão de cada vez deixa de funcionar.",
+            "**Controle digital:** controladores reais rodam em computadores que amostram a cada poucos milissegundos. A amostragem também é um pequeno atraso, e o plano s ganha um primo, o plano z.",
+            "**Filtros de Kalman:** misturam o que um modelo prevê com o que o sensor diz, para você usar um sensor ruidoso sem um filtro lento.",
+            "**Preditores de Smith e controle preditivo baseado em modelo:** controladores que carregam uma pequena simulação dentro de si para enxergar além dos atrasos, a verdadeira cura do chuveiro.",
+            "**Controle não linear e robusto:** o que fazer quando o arrasto não é linear ou o drone voa em 3D, e como *provar* que você ainda tem margem."
           ]
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Lugar das raízes primeiro. Quero *ver* os polos se mexendo enquanto giro um botão só."
         },
         {
           "t": "cliff",
@@ -273,13 +427,15 @@
       "title": "Controle da missão",
       "measured": "leitura do sensor",
       "hAria": "Altura ao longo da missão de 20 segundos com a faixa alvo; momentos de rajada e de queda de pacote marcados.",
-      "tAria": "Empuxo ao longo da missão com o limite de 20 N do motor.",
+      "tAria": "Empuxo ao longo da missão: o que o controlador pediu (cortado nos 0 a 20 N dos motores) e o que os motores, com atraso, entregaram.",
       "gust": "rajada",
       "drop": "soltar",
       "max": "20 N máx",
+      "min": "0 N: não puxa para baixo",
+      "asked": "pedido",
+      "delivered": "entregue",
       "splane": "Polos nominais em malha fechada do drone com atraso do motor e derivativo filtrado.",
       "filter": "Filtro D $\\tau_f$",
-      "dMeas": "D a partir da medição (sem tranco)",
       "presetJune": "Ajuste da June para ar calmo",
       "instant": "Voar instantaneamente",
       "checklist": "Checklist da missão",
@@ -289,14 +445,28 @@
         "gust": "Permanecer dentro de {gustCm} cm desde o início da rajada até o soltar do pacote",
         "recover": "De volta dentro de ± {bandCm} cm em menos de {recover} s após a soltura",
         "ground": "Nunca tocar o chão após a decolagem",
-        "calm": "Desvio padrão do empuxo abaixo de {calm} N de 3 a 6 s"
+        "calm": "Desvio padrão do empuxo abaixo de {calm} N de 3 a 6 s",
+        "neverRise": "não se acomodou até {s} s",
+        "neverBack": "não voltou até {s} s"
       },
       "touched": "tocou!",
       "clear": "livre",
       "ready": "Pronto. Ajuste os ganhos e pressione Jogar (ou Voar instantaneamente).",
       "flying": "Voando…",
-      "gold": "OURO! Todas as seis estrelas. Você é um engenheiro de controle.",
+      "hitPage": "Pá! O drone subiu para fora da ilustração e bateu no que está acima. Os motores pararam e ele caiu. Em um cômodo real, o sobressinal faria o drone bater no teto.",
+      "hitNoise": "Foi o ruído do sensor que o levantou: a tremedeira cortada empurra mais para cima do que para baixo.",
+      "gold": "OURO! Todas as seis estrelas. Você já faz engenharia de controle.",
       "stars": "{n} de 6 estrelas. Continue ajustando!",
+      "hint": {
+        "ground": "Ele ficou no chão ou caiu de volta. Comece com mais Kp: é isso que o levanta.",
+        "noise": "Os motores tremem: o D transforma o tremor do sensor em picos de empuxo. Aumente τf ou baixe Kd.",
+        "droop": "Ele fica abaixo de 2 m: isso é desvio residual. Um pouco de Ki resolve.",
+        "overshoot": "Ele tem sobressinal na decolagem. Mais Kd, ou menos Ki.",
+        "rise": "Ele sobe devagar demais: não se acomodou até 3 s. Tente um pouco mais de Ki.",
+        "gust": "A rajada o empurra longe demais. Mais Kp o deixa mais firme.",
+        "recover": "Desfazer a queda demora demais. Esse é o trabalho do integral: tente mais Ki.",
+        "swing": "O empuxo ainda está balançando de 3 a 6 s: o drone não se acomodou. Um pouco mais de Kd acalma o movimento."
+      },
       "best": "Seu melhor até agora: {n} estrelas (Kp {kp}, Ki {ki}, Kd {kd}, τf {tf} s).",
       "phase": {
         "takeoff": "{s} s: decolagem com o pacote",
@@ -308,10 +478,37 @@
       "poles": {
         "stable": "Polos nominais: todos na metade esquerda.",
         "unstable": "Um polo nominal está na metade direita: essa sintonia não se sustenta!",
-        "off": "({n} polo(s) rápido(s) fora da borda esquerda.)",
+        "off_one": "(1 polo rápido fora da borda esquerda.)",
+        "off_other": "(Polos rápidos fora da borda esquerda: {n}.)",
         "marginal": "Polos nominais: um polo está na fronteira de estabilidade."
       },
-      "hitPage": "Pá! O drone subiu para fora da ilustração e bateu no que está acima. Os motores pararam e ele caiu. Em um cômodo real, o sobressinal faria o drone bater no teto."
+      "state": {
+        "pass": "aprovado",
+        "fail": "reprovado",
+        "pending": "ainda não decidido"
+      }
+    }
+  },
+  "plays": {
+    "limit": {
+      "kp": "ganho Kp, newtons por metro",
+      "clipped": ", e os motores dão 20"
+    },
+    "lag": {
+      "tm": "atraso do motor, segundos"
+    },
+    "drop": {
+      "pkg": "massa do pacote, quilogramas",
+      "ki": "ganho Ki, newtons por metro-segundo",
+      "e": "erro médio, centímetros"
+    },
+    "spike": {
+      "kd": "ganho Kd, newton-segundos por metro",
+      "tf": "constante de tempo do filtro, segundos"
+    },
+    "gust": {
+      "F": "empurrão constante, newtons",
+      "kp": "ganho Kp, newtons por metro"
     }
   }
 }

@@ -23,7 +23,7 @@
           "t": "say",
           "who": "theo",
           "mood": "happy",
-          "text": "Genau darum geht’s. Der Regler muss es allein schaffen. Wir wählen nur drei Zahlen. Na gut, vier."
+          "text": "Genau darum geht’s. Der Regler muss es allein schaffen. Wir wählen nur drei Zahlen. Na gut, vier: den Filter auch."
         },
         {
           "t": "p",
@@ -41,15 +41,57 @@
         },
         {
           "t": "p",
-          "text": "Unser Drohnenmodell wird fürs Finale ein bisschen ehrlicher. Mit jedem dieser Punkte müssen echte Drohnen leben:"
+          "text": "Unser Drohnenmodell wird fürs Finale ein bisschen ehrlicher. Mit jedem dieser Punkte müssen echte Drohnen leben, und jeder ist ein alter Bekannter aus einem früheren Kapitel:"
         },
         {
           "t": "list",
           "items": [
-            "**Motorverzögerung:** Die Propeller brauchen etwa 0,05 s, um hoch- oder runterzudrehen. Der Schub, den du verlangst, kommt einen Moment später an.",
-            "**Ein verrauschter Sensor:** Jede Höhenmessung liegt zufällig um etwa 2 cm daneben, tausendmal pro Sekunde.",
-            "**Begrenzte Motoren:** 0 bis 20 N, nie negativ.",
-            "**D ist gefiltert:** Weil das wahre Tempo unbekannt ist, nimmt D die Steigung des gefilterten Sensorwerts, mit der Zeitkonstante $\\tau_f$, die du wählst."
+            "**Motorverzögerung (τ ≈ 0,05 s):** Ein Propeller kann sein Tempo nicht sofort ändern. Sein Schub folgt dem Befehl wie der abkühlende Kaffee aus Kapitel 3, eine Verzögerung erster Ordnung: 63 % des Wegs nach 0,05 s. Ein verspäteter Schub ist der Phasenverzug aus Kapitel 10 in Verkleidung.",
+            "**Ein verrauschter Sensor (σ ≈ 2 cm):** Jede Höhenmessung liegt zufällig um etwa 2 cm daneben, tausendmal pro Sekunde. Kapitel 9 hat uns gewarnt: D macht aus diesem Zittern große Schubspitzen.",
+            "**Begrenzte Motoren (0 bis 20 N):** Die Grenze aus Kapitel 8 bleibt. Mit dem Paket wiegt die Drohne 6,9 N, also sind 20 N nur etwa das Dreifache ihres Gewichts, und nach unten ziehen können die Motoren nie. Solange sie am Anschlag sind, pausiert der Haufen (das Anti-Windup aus Kapitel 9).",
+            "**D ist gefiltert:** die Lösung aus Kapitel 9. D nimmt die Steigung eines geglätteten Sensorwerts, eine Verzögerung erster Ordnung mit der Zeitkonstante $\\tau_f$, die du wählst. Längeres $\\tau_f$ heißt ruhiger, aber später."
+          ]
+        },
+        {
+          "t": "play",
+          "id": "limit",
+          "text": "Beim Start verlangt $\\eff{K_p}$ = {scrub|kp|eff} N/m mal 2 m Fehler {calc|ask} N{calc|clip}. Mit dem Paket wiegt die Drohne {calc|w} N, also sind 20 N nur das {calc|ratio}-Fache ihres Gewichts."
+        },
+        {
+          "t": "callout",
+          "title": "Eine kurze Verzögerung ist fast eine Totzeit",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Ein Motor, der 0,05 s zum Hochdrehen braucht… ist das nicht einfach eine winzige Totzeit?"
+            },
+            {
+              "t": "math",
+              "tex": "\\angle \\frac{1}{1 + i\\omega\\tau_m} = -\\arctan(\\omega\\tau_m) \\approx -\\omega\\tau_m \\qquad (\\omega\\tau_m \\ll 1)"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "excited",
+              "text": "Fast! Nimm eine Einstellung, die alle sechs Sterne holt (kein Spoiler). Ihre Kreisverstärkung ist bei etwa 10 rad/s genau 1, dort, wo Kapitel 10 die Phasenreserve abliest. Dort würde eine Totzeit von 0,05 s 28° kosten. Die Verzögerung kostet 26°."
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "happy",
+              "text": "Also wieder Kapitel 10, nur kleiner."
+            },
+            {
+              "t": "play",
+              "id": "lag",
+              "text": "Die Kreisverstärkung dieser Sechs-Sterne-Einstellung ist bei etwa {calc|wc} rad/s gleich 1. Eine Motorverzögerung von $\\tau_m$ = {scrub|tm} s hält diesen Wackler um {calc|lag}° zurück, also fällt die Phasenreserve von 59° auf {calc|pm}°."
+            },
+            {
+              "t": "p",
+              "text": "Mit den echten Motoren sind etwa 25° Reserve weg, bevor Rauschen oder Grenzen überhaupt ins Spiel kommen. Deshalb sind die Gewinner im Finale sanfter als die aus Kapitel 9."
+            }
           ]
         },
         {
@@ -64,18 +106,29 @@
           "options": [
             {
               "text": "P: Er reagiert sofort auf den Fehler",
-              "why": "P reagiert zuerst, aber P allein würde sich einfach bei einem *anderen* Durchhängen einpendeln, weil sich der Schwebeschub geändert hat."
+              "why": "P reagiert zuerst, aber P allein würde sich einfach bei einem *anderen* Durchhängen einpendeln, weil sich der Schwebeschub geändert hat: mit $K_p$ = 20 etwa 10 cm zu hoch."
             },
             {
               "text": "I: Der Haufen muss den neuen Schwebeschub finden",
               "correct": true,
-              "why": "Die Drohne braucht jetzt etwa 4,9 N statt 6,9 N. Nur das Integral kann einen neuen konstanten Schub aufspüren und trotzdem bei null Fehler landen."
+              "why": "Die Drohne braucht jetzt etwa 4,9 N statt 6,9 N. In Ruhe sind Fehler und D null, also muss der Haufen das neue Gewicht allein halten. Nur das Integral kann einen neuen konstanten Schub aufspüren und trotzdem bei null Fehler landen."
             },
             {
               "text": "D: Er stoppt den Sprung",
               "why": "D dämpft den Sprung, und das ist nützlich. Aber er verstummt, sobald die Drohne stillsteht, also kann er das neue Gleichgewicht nicht halten."
             }
           ]
+        },
+        {
+          "t": "play",
+          "id": "drop",
+          "text": "Wenn ein Paket von {scrub|pkg} kg abfällt, muss der Schwebeschub um {calc|dN|eff} N sinken. Nur das Integral kann das dauerhaft halten: Bei $\\eff{K_i}$ = {scrub|ki|eff} N/(m·s) muss es {calc|area} m·s Fehler anhäufen, und bei einem mittleren Fehler von {scrub|e} cm dauert das etwa {calc|time} s."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Moment. Nach dem Abwurf *muss* die Drohne also eine Weile etwas zu hoch schweben? Das ist der Fehler, aus dem der Haufen wieder umlernt!"
         }
       ]
     },
@@ -85,11 +138,15 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Jede Änderung an einem Schieberegler startet den Einsatz neu, und der vorherige Flug bleibt als Geist stehen. Die kleine s-Ebene zeigt die **nominellen** Pole (perfekter Sensor, kein Paket, keine Grenzen). So siehst du das lineare Bild, während daneben der echte, chaotische Flug passiert. Hol dir alle sechs Sterne für Gold."
+          "text": "Jede Änderung an einem Schieberegler startet den Einsatz neu, und der vorherige Flug bleibt als Geist stehen. Die kleine s-Ebene zeigt die **nominellen** Pole: Motorverzögerung und Filter sind drin, nur Rauschen, Paket und Grenzen bleiben draußen. So siehst du das lineare Bild, während daneben der echte, chaotische Flug passiert. Hol dir alle sechs Sterne für Gold."
         },
         {
           "t": "p",
-          "text": "Für den Ankunftsstern muss die **tatsächliche Höhe** ab der Ankunft bis zur Böe bei 6 s innerhalb von ±5 cm **bleiben**; einmaliges Kreuzen von 2 m zählt nicht. Der Stern für ruhige Motoren nutzt die **Standardabweichung** des Schubs von 3 bis 6 s: die typische Schwankung um den Mittelwert, einschließlich spätem Einpendeln und Sensorrauschen."
+          "text": "Die Grenzen sind das, was ein Lieferkunde bemerken würde: eingeschwungen innerhalb von 3 s, nie mehr als 10 % zu hoch, von der Böe nicht mehr als eine Handbreit (20 cm) verschoben, 2 s nach dem Abwurf wieder da, nie am Boden schrammen und Motoren, die nicht brummen (unter 0,5 N Rattern)."
+        },
+        {
+          "t": "p",
+          "text": "Für den Ankunftsstern muss die **tatsächliche Höhe** ab der Ankunft bis zur Böe bei 6 s innerhalb von ±5 cm **bleiben**; einmaliges Kreuzen von 2 m zählt nicht. Der Stern für ruhige Motoren nutzt die **Standardabweichung** des Schubs von 3 bis 6 s, nach dem Start und vor der Böe: die typische Schwankung um den Mittelwert, einschließlich spätem Einpendeln und Sensorrauschen. Zeig auf eine Zeile der Checkliste (oder spring mit Tab hin), dann werden die Sekunden schattiert, die sie bewertet."
         },
         {
           "t": "widget",
@@ -97,8 +154,12 @@
         },
         {
           "t": "note",
+          "text": "Das Zittern des Sensors ist zufällig, aber bei jedem Flug *derselbe* Zufall. Wenn sich Geist und neuer Lauf unterscheiden, warst also du das. Eine echte Drohne bekommt jeden Tag neues Rauschen, und gute Einstellungen gewinnen mit jedem Rauschen: Wir haben eine Sechs-Sterne-Einstellung durch 30 verschiedene Zitterfolgen geflogen, und sie hat jedes Mal sechs Sterne geholt."
+        },
+        {
+          "t": "note",
           "aside": true,
-          "text": "Du steckst fest? Die Gewinner vom Spielplatz aus Kapitel 9 sind ein guter Start. Dann verlängere $\\tau_f$, bis die Motoren aufhören zu rattern."
+          "text": "Du steckst fest? Fang mit einer ruhigen Einstellung aus Kapitel 9 an, etwa $K_p$ = 20, $K_i$ = 10, $K_d$ = 4 mit $\\tau_f$ = 0,04 s. Das sind fünf Sterne. Dann stups $K_i$ nach oben, bis der Ankunftsstern aufleuchtet."
         },
         {
           "t": "say",
@@ -116,11 +177,65 @@
           "t": "say",
           "who": "theo",
           "mood": "think",
-          "text": "Kapitel 9, Warnung 2: Ein großes $K_d$ und ein sehr kurzer Filter machen aus jedem Sensorzittern von 2 cm eine Schubspitze. Weil der Schub viel öfter bei 0 N als bei 20 N abgeschnitten wird, entsteht im Mittel zusätzlicher Schub. So kommt das Überschwingen zustande. Im gedachten windstillen Flug gab es diesen Effekt nicht: Dort war auch der Sensor perfekt."
+          "text": "Kapitel 9, Warnung 2: Ein großes $K_d$ und ein winziger Filter machen aus jedem Sensorzittern von 2 cm eine Schubspitze. Und die Spitzen werden viel öfter bei 0 N abgeschnitten als bei 20 N (die blasse orange Linie zeigt, was der Regler *verlangt* hat: Sieh, wie oft sie 0 N erreicht), also bringen sie einen schiefen Zusatzschub. Das ist das Überschwingen, dieselbe Drift nach oben, die wir in Kapitel 9 erwischt haben. Makellos war es nur, weil deine gedachte Windstille mit einem perfekten Sensor kam."
+        },
+        {
+          "t": "play",
+          "id": "spike",
+          "text": "Mit $\\eff{K_d}$ = {scrub|kd|eff} N·s/m und einem Filter von $\\tau_f$ = {scrub|tf} s verlangt jedes 2-cm-Wackeln des Sensors etwa {calc|spike|eff} N von den Motoren ($K_d\\sigma/\\tau_f$). Zum Schweben braucht es nur 6,9 N."
+        },
+        {
+          "t": "callout",
+          "title": "Warum nicht einfach mehr D?",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "think",
+              "text": "Die Motoren sind zappelig, also brauchen sie mehr Dämpfung. Mehr D!"
+            },
+            {
+              "t": "p",
+              "text": "Theo probiert es mit $K_p$ = 20, $K_i$ = 15 und $\\tau_f$ = 0,04 s. Der Fussel wird *schlimmer*: 0,22 N Rattern bei $K_d$ = 5, 0,41 N bei $K_d$ = 10. Ohne Rauschen ist dasselbe $K_d$ = 10 fast lautlos."
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "happy",
+              "text": "D beruhigt Rauschen also nicht, es verstärkt es. Dämpfung beruhigt *Bewegung*, und das Rauschen ist keine Bewegung: Das ist der Sensor, der flunkert."
+            }
+          ]
         },
         {
           "t": "p",
-          "text": "Probier **Junes Windstille-Einstellung** und schau zu, wie der Stern „Motoren ruhig“ durchfällt. Dann verlängere den Filter auf etwa 0,04 s und nimm $K_d$ runter auf etwa 6. Du gibst ein Haar an Tempo ab und bekommst ruhige Motoren. Dieses Abwägen, Tempo gegen Rauschen und gegen Robustheit, *ist* Regelungstechnik."
+          "text": "Probier **Junes Windstille-Einstellung** und schau zu, wie der Stern „Motoren ruhig“ durchfällt. Dann verlängere den Filter auf 0,04 s und nimm $K_d$ runter auf etwa 7. Bei $K_d$ = 7 kommt sie in etwa 1,9 s an statt in Junes erträumten 1,3 s: Das ist der Preis für ruhige Motoren. Dieses Abwägen, Tempo gegen Rauschen und gegen Robustheit, *ist* Regelungstechnik."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Ein bisschen langsamer, und die Motoren hören auf zu kreischen. Abgemacht. In meinem Kopf war die Luft ruhig *und* der Sensor perfekt."
+        },
+        {
+          "t": "callout",
+          "title": "Die Böe ist ein Job für P",
+          "blocks": [
+            {
+              "t": "play",
+              "id": "gust",
+              "text": "Ein gleichmäßiger Druck von {scrub|F|dis} N gegen eine P-Verstärkung von $\\eff{K_p}$ = {scrub|kp|eff} N/m verschiebt die Drohne um $F/K_p$ = {calc|dev} cm, sobald ein bisschen D sie zur Ruhe gebracht hat."
+            },
+            {
+              "t": "p",
+              "text": "Die Böe im Einsatz dauert nur 3 s, also hat das Integral kaum etwas zu melden: Eine Sechs-Sterne-Einstellung mit $K_p$ = 20 sackt trotzdem etwa 7 cm ab. Und ganz ohne D wackelt P mit den verzögerten Motoren immer weiter, statt zur Ruhe zu kommen."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "happy",
+              "text": "Wenn also der Böen-Stern durchfällt, greif nicht zu $K_i$. Mach die Feder steifer: mehr $K_p$."
+            }
+          ]
         }
       ]
     },
@@ -161,7 +276,7 @@
             "Die **nicht gekürzten Pole** einer Übertragungsfunktion markieren natürliche Bewegungen, die vom gewählten Eingang zum Ausgang sichtbar sind: links klingen sie ab, rechts wachsen sie (Kap. 8).",
             "**PID**: I killt das Durchhängen, D bringt Dämpfung, und jeder Anteil verschiebt die Pole (Kap. 9).",
             "**Totzeit** bringt Phasenverzug; **Reserven** sagen dir, wie weit du von der Klippe entfernt bist (Kap. 10).",
-            "Echte Hardware bringt Grenzen, Verzögerung und Rauschen mit, also sind gute Regler nicht nur schnell, sondern auch ruhig (Kap. 11)."
+            "Echte Hardware bringt **Grenzen** (Kap. 8), **Verzögerung**, die Phasenreserve kostet (Kap. 3 + Kap. 10), und **Rauschen**, das D verstärkt (Kap. 9), also sind gute Regler nicht nur schnell, sondern auch ruhig (Kap. 11)."
           ]
         },
         {
@@ -173,6 +288,16 @@
       "id": "final-check",
       "title": "Erklär es einem Freund",
       "blocks": [
+        {
+          "t": "p",
+          "text": "Zuerst dein Einsatz: Wie viele Sterne hast du geholt, und welcher war am schwersten? Sag laut, *warum*, bevor du weiterliest."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Bei mir war’s der Ruhe-Stern. Ich hab immer mehr D dazugegeben, um die Motoren zu beruhigen, und sie wurden nur lauter."
+        },
         {
           "t": "p",
           "text": "Der beste Test fürs Verstehen ist Erklären. Versuch vor jeder Antwort, *deine* Version laut zu sagen. Dann wähl die Erklärung, die am besten dazu passt."
@@ -220,21 +345,44 @@
               ]
             },
             {
-              "id": "ch11-q3",
-              "q": "„Warum bin ich unter der Dusche immer übers Ziel hinausgeschossen?“",
+              "id": "ch11-q4",
+              "q": "Die Drohne deines Freundes schwebt, aber ihre Motoren brummen und werden heiß. Der Höhensensor zittert um 2 cm. Was probierst du zuerst?",
               "options": [
                 {
-                  "text": "Du hast mit zu viel Verstärkung auf verzögerte Informationen reagiert: Die Phase des Kreises hat −180° erreicht, während seine Verstärkung noch über 1 lag. So hat jede Korrektur den Schwung aufgepumpt",
+                  "text": "Den Ableitungsfilter verlängern oder $K_d$ senken",
                   "correct": true,
-                  "why": "Genau. Die Kur war weniger Verstärkung oder mehr Phasenreserve, nicht mehr Anstrengung."
+                  "why": "D macht aus Sensorzittern etwa $K_d\\sigma/\\tau_f$ Newton Befehl: 40 N bei $K_d$ = 10 und $\\tau_f$ = 0,005 s, nur 3,5 N bei $K_d$ = 7 und $\\tau_f$ = 0,04 s. Dafür gibst du ein bisschen Ankunftstempo ab."
                 },
                 {
-                  "text": "Die Dusche war kaputt",
-                  "why": "In Kapitel 0 deckten sich die breiten, langsamen Wellen nach dem Verschieben fast. Abrupte Änderungen wurden im Rohr aber zusätzlich geglättet. Die Dusche reagierte verzögert und geglättet."
+                  "text": "Mehr $K_d$, für mehr Dämpfung",
+                  "why": "Dämpfung beruhigt *Bewegung*, nicht Sensorflunkereien. Bei $\\tau_f$ = 0,04 s wächst das Rattern von 0,22 N bei $K_d$ = 5 auf 0,41 N bei $K_d$ = 10."
                 },
                 {
-                  "text": "Du hast nicht schnell genug reagiert",
-                  "why": "*Stärker* zu reagieren hat es schlimmer gemacht, wie die Roboterhände gezeigt haben. Tempo auf alte Nachrichten ist das Problem."
+                  "text": "Das Integral ausschalten",
+                  "why": "I summiert den Fehler langsam auf, also reicht es das Zittern kaum weiter. Ohne I hängt die Drohne durch und kann einen Paketabwurf nicht ausgleichen."
+                },
+                {
+                  "text": "Mehr $K_p$",
+                  "why": "P reicht das Zittern direkt durch ($K_p\\sigma$: 0,4 N bei $K_p$ = 20), also heißt mehr P ein bisschen *mehr* Brummen, nicht weniger."
+                }
+              ]
+            },
+            {
+              "id": "ch11-q5",
+              "q": "Die Motoren werden langsamer: Ihre Verzögerung steigt von 0,05 s auf 0,1 s. Was passiert mit der Sechs-Sterne-Einstellung aus dem Abstecher?",
+              "options": [
+                {
+                  "text": "Ihre Phasenreserve schrumpft von etwa 33° auf etwa 21°, also wackelt sie mehr",
+                  "correct": true,
+                  "why": "Eine Verzögerung hält jeden Wackler um $\\arctan(\\omega\\tau)$ zurück: der Phasenverzug aus Kapitel 10, dasselbe, was die Dusche hat überschwingen lassen. Eine längere Verzögerung lässt weniger Reserve vor −180°."
+                },
+                {
+                  "text": "Nichts: 0,1 s sind winzig neben dem 20-s-Einsatz",
+                  "why": "Entscheidend ist die Verzögerung im Vergleich zum Wackler des Kreises, etwa 10 rad/s (ein Schwung alle 0,6 s), nicht die Länge des Einsatzes."
+                },
+                {
+                  "text": "Sie hängt mehr durch",
+                  "why": "Mit I gibt es überhaupt kein Durchhängen, und eine Verzögerung ändert das *Timing*, nicht das endgültige Kräftegleichgewicht."
                 }
               ]
             }
@@ -253,13 +401,19 @@
         {
           "t": "list",
           "items": [
-            "**Wurzelortskurve:** Statt Pole zu ziehen, ziehst du an der *Verstärkung* und schaust zu, wie die Pole Bahnen durch die s-Ebene zeichnen.",
-            "**Zustandsraumregelung:** viele Sensoren, viele Motoren, alles gleichzeitig: Neigung, Drehung und Position einer echten Drohne zusammen.",
-            "**Digitale Regelung:** Echte Regler laufen auf Computern, die alle paar Millisekunden abtasten. Die s-Ebene bekommt eine Cousine, die z-Ebene.",
-            "**Kalman-Filter:** Rauschen clever bekämpfen, indem man die Vorhersage eines Modells mit der Messung des Sensors mischt.",
-            "**Smith-Prädiktoren und modellprädiktive Regelung:** Regler, die eine kleine Simulation in sich tragen, um um Verzögerungen herumzuschauen.",
-            "**Nichtlineare und robuste Regelung:** was tun, wenn die Welt nicht linear ist, und wie man beweist, dass man trotzdem noch Reserve hat."
+            "**Wurzelortskurve:** Statt Pole zu ziehen, ziehst du an der *Verstärkung* und schaust zu, wie die Pole Bahnen zeichnen. Du würdest auf einen Blick sehen, welches $K_p$ zu viel ist.",
+            "**Zustandsraumregelung:** viele Sensoren und Motoren gleichzeitig. Eine echte Drohne muss Neigung, Drehung und Position zusammen halten, und das Einstellen Knopf für Knopf funktioniert nicht mehr.",
+            "**Digitale Regelung:** Echte Regler laufen auf Computern, die alle paar Millisekunden abtasten. Auch Abtasten ist eine kleine Verzögerung, und die s-Ebene bekommt eine Cousine, die z-Ebene.",
+            "**Kalman-Filter:** mischen, was ein Modell vorhersagt, mit dem, was der Sensor sagt. So kannst du einen verrauschten Sensor ohne langsamen Filter nutzen.",
+            "**Smith-Prädiktoren und modellprädiktive Regelung:** Regler, die eine kleine Simulation in sich tragen, um um Verzögerungen herumzuschauen: das eigentliche Heilmittel für die Dusche.",
+            "**Nichtlineare und robuste Regelung:** was tun, wenn der Luftwiderstand nicht linear ist oder die Drohne in 3D fliegt, und wie man *beweist*, dass man trotzdem noch Reserve hat."
           ]
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Zuerst die Wurzelortskurve. Ich will *zusehen*, wie die Pole wandern, während ich an einem Knopf drehe."
         },
         {
           "t": "cliff",
@@ -273,13 +427,15 @@
       "title": "Einsatzzentrale",
       "measured": "Sensorwert",
       "hAria": "Höhe über den 20-Sekunden-Einsatz mit dem Zielband; die Momente von Böe und Paketabwurf sind markiert.",
-      "tAria": "Schub über den Einsatz mit der Motorgrenze von 20 N.",
+      "tAria": "Schub über den Einsatz: was der Regler verlangt hat (auf die 0 bis 20 N der Motoren begrenzt) und was die verzögerten Motoren geliefert haben.",
       "gust": "Böe",
       "drop": "Abwurf",
       "max": "max. 20 N",
+      "min": "0 N: kein Ziehen nach unten",
+      "asked": "verlangt",
+      "delivered": "geliefert",
       "splane": "Nominelle Pole des geschlossenen Regelkreises der Drohne mit Motorverzögerung und gefilterter Ableitung.",
       "filter": "D-Filter $\\tau_f$",
-      "dMeas": "D aus der Messung (kein D-Stoß)",
       "presetJune": "Junes Windstille-Einstellung",
       "instant": "Sofort fliegen",
       "checklist": "Einsatz-Checkliste",
@@ -289,15 +445,28 @@
         "gust": "Von der Böe bis zum Paketabwurf innerhalb von {gustCm} cm bleiben",
         "recover": "Weniger als {recover} s nach dem Abwurf wieder innerhalb ± {bandCm} cm",
         "ground": "Nach dem Start nie den Boden berühren",
-        "calm": "Standardabweichung des Schubs von 3 bis 6 s unter {calm} N"
+        "calm": "Standardabweichung des Schubs von 3 bis 6 s unter {calm} N",
+        "neverRise": "bis {s} s nicht eingeschwungen",
+        "neverBack": "bis {s} s nicht zurück"
       },
       "touched": "berührt!",
       "clear": "frei",
       "ready": "Bereit. Stell die Verstärkungen ein und drück dann auf Abspielen (oder Sofort fliegen).",
       "flying": "Fliegt…",
       "hitPage": "Bonk! Die Drohne flog aus dem Bild und prallte gegen das, was darüber steht. Die Motoren setzten aus, und sie stürzte ab. In einem echten Raum landet Überschwingen an der Decke.",
+      "hitNoise": "Das Sensorrauschen hat sie hochgehoben: Das abgeschnittene Rattern drückt mehr nach oben als nach unten.",
       "gold": "GOLD! Alle sechs Sterne. Du bist eine echte Regelungstechnikerin / ein echter Regelungstechniker.",
       "stars": "{n} von 6 Sternen. Weiter einstellen!",
+      "hint": {
+        "ground": "Sie saß am Boden oder ist zurückgefallen. Fang mit mehr Kp an: Das hebt sie hoch.",
+        "noise": "Die Motoren rattern: D macht aus dem Sensorzittern Schubspitzen. Verlängere τf oder senke Kd.",
+        "droop": "Sie hängt unter 2 m: Das ist Durchhängen. Ein bisschen Ki behebt das.",
+        "overshoot": "Sie schwingt beim Start über. Mehr Kd oder weniger Ki.",
+        "rise": "Sie kriecht zu langsam hoch: Bis 3 s ist sie nicht eingeschwungen. Probier etwas mehr Ki.",
+        "gust": "Die Böe drückt sie zu weit weg. Mehr Kp macht sie steifer.",
+        "recover": "Der Abwurf wird zu langsam ausgeglichen. Das ist die Aufgabe des Integrals: Probier mehr Ki.",
+        "swing": "Der Schub schwingt von 3 bis 6 s immer noch: Die Drohne ist nicht zur Ruhe gekommen. Etwas mehr Kd beruhigt die Bewegung."
+      },
       "best": "Dein bisher Bestes: {n} Sterne (Kp {kp}, Ki {ki}, Kd {kd}, τf {tf} s).",
       "phase": {
         "takeoff": "{s} s: Start mit dem Paket",
@@ -309,9 +478,37 @@
       "poles": {
         "stable": "Nominelle Pole: alle in der linken Hälfte.",
         "unstable": "Ein nomineller Pol liegt in der rechten Hälfte: Diese Einstellung kann nicht halten!",
-        "off": "({n} schnelle(r) Pol(e) jenseits des linken Rands.)",
-        "marginal": "Nennpole: Ein Pol liegt auf der Stabilitätsgrenze."
+        "off_one": "(1 schneller Pol jenseits des linken Rands.)",
+        "off_other": "({n} schnelle Pole jenseits des linken Rands.)",
+        "marginal": "Nominelle Pole: Ein Pol liegt auf der Stabilitätsgrenze."
+      },
+      "state": {
+        "pass": "bestanden",
+        "fail": "nicht bestanden",
+        "pending": "noch offen"
       }
+    }
+  },
+  "plays": {
+    "limit": {
+      "kp": "Verstärkung Kp, Newton pro Meter",
+      "clipped": ", und die Motoren geben 20"
+    },
+    "lag": {
+      "tm": "Motorverzögerung, Sekunden"
+    },
+    "drop": {
+      "pkg": "Paketmasse, Kilogramm",
+      "ki": "Verstärkung Ki, Newton pro Meter-Sekunde",
+      "e": "mittlerer Fehler, Zentimeter"
+    },
+    "spike": {
+      "kd": "Verstärkung Kd, Newtonsekunden pro Meter",
+      "tf": "Filterzeitkonstante, Sekunden"
+    },
+    "gust": {
+      "F": "gleichmäßiger Druck, Newton",
+      "kp": "Verstärkung Kp, Newton pro Meter"
     }
   }
 }

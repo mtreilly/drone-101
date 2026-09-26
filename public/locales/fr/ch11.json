@@ -23,7 +23,7 @@
           "t": "say",
           "who": "theo",
           "mood": "happy",
-          "text": "C'est tout l'intérêt. Le correcteur doit se débrouiller seul. Nous, on choisit juste trois nombres. Enfin, quatre."
+          "text": "C'est tout l'intérêt. Le correcteur doit se débrouiller seul. Nous, on choisit juste trois nombres. Enfin, quatre : le filtre aussi."
         },
         {
           "t": "p",
@@ -41,15 +41,57 @@
         },
         {
           "t": "p",
-          "text": "Pour le final, notre modèle de drone devient un peu plus honnête. Chacun de ces points est une réalité avec laquelle les vrais drones doivent vivre :"
+          "text": "Pour le final, notre modèle de drone devient un peu plus honnête. Chacun de ces points est une réalité avec laquelle les vrais drones doivent vivre, et chacun est un vieil ami d'un chapitre précédent :"
         },
         {
           "t": "list",
           "items": [
-            "**Retard des moteurs :** les hélices mettent environ 0,05 s à accélérer ou ralentir. La poussée demandée arrive un instant plus tard.",
-            "**Un capteur bruité :** chaque mesure de hauteur est fausse d'environ 2 cm, au hasard, mille fois par seconde.",
-            "**Des moteurs limités :** de 0 à 20 N, jamais négatif.",
-            "**D est filtré :** comme on ne connaît pas la vraie vitesse, D utilise la pente de la mesure filtrée du capteur, avec la constante de temps $\\tau_f$ que tu choisis."
+            "**Retard des moteurs (τ ≈ 0,05 s) :** une hélice ne change pas de vitesse instantanément. Sa poussée suit la commande comme le café qui refroidit au chapitre 3, un système du premier ordre : 63 % du chemin au bout de 0,05 s. Une poussée en retard, c'est le déphasage du chapitre 10 déguisé.",
+            "**Un capteur bruité (σ ≈ 2 cm) :** chaque mesure de hauteur est fausse d'environ 2 cm, au hasard, mille fois par seconde. Le chapitre 9 nous a prévenus : D transforme ce tremblement en gros pics de poussée.",
+            "**Des moteurs limités (0 à 20 N) :** la limite du chapitre 8 reste active. Avec le colis, le drone pèse 6,9 N : 20 N, ce n'est donc qu'environ trois fois son poids, et les moteurs ne peuvent jamais tirer vers le bas. Tant qu'ils sont en butée, le tas se met en pause (l'anti-emballement du chapitre 9).",
+            "**D est filtré :** la solution du chapitre 9. D prend la pente d'une mesure du capteur lissée, par un système du premier ordre dont tu choisis la constante de temps $\\tau_f$. Un $\\tau_f$ plus long, c'est plus calme, mais plus tard."
+          ]
+        },
+        {
+          "t": "play",
+          "id": "limit",
+          "text": "Au décollage, $\\eff{K_p}$ = {scrub|kp|eff} N/m fois l'erreur de 2 m demande {calc|ask} N{calc|clip}. Avec le colis, le drone pèse {calc|w} N : 20 N, ce n'est que {calc|ratio}× son poids."
+        },
+        {
+          "t": "callout",
+          "title": "Un retard court, c'est presque un retard pur",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Un moteur qui met 0,05 s à prendre sa vitesse… ce n'est pas juste un minuscule retard pur ?"
+            },
+            {
+              "t": "math",
+              "tex": "\\angle \\frac{1}{1 + i\\omega\\tau_m} = -\\arctan(\\omega\\tau_m) \\approx -\\omega\\tau_m \\qquad (\\omega\\tau_m \\ll 1)"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "excited",
+              "text": "Presque ! Prends un réglage qui gagne les six étoiles (pas de spoiler). Son gain de boucle vaut exactement 1 vers 10 rad/s, là où le chapitre 10 lit la marge de phase. À cette vitesse, un retard pur de 0,05 s coûterait 28°. Le retard des moteurs en coûte 26°."
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "happy",
+              "text": "Donc c'est le chapitre 10 qui recommence, en plus petit."
+            },
+            {
+              "t": "play",
+              "id": "lag",
+              "text": "Le gain de boucle de ce réglage six étoiles vaut 1 vers {calc|wc} rad/s. Un retard des moteurs de $\\tau_m$ = {scrub|tm} s retient cette oscillation de {calc|lag}° : la marge de phase passe de 59° à {calc|pm}°."
+            },
+            {
+              "t": "p",
+              "text": "Avec les vrais moteurs, environ 25° de marge ont disparu avant même que le bruit ou les limites entrent en jeu. Voilà pourquoi les réglages gagnants du final sont plus doux que ceux du chapitre 9."
+            }
           ]
         },
         {
@@ -64,18 +106,29 @@
           "options": [
             {
               "text": "P : il réagit tout de suite à l'erreur",
-              "why": "P réagit en premier, mais P seul se stabiliserait juste avec un affaissement *différent*, parce que la poussée de vol stationnaire a changé."
+              "why": "P réagit en premier, mais P seul se stabiliserait juste avec un affaissement *différent*, parce que la poussée de vol stationnaire a changé : avec $K_p$ = 20, environ 10 cm trop haut."
             },
             {
               "text": "I : le tas doit trouver la nouvelle poussée de vol stationnaire",
               "correct": true,
-              "why": "Le drone a maintenant besoin d'environ 4,9 N au lieu de 6,9 N. Seule l'intégrale peut aller chercher une nouvelle poussée constante et finir quand même avec une erreur nulle."
+              "why": "Le drone a maintenant besoin d'environ 4,9 N au lieu de 6,9 N. Au repos, l'erreur vaut 0 et D vaut 0 : c'est donc le tas seul qui doit porter le nouveau poids. Seule l'intégrale peut aller chercher une nouvelle poussée constante et finir quand même avec une erreur nulle."
             },
             {
               "text": "D : il arrête le saut",
               "why": "D amortit le saut, ce qui est utile, mais il se tait dès que le drone est immobile, donc il ne peut pas tenir le nouvel équilibre."
             }
           ]
+        },
+        {
+          "t": "play",
+          "id": "drop",
+          "text": "Quand un colis de {scrub|pkg} kg est largué, la poussée de vol stationnaire doit baisser de {calc|dN|eff} N. Seule l'intégrale peut tenir ça pour de bon : avec $\\eff{K_i}$ = {scrub|ki|eff} N/(m·s), elle doit empiler {calc|area} m·s d'erreur, ce qui, avec une erreur moyenne de {scrub|e} cm, prend environ {calc|time} s."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Attends. Donc après le largage, le drone est *obligé* de flotter un peu trop haut pendant un moment ? C'est cette erreur-là qui sert au tas à se défaire !"
         }
       ]
     },
@@ -85,11 +138,15 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Chaque changement de curseur relance la mission, et le vol précédent reste affiché en fantôme. Le petit plan s montre les pôles **nominaux** (capteur parfait, pas de colis, pas de limites), pour que tu voies l'image linéaire pendant que le vrai vol, bien plus désordonné, se déroule à côté. Gagne les six étoiles pour l'or."
+          "text": "Chaque changement de curseur relance la mission, et le vol précédent reste affiché en fantôme. Le petit plan s montre les pôles **nominaux** : le retard des moteurs et le filtre sont pris en compte, seuls le bruit, le colis et les limites sont laissés de côté. Tu vois ainsi l'image linéaire pendant que le vrai vol, bien plus désordonné, se déroule à côté. Gagne les six étoiles pour l'or."
         },
         {
           "t": "p",
-          "text": "Pour l’étoile d’arrivée, la **hauteur réelle doit rester** à ±5 cm de la cible depuis l’arrivée jusqu’à la rafale à 6 s ; traverser 2 m une seule fois ne suffit pas. L’étoile des moteurs calmes utilise l’**écart-type** de la poussée entre 3 et 6 s : son écart typique autour de sa moyenne, y compris la fin de stabilisation et le bruit du capteur."
+          "text": "Les limites, c'est ce qu'un client de la livraison remarquerait : stabilisé en moins de 3 s, jamais plus de 10 % trop haut, pas déporté de plus d'une largeur de main (20 cm) par la rafale, revenu en 2 s après le largage, sans jamais racler le sol, et des moteurs qui ne bourdonnent pas (moins de 0,5 N de crépitement)."
+        },
+        {
+          "t": "p",
+          "text": "Pour l’étoile d’arrivée, la **hauteur réelle doit rester** à ±5 cm de la cible depuis l’arrivée jusqu’à la rafale à 6 s ; traverser 2 m une seule fois ne suffit pas. L’étoile des moteurs calmes utilise l’**écart-type** de la poussée entre 3 et 6 s, après le décollage et avant la rafale : son écart typique autour de sa moyenne, y compris la fin de stabilisation et le bruit du capteur. Pointe une ligne de la liste de contrôle (ou atteins-la avec Tab) pour ombrer les secondes qu’elle juge."
         },
         {
           "t": "widget",
@@ -97,8 +154,12 @@
         },
         {
           "t": "note",
+          "text": "Le tremblement du capteur est aléatoire, mais c'est le *même* hasard à chaque vol : quand le fantôme et le nouveau vol diffèrent, c'est toi qui as fait la différence. Un vrai drone a un bruit nouveau chaque jour, et les bons réglages gagnent avec n'importe quel bruit : on a fait voler un réglage six étoiles avec 30 tremblements différents, et il a gagné six étoiles à chaque fois."
+        },
+        {
+          "t": "note",
           "aside": true,
-          "text": "Bloqué ? Les réglages gagnants du terrain de jeu du chapitre 9 sont un bon point de départ. Ensuite, allonge $\\tau_f$ jusqu'à ce que les moteurs arrêtent de crépiter."
+          "text": "Bloqué·e ? Pars d'un réglage calme du chapitre 9, par exemple $K_p$ = 20, $K_i$ = 10, $K_d$ = 4 avec $\\tau_f$ = 0,04 s. Ça fait cinq étoiles. Puis augmente $K_i$ petit à petit jusqu'à ce que l'étoile d'arrivée s'allume."
         },
         {
           "t": "say",
@@ -116,11 +177,65 @@
           "t": "say",
           "who": "theo",
           "mood": "think",
-          "text": "Chapitre 9, avertissement 2. Un gros $K_d$ fois un filtre minuscule transforme chaque tremblement de 2 cm du capteur en pic de poussée. Et les pics sont écrêtés à 0 N bien plus souvent qu'à 20 N, donc ils ajoutent une poussée en plus, déséquilibrée : c'est ça, le dépassement. Il n'était impeccable que parce que ton air calme imaginaire venait avec un capteur parfait."
+          "text": "Chapitre 9, avertissement 2. Un gros $K_d$ fois un filtre minuscule transforme chaque tremblement de 2 cm du capteur en pic de poussée. Et les pics sont écrêtés à 0 N bien plus souvent qu'à 20 N (la ligne orange pâle montre ce que le correcteur a *demandé* : regarde combien de fois elle touche 0 N), donc ils ajoutent une poussée en plus, déséquilibrée. C'est ça, le dépassement : la même dérive vers le haut que le chapitre 9 avait repérée. Il n'était impeccable que parce que ton air calme imaginaire venait avec un capteur parfait."
+        },
+        {
+          "t": "play",
+          "id": "spike",
+          "text": "Avec $\\eff{K_d}$ = {scrub|kd|eff} N·s/m et un filtre de $\\tau_f$ = {scrub|tf} s, chaque tremblement de 2 cm du capteur demande aux moteurs environ {calc|spike|eff} N ($K_d\\sigma/\\tau_f$). Le vol stationnaire n'en demande que 6,9."
+        },
+        {
+          "t": "callout",
+          "title": "Pourquoi pas juste plus de D ?",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "think",
+              "text": "Les moteurs sont nerveux, donc il leur faut plus d'amortissement. Plus de D !"
+            },
+            {
+              "t": "p",
+              "text": "Theo essaie avec $K_p$ = 20, $K_i$ = 15 et $\\tau_f$ = 0,04 s. Le flou *empire* : 0,22 N de crépitement à $K_d$ = 5, 0,41 N à $K_d$ = 10. Sans le bruit, le même $K_d$ = 10 est presque silencieux."
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "happy",
+              "text": "Donc D ne calme pas le bruit, il l'amplifie. L'amortissement calme le *mouvement*, et le bruit n'est pas un mouvement : c'est le capteur qui raconte des bobards."
+            }
+          ]
         },
         {
           "t": "p",
-          "text": "Essaie **le réglage air calme de June** et regarde l'étoile « moteurs calmes » échouer. Puis allonge le filtre à environ 0,04 s et descends $K_d$ vers 6. Tu perds un chouïa de vitesse et tu gagnes des moteurs calmes. Ce compromis, la vitesse contre le bruit et contre la robustesse, c'est *ça*, l'automatique."
+          "text": "Essaie **le réglage air calme de June** et regarde l'étoile « moteurs calmes » échouer. Puis allonge le filtre à 0,04 s et descends $K_d$ vers 7. À $K_d$ = 7, le drone arrive en environ 1,9 s au lieu des 1,3 s rêvées par June : c'est le prix de moteurs calmes. Ce compromis, la vitesse contre le bruit et contre la robustesse, *c'est* l'automatique."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Un peu plus lent, et les moteurs arrêtent de hurler. Marché conclu. Dans ma tête, l'air était calme *et* le capteur était parfait."
+        },
+        {
+          "t": "callout",
+          "title": "La rafale, c'est un travail pour P",
+          "blocks": [
+            {
+              "t": "play",
+              "id": "gust",
+              "text": "Une poussée constante de {scrub|F|dis} N face à un gain P de $\\eff{K_p}$ = {scrub|kp|eff} N/m déplace le drone de $F/K_p$ = {calc|dev} cm, une fois qu'un peu de D l'a laissé se stabiliser."
+            },
+            {
+              "t": "p",
+              "text": "La rafale de la mission ne dure que 3 s, donc l'intégrale n'a presque pas son mot à dire : un réglage six étoiles avec $K_p$ = 20 descend encore d'environ 7 cm. Et sans aucun D, P continue d'osciller sur les moteurs en retard au lieu de se stabiliser."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "happy",
+              "text": "Donc si l'étoile de la rafale échoue, ne touche pas à $K_i$. Raidis le ressort : plus de $K_p$."
+            }
+          ]
         }
       ]
     },
@@ -161,7 +276,7 @@
             "Les **pôles non simplifiés** d’une fonction de transfert indiquent les mouvements naturels visibles entre l’entrée et la sortie choisies : ceux de gauche s’atténuent, ceux de droite grandissent (ch. 8).",
             "**PID** : I tue l'affaissement, D ajoute de l'amortissement, et chacun déplace les pôles (chap. 9).",
             "Le **retard** ajoute du retard de phase ; les **marges** disent à quelle distance du bord de la falaise on est (chap. 10).",
-            "Le vrai matériel ajoute des limites, du retard et du bruit, donc un bon correcteur est calme autant que rapide (chap. 11)."
+            "Le vrai matériel ajoute des **limites** (chap. 8), un **retard** qui coûte de la marge de phase (chap. 3 + chap. 10) et du **bruit** que D amplifie (chap. 9) : un bon correcteur est donc calme autant que rapide (chap. 11)."
           ]
         },
         {
@@ -173,6 +288,16 @@
       "id": "final-check",
       "title": "Explique-le à un ami",
       "blocks": [
+        {
+          "t": "p",
+          "text": "D'abord, ta mission : combien d'étoiles as-tu gagnées, et laquelle a été la plus dure ? Dis *pourquoi* à voix haute avant de continuer ta lecture."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Pour moi, c'était l'étoile du calme. J'ajoutais du D pour calmer les moteurs, et ils ne faisaient que crier plus fort."
+        },
         {
           "t": "p",
           "text": "Le meilleur test de compréhension, c'est d'expliquer. Avant chaque réponse, essaie de dire *ta* version à voix haute. Puis choisis l'explication qui lui correspond le mieux."
@@ -220,21 +345,44 @@
               ]
             },
             {
-              "id": "ch11-q3",
-              "q": "« Pourquoi je dépassais sans arrêt sous la douche ? »",
+              "id": "ch11-q4",
+              "q": "Le drone d'une amie tient en vol stationnaire, mais ses moteurs bourdonnent et chauffent. Le capteur de hauteur tremble de 2 cm. Que faut-il essayer en premier ?",
               "options": [
                 {
-                  "text": "Tu réagissais à une information en retard avec trop de gain : la phase de la boucle atteignait −180° alors que son gain était encore au-dessus de 1, donc chaque correction entretenait l'oscillation",
+                  "text": "Allonger le filtre de la dérivée ou baisser $K_d$",
                   "correct": true,
-                  "why": "Exactement. Le remède, c'était moins de gain, ou plus de marge de phase, pas plus d'effort."
+                  "why": "D transforme le tremblement du capteur en environ $K_d\\sigma/\\tau_f$ newtons de commande : 40 N pour $K_d$ = 10 et $\\tau_f$ = 0,005 s, seulement 3,5 N pour $K_d$ = 7 et $\\tau_f$ = 0,04 s. On sacrifie un peu de vitesse d'arrivée."
                 },
                 {
-                  "text": "La douche était défectueuse",
-                  "why": "Au chapitre 0, décaler les courbes faisait presque coïncider les grandes oscillations, mais le tuyau lissait aussi les changements brusques. La douche avait du retard et lissait la réponse."
+                  "text": "Plus de $K_d$, pour plus d'amortissement",
+                  "why": "L'amortissement calme le *mouvement*, pas les bobards du capteur. À $\\tau_f$ = 0,04 s, le crépitement passe de 0,22 N à $K_d$ = 5 à 0,41 N à $K_d$ = 10."
                 },
                 {
-                  "text": "Tu ne réagissais pas assez vite",
-                  "why": "Réagir *plus fort* empirait les choses, comme l'ont montré les mains robots. La vitesse sur de vieilles nouvelles, c'est ça le problème."
+                  "text": "Couper l'intégrale",
+                  "why": "I additionne l'erreur lentement, donc il laisse à peine passer le tremblement. Sans lui, le drone s'affaisse et ne peut pas rattraper le largage d'un colis."
+                },
+                {
+                  "text": "Plus de $K_p$",
+                  "why": "P laisse passer le tremblement tel quel ($K_p\\sigma$ : 0,4 N à $K_p$ = 20), donc plus de P veut dire un peu *plus* de bourdonnement, pas moins."
+                }
+              ]
+            },
+            {
+              "id": "ch11-q5",
+              "q": "Les moteurs deviennent plus lents : leur retard passe de 0,05 s à 0,1 s. Que devient le réglage six étoiles du détour ?",
+              "options": [
+                {
+                  "text": "Sa marge de phase rétrécit, d'environ 33° à environ 21°, donc il oscille davantage",
+                  "correct": true,
+                  "why": "Un retard du premier ordre retient chaque oscillation de $\\arctan(\\omega\\tau)$ : c'est le déphasage du chapitre 10, la même chose qui faisait dépasser la douche. Un retard plus long laisse moins de marge avant −180°."
+                },
+                {
+                  "text": "Rien : 0,1 s, c'est minuscule à côté des 20 s de la mission",
+                  "why": "Ce qui compte, c'est le retard comparé à l'oscillation de la boucle, environ 10 rad/s (une oscillation toutes les 0,6 s), pas la durée de la mission."
+                },
+                {
+                  "text": "Il s'affaisse davantage",
+                  "why": "Avec I activé, il n'y a aucun affaissement, et un retard change le *rythme*, pas l'équilibre final des forces."
                 }
               ]
             }
@@ -253,13 +401,19 @@
         {
           "t": "list",
           "items": [
-            "**Lieu des racines :** au lieu de déplacer les pôles, déplace le *gain* et regarde les pôles tracer des chemins à travers le plan s.",
-            "**Représentation d'état :** plein de capteurs, plein de moteurs, tout à la fois : l'inclinaison, la rotation et la position d'un vrai drone ensemble.",
-            "**Commande numérique :** les vrais correcteurs tournent sur des ordinateurs qui échantillonnent toutes les quelques millisecondes. Le plan s a un cousin, le plan z.",
-            "**Filtres de Kalman :** combattre le bruit intelligemment en mélangeant la prédiction d'un modèle et la mesure du capteur.",
-            "**Prédicteurs de Smith et commande prédictive :** des correcteurs qui embarquent une petite simulation, pour voir au-delà des retards.",
-            "**Commande non linéaire et robuste :** que faire quand le monde n'est pas linéaire, et comment prouver qu'on a encore de la marge."
+            "**Lieu des racines :** au lieu de déplacer les pôles, déplace le *gain* et regarde les pôles tracer des chemins. Tu verrais d'un coup d'œil quel $K_p$ est de trop.",
+            "**Représentation d'état :** plein de capteurs et de moteurs à la fois. Un vrai drone doit tenir ensemble son inclinaison, sa rotation et sa position, et régler un bouton à la fois ne marche plus.",
+            "**Commande numérique :** les vrais correcteurs tournent sur des ordinateurs qui échantillonnent toutes les quelques millisecondes. L'échantillonnage est lui aussi un petit retard, et le plan s a un cousin, le plan z.",
+            "**Filtres de Kalman :** ils mélangent ce que prédit un modèle et ce que dit le capteur, pour utiliser un capteur bruité sans filtre lent.",
+            "**Prédicteurs de Smith et commande prédictive :** des correcteurs qui embarquent une petite simulation pour voir au-delà des retards, le vrai remède de la douche.",
+            "**Commande non linéaire et robuste :** que faire quand la traînée n'est pas linéaire ou que le drone vole en 3D, et comment *prouver* qu'on a encore de la marge."
           ]
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Le lieu des racines d'abord. Je veux *voir* les pôles bouger pendant que je tourne un seul bouton."
         },
         {
           "t": "cliff",
@@ -273,13 +427,15 @@
       "title": "Contrôle de mission",
       "measured": "lecture du capteur",
       "hAria": "Hauteur pendant les 20 secondes de la mission avec la bande cible ; les moments de la rafale et du largage du colis sont marqués.",
-      "tAria": "Poussée pendant la mission avec la limite moteur de 20 N.",
+      "tAria": "Poussée pendant la mission : ce que le correcteur a demandé (écrêté aux 0 à 20 N des moteurs) et ce que les moteurs, en retard, ont fourni.",
       "gust": "rafale",
       "drop": "largage",
       "max": "20 N max",
+      "min": "0 N : impossible de tirer vers le bas",
+      "asked": "demandée",
+      "delivered": "fournie",
       "splane": "Pôles nominaux en boucle fermée du drone avec retard des moteurs et dérivée filtrée.",
       "filter": "Filtre de D $\\tau_f$",
-      "dMeas": "D sur la mesure (pas d'à-coup)",
       "presetJune": "Le réglage air calme de June",
       "instant": "Voler instantanément",
       "checklist": "Liste de contrôle de la mission",
@@ -289,15 +445,28 @@
         "gust": "Rester à moins de {gustCm} cm de la cible de la rafale jusqu’au largage",
         "recover": "Revenir à ± {bandCm} cm moins de {recover} s après le largage",
         "ground": "Ne jamais toucher le sol après le décollage",
-        "calm": "Écart-type de la poussée sous {calm} N de 3 à 6 s"
+        "calm": "Écart-type de la poussée sous {calm} N de 3 à 6 s",
+        "neverRise": "pas stabilisé à {s} s",
+        "neverBack": "pas revenu à {s} s"
       },
       "touched": "touché !",
       "clear": "OK",
       "ready": "Prêt. Règle les gains, puis appuie sur Lecture (ou Voler instantanément).",
       "flying": "En vol…",
       "hitPage": "Bonk ! Il est sorti du dessin et a heurté ce qui se trouve au-dessus. Les moteurs ont calé et il est tombé. Dans une vraie pièce, le dépassement finit au plafond.",
+      "hitNoise": "C'est le bruit du capteur qui l'a fait monter : le crépitement écrêté pousse plus vers le haut que vers le bas.",
       "gold": "OR ! Les six étoiles. Tu es automaticien·ne.",
       "stars": "{n} étoiles sur 6. Continue à régler !",
+      "hint": {
+        "ground": "Il est resté au sol ou y est retombé. Commence par plus de Kp : c'est lui qui le soulève.",
+        "noise": "Les moteurs crépitent : D transforme le tremblement du capteur en pics de poussée. Allonge τf ou baisse Kd.",
+        "droop": "Il reste sous 2 m : c'est l'affaissement. Un peu de Ki va le corriger.",
+        "overshoot": "Il dépasse au décollage. Plus de Kd, ou moins de Ki.",
+        "rise": "Il monte trop lentement : il n'est pas stabilisé à 3 s. Essaie un peu plus de Ki.",
+        "gust": "La rafale le pousse trop loin. Plus de Kp le raidit.",
+        "recover": "Le largage met trop de temps à être rattrapé. C'est le travail de l'intégrale : essaie plus de Ki.",
+        "swing": "La poussée oscille encore entre 3 et 6 s : le drone n'est pas stabilisé. Un peu plus de Kd calme le mouvement."
+      },
       "best": "Ton meilleur score jusqu'ici : {n} étoiles (Kp {kp}, Ki {ki}, Kd {kd}, τf {tf} s).",
       "phase": {
         "takeoff": "{s} s : décollage avec le colis",
@@ -309,9 +478,37 @@
       "poles": {
         "stable": "Pôles nominaux : tous dans la moitié gauche.",
         "unstable": "Un pôle nominal est dans la moitié droite : ce réglage ne peut pas tenir !",
-        "off": "({n} pôle(s) rapide(s) hors du bord gauche.)",
+        "off_one": "(1 pôle rapide hors du bord gauche.)",
+        "off_other": "({n} pôles rapides hors du bord gauche.)",
         "marginal": "Pôles nominaux : un pôle est sur la limite de stabilité."
+      },
+      "state": {
+        "pass": "réussi",
+        "fail": "échoué",
+        "pending": "pas encore décidé"
       }
+    }
+  },
+  "plays": {
+    "limit": {
+      "kp": "gain Kp, en newtons par mètre",
+      "clipped": ", et les moteurs en donnent 20"
+    },
+    "lag": {
+      "tm": "retard des moteurs, en secondes"
+    },
+    "drop": {
+      "pkg": "masse du colis, en kilogrammes",
+      "ki": "gain Ki, en newtons par mètre-seconde",
+      "e": "erreur moyenne, en centimètres"
+    },
+    "spike": {
+      "kd": "gain Kd, en newtons-secondes par mètre",
+      "tf": "constante de temps du filtre, en secondes"
+    },
+    "gust": {
+      "F": "poussée constante, en newtons",
+      "kp": "gain Kp, en newtons par mètre"
     }
   }
 }
