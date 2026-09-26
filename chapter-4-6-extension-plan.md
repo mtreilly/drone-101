@@ -228,3 +228,52 @@ and screenshots pass.
   positions → overshoot/settling) and in Chapter 2's droop explanation (`4.9/Kp`).
 - Consider side trips for Chapter 7's partial fractions and Chapter 8's overshoot formula.
 - Audit remaining chapters with the same "every term defined before use" table used for Ch 6.
+
+---
+
+## Status (2026-09-26): built
+
+All four phases are implemented. Deviations from the sketch above, and why:
+
+- **Plays live in `src/chapters/chNN/plays.ts`**, loaded next to the widgets through
+  `CHAPTERS[n].plays`, so the maths is pure and tested in Node (`src/story/play.test.ts` checks
+  every playable sentence in every locale resolves to a model, names its inputs and renders every
+  output at both ends of every range).
+- **Side trips are a `callout` block holding other blocks** (`p`, `math`, `play` …) rather than
+  fixed `text`/`tex`/`play` fields; rendered as `role="note"`, quieter than cards.
+- **"Drag me"**: a pencilled hint sits on the first playable number of a chapter's main path
+  (never inside a side trip) until the reader has moved any number once.
+- **Ch 4 order** is ladder → tiny steps → copy: e is *built* first (compounding) and then
+  *measured* (slope ÷ height = 1), so Mika's "e is random" is answered twice, by two routes.
+- **The ζ = 0.7 claim is about 5 %, not 2 %**: to the 2 % band ζ = 0.7 (1.99 s) is not faster than
+  ζ = 1 (1.95 s); within 5 % it is (0.97 s vs 1.60 s). The race shows the 5 % band for ζ = 0.7 and
+  the tests pin both facts.
+- The doubling sentence uses one output for the whole "2 × 2 × 2 = 8", so it stays in reading
+  order inside right-to-left text; slider values and readouts now pick their own direction
+  (`valueDir`), so "× 2", "1.00 s" read left to right in Arabic.
+
+Validation: `pnpm test` (256 tests, incl. new ch04/ch06 numbers), `tsc`, oxlint, axe on
+Chapters 4 and 6 (en light + dark: 0 violations), full `pnpm a11y`; screenshots at 1280 and
+375 px in light/dark, German (long words), Arabic (RTL), Japanese (CJK); keyboard (arrow keys,
+Shift ×10, Home/End on playable numbers) and pointer drag checked.
+
+### Glossary choices for the new terms
+
+| Term | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
+|---|---|---|---|---|---|---|---|---|---|
+| side trip | Petit détour | Desvío | Deviazione | Abstecher | Dygresja | Desvio | 寄り道 | 绕个小弯 | استطراد |
+| critical damping | amortissement critique | amortiguamiento crítico | smorzamento critico | kritische Dämpfung | tłumienie krytyczne | amortecimento crítico | 臨界減衰 | 临界阻尼 | التخميد الحرج |
+| damped frequency | pseudo-pulsation | frecuencia amortiguada | pulsazione smorzata | gedämpfte Eigenkreisfrequenz | pulsacja tłumiona | frequência amortecida | 減衰固有振動数 | 阻尼振荡频率 | التردد المخمَّد |
+| mode | mode | modo | modo | Modus (Modi) | mod (mody) | modo | モード | 模态 | نمط (أنماط) |
+| step response | réponse indicielle | respuesta al escalón | risposta al gradino | Sprungantwort | odpowiedź skokowa | resposta ao degrau | ステップ応答 | 阶跃响应 | استجابة الخطوة |
+| settling time | temps de réponse à 2 % | tiempo de establecimiento | tempo di assestamento | Einschwingzeit | czas ustalania | tempo de acomodação | 整定時間 | 稳定时间 | زمن الاستقرار |
+| natural logarithm | logarithme népérien | logaritmo natural | logaritmo naturale | natürlicher Logarithmus | logarytm naturalny | logaritmo natural | 自然対数 | 自然对数 | اللوغاريتم الطبيعي |
+
+### Still open (needs people, not code)
+
+- Native-speaker review with control knowledge for every new string, per CLAUDE.md. Flagged by
+  the translators: fr "temps de réponse" vs the widget's "stabilisé"; zh-CN 稳定时间 (ch06/08) vs
+  调节时间 (ch09); de "Modi" vs "Moden"; es "tiempo de establecimiento" vs "asentamiento";
+  ar Bernoulli spelling (ياكوب / يعقوب); ja pronouns and one polite-style paragraph in ch06.
+- Mika's grammatical gender differs by locale (masculine in it/ar, feminine in pl, neutral
+  phrasing chosen in es/pt-BR); the cast sheet should settle it for every language.
