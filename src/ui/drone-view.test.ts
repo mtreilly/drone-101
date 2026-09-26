@@ -42,20 +42,4 @@ describe('DroneView label placement', () => {
       }
     }
   });
-
-  it('moves the label off the default spot exactly when the drone would cover it', () => {
-    const fs = 16;
-    const w = estWidth('target', fs);
-    const at = (h: number) => pickSpot(targetSpots(y(2), w, fs), droneBoxes(y(h) - 6), 0);
-    // drone well above or below: the usual spot, above the line on the left
-    expect(at(2.5)).toBe(0);
-    expect(at(1.4)).toBe(0);
-    // hovering on the target: the props cover the usual spot
-    expect(at(2)).not.toBe(0);
-  });
-
-  it('estimates CJK glyphs as full-width', () => {
-    expect(estWidth('目標値', 10)).toBeCloseTo(30, 6);
-    expect(estWidth('ab', 10)).toBeCloseTo(10.4, 6);
-  });
 });

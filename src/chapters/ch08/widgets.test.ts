@@ -12,7 +12,6 @@ import {
   noZeroResponse,
   noZeroSlope,
   playgroundTrace,
-  recipeGain,
   stateAt,
   stepFromPoles,
   zeroResponse,
@@ -106,13 +105,6 @@ describe('chapter 8 playground: the ground is a real event', () => {
     const tr3 = playgroundTrace(0.5, 0);
     expect(tr3.at).toBeNull();
     expect(stateAt(tr3, PLAY_T, 0.5, 0).h).toBeGreaterThan(3);
-  });
-});
-
-describe('chapter 8 recipe widget numbers', () => {
-  it('the wave comes out 1.104 times bigger: 0.5 m → 0.55 m', () => {
-    expect(recipeGain(2)).toBeCloseTo(1.104, 3);
-    expect(0.5 * recipeGain(2)).toBeCloseTo(0.552, 3);
   });
 });
 

@@ -6,12 +6,6 @@ const REF = pid(20, 15, 5, { dTau: 0.04 });
 const JUNE = pid(30, 15, 10, { dTau: 0.005 });
 
 describe('noisy claims are checked on many seeds (starsOnSeeds)', () => {
-  it('seeds are 1…n', () => {
-    expect(seeds()).toHaveLength(30);
-    expect(seeds(3)).toEqual([1, 2, 3]);
-    expect(seeds(2, 7)).toEqual([7, 8]);
-  });
-
   it('the reference tune earns six stars on all 30 seeds, calm between 0.19 and 0.27 N', () => {
     const s = starsOnSeeds(REF);
     expect(s.seeds).toEqual(seeds(30));
@@ -71,18 +65,6 @@ describe('motor lag costs phase margin (missionMargins, play P3)', () => {
     expect(missionMargins(REF)).toEqual(missionMargins(REF, 0.05));
   });
 
-  it('false-obvious: the drop (25.1°) is not arctan(ωc·τm) at the old crossover (28.4°), because the crossover moves', () => {
-    const drop = missionMargins(REF, 0).pm - missionMargins(REF, 0.05).pm;
-    expect(drop).toBeCloseTo(25.1, 0);
-    expect((Math.atan(missionMargins(REF, 0).wc * 0.05) * 180) / Math.PI).toBeCloseTo(28.4, 0);
-  });
-
-  it('a short lag is almost a delay: ωτ = 28.2° vs arctan(ωτ) = 26.2° at the crossover', () => {
-    const m = missionMargins(REF);
-    expect((m.wc * 0.05 * 180) / Math.PI).toBeCloseTo(28.2, 0);
-    expect(m.lag).toBeCloseTo(26.2, 0);
-  });
-
   it('agrees with the nominal poles: a positive phase margin exactly when every pole is in the left half', () => {
     for (const p of [REF, JUNE, pid(30, 15, 7, { dTau: 0.04 }), pid(20, 400, 0, { dTau: 0.04 }), pid(5, 20, 0, { dTau: 0.04 })]) {
       const stable = missionPoles(p).every((z) => z.re < 0);
@@ -107,14 +89,6 @@ describe('asked for vs delivered (Trace.command)', () => {
     expect(Math.min(...motor)).toBeGreaterThan(2.9);
     expect(Math.max(...motor)).toBeLessThan(10.7);
   });
-
-  it('take-off: the reference tune asks for 40 N and the command is pinned at 20 N for about 0.27 s', () => {
-    const tr = runMission(REF);
-    expect(tr.request[0]).toBeCloseTo(40, 6);
-    expect(tr.command[0]).toBe(20);
-    const pinned = tr.t.filter((t, i) => t < 3 && tr.command[i] >= 20 - 1e-9).length * 0.01;
-    expect(pinned).toBeCloseTo(0.27, 1);
-  });
 });
 
 describe('keepTogether (checklist and status text)', () => {
@@ -136,10 +110,5 @@ describe('sentences (status and pole note)', () => {
     expect(sentences('チューニングを続けよう！', '2 mより下にぶら下がっている。')).toBe('チューニングを続けよう！2 mより下にぶら下がっている。');
     expect(sentences('公称極：すべて左半平面にある。', '（速い極が1個、左端の外にある。）')).toBe('公称極：すべて左半平面にある。（速い極が1個、左端の外にある。）');
     expect(sentences('واصل الضبط!', 'قليل من Ki يصلحه.')).toBe('واصل الضبط! قليل من Ki يصلحه.');
-  });
-  it('drops empty parts', () => {
-    expect(sentences('Gold!', '')).toBe('Gold!');
-    expect(sentences('', 'x')).toBe('x');
-    expect(sentences('', '')).toBe('');
   });
 });

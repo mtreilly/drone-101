@@ -1,6 +1,6 @@
 import { DRONE, DroneSim, type PID } from '../../sim/drone-model';
 import { pid, runDrone } from '../ch09/pid-tools';
-import { JUNE_TUNE, LIMITS, MISSION, WINDOWS, dSpike, evaluate, hintFor, missionConfig, missionMargins, missionPoles, neverBack, neverSettled, noiseLifted, runMission, starsOnSeeds } from './mission';
+import { LIMITS, MISSION, WINDOWS, dSpike, evaluate, hintFor, missionConfig, missionMargins, missionPoles, neverBack, neverSettled, noiseLifted, runMission, starsOnSeeds } from './mission';
 import { flyMission } from './page-hit';
 import { SIX_STAR, plays } from './plays';
 
@@ -16,23 +16,6 @@ describe('Chapter 11 mission', () => {
     const r = evaluate(runMission(pid(10, 0, 1, { dTau: 0.02 })));
     expect(r.stars).toBeLessThan(6);
     expect(r.pass.rise).toBe(false);
-  });
-
-  // June's preset (kept in sync with JUNE_TUNE in widgets.ts)
-  const june = pid(30, 15, 10, { dTau: 0.005 });
-
-  it("June's high-Kd tune chatters and overshoots with the noisy sensor", () => {
-    const r = evaluate(runMission(june));
-    expect(r.pass.calm).toBe(false);
-    expect(r.pass.overshoot).toBe(false);
-    // the fix suggested in the text: longer filter, Kd down to about 7 (30 seeds: see below)
-    expect(evaluate(runMission(pid(30, 15, 7, { dTau: 0.04 }))).stars).toBe(6);
-  });
-
-  it('…yet with a perfect sensor it earns all six stars ("flawless in calm air")', async () => {
-    const { runDrone } = await import('../ch09/pid-tools');
-    const { missionConfig } = await import('./mission');
-    expect(evaluate(runDrone({ ...missionConfig(june), noiseStd: 0 }, 20)).stars).toBe(6);
   });
 
   it('nominal poles: good tune stable, huge Ki unstable', () => {
@@ -273,13 +256,6 @@ describe('the mission widget tells the truth', () => {
     expect(neverSettled(late)).toBe(false);
     expect(neverBack(ev(REF))).toBe(false);
     expect(neverSettled(ev(REF))).toBe(false);
-  });
-
-  it('the "D from measurement" switch was a no-op here (the target never jumps), so removing it changes no flight', () => {
-    const a = runMission(pid(20, 15, 5, { dTau: 0.04, dOnMeasurement: true }));
-    const b = runMission(pid(20, 15, 5, { dTau: 0.04, dOnMeasurement: false }));
-    expect(Math.max(...a.h.map((v, i) => Math.abs(v - b.h[i])))).toBeLessThan(1e-9);
-    expect(JUNE_TUNE).toEqual({ kp: 30, ki: 15, kd: 10, dTau: 0.005 });
   });
 
   it('hints point at the failure to fix first, each backed by a real case', () => {

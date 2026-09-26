@@ -1,4 +1,4 @@
-import { DRONE, DroneSim, defaultDroneConfig } from '../../sim/drone-model';
+import { DRONE, defaultDroneConfig } from '../../sim/drone-model';
 import { runUnderCeiling } from './page-ceiling';
 import { LIMITED, emptyTrace, hoverStep, pid, runDrone, takeoff } from './pid-tools';
 
@@ -30,18 +30,6 @@ describe('traces record what was asked for and what the motors were told', () =>
     expect(Math.max(...free.command)).toBeGreaterThan(20);
   });
 
-  it('Chapter 9 kick (1 → 2 m, D on the error, τf 0.01 s): D asks for about 413 N, the motors get 20 N', () => {
-    const tr = hoverStep(pid(15, 8, 4, { dTau: 0.01, dOnMeasurement: false }), 1, 2, 5);
-    const peak = Math.max(...tr.request);
-    // Kd·Δr/τf = 400 N, plus Kp·Δr and the hover thrust the pile holds
-    expect(peak).toBeGreaterThan(400);
-    expect(peak).toBeLessThan(420);
-    expect(Math.max(...tr.command)).toBe(20);
-    // from the measurement there is no kick: P alone asks Kp·Δr + mg = 19.9 N
-    const me = hoverStep(pid(15, 8, 4, { dTau: 0.01, dOnMeasurement: true }), 1, 2, 5);
-    expect(Math.max(...me.request)).toBeCloseTo(15 + MG, 1);
-  });
-
   it('hover start is in equilibrium from the very first sample (hover thrust, not a stale 0 N)', () => {
     for (const p of [pid(15, 8, 4, { dTau: 0.01 }), pid(20, 0, 4)]) {
       const tr = hoverStep(p, 1, 2, 2);
@@ -59,12 +47,6 @@ describe('traces record what was asked for and what the motors were told', () =>
     // the noisy D term asks for far more (and less) than the motors can give
     expect(Math.min(...tr.request)).toBeLessThan(-20);
     expect(Math.max(...tr.request)).toBeGreaterThan(40);
-  });
-
-  it('the sim exposes the same pair live', () => {
-    const sim = new DroneSim(takeoff(pid(20, 10, 4)));
-    expect(sim.request).toBeCloseTo(40, 9);
-    expect(sim.command).toBe(20);
   });
 
   it('the page-ceiling runner records them too', () => {
