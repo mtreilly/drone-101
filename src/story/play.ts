@@ -33,6 +33,18 @@ export interface PlayModel {
   outputs: Record<string, (v: PlayValues, t: T) => string>;
 }
 
+/**
+ * Lets a widget follow a playable sentence: `fn` gets the sentence's current values every time
+ * the reader changes one of its numbers (the renderer emits `play:<id>` on the chapter bus).
+ * Returns the unsubscribe function; return it from the widget (or add it to its cleanups).
+ * The sentence emits only on change, so the widget keeps its own defaults until then.
+ */
+export function followPlay(bus: Bus, id: string, fn: (values: PlayValues) => void): () => void {
+  return bus.on(`play:${id}`, (payload) => {
+    if (payload && typeof payload === 'object') fn({ ...(payload as PlayValues) });
+  });
+}
+
 const decimals = (step: number): number => {
   const s = String(step);
   const i = s.indexOf('.');

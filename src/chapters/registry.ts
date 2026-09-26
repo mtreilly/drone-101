@@ -14,11 +14,11 @@ export const CHAPTERS: { ns: string; load: () => Promise<WidgetModule>; plays?: 
   { ns: 'ch04', load: () => import('./ch04/widgets'), plays: () => import('./ch04/plays') },
   { ns: 'ch05', load: () => import('./ch05/widgets') },
   { ns: 'ch06', load: () => import('./ch06/widgets'), plays: () => import('./ch06/plays') },
-  { ns: 'ch07', load: () => import('./ch07/widgets') },
-  { ns: 'ch08', load: () => import('./ch08/widgets') },
-  { ns: 'ch09', load: () => import('./ch09/widgets') },
-  { ns: 'ch10', load: () => import('./ch10/widgets') },
-  { ns: 'ch11', load: () => import('./ch11/widgets') },
+  { ns: 'ch07', load: () => import('./ch07/widgets'), plays: () => import('./ch07/plays') },
+  { ns: 'ch08', load: () => import('./ch08/widgets'), plays: () => import('./ch08/plays') },
+  { ns: 'ch09', load: () => import('./ch09/widgets'), plays: () => import('./ch09/plays') },
+  { ns: 'ch10', load: () => import('./ch10/widgets'), plays: () => import('./ch10/plays') },
+  { ns: 'ch11', load: () => import('./ch11/widgets'), plays: () => import('./ch11/plays') },
 ];
 
 export const CHAPTER_COUNT = CHAPTERS.length;
