@@ -4,7 +4,7 @@ import { fmt, getLang, tc } from '../../core/i18n';
 import { progress } from '../../core/progress';
 import { DroneSim, type PID } from '../../sim/drone-model';
 import type { WidgetFactory } from '../../story/types';
-import { slider, transport } from '../../ui/controls';
+import { slider, transport, valueDir } from '../../ui/controls';
 import { DroneView } from '../../ui/drone-view';
 import { Loop } from '../../ui/loop';
 import { Plot, type Band } from '../../ui/plot';
@@ -18,6 +18,8 @@ import {
   MISSION,
   evaluate,
   hintFor,
+  keepTogether,
+  sentences,
   missionConfig,
   missionPoles,
   neverBack,
@@ -29,7 +31,7 @@ import {
   type MissionResult,
   type MissionTrace,
 } from './mission';
-import { flyMission, pageCeiling, withCeiling } from './page-hit';
+import { flyMission, missionStep, pageCeiling, withCeiling } from './page-hit';
 
 export const BEST_KEY = 'ch11.best';
 
@@ -77,7 +79,7 @@ const mission: WidgetFactory = (host, ctx) => {
     'span',
     { class: 'mission-minis', 'aria-hidden': 'true' },
     CRITERIA.map((id) => {
-      const m = h('span', { class: 'mini', 'data-state': 'pending', title: t(`crit.${id}`, criterionVars) }, '○');
+      const m = h('span', { class: 'mini', 'data-state': 'pending', title: keepTogether(t(`crit.${id}`, criterionVars)) }, '○');
       minis.set(id, m);
       return m;
     }),
@@ -173,12 +175,12 @@ const mission: WidgetFactory = (host, ctx) => {
     aim();
     const steps = Math.round(Math.min(dt, MISSION.duration - sim.t) / sim.dt);
     for (let k = 0; k < steps; k++) {
-      sim.step();
+      missionStep(sim);
       acc++;
       if (acc % 10 === 0) record();
     }
     tr.crashed = sim.crashed;
-    tr.stalledAt = sim.stalled ? sim.ceilingAt : null;
+    tr.stalledAt = sim.stalled && sim.ceilingAt !== null ? sim.ceilingAt : null;
     draw();
     if (sim.t >= MISSION.duration - 1e-9) finish();
     else showResult(evaluate(tr), false, true);
@@ -192,7 +194,7 @@ const mission: WidgetFactory = (host, ctx) => {
       'li',
       { 'data-state': 'pending', tabindex: '0' },
       h('span', { class: 'mark', 'aria-hidden': 'true' }, '○'),
-      h('span', { class: 'crit-text' }, t(`crit.${id}`, criterionVars)),
+      h('span', { class: 'crit-text' }, keepTogether(t(`crit.${id}`, criterionVars))),
       h('span', { class: 'crit-val' }),
       h('span', { class: 'visually-hidden crit-state' }, t('state.pending')),
     );
@@ -231,7 +233,7 @@ const mission: WidgetFactory = (host, ctx) => {
   };
   /** the line under the score: why the drone hit the page, or what to fix first */
   const advice = (r: MissionResult): string => {
-    if (sim.ceilingAt !== null) return `${t('hitPage')}${noiseLifted(g) ? ` ${t('hitNoise')}` : ''}`;
+    if (sim.ceilingAt !== null) return sentences(t('hitPage'), noiseLifted(g) ? t('hitNoise') : '');
     const hint = hintFor(r, g);
     return hint ? t(`hint.${hint}`) : '';
   };
@@ -253,12 +255,15 @@ const mission: WidgetFactory = (host, ctx) => {
       setState(li, li.querySelector<HTMLElement>('.mark')!, state, animate);
       const mini = minis.get(id)!;
       setState(mini, mini, state, animate);
-      li.querySelector('.crit-val')!.textContent = state === 'pending' ? '' : v[id];
+      // "89.4 cm" is one isolated left-to-right run, "لم تعد بحلول 20 ث" a right-to-left one
+      const text = state === 'pending' ? '' : v[id];
+      const val = li.querySelector<HTMLElement>('.crit-val')!;
+      if (val.textContent !== text) val.replaceChildren(text ? h('bdi', { dir: valueDir(text) }, text) : '');
     }
     if (final) {
       row.set(CRITERIA.map((id) => r.pass[id]));
       const more = advice(r);
-      starsText.textContent = `${r.stars === 6 ? t('gold') : t('stars', { n: r.stars })}${more ? ` ${more}` : ''}`;
+      starsText.textContent = keepTogether(sentences(r.stars === 6 ? t('gold') : t('stars', { n: r.stars }), more));
       starsEl.className = `w-status score-line${r.stars === 6 ? ' good' : ''}`;
       if (save) {
         const best = progress.load<Best>(BEST_KEY);
@@ -275,14 +280,16 @@ const mission: WidgetFactory = (host, ctx) => {
   }
   const showBest = () => {
     const best = progress.load<Best>(BEST_KEY);
-    bestEl.textContent = best ? t('best', { n: best.stars, kp: fmt(best.kp, 0), ki: fmt(best.ki, 0), kd: fmt(best.kd, 1), tf: fmt(best.dTau, 3) }) : '';
+    const text = best ? t('best', { n: best.stars, kp: fmt(best.kp, 0), ki: fmt(best.ki, 0), kd: fmt(best.kd, 1), tf: fmt(best.dTau, 3) }) : '';
+    // the tune in brackets wraps only as a whole (a break inside it scatters its pieces in right-to-left text)
+    bestEl.textContent = text.replace(/[(（][^()（）]*[)）]/u, (m) => m.replace(/ /g, '\u00a0'));
   };
 
   function finish(): void {
     finished = true;
     loop.pause();
     tr.crashed = sim.crashed;
-    tr.stalledAt = sim.stalled ? sim.ceilingAt : null;
+    tr.stalledAt = sim.stalled && sim.ceilingAt !== null ? sim.ceilingAt : null;
     draw();
     showResult(evaluate(tr), true, true);
   }
@@ -344,8 +351,8 @@ const mission: WidgetFactory = (host, ctx) => {
     const off = ps.filter((p) => p.re < pRange.reMin).length;
     const unstable = ps.some((p) => p.re > 1e-9);
     const marginal = ps.some((p) => p.re >= -1e-9);
-    const offText = off ? ` ${t(new Intl.PluralRules(getLang()).select(off) === 'one' ? 'poles.off_one' : 'poles.off_other', { n: fmt(off, 0) })}` : '';
-    poleNote.textContent = `${unstable ? t('poles.unstable') : marginal ? t('poles.marginal') : t('poles.stable')}${offText}`;
+    const offText = off ? t(new Intl.PluralRules(getLang()).select(off) === 'one' ? 'poles.off_one' : 'poles.off_other', { n: fmt(off, 0) }) : '';
+    poleNote.textContent = sentences(unstable ? t('poles.unstable') : marginal ? t('poles.marginal') : t('poles.stable'), offText);
   }
 
   // dragging previews the whole mission instantly; letting go of a pointer drag flies it live
@@ -382,7 +389,7 @@ const mission: WidgetFactory = (host, ctx) => {
       if (finished) return;
       aim();
       for (let k = 0; k < 100; k++) {
-        sim.step();
+        missionStep(sim);
         acc++;
         if (acc % 10 === 0) record();
       }

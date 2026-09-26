@@ -185,3 +185,27 @@ describe('the page ceiling is re-measured when the layout settles, scroll includ
     expect(onChange).not.toHaveBeenCalled();
   });
 });
+
+describe('a crash ends the flight: the drone stays down', () => {
+  // weak P, some I: it swings up to 4.05 m (under the page on any screen), slams into the ground at 3.86 s,
+  // and the sim alone would fly it back up to 4.57 m on running motors
+  const p = pid(2, 4, 0, { dTau: 0.04 });
+  it.each([null, DESK])('ceiling %s: after the crash it stays on the ground with the motors off', (h) => {
+    const { tr, sim } = flyMission(p, h);
+    expect(sim.crashed).toBe(true);
+    expect(sim.ceilingAt).toBeNull();
+    expect(tr.stalledAt ?? null).toBeNull();
+    const i0 = tr.h.findIndex((y, i) => tr.t[i] > 1 && y <= 1e-6);
+    expect(tr.t[i0]).toBeCloseTo(3.86, 1);
+    expect(Math.max(...tr.h.slice(0, i0))).toBeCloseTo(4.05, 1);
+    expect(Math.max(...tr.h.slice(i0))).toBe(0);
+    expect(Math.max(...tr.thrust.slice(i0 + 1))).toBe(0);
+    const r = evaluate(tr);
+    expect(r.pass.ground).toBe(false);
+    expect(r.stars).toBe(0);
+  });
+  it('a tune that never crashes flies exactly as before', () => {
+    const good = pid(20, 15, 5, { dTau: 0.04 });
+    expect(flyMission(good, null).tr.h).toEqual(runMission(good).h);
+  });
+});

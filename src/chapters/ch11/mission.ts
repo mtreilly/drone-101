@@ -241,3 +241,11 @@ function addPoly(a: number[], b: number[]): number[] {
   b.forEach((x, i) => (out[n - b.length + i] += x));
   return out;
 }
+
+/** Keeps "± 5 cm" and "2 m" on one line: a break after ± strands it at the line end, worst in right-to-left text. */
+export const keepTogether = (s: string): string =>
+  s.replace(/± /g, '±\u00a0').replace(/(\d) (?=(?:%|cm|m|s|N|سم|م|ثانية|ثوانٍ|ث|نيوتن)(?![\p{L}]))/gu, '$1\u00a0');
+
+/** Joins sentences: a space after Latin or Arabic punctuation, none after a full-width one (Japanese, Chinese). */
+export const sentences = (...parts: string[]): string =>
+  parts.filter(Boolean).reduce((a, b) => (!a || /[\u3000-\u303f\uff01-\uff0f\uff1a-\uff20]$/u.test(a) ? a + b : `${a} ${b}`), '');

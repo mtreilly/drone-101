@@ -1,6 +1,6 @@
 import { seeds } from '../../sim/random';
 import { pid } from '../ch09/pid-tools';
-import { evaluate, missionMargins, missionPoles, runMission, starsOnSeeds } from './mission';
+import { evaluate, keepTogether, sentences, missionMargins, missionPoles, runMission, starsOnSeeds } from './mission';
 
 const REF = pid(20, 15, 5, { dTau: 0.04 });
 const JUNE = pid(30, 15, 10, { dTau: 0.005 });
@@ -114,5 +114,32 @@ describe('asked for vs delivered (Trace.command)', () => {
     expect(tr.command[0]).toBe(20);
     const pinned = tr.t.filter((t, i) => t < 3 && tr.command[i] >= 20 - 1e-9).length * 0.01;
     expect(pinned).toBeCloseTo(0.27, 1);
+  });
+});
+
+describe('keepTogether (checklist and status text)', () => {
+  const nb = ' ';
+  it('glues ± to its number and numbers to their units', () => {
+    expect(keepTogether('Reach 2 m (± 5 cm) by 3 s')).toBe(`Reach 2${nb}m (±${nb}5${nb}cm) by 3${nb}s`);
+    expect(keepTogether('الوصول إلى ارتفاع 2 م (± 5 سم) بحلول 3 ثانية')).toBe(`الوصول إلى ارتفاع 2${nb}م (±${nb}5${nb}سم) بحلول 3${nb}ثانية`);
+  });
+  it('leaves words that only start like a unit alone', () => {
+    expect(keepTogether('von 3 bis 6 s')).toBe(`von 3 bis 6${nb}s`);
+    expect(keepTogether('3 stars')).toBe('3 stars');
+    expect(keepTogether('10 N max')).toBe(`10${nb}N max`);
+  });
+});
+
+describe('sentences (status and pole note)', () => {
+  it('joins with a space, except after full-width punctuation', () => {
+    expect(sentences('3 of 6 stars. Keep tuning!', 'It droops.')).toBe('3 of 6 stars. Keep tuning! It droops.');
+    expect(sentences('チューニングを続けよう！', '2 mより下にぶら下がっている。')).toBe('チューニングを続けよう！2 mより下にぶら下がっている。');
+    expect(sentences('公称極：すべて左半平面にある。', '（速い極が1個、左端の外にある。）')).toBe('公称極：すべて左半平面にある。（速い極が1個、左端の外にある。）');
+    expect(sentences('واصل الضبط!', 'قليل من Ki يصلحه.')).toBe('واصل الضبط! قليل من Ki يصلحه.');
+  });
+  it('drops empty parts', () => {
+    expect(sentences('Gold!', '')).toBe('Gold!');
+    expect(sentences('', 'x')).toBe('x');
+    expect(sentences('', '')).toBe('');
   });
 });

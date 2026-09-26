@@ -12,6 +12,15 @@ import { MISSION, missionConfig, type MissionTrace } from './mission';
 export const withCeiling = (cfg: DroneConfig, h: number | null): DroneConfig => (h === null ? cfg : { ...cfg, ceiling: { h, stall: true } });
 
 /**
+ * One mission step. A crash (hitting the ground faster than the sim's crash speed) breaks the motors:
+ * they stop, so the drone stays down and the plots never show a wrecked drone flying off again.
+ */
+export function missionStep(sim: DroneSim): void {
+  sim.step();
+  if (sim.crashed) sim.stalled = true;
+}
+
+/**
  * The whole mission under a ceiling (`null` = open sky), sampled every 10 ms exactly like `runDrone`
  * (so the live flight and "Fly instantly" match), plus the finished sim (`ceilingAt` says whether it hit).
  */
@@ -19,9 +28,13 @@ export function flyMission(p: PID, ceiling: number | null, seed = 7): { tr: Miss
   const sim = new DroneSim(withCeiling(missionConfig(p, seed), ceiling));
   const tr: MissionTrace = emptyTrace();
   sampleTrace(sim, tr);
-  sim.advance(MISSION.duration, () => sampleTrace(sim, tr), 10);
+  const n = Math.round(MISSION.duration / sim.dt);
+  for (let i = 1; i <= n; i++) {
+    missionStep(sim);
+    if (i % 10 === 0) sampleTrace(sim, tr);
+  }
   tr.crashed = sim.crashed;
-  if (sim.stalled) tr.stalledAt = sim.ceilingAt;
+  if (sim.ceilingAt !== null && sim.stalled) tr.stalledAt = sim.ceilingAt;
   return { tr, sim };
 }
 
