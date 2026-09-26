@@ -161,7 +161,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Vamos encontrar o ponto ideal. O drone passa se tiver um desvio residual **menor que 20 cm** *e* ultrapassar o alvo em **menos de 30%** (medimos a ultrapassagem como o quanto ele sobe acima da altura em que finalmente se estabiliza). Encontre um $K_p$ que faça as duas coisas."
+          "text": "Vamos encontrar o ponto ideal. O drone passa se tiver um desvio residual **menor que 20 cm** *e* um sobressinal **menor que 30%** (medimos o sobressinal como o quanto ele sobe acima da altura em que finalmente se estabiliza). Encontre um $K_p$ que faça as duas coisas."
         },
         {
           "t": "widget",
@@ -171,7 +171,7 @@
           "t": "say",
           "who": "mika",
           "mood": "worried",
-          "text": "As zonas verdes nunca se sobrepõem! O desvio residual precisa de $K_p$ acima de cerca de 24,5, a ultrapassagem precisa dele abaixo de cerca de 3,9. **Não há resposta**."
+          "text": "As zonas verdes nunca se sobrepõem! O desvio residual precisa de $K_p$ acima de cerca de 24,5, o sobressinal precisa dele abaixo de cerca de 3,9. **Não há resposta**."
         },
         {
           "t": "say",
@@ -309,7 +309,7 @@
       "readout": {
         "final": "estabiliza em",
         "droop": "desvio residual",
-        "overshoot": "ultrapassagem do alvo",
+        "overshoot": "sobressinal",
         "peakThrust": "empuxo de pico"
       },
       "status": {
@@ -336,14 +336,14 @@
       "noflight": "sem decolagem",
       "readout": {
         "droop": "desvio residual",
-        "overshoot": "ultrapassagem do alvo"
+        "overshoot": "sobressinal"
       },
       "help": "Cada curva mostra o que o drone faria em cada Kp. A faixa verde é onde aquele requisito é atendido.",
       "status": {
         "neither": "Nenhum requisito é atendido aqui. Continue explorando.",
-        "droopOnly": "O desvio residual passa ✓ mas a ultrapassagem do alvo é grande demais.",
-        "overOnly": "A ultrapassagem do alvo passa ✓ mas o desvio residual é enorme.",
-        "impossible": "Você encontrou as duas zonas verdes, e elas nunca se sobrepõem: o desvio residual exige Kp > {a}, a ultrapassagem do alvo exige Kp < {b}. Nenhum Kp único consegue atender."
+        "droopOnly": "O desvio residual passa ✓ mas o sobressinal é grande demais.",
+        "overOnly": "O sobressinal passa ✓ mas o desvio residual é enorme.",
+        "impossible": "Você encontrou as duas zonas verdes, e elas nunca se sobrepõem: o desvio residual exige Kp > {a}, o sobressinal exige Kp < {b}. Nenhum Kp único consegue atender."
       }
     }
   }
