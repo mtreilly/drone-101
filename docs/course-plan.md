@@ -56,7 +56,7 @@ Useful consequences we'll exploit (verified in §3):
 - Pipe transport delay `L = 2.5 s`, then first-order mixing/heat lag `τ = 1 s`.
 - Target: 38 °C (± 1 °C comfort band).
 - Transfer function: `G(s) = 45 · e^(−Ls) / (τ s + 1)` (°C per unit knob).
-- Phase crosses −180° at `ω ≈ 0.95 rad/s` → natural "hunting" period ≈ 6.6 s. That's exactly the hot–cold–hot rhythm people feel. Critical proportional gain ≈ 0.031 knob-units/°C. (All to be re-verified numerically before Ch 10 is built.)
+- For a position-style (P) hand, the phase crosses −180° at `ω ≈ 0.95 rad/s` → hunting period ≈ 6.6 s, critical gain ≈ 0.031 knob-units/°C. Chapter 0's robot hands turn the knob at a rate (an I controller), so their edge is slower: ≈ 13.8 s (verified in the Chapter 10 tests).
 
 **Secondary systems** (brief, always tied back to the drone): cooling coffee (`τ ≈ 10 min`), filling tank, mass on a spring, cruise control (one panel in Ch 1).
 
@@ -252,7 +252,7 @@ Legend for each chapter: **Q** = driving question · **Idea** = the one new idea
   - **9a Integral:** *accumulate past error (Ch 3c area!) and push by that.* The droop can't survive: as long as error ≠ 0, the pile keeps growing. Shown with the error area shading and the orange integral contribution rising until gravity is exactly cancelled.
   - **9b Derivative:** *push against the speed of the error* — a virtual damper (Ch 6 callback, adds to `c`).
   - **9c Poles move:** each gain's effect on the 3 closed-loop poles of `m s³ + (c + Kd)s² + Kp s + Ki`. Sliders drag poles in real time.
-  - **9d Playground:** Kp, Ki, Kd sliders + live response + pole plot + scoreboard (overshoot, 2% settling time, steady-state error, peak thrust). Stars for meeting targets.
+  - **9d Playground:** Kp, Ki, Kd sliders + live response + pole plot + scoreboard (overshoot, 2% settling time, steady-state error, time with thrust pinned at a motor limit). Stars for meeting targets.
   - **9e Warnings:** (i) derivative kick when the setpoint jumps (fix: derivative on measurement); (ii) sensor noise amplified by D (toggle noise, watch orange go fuzzy; fix: filter). Short, visual.
 - **Predict:** "Add a big Ki to fix droop faster. What happens?" (a) droop vanishes quickly and cleanly (b) droop vanishes but it wiggles more (c) it can go unstable. → (b), and past the cliff (c). The stability boundary `(c + Kd)·Kp = m·Ki` is drawn on a Ki-vs-Kd mini-map with a dot for the current gains.
 - **Misconception:** "The D term predicts the future." (Mika.) It only extrapolates the current slope, and noise makes its "prediction" wild.
@@ -261,7 +261,7 @@ Legend for each chapter: **Q** = driving question · **Idea** = the one new idea
 - **Check:**
   1. Which term fixes steady-state error, and why can't P alone?
   2. Adding Kd moves the poles which way? (left/more damped)
-  3. Mini-challenge: overshoot < 5%, settle < 2 s, zero droop, peak thrust < 20 N.
+  3. Mini-challenge: overshoot < 5%, settle < 1.5 s, droop < 1 cm, thrust pinned at a limit < 0.2 s. (A peak-thrust star is impossible: every take-off with Kp ≥ 10 asks for the full 20 N.)
   4. Why is derivative on measurement better than on error when the setpoint jumps?
 - **Map:** `Integral action`, `Derivative action`, `PID`, `Noise & derivative kick`.
 - **Cliffhanger:** June: "We could build a shower controller now… but when I tried, it wiggled exactly like we did in Chapter 0. What is it about *delay*?"
@@ -273,7 +273,7 @@ Legend for each chapter: **Q** = driving question · **Idea** = the one new idea
 - **Idea (one per section):**
   - **10a Delay = lag in time = lag in phase:** a sine going through a 2.5 s delay comes out shifted; the shift *in degrees* grows with frequency (`ωL`). Animated: the same delay is a small nudge for a slow wave and a half-cycle for a fast one.
   - **10b Frequency response:** feed sine waves of chosen speed into the shower; measure output size and lag; **each measurement drops a dot onto two plots** (gain & phase vs frequency). After ~8 dots, the analytic Bode curve fades in over them — "we just drew a Bode plot by hand."
-  - **10c Margins:** where phase hits −180° a wave comes back perfectly flipped — "pushing a swing at the wrong moment." If the loop gain there ≥ 1, it self-sustains. Gain margin and phase margin drawn as "distance to the cliff edge." Ch 0 callback: the human reacting hard had gain > 1 at ≈6.6 s period → oscillated at ≈6.6 s. We replay the learner's own Ch 0 run next to the prediction.
+  - **10c Margins:** where phase hits −180° a wave comes back perfectly flipped — "pushing a swing at the wrong moment." If the loop gain there ≥ 1, it self-sustains. Gain margin and phase margin drawn as "distance to the cliff edge." Ch 0 callback: the robot hands (I controllers) reach the edge at a ≈13.8 s period; a position-style human hand at ≈6.6 s. We replay the learner's own Ch 0 run next to the prediction.
   - **10d Design the robot shower:** PI controller with sliders; margins shown live; beat your Ch 0 score (time-to-comfort and time-in-band) against your saved run.
 - **Predict:** "Double the pipe delay. Does the critical gain go up or down?" → down; the cliff gets closer.
 - **Misconception:** "Delay only makes things slower, it can't make them unstable." (Theo.)
@@ -292,7 +292,7 @@ Legend for each chapter: **Q** = driving question · **Idea** = the one new idea
 - **Q:** "Can *you* keep the drone at 2 m through everything?"
 - **Idea:** *Putting it together under realistic conditions* (the only new ingredients — motor lag, sensor noise, derivative filter, saturation — are each introduced in a single margin note, honestly labelled as "real-world grit").
 - **Hook:** Sandbox with Kp, Ki, Kd, derivative filter, derivative-on-measurement toggle. Scripted 20 s mission: take off → 2 m; wind gust (±1.5 N, 3 s) at t = 6 s; package drop (−0.2 kg) at t = 12 s; sensor noise throughout. Live s-plane (nominal model), response, thrust, and a mission checklist.
-- **Pass criteria (tuned and verified during build; draft):** reach 2 m ± 5 cm within 3 s; overshoot < 10%; max deviation during gust < 20 cm; after package drop back within ± 5 cm in 2 s; never touches ground after take-off; thrust saturates < 0.5 s total. Stars for each; "gold" for all.
+- **Pass criteria (tuned and verified during build; draft):** reach 2 m ± 5 cm within 3 s; overshoot < 10%; max deviation during gust < 20 cm; after package drop back within ± 5 cm in 2 s; never touches ground after take-off; motors calm in hover (thrust standard deviation < 0.5 N from 3 to 6 s, on running motors). Stars for each; "gold" for all.
 - **Predict:** "Before you tune: which term will matter most for the package drop?" (Ki — the weight changed; only integral re-finds the new hover thrust.)
 - **Misconception:** "A controller tuned for calm air is tuned." (June.)
 - **Mistake:** Their high-Kd "perfect" calm-air tune fails with noise on — the motors chatter. They add the filter and trade a little speed for calm.

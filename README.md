@@ -25,7 +25,7 @@ pnpm a11y       # accessibility checks across chapters and languages
 | `src/story/` | chapter renderer (dialogue, notes, predict cards, quizzes), characters, concept map |
 | `src/chapters/chNN/` | each chapter's interactives (+ tests verifying every number in its text) |
 | `public/locales/{lang}/` | visible text: `common.json` plus one namespace per chapter |
-| `docs/` | course plan, glossary, design notes, open issues and extension plans |
+| `docs/` | course plan, glossary, design notes and extension plans |
 
 See `docs/` for the pedagogical outline and physical parameters (`docs/course-plan.md`), the glossary and design notes.
 

@@ -9,7 +9,6 @@ All other documentation lives in `docs/`:
 - `docs/course-plan.md`: pedagogical outline and physical parameters, chapter by chapter.
 - `docs/glossary.md`: per-locale terminology choices (read before translating anything).
 - `docs/page-physics.md`: rules for objects that fly out of their picture onto the page.
-- `docs/open-issues.md`: known gaps between these rules and the code, and reviews still owed.
 - `docs/plans/`: phased plans for past and current extensions (historical once built).
 - `docs/software-quality-goal.md`: brief for architecture/software-quality reviews.
 
@@ -98,8 +97,7 @@ for all Arabic readers. For `ja` and `zh-CN`, inspect line breaks, punctuation, 
 ## Accessibility: checked, not assumed
 
 - Target: **WCAG 2.2 AA**, keyboard-first, screen-reader friendly, `prefers-reduced-motion`,
-  `prefers-contrast: more` and forced-colours respected. (Contrast and forced-colours styles are
-  not built yet: see `docs/open-issues.md`. New UI must still work in them.)
+  `prefers-contrast: more` and forced-colours respected.
 - **Run the axe-core CLI suite before committing UI changes:**
   - `pnpm a11y --quick` — English, light theme, every page
   - `pnpm a11y` — every page in every language (+ English dark)
@@ -129,8 +127,7 @@ for all Arabic readers. For `ja` and `zh-CN`, inspect line breaks, punctuation, 
   (dialogue, notes, sketch and canvas labels); **Caveat** (`--font-display`) only for large
   display headings; **Atkinson Hyperlegible** (`--font-body`) for body text. Japanese, Simplified
   Chinese and Arabic map all three to their Noto Sans font. Canvas labels use the shared canvas
-  font helper, and canvas text must redraw once web fonts have loaded (`document.fonts.ready`;
-  not built yet, see `docs/open-issues.md`).
+  font helper, and canvas text must redraw once web fonts have loaded (`document.fonts.ready`).
 - Widgets share one anatomy: title → visual(s) → sliders (`.w-controls`) → readouts + transport
   (`.w-hud`) → status (reserves its height) → help. Labels never collide; stacked plots share a left
   edge; nothing clips at 375 px.

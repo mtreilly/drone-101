@@ -73,7 +73,7 @@ Chosen during the Chapter 4/6 extension (`docs/plans/ch04-06-extension.md`).
 ## Open terminology questions
 
 Places where one concept currently has two words. Found by comparing the locale files on
-2026-09-26 (key paths are examples, not the full list). Settle each one with a native reviewer,
+2026-09-26 (key paths are examples, not the full list). Settle each one with a native reviewer who knows control engineering,
 then fix every string and delete the entry.
 
 **Droop vs. steady-state error**
@@ -118,3 +118,4 @@ then fix every string and delete the entry.
 - ja: pronouns and one polite-style paragraph in ch06.
 - Cast gender: Mika is masculine in it/ar, feminine in pl, neutral phrasing in es/pt-BR. Settle it
   per language in a cast sheet.
+- ar numerals: Western (0–9) or Eastern Arabic (٠–٩) digits; agree on one with an Arabic reviewer.
