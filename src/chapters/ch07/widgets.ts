@@ -293,8 +293,8 @@ const explode: WidgetFactory = (host, ctx) => {
     }
     F.set('F', xs, ys);
     F.setBands([{ kind: 'v', from: -2.5, to: a, color: withAlpha(color('ink3'), 0.12), label: t('noArea') }]);
-    // the label sits beside its line, halfway up, clear of the band's corner label
-    F.setLines([{ kind: 'v', at: a, color: 'ink', dash: [5, 4], label: t('lives', { a: fmt(a, 2) }), labelSide: 'right', labelAt: 'middle', avoid: ['F'] }]);
+    // the curve hugs the line's right side all the way up, so its short label sits in the band on the left
+    F.setLines([{ kind: 'v', at: a, color: 'ink', dash: [5, 4], label: `a = ${fmt(a, 2)}`, labelSide: 'left', labelAt: 'middle', avoid: ['F'] }]);
     const val = s > a ? 1 / (s - a) : Infinity;
     // near a the value leaves the frame: pin it to the top edge with an arrow and the number
     F.setMarkers(Number.isFinite(val) ? [{ x: s, y: val, color: 'ink', label: `s = ${fmt(s, 2)}`, clamp: true, offLabel: `↑ ${fmt(val, 2)}` }] : []);
