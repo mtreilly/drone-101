@@ -24,6 +24,30 @@
           "text": "Links: eine Masse von 0,5 kg an einer Feder mit Dämpfer (ein kleiner ölgefüllter Kolben, der sich gegen Bewegung sträubt). Rechts: unsere Drohne, gleiche Masse, gleicher Luftwiderstand, mit Proportionalregelung."
         },
         {
+          "t": "p",
+          "text": "Schreiben wir zuerst jede Kraft auf die Masse auf, eine nach der anderen. Wir messen ihre Position $x$ ab der Ruhelage, nach oben positiv."
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Die Feder** zieht zurück Richtung Ruhelage, umso stärker, je weiter sie gedehnt ist: $-\\eff{k}\\,x$. Doppelt so weit gedehnt heißt doppelt so starker Zug.",
+            "**Der Dämpfer** drückt gegen die *Bewegung*, nicht gegen die Position: $-c\\,\\dot{x}$. Im Stillstand tut er nichts. Bei schneller Bewegung drückt er kräftig zurück. ($\\dot{x}$ ist das Tempo aus Kapitel 3.)",
+            "**Die Schwerkraft** verschiebt nur die Ruhelage ein bisschen nach unten. Wenn wir ab der Ruhelage messen, ist sie erledigt."
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Kraft = Masse × Beschleunigung, und Beschleunigung ist die Steigung der Steigung (Kapitel 4). Zähl die Kräfte zusammen und bring alles auf eine Seite:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\,\\ddot{x} = -\\eff{k}\\,x - c\\,\\dot{x} \\quad\\Longrightarrow\\quad m\\,\\ddot{x} + c\\,\\dot{x} + \\eff{k}\\,x = 0"
+        },
+        {
+          "t": "p",
+          "text": "Im Widget ist der {eff|orange Pfeil} an der Masse der Zug der Feder, der graue der Druck des Dämpfers. Schau, wie der Pfeil des Dämpfers verschwindet, sobald die Masse oben oder unten beim Schwingen kurz stillsteht."
+        },
+        {
           "t": "note",
           "text": "Damit uns die Schwerkraft nicht ablenkt, schenken wir der Drohne hier ihren Schwebeschub (4,9 N), sodass sie nicht durchhängt. In Kapitel 9 verdienen wir ihn uns ehrlich."
         },
@@ -46,6 +70,31 @@
           "who": "theo",
           "mood": "happy",
           "text": "Ein P-Regler ist also eine virtuelle Feder, und der Luftwiderstand $c$ ist ein virtueller Dämpfer. Alles, was wir über Federn lernen, gibt’s gratis dazu."
+        },
+        {
+          "t": "callout",
+          "title": "Einheiten-Check",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Die Steifigkeit $\\eff{k}$ einer Feder misst man in **Newton pro Meter**: Newton Zug für jeden Meter Dehnung. Unsere Verstärkung $\\eff{K_p}$ macht aus Metern Fehler Newton Schub, also ist sie auch Newton pro Meter. Der Regler ist nicht bloß *wie* eine Feder. Laut den Einheiten *ist* er eine."
+            },
+            {
+              "t": "play",
+              "id": "units",
+              "text": "Bei $\\eff{K_p}$ = {scrub|kp|eff} N/m bekommt eine Drohne, die {scrub|e} m zu tief ist, {calc|f|eff} N zusätzlichen Schub."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "Echte Dämpfer",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Die Stoßdämpfer eines Autos sind Dämpfer: Öl wird durch kleine Löcher gepresst, also wehren sie sich gegen schnelle Bewegung und merken langsame kaum. Genauso die Soft-Close-Scharniere am Küchenschrank und der Türschließer oben an einer schweren Tür. Bau die Dämpfer aus einem Auto aus, und bei jeder Bodenwelle schaukelt es los. Mach sie viel zu hart, und jede Bodenwelle kommt direkt bei dir an."
+            }
+          ]
         }
       ]
     },
@@ -55,32 +104,116 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Jedes Feder-Masse-Dämpfer-System, und damit jede Drohne mit P-Regler, wird durch nur **zwei Zahlen** beschrieben:"
+          "text": "Jedes Feder-Masse-Dämpfer-System, und damit jede Drohne mit P-Regler, wird durch nur **zwei Zahlen** beschrieben. Erarbeiten wir sie uns eine nach der anderen."
         },
         {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Eigenkreisfrequenz $\\omega_n = \\sqrt{k/m}$",
-              "def": "Wie schnell es schwingen *will*, in Radiant pro Sekunde. Eine steifere Feder (größeres $\\eff{k}$) oder eine leichtere Masse heißt schnelleres Schwingen."
-            },
-            {
-              "term": "Dämpfungsgrad $\\zeta = \\dfrac{c}{2\\sqrt{m k}}$",
-              "def": "Wie schnell das Schwingen abklingt. Eine reine Zahl ohne Einheit: 0 heißt, es schwingt ewig, 1 ist die genaue Grenze zwischen Wackeln und Nicht-Wackeln."
-            }
-          ]
+          "t": "h3",
+          "text": "Wie schnell: die Eigenkreisfrequenz"
         },
         {
           "t": "p",
-          "text": "Erinnere dich an die Feder aus Kapitel 4 und 5: Das Raten einer Exponentialfunktion hat uns zwei Werte für $s$ geliefert. Mit Dämpfer ergibt derselbe Tipp $m s^2 + c s + k = 0$. Seine zwei Lösungen sind zwei Punkte auf unserer Karte von $s$. Teil durch $m$, dann wird daraus"
+          "text": "Nimm den Dämpfer weg, und wir sind zurück in Kapitel 5: Die Feder schwingt wie $\\cos(\\omega t)$ mit $\\omega = \\sqrt{k/m}$. Dieses Tempo nennen wir die **Eigenkreisfrequenz** $\\omega_n$: wie schnell das System schwingen *will*, wenn nichts es bremst."
+        },
+        {
+          "t": "math",
+          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{k}}{m}} \\qquad\\qquad \\text{eine volle Schwingung alle } \\frac{2\\pi}{\\omega_n} \\text{ s}"
+        },
+        {
+          "t": "play",
+          "id": "wn",
+          "text": "Mit k = {scrub|k|eff} N/m und m = 0,5 kg ist $\\omega_n$ ≈ {calc|wn} rad/s: eine volle Schwingung alle {calc|period} s."
+        },
+        {
+          "t": "p",
+          "text": "Eine steifere Feder zieht stärker, also schwingt sie schneller. Eine schwerere Masse lässt sich schwerer herumschubsen, also schwingt sie langsamer. (Radiant pro Sekunde ist das Drehtempo aus Kapitel 5: eine volle Umdrehung sind 2π Radiant.)"
+        },
+        {
+          "t": "h3",
+          "text": "Wie federnd: der Dämpfungsgrad"
+        },
+        {
+          "t": "p",
+          "text": "Jetzt bauen wir den Dämpfer wieder ein. Wie viel Dämpfung ist „viel“? Das hängt von der Feder ab: Ein Dämpfer, der eine weiche Feder bändigt, bremst eine steife kaum. Also vergleichen wir mit einer besonderen Menge, der **kritischen Dämpfung** $c_{\\text{krit}}$: der kleinsten Dämpfung, die das Überschwingen ganz verhindert."
+        },
+        {
+          "t": "math",
+          "tex": "c_{\\text{krit}} = 2\\sqrt{m\\,\\eff{k}} \\qquad\\qquad \\zeta = \\frac{c}{c_{\\text{krit}}} = \\frac{c}{2\\sqrt{m\\,\\eff{k}}}"
+        },
+        {
+          "t": "p",
+          "text": "Der **Dämpfungsgrad** ζ (der griechische Buchstabe Zeta) ist unsere Dämpfung als Bruchteil davon. Eine reine Zahl, ohne Einheit. ζ = 0 schwingt ewig, ζ = 1 ist genau kritisch, und ζ = 0,5 hat halb so viel Dämpfung, wie nötig wäre, um das Überschwingen zu verhindern."
+        },
+        {
+          "t": "play",
+          "id": "zeta",
+          "text": "Mit c = {scrub|c} N·s/m an einer Feder mit k = 20 N/m ist $c_{\\text{krit}}$ = {calc|ccrit} N·s/m, also ζ = {calc|zeta}: {calc|regime}."
+        },
+        {
+          "t": "h3",
+          "text": "Die zwei Punkte auf der Karte"
+        },
+        {
+          "t": "p",
+          "text": "Jetzt zurück zur Karte von $s$. Raten wir wie in Kapitel 4 und 5 $x = e^{st}$, dann wird aus der Gleichung $m s^2 + c s + k = 0$. Teil durch $m$ und schreib die zwei Koeffizienten mit unseren Knöpfen:"
+        },
+        {
+          "t": "math",
+          "tex": "s^2 + \\underbrace{\\frac{c}{m}}_{2\\zeta\\omega_n}\\, s + \\underbrace{\\frac{\\eff{k}}{m}}_{\\omega_n^2} = 0"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Moment mal. Wo kommt dieses $2\\zeta\\omega_n$ her? Das sieht ausgedacht aus."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Rechne es aus: $2\\zeta\\omega_n = 2 \\cdot \\frac{c}{2\\sqrt{mk}} \\cdot \\sqrt{\\frac{k}{m}} = \\frac{c}{m}$. Es ist dieselbe Zahl, nur umbenannt, damit unsere zwei Knöpfe in der Gleichung auftauchen."
+        },
+        {
+          "t": "p",
+          "text": "Löse sie mit der Mitternachtsformel, und heraus kommen die zwei Werte von $s$:"
         },
         {
           "t": "math",
           "tex": "\\begin{aligned} & s^2 + 2\\zeta\\omega_n\\, s + \\omega_n^2 = 0 \\\\ \\Longrightarrow\\quad & s = -\\zeta\\omega_n \\pm \\omega_n\\sqrt{\\zeta^2 - 1} \\end{aligned}"
         },
         {
+          "t": "callout",
+          "title": "Woher das ± kommt",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Jede Gleichung $s^2 + b\\,s + q = 0$ lässt sich per quadratischer Ergänzung lösen: $(s + b/2)^2 = b^2/4 - q$. Eine Quadratwurzel hat zwei Antworten, eine mit + und eine mit −, also gibt es immer **zwei** Werte von $s$:"
+            },
+            {
+              "t": "math",
+              "tex": "s = -\\frac{b}{2} \\pm \\sqrt{\\frac{b^2}{4} - q}"
+            },
+            {
+              "t": "p",
+              "text": "Mit $b = 2\\zeta\\omega_n$ und $q = \\omega_n^2$ steht unter der Wurzel $\\omega_n^2(\\zeta^2 - 1)$. Für ζ < 1 ist das negativ, und wir brauchen das $i$ aus Kapitel 5: Die zwei Antworten werden ein Spiegelpaar, $-\\zeta\\omega_n \\pm i\\,\\omega_n\\sqrt{1-\\zeta^2}$. Bei ζ = 1 ist die Wurzel genau null, und die zwei Antworten treffen sich. Daher kommt $c_{\\text{krit}} = 2\\sqrt{mk}$: Das ist die Dämpfung, bei der die Wurzel verschwindet."
+            }
+          ]
+        },
+        {
           "t": "p",
-          "text": "Das ± liefert zwei Antworten, eine für jeden Punkt. Bei einer Dämpfung unter 1 ist der Ausdruck unter der Wurzel negativ: Die Punkte liegen waagerecht gleich, aber auf entgegengesetzten Höhen. Bei 1 treffen sie sich; darüber liegen beide auf der waagerechten Achse."
+          "text": "Das ±-Zeichen liefert zwei Antworten, eine für jeden Punkt. Die Links-rechts-Lage eines Punkts ist **σ** (Sigma): wie schnell dieser Teil der Bewegung schrumpft. Seine Höhe ist **ω**: wie schnell er sich dreht. Bei einer Dämpfung unter 1 liegen die Punkte waagerecht gleich, aber auf entgegengesetzten Höhen. Bei 1 treffen sie sich; darüber liegen beide auf der waagerechten Achse."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Sprungantwort",
+              "def": "Wie ein System auf einen plötzlichen Sprung seines Ziels antwortet, hier von 0 auf 1 m. Die übliche Art, einen Charakter zu zeigen."
+            },
+            {
+              "term": "Einschwingzeit (2 %)",
+              "def": "Wie lange es dauert, bis die Antwort für immer innerhalb von 2 % um das Ziel bleibt."
+            }
+          ]
         },
         {
           "t": "p",
@@ -105,6 +238,37 @@
             {
               "term": "Überdämpft ($\\zeta > 1$)",
               "def": "Das Paar teilt sich auf der reellen Achse auf: Einer wandert nach links, einer kriecht Richtung null. Kein Überschwingen, aber träge."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "In den unterdämpften Punkten steckt noch ein Detail: Ihre Höhe ist $\\omega_n\\sqrt{1-\\zeta^2}$, ein bisschen **weniger** als $\\omega_n$. Dämpfung lässt das Wackeln nicht nur schrumpfen, sie bremst es auch ein wenig. Das ist die **gedämpfte Eigenkreisfrequenz** $\\omega_d$, und das Widget zeigt sie an."
+        },
+        {
+          "t": "math",
+          "tex": "\\omega_d = \\omega_n\\sqrt{1 - \\zeta^2}"
+        },
+        {
+          "t": "callout",
+          "title": "Warum ein Kreis?",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Der gestrichelte Kreis im Widget ist keine Deko. Für ζ < 1 sitzen die Punkte bei $\\sigma = -\\zeta\\omega_n$ und $\\omega = \\pm\\omega_n\\sqrt{1-\\zeta^2}$. Nach Pythagoras ist ihr Abstand von 0"
+            },
+            {
+              "t": "math",
+              "tex": "\\sqrt{\\sigma^2 + \\omega^2} = \\sqrt{\\zeta^2\\omega_n^2 + \\omega_n^2\\,(1 - \\zeta^2)} = \\omega_n"
+            },
+            {
+              "t": "play",
+              "id": "circle",
+              "text": "Mit $\\omega_n$ = 3 und ζ = {scrub|z} sitzen die Punkte bei {calc|roots}, im Abstand {calc|r} von 0."
+            },
+            {
+              "t": "p",
+              "text": "Wer ζ ändert, schiebt die Punkte also nur auf dem Kreis herum, und wer $\\omega_n$ ändert, ändert die Größe des Kreises."
             }
           ]
         },
@@ -174,7 +338,26 @@
         },
         {
           "t": "p",
-          "text": "Bei dieser Sprungantwort bestimmt die **langsamste tatsächlich vorhandene Bewegung** die lange Wartezeit. Zu wenig Dämpfung bedeutet Wackeln, zu viel Kriechen. Für eine einfache Antwort wie diese bietet $\\zeta$ von etwa 0,7 bis 1 oft einen guten Ausgleich. Andere Aufgaben können einen anderen brauchen."
+          "text": "Jede $e^{st}$-Zutat der Bewegung heißt **Modus** (Mehrzahl: Modi). Die Bewegung ist eine Mischung aus Modi, und sobald die schnellen abgeklungen sind, bleibt nur der langsamste übrig. Bei dieser Sprungantwort bestimmt also der **langsamste Modus, der tatsächlich vorkommt**, die lange Wartezeit."
+        },
+        {
+          "t": "callout",
+          "title": "Wie lange dauert „eingeschwungen“?",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Ein Modus $e^{-at}$ ist auf 2 % geschrumpft, wenn $e^{-at} = 0{,}02$ ist, und das dauert $t = \\ln 50 / a \\approx 3{,}9/a$. Mit einer Zeitkonstante $\\tau = 1/a$ sind das etwa vier Zeitkonstanten: schon wieder das Lineal aus Kapitel 3. Nach 4τ ist nur noch $e^{-4} \\approx 1{,}8\\%$ übrig."
+            },
+            {
+              "t": "play",
+              "id": "settle",
+              "text": "Ein Modus, der mit a = {scrub|a} pro Sekunde schrumpft, ist nach etwa {calc|ts} s innerhalb von 2 %."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Zu wenig Dämpfung heißt Wackeln, zu viel heißt Kriechen. Dazwischen liegt ein Sweet Spot. Nimm im Rennen ζ = 0,7: Es schwingt um weniger als 5 % über, kommt aber viel früher **auf 5 % ans Ziel heran** als ζ = 1. Viele Entwürfe zielen auf ζ zwischen etwa 0,7 und 1 und tauschen ein kleines Überschwingen gegen Tempo. Andere Aufgaben bevorzugen vielleicht eine andere Balance."
         }
       ]
     },
@@ -201,8 +384,13 @@
           "text": "Und mehr Dämpfung kriegen wir nur, wenn wir $\\eff{K_p}$ stark runterdrehen, und dann ist das Durchhängen wieder da. Wir brauchen einen Weg, Dämpfung *absichtlich* hinzuzufügen."
         },
         {
-          "t": "note",
-          "text": "Probier’s im ersten Widget aus: Schieb $K_p$ und schau zu, wie ζ fällt, während die Schwünge wilder werden."
+          "t": "p",
+          "text": "Zieh an der Verstärkung und sieh den Zielkonflikt in einem Satz:"
+        },
+        {
+          "t": "play",
+          "id": "drone",
+          "text": "Mit $\\eff{K_p}$ = {scrub|kp|eff} N/m: ζ = {calc|zeta}, $\\omega_n$ = {calc|wn} rad/s, und ohne den geschenkten Schwebeschub würde sie {calc|droop} m durchhängen."
         }
       ]
     },
@@ -215,7 +403,9 @@
           "items": [
             "Eine Drohne mit P-Regler gehorcht **genau** derselben Gleichung wie eine Masse an einer Feder: Der Regler ist eine virtuelle Feder.",
             "Zwei Zahlen fassen ihren Charakter zusammen: $\\omega_n$ (wie schnell) und $\\zeta$ (wie hüpfig).",
+            "$\\omega_n = \\sqrt{k/m}$ ist das Schwingtempo ohne Dämpfer. $\\zeta = c/c_{\\text{krit}}$ vergleicht die Dämpfung mit der kritischen Dämpfung $2\\sqrt{mk}$, die das Überschwingen gerade verhindert.",
             "Die Bewegung ist eine Mischung aus zwei $e^{st}$-Termen. Die zwei $s$-Werte sitzen bei Unterdämpfung auf einem Kreis mit Radius $\\omega_n$ und teilen sich bei Überdämpfung auf der reellen Achse auf.",
+            "Dämpfung bremst das Wackeln auch ein wenig: $\\omega_d = \\omega_n\\sqrt{1-\\zeta^2}$.",
             "Mehr Dämpfung ist nicht immer besser: Ab $\\zeta = 1$ kriecht der langsame $s$-Wert Richtung null, und alles wird langsamer.",
             "Bei der Drohne heißt mehr $K_p$ weniger Dämpfung. Deshalb wurde sie wackeliger."
           ]
@@ -261,6 +451,25 @@
                 {
                   "text": "Überdämpft, $\\zeta > 1$",
                   "why": "Überdämpfung braucht viel Dämpfung im Vergleich zur Steifigkeit. Unsere Verstärkung ist hoch und unser Luftwiderstand klein, also genau umgekehrt."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q5",
+              "q": "Eine Feder mit $k = 8$ N/m hält eine Masse von 0,5 kg. Wie viel Dämpfung $c$ macht sie kritisch gedämpft?",
+              "options": [
+                {
+                  "text": "$c = 4$ N·s/m",
+                  "correct": true,
+                  "why": "$c_{\\text{krit}} = 2\\sqrt{m k} = 2\\sqrt{0{,}5 \\cdot 8} = 2\\sqrt{4} = 4$ N·s/m."
+                },
+                {
+                  "text": "$c = 16$ N·s/m",
+                  "why": "Das ist $2k$. Die kritische Dämpfung nimmt die Wurzel aus Masse × Steifigkeit: $2\\sqrt{mk}$."
+                },
+                {
+                  "text": "$c = 1$ N·s/m",
+                  "why": "Das ist der Luftwiderstand unserer Drohne, und der ergibt hier $\\zeta = 0{,}25$: unterdämpft."
                 }
               ]
             },
@@ -332,7 +541,9 @@
         "critical": "kritisch gedämpft",
         "over": "überdämpft"
       },
-      "together": "beide in einem Diagramm"
+      "together": "beide in einem Diagramm",
+      "forceSpring": "Zug der Feder",
+      "forceDamper": "Druck des Dämpfers"
     },
     "personality": {
       "title": "Zwei Knöpfe, zwei Punkte, ein Charakter",
@@ -367,7 +578,9 @@
       "springCap": "an einer Feder zuschauen",
       "re": "σ",
       "im": "ω",
-      "offMap": "{v} liegt außerhalb der Karte ←"
+      "offMap": "{v} liegt außerhalb der Karte ←",
+      "wd": "Wackeltempo ωd",
+      "noWiggle": "kein Wackeln"
     },
     "race": {
       "title": "Das Dämpfungsrennen",
@@ -390,7 +603,35 @@
       "re": "σ",
       "im": "ω",
       "fastOff": "← der schnelle bei {v} (außerhalb der Karte)",
-      "double": "beide hier"
+      "double": "beide hier",
+      "band5": "innerhalb von 5 %",
+      "sweet": "ζ = 0,7 schwingt um {os} % über, ist aber nach {y5} s innerhalb von 5 % um das Ziel. ζ = 1 braucht {r5} s."
+    }
+  },
+  "plays": {
+    "units": {
+      "kp": "Verstärkung Kp, Newton pro Meter",
+      "e": "Fehler, Meter"
+    },
+    "wn": {
+      "k": "Federsteifigkeit k, Newton pro Meter"
+    },
+    "zeta": {
+      "c": "Dämpfung c, Newtonsekunden pro Meter",
+      "regime": {
+        "under": "unterdämpft",
+        "critical": "kritisch gedämpft",
+        "over": "überdämpft"
+      }
+    },
+    "circle": {
+      "z": "Dämpfungsgrad Zeta"
+    },
+    "settle": {
+      "a": "Schrumpfrate a, pro Sekunde"
+    },
+    "drone": {
+      "kp": "Verstärkung Kp, Newton pro Meter"
     }
   }
 }

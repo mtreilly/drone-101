@@ -24,6 +24,30 @@
           "text": "À gauche : une masse de 0,5 kg suspendue à un ressort avec un amortisseur (un petit piston rempli d'huile qui résiste au mouvement). À droite : notre drone, même masse, même traînée, en commande proportionnelle."
         },
         {
+          "t": "p",
+          "text": "D'abord, écrivons toutes les forces qui agissent sur la masse, une par une. On mesure sa position $x$ depuis le point de repos, vers le haut positif."
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Le ressort** tire vers le repos, d'autant plus fort qu'il est étiré : $-\\eff{k}\\,x$. Étire-le deux fois plus, il tire deux fois plus fort.",
+            "**L'amortisseur** s'oppose au *mouvement*, pas à la position : $-c\\,\\dot{x}$. À l'arrêt, il ne fait rien. En mouvement rapide, il repousse fort. ($\\dot{x}$, c'est la vitesse du chapitre 3.)",
+            "**La gravité** abaisse juste un peu le point de repos. En mesurant depuis le repos, on s'en débarrasse."
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Force = masse × accélération, et l'accélération, c'est la pente de la pente (chapitre 4). On additionne les forces et on met tout du même côté :"
+        },
+        {
+          "t": "math",
+          "tex": "m\\,\\ddot{x} = -\\eff{k}\\,x - c\\,\\dot{x} \\quad\\Longrightarrow\\quad m\\,\\ddot{x} + c\\,\\dot{x} + \\eff{k}\\,x = 0"
+        },
+        {
+          "t": "p",
+          "text": "Dans la simulation, la {eff|flèche orange} sur la masse est la traction du ressort, et la grise la poussée de l'amortisseur. Regarde : la flèche de l'amortisseur disparaît chaque fois que la masse s'arrête un instant en haut ou en bas d'une oscillation."
+        },
+        {
           "t": "note",
           "text": "Pour que la gravité ne nous distraie pas, on offre ici au drone sa poussée de vol stationnaire (4,9 N), pour qu'il ne s'affaisse pas. On la gagnera honnêtement au chapitre 9."
         },
@@ -46,6 +70,31 @@
           "who": "theo",
           "mood": "happy",
           "text": "Donc un correcteur P est un ressort virtuel, et la traînée de l'air $c$ est un amortisseur virtuel. Tout ce qu'on apprend sur les ressorts, on l'a gratuitement."
+        },
+        {
+          "t": "callout",
+          "title": "Vérifions les unités",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "La raideur $\\eff{k}$ d'un ressort se mesure en **newtons par mètre** : des newtons de traction pour chaque mètre d'étirement. Notre gain $\\eff{K_p}$ transforme des mètres d'erreur en newtons de poussée, donc il s'exprime lui aussi en newtons par mètre. Le correcteur ne *ressemble* pas seulement à un ressort. D'après les unités, c'en *est* un."
+            },
+            {
+              "t": "play",
+              "id": "units",
+              "text": "Avec $\\eff{K_p}$ = {scrub|kp|eff} N/m, un drone {scrub|e} m trop bas reçoit {calc|f|eff} N de poussée en plus."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "De vrais amortisseurs",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Les amortisseurs d'une voiture en sont : de l'huile qui passe par de petits trous, si bien qu'ils combattent les mouvements rapides et remarquent à peine les lents. Les charnières à fermeture douce d'un placard de cuisine aussi, tout comme le ferme-porte en haut d'une lourde porte. Enlève les amortisseurs d'une voiture et chaque bosse la fait rebondir. Rends-les beaucoup trop durs et tu sens chaque bosse de plein fouet."
+            }
+          ]
         }
       ]
     },
@@ -55,32 +104,116 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Chaque système masse-ressort-amortisseur, et donc chaque drone en commande P, est décrit par seulement **deux nombres** :"
+          "text": "Chaque système masse-ressort-amortisseur, et donc chaque drone en commande P, est décrit par seulement **deux nombres**. Gagnons-les un par un."
         },
         {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Pulsation propre $\\omega_n = \\sqrt{k/m}$",
-              "def": "À quelle vitesse il *veut* osciller, en radians par seconde. Un ressort plus raide (plus grand $\\eff{k}$) ou une masse plus légère donnent une oscillation plus rapide."
-            },
-            {
-              "term": "Taux d'amortissement $\\zeta = \\dfrac{c}{2\\sqrt{m k}}$",
-              "def": "À quelle vitesse l'oscillation s'éteint. C'est un nombre pur : 0 veut dire qu'il oscille pour toujours, 1 est la frontière exacte entre osciller et ne pas osciller."
-            }
-          ]
+          "t": "h3",
+          "text": "À quelle vitesse : la pulsation propre"
         },
         {
           "t": "p",
-          "text": "Souviens-toi du ressort des chapitres 4 et 5, où deviner une exponentielle nous donnait deux valeurs de $s$. Ajoute un amortisseur et la même supposition donne $m s^2 + c s + k = 0$. Ses deux solutions sont deux points sur notre carte de $s$. Divise par $m$ et ça devient"
+          "text": "Enlève l'amortisseur et on revient au chapitre 5 : le ressort oscille comme $\\cos(\\omega t)$ avec $\\omega = \\sqrt{k/m}$. Cette vitesse, on l'appelle la **pulsation propre** $\\omega_n$ : à quelle vitesse le système *veut* osciller quand rien ne le freine."
+        },
+        {
+          "t": "math",
+          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{k}}{m}} \\qquad\\qquad \\text{une oscillation complète toutes les } \\frac{2\\pi}{\\omega_n} \\text{ s}"
+        },
+        {
+          "t": "play",
+          "id": "wn",
+          "text": "Avec k = {scrub|k|eff} N/m et m = 0,5 kg, $\\omega_n$ ≈ {calc|wn} rad/s : une oscillation complète toutes les {calc|period} s."
+        },
+        {
+          "t": "p",
+          "text": "Un ressort plus raide tire plus fort, donc il oscille plus vite. Une masse plus lourde est plus dure à bousculer, donc elle oscille plus lentement. (Les radians par seconde, c'est la vitesse de rotation du chapitre 5 : un tour complet fait 2π radians.)"
+        },
+        {
+          "t": "h3",
+          "text": "À quel point ça rebondit : le taux d'amortissement"
+        },
+        {
+          "t": "p",
+          "text": "Maintenant, remets l'amortisseur. C'est quoi, « beaucoup » d'amortissement ? Ça dépend du ressort : un amortisseur qui calme un ressort mou freine à peine un ressort raide. On compare donc à une quantité spéciale, l'**amortissement critique** $c_{\\text{crit}}$ : le plus petit amortissement qui supprime complètement le dépassement."
+        },
+        {
+          "t": "math",
+          "tex": "c_{\\text{crit}} = 2\\sqrt{m\\,\\eff{k}} \\qquad\\qquad \\zeta = \\frac{c}{c_{\\text{crit}}} = \\frac{c}{2\\sqrt{m\\,\\eff{k}}}"
+        },
+        {
+          "t": "p",
+          "text": "Le **taux d'amortissement** ζ (la lettre grecque zêta) est notre amortissement exprimé en fraction de celui-ci. C'est un nombre pur, sans unité. ζ = 0 oscille pour toujours, ζ = 1 est exactement critique, et ζ = 0,5 a la moitié de l'amortissement qu'il faudrait pour supprimer le dépassement."
+        },
+        {
+          "t": "play",
+          "id": "zeta",
+          "text": "Avec c = {scrub|c} N·s/m sur un ressort k = 20 N/m, $c_{\\text{crit}}$ = {calc|ccrit} N·s/m, donc ζ = {calc|zeta} : {calc|regime}."
+        },
+        {
+          "t": "h3",
+          "text": "Les deux points sur la carte"
+        },
+        {
+          "t": "p",
+          "text": "Retour à la carte de $s$. En devinant $x = e^{st}$, comme aux chapitres 4 et 5, l'équation devient $m s^2 + c s + k = 0$. Divise par $m$, puis écris les deux coefficients avec nos boutons :"
+        },
+        {
+          "t": "math",
+          "tex": "s^2 + \\underbrace{\\frac{c}{m}}_{2\\zeta\\omega_n}\\, s + \\underbrace{\\frac{\\eff{k}}{m}}_{\\omega_n^2} = 0"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Attends. D'où sort ce $2\\zeta\\omega_n$ ? On dirait qu'il tombe du ciel."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Développe : $2\\zeta\\omega_n = 2 \\cdot \\frac{c}{2\\sqrt{mk}} \\cdot \\sqrt{\\frac{k}{m}} = \\frac{c}{m}$. C'est le même nombre, juste renommé, pour que nos deux boutons apparaissent dans l'équation."
+        },
+        {
+          "t": "p",
+          "text": "Résous-la avec la formule du second degré et voilà les deux valeurs de $s$ :"
         },
         {
           "t": "math",
           "tex": "\\begin{aligned} & s^2 + 2\\zeta\\omega_n\\, s + \\omega_n^2 = 0 \\\\ \\Longrightarrow\\quad & s = -\\zeta\\omega_n \\pm \\omega_n\\sqrt{\\zeta^2 - 1} \\end{aligned}"
         },
         {
+          "t": "callout",
+          "title": "D'où vient le ±",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Toute équation $s^2 + b\\,s + q = 0$ se résout en complétant le carré : $(s + b/2)^2 = b^2/4 - q$. Une racine carrée a deux réponses, une avec + et une avec −, donc il y a toujours **deux** valeurs de $s$ :"
+            },
+            {
+              "t": "math",
+              "tex": "s = -\\frac{b}{2} \\pm \\sqrt{\\frac{b^2}{4} - q}"
+            },
+            {
+              "t": "p",
+              "text": "Avec $b = 2\\zeta\\omega_n$ et $q = \\omega_n^2$, ce qu'il y a sous la racine vaut $\\omega_n^2(\\zeta^2 - 1)$. Quand ζ < 1, c'est négatif, et il nous faut le $i$ du chapitre 5 : les deux réponses deviennent une paire miroir, $-\\zeta\\omega_n \\pm i\\,\\omega_n\\sqrt{1-\\zeta^2}$. À ζ = 1, la racine vaut exactement zéro et les deux réponses se rejoignent. C'est de là que vient $c_{\\text{crit}} = 2\\sqrt{mk}$ : c'est l'amortissement qui fait disparaître la racine."
+            }
+          ]
+        },
+        {
           "t": "p",
-          "text": "Le signe ± donne deux réponses, une pour chaque point. Quand l’amortissement est inférieur à 1, l’expression sous la racine est négative : les points ont la même position horizontale, mais des hauteurs opposées. À 1 ils se rejoignent ; au-dessus de 1, tous deux sont sur l’axe horizontal."
+          "text": "Le signe ± donne deux réponses, une pour chaque point. La position horizontale d'un point, c'est **σ** (sigma) : à quelle vitesse cette partie du mouvement rétrécit. Sa hauteur, c'est **ω** : à quelle vitesse elle tourne. Quand l'amortissement est inférieur à 1, les points ont la même position horizontale, mais des hauteurs opposées. À 1 ils se rejoignent ; au-dessus de 1, tous deux sont sur l'axe horizontal."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Réponse indicielle",
+              "def": "Comment un système répond à un saut brusque de sa cible, ici de 0 à 1 m. C'est la façon classique de montrer une personnalité."
+            },
+            {
+              "term": "Temps de réponse à 2 %",
+              "def": "Le temps qu'il faut pour que la réponse reste pour de bon à moins de 2 % de la cible."
+            }
+          ]
         },
         {
           "t": "p",
@@ -105,6 +238,37 @@
             {
               "term": "Sur-amorti ($\\zeta > 1$)",
               "def": "La paire se sépare le long de l'axe réel : l'une part vers la gauche, l'autre se traîne vers zéro. Pas de dépassement, mais c'est mou."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Un dernier détail se cache dans les points sous-amortis : leur hauteur vaut $\\omega_n\\sqrt{1-\\zeta^2}$, un peu **moins** que $\\omega_n$. L'amortissement ne fait pas que rétrécir l'oscillation, il la ralentit aussi un peu. C'est la **pseudo-pulsation** $\\omega_d$, et la simulation l'affiche."
+        },
+        {
+          "t": "math",
+          "tex": "\\omega_d = \\omega_n\\sqrt{1 - \\zeta^2}"
+        },
+        {
+          "t": "callout",
+          "title": "Pourquoi un cercle ?",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Le cercle en tirets de la simulation n'est pas là pour décorer. Pour ζ < 1, les points sont en $\\sigma = -\\zeta\\omega_n$ et $\\omega = \\pm\\omega_n\\sqrt{1-\\zeta^2}$. D'après Pythagore, leur distance à 0 vaut"
+            },
+            {
+              "t": "math",
+              "tex": "\\sqrt{\\sigma^2 + \\omega^2} = \\sqrt{\\zeta^2\\omega_n^2 + \\omega_n^2\\,(1 - \\zeta^2)} = \\omega_n"
+            },
+            {
+              "t": "play",
+              "id": "circle",
+              "text": "Avec $\\omega_n$ = 3 et ζ = {scrub|z}, les points sont en {calc|roots}, à une distance {calc|r} de 0."
+            },
+            {
+              "t": "p",
+              "text": "Changer ζ fait donc seulement glisser les points le long du cercle, et changer $\\omega_n$ change la taille du cercle."
             }
           ]
         },
@@ -174,7 +338,26 @@
         },
         {
           "t": "p",
-          "text": "Pour cette réponse à un échelon, c’est le **mode le plus lent réellement présent** qui impose la longue attente. Trop peu d’amortissement fait osciller ; trop ralentit. Pour une réponse simple comme celle-ci, $\\zeta$ entre environ 0,7 et 1 offre souvent un bon équilibre. D’autres tâches peuvent demander un autre compromis."
+          "text": "Chaque ingrédient $e^{st}$ du mouvement s'appelle un **mode**. Le mouvement est un mélange de modes, et une fois les rapides éteints, il ne reste que le plus lent. Pour cette réponse indicielle, c'est donc le **mode le plus lent réellement présent** qui impose la longue attente."
+        },
+        {
+          "t": "callout",
+          "title": "Combien de temps pour être « stabilisé » ?",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Un mode $e^{-at}$ est tombé à 2 % quand $e^{-at} = 0{,}02$, ce qui prend $t = \\ln 50 / a \\approx 3{,}9/a$. Avec une constante de temps $\\tau = 1/a$, ça fait environ quatre constantes de temps : encore la règle graduée du chapitre 3. Après 4τ, il ne reste que $e^{-4} \\approx 1{,}8\\%$."
+            },
+            {
+              "t": "play",
+              "id": "settle",
+              "text": "Un mode qui rétrécit au rythme a = {scrub|a} par seconde est à moins de 2 % après environ {calc|ts} s."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Trop peu d'amortissement fait osciller ; trop fait se traîner. Entre les deux, il y a un juste milieu. Choisis ζ = 0,7 dans la course : il dépasse de moins de 5 %, mais il arrive **à moins de 5 % de la cible** bien plus tôt que ζ = 1. Beaucoup de réglages visent un ζ entre environ 0,7 et 1, en échangeant un petit dépassement contre de la vitesse. D'autres tâches peuvent demander un autre compromis."
         }
       ]
     },
@@ -201,8 +384,13 @@
           "text": "Et on ne peut pas avoir plus d'amortissement sans baisser énormément $\\eff{K_p}$, ce qui ramène l'affaissement. Il nous faut un moyen d'ajouter de l'amortissement *exprès*."
         },
         {
-          "t": "note",
-          "text": "Essaie dans la première simulation : fais glisser $K_p$ et regarde ζ baisser à mesure que les oscillations deviennent plus folles."
+          "t": "p",
+          "text": "Fais glisser le gain et regarde le compromis tenir en une phrase :"
+        },
+        {
+          "t": "play",
+          "id": "drone",
+          "text": "Avec $\\eff{K_p}$ = {scrub|kp|eff} N/m : ζ = {calc|zeta}, $\\omega_n$ = {calc|wn} rad/s, et sans la poussée de vol stationnaire offerte, il s'affaisserait de {calc|droop} m."
         }
       ]
     },
@@ -215,7 +403,9 @@
           "items": [
             "Un drone en commande P obéit **exactement** à la même équation qu'une masse au bout d'un ressort : le correcteur est un ressort virtuel.",
             "Deux nombres résument sa personnalité : $\\omega_n$ (à quelle vitesse) et $\\zeta$ (à quel point ça rebondit).",
+            "$\\omega_n = \\sqrt{k/m}$ est la vitesse d'oscillation sans amortisseur. $\\zeta = c/c_{\\text{crit}}$ compare l'amortissement à l'amortissement critique $2\\sqrt{mk}$, celui qui supprime tout juste le dépassement.",
             "Le mouvement est un mélange de deux termes $e^{st}$. Les deux valeurs de $s$ sont sur un cercle de rayon $\\omega_n$ quand c'est sous-amorti, et se séparent le long de l'axe réel quand c'est sur-amorti.",
+            "L'amortissement ralentit aussi un peu l'oscillation : $\\omega_d = \\omega_n\\sqrt{1-\\zeta^2}$.",
             "Plus d'amortissement, ce n'est pas toujours mieux : au-delà de $\\zeta = 1$, la valeur de $s$ lente se traîne vers zéro et tout ralentit.",
             "Pour le drone, plus de $K_p$ veut dire moins d'amortissement. C'est pour ça qu'il oscillait de plus en plus."
           ]
@@ -261,6 +451,25 @@
                 {
                   "text": "Sur-amorti, $\\zeta > 1$",
                   "why": "Le sur-amortissement demande beaucoup d'amortissement par rapport à la raideur. Notre gain est élevé et notre traînée faible : c'est l'inverse."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q5",
+              "q": "Un ressort avec $k = 8$ N/m porte une masse de 0,5 kg. Quel amortissement $c$ donne un amortissement critique ?",
+              "options": [
+                {
+                  "text": "$c = 4$ N·s/m",
+                  "correct": true,
+                  "why": "$c_{\\text{crit}} = 2\\sqrt{m k} = 2\\sqrt{0{,}5 \\cdot 8} = 2\\sqrt{4} = 4$ N·s/m."
+                },
+                {
+                  "text": "$c = 16$ N·s/m",
+                  "why": "Ça, c'est $2k$. L'amortissement critique utilise la racine carrée de masse × raideur : $2\\sqrt{mk}$."
+                },
+                {
+                  "text": "$c = 1$ N·s/m",
+                  "why": "C'est la traînée de l'air de notre drone, qui donne ici $\\zeta = 0{,}25$ : sous-amorti."
                 }
               ]
             },
@@ -332,7 +541,9 @@
         "critical": "amortissement critique",
         "over": "sur-amorti"
       },
-      "together": "les deux, sur un seul graphique"
+      "together": "les deux, sur un seul graphique",
+      "forceSpring": "traction du ressort",
+      "forceDamper": "poussée de l'amortisseur"
     },
     "personality": {
       "title": "Deux boutons, deux points, une personnalité",
@@ -367,7 +578,9 @@
       "springCap": "regarde-le sur un ressort",
       "re": "σ",
       "im": "ω",
-      "offMap": "{v} est hors de la carte ←"
+      "offMap": "{v} est hors de la carte ←",
+      "wd": "pseudo-pulsation ωd",
+      "noWiggle": "pas d'oscillation"
     },
     "race": {
       "title": "La course de l'amortissement",
@@ -390,7 +603,35 @@
       "re": "σ",
       "im": "ω",
       "fastOff": "← la rapide en {v} (hors de la carte)",
-      "double": "les deux ici"
+      "double": "les deux ici",
+      "band5": "à moins de 5 %",
+      "sweet": "ζ = 0,7 dépasse de {os} %, mais il est à moins de 5 % de la cible après {y5} s. ζ = 1 a besoin de {r5} s."
+    }
+  },
+  "plays": {
+    "units": {
+      "kp": "gain Kp, newtons par mètre",
+      "e": "erreur, mètres"
+    },
+    "wn": {
+      "k": "raideur du ressort k, newtons par mètre"
+    },
+    "zeta": {
+      "c": "amortissement c, newtons-secondes par mètre",
+      "regime": {
+        "under": "sous-amorti",
+        "critical": "amortissement critique",
+        "over": "sur-amorti"
+      }
+    },
+    "circle": {
+      "z": "taux d'amortissement zêta"
+    },
+    "settle": {
+      "a": "vitesse de décroissance a, par seconde"
+    },
+    "drone": {
+      "kp": "gain Kp, newtons par mètre"
     }
   }
 }

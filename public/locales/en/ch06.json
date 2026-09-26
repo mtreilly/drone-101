@@ -24,6 +24,30 @@
           "text": "On the left: a mass of 0.5 kg hanging on a spring with a damper (a little oil-filled piston that resists motion). On the right: our drone, same mass, same drag, under proportional control."
         },
         {
+          "t": "p",
+          "text": "First, let's write down every force on the mass, one at a time. Measure its position $x$ from the resting point, with up as positive."
+        },
+        {
+          "t": "list",
+          "items": [
+            "**The spring** pulls back towards rest, harder the further it's stretched: $-\\eff{k}\\,x$. Stretch it twice as far and it pulls twice as hard.",
+            "**The damper** pushes against the *motion*, not the position: $-c\\,\\dot{x}$. Standing still, it does nothing. Moving fast, it pushes back hard. ($\\dot{x}$ is Chapter 3's speed.)",
+            "**Gravity** only moves the resting point down a little. Measuring from rest takes care of it."
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Force = mass × acceleration, and acceleration is the slope of the slope (Chapter 4). Add the forces up and move everything to one side:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\,\\ddot{x} = -\\eff{k}\\,x - c\\,\\dot{x} \\quad\\Longrightarrow\\quad m\\,\\ddot{x} + c\\,\\dot{x} + \\eff{k}\\,x = 0"
+        },
+        {
+          "t": "p",
+          "text": "In the widget, the {eff|orange arrow} on the mass is the spring's pull and the grey one is the damper's push. Watch how the damper's arrow vanishes whenever the mass stops for an instant at the top or bottom of a swing."
+        },
+        {
           "t": "note",
           "text": "To keep gravity from distracting us, we give the drone its hover thrust (4.9 N) for free here, so it doesn't droop. We'll earn that honestly in Chapter 9."
         },
@@ -46,6 +70,31 @@
           "who": "theo",
           "mood": "happy",
           "text": "So a P controller is a virtual spring, and the air drag $c$ is a virtual damper. Everything we learn about springs, we get for free."
+        },
+        {
+          "t": "callout",
+          "title": "Units check",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "A spring's stiffness $\\eff{k}$ is measured in **newtons per metre**: newtons of pull for every metre of stretch. Our gain $\\eff{K_p}$ turns metres of error into newtons of thrust, so it's newtons per metre too. The controller isn't just *like* a spring. By the units, it *is* one."
+            },
+            {
+              "t": "play",
+              "id": "units",
+              "text": "At $\\eff{K_p}$ = {scrub|kp|eff} N/m, a drone {scrub|e} m too low gets {calc|f|eff} N of extra thrust."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "Real dampers",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "A car's shock absorbers are dampers: oil squeezed through small holes, so they fight fast motion and barely notice slow motion. So are the soft-close hinges on a kitchen cupboard and the closer at the top of a heavy door. Remove the dampers from a car and every bump sets it bouncing. Make them far too stiff and every bump comes straight through to you."
+            }
+          ]
         }
       ]
     },
@@ -55,32 +104,116 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Every mass-spring-damper, and so every P-controlled drone, is described by just **two numbers**:"
+          "text": "Every mass-spring-damper, and so every P-controlled drone, is described by just **two numbers**. Let's earn them one at a time."
         },
         {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Natural frequency $\\omega_n = \\sqrt{k/m}$",
-              "def": "How fast it *wants* to swing, in radians per second. A stiffer spring (bigger $\\eff{k}$) or a lighter mass means a faster swing."
-            },
-            {
-              "term": "Damping ratio $\\zeta = \\dfrac{c}{2\\sqrt{m k}}$",
-              "def": "How quickly the swinging dies out. It's a pure number: 0 means it swings forever, 1 is the exact border between wobbling and not."
-            }
-          ]
+          "t": "h3",
+          "text": "How fast: the natural frequency"
         },
         {
           "t": "p",
-          "text": "Now remember the spring from Chapters 4 and 5, where guessing an exponential gave us two values of $s$. Add a damper and the same guess gives $m s^2 + c s + k = 0$. Its two solutions are two points on our map of $s$. Divide by $m$ and it becomes"
+          "text": "Take the damper away and we're back in Chapter 5: the spring swings as $\\cos(\\omega t)$ with $\\omega = \\sqrt{k/m}$. We call that speed the **natural frequency** $\\omega_n$: how fast the system *wants* to swing when nothing slows it down."
+        },
+        {
+          "t": "math",
+          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{k}}{m}} \\qquad\\qquad \\text{one full swing every } \\frac{2\\pi}{\\omega_n} \\text{ s}"
+        },
+        {
+          "t": "play",
+          "id": "wn",
+          "text": "With k = {scrub|k|eff} N/m and m = 0.5 kg, $\\omega_n$ ≈ {calc|wn} rad/s: one full swing every {calc|period} s."
+        },
+        {
+          "t": "p",
+          "text": "A stiffer spring pulls harder, so it swings faster. A heavier mass is harder to shove around, so it swings slower. (Radians per second is Chapter 5's spinning speed: one full turn is 2π radians.)"
+        },
+        {
+          "t": "h3",
+          "text": "How bouncy: the damping ratio"
+        },
+        {
+          "t": "p",
+          "text": "Now put the damper back. How much damping is \"a lot\"? That depends on the spring: a damper that tames a soft spring barely slows a stiff one. So we compare against one special amount, the **critical damping** $c_{\\text{crit}}$: the smallest damping that stops the overshoot completely."
+        },
+        {
+          "t": "math",
+          "tex": "c_{\\text{crit}} = 2\\sqrt{m\\,\\eff{k}} \\qquad\\qquad \\zeta = \\frac{c}{c_{\\text{crit}}} = \\frac{c}{2\\sqrt{m\\,\\eff{k}}}"
+        },
+        {
+          "t": "p",
+          "text": "The **damping ratio** ζ (the Greek letter zeta) is our damping as a fraction of that. It's a pure number, with no units. ζ = 0 swings forever, ζ = 1 is exactly critical, and ζ = 0.5 has half the damping it would take to stop the overshoot."
+        },
+        {
+          "t": "play",
+          "id": "zeta",
+          "text": "With c = {scrub|c} N·s/m on a k = 20 N/m spring, $c_{\\text{crit}}$ = {calc|ccrit} N·s/m, so ζ = {calc|zeta}: {calc|regime}."
+        },
+        {
+          "t": "h3",
+          "text": "The two dots on the map"
+        },
+        {
+          "t": "p",
+          "text": "Now back to the map of $s$. Guessing $x = e^{st}$, as in Chapters 4 and 5, turns the equation into $m s^2 + c s + k = 0$. Divide by $m$, then write the two coefficients with our knobs:"
+        },
+        {
+          "t": "math",
+          "tex": "s^2 + \\underbrace{\\frac{c}{m}}_{2\\zeta\\omega_n}\\, s + \\underbrace{\\frac{\\eff{k}}{m}}_{\\omega_n^2} = 0"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Hold on. Where did that $2\\zeta\\omega_n$ come from? It looks made up."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Multiply it out: $2\\zeta\\omega_n = 2 \\cdot \\frac{c}{2\\sqrt{mk}} \\cdot \\sqrt{\\frac{k}{m}} = \\frac{c}{m}$. It's the same number, just renamed, so our two knobs show up in the equation."
+        },
+        {
+          "t": "p",
+          "text": "Solve it with the quadratic formula and out come the two values of $s$:"
         },
         {
           "t": "math",
           "tex": "\\begin{aligned} & s^2 + 2\\zeta\\omega_n\\, s + \\omega_n^2 = 0 \\\\ \\Longrightarrow\\quad & s = -\\zeta\\omega_n \\pm \\omega_n\\sqrt{\\zeta^2 - 1} \\end{aligned}"
         },
         {
+          "t": "callout",
+          "title": "Where the ± comes from",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Any equation $s^2 + b\\,s + q = 0$ can be solved by completing the square: $(s + b/2)^2 = b^2/4 - q$. A square root has two answers, one with + and one with −, so there are always **two** values of $s$:"
+            },
+            {
+              "t": "math",
+              "tex": "s = -\\frac{b}{2} \\pm \\sqrt{\\frac{b^2}{4} - q}"
+            },
+            {
+              "t": "p",
+              "text": "With $b = 2\\zeta\\omega_n$ and $q = \\omega_n^2$, the part under the root is $\\omega_n^2(\\zeta^2 - 1)$. When ζ < 1 it's negative, and we need Chapter 5's $i$: the two answers become a mirror pair, $-\\zeta\\omega_n \\pm i\\,\\omega_n\\sqrt{1-\\zeta^2}$. At ζ = 1 the root is exactly zero and the two answers meet. That's where $c_{\\text{crit}} = 2\\sqrt{mk}$ comes from: it's the damping that makes the root vanish."
+            }
+          ]
+        },
+        {
           "t": "p",
-          "text": "The ± sign gives us two answers, one for each dot. When damping is below 1, the expression under the square root is negative: the dots share a left-right position but sit at opposite heights. At 1 they meet; above 1 both lie on the horizontal axis."
+          "text": "The ± sign gives us two answers, one for each dot. The left-right position of a dot is **σ** (sigma): how fast that part of the motion shrinks. Its height is **ω**: how fast it spins. When damping is below 1, the dots share a left-right position but sit at opposite heights. At 1 they meet; above 1 both lie on the horizontal axis."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Step response",
+              "def": "How a system answers a sudden jump of its target, here from 0 to 1 m. It's the standard way to show a personality."
+            },
+            {
+              "term": "Settling time (2%)",
+              "def": "How long until the response stays within 2% of the target for good."
+            }
+          ]
         },
         {
           "t": "p",
@@ -105,6 +238,37 @@
             {
               "term": "Overdamped ($\\zeta > 1$)",
               "def": "The pair splits along the real axis: one moves left, one creeps towards zero. No overshoot, but sluggish."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "One more detail hides in the underdamped dots: their height is $\\omega_n\\sqrt{1-\\zeta^2}$, a bit **less** than $\\omega_n$. Damping doesn't only shrink the wiggle, it slows it down a little too. This is the **damped frequency** $\\omega_d$, and the widget shows it."
+        },
+        {
+          "t": "math",
+          "tex": "\\omega_d = \\omega_n\\sqrt{1 - \\zeta^2}"
+        },
+        {
+          "t": "callout",
+          "title": "Why a circle?",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The dashed circle in the widget isn't decoration. For ζ < 1 the dots sit at $\\sigma = -\\zeta\\omega_n$ and $\\omega = \\pm\\omega_n\\sqrt{1-\\zeta^2}$. By Pythagoras, their distance from 0 is"
+            },
+            {
+              "t": "math",
+              "tex": "\\sqrt{\\sigma^2 + \\omega^2} = \\sqrt{\\zeta^2\\omega_n^2 + \\omega_n^2\\,(1 - \\zeta^2)} = \\omega_n"
+            },
+            {
+              "t": "play",
+              "id": "circle",
+              "text": "With $\\omega_n$ = 3 and ζ = {scrub|z}, the dots sit at {calc|roots}, a distance {calc|r} from 0."
+            },
+            {
+              "t": "p",
+              "text": "So changing ζ only slides the dots around the circle, and changing $\\omega_n$ changes the size of the circle."
             }
           ]
         },
@@ -174,7 +338,26 @@
         },
         {
           "t": "p",
-          "text": "For this step response, the **slowest mode that actually appears** determines the long wait. Too little damping means wobbles; too much means creeping. For a simple response like this, $\\zeta$ around 0.7 to 1 often gives a useful balance. Different tasks may prefer a different balance."
+          "text": "Each $e^{st}$ ingredient of the motion is called a **mode**. The motion is a mix of modes, and once the fast ones have faded, only the slowest is left. So for this step response, the **slowest mode that actually appears** sets the long wait."
+        },
+        {
+          "t": "callout",
+          "title": "How long is \"settled\"?",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "A mode $e^{-at}$ has shrunk to 2% when $e^{-at} = 0.02$, which takes $t = \\ln 50 / a \\approx 3.9/a$. With a time constant $\\tau = 1/a$, that's about four time constants: Chapter 3's ruler again. After 4τ, only $e^{-4} \\approx 1.8\\%$ is left."
+            },
+            {
+              "t": "play",
+              "id": "settle",
+              "text": "A mode that shrinks at a = {scrub|a} per second is within 2% after about {calc|ts} s."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Too little damping means wobbles; too much means creeping. In between there's a sweet spot. Pick ζ = 0.7 in the race: it overshoots by less than 5%, but it gets **within 5% of the target** much sooner than ζ = 1 does. Many designs aim for ζ between about 0.7 and 1, trading a small overshoot for speed. Other tasks may prefer a different balance."
         }
       ]
     },
@@ -201,8 +384,13 @@
           "text": "And we can't get more damping without turning $\\eff{K_p}$ way down, which brings back the droop. We need a way to add damping *on purpose*."
         },
         {
-          "t": "note",
-          "text": "Try it in the first widget: slide $K_p$ and watch ζ fall as the swings get wilder."
+          "t": "p",
+          "text": "Drag the gain and watch the trade-off in one sentence:"
+        },
+        {
+          "t": "play",
+          "id": "drone",
+          "text": "With $\\eff{K_p}$ = {scrub|kp|eff} N/m: ζ = {calc|zeta}, $\\omega_n$ = {calc|wn} rad/s, and without the free hover thrust it would droop {calc|droop} m."
         }
       ]
     },
@@ -215,7 +403,9 @@
           "items": [
             "A P-controlled drone obeys **exactly** the same equation as a mass on a spring: the controller is a virtual spring.",
             "Two numbers capture its personality: $\\omega_n$ (how fast) and $\\zeta$ (how bouncy).",
+            "$\\omega_n = \\sqrt{k/m}$ is the swing speed with no damper. $\\zeta = c/c_{\\text{crit}}$ compares the damping with the critical damping $2\\sqrt{mk}$ that just stops the overshoot.",
             "The motion is a mix of two $e^{st}$ terms. The two $s$ values sit on a circle of radius $\\omega_n$ when underdamped, and split along the real axis when overdamped.",
+            "Damping also slows the wiggle a little: $\\omega_d = \\omega_n\\sqrt{1-\\zeta^2}$.",
             "More damping isn't always better: past $\\zeta = 1$ the slow $s$ value creeps towards zero and everything slows down.",
             "For the drone, more $K_p$ means less damping. That's why it got wobblier."
           ]
@@ -261,6 +451,25 @@
                 {
                   "text": "Overdamped, $\\zeta > 1$",
                   "why": "Overdamping needs lots of damping compared with stiffness. Our gain is high and our drag small, which is the opposite."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q5",
+              "q": "A spring with $k = 8$ N/m holds a 0.5 kg mass. How much damping $c$ makes it critically damped?",
+              "options": [
+                {
+                  "text": "$c = 4$ N·s/m",
+                  "correct": true,
+                  "why": "$c_{\\text{crit}} = 2\\sqrt{m k} = 2\\sqrt{0.5 \\cdot 8} = 2\\sqrt{4} = 4$ N·s/m."
+                },
+                {
+                  "text": "$c = 16$ N·s/m",
+                  "why": "That's $2k$. Critical damping uses the square root of mass × stiffness: $2\\sqrt{mk}$."
+                },
+                {
+                  "text": "$c = 1$ N·s/m",
+                  "why": "That's our drone's air drag, which gives $\\zeta = 0.25$ here: underdamped."
                 }
               ]
             },
@@ -332,7 +541,9 @@
         "critical": "critically damped",
         "over": "overdamped"
       },
-      "together": "both, on one graph"
+      "together": "both, on one graph",
+      "forceSpring": "spring pull",
+      "forceDamper": "damper push"
     },
     "personality": {
       "title": "Two knobs, two dots, one personality",
@@ -367,7 +578,9 @@
       "springCap": "watch it on a spring",
       "re": "σ",
       "im": "ω",
-      "offMap": "{v} is off the map ←"
+      "offMap": "{v} is off the map ←",
+      "wd": "wiggle speed ωd",
+      "noWiggle": "no wiggle"
     },
     "race": {
       "title": "The damping race",
@@ -390,7 +603,35 @@
       "re": "σ",
       "im": "ω",
       "fastOff": "← fast one at {v} (off the map)",
-      "double": "both here"
+      "double": "both here",
+      "band5": "within 5%",
+      "sweet": "ζ = 0.7 overshoots by {os}%, but it's within 5% of the target after {y5} s. ζ = 1 needs {r5} s."
+    }
+  },
+  "plays": {
+    "units": {
+      "kp": "gain Kp, newtons per metre",
+      "e": "error, metres"
+    },
+    "wn": {
+      "k": "spring stiffness k, newtons per metre"
+    },
+    "zeta": {
+      "c": "damping c, newton-seconds per metre",
+      "regime": {
+        "under": "underdamped",
+        "critical": "critically damped",
+        "over": "overdamped"
+      }
+    },
+    "circle": {
+      "z": "damping ratio zeta"
+    },
+    "settle": {
+      "a": "shrink rate a, per second"
+    },
+    "drone": {
+      "kp": "gain Kp, newtons per metre"
     }
   }
 }

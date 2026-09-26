@@ -13,7 +13,7 @@ export const CHAPTERS: { ns: string; load: () => Promise<WidgetModule>; plays?: 
   { ns: 'ch03', load: () => import('./ch03/widgets') },
   { ns: 'ch04', load: () => import('./ch04/widgets'), plays: () => import('./ch04/plays') },
   { ns: 'ch05', load: () => import('./ch05/widgets') },
-  { ns: 'ch06', load: () => import('./ch06/widgets') },
+  { ns: 'ch06', load: () => import('./ch06/widgets'), plays: () => import('./ch06/plays') },
   { ns: 'ch07', load: () => import('./ch07/widgets') },
   { ns: 'ch08', load: () => import('./ch08/widgets') },
   { ns: 'ch09', load: () => import('./ch09/widgets') },

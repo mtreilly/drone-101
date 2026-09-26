@@ -5,6 +5,7 @@ import { overshootFormula, secondOrderSolution } from '../../math/second-order';
 import { DRONE, DroneSim, HOVER_THRUST, P_ONLY, defaultDroneConfig } from '../../sim/drone-model';
 import { MassSpringDamper } from '../../sim/msd-model';
 import type { WidgetFactory } from '../../story/types';
+import { color, withAlpha } from '../../ui/colors';
 import { readout, segmented, slider, transport } from '../../ui/controls';
 import { DroneView } from '../../ui/drone-view';
 import { Loop } from '../../ui/loop';
@@ -26,6 +27,7 @@ import {
   secondOrderRoots,
   setIconLabel,
   settling,
+  within,
 } from './helpers';
 
 const { m, c } = DRONE;
@@ -36,12 +38,12 @@ const twins: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
   mark(host);
   let kp = 20;
-  type Trace = { t: number[]; drone: number[]; thrust: number[]; spring: number[] };
+  type Trace = { t: number[]; drone: number[]; thrust: number[]; spring: number[]; vel: number[] };
   /** Whole 6 s run for both systems, so a slider drag redraws instantly. */
   const compute = (): Trace => {
     const msd = new MassSpringDamper(m, c, kp, () => 0, -1, 0);
     const drone = new DroneSim(defaultDroneConfig({ pid: { ...P_ONLY(kp), ff: HOVER_THRUST }, h0: 1 }));
-    const tr: Trace = { t: [0], drone: [drone.h - 2], thrust: [drone.thrust], spring: [msd.pos] };
+    const tr: Trace = { t: [0], drone: [drone.h - 2], thrust: [drone.thrust], spring: [msd.pos], vel: [msd.x[1]] };
     for (let i = 1; i <= RUN * 1000; i++) {
       msd.step();
       drone.step();
@@ -50,6 +52,7 @@ const twins: WidgetFactory = (host, ctx) => {
         tr.drone.push(drone.h - 2);
         tr.thrust.push(drone.thrust);
         tr.spring.push(msd.pos);
+        tr.vel.push(msd.x[1]);
       }
     }
     return tr;
@@ -64,6 +67,15 @@ const twins: WidgetFactory = (host, ctx) => {
   a.append(caption(t('spring')));
   const msdView = new MsdView(a, t('msdAria'), 60);
   msdView.el.style.maxWidth = '200px';
+  // the two forces on the mass, so each term of the equation has a picture
+  a.append(
+    h(
+      'p',
+      { class: 'force-key' },
+      h('span', null, h('span', { class: 'force-swatch spring', 'aria-hidden': 'true' }), t('forceSpring')),
+      h('span', null, h('span', { class: 'force-swatch damper', 'aria-hidden': 'true' }), t('forceDamper')),
+    ),
+  );
   b.append(caption(t('drone')));
   const droneView = new DroneView(b, { hMax: 3, width: 230 });
   pl.append(caption(t('together')));
@@ -98,6 +110,7 @@ const twins: WidgetFactory = (host, ctx) => {
   const show = (tt: number) => {
     const n = Math.min(tr.t.length - 1, Math.round(tt / 0.01));
     msdView.update(tr.spring[n], 0);
+    msdView.forces(-kp * tr.spring[n], -c * tr.vel[n]);
     droneView.update({ h: tr.drone[n] + 2, r: 2, thrust: tr.thrust[n] });
     plot.set('drone', tr.t.slice(0, n + 1), tr.drone.slice(0, n + 1));
     plot.set('spring', tr.t.slice(0, n + 1), tr.spring.slice(0, n + 1));
@@ -217,6 +230,7 @@ const personality: WidgetFactory = (host, ctx) => {
   const rTs = readout(t('settle'));
   const rRoots = readout(t('roots'));
   rRoots.el.style.flex = '2 1 9.5rem';
+  const rWd = readout(t('wd'));
   const rReg = readout(t('personality'));
   let resp = sample(() => 0, T1);
   let playT = 0;
@@ -261,6 +275,8 @@ const personality: WidgetFactory = (host, ctx) => {
     rTs.set(Number.isNaN(ts) ? t('never') : `${fmt(ts, 2)} s`);
     const rootsText = roots[0].im !== 0 ? `${fmt(roots[0].re, 2)} ± ${fmt(Math.abs(roots[0].im), 2)}i` : `${fmtC(roots[0])}, ${fmtC(roots[1])}`;
     rRoots.set(rootsText);
+    // the wiggle is a little slower than ωn: ωd = ωn√(1 − ζ²)
+    rWd.set(zeta < 1 ? `${fmt(wn * Math.sqrt(1 - zeta * zeta), 2)} rad/s` : t('noWiggle'));
     rReg.set(t(`regime.${regime(zeta)}`));
     plot.describe(t('describe', { z: fmt(zeta, 2), w: fmt(wn, 1), r: rootsText }));
   };
@@ -268,14 +284,14 @@ const personality: WidgetFactory = (host, ctx) => {
   const sz = slider({ label: t('zeta'), min: 0, max: 3, step: 0.01, value: zeta, onInput: (v) => ((zeta = v), update()) });
   onInteractStart(sw.input, () => plot.clear(true));
   onInteractStart(sz.input, () => plot.clear(true));
-  ctrlCell.append(h('div', { class: 'w-controls', style: { marginTop: '4px' } }, sw.el, sz.el), h('div', { class: 'readouts', style: { marginTop: '14px' } }, rOS.el, rTs.el, rRoots.el, rReg.el));
+  ctrlCell.append(h('div', { class: 'w-controls', style: { marginTop: '4px' } }, sw.el, sz.el), h('div', { class: 'readouts', style: { marginTop: '14px' } }, rOS.el, rTs.el, rRoots.el, rWd.el, rReg.el));
   host.append(panels);
   update();
   if (Loop.autoplay) loop.play();
   return () => loop.destroy();
 };
 
-/** June's "more damping is safer": race ζ = 1 against a heavier damper. */
+/** June's "more damping is safer": race ζ = 1 against a heavier damper (and a lighter one). */
 const race: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
   mark(host);
@@ -337,7 +353,9 @@ const race: WidgetFactory = (host, ctx) => {
     yours = sample(secondOrderSolution(m, 2 * zeta * wn * m, k, k, 0, 0), T1, 600);
     plot.set('ref', ref.xs, ref.ys);
     plot.set('y', yours.xs, yours.ys);
-    labelB.textContent = t('yoursZ', { z: fmt(zeta, 0) });
+    labelB.textContent = t('yoursZ', { z: fmt(zeta, zeta < 1 ? 1 : 0) });
+    // the sweet spot is judged on getting close (within 5%), so show that band for it
+    plot.setBands(zeta < 1 ? [{ kind: 'h', from: 0.95, to: 1.05, color: withAlpha(color('good'), 0.14), label: t('band5') }] : []);
     const roots = secondOrderRoots(wn, zeta);
     plane.set(
       roots.map((r, i) => {
@@ -351,21 +369,24 @@ const race: WidgetFactory = (host, ctx) => {
       const fast = clampToPlane(plane, roots[1].re, 0);
       fastLabel(fast.off ? t('fastOff', { v: fmt(roots[1].re, 1) }) : t('fast'), fast.re, 0, fast.off ? -4 : 0, -14, fast.off ? 'start' : 'middle');
     } else {
-      slowLabel(t('double'), roots[0].re, 0, 0, -14);
+      // a double root at ζ = 1; a complex pair needs no label
+      slowLabel(zeta === 1 ? t('double') : '', roots[0].re, 0, 0, -14);
       fastLabel('', 0, 0);
     }
     const sa = settling(ref.xs, ref.ys, 1, 1);
     const sb = settling(yours.xs, yours.ys, 1, 1);
     rA.set(`${fmt(sa, 2)} s`);
-    rB.set(Number.isNaN(sb) ? t('never') : `${fmt(sb, 2)} s`, zeta === 1 ? '' : sb > sa || Number.isNaN(sb) ? 'bad' : 'good');
-    status.textContent = zeta === 1 ? t('same') : t('slower', { k: fmt((Number.isNaN(sb) ? T1 : sb) / sa, 1) });
+    rB.set(Number.isNaN(sb) ? t('never') : `${fmt(sb, 2)} s`, zeta <= 1 ? '' : sb > sa || Number.isNaN(sb) ? 'bad' : 'good');
+    if (zeta < 1) {
+      status.textContent = t('sweet', { os: fmt(overshootFormula(zeta), 1), y5: fmt(within(yours, 0.05), 2), r5: fmt(within(ref, 0.05), 2) });
+    } else status.textContent = zeta === 1 ? t('same') : t('slower', { k: fmt((Number.isNaN(sb) ? T1 : sb) / sa, 1) });
     playT = 0;
     if (Loop.autoplay) loop.play();
     else showEnd();
   };
   const seg = segmented(
     t('choose'),
-    ['1', '3', '5'].map((v) => ({ value: v, label: `ζ = ${v}` })),
+    ['0.7', '1', '3', '5'].map((v) => ({ value: v, label: `ζ = ${fmt(Number(v), v === '0.7' ? 1 : 0)}` })),
     '3',
     (v) => {
       zeta = Number(v);

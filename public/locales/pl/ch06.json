@@ -24,6 +24,30 @@
           "text": "Po lewej: masa 0,5 kg zawieszona na sprężynie z tłumikiem (małym tłokiem wypełnionym olejem, który stawia opór ruchowi). Po prawej: nasz dron, ta sama masa, ten sam opór, z regulatorem proporcjonalnym."
         },
         {
+          "t": "p",
+          "text": "Najpierw zapiszmy po kolei wszystkie siły działające na masę. Położenie $x$ mierzymy od punktu spoczynku, w górę na plus."
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Sprężyna** ciągnie z powrotem do spoczynku, tym mocniej, im bardziej jest rozciągnięta: $-\\eff{k}\\,x$. Rozciągnij ją dwa razy bardziej, a pociągnie dwa razy mocniej.",
+            "**Tłumik** pcha przeciwko *ruchowi*, a nie przeciwko położeniu: $-c\\,\\dot{x}$. Gdy masa stoi, nic nie robi. Gdy pędzi, mocno się opiera. ($\\dot{x}$ to prędkość z rozdziału 3.)",
+            "**Grawitacja** tylko trochę obniża punkt spoczynku. Mierzenie od spoczynku załatwia sprawę."
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Siła = masa × przyspieszenie, a przyspieszenie to nachylenie nachylenia (rozdział 4). Dodaj siły i przenieś wszystko na jedną stronę:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\,\\ddot{x} = -\\eff{k}\\,x - c\\,\\dot{x} \\quad\\Longrightarrow\\quad m\\,\\ddot{x} + c\\,\\dot{x} + \\eff{k}\\,x = 0"
+        },
+        {
+          "t": "p",
+          "text": "W widżecie {eff|pomarańczowa strzałka} na masie to ciągnięcie sprężyny, a szara to pchnięcie tłumika. Zobacz, jak strzałka tłumika znika za każdym razem, gdy masa na chwilę zatrzymuje się na górze albo na dole wahnięcia."
+        },
+        {
           "t": "note",
           "text": "Żeby grawitacja nas nie rozpraszała, dajemy tu dronowi ciąg zawisu (4,9 N) za darmo, więc nie zwisa. Uczciwie zapracujemy na to w rozdziale 9."
         },
@@ -46,6 +70,31 @@
           "who": "theo",
           "mood": "happy",
           "text": "Czyli regulator P to wirtualna sprężyna, a opór powietrza $c$ to wirtualny tłumik. Wszystko, czego nauczymy się o sprężynach, dostajemy gratis."
+        },
+        {
+          "t": "callout",
+          "title": "Sprawdzamy jednostki",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Sztywność sprężyny $\\eff{k}$ mierzymy w **niutonach na metr**: tyle niutonów ciągnięcia na każdy metr rozciągnięcia. Nasze wzmocnienie $\\eff{K_p}$ zamienia metry uchybu w niutony ciągu, więc też jest w niutonach na metr. Regulator nie jest tylko *podobny* do sprężyny. Sądząc po jednostkach, on *jest* sprężyną."
+            },
+            {
+              "t": "play",
+              "id": "units",
+              "text": "Przy $\\eff{K_p}$ = {scrub|kp|eff} N/m dron o {scrub|e} m za nisko dostaje {calc|f|eff} N dodatkowego ciągu."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "Prawdziwe tłumiki",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Amortyzatory w samochodzie to tłumiki: olej przeciskany przez małe otworki, więc walczą z szybkim ruchem, a wolnego prawie nie zauważają. Tak samo działają zawiasy z cichym domykaniem w kuchennej szafce i samozamykacz u góry ciężkich drzwi. Wyjmij tłumiki z samochodu, a każdy wybój rozbuja go na dobre. Zrób je o wiele za sztywne, a każdy wybój poczujesz prosto na sobie."
+            }
+          ]
         }
       ]
     },
@@ -55,32 +104,116 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Każdy układ masa-sprężyna-tłumik, a więc każdy dron z regulatorem P, opisują tylko **dwie liczby**:"
+          "text": "Każdy układ masa-sprężyna-tłumik, a więc każdy dron z regulatorem P, opisują tylko **dwie liczby**. Zapracujmy na nie po kolei."
         },
         {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Pulsacja własna $\\omega_n = \\sqrt{k/m}$",
-              "def": "Jak szybko układ *chce* się wahać, w radianach na sekundę. Sztywniejsza sprężyna (większe $\\eff{k}$) albo lżejsza masa to szybsze wahania."
-            },
-            {
-              "term": "Współczynnik tłumienia $\\zeta = \\dfrac{c}{2\\sqrt{m k}}$",
-              "def": "Jak szybko wahania wygasają. To czysta liczba: 0 oznacza wahania w nieskończoność, 1 to dokładna granica między chybotaniem a jego brakiem."
-            }
-          ]
+          "t": "h3",
+          "text": "Jak szybko: pulsacja własna"
         },
         {
           "t": "p",
-          "text": "Przypomnij sobie sprężynę z rozdziałów 4 i 5, gdzie zgadywanie wykładniczej dało nam dwie wartości $s$. Dodaj tłumik, a to samo zgadywanie daje $m s^2 + c s + k = 0$. Jego dwa rozwiązania to dwa punkty na naszej mapie $s$. Podziel przez $m$, a dostaniesz"
+          "text": "Zabierz tłumik, a wracamy do rozdziału 5: sprężyna waha się jak $\\cos(\\omega t)$ z $\\omega = \\sqrt{k/m}$. Tę szybkość nazywamy **pulsacją własną** $\\omega_n$: jak szybko układ *chce* się wahać, gdy nic go nie hamuje."
+        },
+        {
+          "t": "math",
+          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{k}}{m}} \\qquad\\qquad \\text{jedno pełne wahnięcie co } \\frac{2\\pi}{\\omega_n} \\text{ s}"
+        },
+        {
+          "t": "play",
+          "id": "wn",
+          "text": "Przy k = {scrub|k|eff} N/m i m = 0,5 kg $\\omega_n$ ≈ {calc|wn} rad/s: jedno pełne wahnięcie co {calc|period} s."
+        },
+        {
+          "t": "p",
+          "text": "Sztywniejsza sprężyna ciągnie mocniej, więc waha się szybciej. Cięższą masę trudniej popchnąć, więc waha się wolniej. (Radiany na sekundę to szybkość wirowania z rozdziału 5: pełny obrót to 2π radianów.)"
+        },
+        {
+          "t": "h3",
+          "text": "Jak skocznie: współczynnik tłumienia"
+        },
+        {
+          "t": "p",
+          "text": "Teraz przywróćmy tłumik. Ile tłumienia to „dużo”? To zależy od sprężyny: tłumik, który poskramia miękką sprężynę, ledwo spowalnia sztywną. Porównujemy więc z jedną szczególną wartością, **tłumieniem krytycznym** $c_{\\text{kr}}$: najmniejszym tłumieniem, które całkiem usuwa przeregulowanie."
+        },
+        {
+          "t": "math",
+          "tex": "c_{\\text{kr}} = 2\\sqrt{m\\,\\eff{k}} \\qquad\\qquad \\zeta = \\frac{c}{c_{\\text{kr}}} = \\frac{c}{2\\sqrt{m\\,\\eff{k}}}"
+        },
+        {
+          "t": "p",
+          "text": "**Współczynnik tłumienia** ζ (grecka litera dzeta) to nasze tłumienie jako ułamek tamtego. To czysta liczba, bez jednostek. ζ = 0 waha się w nieskończoność, ζ = 1 to dokładnie tłumienie krytyczne, a ζ = 0,5 ma połowę tłumienia potrzebnego, żeby usunąć przeregulowanie."
+        },
+        {
+          "t": "play",
+          "id": "zeta",
+          "text": "Przy c = {scrub|c} N·s/m na sprężynie k = 20 N/m $c_{\\text{kr}}$ = {calc|ccrit} N·s/m, więc ζ = {calc|zeta}: {calc|regime}."
+        },
+        {
+          "t": "h3",
+          "text": "Dwie kropki na mapie"
+        },
+        {
+          "t": "p",
+          "text": "Wróćmy do mapy $s$. Zgadywanie $x = e^{st}$, jak w rozdziałach 4 i 5, zamienia równanie w $m s^2 + c s + k = 0$. Podziel przez $m$, a potem zapisz oba współczynniki za pomocą naszych pokręteł:"
+        },
+        {
+          "t": "math",
+          "tex": "s^2 + \\underbrace{\\frac{c}{m}}_{2\\zeta\\omega_n}\\, s + \\underbrace{\\frac{\\eff{k}}{m}}_{\\omega_n^2} = 0"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Chwileczkę. Skąd się wzięło to $2\\zeta\\omega_n$? Wygląda na wymyślone."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Wymnóż: $2\\zeta\\omega_n = 2 \\cdot \\frac{c}{2\\sqrt{mk}} \\cdot \\sqrt{\\frac{k}{m}} = \\frac{c}{m}$. To ta sama liczba, tylko pod nową nazwą, żeby nasze dwa pokrętła pojawiły się w równaniu."
+        },
+        {
+          "t": "p",
+          "text": "Rozwiąż je wzorem na pierwiastki równania kwadratowego, a wyjdą dwie wartości $s$:"
         },
         {
           "t": "math",
           "tex": "\\begin{aligned} & s^2 + 2\\zeta\\omega_n\\, s + \\omega_n^2 = 0 \\\\ \\Longrightarrow\\quad & s = -\\zeta\\omega_n \\pm \\omega_n\\sqrt{\\zeta^2 - 1} \\end{aligned}"
         },
         {
+          "t": "callout",
+          "title": "Skąd się bierze ±",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Każde równanie $s^2 + b\\,s + q = 0$ da się rozwiązać, uzupełniając do kwadratu: $(s + b/2)^2 = b^2/4 - q$. Pierwiastek kwadratowy ma dwie odpowiedzi, jedną z + i jedną z −, więc zawsze są **dwie** wartości $s$:"
+            },
+            {
+              "t": "math",
+              "tex": "s = -\\frac{b}{2} \\pm \\sqrt{\\frac{b^2}{4} - q}"
+            },
+            {
+              "t": "p",
+              "text": "Przy $b = 2\\zeta\\omega_n$ i $q = \\omega_n^2$ wyrażenie pod pierwiastkiem to $\\omega_n^2(\\zeta^2 - 1)$. Gdy ζ < 1, jest ujemne i potrzebujemy $i$ z rozdziału 5: obie odpowiedzi stają się lustrzaną parą, $-\\zeta\\omega_n \\pm i\\,\\omega_n\\sqrt{1-\\zeta^2}$. Przy ζ = 1 pierwiastek wynosi dokładnie zero i obie odpowiedzi się spotykają. Stąd właśnie $c_{\\text{kr}} = 2\\sqrt{mk}$: to tłumienie, przy którym pierwiastek znika."
+            }
+          ]
+        },
+        {
           "t": "p",
-          "text": "Znak ± daje dwie odpowiedzi, po jednej dla każdej kropki. Gdy tłumienie jest mniejsze od 1, wyrażenie pod pierwiastkiem jest ujemne: kropki mają tę samą pozycję poziomą, lecz przeciwne wysokości. Przy 1 się spotykają; powyżej 1 obie leżą na osi poziomej."
+          "text": "Znak ± daje dwie odpowiedzi, po jednej dla każdej kropki. Pozycja kropki w poziomie to **σ** (sigma): jak szybko ta część ruchu maleje. Jej wysokość to **ω**: jak szybko wiruje. Gdy tłumienie jest mniejsze od 1, kropki mają tę samą pozycję poziomą, lecz przeciwne wysokości. Przy 1 się spotykają; powyżej 1 obie leżą na osi poziomej."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Odpowiedź skokowa",
+              "def": "Jak układ reaguje na nagły skok celu, tutaj z 0 do 1 m. To standardowy sposób pokazywania charakteru."
+            },
+            {
+              "term": "Czas ustalania (2 %)",
+              "def": "Ile trwa, zanim odpowiedź na dobre zostanie w granicach 2 % od celu."
+            }
+          ]
         },
         {
           "t": "p",
@@ -105,6 +238,37 @@
             {
               "term": "Przetłumiony ($\\zeta > 1$)",
               "def": "Para rozdziela się wzdłuż osi rzeczywistej: jedna wartość ucieka w lewo, druga pełznie w stronę zera. Bez przeregulowania, ale ospale."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "W niedotłumionych kropkach kryje się jeszcze jeden szczegół: ich wysokość to $\\omega_n\\sqrt{1-\\zeta^2}$, trochę **mniej** niż $\\omega_n$. Tłumienie nie tylko zmniejsza kołysanie, ale też trochę je spowalnia. To **pulsacja tłumiona** $\\omega_d$ i widżet ją pokazuje."
+        },
+        {
+          "t": "math",
+          "tex": "\\omega_d = \\omega_n\\sqrt{1 - \\zeta^2}"
+        },
+        {
+          "t": "callout",
+          "title": "Dlaczego okrąg?",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Przerywany okrąg w widżecie to nie ozdoba. Dla ζ < 1 kropki leżą w $\\sigma = -\\zeta\\omega_n$ i $\\omega = \\pm\\omega_n\\sqrt{1-\\zeta^2}$. Z twierdzenia Pitagorasa ich odległość od 0 to"
+            },
+            {
+              "t": "math",
+              "tex": "\\sqrt{\\sigma^2 + \\omega^2} = \\sqrt{\\zeta^2\\omega_n^2 + \\omega_n^2\\,(1 - \\zeta^2)} = \\omega_n"
+            },
+            {
+              "t": "play",
+              "id": "circle",
+              "text": "Przy $\\omega_n$ = 3 i ζ = {scrub|z} kropki leżą w {calc|roots}, w odległości {calc|r} od 0."
+            },
+            {
+              "t": "p",
+              "text": "Zmiana ζ tylko przesuwa więc kropki po okręgu, a zmiana $\\omega_n$ zmienia rozmiar okręgu."
             }
           ]
         },
@@ -174,7 +338,26 @@
         },
         {
           "t": "p",
-          "text": "W tej odpowiedzi na skok długie oczekiwanie wyznacza **najwolniejszy składnik, który naprawdę występuje**. Zbyt małe tłumienie daje wahania, zbyt duże — powolne pełzanie. Przy prostej odpowiedzi jak ta $\\zeta$ około 0,7–1 często daje użyteczny kompromis. Inne zadania mogą wymagać innego."
+          "text": "Każdy składnik ruchu $e^{st}$ nazywamy **modem**. Ruch jest mieszanką modów, a gdy szybkie już wygasną, zostaje tylko najwolniejszy. Dlatego w tej odpowiedzi skokowej długie oczekiwanie wyznacza **najwolniejszy mod, który naprawdę występuje**."
+        },
+        {
+          "t": "callout",
+          "title": "Kiedy jest „ustalone”?",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Mod $e^{-at}$ spada do 2 %, gdy $e^{-at} = 0{,}02$, co zajmuje $t = \\ln 50 / a \\approx 3{,}9/a$. Przy stałej czasowej $\\tau = 1/a$ to około czterech stałych czasowych: znowu linijka z rozdziału 3. Po 4τ zostaje tylko $e^{-4} \\approx 1{,}8\\%$."
+            },
+            {
+              "t": "play",
+              "id": "settle",
+              "text": "Mod, który maleje w tempie a = {scrub|a} na sekundę, mieści się w 2 % po około {calc|ts} s."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Zbyt małe tłumienie daje wahania, zbyt duże — powolne pełzanie. Pomiędzy jest złoty środek. Wybierz w wyścigu ζ = 0,7: przeregulowanie jest mniejsze niż 5 %, ale układ trafia **w granice 5 % od celu** dużo wcześniej niż przy ζ = 1. Wiele projektów celuje w ζ mniej więcej od 0,7 do 1, wymieniając małe przeregulowanie na szybkość. Inne zadania mogą wymagać innego kompromisu."
         }
       ]
     },
@@ -201,8 +384,13 @@
           "text": "I nie dostaniemy więcej tłumienia bez mocnego skręcenia $\\eff{K_p}$, a to przywraca zwis. Potrzebujemy sposobu, żeby dodawać tłumienie *celowo*."
         },
         {
-          "t": "note",
-          "text": "Wypróbuj to w pierwszym widżecie: przesuwaj $K_p$ i patrz, jak ζ spada, a wahania robią się coraz dziksze."
+          "t": "p",
+          "text": "Przeciągnij wzmocnienie i zobacz cały kompromis w jednym zdaniu:"
+        },
+        {
+          "t": "play",
+          "id": "drone",
+          "text": "Przy $\\eff{K_p}$ = {scrub|kp|eff} N/m: ζ = {calc|zeta}, $\\omega_n$ = {calc|wn} rad/s, a bez darmowego ciągu zawisu zwis wyniósłby {calc|droop} m."
         }
       ]
     },
@@ -215,7 +403,9 @@
           "items": [
             "Dron z regulatorem P podlega **dokładnie** temu samemu równaniu co masa na sprężynie: regulator to wirtualna sprężyna.",
             "Jego charakter opisują dwie liczby: $\\omega_n$ (jak szybko) i $\\zeta$ (jak skocznie).",
+            "$\\omega_n = \\sqrt{k/m}$ to szybkość wahań bez tłumika. $\\zeta = c/c_{\\text{kr}}$ porównuje tłumienie z tłumieniem krytycznym $2\\sqrt{mk}$, które akurat usuwa przeregulowanie.",
             "Ruch jest mieszanką dwóch składników $e^{st}$. Dwie wartości $s$ leżą na okręgu o promieniu $\\omega_n$, gdy układ jest niedotłumiony, i rozdzielają się wzdłuż osi rzeczywistej, gdy jest przetłumiony.",
+            "Tłumienie też trochę spowalnia kołysanie: $\\omega_d = \\omega_n\\sqrt{1-\\zeta^2}$.",
             "Więcej tłumienia to nie zawsze lepiej: powyżej $\\zeta = 1$ powolna wartość $s$ pełznie w stronę zera i wszystko zwalnia.",
             "W dronie więcej $K_p$ oznacza mniej tłumienia. Dlatego robił się coraz bardziej chybotliwy."
           ]
@@ -265,6 +455,25 @@
               ]
             },
             {
+              "id": "ch6-q5",
+              "q": "Sprężyna o $k = 8$ N/m trzyma masę 0,5 kg. Jakie tłumienie $c$ sprawi, że będzie tłumiona krytycznie?",
+              "options": [
+                {
+                  "text": "$c = 4$ N·s/m",
+                  "correct": true,
+                  "why": "$c_{\\text{kr}} = 2\\sqrt{m k} = 2\\sqrt{0{,}5 \\cdot 8} = 2\\sqrt{4} = 4$ N·s/m."
+                },
+                {
+                  "text": "$c = 16$ N·s/m",
+                  "why": "To $2k$. Tłumienie krytyczne używa pierwiastka z masy × sztywność: $2\\sqrt{mk}$."
+                },
+                {
+                  "text": "$c = 1$ N·s/m",
+                  "why": "To opór powietrza naszego drona, który daje tu $\\zeta = 0{,}25$: układ niedotłumiony."
+                }
+              ]
+            },
+            {
               "id": "ch6-q3",
               "q": "Przy samym regulatorze P jakie $K_p$ dałoby drona tłumionego krytycznie ($\\zeta = 1$)?",
               "options": [
@@ -290,7 +499,7 @@
                 {
                   "text": "$-0{,}2$",
                   "correct": true,
-                  "why": "$e^{-0{,}2t}$ potrzebuje około 20 s, żeby wygasnąć do 2 %, a $e^{-10t}$ znika w 0,4 s. Rządzi ta najbliższa osi pionowej."
+                  "why": "$e^{-0{,}2t}$ potrzebuje około 20 s, żeby wygasnąć do 2 %, a $e^{-10t}$ znika w 0,4 s. Rządzi ta najbliższa osi pionowej."
                 },
                 {
                   "text": "$-10$",
@@ -332,7 +541,9 @@
         "critical": "tłumiony krytycznie",
         "over": "przetłumiony"
       },
-      "together": "oba na jednym wykresie"
+      "together": "oba na jednym wykresie",
+      "forceSpring": "ciągnięcie sprężyny",
+      "forceDamper": "pchnięcie tłumika"
     },
     "personality": {
       "title": "Dwa pokrętła, dwie kropki, jeden charakter",
@@ -351,7 +562,7 @@
       "wn": "Pulsacja własna $\\omega_n$",
       "zeta": "Współczynnik tłumienia $\\zeta$",
       "overshoot": "przeregulowanie",
-      "settle": "ustala się (2 %)",
+      "settle": "ustala się (2 %)",
       "roots": "dwie wartości s",
       "personality": "charakter",
       "never": "nigdy",
@@ -367,7 +578,9 @@
       "springCap": "zobacz to na sprężynie",
       "re": "σ",
       "im": "ω",
-      "offMap": "{v} jest poza mapą ←"
+      "offMap": "{v} jest poza mapą ←",
+      "wd": "szybkość kołysania ωd",
+      "noWiggle": "bez kołysania"
     },
     "race": {
       "title": "Wyścig tłumienia",
@@ -390,7 +603,35 @@
       "re": "σ",
       "im": "ω",
       "fastOff": "← szybka w {v} (poza mapą)",
-      "double": "obie tutaj"
+      "double": "obie tutaj",
+      "band5": "w granicach 5 %",
+      "sweet": "ζ = 0,7 przeregulowuje o {os} %, ale jest w granicach 5 % od celu po {y5} s. ζ = 1 potrzebuje {r5} s."
+    }
+  },
+  "plays": {
+    "units": {
+      "kp": "wzmocnienie Kp, niutony na metr",
+      "e": "uchyb, metry"
+    },
+    "wn": {
+      "k": "sztywność sprężyny k, niutony na metr"
+    },
+    "zeta": {
+      "c": "tłumienie c, niutonosekundy na metr",
+      "regime": {
+        "under": "niedotłumiony",
+        "critical": "tłumiony krytycznie",
+        "over": "przetłumiony"
+      }
+    },
+    "circle": {
+      "z": "współczynnik tłumienia dzeta"
+    },
+    "settle": {
+      "a": "tempo malenia a, na sekundę"
+    },
+    "drone": {
+      "kp": "wzmocnienie Kp, niutony na metr"
     }
   }
 }

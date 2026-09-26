@@ -24,6 +24,30 @@
           "text": "A la izquierda: una masa de 0,5 kg colgada de un resorte con un amortiguador (un pistoncito lleno de aceite que se resiste al movimiento). A la derecha: nuestro dron, misma masa, mismo rozamiento, con control proporcional."
         },
         {
+          "t": "p",
+          "text": "Primero, escribamos todas las fuerzas sobre la masa, una por una. Medimos su posición $x$ desde el punto de reposo, con el sentido hacia arriba como positivo."
+        },
+        {
+          "t": "list",
+          "items": [
+            "**El resorte** tira de vuelta hacia el reposo, más fuerte cuanto más estirado está: $-\\eff{k}\\,x$. Estíralo el doble y tira el doble de fuerte.",
+            "**El amortiguador** empuja contra el *movimiento*, no contra la posición: $-c\\,\\dot{x}$. Quieto, no hace nada. Moviéndose rápido, empuja fuerte en contra. ($\\dot{x}$ es la velocidad del capítulo 3.)",
+            "**La gravedad** solo baja un poco el punto de reposo. Medir desde el reposo ya la tiene en cuenta."
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Fuerza = masa × aceleración, y la aceleración es la pendiente de la pendiente (capítulo 4). Suma las fuerzas y pasa todo a un lado:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\,\\ddot{x} = -\\eff{k}\\,x - c\\,\\dot{x} \\quad\\Longrightarrow\\quad m\\,\\ddot{x} + c\\,\\dot{x} + \\eff{k}\\,x = 0"
+        },
+        {
+          "t": "p",
+          "text": "En el widget, la {eff|flecha naranja} sobre la masa es el tirón del resorte y la gris es el empuje del amortiguador. Fíjate en cómo la flecha del amortiguador desaparece cada vez que la masa se para un instante arriba o abajo de una oscilación."
+        },
+        {
           "t": "note",
           "text": "Para que la gravedad no nos distraiga, aquí le regalamos al dron su empuje de vuelo estacionario (4,9 N), así que no cae. Nos lo ganaremos honradamente en el capítulo 9."
         },
@@ -46,6 +70,31 @@
           "who": "theo",
           "mood": "happy",
           "text": "Así que un controlador P es un resorte virtual, y el rozamiento del aire $c$ es un amortiguador virtual. Todo lo que aprendamos sobre resortes nos sale gratis."
+        },
+        {
+          "t": "callout",
+          "title": "Comprobación de unidades",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "La rigidez de un resorte $\\eff{k}$ se mide en **newtons por metro**: newtons de tirón por cada metro de estiramiento. Nuestra ganancia $\\eff{K_p}$ convierte metros de error en newtons de empuje, así que también son newtons por metro. El controlador no solo se *parece* a un resorte. Por las unidades, *es* uno."
+            },
+            {
+              "t": "play",
+              "id": "units",
+              "text": "Con $\\eff{K_p}$ = {scrub|kp|eff} N/m, un dron que está {scrub|e} m demasiado bajo recibe {calc|f|eff} N de empuje extra."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "Amortiguadores de verdad",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Los amortiguadores de un coche son justo eso: aceite que se aprieta a través de agujeritos, así que luchan contra el movimiento rápido y apenas notan el lento. También lo son las bisagras de cierre suave de un armario de cocina y el cierrapuertas de lo alto de una puerta pesada. Quítale los amortiguadores a un coche y cada bache lo pone a botar. Hazlos demasiado duros y cada bache te llega entero."
+            }
+          ]
         }
       ]
     },
@@ -55,32 +104,116 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Todo sistema masa-resorte-amortiguador, y por tanto todo dron con control P, se describe con solo **dos números**:"
+          "text": "Todo sistema masa-resorte-amortiguador, y por tanto todo dron con control P, se describe con solo **dos números**. Ganémonoslos uno por uno."
         },
         {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Frecuencia natural $\\omega_n = \\sqrt{k/m}$",
-              "def": "Lo rápido que *quiere* oscilar, en radianes por segundo. Un resorte más rígido ($\\eff{k}$ más grande) o una masa más ligera significan una oscilación más rápida."
-            },
-            {
-              "term": "Coeficiente de amortiguamiento $\\zeta = \\dfrac{c}{2\\sqrt{m k}}$",
-              "def": "Lo rápido que se apaga la oscilación. Es un número puro: 0 significa que oscila para siempre, y 1 es la frontera exacta entre tambalearse y no hacerlo."
-            }
-          ]
+          "t": "h3",
+          "text": "Lo rápido: la frecuencia natural"
         },
         {
           "t": "p",
-          "text": "Recuerda el resorte de los capítulos 4 y 5, donde probar con una exponencial nos dio dos valores de $s$. Añade un amortiguador y la misma suposición da $m s^2 + c s + k = 0$. Sus dos soluciones son dos puntos en nuestro mapa de $s$. Divide entre $m$ y queda"
+          "text": "Quita el amortiguador y volvemos al capítulo 5: el resorte oscila como $\\cos(\\omega t)$ con $\\omega = \\sqrt{k/m}$. A esa rapidez la llamamos **frecuencia natural** $\\omega_n$: lo rápido que el sistema *quiere* oscilar cuando nada lo frena."
+        },
+        {
+          "t": "math",
+          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{k}}{m}} \\qquad\\qquad \\text{una oscilación completa cada } \\frac{2\\pi}{\\omega_n} \\text{ s}"
+        },
+        {
+          "t": "play",
+          "id": "wn",
+          "text": "Con k = {scrub|k|eff} N/m y m = 0,5 kg, $\\omega_n$ ≈ {calc|wn} rad/s: una oscilación completa cada {calc|period} s."
+        },
+        {
+          "t": "p",
+          "text": "Un resorte más rígido tira más fuerte, así que oscila más rápido. Una masa más pesada cuesta más de mover, así que oscila más despacio. (Los radianes por segundo son la velocidad de giro del capítulo 5: una vuelta completa son 2π radianes.)"
+        },
+        {
+          "t": "h3",
+          "text": "Lo saltarín: el coeficiente de amortiguamiento"
+        },
+        {
+          "t": "p",
+          "text": "Ahora vuelve a poner el amortiguador. ¿Cuánto amortiguamiento es \"mucho\"? Depende del resorte: un amortiguador que doma un resorte blando apenas frena uno rígido. Así que comparamos con una cantidad especial, el **amortiguamiento crítico** $c_{\\text{crit}}$: el menor amortiguamiento que elimina por completo el sobreimpulso."
+        },
+        {
+          "t": "math",
+          "tex": "c_{\\text{crit}} = 2\\sqrt{m\\,\\eff{k}} \\qquad\\qquad \\zeta = \\frac{c}{c_{\\text{crit}}} = \\frac{c}{2\\sqrt{m\\,\\eff{k}}}"
+        },
+        {
+          "t": "p",
+          "text": "El **coeficiente de amortiguamiento** ζ (la letra griega zeta) es nuestro amortiguamiento como fracción de esa cantidad. Es un número puro, sin unidades. ζ = 0 oscila para siempre, ζ = 1 es exactamente crítico, y ζ = 0,5 tiene la mitad del amortiguamiento que haría falta para eliminar el sobreimpulso."
+        },
+        {
+          "t": "play",
+          "id": "zeta",
+          "text": "Con c = {scrub|c} N·s/m en un resorte de k = 20 N/m, $c_{\\text{crit}}$ = {calc|ccrit} N·s/m, así que ζ = {calc|zeta}: {calc|regime}."
+        },
+        {
+          "t": "h3",
+          "text": "Los dos puntos del mapa"
+        },
+        {
+          "t": "p",
+          "text": "Ahora volvamos al mapa de $s$. Probar con $x = e^{st}$, como en los capítulos 4 y 5, convierte la ecuación en $m s^2 + c s + k = 0$. Divide entre $m$ y escribe los dos coeficientes con nuestros mandos:"
+        },
+        {
+          "t": "math",
+          "tex": "s^2 + \\underbrace{\\frac{c}{m}}_{2\\zeta\\omega_n}\\, s + \\underbrace{\\frac{\\eff{k}}{m}}_{\\omega_n^2} = 0"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Un momento. ¿De dónde sale ese $2\\zeta\\omega_n$? Parece inventado."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Multiplícalo: $2\\zeta\\omega_n = 2 \\cdot \\frac{c}{2\\sqrt{mk}} \\cdot \\sqrt{\\frac{k}{m}} = \\frac{c}{m}$. Es el mismo número con otro nombre, para que nuestros dos mandos aparezcan en la ecuación."
+        },
+        {
+          "t": "p",
+          "text": "Resuélvela con la fórmula de la ecuación de segundo grado y salen los dos valores de $s$:"
         },
         {
           "t": "math",
           "tex": "\\begin{aligned} & s^2 + 2\\zeta\\omega_n\\, s + \\omega_n^2 = 0 \\\\ \\Longrightarrow\\quad & s = -\\zeta\\omega_n \\pm \\omega_n\\sqrt{\\zeta^2 - 1} \\end{aligned}"
         },
         {
+          "t": "callout",
+          "title": "De dónde sale el ±",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Cualquier ecuación $s^2 + b\\,s + q = 0$ se puede resolver completando el cuadrado: $(s + b/2)^2 = b^2/4 - q$. Una raíz cuadrada tiene dos respuestas, una con + y otra con −, así que siempre hay **dos** valores de $s$:"
+            },
+            {
+              "t": "math",
+              "tex": "s = -\\frac{b}{2} \\pm \\sqrt{\\frac{b^2}{4} - q}"
+            },
+            {
+              "t": "p",
+              "text": "Con $b = 2\\zeta\\omega_n$ y $q = \\omega_n^2$, lo que queda bajo la raíz es $\\omega_n^2(\\zeta^2 - 1)$. Cuando ζ < 1 es negativo, y necesitamos la $i$ del capítulo 5: las dos respuestas se convierten en una pareja reflejada, $-\\zeta\\omega_n \\pm i\\,\\omega_n\\sqrt{1-\\zeta^2}$. En ζ = 1 la raíz vale exactamente cero y las dos respuestas se juntan. De ahí sale $c_{\\text{crit}} = 2\\sqrt{mk}$: es el amortiguamiento que hace desaparecer la raíz."
+            }
+          ]
+        },
+        {
           "t": "p",
-          "text": "El signo ± da dos respuestas, una por cada punto. Cuando el amortiguamiento es menor que 1, lo que hay bajo la raíz es negativo: los puntos comparten posición horizontal, pero tienen alturas opuestas. En 1 se juntan; por encima de 1 ambos quedan en el eje horizontal."
+          "text": "El signo ± da dos respuestas, una por cada punto. La posición horizontal de un punto es **σ** (sigma): lo rápido que se encoge esa parte del movimiento. Su altura es **ω**: lo rápido que gira. Cuando el amortiguamiento es menor que 1, los puntos comparten posición horizontal, pero tienen alturas opuestas. En 1 se juntan; por encima de 1 ambos quedan en el eje horizontal."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Respuesta al escalón",
+              "def": "Cómo responde un sistema a un salto repentino de su objetivo, aquí de 0 a 1 m. Es la forma habitual de mostrar una personalidad."
+            },
+            {
+              "term": "Tiempo de establecimiento (2 %)",
+              "def": "Cuánto tarda la respuesta en quedarse para siempre dentro del 2 % del objetivo."
+            }
+          ]
         },
         {
           "t": "p",
@@ -105,6 +238,37 @@
             {
               "term": "Sobreamortiguado ($\\zeta > 1$)",
               "def": "La pareja se separa a lo largo del eje real: uno se va a la izquierda y el otro se arrastra hacia el cero. Sin sobreimpulso, pero lento."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Un detalle más se esconde en los puntos subamortiguados: su altura es $\\omega_n\\sqrt{1-\\zeta^2}$, algo **menor** que $\\omega_n$. El amortiguamiento no solo encoge la oscilación, también la frena un poco. Es la **frecuencia amortiguada** $\\omega_d$, y el widget la muestra."
+        },
+        {
+          "t": "math",
+          "tex": "\\omega_d = \\omega_n\\sqrt{1 - \\zeta^2}"
+        },
+        {
+          "t": "callout",
+          "title": "¿Por qué un círculo?",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "El círculo discontinuo del widget no es decoración. Para ζ < 1 los puntos están en $\\sigma = -\\zeta\\omega_n$ y $\\omega = \\pm\\omega_n\\sqrt{1-\\zeta^2}$. Por Pitágoras, su distancia a 0 es"
+            },
+            {
+              "t": "math",
+              "tex": "\\sqrt{\\sigma^2 + \\omega^2} = \\sqrt{\\zeta^2\\omega_n^2 + \\omega_n^2\\,(1 - \\zeta^2)} = \\omega_n"
+            },
+            {
+              "t": "play",
+              "id": "circle",
+              "text": "Con $\\omega_n$ = 3 y ζ = {scrub|z}, los puntos están en {calc|roots}, a una distancia {calc|r} de 0."
+            },
+            {
+              "t": "p",
+              "text": "Así que cambiar ζ solo desliza los puntos por el círculo, y cambiar $\\omega_n$ cambia el tamaño del círculo."
             }
           ]
         },
@@ -174,7 +338,26 @@
         },
         {
           "t": "p",
-          "text": "En esta respuesta a un escalón, el **modo más lento que realmente aparece** determina la espera larga. Poco amortiguamiento hace oscilar; demasiado hace avanzar a rastras. En una respuesta sencilla como esta, $\\zeta$ entre 0,7 y 1 suele dar un equilibrio útil. Otras tareas pueden preferir otro."
+          "text": "Cada ingrediente $e^{st}$ del movimiento se llama **modo**. El movimiento es una mezcla de modos, y cuando los rápidos se han apagado, solo queda el más lento. Así que en esta respuesta al escalón, el **modo más lento que realmente aparece** determina la espera larga."
+        },
+        {
+          "t": "callout",
+          "title": "¿Cuánto es \"estabilizado\"?",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Un modo $e^{-at}$ se ha encogido hasta el 2 % cuando $e^{-at} = 0.02$, lo que tarda $t = \\ln 50 / a \\approx 3.9/a$. Con una constante de tiempo $\\tau = 1/a$, son unas cuatro constantes de tiempo: otra vez la regla del capítulo 3. Tras 4τ solo queda $e^{-4} \\approx 1.8\\%$."
+            },
+            {
+              "t": "play",
+              "id": "settle",
+              "text": "Un modo que se encoge con a = {scrub|a} por segundo queda dentro del 2 % tras unos {calc|ts} s."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Poco amortiguamiento hace oscilar; demasiado hace avanzar a rastras. Entre medias hay un punto justo. Elige ζ = 0,7 en la carrera: tiene un sobreimpulso de menos del 5 %, pero llega **a menos del 5 % del objetivo** mucho antes que ζ = 1. Muchos diseños buscan un ζ entre 0,7 y 1, más o menos, y cambian un pequeño sobreimpulso por rapidez. Otras tareas pueden preferir otro equilibrio."
         }
       ]
     },
@@ -201,8 +384,13 @@
           "text": "Y no podemos conseguir más amortiguamiento sin bajar muchísimo $\\eff{K_p}$, lo que nos devuelve la caída. Necesitamos una forma de añadir amortiguamiento *a propósito*."
         },
         {
-          "t": "note",
-          "text": "Pruébalo en el primer widget: mueve $K_p$ y mira cómo baja ζ mientras las oscilaciones se vuelven más locas."
+          "t": "p",
+          "text": "Arrastra la ganancia y mira el compromiso en una sola frase:"
+        },
+        {
+          "t": "play",
+          "id": "drone",
+          "text": "Con $\\eff{K_p}$ = {scrub|kp|eff} N/m: ζ = {calc|zeta}, $\\omega_n$ = {calc|wn} rad/s, y sin el empuje de vuelo estacionario regalado caería {calc|droop} m."
         }
       ]
     },
@@ -215,7 +403,9 @@
           "items": [
             "Un dron con control P obedece **exactamente** la misma ecuación que una masa colgada de un resorte: el controlador es un resorte virtual.",
             "Dos números resumen su personalidad: $\\omega_n$ (lo rápido) y $\\zeta$ (lo saltarín).",
+            "$\\omega_n = \\sqrt{k/m}$ es la rapidez de oscilación sin amortiguador. $\\zeta = c/c_{\\text{crit}}$ compara el amortiguamiento con el amortiguamiento crítico $2\\sqrt{mk}$, el justo para eliminar el sobreimpulso.",
             "El movimiento es una mezcla de dos términos $e^{st}$. Los dos valores de $s$ están sobre un círculo de radio $\\omega_n$ cuando está subamortiguado, y se separan a lo largo del eje real cuando está sobreamortiguado.",
+            "El amortiguamiento también frena un poco la oscilación: $\\omega_d = \\omega_n\\sqrt{1-\\zeta^2}$.",
             "Más amortiguamiento no siempre es mejor: pasado $\\zeta = 1$, el valor lento de $s$ se arrastra hacia el cero y todo se ralentiza.",
             "Para el dron, más $K_p$ significa menos amortiguamiento. Por eso se tambaleaba más."
           ]
@@ -261,6 +451,25 @@
                 {
                   "text": "Sobreamortiguado, $\\zeta > 1$",
                   "why": "Para sobreamortiguar hace falta mucho amortiguamiento en comparación con la rigidez. Nuestra ganancia es alta y nuestro rozamiento, pequeño: justo lo contrario."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q5",
+              "q": "Un resorte con $k = 8$ N/m sostiene una masa de 0,5 kg. ¿Cuánto amortiguamiento $c$ hace falta para que tenga amortiguamiento crítico?",
+              "options": [
+                {
+                  "text": "$c = 4$ N·s/m",
+                  "correct": true,
+                  "why": "$c_{\\text{crit}} = 2\\sqrt{m k} = 2\\sqrt{0.5 \\cdot 8} = 2\\sqrt{4} = 4$ N·s/m."
+                },
+                {
+                  "text": "$c = 16$ N·s/m",
+                  "why": "Eso es $2k$. El amortiguamiento crítico usa la raíz cuadrada de masa × rigidez: $2\\sqrt{mk}$."
+                },
+                {
+                  "text": "$c = 1$ N·s/m",
+                  "why": "Ese es el rozamiento del aire de nuestro dron, que aquí da $\\zeta = 0.25$: subamortiguado."
                 }
               ]
             },
@@ -316,7 +525,7 @@
   ],
   "widgets": {
     "twins": {
-      "title": "Muelle vs. dron",
+      "title": "Resorte vs. dron",
       "spring": "masa colgada de un resorte",
       "drone": "dron con control P",
       "msdAria": "Una masa colgada de un resorte y un amortiguador, rebotando alrededor de su posición de reposo.",
@@ -332,7 +541,9 @@
         "critical": "amortiguamiento crítico",
         "over": "sobreamortiguado"
       },
-      "together": "los dos, en una gráfica"
+      "together": "los dos, en una gráfica",
+      "forceSpring": "tirón del resorte",
+      "forceDamper": "empuje del amortiguador"
     },
     "personality": {
       "title": "Dos mandos, dos puntos, una personalidad",
@@ -367,7 +578,9 @@
       "springCap": "míralo en un resorte",
       "re": "σ",
       "im": "ω",
-      "offMap": "{v} está fuera del mapa ←"
+      "offMap": "{v} está fuera del mapa ←",
+      "wd": "rapidez de oscilación ωd",
+      "noWiggle": "sin oscilación"
     },
     "race": {
       "title": "La carrera del amortiguamiento",
@@ -390,7 +603,35 @@
       "re": "σ",
       "im": "ω",
       "fastOff": "← el rápido en {v} (fuera del mapa)",
-      "double": "los dos aquí"
+      "double": "los dos aquí",
+      "band5": "dentro del 5 %",
+      "sweet": "ζ = 0,7 tiene un sobreimpulso del {os} %, pero queda dentro del 5 % del objetivo tras {y5} s. ζ = 1 necesita {r5} s."
+    }
+  },
+  "plays": {
+    "units": {
+      "kp": "ganancia Kp, newtons por metro",
+      "e": "error, metros"
+    },
+    "wn": {
+      "k": "rigidez del resorte k, newtons por metro"
+    },
+    "zeta": {
+      "c": "amortiguamiento c, newton segundos por metro",
+      "regime": {
+        "under": "subamortiguado",
+        "critical": "con amortiguamiento crítico",
+        "over": "sobreamortiguado"
+      }
+    },
+    "circle": {
+      "z": "coeficiente de amortiguamiento zeta"
+    },
+    "settle": {
+      "a": "ritmo de encogimiento a, por segundo"
+    },
+    "drone": {
+      "kp": "ganancia Kp, newtons por metro"
     }
   }
 }

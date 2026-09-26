@@ -24,6 +24,30 @@
           "text": "A sinistra: una massa di 0,5 kg appesa a una molla con uno smorzatore (un pistoncino pieno d'olio che si oppone al movimento). A destra: il nostro drone, stessa massa, stesso attrito, con controllo proporzionale."
         },
         {
+          "t": "p",
+          "text": "Prima di tutto, scriviamo ogni forza che agisce sulla massa, una alla volta. Misuriamo la sua posizione $x$ dal punto di riposo, con l'alto come verso positivo."
+        },
+        {
+          "t": "list",
+          "items": [
+            "**La molla** tira indietro verso il riposo, tanto più forte quanto più è allungata: $-\\eff{k}\\,x$. Allungala il doppio e tira il doppio.",
+            "**Lo smorzatore** si oppone al *movimento*, non alla posizione: $-c\\,\\dot{x}$. Da fermo non fa niente. Se si muove veloce, spinge indietro forte. ($\\dot{x}$ è la velocità del Capitolo 3.)",
+            "**La gravità** sposta solo un po' più in basso il punto di riposo. Misurando dal riposo, ce ne liberiamo."
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Forza = massa × accelerazione, e l'accelerazione è la pendenza della pendenza (Capitolo 4). Sommiamo le forze e portiamo tutto da una parte:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\,\\ddot{x} = -\\eff{k}\\,x - c\\,\\dot{x} \\quad\\Longrightarrow\\quad m\\,\\ddot{x} + c\\,\\dot{x} + \\eff{k}\\,x = 0"
+        },
+        {
+          "t": "p",
+          "text": "Nella simulazione, la {eff|freccia arancione} sulla massa è la trazione della molla e quella grigia è la spinta dello smorzatore. Guarda come la freccia dello smorzatore sparisce ogni volta che la massa si ferma per un istante in cima o in fondo a un'oscillazione."
+        },
+        {
           "t": "note",
           "text": "Per non farci distrarre dalla gravità, qui regaliamo al drone la sua spinta necessaria per restare in volo stazionario (4,9 N), così non si abbassa. Ce la guadagneremo onestamente nel Capitolo 9."
         },
@@ -46,6 +70,31 @@
           "who": "theo",
           "mood": "happy",
           "text": "Quindi un controllore P è una molla virtuale, e l'attrito dell'aria $c$ è uno smorzatore virtuale. Tutto quello che impariamo sulle molle ce lo ritroviamo gratis."
+        },
+        {
+          "t": "callout",
+          "title": "Controllo delle unità",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "La rigidezza $\\eff{k}$ di una molla si misura in **newton al metro**: newton di trazione per ogni metro di allungamento. Il nostro guadagno $\\eff{K_p}$ trasforma metri di errore in newton di spinta, quindi anche lui è in newton al metro. Il controllore non è solo *simile* a una molla. Unità alla mano, *è* una molla."
+            },
+            {
+              "t": "play",
+              "id": "units",
+              "text": "Con $\\eff{K_p}$ = {scrub|kp|eff} N/m, un drone {scrub|e} m troppo in basso riceve {calc|f|eff} N di spinta in più."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "Smorzatori veri",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Gli ammortizzatori di un'auto sono smorzatori: olio spremuto attraverso piccoli fori, così combattono i movimenti rapidi e quasi non si accorgono di quelli lenti. Lo sono anche le cerniere a chiusura ammortizzata di un pensile della cucina e il chiudiporta in cima a una porta pesante. Togli gli ammortizzatori a un'auto e ogni buca la fa rimbalzare. Rendili troppo rigidi e ogni buca ti arriva dritta addosso."
+            }
+          ]
         }
       ]
     },
@@ -55,32 +104,116 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Ogni sistema massa-molla-smorzatore, e quindi ogni drone con controllo P, è descritto da soli **due numeri**:"
+          "text": "Ogni sistema massa-molla-smorzatore, e quindi ogni drone con controllo P, è descritto da soli **due numeri**. Guadagniamoceli uno alla volta."
         },
         {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Pulsazione naturale $\\omega_n = \\sqrt{k/m}$",
-              "def": "Quanto in fretta *vuole* oscillare, in radianti al secondo. Una molla più rigida ($\\eff{k}$ più grande) o una massa più leggera vogliono dire un'oscillazione più rapida."
-            },
-            {
-              "term": "Coefficiente di smorzamento $\\zeta = \\dfrac{c}{2\\sqrt{m k}}$",
-              "def": "Quanto in fretta si spegne l'oscillazione. È un numero puro: 0 vuol dire che oscilla per sempre, 1 è il confine esatto tra ballare e non ballare."
-            }
-          ]
+          "t": "h3",
+          "text": "Quanto è rapido: la pulsazione naturale"
         },
         {
           "t": "p",
-          "text": "Ora ripensa alla molla dei Capitoli 4 e 5, dove provare un esponenziale ci ha dato due valori di $s$. Aggiungi uno smorzatore e la stessa ipotesi dà $m s^2 + c s + k = 0$. Le sue due soluzioni sono due punti sulla nostra mappa di $s$. Dividi per $m$ e diventa"
+          "text": "Togli lo smorzatore e siamo di nuovo nel Capitolo 5: la molla oscilla come $\\cos(\\omega t)$ con $\\omega = \\sqrt{k/m}$. Chiamiamo quella velocità **pulsazione naturale** $\\omega_n$: quanto in fretta il sistema *vuole* oscillare quando niente lo frena."
+        },
+        {
+          "t": "math",
+          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{k}}{m}} \\qquad\\qquad \\text{un'oscillazione completa ogni } \\frac{2\\pi}{\\omega_n} \\text{ s}"
+        },
+        {
+          "t": "play",
+          "id": "wn",
+          "text": "Con k = {scrub|k|eff} N/m e m = 0,5 kg, $\\omega_n$ ≈ {calc|wn} rad/s: un'oscillazione completa ogni {calc|period} s."
+        },
+        {
+          "t": "p",
+          "text": "Una molla più rigida tira più forte, quindi oscilla più in fretta. Una massa più pesante è più difficile da spostare, quindi oscilla più lentamente. (I radianti al secondo sono la velocità di rotazione del Capitolo 5: un giro completo è 2π radianti.)"
+        },
+        {
+          "t": "h3",
+          "text": "Quanto rimbalza: il coefficiente di smorzamento"
+        },
+        {
+          "t": "p",
+          "text": "Ora rimettiamo lo smorzatore. Quanto smorzamento è \"tanto\"? Dipende dalla molla: uno smorzatore che doma una molla morbida rallenta appena una molla rigida. Quindi facciamo il confronto con una quantità speciale, lo **smorzamento critico** $c_{\\text{crit}}$: lo smorzamento più piccolo che elimina del tutto la sovraelongazione."
+        },
+        {
+          "t": "math",
+          "tex": "c_{\\text{crit}} = 2\\sqrt{m\\,\\eff{k}} \\qquad\\qquad \\zeta = \\frac{c}{c_{\\text{crit}}} = \\frac{c}{2\\sqrt{m\\,\\eff{k}}}"
+        },
+        {
+          "t": "p",
+          "text": "Il **coefficiente di smorzamento** ζ (la lettera greca zeta) è il nostro smorzamento come frazione di quello critico. È un numero puro, senza unità. ζ = 0 oscilla per sempre, ζ = 1 è esattamente critico, e ζ = 0,5 ha metà dello smorzamento che servirebbe per eliminare la sovraelongazione."
+        },
+        {
+          "t": "play",
+          "id": "zeta",
+          "text": "Con c = {scrub|c} N·s/m su una molla da k = 20 N/m, $c_{\\text{crit}}$ = {calc|ccrit} N·s/m, quindi ζ = {calc|zeta}: {calc|regime}."
+        },
+        {
+          "t": "h3",
+          "text": "I due puntini sulla mappa"
+        },
+        {
+          "t": "p",
+          "text": "Ora torniamo alla mappa di $s$. Provando $x = e^{st}$, come nei Capitoli 4 e 5, l'equazione diventa $m s^2 + c s + k = 0$. Dividiamo per $m$, poi scriviamo i due coefficienti con le nostre manopole:"
+        },
+        {
+          "t": "math",
+          "tex": "s^2 + \\underbrace{\\frac{c}{m}}_{2\\zeta\\omega_n}\\, s + \\underbrace{\\frac{\\eff{k}}{m}}_{\\omega_n^2} = 0"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Un momento. Da dove salta fuori quel $2\\zeta\\omega_n$? Sembra inventato."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Fai il conto: $2\\zeta\\omega_n = 2 \\cdot \\frac{c}{2\\sqrt{mk}} \\cdot \\sqrt{\\frac{k}{m}} = \\frac{c}{m}$. È lo stesso numero, solo con un altro nome, così le nostre due manopole compaiono nell'equazione."
+        },
+        {
+          "t": "p",
+          "text": "Risolviamola con la formula dell'equazione di secondo grado ed ecco i due valori di $s$:"
         },
         {
           "t": "math",
           "tex": "\\begin{aligned} & s^2 + 2\\zeta\\omega_n\\, s + \\omega_n^2 = 0 \\\\ \\Longrightarrow\\quad & s = -\\zeta\\omega_n \\pm \\omega_n\\sqrt{\\zeta^2 - 1} \\end{aligned}"
         },
         {
+          "t": "callout",
+          "title": "Da dove viene il ±",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Qualsiasi equazione $s^2 + b\\,s + q = 0$ si risolve completando il quadrato: $(s + b/2)^2 = b^2/4 - q$. Una radice quadrata ha due risposte, una con + e una con −, quindi ci sono sempre **due** valori di $s$:"
+            },
+            {
+              "t": "math",
+              "tex": "s = -\\frac{b}{2} \\pm \\sqrt{\\frac{b^2}{4} - q}"
+            },
+            {
+              "t": "p",
+              "text": "Con $b = 2\\zeta\\omega_n$ e $q = \\omega_n^2$, la parte sotto la radice è $\\omega_n^2(\\zeta^2 - 1)$. Quando ζ < 1 è negativa, e ci serve la $i$ del Capitolo 5: le due risposte diventano una coppia speculare, $-\\zeta\\omega_n \\pm i\\,\\omega_n\\sqrt{1-\\zeta^2}$. A ζ = 1 la radice è esattamente zero e le due risposte si incontrano. Ecco da dove viene $c_{\\text{crit}} = 2\\sqrt{mk}$: è lo smorzamento che fa sparire la radice."
+            }
+          ]
+        },
+        {
           "t": "p",
-          "text": "Il segno ± dà due risposte, una per ogni punto. Quando lo smorzamento è sotto 1, ciò che sta sotto la radice è negativo: i punti hanno la stessa posizione orizzontale ma altezze opposte. A 1 si incontrano; sopra 1 sono entrambi sull’asse orizzontale."
+          "text": "Il segno ± dà due risposte, una per ogni punto. La posizione orizzontale di un punto è **σ** (sigma): quanto in fretta quella parte del moto si riduce. La sua altezza è **ω**: quanto in fretta gira. Quando lo smorzamento è sotto 1, i punti hanno la stessa posizione orizzontale ma altezze opposte. A 1 si incontrano; sopra 1 sono entrambi sull’asse orizzontale."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Risposta al gradino",
+              "def": "Come risponde un sistema a un salto improvviso del suo obiettivo, qui da 0 a 1 m. È il modo classico per mostrare una personalità."
+            },
+            {
+              "term": "Tempo di assestamento (2%)",
+              "def": "Quanto ci vuole perché la risposta resti per sempre entro il 2% dall'obiettivo."
+            }
+          ]
         },
         {
           "t": "p",
@@ -105,6 +238,37 @@
             {
               "term": "Sovrasmorzato ($\\zeta > 1$)",
               "def": "La coppia si separa lungo l'asse reale: uno va a sinistra, l'altro si avvicina piano piano allo zero. Niente sovraelongazione, ma lento."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Nei puntini sottosmorzati si nasconde un altro dettaglio: la loro altezza è $\\omega_n\\sqrt{1-\\zeta^2}$, un po' **meno** di $\\omega_n$. Lo smorzamento non si limita a ridurre l'oscillazione, la rallenta anche un pochino. È la **pulsazione smorzata** $\\omega_d$, e la simulazione la mostra."
+        },
+        {
+          "t": "math",
+          "tex": "\\omega_d = \\omega_n\\sqrt{1 - \\zeta^2}"
+        },
+        {
+          "t": "callout",
+          "title": "Perché un cerchio?",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Il cerchio tratteggiato nella simulazione non è una decorazione. Per ζ < 1 i puntini stanno a $\\sigma = -\\zeta\\omega_n$ e $\\omega = \\pm\\omega_n\\sqrt{1-\\zeta^2}$. Per Pitagora, la loro distanza da 0 è"
+            },
+            {
+              "t": "math",
+              "tex": "\\sqrt{\\sigma^2 + \\omega^2} = \\sqrt{\\zeta^2\\omega_n^2 + \\omega_n^2\\,(1 - \\zeta^2)} = \\omega_n"
+            },
+            {
+              "t": "play",
+              "id": "circle",
+              "text": "Con $\\omega_n$ = 3 e ζ = {scrub|z}, i puntini stanno in {calc|roots}, a una distanza {calc|r} da 0."
+            },
+            {
+              "t": "p",
+              "text": "Quindi cambiare ζ fa solo scorrere i puntini lungo il cerchio, e cambiare $\\omega_n$ cambia la grandezza del cerchio."
             }
           ]
         },
@@ -174,7 +338,26 @@
         },
         {
           "t": "p",
-          "text": "Per questa risposta a gradino, è il **modo più lento che compare davvero** a determinare la lunga attesa. Troppo poco smorzamento fa oscillare; troppo fa strisciare. In una risposta semplice come questa, $\\zeta$ tra circa 0,7 e 1 offre spesso un buon equilibrio. Altri compiti possono preferirne uno diverso."
+          "text": "Ogni ingrediente $e^{st}$ del moto si chiama **modo**. Il moto è un miscuglio di modi, e quando quelli veloci si sono spenti resta solo il più lento. Quindi, per questa risposta al gradino, è il **modo più lento che compare davvero** a decidere la lunga attesa."
+        },
+        {
+          "t": "callout",
+          "title": "Quanto ci vuole per \"assestarsi\"?",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Un modo $e^{-at}$ si è ridotto al 2% quando $e^{-at} = 0{,}02$, cioè dopo $t = \\ln 50 / a \\approx 3{,}9/a$. Con una costante di tempo $\\tau = 1/a$, sono circa quattro costanti di tempo: di nuovo il righello del Capitolo 3. Dopo 4τ resta solo $e^{-4} \\approx 1{,}8\\%$."
+            },
+            {
+              "t": "play",
+              "id": "settle",
+              "text": "Un modo che si riduce con a = {scrub|a} al secondo è entro il 2% dopo circa {calc|ts} s."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Troppo poco smorzamento fa oscillare; troppo fa strisciare. Nel mezzo c'è un punto ideale. Scegli ζ = 0,7 nella gara: va oltre di meno del 5%, ma arriva **entro il 5% dall'obiettivo** molto prima di ζ = 1. Molti progetti puntano a ζ tra circa 0,7 e 1, scambiando una piccola sovraelongazione con la rapidità. Altri compiti possono preferire un equilibrio diverso."
         }
       ]
     },
@@ -201,8 +384,13 @@
           "text": "E non possiamo avere più smorzamento senza abbassare parecchio $\\eff{K_p}$, che fa tornare l'abbassamento. Ci serve un modo per aggiungere smorzamento *apposta*."
         },
         {
-          "t": "note",
-          "text": "Provalo nella prima simulazione: sposta $K_p$ e guarda ζ scendere mentre le oscillazioni diventano più sfrenate."
+          "t": "p",
+          "text": "Trascina il guadagno e guarda il compromesso in una sola frase:"
+        },
+        {
+          "t": "play",
+          "id": "drone",
+          "text": "Con $\\eff{K_p}$ = {scrub|kp|eff} N/m: ζ = {calc|zeta}, $\\omega_n$ = {calc|wn} rad/s, e senza la spinta di volo stazionario regalata si abbasserebbe di {calc|droop} m."
         }
       ]
     },
@@ -215,7 +403,9 @@
           "items": [
             "Un drone con controllo P segue **esattamente** la stessa equazione di una massa su una molla: il controllore è una molla virtuale.",
             "Due numeri ne catturano la personalità: $\\omega_n$ (quanto è rapido) e $\\zeta$ (quanto è saltellante).",
+            "$\\omega_n = \\sqrt{k/m}$ è la velocità di oscillazione senza smorzatore. $\\zeta = c/c_{\\text{crit}}$ confronta lo smorzamento con lo smorzamento critico $2\\sqrt{mk}$, quello che elimina appena la sovraelongazione.",
             "Il moto è un miscuglio di due termini $e^{st}$. I due valori di $s$ stanno su un cerchio di raggio $\\omega_n$ quando è sottosmorzato, e si separano lungo l'asse reale quando è sovrasmorzato.",
+            "Lo smorzamento rallenta anche un po' l'oscillazione: $\\omega_d = \\omega_n\\sqrt{1-\\zeta^2}$.",
             "Più smorzamento non è sempre meglio: oltre $\\zeta = 1$ il valore di $s$ lento si avvicina allo zero e tutto rallenta.",
             "Per il drone, più $K_p$ vuol dire meno smorzamento. Ecco perché ballava di più."
           ]
@@ -261,6 +451,25 @@
                 {
                   "text": "Sovrasmorzato, $\\zeta > 1$",
                   "why": "Per essere sovrasmorzato serve tanto smorzamento rispetto alla rigidezza. Il nostro guadagno è alto e l'attrito piccolo: l'opposto."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q5",
+              "q": "Una molla con $k = 8$ N/m regge una massa di 0,5 kg. Quanto smorzamento $c$ la rende a smorzamento critico?",
+              "options": [
+                {
+                  "text": "$c = 4$ N·s/m",
+                  "correct": true,
+                  "why": "$c_{\\text{crit}} = 2\\sqrt{m k} = 2\\sqrt{0{,}5 \\cdot 8} = 2\\sqrt{4} = 4$ N·s/m."
+                },
+                {
+                  "text": "$c = 16$ N·s/m",
+                  "why": "Quello è $2k$. Lo smorzamento critico usa la radice quadrata di massa × rigidezza: $2\\sqrt{mk}$."
+                },
+                {
+                  "text": "$c = 1$ N·s/m",
+                  "why": "È l'attrito dell'aria del nostro drone, che qui dà $\\zeta = 0{,}25$: sottosmorzato."
                 }
               ]
             },
@@ -332,7 +541,9 @@
         "critical": "smorzamento critico",
         "over": "sovrasmorzato"
       },
-      "together": "tutti e due, in un solo grafico"
+      "together": "tutti e due, in un solo grafico",
+      "forceSpring": "trazione della molla",
+      "forceDamper": "spinta dello smorzatore"
     },
     "personality": {
       "title": "Due manopole, due puntini, una personalità",
@@ -367,7 +578,9 @@
       "springCap": "guardalo su una molla",
       "re": "σ",
       "im": "ω",
-      "offMap": "{v} è fuori dalla mappa ←"
+      "offMap": "{v} è fuori dalla mappa ←",
+      "wd": "pulsazione smorzata ωd",
+      "noWiggle": "nessuna oscillazione"
     },
     "race": {
       "title": "La gara dello smorzamento",
@@ -390,7 +603,35 @@
       "re": "σ",
       "im": "ω",
       "fastOff": "← quello veloce a {v} (fuori dalla mappa)",
-      "double": "tutti e due qui"
+      "double": "tutti e due qui",
+      "band5": "entro il 5%",
+      "sweet": "ζ = 0,7 va oltre del {os}%, ma è entro il 5% dall'obiettivo dopo {y5} s. A ζ = 1 servono {r5} s."
+    }
+  },
+  "plays": {
+    "units": {
+      "kp": "guadagno Kp, newton al metro",
+      "e": "errore, metri"
+    },
+    "wn": {
+      "k": "rigidezza della molla k, newton al metro"
+    },
+    "zeta": {
+      "c": "smorzamento c, newton secondo al metro",
+      "regime": {
+        "under": "sottosmorzato",
+        "critical": "a smorzamento critico",
+        "over": "sovrasmorzato"
+      }
+    },
+    "circle": {
+      "z": "coefficiente di smorzamento zeta"
+    },
+    "settle": {
+      "a": "tasso di riduzione a, al secondo"
+    },
+    "drone": {
+      "kp": "guadagno Kp, newton al metro"
     }
   }
 }

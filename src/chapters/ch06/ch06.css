@@ -119,3 +119,32 @@
   background: var(--paper);
   border: 1.5px dashed var(--paper-3);
 }
+
+/* key for the force arrows on the spring (twins widget) */
+.p68 .force-key {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px 8px;
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: var(--ink-2);
+}
+.p68 .force-key > span {
+  white-space: nowrap;
+}
+.p68 .force-swatch {
+  display: inline-block;
+  width: 3px;
+  height: 14px;
+  border-radius: 2px;
+  margin-inline-end: 6px;
+  vertical-align: -2px;
+}
+.p68 .force-swatch.spring {
+  background: var(--c-effort);
+}
+.p68 .force-swatch.damper {
+  background: var(--ink-2);
+}

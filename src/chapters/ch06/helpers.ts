@@ -60,6 +60,12 @@ export function settling(xs: number[], ys: number[], target: number, size: numbe
   return 0;
 }
 
+/** Time after which a step response stays within `band` (a fraction) of the target 1. */
+export function within(d: { xs: number[]; ys: number[] }, band: number): number {
+  for (let i = d.ys.length - 1; i >= 0; i--) if (Math.abs(d.ys[i] - 1) > band) return d.xs[Math.min(d.xs.length - 1, i + 1)];
+  return 0;
+}
+
 /** Marks a widget host so the chapter 6–8 polish styles apply only to these widgets. */
 export const mark = (host: HTMLElement): void => host.classList.add('p68');
 
