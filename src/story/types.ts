@@ -61,6 +61,8 @@ export interface Bus {
 }
 
 export interface WidgetCtx {
+  /** Register resources as they are created, including if mounting later fails. */
+  onCleanup: (dispose: () => void) => void;
   /** strings under `widgets.<id>` of the chapter namespace */
   t: T;
   /** strings of the whole chapter namespace */

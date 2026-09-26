@@ -27,7 +27,7 @@ const tangent: WidgetFactory = (host, ctx) => {
     series: [{ id: 'h', color: 'out', label: t('height') }],
     height: 210,
     label: t('ariaTop'),
-  });
+  }, ctx.onCleanup);
   top.set('h', run.t, run.h);
   top.setLines([{ kind: 'h', at: 2, color: 'sp', label: t('target') }]);
   top.setMarkers([{ x: run.t[iPeak], y: run.h[iPeak], color: 'ink2', shape: 'ring', label: t('peak') }]);
@@ -38,7 +38,7 @@ const tangent: WidgetFactory = (host, ctx) => {
     series: [{ id: 'v', color: 'ink', label: t('speed'), width: 2.4 }],
     height: 180,
     label: t('ariaBottom'),
-  });
+  }, ctx.onCleanup);
   bottom.setLines([{ kind: 'h', at: 0, color: 'ink3', dash: [2, 3], width: 1 }]);
   const traced: boolean[] = Array.from({ length: run.t.length }, () => false);
   let lastIdx = 0;
@@ -135,7 +135,7 @@ const coffee: WidgetFactory = (host, ctx) => {
     ],
     height: 260,
     label: t('aria'),
-  });
+  }, ctx.onCleanup);
   plot.setLines([{ kind: 'h', at: COFFEE.room, color: 'sp', label: t('room') }]);
   let showExact = false;
   const status = h('p', { class: 'w-status steady', 'aria-live': 'polite' });
@@ -242,7 +242,7 @@ const ruler: WidgetFactory = (host, ctx) => {
     series: [{ id: 'y', color: 'out', label: t('curve'), ghost: true }],
     height: 240,
     label: t('aria'),
-  });
+  }, ctx.onCleanup);
   const r63 = readout(t('read1'), 'out');
   const r86 = readout(t('read2'), 'out');
   const draw = () => {
@@ -311,7 +311,7 @@ const area: WidgetFactory = (host, ctx) => {
     series: [{ id: 'v', color: 'ink', label: t('speed') }],
     height: 190,
     label: t('ariaTop'),
-  });
+  }, ctx.onCleanup);
   top.set('v', run.t, run.v);
   top.setLines([{ kind: 'h', at: 0, color: 'ink3', dash: [2, 3], width: 1 }]);
   const bottom = new Plot(host, {
@@ -323,7 +323,7 @@ const area: WidgetFactory = (host, ctx) => {
     ],
     height: 190,
     label: t('ariaBottom'),
-  });
+  }, ctx.onCleanup);
   bottom.set('true', run.t, run.h);
   let cursor = 0;
   const rA = readout(t('readArea'), 'out');

@@ -8,6 +8,7 @@ import './ch01.css';
 
 /** Drone view on the left, height + thrust plots on the right. Shared by chapters 1 and 2. */
 export function droneRig(
+  onCleanup: (dispose: () => void) => void,
   host: HTMLElement,
   o: { tMax: number; hMax: number; thrustMin: number; thrustMax: number; heightLabel: string; thrustLabel: string; aria: string; errorBand?: boolean; onCeiling?: () => void },
 ): { view: DroneView; hPlot: Plot; tPlot: Plot; left: HTMLElement; right: HTMLElement } {
@@ -16,7 +17,7 @@ export function droneRig(
   const right = h('div');
   grid.append(left, right);
   host.append(grid);
-  const view = new DroneView(left, { hMax: o.hMax, width: 230, onCeiling: o.onCeiling });
+  const view = new DroneView(left, { hMax: o.hMax, width: 230, onCeiling: o.onCeiling }, onCleanup);
   const hPlot = new Plot(right, {
     x: { label: tc('plots.time'), min: 0, max: o.tMax },
     y: { label: tc('plots.height'), min: 0, max: o.hMax },
@@ -27,14 +28,14 @@ export function droneRig(
     height: 200,
     label: o.aria,
     fillBetween: o.errorBand ? ['r', 'h', 'err'] : undefined,
-  });
+  }, onCleanup);
   const tPlot = new Plot(right, {
     x: { label: tc('plots.time'), min: 0, max: o.tMax },
     y: { label: tc('plots.thrust'), min: o.thrustMin, max: o.thrustMax },
     series: [{ id: 'T', color: 'eff', label: o.thrustLabel, ghost: true }],
     height: 130,
     label: o.thrustLabel,
-  });
+  }, onCleanup);
   return { view, hPlot, tPlot, left, right };
 }
 

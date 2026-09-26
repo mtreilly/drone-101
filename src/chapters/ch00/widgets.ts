@@ -8,15 +8,9 @@ import { Loop } from '../../ui/loop';
 import { Plot } from '../../ui/plot';
 import { ShowerView } from '../../ui/shower-view';
 import { policies } from './hands';
+import { SHOWER_RUN_KEY, type SavedShowerRun } from './saved-run';
 import './ch00.css';
 
-export interface SavedShowerRun {
-  t: number[];
-  T: number[];
-  u: number[];
-}
-
-export const SHOWER_RUN_KEY = 'ch0.run';
 const DURATION = 60;
 const GOAL = 10;
 
@@ -32,7 +26,7 @@ function viewLabels(t: WidgetCtx['t']) {
   };
 }
 
-function tempPlot(host: HTMLElement, t: WidgetCtx['t'], label: string): Plot {
+function tempPlot(onCleanup: WidgetCtx['onCleanup'], host: HTMLElement, t: WidgetCtx['t'], label: string): Plot {
   const p = new Plot(host, {
     x: { label: tc('plots.time'), min: 0, max: DURATION },
     y: { label: tc('plots.temp'), min: 10, max: 62 },
@@ -42,7 +36,7 @@ function tempPlot(host: HTMLElement, t: WidgetCtx['t'], label: string): Plot {
     ],
     height: 230,
     label,
-  });
+  }, onCleanup);
   p.setBands([{ kind: 'h', from: SHOWER.target - SHOWER.band, to: SHOWER.target + SHOWER.band, color: 'sp@0.16' }]);
   p.setLines([{ kind: 'h', at: SHOWER.target, color: 'sp', label: '38 °C' }]);
   return p;
@@ -73,7 +67,7 @@ const manual: WidgetFactory = (host, ctx) => {
       if (state === 'ready') start();
     },
   });
-  const plot = tempPlot(right, t, t('plot.aria'));
+  const plot = tempPlot(ctx.onCleanup, right, t, t('plot.aria'));
   // the visual status changes many times a second; screen readers only hear milestones
   const status = h('p', { class: 'w-status', 'aria-hidden': 'true' }, t('status.ready'));
   const announce = h('p', { class: 'visually-hidden', 'aria-live': 'polite' });
@@ -195,7 +189,7 @@ const robots: WidgetFactory = (host, ctx) => {
   const right = h('div');
   grid.append(left, right);
   const view = new ShowerView(left, { labels: viewLabels(t) });
-  const plot = tempPlot(right, t, t('plot.aria'));
+  const plot = tempPlot(ctx.onCleanup, right, t, t('plot.aria'));
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
   /** advances the robot by `dt` seconds, sampling the plot every 0.1 s */
   const tick = (dt: number) => {
@@ -289,7 +283,7 @@ const lag: WidgetFactory = (host, ctx) => {
     ],
     height: 230,
     label: t('plot.aria'),
-  });
+  }, ctx.onCleanup);
   const mixOf = (u: number) => SHOWER.cold + (SHOWER.hot - SHOWER.cold) * u;
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
   const dtData = data.t[1] - data.t[0];

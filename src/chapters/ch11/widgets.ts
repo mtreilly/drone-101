@@ -13,6 +13,7 @@ import { SPlane } from '../../ui/s-plane';
 import '../ch09/ch09.css';
 import { emptyTrace, pid, sampleTrace } from '../ch09/pid-tools';
 import { starRow } from '../ch09/stars';
+import { sameCeiling } from '../ch09/page-ceiling';
 import {
   CRITERIA,
   LIMITS,
@@ -93,7 +94,7 @@ const mission: WidgetFactory = (host, ctx) => {
   grid.append(left, right);
   host.append(grid);
   // a tune that climbs far past the target flies out of the picture into the page: the sim hits it (page-hit.ts)
-  const view = new DroneView(left, { hMax: 3, width: 240, showSensor: true, onCeiling: () => {} });
+  const view = new DroneView(left, { hMax: 3, width: 240, showSensor: true, onCeiling: () => {} }, ctx.onCleanup);
   const ceil = pageCeiling(view, () => pageMoved());
   const hPlot = new Plot(right, {
     x: { label: tc('plots.time'), min: 0, max: MISSION.duration },
@@ -106,7 +107,7 @@ const mission: WidgetFactory = (host, ctx) => {
     fillBetween: ['r', 'h', 'err'],
     height: 190,
     label: t('hAria'),
-  });
+  }, ctx.onCleanup);
   const events = [
     { kind: 'v' as const, at: MISSION.gust.start, color: 'dis', label: t('gust') },
     { kind: 'v' as const, at: MISSION.dropAt, color: 'dis', label: t('drop') },
@@ -124,7 +125,7 @@ const mission: WidgetFactory = (host, ctx) => {
     ],
     height: 150,
     label: t('tAria'),
-  });
+  }, ctx.onCleanup);
   tPlot.setLines([
     { kind: 'h', at: 20, color: 'ink3', dash: [2, 4], label: t('max'), labelAt: 'start', labelSide: 'above' },
     { kind: 'h', at: 0, color: 'ink3', dash: [2, 4], label: t('min'), labelAt: 'start', labelSide: 'below' },
@@ -342,7 +343,7 @@ const mission: WidgetFactory = (host, ctx) => {
   // nominal poles, at their true values (a fast one off the left edge becomes an arrow with its value)
   const pRange = { reMin: -40, reMax: 5, imMax: 25 };
   const poleBox = h('div', { class: 'mission-poles' });
-  const sp = new SPlane(poleBox, { ...pRange, label: t('splane'), regions: true, maxWidth: 340, reLabel: 'σ', imLabel: 'ω' });
+  const sp = new SPlane(poleBox, { ...pRange, label: t('splane'), regions: true, maxWidth: 340, reLabel: 'σ', imLabel: 'ω' }, ctx.onCleanup);
   const poleNote = h('p', { class: 'w-help' });
   poleBox.append(poleNote);
   function updatePoles(): void {
@@ -367,7 +368,11 @@ const mission: WidgetFactory = (host, ctx) => {
     sl.input.addEventListener('pointerdown', () => (pointer = true));
     sl.input.addEventListener('change', () => {
       if (pointer && Loop.autoplay) restart(true);
-      else instant(true);
+      else if (finished && !fresh && sameCeiling(ceil.measure(), sim.cfg.ceiling?.h ?? null)) {
+        // Input already computed this flight. Commit its score/ghost without flying it twice.
+        fresh = true;
+        showResult(evaluate(tr), true, false);
+      } else instant(true);
       pointer = false;
     });
   }

@@ -63,7 +63,7 @@ const ladder: WidgetFactory = (host, ctx) => {
     height: 260,
     label: t('aria'),
     legend: false,
-  });
+  }, ctx.onCleanup);
   const rMul = readout(t('readMul'), 'out');
   const rRise = readout(t('readRise'));
   const rRate = readout(t('readRate'));
@@ -198,7 +198,7 @@ const compoundWidget: WidgetFactory = (host, ctx) => {
     ],
     height: 250,
     label: t('aria'),
-  });
+  }, ctx.onCleanup);
   const rEach = readout(t('readEach'));
   const rTotal = readout(t('readTotal'), 'out');
   const status = h('p', { class: 'w-status steady', 'aria-live': 'polite' });
@@ -271,7 +271,7 @@ const bases: WidgetFactory = (host, ctx) => {
     ],
     height: 240,
     label: t('aria'),
-  });
+  }, ctx.onCleanup);
   const rH = readout(t('readHeight'), 'out');
   const rS = readout(t('readSlope'));
   const rR = readout(t('readRatio'));
@@ -341,7 +341,7 @@ const expA: WidgetFactory = (host, ctx) => {
     ],
     height: 240,
     label: t('aria'),
-  });
+  }, ctx.onCleanup);
   plot.setLines([{ kind: 'h', at: 0, color: 'ink3', dash: [2, 3], width: 1 }]);
   const rR = readout(t('readRatio'));
   const status = h('p', { class: 'w-status steady', 'aria-live': 'polite' });
@@ -421,7 +421,7 @@ const guess: WidgetFactory = (host, ctx) => {
     ],
     height: 240,
     label: t('aria'),
-  });
+  }, ctx.onCleanup);
   plot.set('rule', tt, truth);
   plot.setLines([
     { kind: 'h', at: 20, color: 'sp', label: t('room') },
@@ -483,7 +483,7 @@ const square: WidgetFactory = (host, ctx) => {
     series: [{ id: 'sq', color: 'out', label: t('square') }],
     height: 240,
     label: t('aria'),
-  });
+  }, ctx.onCleanup);
   plot.fn('sq', (x) => x * x);
   plot.setLines([
     { kind: 'h', at: -kOverM, color: 'sp', label: t('need') },

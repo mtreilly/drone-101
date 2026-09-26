@@ -86,9 +86,9 @@ const recipe: WidgetFactory = (host, ctx) => {
     ],
     height: 240,
     label: t('plotAria'),
-  });
+  }, ctx.onCleanup);
   right.append(caption(t('droneCap')));
-  const view = new DroneView(right, { hMax: 3, width: 200 });
+  const view = new DroneView(right, { hMax: 3, width: 200 }, ctx.onCleanup);
   const eq = h('div', { class: 'math-block' });
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
   host.append(eq, status);
@@ -194,7 +194,7 @@ const playground: WidgetFactory = (host, ctx) => {
       }
       update();
     },
-  });
+  }, ctx.onCleanup);
   // built-in guides (locale-aware labels): settling lines, constant-ζ rays with their overshoot
   plane.setSettleLines([1, 2, 4]);
   plane.setRays([0.2, 0.5, 0.7]);
@@ -243,7 +243,7 @@ const playground: WidgetFactory = (host, ctx) => {
   top.append(vbox, rbox);
   right.append(top);
   // an unstable drone can fly out of its picture into the page; the hit stalls it and it falls (see fall.ts)
-  const view = new DroneView(vbox, { hMax: 3, width: 180, onCeiling: () => hitPage() });
+  const view = new DroneView(vbox, { hMax: 3, width: 180, onCeiling: () => hitPage() }, ctx.onCleanup);
   const rP = readout(t('poles'));
   const rZ = readout(t('zeta'));
   const rW = readout(t('wn'));
@@ -260,7 +260,7 @@ const playground: WidgetFactory = (host, ctx) => {
     series: [{ id: 'h', color: 'out', label: t('response'), ghost: true }],
     height: 210,
     label: t('plotAria'),
-  });
+  }, ctx.onCleanup);
   plot.setLines([{ kind: 'h', at: 2, color: 'sp', label: t('target') }]);
   const eq = h('div', { class: 'math-block' });
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
@@ -460,7 +460,7 @@ const zero: WidgetFactory = (host, ctx) => {
       if (p.re > -0.3) plane.move('z', z, 0);
       update();
     },
-  });
+  }, ctx.onCleanup);
   plane.set([
     { id: 'p', re: -2, im: 3, kind: 'pole', mirror: true },
     { id: 'z', re: z, im: 0, kind: 'zero', draggable: true, realOnly: true },
@@ -476,7 +476,7 @@ const zero: WidgetFactory = (host, ctx) => {
     ],
     height: 240,
     label: t('plotAria'),
-  });
+  }, ctx.onCleanup);
   plot.setLines([{ kind: 'h', at: 1, color: 'sp' }]);
   const slopeLegend = plot.el.querySelectorAll('.plot-legend-item')[1]?.lastChild ?? null;
   const ref = sample(noZeroResponse, T1, 400);
@@ -534,7 +534,7 @@ const limit: WidgetFactory = (host, ctx) => {
     ],
     height: 230,
     label: t('hAria'),
-  });
+  }, ctx.onCleanup);
   hp.setLines([{ kind: 'h', at: 2, color: 'sp' }]);
   const tp = new Plot(b, {
     x: { label: tc('plots.time'), min: 0, max: T1 },
@@ -545,7 +545,7 @@ const limit: WidgetFactory = (host, ctx) => {
     ],
     height: 230,
     label: t('tAria'),
-  });
+  }, ctx.onCleanup);
   // "can't pull down" sits under the 0 N line, in the band no curve reaches unless the maths goes negative
   tp.setLines([
     { kind: 'h', at: 20, color: 'ink3', label: t('max'), avoid: ['real', 'ideal'] },

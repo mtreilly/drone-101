@@ -16,7 +16,7 @@ const pcontrol: WidgetFactory = (host, ctx) => {
   let playT = 0;
   let idx = 0;
   host.append(h('p', { class: 'w-title' }, t('title')));
-  const rig = droneRig(host, {
+  const rig = droneRig(ctx.onCleanup, host, {
     tMax: RUN,
     hMax: 3.5,
     thrustMin: -10,
@@ -159,14 +159,14 @@ const challenge: WidgetFactory = (host, ctx) => {
     series: [{ id: 'd', color: 'err', label: t('droopSeries') }],
     height: 190,
     label: t('droopAria'),
-  });
+  }, ctx.onCleanup);
   const overPlot = new Plot(c, {
     x: xAxis(),
     y: { label: t('overAxis'), min: 0, max: 100 },
     series: [{ id: 'o', color: 'out', label: t('overSeries') }],
     height: 190,
     label: t('overAria'),
-  });
+  }, ctx.onCleanup);
   droopPlot.fn('d', droopOf, 600);
   overPlot.fn('o', (k) => overshootOf(k), 600);
   const zone = 'sp@0.16';

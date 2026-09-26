@@ -77,7 +77,7 @@ const twins: WidgetFactory = (host, ctx) => {
     ),
   );
   b.append(caption(t('drone')));
-  const droneView = new DroneView(b, { hMax: 3, width: 230 });
+  const droneView = new DroneView(b, { hMax: 3, width: 230 }, ctx.onCleanup);
   pl.append(caption(t('together')));
   const plot = new Plot(pl, {
     x: { label: tc('plots.time'), min: 0, max: RUN },
@@ -88,7 +88,7 @@ const twins: WidgetFactory = (host, ctx) => {
     ],
     height: 250,
     label: t('plotAria'),
-  });
+  }, ctx.onCleanup);
   plot.setLines([{ kind: 'h', at: 0, color: 'sp', label: t('target') }]);
   const eqSpring = h('div', { class: 'math-block' });
   const eqDrone = h('div', { class: 'math-block' });
@@ -194,10 +194,10 @@ const personality: WidgetFactory = (host, ctx) => {
     series: [{ id: 'y', color: 'out', label: t('response'), ghost: true }],
     height: 320,
     label: t('plotAria'),
-  });
+  }, ctx.onCleanup);
   plot.setLines([{ kind: 'h', at: 1, color: 'sp', label: t('target') }]);
   planeCell.append(caption(t('planeCap')));
-  const plane = new SPlane(planeCell, { reMin: -10, reMax: 2, imMax: 6, label: t('planeAria'), reLabel: t('re'), imLabel: t('im'), maxWidth: 360 });
+  const plane = new SPlane(planeCell, { reMin: -10, reMax: 2, imMax: 6, label: t('planeAria'), reLabel: t('re'), imLabel: t('im'), maxWidth: 360 }, ctx.onCleanup);
   plane.svg.style.overflow = 'hidden';
   const offLabel = planeLabel(plane, 'pt-note');
   springCell.append(caption(t('springCap')));
@@ -218,7 +218,7 @@ const personality: WidgetFactory = (host, ctx) => {
       height: 120,
       label: t('panelAria', { z: fmt(z, 1) }),
       legend: false,
-    });
+    }, ctx.onCleanup);
     p.setLines([{ kind: 'h', at: 1, color: 'sp' }]);
     return { box, p };
   });
@@ -306,7 +306,7 @@ const race: WidgetFactory = (host, ctx) => {
     ],
     height: 240,
     label: t('plotAria'),
-  });
+  }, ctx.onCleanup);
   plot.setLines([{ kind: 'h', at: 1, color: 'sp' }]);
   const views = h('div', { class: 'pair-grid', style: { marginTop: '12px' } });
   const va = h('div');
@@ -319,7 +319,7 @@ const race: WidgetFactory = (host, ctx) => {
   const msdB = new MsdView(vb, t('msdAria'), 60);
   msdA.el.style.maxWidth = msdB.el.style.maxWidth = '150px';
   right.append(caption(t('planeCap')));
-  const plane = new SPlane(right, { reMin: -18, reMax: 2, imMax: 5, label: t('planeAria'), reLabel: t('re'), imLabel: t('im'), maxWidth: 420 });
+  const plane = new SPlane(right, { reMin: -18, reMax: 2, imMax: 5, label: t('planeAria'), reLabel: t('re'), imLabel: t('im'), maxWidth: 420 }, ctx.onCleanup);
   const slowLabel = planeLabel(plane);
   const fastLabel = planeLabel(plane);
   const rA = readout(t('settleRef'));

@@ -247,11 +247,12 @@ export class Plot {
   private base: { x: [number, number]; y: [number, number] };
   private tween: { x: RangeTween | null; y: RangeTween | null } = { x: null, y: null };
   private drawn = false;
+  private destroyed = false;
   private waiter = () => this.invalidate(true);
   /** extra draw callback in data coordinates, e.g. tangent lines or shaded areas */
   overlay: ((ctx: CanvasRenderingContext2D, px: (x: number) => number, py: (y: number) => number) => void) | null = null;
 
-  constructor(host: HTMLElement, public opts: PlotOptions) {
+  constructor(host: HTMLElement, public opts: PlotOptions, onCleanup?: (dispose: () => void) => void) {
     this.baseH = opts.height ?? 220;
     this.hgt = this.baseH;
     this.base = { x: [opts.x.min, opts.x.max], y: [opts.y.min, opts.y.max] };
@@ -262,6 +263,7 @@ export class Plot {
     const legend = opts.legend === false ? null : this.buildLegend();
     this.el = h('figure', { class: 'plot' }, legend, this.canvas, this.desc);
     host.append(this.el);
+    onCleanup?.(() => this.destroy());
     for (const s of opts.series) this.series.set(s.id, { ...s, xs: [], ys: [], gx: null, gy: null });
     if (opts.x.autoMax || opts.x.autoMin || opts.y.autoMax || opts.y.autoMin) wireInput();
     const ro = new ResizeObserver(() => this.resize());
@@ -270,7 +272,9 @@ export class Plot {
     this.disposers.push(onThemeChange(() => this.invalidate(true)));
     this.disposers.push(() => input.waiters.delete(this.waiter));
     // canvas text is rasterised immediately, so redraw once the web fonts arrive
-    document.fonts?.ready.then(() => this.invalidate(true));
+    document.fonts?.ready.then(() => {
+      if (!this.destroyed) this.invalidate(true);
+    });
     this.resize();
   }
 
@@ -296,6 +300,8 @@ export class Plot {
   }
 
   destroy(): void {
+    if (this.destroyed) return;
+    this.destroyed = true;
     cancelAnimationFrame(this.raf);
     this.disposers.forEach((d) => d());
     this.el.remove();

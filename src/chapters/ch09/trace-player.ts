@@ -191,5 +191,8 @@ export class TracePlayer {
 
   destroy(): void {
     this.loop.destroy();
+    this.hPlot.destroy();
+    this.tPlot.destroy();
+    this.view.destroy();
   }
 }

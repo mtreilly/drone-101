@@ -137,7 +137,7 @@ const poles: WidgetFactory = (host, ctx) => {
   grid.append(left, right);
   host.append(grid);
   const range = { reMin: -16, reMax: 4, imMax: 10 };
-  const sp = new SPlane(left, { ...range, label: t('splane'), regions: true, maxWidth: 420, reLabel: t('reShort'), imLabel: t('imShort') });
+  const sp = new SPlane(left, { ...range, label: t('splane'), regions: true, maxWidth: 420, reLabel: t('reShort'), imLabel: t('imShort') }, ctx.onCleanup);
   const trail: SVGCircleElement[] = [];
   const map = new Plot(right, {
     x: { label: t('map.x'), min: 0, max: 10 },
@@ -145,7 +145,7 @@ const poles: WidgetFactory = (host, ctx) => {
     series: [{ id: 'edge', color: 'bad', label: t('map.edge'), dash: [6, 4] }],
     height: 200,
     label: t('map.aria'),
-  });
+  }, ctx.onCleanup);
   const step = new Plot(right, {
     x: { label: tc('plots.time'), min: 0, max: 8 },
     y: { label: tc('plots.height'), min: 1.2, max: 2.8 },
@@ -155,7 +155,7 @@ const poles: WidgetFactory = (host, ctx) => {
     ],
     height: 170,
     label: t('stepAria'),
-  });
+  }, ctx.onCleanup);
   const rOs = readout(t('readout.overshoot'), 'out');
   const rTs = readout(t('readout.settling'), 'out');
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });

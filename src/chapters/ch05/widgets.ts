@@ -129,7 +129,7 @@ const spinner: WidgetFactory = (host, ctx) => {
     series: [{ id: 'sh', color: 'out', label: t('shadow'), ghost: true }],
     height: 220,
     label: t('plotAria'),
-  });
+  }, ctx.onCleanup);
   const draw = () => {
     const z = spiralPoint(0, w, time);
     const vScale = 0.35;
@@ -220,7 +220,7 @@ const twins: WidgetFactory = (host, ctx) => {
     ],
     height: 220,
     label: t('plotAria'),
-  });
+  }, ctx.onCleanup);
   const status = h('p', { class: 'w-status steady', 'aria-live': 'polite' });
   const draw = () => {
     const a = spiralPoint(0, w, time);
@@ -314,7 +314,7 @@ const smap: WidgetFactory = (host, ctx) => {
       omega = Math.round(p.im * 100) / 100;
       restart();
     },
-  });
+  }, ctx.onCleanup);
   const spiral = new SpiralCanvas(right, { aria: t('spiralAria'), time: t('time'), re: t('reShort'), im: t('imShort'), shadow: t('shadow') });
   const plot = new Plot(right, {
     x: { label: tc('plots.time'), min: 0, max: 8 },
@@ -322,7 +322,7 @@ const smap: WidgetFactory = (host, ctx) => {
     series: [{ id: 'sh', color: 'out', label: t('shadow'), ghost: true }],
     height: 170,
     label: t('plotAria'),
-  });
+  }, ctx.onCleanup);
   const rS = readout(t('readS'));
   const rTurns = readout(t('readTurns'));
   const rSize = readout(t('readSize'));
@@ -436,7 +436,7 @@ const fourier: WidgetFactory = (host, ctx) => {
     ],
     height: 220,
     label: t('aria'),
-  });
+  }, ctx.onCleanup);
   plot.fn('target', squareWave, 800);
   const status = h('p', { class: 'w-status steady', 'aria-live': 'polite' });
   const draw = () => {

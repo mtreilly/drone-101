@@ -225,8 +225,10 @@ function mountWidget(id: string, caption: string | undefined, wide: boolean, env
   }
   // mount after insertion so layout-dependent widgets can measure themselves
   queueMicrotask(() => {
+    if (!host.isConnected) return;
     try {
       const cleanup = factory(host, {
+        onCleanup: (dispose) => env.cleanups.push(dispose),
         t: translator(env.ns, `widgets.${id}`),
         tch: translator(env.ns),
         chapter: env.chapter,

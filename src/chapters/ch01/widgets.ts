@@ -58,7 +58,7 @@ const schedule: WidgetFactory = (host, ctx) => {
   // flying out of the picture into the page: the page is a ceiling, and open loop can't notice it either
   let hitCeiling = false;
   host.append(h('p', { class: 'w-title' }, t('title')));
-  const rig = droneRig(host, {
+  const rig = droneRig(ctx.onCleanup, host, {
     tMax: RUN,
     hMax: 3,
     thrustMin: 0,
@@ -213,7 +213,7 @@ const feedback: WidgetFactory = (host, ctx) => {
     },
   );
   host.append(seg.el);
-  const rig = droneRig(host, {
+  const rig = droneRig(ctx.onCleanup, host, {
     tMax: WINDOW,
     hMax: 3,
     thrustMin: 0,

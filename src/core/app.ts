@@ -8,11 +8,13 @@ import { createBus, type ChapterContent } from '../story/types';
 import { h } from './dom';
 import { applyDocumentLang, getLang, loadNamespace, onLangChange, prefetchNamespace, raw, setLang, tc } from './i18n';
 import { LANGUAGES, languageOf } from './languages';
+import { loadFontStyles } from './font-styles';
 import { progress } from './progress';
 import { setRich } from './rich-text';
 import { applyTheme, getTheme, type ThemeChoice } from './theme';
 
 let cleanups: (() => void)[] = [];
+let routeRequest = 0;
 let rootEl: HTMLElement;
 let main: HTMLElement;
 let strip: HTMLElement;
@@ -97,7 +99,7 @@ export async function startApp(root: HTMLElement): Promise<void> {
   rootEl = root;
   applyTheme(getTheme());
   applyDocumentLang();
-  await loadNamespace('common');
+  await Promise.all([loadNamespace('common'), loadFontStyles(getLang())]);
   installGlobalHandlers();
   root.append(buildShell());
   window.addEventListener('hashchange', route);
@@ -342,10 +344,12 @@ function updateNav(): void {
 }
 
 async function route(opts: { keepScroll?: boolean } | Event = {}): Promise<void> {
+  const request = ++routeRequest;
   const keepScroll = !(opts instanceof Event) && !!opts.keepScroll;
   const y = scrollY;
   cleanups.forEach((c) => c());
   cleanups = [];
+  const ownedCleanups = cleanups;
   const hash = location.hash.replace(/^#/, '');
   const m = /^\/ch\/(\d+)(?:\/([\w-]+))?/.exec(hash);
   main.replaceChildren();
@@ -353,7 +357,8 @@ async function route(opts: { keepScroll?: boolean } | Event = {}): Promise<void>
   if (m) {
     const n = Number(m[1]);
     if (n >= 0 && n < CHAPTER_COUNT) {
-      await showChapter(n, m[2], keepScroll);
+      await showChapter(n, ownedCleanups, () => request === routeRequest, m[2], keepScroll);
+      if (request !== routeRequest) return;
       if (keepScroll) scrollTo(0, y);
       dispatchEvent(new Event('route:rendered'));
       return;
@@ -365,12 +370,13 @@ async function route(opts: { keepScroll?: boolean } | Event = {}): Promise<void>
   dispatchEvent(new Event('route:rendered'));
 }
 
-async function showChapter(n: number, sectionId?: string, keepScroll = false): Promise<void> {
+async function showChapter(n: number, ownedCleanups: (() => void)[], isCurrent: () => boolean, sectionId?: string, keepScroll = false): Promise<void> {
   const entry = CHAPTERS[n];
   main.append(h('p', { class: 'page loading', 'aria-live': 'polite' }, tc('app.loading')));
   const [content, mod, playMod] = await Promise.all([loadNamespace(entry.ns) as Promise<unknown>, entry.load(), entry.plays?.()]);
+  if (!isCurrent()) return;
   const bus = createBus();
-  const page = renderChapter({ chapter: n, ns: entry.ns, content: content as ChapterContent, widgets: mod.widgets, plays: playMod?.plays ?? {}, bus, cleanups });
+  const page = renderChapter({ chapter: n, ns: entry.ns, content: content as ChapterContent, widgets: mod.widgets, plays: playMod?.plays ?? {}, bus, cleanups: ownedCleanups });
   const navEl = h('nav', { class: 'chapter-nav', 'aria-label': tc('nav.chapterNav') });
   const rtl = languageOf(getLang()).dir === 'rtl';
   const backArrow = rtl ? '→' : '←';
@@ -399,12 +405,18 @@ async function showChapter(n: number, sectionId?: string, keepScroll = false): P
   if (n < CHAPTER_COUNT - 1) {
     const next = CHAPTERS[n + 1];
     const warm = () => {
+      if (!isCurrent()) return;
       prefetchNamespace(next.ns);
       next.load().catch(() => {});
       next.plays?.().catch(() => {});
     };
-    if ('requestIdleCallback' in window) requestIdleCallback(warm, { timeout: 4000 });
-    else setTimeout(warm, 1500);
+    if ('requestIdleCallback' in window) {
+      const id = requestIdleCallback(warm, { timeout: 4000 });
+      ownedCleanups.push(() => cancelIdleCallback(id));
+    } else {
+      const id = setTimeout(warm, 1500);
+      ownedCleanups.push(() => clearTimeout(id));
+    }
   }
   if (keepScroll) return;
   const place = progress.load<{ ch: number; frac: number }>('reading');

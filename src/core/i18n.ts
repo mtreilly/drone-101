@@ -1,4 +1,5 @@
 import { isolateRuns } from './bidi';
+import { loadFontStyles } from './font-styles';
 import { DEFAULT_LANG, isSupported, languageOf, matchLanguage } from './languages';
 
 /**
@@ -16,6 +17,7 @@ const inflight = new Map<string, Promise<Dict>>();
 const STORE_KEY = 'feedback-adventure:lang';
 let lang = detectLang();
 const listeners = new Set<(lang: string) => void>();
+let languageRequest = 0;
 
 export const getLang = (): string => lang;
 
@@ -49,15 +51,12 @@ export function applyDocumentLang(): void {
 
 /** Switches language: loads its common strings first, then notifies listeners to re-render. */
 export async function setLang(code: string): Promise<void> {
-  if (!isSupported(code) || code === lang) return;
-  const previous = lang;
+  if (!isSupported(code)) return;
+  const request = ++languageRequest;
+  if (code === lang) return;
+  await Promise.all([loadNamespace('common', code), loadFontStyles(code)]);
+  if (request !== languageRequest) return;
   lang = code;
-  try {
-    await loadNamespace('common');
-  } catch (err) {
-    lang = previous;
-    throw err;
-  }
   try {
     localStorage.setItem(STORE_KEY, code);
   } catch {

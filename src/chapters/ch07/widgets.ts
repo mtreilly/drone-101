@@ -103,7 +103,7 @@ const probe: WidgetFactory = (host, ctx) => {
     ],
     height: 240,
     label: t('plotAria'),
-  });
+  }, ctx.onCleanup);
   const fplot = new Plot(b, {
     x: { label: 's', min: -1, max: 4 },
     y: { label: 'F(s)', min: 0, max: 4 },
@@ -113,7 +113,7 @@ const probe: WidgetFactory = (host, ctx) => {
     ],
     height: 240,
     label: t('fAria'),
-  });
+  }, ctx.onCleanup);
   const trace = { xs: [] as number[], ys: [] as number[] };
   const rArea = readout(t('area'));
   const rTotal = readout(t('total'));
@@ -258,7 +258,7 @@ const explode: WidgetFactory = (host, ctx) => {
     series: [{ id: 'p', color: 'ink', label: t('product') }],
     height: 220,
     label: t('prodAria'),
-  });
+  }, ctx.onCleanup);
   shadeOverlay(prod, () => (tt) => Math.exp((a - s) * tt), () => 10);
   const F = new Plot(right, {
     x: { label: 's', min: -2.5, max: 4 },
@@ -266,7 +266,7 @@ const explode: WidgetFactory = (host, ctx) => {
     series: [{ id: 'F', color: 'ink', label: t('curve') }],
     height: 220,
     label: t('fAria'),
-  });
+  }, ctx.onCleanup);
   const rF = readout(t('readF'));
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
   const eq = h('div', { class: 'math-block' });
@@ -326,7 +326,7 @@ const unspin: WidgetFactory = (host, ctx) => {
     ],
     height: 360,
     label: t('plotAria'),
-  });
+  }, ctx.onCleanup);
   // each quarter second of area is one arrow, laid head to tail along the path (Chapter 5's arrows)
   const PIECE = 0.25;
   plot.overlay = (g, px, py) => {
@@ -491,7 +491,7 @@ const derivRule: WidgetFactory = (host, ctx) => {
     ],
     height: 250,
     label: t('plotAria'),
-  });
+  }, ctx.onCleanup);
   const sp = new Plot(right, {
     x: { label: 's', min: 0.2, max: 3 },
     y: { label: '', min: -2, max: 2 },
@@ -502,7 +502,7 @@ const derivRule: WidgetFactory = (host, ctx) => {
     ],
     height: 250,
     label: t('sAria'),
-  });
+  }, ctx.onCleanup);
   const rL = readout(t('lhsShort'));
   const rR = readout(t('rhsShort'));
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
@@ -624,7 +624,7 @@ const tableW: WidgetFactory = (host, ctx) => {
     ],
     height: 220,
     label: t('plotAria'),
-  });
+  }, ctx.onCleanup);
   shadeOverlay(plot, () => (tt) => rows[cur].f(tt) * Math.exp(-s * tt), () => PROBE_T);
   const steps = h('div', { class: 'derivation', id: uid('derivation') });
   const rNum = readout(t('numeric'));
@@ -695,7 +695,7 @@ const solve: WidgetFactory = (host, ctx) => {
     ],
     height: 260,
     label: t('plotAria'),
-  });
+  }, ctx.onCleanup);
   plot.setLines([{ kind: 'h', at: 2, color: 'sp', label: t('target') }]);
   const eqH = h('div', { class: 'math-block' });
   const eqT = h('div', { class: 'math-block' });

@@ -128,7 +128,9 @@ export class DroneView {
   /** tumble after a knock: sideways drift (px) and rotation (deg), purely visual since the model is vertical only */
   private tumble = { on: false, hit: false, bump: false, dx: 0, vx: 0, angle: 0, spin: 0 };
 
-  constructor(host: HTMLElement, private o: DroneViewOptions = {}) {
+  private observer: ResizeObserver | null = null;
+
+  constructor(host: HTMLElement, private o: DroneViewOptions = {}, onCleanup?: (dispose: () => void) => void) {
     this.hMax = o.hMax ?? 3;
     this.free = !!o.onCeiling && !prefersReducedMotion();
     // Physical x coordinates and text anchors stay left-to-right even in Arabic UI.
@@ -185,9 +187,16 @@ export class DroneView {
     this.desc = h('p', { class: 'visually-hidden', 'aria-live': 'off' });
     this.el = h('div', { class: `drone-wrap${this.free ? ' free' : ''}`, style: { maxWidth: `${o.width ?? 300}px`, margin: '0 auto' } }, this.svg, this.desc);
     host.append(this.el);
-    new ResizeObserver(() => this.resize()).observe(this.svg);
+    onCleanup?.(() => this.destroy());
+    this.observer = new ResizeObserver(() => this.resize());
+    this.observer.observe(this.svg);
     document.fonts?.ready.then(() => (this.targetW = 0));
     this.update({ h: 0, r: 2, thrust: 0 });
+  }
+
+  destroy(): void {
+    this.observer?.disconnect();
+    this.observer = null;
   }
 
   private text(el: SVGTextElement, size: number): SVGTextElement {

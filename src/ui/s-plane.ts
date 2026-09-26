@@ -174,7 +174,10 @@ export class SPlane {
   /** viewBox units per CSS pixel, so labels and markers keep a readable size in narrow columns */
   private k = 1;
 
-  constructor(host: HTMLElement, public o: SPlaneOptions) {
+  private observer: ResizeObserver | null = null;
+  private destroyed = false;
+
+  constructor(host: HTMLElement, public o: SPlaneOptions, onCleanup?: (dispose: () => void) => void) {
     this.H = Math.round((W * 2 * o.imMax) / (o.reMax - o.reMin));
     // physical coordinates: text anchors stay left-to-right even in Arabic UI (as in DroneView)
     this.svg = s('svg', {
@@ -199,6 +202,7 @@ export class SPlane {
     this.svg.append(this.deco, this.guides, this.ghostLayer, this.layer);
     this.el = h('div', { class: 's-plane-wrap', style: o.maxWidth ? { maxWidth: `${o.maxWidth}px` } : undefined }, this.svg, this.desc);
     host.append(this.el);
+    onCleanup?.(() => this.destroy());
     let lastW = 0;
     const ro = new ResizeObserver(() => {
       const w = this.svg.clientWidth || W;
@@ -222,11 +226,20 @@ export class SPlane {
       this.layoutLabels();
     });
     ro.observe(this.svg);
+    this.observer = ro;
     // guide labels are measured; measure again once the hand-drawn font has arrived
     document.fonts?.ready.then(() => {
+      if (this.destroyed) return;
       this.fitRegionLabels();
       this.layoutLabels();
     });
+  }
+
+  destroy(): void {
+    if (this.destroyed) return;
+    this.destroyed = true;
+    this.observer?.disconnect();
+    clearTimeout(this.descTimer);
   }
 
   sx = (re: number): number => ((re - this.o.reMin) / (this.o.reMax - this.o.reMin)) * W;

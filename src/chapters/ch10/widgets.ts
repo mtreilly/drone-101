@@ -12,7 +12,7 @@ import { Loop } from '../../ui/loop';
 import { Plot } from '../../ui/plot';
 import { ShowerView } from '../../ui/shower-view';
 import { HAND_GAIN } from '../ch00/hands';
-import { SHOWER_RUN_KEY, type SavedShowerRun } from '../ch00/widgets';
+import { SHOWER_RUN_KEY, type SavedShowerRun } from '../ch00/saved-run';
 import {
   BODE_STEP,
   BODE_W_MAX,
@@ -40,14 +40,14 @@ import {
 } from './shower-tools';
 
 
-function tempPlot(host: HTMLElement, label: string, tMax: number, series: { id: string; color: string; label: string; ghost?: boolean; dash?: number[]; width?: number }[]): Plot {
+function tempPlot(onCleanup: WidgetCtx['onCleanup'], host: HTMLElement, label: string, tMax: number, series: { id: string; color: string; label: string; ghost?: boolean; dash?: number[]; width?: number }[]): Plot {
   const p = new Plot(host, {
     x: { label: tc('plots.time'), min: 0, max: tMax },
     y: { label: tc('plots.temp'), min: 10, max: 62 },
     series,
     height: 200,
     label,
-  });
+  }, onCleanup);
   p.setBands([{ kind: 'h', from: SHOWER.target - SHOWER.band, to: SHOWER.target + SHOWER.band, color: 'sp@0.16' }]);
   p.setLines([{ kind: 'h', at: SHOWER.target, color: 'sp', label: '38 °C' }]);
   return p;
@@ -67,7 +67,7 @@ const phase: WidgetFactory = (host, ctx) => {
     ],
     height: 200,
     label: t('aria'),
-  });
+  }, ctx.onCleanup);
   // a lag is not an error: the delay's purple, like the arrow
   const rLag = readout(t('lag'), 'dis');
   const rW = readout(t('w'));
@@ -137,7 +137,7 @@ const bode: WidgetFactory = (host, ctx) => {
     ],
     height: 220,
     label: t('timeAria'),
-  });
+  }, ctx.onCleanup);
   const wAxis = { label: t('w'), min: BODE_W_MIN, max: BODE_W_MAX, log: true, logSteps: [1, 2, 5] };
   const gainPlot = new Plot(right, {
     x: wAxis,
@@ -148,7 +148,7 @@ const bode: WidgetFactory = (host, ctx) => {
     ],
     height: 170,
     label: t('gainAria'),
-  });
+  }, ctx.onCleanup);
   const phasePlot = new Plot(right, {
     x: wAxis,
     y: { label: t('phase'), min: -540, max: 0, ticks: [0, -180, -360, -540] },
@@ -158,7 +158,7 @@ const bode: WidgetFactory = (host, ctx) => {
     ],
     height: 170,
     label: t('phaseAria'),
-  });
+  }, ctx.onCleanup);
   const flipLine = { kind: 'h' as const, at: -180, color: 'err', label: t('flip'), labelAt: 'start' as const, labelSide: 'below' as const };
   phasePlot.setLines([flipLine]);
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' }, t('status.start'));
@@ -259,7 +259,7 @@ const LOOP_WS = logspace(Math.log10(LOOP_W_MIN), Math.log10(LOOP_W_MAX), 300);
  * Strings from the widget's own subtree: w, gain, phase, loop, gainAria, phaseAria, one, cliff,
  * atCross.
  */
-function marginPlots(host: HTMLElement, t: WidgetCtx['t'], { withGain = true, height = 190, phaseMin = -360 } = {}) {
+function marginPlots(onCleanup: WidgetCtx['onCleanup'], host: HTMLElement, t: WidgetCtx['t'], { withGain = true, height = 190, phaseMin = -360 } = {}) {
   const xAxis = { label: t('w'), min: LOOP_W_MIN, max: LOOP_W_MAX, log: true, logSteps: [1, 2, 5] };
   const gain = withGain
     ? new Plot(host, {
@@ -270,7 +270,7 @@ function marginPlots(host: HTMLElement, t: WidgetCtx['t'], { withGain = true, he
         series: [{ id: 'L', color: 'out', label: t('loop'), ghost: true }],
         height: height + 30,
         label: t('gainAria'),
-      })
+      }, onCleanup)
     : null;
   const phase = new Plot(host, {
     x: xAxis,
@@ -278,7 +278,7 @@ function marginPlots(host: HTMLElement, t: WidgetCtx['t'], { withGain = true, he
     series: [{ id: 'L', color: 'out', label: withGain ? undefined : t('loop'), ghost: true }],
     height,
     label: t('phaseAria'),
-  });
+  }, onCleanup);
   const show = (loop: TF, delay: number, fresh: boolean): LoopMargins => {
     const pts = sweep(loop.num, loop.den, delay, LOOP_WS);
     const m = loopMargins(loop, delay);
@@ -321,8 +321,8 @@ const margins: WidgetFactory = (host, ctx) => {
   const right = h('div');
   grid.append(left, right);
   host.append(grid);
-  const plots = marginPlots(left, t);
-  const temp = tempPlot(right, t('timeAria'), 60, [{ id: 'T', color: 'out', label: t('temp'), ghost: true }]);
+  const plots = marginPlots(ctx.onCleanup, left, t);
+  const temp = tempPlot(ctx.onCleanup, right, t('timeAria'), 60, [{ id: 'T', color: 'out', label: t('temp'), ghost: true }]);
   const rGm = readout(t('gm'));
   const rPm = readout(t('pm'));
   const rCrit = readout(t('crit'), 'eff');
@@ -373,7 +373,7 @@ const replay: WidgetFactory = (host, ctx) => {
     tr = runShower(handPolicy(HAND_GAIN), 60);
   }
   host.append(h('p', { class: 'w-title' }, t('title')), h('p', { class: 'w-help' }, yours ? t('yours') : t('robot')));
-  const plot = tempPlot(host, t('aria'), 60, [
+  const plot = tempPlot(ctx.onCleanup, host, t('aria'), 60, [
     { id: 'T', color: 'out', label: t('temp') },
     { id: 'mix', color: 'eff', label: t('mix'), dash: [2, 3], width: 1.5 },
   ]);
@@ -418,12 +418,12 @@ const designer: WidgetFactory = (host, ctx) => {
   const view = new ShowerView(left, {
     labels: { aria: t('view.aria'), knob: t('view.knob'), cold: 'C', hot: 'H', pipe: t('view.pipe'), head: t('view.head'), thermo: t('view.thermo') },
   });
-  const plot = tempPlot(right, t('aria'), 40, [
+  const plot = tempPlot(ctx.onCleanup, right, t('aria'), 40, [
     { id: 'T', color: 'out', label: t('temp'), ghost: true },
     { id: 'mix', color: 'eff', label: t('mix'), dash: [2, 3], width: 1.5 },
   ]);
   // the loop's phase, so the phase-margin readout has a picture (arrow to −180°)
-  const loopPlot = marginPlots(right, t, { withGain: false, height: 150, phaseMin: -540 });
+  const loopPlot = marginPlots(ctx.onCleanup, right, t, { withGain: false, height: 150, phaseMin: -540 });
   let loopFresh = true;
   const rPm = readout(t('pm'));
   const rGm = readout(t('gm'));
