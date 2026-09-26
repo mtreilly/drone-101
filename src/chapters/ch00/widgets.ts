@@ -1,12 +1,13 @@
 import { h } from '../../core/dom';
 import { fmt, tc } from '../../core/i18n';
 import { progress } from '../../core/progress';
-import { SHOWER, ShowerSim, knobFor, type ShowerPolicy } from '../../sim/shower-model';
+import { SHOWER, ShowerSim } from '../../sim/shower-model';
 import type { WidgetCtx, WidgetFactory } from '../../story/types';
 import { readout, segmented, slider, transport } from '../../ui/controls';
 import { Loop } from '../../ui/loop';
 import { Plot } from '../../ui/plot';
 import { ShowerView } from '../../ui/shower-view';
+import { policies } from './hands';
 import './ch00.css';
 
 export interface SavedShowerRun {
@@ -18,14 +19,6 @@ export interface SavedShowerRun {
 export const SHOWER_RUN_KEY = 'ch0.run';
 const DURATION = 60;
 const GOAL = 10;
-
-/** Robot hands: turn the knob at a speed proportional to how wrong it feels. */
-export const HAND_GAIN = 0.008;
-export const policies: Record<'normal' | 'harder' | 'patient', ShowerPolicy> = {
-  normal: { kind: 'rate', rate: (_t, felt) => HAND_GAIN * (SHOWER.target - felt) },
-  harder: { kind: 'rate', rate: (_t, felt) => 2 * HAND_GAIN * (SHOWER.target - felt) },
-  patient: { kind: 'position', position: () => knobFor(SHOWER.target) },
-};
 
 function viewLabels(t: WidgetCtx['t']) {
   return {

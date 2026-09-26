@@ -1,5 +1,6 @@
 import '../ch09/ch09.css';
 import { h } from '../../core/dom';
+import { canvasHandFont } from '../../core/font';
 import { fmt, tc } from '../../core/i18n';
 import { progress } from '../../core/progress';
 import { logspace, sweep } from '../../math/bode';
@@ -85,7 +86,7 @@ const phase: WidgetFactory = (host, ctx) => {
       c.lineTo(x1, y);
       c.lineTo(x1 - 6, y + 4);
       c.stroke();
-      c.font = '15px "Patrick Hand", cursive';
+      c.font = canvasHandFont(15);
       c.textAlign = 'left';
       c.textBaseline = 'middle';
       c.fillText(`${fmt(L, 1)} s`, x1 + 6, y);

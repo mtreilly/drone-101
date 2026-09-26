@@ -47,6 +47,7 @@ export class SPlane {
   /** decoration layer under the points (guides, trails) */
   readonly deco: SVGGElement;
   private desc: HTMLElement;
+  private descTimer = 0;
   /** viewBox units per CSS pixel, so labels and markers keep a readable size in narrow columns */
   private k = 1;
 
@@ -210,10 +211,15 @@ export class SPlane {
     return `${name}: ${formatS(p.re, p.im, !!p.mirror)}`;
   }
 
+  /** Announce every point once the reader pauses, not on every drag frame or held arrow key. */
   describe(): void {
-    this.desc.textContent = this.all()
-      .map((p) => this.pointText(p))
-      .join('; ');
+    clearTimeout(this.descTimer);
+    this.descTimer = window.setTimeout(() => {
+      const text = this.all()
+        .map((p) => this.pointText(p))
+        .join('; ');
+      if (this.desc.textContent !== text) this.desc.textContent = text;
+    }, 500);
   }
 
   private makeDraggable(id: string, main: SVGGElement, twin: SVGGElement | null): void {
