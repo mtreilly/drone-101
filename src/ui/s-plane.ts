@@ -43,6 +43,49 @@ export interface SPlaneOptions {
 const W = 400;
 const EPS = 1e-9;
 
+/** An axis-aligned box in viewBox units. */
+export interface LabelBox {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+/** Two boxes overlap (with `pad` units of breathing room). */
+export const overlaps = (a: LabelBox, b: LabelBox, pad = 1): boolean =>
+  a.x < b.x + b.w + pad && b.x < a.x + a.w + pad && a.y < b.y + b.h + pad && b.y < a.y + a.h + pad;
+
+const area = (a: LabelBox, b: LabelBox, pad: number): number =>
+  Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x) + pad) * Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y) + pad);
+
+/**
+ * The first candidate that touches none of the obstacles; when every spot touches something, the
+ * one that covers the least.
+ */
+export function firstFree<C>(cands: C[], box: (c: C) => LabelBox | null, obstacles: LabelBox[], inside?: LabelBox): C {
+  let best = cands[0];
+  let bestCost = Infinity;
+  for (const c of cands) {
+    const b = box(c);
+    if (!b) continue;
+    const out = inside && (b.x < inside.x || b.y < inside.y || b.x + b.w > inside.x + inside.w || b.y + b.h > inside.y + inside.h);
+    const hit = obstacles.filter((o) => overlaps(b, o, 3));
+    if (!out && !hit.length) return c;
+    const cost = (out ? 1e6 : 0) + hit.reduce((sum, o) => sum + area(b, o, 3), 0);
+    if (cost < bestCost) (bestCost = cost), (best = c);
+  }
+  return best;
+}
+
+const bbox = (el: SVGGraphicsElement): LabelBox | null => {
+  try {
+    const b = el.getBBox();
+    return b.width || b.height ? { x: b.x, y: b.y, w: b.width, h: b.height } : null;
+  } catch {
+    return null;
+  }
+};
+
 /** Where a point is drawn: inside the plane, or pinned to the edge with the direction it left by. */
 export interface Placement {
   re: number;
@@ -117,6 +160,12 @@ export class SPlane {
   private circleState: { r: number; label?: string; at?: number } | null = null;
   private raysState: number[] = [];
   private settleState: number[] = [];
+  /** labels the layout pass moves out of each other's way */
+  private settleLabels: { text: SVGTextElement; x: number; full: string; short: string }[] = [];
+  private rayLabels: { text: SVGTextElement; top: boolean; py: number; n: number }[] = [];
+  private fixedLabels: SVGTextElement[] = [];
+  private tickLabels: SVGTextElement[] = [];
+  private regionLabels: { el: SVGTextElement; text: string; from: number; to: number; anchor: number }[] = [];
   private desc: HTMLElement;
   private descTimer = 0;
   /** viewBox units per CSS pixel, so labels and markers keep a readable size in narrow columns */
@@ -163,13 +212,18 @@ export class SPlane {
         this.drawGhosts();
       }
       // label lengths change with the font floor
+      this.fitRegionLabels();
       this.drawSettle();
       this.drawRays();
       this.drawCircle();
+      this.layoutLabels();
     });
     ro.observe(this.svg);
     // guide labels are measured; measure again once the hand-drawn font has arrived
-    document.fonts?.ready.then(() => this.drawSettle());
+    document.fonts?.ready.then(() => {
+      this.fitRegionLabels();
+      this.layoutLabels();
+    });
   }
 
   sx = (re: number): number => ((re - this.o.reMin) / (this.o.reMax - this.o.reMin)) * W;
@@ -183,12 +237,20 @@ export class SPlane {
     const bg = s('g', { class: 'bg' });
     const x0 = this.sx(0);
     if (o.regions) {
+      const stable = s('text', { x: 8, y: this.H - 10, class: 'region-label stable' }, tc('splane.stable'));
+      const unstable = s('text', { x: W - 8, y: this.H - 10, class: 'region-label unstable', 'text-anchor': 'end' }, tc('splane.unstable'));
       bg.append(
         s('rect', { x: 0, y: 0, width: x0, height: this.H, class: 'region-stable' }),
         s('rect', { x: x0, y: 0, width: W - x0, height: this.H, class: 'region-unstable' }),
-        s('text', { x: 8, y: this.H - 10, class: 'region-label stable' }, tc('splane.stable')),
-        s('text', { x: W - 8, y: this.H - 10, class: 'region-label unstable', 'text-anchor': 'end' }, tc('splane.unstable')),
+        stable,
+        unstable,
       );
+      // each caption stays inside its own half, clear of the ω axis
+      this.regionLabels = [
+        { el: stable, text: tc('splane.stable'), from: 8, to: x0 - 8, anchor: 8 },
+        { el: unstable, text: tc('splane.unstable'), from: x0 + 8, to: W - 8, anchor: W - 8 },
+      ];
+      this.fixedLabels.push(stable, unstable);
     }
     // grid
     const g = s('g', { class: 'grid' });
@@ -196,13 +258,17 @@ export class SPlane {
     for (let r = Math.ceil(o.reMin / stepRe) * stepRe; r <= o.reMax; r += stepRe) {
       if (Math.abs(r) < 1e-9) continue;
       g.append(s('line', { x1: this.sx(r), x2: this.sx(r), y1: 0, y2: this.H }));
-      g.append(s('text', { x: this.sx(r), y: this.sy(0) + 16, 'text-anchor': 'middle', class: 'tick' }, fmtTick(r)));
+      const tick = s('text', { x: this.sx(r), y: this.sy(0) + 16, 'text-anchor': 'middle', class: 'tick' }, fmtTick(r));
+      this.tickLabels.push(tick);
+      g.append(tick);
     }
     const stepIm = gridStep(2 * o.imMax);
     for (let i = Math.ceil(-o.imMax / stepIm) * stepIm; i <= o.imMax; i += stepIm) {
       if (Math.abs(i) < 1e-9) continue;
       g.append(s('line', { x1: 0, x2: W, y1: this.sy(i), y2: this.sy(i) }));
-      g.append(s('text', { x: x0 - 5, y: this.sy(i) + 4, 'text-anchor': 'end', class: 'tick' }, `${fmtTick(i)}i`));
+      const tick = s('text', { x: x0 - 5, y: this.sy(i) + 4, 'text-anchor': 'end', class: 'tick' }, `${fmtTick(i)}i`);
+      this.tickLabels.push(tick);
+      g.append(tick);
     }
     bg.append(g);
     // rough axes
@@ -210,10 +276,10 @@ export class SPlane {
     const axisOpts = { stroke: 'currentColor', strokeWidth: 1.5, roughness: 0.8, seed: 3 };
     const ax = s('g', { class: 'axes' });
     ax.append(rc.line(0, this.sy(0), W, this.sy(0), axisOpts), rc.line(x0, 0, x0, this.H, axisOpts));
-    ax.append(
-      s('text', { x: W - 6, y: this.sy(0) - 8, 'text-anchor': 'end', class: 'axis-label' }, o.reLabel ?? tc('splane.re')),
-      s('text', { x: x0 + 8, y: 16, class: 'axis-label' }, o.imLabel ?? tc('splane.im')),
-    );
+    const reText = s('text', { x: W - 6, y: this.sy(0) - 8, 'text-anchor': 'end', class: 'axis-label' }, o.reLabel ?? tc('splane.re'));
+    const imText = s('text', { x: x0 + 8, y: 16, class: 'axis-label' }, o.imLabel ?? tc('splane.im'));
+    ax.append(reText, imText);
+    this.fixedLabels.push(reText, imText);
     bg.append(ax);
     this.svg.append(bg);
   }
@@ -257,6 +323,7 @@ export class SPlane {
       this.place(p.id);
     }
     this.layoutOffValues();
+    this.layoutLabels();
   }
 
   move(id: string, re: number, im: number, notify = false): void {
@@ -265,6 +332,7 @@ export class SPlane {
     p.re = clamp(re, this.o.reMin, this.o.reMax);
     p.im = p.realOnly ? 0 : clamp(im, p.mirror ? 0 : -this.o.imMax, this.o.imMax);
     this.place(id);
+    this.layoutLabels();
     if (notify) {
       this.o.onChange?.(p);
       this.describe();
@@ -300,6 +368,7 @@ export class SPlane {
   setRays(zetas: number[]): void {
     this.raysState = zetas.filter((z) => z > 0 && z <= 1);
     this.drawRays();
+    this.layoutLabels();
   }
 
   /**
@@ -309,6 +378,7 @@ export class SPlane {
   setSettleLines(sigmas: number[]): void {
     this.settleState = sigmas.filter((v) => v > 0);
     this.drawSettle();
+    this.layoutLabels();
   }
 
   private create(p: SPoint): void {
@@ -327,7 +397,8 @@ export class SPlane {
     if (p.kind === 'pole') {
       g.append(s('path', { d: 'M-8,-8L8,8M8,-8L-8,8', class: 'x mark' }));
     } else if (p.kind === 'zero') {
-      g.append(s('circle', { r: 8, class: 'o mark' }));
+      // a touch larger than a pole's ×, so a pole sitting on a zero still shows inside it
+      g.append(s('circle', { r: 10, class: 'o mark' }));
     } else {
       g.append(s('circle', { r: 8, class: 'dot mark' }));
     }
@@ -441,6 +512,7 @@ export class SPlane {
 
   private drawRays(): void {
     this.raysG.replaceChildren();
+    this.rayLabels = [];
     const { o } = this;
     const m = 0.02 * (o.reMax - o.reMin);
     for (const z of this.raysState) {
@@ -470,26 +542,178 @@ export class SPlane {
       });
       text.setAttribute('y', String(py));
       this.raysG.append(text);
+      this.rayLabels.push({ text, top, py, n: lines.length });
     }
   }
 
   private drawSettle(): void {
     this.settleG.replaceChildren();
-    const room = (this.H / 2) * 0.9;
+    this.settleLabels = [];
     for (const sig of this.settleState) {
       const x = this.sx(-sig);
       const ts = settleRule(sig);
       const v = fmt(ts, Number.isInteger(Math.round(ts * 10) / 10) ? 0 : 1);
-      const y = this.sy(-this.o.imMax * 0.52);
-      const text = s('text', { class: 'guide-label settle-label', x: x - 4, y, transform: `rotate(-90 ${x - 4} ${y})`, 'text-anchor': 'middle' }, tc('splane.settles', { t: v }));
+      const full = tc('splane.settles', { t: v });
+      const text = s('text', { class: 'guide-label settle-label', 'text-anchor': 'middle' }, full);
       this.settleG.append(s('line', { class: 'guide settle', x1: x, x2: x, y1: 0, y2: this.H }), text);
+      this.settleLabels.push({ text, x, full, short: tc('splane.settlesShort', { t: v }) });
+      this.putSettle(this.settleLabels[this.settleLabels.length - 1], -0.52, false, false);
+    }
+  }
+
+  /** Writes a settling-line label along its line: at `at` × imMax, left or right of the line. */
+  private putSettle(l: { text: SVGTextElement; x: number; full: string; short: string }, at: number, right: boolean, short: boolean): LabelBox | null {
+    const txt = short ? l.short : l.full;
+    if (l.text.textContent !== txt) l.text.textContent = txt;
+    const y = this.sy(this.o.imMax * at);
+    const b0 = bbox(l.text);
+    // rotated −90°, the glyphs' tops face left: on the right of the line the text moves one line height over
+    const lineH = b0?.h ?? 15 * this.k;
+    const cx = right ? l.x + 4 + lineH * 0.8 : l.x - 4;
+    l.text.setAttribute('x', String(cx));
+    l.text.setAttribute('y', String(y));
+    l.text.setAttribute('transform', `rotate(-90 ${cx} ${y})`);
+    const b = bbox(l.text);
+    if (!b) return null;
+    // the box after the rotation about (cx, y)
+    return { x: cx + (b.y - y), y: y - (b.x + b.w - cx), w: b.h, h: b.w };
+  }
+
+  /** Point in viewBox units of a marker group's local spot. */
+  private markerBoxes(skip?: string): LabelBox[] {
+    const out: LabelBox[] = [];
+    const r = 11 * this.k;
+    for (const [id, p] of this.pts) {
+      if (id === skip) continue;
+      for (const q of positionsOf(p)) {
+        const pl = placement(q.re, q.im, this.o);
+        out.push({ x: this.sx(pl.re) - r, y: this.sy(pl.im) - r, w: 2 * r, h: 2 * r });
+      }
+    }
+    return out;
+  }
+
+  /**
+   * Keeps labels off the markers and off each other: settling-line labels slide to the other half
+   * or side of their line (or drop their words), ζ labels step aside along the edge or move to the
+   * lower edge, and a point's own label picks the free corner around it.
+   */
+  private layoutLabels(): void {
+    if (!this.svg.isConnected) return;
+    const frame: LabelBox = { x: 0, y: 0, w: W, h: this.H };
+    const fixed = this.fixedLabels.map(bbox).filter((b): b is LabelBox => !!b);
+    const markers = this.markerBoxes();
+    const ticks = this.tickLabels.map(bbox).filter((b): b is LabelBox => !!b);
+    const placed: LabelBox[] = [];
+    const room = this.H * 0.45;
+
+    for (const l of this.settleLabels) {
+      type C = [number, boolean, boolean];
+      const spots: C[] = [];
+      for (const short of [false, true])
+        for (const right of [false, true]) for (const at of [-0.52, 0.52, -0.3, 0.3]) spots.push([at, right, short]);
+      const fits = (c: C) => {
+        const b = this.putSettle(l, ...c);
+        return b && b.h <= room ? b : null;
+      };
+      const pick = firstFree(spots, fits, [...markers, ...fixed, ...placed], frame);
+      const b = this.putSettle(l, ...pick);
+      if (b) placed.push(b);
+    }
+
+    for (const l of this.rayLabels) {
+      const b0 = bbox(l.text);
+      if (!b0) continue;
+      const blocker = [...markers, ...placed].find((m) => overlaps(b0, m));
+      type C = { dx: number; dy: number; mirror: boolean };
+      const shift = blocker ? (l.top ? blocker.x - 3 - (b0.x + b0.w) : blocker.y - 3 - (b0.y + b0.h)) : 0;
+      const spots: C[] = [
+        { dx: 0, dy: 0, mirror: false },
+        { dx: l.top ? shift : 0, dy: l.top ? 0 : shift, mirror: false },
+        { dx: 0, dy: 0, mirror: true },
+      ];
+      const apply = (c: C) => {
+        const base = c.mirror ? this.H - l.py : l.py;
+        l.text.setAttribute('y', String(base + c.dy));
+        l.text.setAttribute('transform', c.dx ? `translate(${c.dx} 0)` : '');
+        const tspans = [...l.text.querySelectorAll('tspan')];
+        tspans.forEach((t, i) => {
+          // mirrored to the lower edge the label stands on it instead of hanging from it (and the reverse)
+          const hang = l.top !== c.mirror;
+          t.setAttribute('dy', hang ? (i === 0 ? '0.9em' : '1.05em') : i === 0 ? `${-0.4 - 1.05 * (l.n - 1)}em` : '1.05em');
+        });
+        const b = bbox(l.text);
+        return b ? { ...b, x: b.x + c.dx } : null;
+      };
+      const pick = firstFree(spots, apply, [...markers, ...fixed, ...placed], frame);
+      const b = apply(pick);
+      if (b) placed.push(b);
+    }
+
+    for (const [id, n] of this.nodes) {
+      const lbl = n.main.querySelector<SVGTextElement>('.pt-label');
+      const p = this.pts.get(id)!;
+      if (!lbl || !p.label) continue;
+      const pl = placement(p.re, p.im, this.o);
+      const tx = this.sx(pl.re);
+      const ty = this.sy(pl.im);
+      const others = this.markerBoxes(id);
+      const spots: [number, number, 'start' | 'end'][] = [
+        [12, -12, 'start'],
+        [-12, -12, 'end'],
+        [12, 24, 'start'],
+        [-12, 24, 'end'],
+      ];
+      const apply = ([x, y, anchor]: [number, number, 'start' | 'end']) => {
+        lbl.setAttribute('x', String(x));
+        lbl.setAttribute('y', String(y));
+        lbl.setAttribute('text-anchor', anchor);
+        const b = bbox(lbl);
+        return b ? { x: tx + b.x * this.k, y: ty + b.y * this.k, w: b.w * this.k, h: b.h * this.k } : null;
+      };
+      const pick = firstFree(spots, apply, [...others, ...fixed, ...ticks, ...placed], frame);
+      const b = apply(pick);
+      if (b) placed.push(b);
+    }
+  }
+
+  /**
+   * Region captions ("settles down", "blows up") must fit their half of the plane: a caption too wide
+   * for it breaks onto two lines at a space, and a single long word is narrowed to fit.
+   */
+  private fitRegionLabels(): void {
+    for (const r of this.regionLabels) {
+      const { el } = r;
+      el.replaceChildren(r.text);
+      el.removeAttribute('textLength');
+      el.removeAttribute('lengthAdjust');
+      const avail = r.to - r.from;
       let len = 0;
       try {
-        len = text.getComputedTextLength();
+        len = el.getComputedTextLength();
       } catch {
-        /* not rendered yet */
+        continue;
       }
-      if (len > room) text.textContent = tc('splane.settlesShort', { t: v });
+      if (!len || len <= avail) continue;
+      const words = r.text.split(' ');
+      if (words.length > 1) {
+        // the split that makes the longer line shortest
+        let best = 1;
+        let bestW = Infinity;
+        for (let i = 1; i < words.length; i++) {
+          const w = Math.max(words.slice(0, i).join(' ').length, words.slice(i).join(' ').length);
+          if (w < bestW) (bestW = w), (best = i);
+        }
+        el.replaceChildren(
+          s('tspan', { x: r.anchor, dy: '-1.1em' }, words.slice(0, best).join(' ')),
+          s('tspan', { x: r.anchor, dy: '1.1em' }, words.slice(best).join(' ')),
+        );
+        const b = bbox(el);
+        if (b && b.w <= avail) continue;
+        el.replaceChildren(r.text);
+      }
+      el.setAttribute('textLength', String(avail));
+      el.setAttribute('lengthAdjust', 'spacingAndGlyphs');
     }
   }
 

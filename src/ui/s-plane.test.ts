@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { loadNamespace } from '../core/i18n';
-import { describePoint, formatS, overshootOf, placement, positionsOf, settleRule, snapNearest, snapStep } from './s-plane';
+import { describePoint, formatS, overshootOf, placement, positionsOf, settleRule, snapNearest, snapStep, firstFree, type LabelBox, overlaps } from './s-plane';
 
 beforeAll(async () => {
   // serve the English locale from disk, as the dev server would
@@ -113,5 +113,21 @@ describe('SPlane values and wording', () => {
 
   it('uses the 4/σ settling rule for its lines', () => {
     expect([1, 2, 4].map(settleRule)).toEqual([4, 2, 1]);
+  });
+});
+
+describe('label spots', () => {
+  const box = (x: number, y: number, w = 10, h = 10): LabelBox => ({ x, y, w, h });
+  it('overlaps respects the padding', () => {
+    expect(overlaps(box(0, 0), box(12, 0))).toBe(false);
+    expect(overlaps(box(0, 0), box(12, 0), 3)).toBe(true);
+  });
+  it('takes the first free spot, inside the frame', () => {
+    const spots = [box(0, 0), box(-20, 0), box(20, 0), box(40, 0)];
+    expect(firstFree(spots, (b) => b, [box(2, 2)], box(0, 0, 100, 100))).toBe(spots[2]);
+  });
+  it('when every spot is taken, the one that covers least', () => {
+    const spots = [box(0, 0), box(20, 0)];
+    expect(firstFree(spots, (b) => b, [box(0, 0), box(28, 0)])).toBe(spots[1]);
   });
 });
