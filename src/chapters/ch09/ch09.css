@@ -76,3 +76,12 @@
     flex: 1 1 130px;
   }
 }
+
+/* poles widget on phones: the σ ticks (−16 … 4, every 2) crowd; keep every other one, drop −16 at the clipped edge.
+   The s-plane draws each σ tick as a line then a text, σ first (10 ticks = 20 children), then the ω ticks. */
+@media (max-width: 400px) {
+  .pid-poles .s-plane .grid text.tick:nth-child(4n):nth-child(-n + 20),
+  .pid-poles .s-plane .grid text.tick:nth-child(2) {
+    display: none;
+  }
+}

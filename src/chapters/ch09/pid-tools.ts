@@ -36,6 +36,8 @@ export interface Trace {
   pkg: number[];
   measured: number[];
   crashed: boolean;
+  /** when it crashed, s, if the runner records it (the view shows the crash from then on) */
+  crashAt?: number | null;
 }
 
 /** A trace with nothing in it yet (fill it with `sampleTrace`). */

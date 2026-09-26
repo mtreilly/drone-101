@@ -1,14 +1,18 @@
 import './ch09.css';
 import { h } from '../../core/dom';
+import { setRich } from '../../core/rich-text';
 import { fmt, tc } from '../../core/i18n';
 import { DRONE } from '../../sim/drone-model';
 import type { WidgetCtx, WidgetFactory } from '../../story/types';
 import { readout, segmented, slider, toggle } from '../../ui/controls';
 import { color, withAlpha } from '../../ui/colors';
 import { Plot } from '../../ui/plot';
-import { SPlane } from '../../ui/s-plane';
-import { runUnderCeiling, watchCeiling } from './page-ceiling';
-import { LIMITED, TARGETS, hoverStep, kiLimit, pid, pidPoles, runDrone, scoreTrace, stars, takeoff } from './pid-tools';
+import { SPlane, type SPoint } from '../../ui/s-plane';
+import { followPlay } from '../../story/play';
+import { runUnderCeiling, stayDown, watchCeiling } from './page-ceiling';
+import { LIMITED, TARGETS, kiLimit, pid, pidPoles, scoreTrace, stars, takeoff } from './pid-tools';
+import { KICK_AT, NOISE_SD, heightTop, damperRun, integralRun, jitterOf, kickRun, meanHeight, nearlyCancels, noiseRun, piZero, polesStep, slowestPole, stepOf } from './scenarios';
+import { NOISY, damperStatus, integralStatus, noiseStatus, zetaPD } from './status';
 import { starRow } from './stars';
 import { TracePlayer } from './trace-player';
 
@@ -22,6 +26,11 @@ function layout(host: HTMLElement, player: TracePlayer | null, parts: { controls
 }
 
 
+/** "$K_p$" alone would be announced as "K_p": give the three gain sliders plain names */
+function nameGains(ctx: WidgetCtx, sliders: { input: HTMLInputElement }[]): void {
+  sliders.forEach((s, i) => s.input.setAttribute('aria-label', ctx.tch(`widgets.gains.${['kp', 'ki', 'kd'][i]}`)));
+}
+
 const playerLabels = (_ctx?: WidgetCtx) => ({
   heightLabel: tc('drone.height'),
   thrustLabel: tc('drone.thrust'),
@@ -31,7 +40,8 @@ const playerLabels = (_ctx?: WidgetCtx) => ({
 const integral: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
   const KP = 20;
-  let ki = 0;
+  // starts where the droop is gone, so the orange pile is visible climbing to the weight
+  let ki = 10;
   host.append(h('p', { class: 'w-title' }, t('title')));
   const player = new TracePlayer(host, {
     ...playerLabels(ctx),
@@ -41,23 +51,27 @@ const integral: WidgetFactory = (host, ctx) => {
   });
   const rDroop = readout(t('readout.droop'), 'err');
   const rPile = readout(t('readout.pile'), 'eff');
+  const rArea = readout(t('readout.area'), 'err');
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
   const run = (preview = false) => {
-    const tr = runDrone(takeoff(pid(KP, ki, 0)), 12);
+    const tr = integralRun(ki);
     if (preview) player.show(tr);
     else player.load(tr);
     const end = tr.h[tr.h.length - 1];
     const droop = 2 - end;
     rDroop.set(`${fmt(droop * 100, 1)} cm`, Math.abs(droop) < 0.01 ? 'good' : '');
     rPile.set(`${fmt(ki * tr.integral[tr.integral.length - 1], 2)} N`);
+    rArea.set(`${fmt(tr.integral[tr.integral.length - 1], 2)} m·s`);
     const lim = kiLimit(KP, 0);
-    status.textContent = ki === 0 ? t('status.none') : ki >= lim ? t('status.unstable', { lim: fmt(lim, 0) }) : Math.abs(droop) < 0.01 ? t('status.gone') : t('status.slow');
-    status.className = `w-status${ki >= lim ? ' bad' : Math.abs(droop) < 0.01 ? ' good' : ''}`;
+    const st = integralStatus(ki, tr, KP);
+    status.textContent = t(`status.${st}`, { lim: fmt(lim, 0) });
+    status.className = `w-status${st === 'unstable' ? ' bad' : st === 'gone' ? ' good' : ''}`;
     player.hPlot.describe(t('describe', { ki: fmt(ki, 0), droop: fmt(droop * 100, 1) }));
   };
   const sl = slider({ label: t('slider'), min: 0, max: 60, step: 1, value: ki, unit: 'N/(m·s)', color: 'eff', onInput: (v) => { ki = v; run(true); } });
+  sl.input.setAttribute('aria-label', ctx.tch('widgets.gains.ki'));
   player.bind(sl.input);
-  layout(host, player, { controls: [sl.el], readouts: [rDroop.el, rPile.el], status });
+  layout(host, player, { controls: [sl.el], readouts: [rDroop.el, rPile.el, rArea.el], status });
   run();
   return () => player.destroy();
 };
@@ -71,24 +85,31 @@ const damper: WidgetFactory = (host, ctx) => {
   host.append(h('p', { class: 'w-title' }, t('title')));
   const player = new TracePlayer(host, { ...playerLabels(ctx), duration: 10 });
   const rDamp = readout(t('readout.damping'), 'eff');
+  const rZeta = readout(t('readout.zeta'), 'eff');
   const rOs = readout(t('readout.overshoot'), 'out');
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
   const run = (preview = false) => {
     const ki = bigKi ? 50 : 10;
-    const tr = runDrone(takeoff(pid(KP, ki, kd)), 10);
+    const tr = damperRun(ki, kd);
     if (preview) player.show(tr);
     else player.load(tr);
     const s = scoreTrace(tr);
+    // one notch less D: did this notch make the overshoot worse?
+    const less = kd > 0 ? scoreTrace(damperRun(ki, kd - 0.5)).overshoot : s.overshoot;
     rDamp.set(`${fmt(DRONE.c + kd, 1)} N·s/m`);
+    const z = zetaPD(KP, kd);
+    rZeta.set(fmt(z, 2));
     rOs.set(`${fmt(s.overshoot, 0)} %`, s.overshoot < 5 ? 'good' : '');
-    const stable = ki < kiLimit(KP, kd);
-    status.textContent = !stable ? t('status.unstable') : s.overshoot < 5 ? t('status.calm') : t('status.bouncy');
-    status.className = `w-status${!stable ? ' bad' : s.overshoot < 5 ? ' good' : ''}`;
+    const st = damperStatus(ki, kd, s.overshoot, less, KP);
+    status.textContent = t(`status.${st}`, { os: fmt(s.overshoot, 0) });
+    status.className = `w-status${st === 'unstable' ? ' bad' : st === 'calm' ? ' good' : ''}`;
   };
   const sl = slider({ label: t('slider'), min: 0, max: 10, step: 0.5, value: kd, unit: 'N·s/m', color: 'eff', onInput: (v) => { kd = v; run(true); } });
+  sl.input.setAttribute('aria-label', ctx.tch('widgets.gains.kd'));
   player.bind(sl.input);
   const tg = toggle(t('bigKi'), bigKi, (v) => { bigKi = v; run(); });
-  layout(host, player, { controls: [sl.el, tg.el], readouts: [rDamp.el, rOs.el], status });
+  tg.input.setAttribute('aria-label', t('bigKiName'));
+  layout(host, player, { controls: [sl.el, tg.el], readouts: [rDamp.el, rZeta.el, rOs.el], status });
   const off = ctx.bus.on('damper:mika', () => { tg.input.checked = true; bigKi = true; run(); });
   run();
   return () => {
@@ -135,19 +156,23 @@ const poles: WidgetFactory = (host, ctx) => {
     height: 170,
     label: t('stepAria'),
   });
+  const rOs = readout(t('readout.overshoot'), 'out');
+  const rTs = readout(t('readout.settling'), 'out');
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
   const update = () => {
     const ps = pidPoles(kp, ki, kd);
     const lim = kiLimit(kp, kd);
-    const pts = ps.map((p, i) => {
-      const [re, im, off] = clampPole(p.re, p.im, range);
-      return { id: `p${i}`, re, im, kind: 'pole' as const, label: off ? t('offmap') : undefined };
-    });
+    // true values: the s-plane itself turns far-away poles into edge arrows with their value
+    const pts: SPoint[] = ps.map((p, i) => ({ id: `p${i}`, re: p.re, im: p.im, kind: 'pole' }));
+    // the I term brings a zero at −Ki/Kp (D works on the measurement, so it adds none)
+    const zero = piZero(kp, ki);
+    if (zero !== null) pts.push({ id: 'z', re: zero, im: 0, kind: 'zero', label: t('zero') });
     // faint trail of where the poles have been
-    for (const p of pts) {
+    for (const p of ps) {
+      const [re, im] = clampPole(p.re, p.im, range);
       const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      c.setAttribute('cx', String(sp.sx(p.re)));
-      c.setAttribute('cy', String(sp.sy(p.im)));
+      c.setAttribute('cx', String(sp.sx(re)));
+      c.setAttribute('cy', String(sp.sy(im)));
       c.setAttribute('r', '2.5');
       c.setAttribute('fill', 'var(--ink-3)');
       c.setAttribute('opacity', '0.35');
@@ -173,21 +198,46 @@ const poles: WidgetFactory = (host, ctx) => {
     };
     map.setMarkers([{ x: kd, y: Math.min(ki, 200), color: ki < lim ? 'good' : 'bad', label: t('map.you') }]);
     step.clear();
-    const tr = hoverStep(pid(kp, ki, kd), 1.5, 2, 8);
-    step.set('h', tr.t, tr.h);
-    step.set('r', tr.t, tr.r);
-    const worst = Math.max(...ps.map((p) => p.re));
-    status.textContent = ki >= lim ? t('status.unstable', { lim: fmt(lim, 0) }) : t('status.stable', { lim: fmt(lim, 0), s: fmt(worst, 2) });
-    status.className = `w-status${ki >= lim ? ' bad' : ''}`;
-    step.describe(status.textContent);
+    const tr = polesStep(kp, ki, kd, 15);
+    const shown = tr.t.findIndex((x) => x > 8);
+    step.set('h', tr.t.slice(0, shown), tr.h.slice(0, shown));
+    step.set('r', tr.t.slice(0, shown), tr.r.slice(0, shown));
+    const stable = ki < lim;
+    const m = stepOf(tr);
+    rOs.set(stable ? `${fmt(m.overshoot, 1)} %` : '—');
+    rTs.set(stable && Number.isFinite(m.settling) ? `${fmt(m.settling, 2)} s` : t('never'));
+    const worst = slowestPole(ps);
+    let text = stable ? t('status.stable', { lim: fmt(lim, 0), s: fmt(worst.re, 2) }) : t('status.unstable', { lim: fmt(lim, 0) });
+    if (stable && nearlyCancels(worst, zero)) text += ` ${t('status.cancel', { z: fmt(zero!, 2) })}`;
+    status.textContent = text;
+    status.className = `w-status${stable ? '' : ' bad'}`;
+    step.describe(text);
   };
   const sKp = slider({ label: t('kp'), min: 2, max: 40, step: 1, value: kp, unit: 'N/m', color: 'eff', onInput: (v) => { kp = v; update(); } });
   const sKi = slider({ label: t('ki'), min: 0, max: 200, step: 2, value: ki, unit: 'N/(m·s)', color: 'eff', onInput: (v) => { ki = v; update(); } });
   const sKd = slider({ label: t('kd'), min: 0, max: 10, step: 0.25, value: kd, unit: 'N·s/m', color: 'eff', onInput: (v) => { kd = v; update(); } });
-  host.classList.add('pid-widget');
-  host.append(h('div', { class: 'w-controls compact' }, sKp.el, sKi.el, sKd.el), status, h('p', { class: 'w-help' }, t('help')));
+  nameGains(ctx, [sKp, sKi, sKd]);
+  host.classList.add('pid-widget', 'pid-poles');
+  host.append(
+    h('div', { class: 'w-controls compact' }, sKp.el, sKi.el, sKd.el),
+    h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rOs.el, rTs.el)),
+    status,
+    setRich(h('p', { class: 'w-help' }), t('help')),
+  );
+  // the "cliff" sentence moves Kp and Kd here: a linked representation
+  const off = followPlay(ctx.bus, 'cliff', (v) => {
+    kp = v.kp;
+    kd = v.kd;
+    sKp.value = kp;
+    sKd.value = kd;
+    update();
+  });
   update();
+  return off;
 };
+
+/** the playground replays the first 6 s of the 15 s it scores */
+const REPLAY = 6;
 
 /** 9d: tuning playground with a scoreboard. */
 const playground: WidgetFactory = (host, ctx) => {
@@ -198,7 +248,7 @@ const playground: WidgetFactory = (host, ctx) => {
   let aw = true;
   host.append(h('p', { class: 'w-title' }, t('title')));
   // windup can throw it out of its picture into the page above; the motors survive the bump (page-ceiling.ts)
-  const player = new TracePlayer(host, { ...playerLabels(ctx), duration: 6, pageCeiling: true });
+  const player = new TracePlayer(host, { ...playerLabels(ctx), duration: REPLAY, pageCeiling: true });
   const rOs = readout(t('readout.overshoot'), 'out');
   const rTs = readout(t('readout.settling'), 'out');
   const rSse = readout(t('readout.sse'), 'err');
@@ -212,36 +262,49 @@ const playground: WidgetFactory = (host, ctx) => {
   let hitAt: number | null = null;
   let verdict = '';
   let hitLine = '';
-  let hitShown: boolean | null = null;
-  // the hit sentence (and a mark on the height plot) appear when the replay gets to the hit
-  const showHit = (on: boolean) => {
-    if (on === hitShown) return;
-    hitShown = on;
-    starsText.textContent = on ? `${verdict} ${hitLine}` : verdict;
-    player.hPlot.setLines(on && hitAt !== null ? [{ kind: 'v', at: hitAt, color: 'ink3', dash: [2, 4], label: t('hit.mark') }] : []);
+  // a crash (landing faster than 1.5 m/s): the drone stays down from then on (docs/page-physics.md rule 8)
+  let crashAt: number | null = null;
+  let crashLine = '';
+  let shown: string | null = null;
+  // the hit and crash sentences (and a mark on the height plot) appear when the replay gets to them;
+  // a crash after the 6 s replay (the stars look at 15 s) is told when the replay ends
+  const showEvents = (tt: number) => {
+    const hitOn = hitAt !== null && tt >= hitAt;
+    const crashOn = crashAt !== null && tt >= Math.min(crashAt, REPLAY - 1e-6);
+    const key = `${hitOn}${crashOn}`;
+    if (key === shown) return;
+    shown = key;
+    starsText.textContent = [verdict, hitOn ? hitLine : '', crashOn ? crashLine : ''].filter(Boolean).join(' ');
+    player.hPlot.setLines(hitOn && hitAt !== null ? [{ kind: 'v', at: hitAt, color: 'ink3', dash: [2, 4], label: t('hit.mark') }] : []);
   };
-  player.onFrame = (tt) => showHit(hitAt !== null && tt >= hitAt);
+  player.onFrame = (tt) => showEvents(tt);
   /** `relayout`: the page moved, so the ceiling did; keep the replay going if the flight so far is unchanged */
   const run = (mode: 'load' | 'preview' | 'relayout' = 'load') => {
     const oldHit = hitAt;
     ceiling = player.view.ceilingHeight();
-    const tr = runUnderCeiling(takeoff(pid(kp, ki, kd, { antiWindup: aw })), 15, ceiling);
+    const tr = stayDown(runUnderCeiling(takeoff(pid(kp, ki, kd, { antiWindup: aw })), 15, ceiling));
     const s = scoreTrace(tr);
     const st = stars(s);
     rOs.set(`${fmt(s.overshoot, 1)} %`, st.overshoot ? 'good' : 'bad');
-    rTs.set(Number.isFinite(s.settling) ? `${fmt(s.settling, 2)} s` : t('never'), st.settling ? 'good' : 'bad');
+    // a P-only drone does settle, just 24.5 cm low: say why it never gets inside the 2 % band
+    rTs.set(Number.isFinite(s.settling) ? `${fmt(s.settling, 2)} s` : t(s.sse > 0.02 * 2 && tr.crashAt === null ? 'neverDroop' : 'never'), st.settling ? 'good' : 'bad');
     rSse.set(`${fmt(s.sse * 100, 1)} cm`, st.sse ? 'good' : 'bad');
     rSat.set(`${fmt(s.saturated, 2)} s`, st.saturated ? 'good' : 'bad');
     const n = Object.values(st).filter(Boolean).length;
     row.set(Object.values(st));
     verdict = n === 4 ? t('allStars') : t('someStars', { n });
     // only a hit the replay shows (its first 6 s) gets a sentence
-    hitAt = tr.hitAt !== null && tr.hitAt <= 6 ? tr.hitAt : null;
+    hitAt = tr.hitAt !== null && tr.hitAt <= REPLAY ? tr.hitAt : null;
     hitLine = t(Number.isFinite(s.settling) ? 'hit.back' : 'hit.wild');
-    hitShown = null;
-    showHit(false);
+    crashAt = tr.crashAt;
+    crashLine = crashAt === null ? '' : t('crash', { t: fmt(crashAt, 1) });
+    shown = null;
+    showEvents(0);
     starsEl.className = `w-status score-line${n === 4 ? ' good' : ''}`;
-    const show = { ...tr, t: tr.t.slice(0, 601), h: tr.h.slice(0, 601), thrust: tr.thrust.slice(0, 601), r: tr.r.slice(0, 601) };
+    const n6 = Math.round(REPLAY * 100) + 1;
+    const show = { ...tr, t: tr.t.slice(0, n6), h: tr.h.slice(0, n6), thrust: tr.thrust.slice(0, n6), r: tr.r.slice(0, n6) };
+    // a windup flight (and a bump into the page) goes well above 3 m: grow the height plot so the peak stays on it
+    player.hPlot.setY(0, heightTop(show.h));
     // before either hit, the old and the new flight are the same
     const same = player.playhead < Math.min(oldHit ?? Infinity, hitAt ?? Infinity);
     if (mode === 'preview') player.show(show);
@@ -251,6 +314,7 @@ const playground: WidgetFactory = (host, ctx) => {
   const sKp = slider({ label: t('kp'), min: 0, max: 40, step: 1, value: kp, unit: 'N/m', color: 'eff', onInput: (v) => { kp = v; run('preview'); } });
   const sKi = slider({ label: t('ki'), min: 0, max: 60, step: 1, value: ki, unit: 'N/(m·s)', color: 'eff', onInput: (v) => { ki = v; run('preview'); } });
   const sKd = slider({ label: t('kd'), min: 0, max: 10, step: 0.5, value: kd, unit: 'N·s/m', color: 'eff', onInput: (v) => { kd = v; run('preview'); } });
+  nameGains(ctx, [sKp, sKi, sKd]);
   for (const sl of [sKp, sKi, sKd]) player.bind(sl.input);
   const tg = toggle(t('antiWindup'), aw, (v) => { aw = v; run(); });
   layout(host, player, {
@@ -274,52 +338,74 @@ const kick: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
   let mode: 'error' | 'measurement' = 'error';
   host.append(h('p', { class: 'w-title' }, t('title')));
-  const player = new TracePlayer(host, { ...playerLabels(ctx), duration: 5, heightRange: [0.5, 2.8] });
+  const player = new TracePlayer(host, { ...playerLabels(ctx), duration: 5, heightRange: [0.5, 2] });
+  const rAsk = readout(t('asked'), 'eff');
   const rPeak = readout(t('peak'), 'eff');
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  // the "kick!" tag appears on the thrust plot when the replay reaches the jump
+  let tagged: boolean | null = null;
+  const tag = (on: boolean) => {
+    if (on === tagged) return;
+    tagged = on;
+    player.tPlot.setMarkers(on ? [{ x: KICK_AT, y: LIMITED.tMax, color: 'err', shape: 'flag', label: t('kickMark') }] : []);
+  };
+  player.onFrame = (tt) => tag(mode === 'error' && tt >= KICK_AT);
   const run = () => {
-    const tr = hoverStep(pid(15, 8, 4, { dTau: 0.01, dOnMeasurement: mode === 'measurement' }), 1, 2, 5);
+    const tr = kickRun(mode);
+    tagged = null;
+    tag(false);
     player.load(tr);
+    const ask = Math.max(...tr.request);
     const peak = Math.max(...tr.thrust);
+    rAsk.set(`${fmt(ask, 0)} N`, ask > LIMITED.tMax ? 'bad' : 'good');
     rPeak.set(`${fmt(peak, 1)} N`, peak >= LIMITED.tMax - 1e-6 ? 'bad' : 'good');
-    status.textContent = t(`status.${mode}`);
+    status.textContent = t(`status.${mode}`, { req: fmt(ask, 0) });
+    status.className = `w-status${mode === 'error' ? ' bad' : ' good'}`;
   };
   const seg = segmented(t('mode'), [
     { value: 'error', label: t('onError') },
     { value: 'measurement', label: t('onMeasurement') },
   ], mode, (v) => { mode = v; run(); });
-  layout(host, player, { controls: [seg.el], readouts: [rPeak.el], status });
+  layout(host, player, { controls: [seg.el], readouts: [rAsk.el, rPeak.el], status });
   run();
   return () => player.destroy();
 };
-
-/** thrust jitter (N) above which we call the motors "chattering" */
-export const NOISY = 1.5;
 
 /** 9e (ii): sensor noise gets amplified by the derivative. */
 const noise: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
   let on = true;
   let tau = 0.005;
+  let kd = 4;
   host.append(h('p', { class: 'w-title' }, t('title')));
   const player = new TracePlayer(host, { ...playerLabels(ctx), duration: 5, heightRange: [1, 2.6], showMeasured: true, measuredLabel: t('measured') });
   const rJit = readout(t('jitter'), 'eff');
+  const rMean = readout(t('mean'), 'out');
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
   const run = (preview = false) => {
-    const tr = hoverStep(pid(15, 8, 4, { dTau: tau }), 2, 2, 5, on ? 0.02 : 0);
+    const tr = noiseRun(kd, tau, on);
+    const mean = meanHeight(tr);
+    rMean.set(`${fmt(mean, 2)} m`, Math.abs(mean - 2) < 0.02 ? 'good' : 'bad');
     if (preview) player.show(tr);
     else player.load(tr);
-    const xs = tr.thrust.slice(50);
-    const mean = xs.reduce((a, b) => a + b, 0) / xs.length;
-    const sd = Math.sqrt(xs.reduce((a, b) => a + (b - mean) ** 2, 0) / xs.length);
+    const sd = jitterOf(tr);
     rJit.set(`± ${fmt(sd, 2)} N`, sd < NOISY ? 'good' : 'bad');
-    status.textContent = !on ? t('status.off') : sd >= NOISY ? t('status.chatter') : t('status.calm');
-    status.className = `w-status${on && sd >= NOISY ? ' bad' : ''}`;
+    const st = noiseStatus(on, kd, sd);
+    status.textContent = t(`status.${st}`, { j: fmt(sd, 1), p: fmt(15 * NOISE_SD, 1), tau: fmt(tau, 3) });
+    status.className = `w-status${st === 'chatter' ? ' bad' : ''}`;
   };
   const tg = toggle(t('toggle'), on, (v) => { on = v; run(); });
   const sl = slider({ label: t('filter'), min: 0.005, max: 0.2, step: 0.005, value: tau, unit: 's', digits: 3, color: 'eff', onInput: (v) => { tau = v; run(true); } });
-  player.bind(sl.input);
-  layout(host, player, { controls: [sl.el, tg.el], readouts: [rJit.el], status });
+  sl.input.setAttribute('aria-label', t('filterName'));
+  const sKd = slider({ label: t('kd'), min: 0, max: 8, step: 0.5, value: kd, unit: 'N·s/m', color: 'eff', onInput: (v) => { kd = v; run(true); } });
+  sKd.input.setAttribute('aria-label', ctx.tch('widgets.gains.kd'));
+  for (const s of [sl, sKd]) player.bind(s.input);
+  layout(host, player, {
+    controls: [sl.el, sKd.el, tg.el],
+    readouts: [rJit.el, rMean.el],
+    status,
+    help: setRich(h('p', { class: 'w-help' }), t('help')),
+  });
   run();
   return () => player.destroy();
 };

@@ -63,7 +63,8 @@ export class TracePlayer {
       { id: 'r', color: 'sp', dash: [6, 5], width: 1.8 },
       { id: 'h', color: 'out', label: o.heightLabel, ghost: true },
     ];
-    if (o.showMeasured) hs.unshift({ id: 'meas', color: 'pencil', label: o.measuredLabel ?? '', width: 1 });
+    // a touch wider than a hairline, so the grey reading stays visible next to the blue height
+    if (o.showMeasured) hs.unshift({ id: 'meas', color: 'pencil', label: o.measuredLabel ?? '', width: 1.3 });
     this.hPlot = new Plot(right, {
       x: { label: tc('plots.time'), min: 0, max: o.duration },
       y: { label: tc('plots.height'), min: o.heightRange?.[0] ?? 0, max: o.heightRange?.[1] ?? 3 },
@@ -184,7 +185,7 @@ export class TracePlayer {
     if (this.o.showMeasured) this.hPlot.set('meas', t, tr.measured.slice(0, n));
     this.tPlot.set('T', t, tr.thrust.slice(0, n));
     for (const e of this.o.extra ?? []) this.tPlot.set(e.id, t, e.values(tr).slice(0, n));
-    this.view.update({ h: tr.h[i], r: tr.r[i], thrust: tr.thrust[i], wind: tr.wind[i], pkg: tr.pkg[i], crashed: tr.crashed && i === tr.t.length - 1, measured: tr.measured[i] });
+    this.view.update({ h: tr.h[i], r: tr.r[i], thrust: tr.thrust[i], wind: tr.wind[i], pkg: tr.pkg[i], crashed: tr.crashed && (tr.crashAt != null ? tr.t[i] >= tr.crashAt - 1e-9 : i === tr.t.length - 1), measured: tr.measured[i] });
     this.onFrame?.(tr.t[i], i);
   }
 

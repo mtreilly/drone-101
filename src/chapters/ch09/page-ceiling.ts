@@ -6,6 +6,8 @@ export interface CeilingTrace extends Trace {
   hitAt: number | null;
   /** separate contacts (touching, dropping away, touching again) */
   hits: number;
+  /** when it first hit the ground faster than CRASH_SPEED, s; null if it never crashed */
+  crashAt: number | null;
 }
 
 /**
@@ -16,13 +18,14 @@ export interface CeilingTrace extends Trace {
  */
 export function runUnderCeiling(cfg: DroneConfig, T: number, ceiling: number | null, every = 10): CeilingTrace {
   const sim = new DroneSim({ ...cfg, ceiling: ceiling === null ? undefined : { h: ceiling, stall: false } });
-  const tr: CeilingTrace = { ...emptyTrace(), hitAt: null, hits: 0 };
+  const tr: CeilingTrace = { ...emptyTrace(), hitAt: null, hits: 0, crashAt: null };
   const sample = () => sampleTrace(sim, tr);
   sample();
   const n = Math.round(T / sim.dt);
   let touching = false;
   for (let i = 1; i <= n; i++) {
     sim.step();
+    if (sim.crashed && tr.crashAt === null) tr.crashAt = sim.t;
     if (ceiling !== null) {
       // the sim bumps on every contact (`stall: false`); here we only count them
       const contact = sim.h >= ceiling - 1e-9;
@@ -36,6 +39,23 @@ export function runUnderCeiling(cfg: DroneConfig, T: number, ceiling: number | n
   tr.hitAt = sim.ceilingAt;
   tr.crashed = sim.crashed;
   return tr;
+}
+
+/**
+ * After a crash the drone stays down: every sample from `crashAt` on is on the ground with the
+ * motors off (the sim itself would fly on). The picture, the plots and the score then agree.
+ */
+export function stayDown<T extends CeilingTrace>(tr: T): T {
+  if (tr.crashAt === null) return tr;
+  const out = { ...tr, h: [...tr.h], thrust: [...tr.thrust], command: [...tr.command], request: [...tr.request], integral: [...tr.integral] };
+  const i0 = tr.t.findIndex((t) => t >= tr.crashAt! - 1e-9);
+  if (i0 < 0) return out;
+  for (let i = i0; i < tr.t.length; i++) {
+    out.h[i] = 0;
+    out.thrust[i] = out.command[i] = out.request[i] = 0;
+    out.integral[i] = tr.integral[i0];
+  }
+  return out;
 }
 
 /** Heights closer than this (m) count as the same ceiling: no recompute for sub-pixel layout jitter. */
