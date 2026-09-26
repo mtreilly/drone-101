@@ -204,7 +204,10 @@ const bode: WidgetFactory = (host, ctx) => {
   });
   const sweepBtn = h('button', { class: 'btn small', type: 'button' }, t('sweep'));
   sweepBtn.addEventListener('click', () => {
-    for (const wm of logspace(Math.log10(0.07), Math.log10(2.5), 8)) measure(wm, false);
+    // a sweep speed next to one already measured (or the slider's) would draw two dots on top of each other
+    const near = (a: number, b: number) => Math.abs(Math.log(a / b)) < Math.log(1.15);
+    const taken = [w, ...dots.map((d) => d.w)];
+    for (const wm of logspace(Math.log10(0.07), Math.log10(2.5), 8)) if (!taken.some((d) => near(d, wm))) measure(wm, false);
     measure(w);
     redraw();
   });
@@ -226,7 +229,8 @@ const bode: WidgetFactory = (host, ctx) => {
     max: 1,
     step: BODE_STEP,
     value: v0,
-    format: (v) => `${fmt(wFromSlider(v), 2)} rad/s (${t('period')} ${fmt((2 * Math.PI) / wFromSlider(v), 1)} s)`,
+    // each number + unit is its own left-to-right run, so the words around them can read right to left
+    format: (v) => `\u2066${fmt(wFromSlider(v), 2)} rad/s\u2069 (${t('period')} \u2066${fmt((2 * Math.PI) / wFromSlider(v), 1)} s\u2069)`,
     color: 'eff',
     onInput: (v) => (w = wFromSlider(v)),
     // one measurement per deliberate choice (pointer release, or a pause in arrow presses)
@@ -253,16 +257,18 @@ const LOOP_WS = logspace(Math.log10(LOOP_W_MIN), Math.log10(LOOP_W_MAX), 300);
  * gain-of-1 speed down to −180° (phase margin). `withGain: false` draws the phase plot only;
  * `phaseMin` is the bottom of the phase axis (−360°, or −540° for loops far over the cliff).
  * Strings from the widget's own subtree: w, gain, phase, loop, gainAria, phaseAria, one, cliff,
- * at180, atCross.
+ * atCross.
  */
-function marginPlots(host: HTMLElement, t: WidgetCtx['t'], { withGain = true, height = 170, phaseMin = -360 } = {}) {
+function marginPlots(host: HTMLElement, t: WidgetCtx['t'], { withGain = true, height = 190, phaseMin = -360 } = {}) {
   const xAxis = { label: t('w'), min: LOOP_W_MIN, max: LOOP_W_MAX, log: true, logSteps: [1, 2, 5] };
   const gain = withGain
     ? new Plot(host, {
         x: xAxis,
-        y: { label: t('gain'), min: 0.05, max: 10, log: true },
+        // two decades and a taller frame: a gain margin of × 1.4 is only 0.15 decade, so the
+        // arrow and the labels at gain 1 need every pixel they can get on a phone
+        y: { label: t('gain'), min: 0.1, max: 10, log: true },
         series: [{ id: 'L', color: 'out', label: t('loop'), ghost: true }],
-        height: height + 20,
+        height: height + 30,
         label: t('gainAria'),
       })
     : null;
@@ -282,11 +288,12 @@ function marginPlots(host: HTMLElement, t: WidgetCtx['t'], { withGain = true, he
       gain.clear(fresh);
       gain.set('L', LOOP_WS, pts.map((q) => q.mag));
       gain.setLines([
-        { kind: 'h', at: 1, color: 'ink3', label: t('one'), labelAt: 'start', labelSide: 'above', avoid: ['L'] },
+        { kind: 'h', at: 1, color: 'ink3', label: t('one'), labelAt: 'end', labelSide: 'above', avoid: ['L'] },
         ...(has180 ? [{ kind: 'v' as const, at: m.w180, color: 'err', dash: [3, 4] }] : []),
       ]);
-      gain.setMarkers(has180 ? [{ x: m.w180, y: 1 / m.gm, color: 'err', label: t('at180'), clamp: true }] : []);
-      gain.setArrows(has180 ? [{ at: m.w180, from: 1 / m.gm, to: 1, color: 'err', label: `× ${fmt(m.gm, 2)}` }] : []);
+      // like the phase plot: the arrow is the margin and carries the only label ("gain margin × 1.40")
+      gain.setMarkers(has180 ? [{ x: m.w180, y: 1 / m.gm, color: 'err', clamp: true }] : []);
+      gain.setArrows(has180 ? [{ at: m.w180, from: 1 / m.gm, to: 1, color: 'err', label: `${t('gm')} \u2066× ${fmt(m.gm, 2)}\u2069` }] : []);
     }
     phase.clear(fresh);
     phase.set('L', LOOP_WS, pts.map((q) => q.phase));
@@ -294,8 +301,10 @@ function marginPlots(host: HTMLElement, t: WidgetCtx['t'], { withGain = true, he
       { kind: 'h', at: -180, color: 'err', label: t('cliff'), labelAt: 'end', labelSide: 'above', avoid: ['L'] },
       ...(hasCross ? [{ kind: 'v' as const, at: m.wc, color: 'ink3', dash: [3, 4] }] : []),
     ]);
-    phase.setMarkers(hasCross ? [{ x: m.wc, y: -180 + m.pm, color: 'out', label: t('atCross'), clamp: true }] : []);
-    phase.setArrows(hasCross ? [{ at: m.wc, from: -180 + m.pm, to: -180, color: m.pm > 0 ? 'out' : 'err', label: `${fmt(m.pm, 0)}°` }] : []);
+    // one label for the point and its arrow ("phase margin 22°"): two labels a few pixels apart collide on a phone.
+    // Past the cliff there is no margin (the readout shows —), only how far over it the loop is.
+    phase.setMarkers(hasCross ? [{ x: m.wc, y: -180 + m.pm, color: 'out', clamp: true }] : []);
+    phase.setArrows(hasCross ? [{ at: m.wc, from: -180 + m.pm, to: -180, color: m.pm > 0 ? 'out' : 'err', label: m.pm > 0 ? `${t('atCross')} \u2066${fmt(m.pm, 0)}°\u2069` : `${fmt(m.pm, 0)}°` }] : []);
     return m;
   };
   return { gain, phase, show };
