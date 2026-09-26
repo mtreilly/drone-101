@@ -4,13 +4,14 @@ An interactive, hand-drawn course that takes a curious beginner from "what is fe
 Laplace transforms, poles and PID control. Vite + TypeScript, no framework. `README.md` gives a
 rough map of the source; the code is the truth, so look before assuming a file or name still exists.
 
-All other documentation lives in `docs/`:
+Standing documentation lives in `docs/`; `.gravity/README.md` introduces the architecture
+knowledge base, including ownership, change traces and accepted trade-offs.
 
 - `docs/course-plan.md`: pedagogical outline and physical parameters, chapter by chapter.
 - `docs/glossary.md`: per-locale terminology choices (read before translating anything).
 - `docs/page-physics.md`: rules for objects that fly out of their picture onto the page.
 - `docs/plans/`: phased plans for past and current extensions (historical once built).
-- `docs/software-quality-goal.md`: brief for architecture/software-quality reviews.
+- `docs/quality-goals/`: architecture, performance and testing briefs, plus review evidence.
 
 New plans go in `docs/plans/{feature}.md`; new standing documentation goes in `docs/`.
 
@@ -144,6 +145,38 @@ the page reacts (Chapter 1's drone bonks the paragraph above and crashes). Read
 never a copy; every contact is a real event in the model, so numbers and picture agree; the event
 must teach the chapter's idea; add it only where the model really reaches the page; reduced motion
 turns it off; shared geometry and sim pieces have one owner.
+
+## Architecture and performance
+
+- A chapter is the natural unit: its locale namespace, widgets, lesson models, playable sentences
+  and claim tests belong together. The chapter registry is the lazy loading boundary. Keep
+  `sim/` and `math/` independent of the DOM, `ui/` responsible for representations, `story/`
+  responsible for interpreting content and `core/app.ts` responsible for the mounted route.
+  Keep teaching orchestration local; introduce shared abstractions only for a stable shared concept.
+- Register widget resources with `ctx.onCleanup` when creating them. Destroy loops, resize
+  observers, theme subscriptions and pending callbacks with their owner. Composite resources
+  such as `TracePlayer` own their internals; destruction must be safe to repeat.
+- Async navigation and language loads may commit only while they still own the current request.
+  Cancel route-owned prefetch work on navigation. Returning to the current language must also
+  supersede a pending switch.
+- Load script-specific font CSS before startup or a language change commits. Keep the canvas
+  redraw after fonts load. Import saved-run contracts from their data module, not a chapter's
+  widget entry point.
+- Measure reader-visible delay before optimising. Remove duplicate calculations first; use
+  caches, workers or incremental computation only when measurements justify their complexity.
+  Check repeated chapter → home navigation for retained observers and theme redraws, and check
+  loading transitions for layout shifts. Bounded replay calculations can stay simple while fast.
+
+## Tests that earn their place
+
+- Follow `docs/quality-goals/testing-goal.md`: each test should catch a plausible regression
+  that would otherwise escape. Preserve analytic physics checks, chapter numerical claims,
+  locale contracts, accessibility semantics and meaningful behavioural regressions.
+- Delete duplicate scenarios, obsolete feature tests and trivial wiring or helper checks that
+  merely repeat the implementation. Prefer an independent oracle or observable invariant over
+  asserting internal structure. Keep one strong check rather than several weaker copies.
+- There is no test-count target, and a reversible change does not automatically need a new test.
+  Run the relevant checks after pruning; do not weaken assertions just to make the suite green.
 
 ## Lessons from past passes
 
