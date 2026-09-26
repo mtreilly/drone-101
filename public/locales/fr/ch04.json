@@ -4,8 +4,8 @@
   "question": "Existe-t-il une courbe dont la pente est simplement une copie d'elle-même ?",
   "sections": [
     {
-      "id": "copy",
-      "title": "Une courbe qui se copie elle-même",
+      "id": "ladder",
+      "title": "Multiplier, encore et encore",
       "blocks": [
         {
           "t": "say",
@@ -14,9 +14,60 @@
           "text": "La dernière fois, l'écart entre le café et la température de la pièce diminuait à une vitesse **proportionnelle à l'écart lui-même**. Grand écart, diminution rapide. Petit écart, diminution lente. Quel genre de courbe fait ça ?"
         },
         {
-          "t": "p",
-          "text": "Cherchons une courbe dont la pente, en chaque point, est un multiple fixe de sa hauteur. De bons candidats sont les courbes qui « doublent » : $2^t$, $3^t$ et compagnie. Chacune se multiplie par le même facteur à chaque seconde."
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Le chapitre 3 nous a déjà donné un indice. Chaque petit pas **multipliait** l'écart par le même nombre. Alors commençons par la machine à multiplier la plus simple qui soit : doubler."
         },
+        {
+          "t": "p",
+          "text": "Prends quelque chose qui **double à chaque seconde**. Après 1 s, tu as 2. Après 2 s, 2 × 2 = 4. Après 3 s, 2 × 2 × 2 = 8. On l'écrit $2^t$ : le petit t en haut compte combien de fois on multiplie par 2."
+        },
+        {
+          "t": "play",
+          "id": "doubling",
+          "text": "En doublant à chaque seconde, après {scrub|n} s tu as {calc|chain}."
+        },
+        {
+          "t": "p",
+          "text": "Fais glisser le nombre de secondes **sous zéro**, ou sur une **demi-seconde**. Zéro seconde, c'est aucun doublement pour l'instant, donc $2^0 = 1$. Une seconde en arrière défait un doublement : $2^{-1} = \\tfrac12$. Et une demi-seconde doit être un nombre qui, utilisé deux fois, donne un doublement : $\\sqrt2 \\approx 1{,}41$, car 1,41 × 1,41 ≈ 2."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Donc l'exposant n'a pas besoin d'être un nombre entier. C'est juste « combien de multiplication a eu lieu », et ça peut être un peu, beaucoup, ou même négatif."
+        },
+        {
+          "t": "p",
+          "text": "Voici ces doublements sous forme d'une échelle de barres. Coupe chaque pas en deux, puis en quatre, puis en toutes petites tranches, et promène la loupe :"
+        },
+        {
+          "t": "widget",
+          "id": "ladder"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Où que je mette la loupe, le pas monte de la **même part** de sa propre hauteur. Les grandes barres montent beaucoup, les petites un peu, mais toujours de la même part."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "C'est exactement la propriété du café : le changement est proportionnel à ce qu'il y a. Et regarde le dernier affichage. Quand les pas rétrécissent, montée ÷ hauteur par seconde se rapproche d'un nombre, environ 0,69 pour le doublement. Garde ça en tête."
+        },
+        {
+          "t": "note",
+          "text": "La raison en une ligne : $b^{t+\\Delta t} = b^{t} \\cdot b^{\\Delta t}$. Sur n'importe quel pas Δt, la courbe se multiplie par le même facteur $b^{\\Delta t}$, où qu'elle soit. Donc elle monte toujours de la même fraction de sa hauteur."
+        }
+      ]
+    },
+    {
+      "id": "tiny",
+      "title": "Grandir par tout petits pas",
+      "blocks": [
         {
           "t": "say",
           "who": "mika",
@@ -26,8 +77,93 @@
         {
           "t": "say",
           "who": "june",
+          "mood": "think",
+          "text": "Ne nous disputons pas. Construisons une règle de croissance et regardons quel nombre en sort."
+        },
+        {
+          "t": "p",
+          "text": "Voici la règle : **grandir de 100 % de ce que tu as, par seconde**. La façon paresseuse de la suivre, c'est un seul pas géant : après 1 s, tu as 1 + 1 = 2. Mais c'est l'astuce du pas géant de June au chapitre 3. Pendant toute la seconde, on a utilisé le taux de croissance du **début**, alors que le tas n'arrêtait pas de grossir."
+        },
+        {
+          "t": "p",
+          "text": "Alors prenons des pas plus petits. Deux pas de 50 % : 1,5 × 1,5 = 2,25. Quatre pas de 25 % : 1,25 × 1,25 × 1,25 × 1,25 ≈ 2,44. Chaque pas fait grandir un tas qui a déjà grandi."
+        },
+        {
+          "t": "say",
+          "who": "mika",
           "mood": "excited",
-          "text": "Mesurons au lieu de nous disputer. On met une tangente sur chaque courbe et on divise sa pente par sa hauteur."
+          "text": "Plus de pas, plus de croissance ! Avec une infinité de pas, on aurait une quantité infinie. Je vais être riche."
+        },
+        {
+          "t": "predict",
+          "id": "ch4-compound",
+          "gate": true,
+          "q": "Continue à découper la seconde : mille pas, un million, autant que tu veux. Que devient le total après une seconde ?",
+          "options": [
+            {
+              "text": "Il grandit sans limite",
+              "why": "Chaque découpage en plus ajoute bien un petit peu, mais ce supplément rétrécit si vite que le total se stabilise. Il ne dépasse jamais 2,72."
+            },
+            {
+              "text": "Il reste à 2 : 100 %, c'est 100 %",
+              "why": "Découper aide vraiment : 2,25 avec deux pas, 2,44 avec quatre. La croissance sur la croissance, ça s'additionne."
+            },
+            {
+              "text": "Il se stabilise, un peu au-dessus de 2,7",
+              "correct": true,
+              "why": "Exact. Les totaux se rapprochent peu à peu de 2,71828…, et aucun nombre de pas ne le dépasse."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "compound"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Ça cale ! Cent pas, mille, et ça ne dépasse jamais 2,718. Adieu ma fortune infinie."
+        },
+        {
+          "t": "play",
+          "id": "compound",
+          "text": "Avec {scrub|n} pas de {calc|pct} % chacun, une seconde de croissance donne {calc|total}."
+        },
+        {
+          "t": "p",
+          "text": "Ce plafond, c'est le nombre $e$. C'est ce dont les pas se rapprochent quand ils deviennent infiniment petits :"
+        },
+        {
+          "t": "math",
+          "tex": "e = \\lim_{n\\to\\infty}\\left(1 + \\frac{1}{n}\\right)^{n} \\approx 2{,}71828"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Maintenant, passe le widget en mode **diminuer**. Avec $\\left(1 - \\frac1n\\right)^n$, on tombe sur $1/e \\approx 0{,}368$ : il reste 36,8 %, donc 63,2 % du chemin est parcouru. C'est le 63 % de la règle graduée de la constante de temps du chapitre 3 !"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Et un seul pas géant de −100 % efface tout. Revoilà mon café gelé. Les tout petits pas règlent le problème, à chaque fois."
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Jacques Bernoulli est tombé sur ce nombre en 1683 en se demandant ce qui se passe quand une banque ajoute les intérêts de plus en plus souvent."
+        }
+      ]
+    },
+    {
+      "id": "copy",
+      "title": "Une courbe qui se copie elle-même",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Maintenant, partons à la chasse, règle graduée en main. On veut une courbe dont la pente, en chaque point, est un multiple fixe de sa hauteur. D'après l'échelle, toute exponentielle $b^t$ devrait convenir : $2^t$, $3^t$ et compagnie. Mets une tangente sur chaque courbe et divise sa pente par sa hauteur."
         },
         {
           "t": "widget",
@@ -35,11 +171,11 @@
         },
         {
           "t": "p",
-          "text": "Fais glisser le curseur le long de n'importe quelle courbe : l'affichage **pente ÷ hauteur** ne bouge pas. Chaque exponentielle se copie elle-même, multipliée par un nombre fixe. Pour la base 2, ce nombre vaut environ 0,693 ; pour la base 3, environ 1,099."
+          "text": "Fais glisser le curseur le long de n'importe quelle courbe : l'affichage **pente ÷ hauteur** ne bouge pas. Chaque exponentielle se copie elle-même, multipliée par un nombre fixe. Pour la base 2, ce nombre vaut environ 0,693 (le nombre dont se rapprochaient les pas rétrécissants de l'échelle). Pour la base 3, environ 1,099."
         },
         {
           "t": "p",
-          "text": "Et pour une seule base, ce nombre vaut exactement **1** : la courbe de la pente se superpose pile à la courbe elle-même. Cette base, c'est $e \\approx 2{,}718$ :"
+          "text": "Et pour une seule base, ce nombre vaut exactement **1** : la courbe de la pente se superpose pile à la courbe elle-même. Quelle est cette base ?"
         },
         {
           "t": "math",
@@ -49,12 +185,36 @@
           "t": "say",
           "who": "mika",
           "mood": "surprised",
-          "text": "Donc $e$ n'a rien d'aléatoire. C'est **le** nombre dont la courbe est sa propre pente. D'accord, je retire ce que j'ai dit."
+          "text": "C'est **encore** 2,718 ! Le même nombre que celui des tout petits pas. Deux chasses complètement différentes, un seul nombre. D'accord, je retire ce que j'ai dit : $e$ n'a rien d'aléatoire."
         },
         {
-          "t": "note",
-          "aside": true,
-          "text": "Le facteur pour la base b s'appelle ln b, le « logarithme népérien ». On n'en aura plus besoin. On utilisera simplement e."
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Évidemment que c'est le même. « Grandir de 100 % de ce que tu as, par seconde, en douceur » *veut dire* pente = hauteur. C'est un seul souhait sous deux déguisements."
+        },
+        {
+          "t": "callout",
+          "title": "Toute base est un e déguisé",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Notre mesure disait que la base 2 a pente ÷ hauteur ≈ 0,693. Ce n'est pas un hasard : 2, c'est ce que devient $e$ après 0,693 seconde de croissance, $2 = e^{0{,}693}$. Donc"
+            },
+            {
+              "t": "math",
+              "tex": "2^{t} = \\left(e^{0{,}693}\\right)^{t} = e^{0{,}693\\,t}"
+            },
+            {
+              "t": "play",
+              "id": "base",
+              "text": "La base {scrub|b} est $e$ élevé à la puissance {calc|lnb}."
+            },
+            {
+              "t": "p",
+              "text": "Toute base positive est une certaine puissance de $e$. Cette puissance a un nom, le **logarithme népérien** $\\ln b$, et c'est exactement le rapport pente ÷ hauteur qu'on a mesuré. Les bases inférieures à 1 ont une puissance négative : elles diminuent."
+            }
+          ]
         }
       ]
     },
@@ -77,6 +237,15 @@
         {
           "t": "math",
           "tex": "\\frac{d}{dt}\\,e^{at} = a\\,e^{at}"
+        },
+        {
+          "t": "p",
+          "text": "Le bouton et la base sont deux façons de voir la même chose : $e^{at} = \\left(e^{a}\\right)^{t}$. À chaque seconde, la courbe se multiplie par $e^{a}$."
+        },
+        {
+          "t": "play",
+          "id": "rate",
+          "text": "Avec a = {scrub|a} par seconde, chaque seconde multiplie la courbe par {calc|ea}."
         },
         {
           "t": "predict",
@@ -212,6 +381,8 @@
         {
           "t": "recap",
           "items": [
+            "$b^t$ veut dire « multiplier par b, t fois », et t peut valoir n'importe quoi : $2^0 = 1$, $2^{-1} = \\tfrac12$, $2^{0{,}5} = \\sqrt2$.",
+            "Grandir de 100 % par seconde par pas de plus en plus petits se stabilise à $e \\approx 2{,}718$. Diminuer de la même façon laisse $1/e \\approx 0{,}368$ : la règle graduée des 63 % du chapitre 3.",
             "La pente de toute exponentielle est une copie d'elle-même : pente ÷ hauteur est constant.",
             "$e \\approx 2{,}718$ est la base pour laquelle ce rapport vaut exactement 1. Avec $e^{at}$, le rapport vaut a.",
             "Prendre la pente de $e^{at}$, c'est juste **multiplier par a**. Le calcul différentiel devient de l'algèbre.",
@@ -222,6 +393,25 @@
         {
           "t": "quiz",
           "items": [
+            {
+              "id": "ch4-q0",
+              "q": "Grandis de 100 % par seconde en 1000 tout petits pas. Après une seconde, tu as environ…",
+              "options": [
+                {
+                  "text": "2,717",
+                  "correct": true,
+                  "why": "$(1 + 1/1000)^{1000} \\approx 2{,}7169$. Plus de pas se rapprochent de $e \\approx 2{,}71828$, mais sans jamais le dépasser."
+                },
+                {
+                  "text": "2",
+                  "why": "Ça, c'est un seul pas géant. Chaque petit pas fait grandir un tas qui a déjà grandi, donc tu finis avec plus."
+                },
+                {
+                  "text": "1000",
+                  "why": "Chaque pas n'ajoute que 0,1 % du tas, pas 1 entier. Le total reste sous $e$."
+                }
+              ]
+            },
             {
               "id": "ch4-q1",
               "q": "Quelle courbe a une pente = −0,5 × hauteur partout ?",
@@ -362,6 +552,60 @@
       "aria": "Parabole de a au carré avec une ligne horizontale à moins quatre qu'elle n'atteint jamais.",
       "playSpring": "Lancer le ressort",
       "pauseSpring": "Mettre le ressort en pause"
+    },
+    "ladder": {
+      "title": "L'échelle du doublement",
+      "xAxis": "temps t (s)",
+      "yAxis": "hauteur 2ᵗ",
+      "curve": "2ᵗ, lisse",
+      "step": "Taille du pas",
+      "tiny": "minuscule",
+      "look": "Loupe en t =",
+      "readMul": "chaque pas multiplie par",
+      "readRise": "montée ÷ hauteur",
+      "readRate": "montée ÷ hauteur, par seconde",
+      "riseLabel": "+{pct} %",
+      "status": "Où que tu regardes, un pas monte de {pct} % de sa propre hauteur. Par seconde, ça fait {r}.",
+      "aria": "Diagramme en barres de 2 puissance t, une barre par pas, avec le pas agrandi mis en évidence et sa montée marquée.",
+      "describe": "Loupe en t = {t} s, hauteur {h}. Chaque pas multiplie par {m}, en montant de {pct} % de sa hauteur.",
+      "help": "Choisis une taille de pas, puis fais glisser sur le graphique (ou utilise le curseur) pour déplacer la loupe.",
+      "pct": "{v} %"
+    },
+    "compound": {
+      "title": "Grandir de 100 % par seconde, en n pas",
+      "xAxis": "temps (s)",
+      "yAxis": "quantité",
+      "smooth": "croissance lisse",
+      "steps": "pas à pas",
+      "mode": "Règle",
+      "growMode": "grandir de 100 % par seconde",
+      "shrinkMode": "diminuer de 100 % par seconde",
+      "n": "Nombre de pas en une seconde",
+      "showSmooth": "Afficher la croissance lisse",
+      "readEach": "chaque pas multiplie par",
+      "readTotal": "après 1 s",
+      "eLine": "e ≈ 2,718",
+      "invLine": "1/e ≈ 0,368",
+      "growOne": "Un seul pas géant : 1 devient 2. Pendant toute la seconde, ça a grandi à son taux de départ.",
+      "grow": "{n} pas : {v}. Encore {gap} sous e, et chaque découpage en plus aide moins.",
+      "shrinkOne": "Un seul pas géant de −100 % : tout a disparu. Revoilà le café gelé de June !",
+      "shrink": "{n} pas : il reste {v}, donc {pct} % du chemin est parcouru.",
+      "aria": "Croissance sur une seconde construite à partir de n pas égaux, avec une ligne en tirets à e (ou à 1 sur e en mode diminution).",
+      "help": "Plus de pas, c'est un taux plus à jour à chaque pas. Passe la règle en diminution pour retrouver les 63 % du chapitre 3."
+    }
+  },
+  "plays": {
+    "doubling": {
+      "n": "secondes de doublement"
+    },
+    "compound": {
+      "n": "nombre de pas"
+    },
+    "rate": {
+      "a": "a, par seconde"
+    },
+    "base": {
+      "b": "base b"
     }
   }
 }

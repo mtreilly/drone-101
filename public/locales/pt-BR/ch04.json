@@ -4,8 +4,8 @@
   "question": "Existe uma curva cuja inclinação é uma cópia de si mesma?",
   "sections": [
     {
-      "id": "copy",
-      "title": "Uma curva que se copia",
+      "id": "ladder",
+      "title": "Multiplicando, de novo e de novo",
       "blocks": [
         {
           "t": "say",
@@ -14,9 +14,60 @@
           "text": "Da última vez, a diferença entre o café e a temperatura ambiente diminuiu a uma taxa **proporcional à própria diferença**. Diferença grande, encolhimento rápido. Diferença pequena, encolhimento lento. Que tipo de curva faz isso?"
         },
         {
-          "t": "p",
-          "text": "Vamos caçar uma curva cuja inclinação, em cada ponto, seja um múltiplo fixo de sua altura. Bons candidatos são as curvas de \"dobrar\": $2^t$, $3^t$ e companhia. Cada uma se multiplica pelo mesmo fator a cada segundo."
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "O Capítulo 3 já deu uma dica. Cada passinho **multiplicava** a diferença pelo mesmo número. Então vamos começar pela máquina de multiplicar mais simples que existe: dobrar."
         },
+        {
+          "t": "p",
+          "text": "Pegue algo que **dobra a cada segundo**. Depois de 1 s você tem 2. Depois de 2 s, 2 × 2 = 4. Depois de 3 s, 2 × 2 × 2 = 8. Escrevemos isso como $2^t$: o t pequenininho lá em cima conta quantas vezes multiplicamos por 2."
+        },
+        {
+          "t": "play",
+          "id": "doubling",
+          "text": "Dobrando a cada segundo, depois de {scrub|n} s você tem {calc|chain}."
+        },
+        {
+          "t": "p",
+          "text": "Arraste o número de segundos para **abaixo de zero**, ou para **meio segundo**. Zero segundo significa que nada dobrou ainda, então $2^0 = 1$. Um segundo para trás desfaz uma dobra: $2^{-1} = \\tfrac12$. E meio segundo tem de ser um número que, usado duas vezes, faça uma dobra inteira: $\\sqrt2 \\approx 1{,}41$, porque 1,41 × 1,41 ≈ 2."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Então o expoente não precisa ser um número inteiro. É só \"quanta multiplicação já aconteceu\", e isso pode ser um pouco, muito ou até negativo."
+        },
+        {
+          "t": "p",
+          "text": "Aqui estão essas dobras como uma escada de barras. Divida cada passo em metades, depois em quartos, depois em fatias minúsculas, e passeie com a lupa:"
+        },
+        {
+          "t": "widget",
+          "id": "ladder"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Onde quer que eu coloque a lupa, o passo sobe a **mesma fração** da sua própria altura. Barras altas sobem muito, barras baixas sobem pouco, mas sempre a mesma fração."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Essa é exatamente a propriedade do café: a mudança é proporcional a quanto existe. E olhe a última leitura. Conforme os passos encolhem, subida ÷ altura por segundo se aproxima de um número, cerca de 0,69 para a dobra. Guarde essa ideia."
+        },
+        {
+          "t": "note",
+          "text": "O motivo em uma linha: $b^{t+\\Delta t} = b^{t} \\cdot b^{\\Delta t}$. Em qualquer passo Δt, a curva se multiplica pelo mesmo fator $b^{\\Delta t}$, onde quer que esteja. Então ela sempre sobe a mesma fração da sua altura."
+        }
+      ]
+    },
+    {
+      "id": "tiny",
+      "title": "Crescendo em passos minúsculos",
+      "blocks": [
         {
           "t": "say",
           "who": "mika",
@@ -26,8 +77,93 @@
         {
           "t": "say",
           "who": "june",
+          "mood": "think",
+          "text": "Nada de discutir. Vamos montar uma regra de crescimento e ver que número sai dela."
+        },
+        {
+          "t": "p",
+          "text": "A regra é esta: **crescer 100% do que você tem, por segundo**. O jeito preguiçoso de segui-la é dar um passo gigante: depois de 1 s você tem 1 + 1 = 2. Mas esse é o truque do passo gigante da June no Capítulo 3. Durante o segundo inteiro usamos a taxa de crescimento do **início**, mesmo com a pilha ficando cada vez maior."
+        },
+        {
+          "t": "p",
+          "text": "Então dê passos menores. Dois passos de 50%: 1,5 × 1,5 = 2,25. Quatro passos de 25%: 1,25 × 1,25 × 1,25 × 1,25 ≈ 2,44. Cada passo faz crescer uma pilha que já cresceu."
+        },
+        {
+          "t": "say",
+          "who": "mika",
           "mood": "excited",
-          "text": "Vamos medir em vez de discutir. Coloque uma tangente em cada curva e divida sua inclinação por sua altura."
+          "text": "Mais passos, mais crescimento! Com infinitos passos a gente teria uma quantidade infinita. Vou encher o bolso!"
+        },
+        {
+          "t": "predict",
+          "id": "ch4-compound",
+          "gate": true,
+          "q": "Continue dividindo o segundo: mil passos, um milhão, quantos você quiser. O que acontece com o total depois de um segundo?",
+          "options": [
+            {
+              "text": "Cresce sem limite",
+              "why": "Cada divisão extra acrescenta um pouquinho, mas esse extra encolhe tão rápido que o total se estabiliza. Ele nunca passa de 2,72."
+            },
+            {
+              "text": "Fica em 2: 100% é 100%",
+              "why": "Dividir ajuda de verdade: 2,25 com dois passos, 2,44 com quatro. Crescimento em cima de crescimento vai se somando."
+            },
+            {
+              "text": "Se estabiliza, um pouco acima de 2,7",
+              "correct": true,
+              "why": "Isso. Os totais vão subindo devagar em direção a 2,71828…, e nenhum número de passos passa disso."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "compound"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Empacou! Cem passos, mil, e nunca passa de 2,718. Adeus, minha fortuna infinita."
+        },
+        {
+          "t": "play",
+          "id": "compound",
+          "text": "Com {scrub|n} passos de {calc|pct}% cada, um segundo de crescimento dá {calc|total}."
+        },
+        {
+          "t": "p",
+          "text": "Esse teto é o número $e$. É dele que os passos se aproximam quando ficam infinitamente pequenos:"
+        },
+        {
+          "t": "math",
+          "tex": "e = \\lim_{n\\to\\infty}\\left(1 + \\frac{1}{n}\\right)^{n} \\approx 2{,}71828"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Agora mude o widget para **encolher**. Com $\\left(1 - \\frac1n\\right)^n$ ele chega a $1/e \\approx 0{,}368$: sobram 36,8%, então 63,2% do caminho já foi. São os 63% da régua da constante de tempo do Capítulo 3!"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "E um único passo gigante de −100% apaga tudo. É o meu café congelado de novo. Passos minúsculos resolvem, sempre."
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Jacob Bernoulli topou com esse número em 1683, quando se perguntava o que acontece se um banco somar os juros cada vez com mais frequência."
+        }
+      ]
+    },
+    {
+      "id": "copy",
+      "title": "Uma curva que se copia",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Agora vamos caçar com uma régua. Queremos uma curva cuja inclinação, em cada ponto, seja um múltiplo fixo de sua altura. A escada diz que toda exponencial $b^t$ deveria servir: $2^t$, $3^t$ e companhia. Coloque uma tangente em cada curva e divida sua inclinação por sua altura."
         },
         {
           "t": "widget",
@@ -35,11 +171,11 @@
         },
         {
           "t": "p",
-          "text": "Arraste o cursor ao longo de qualquer curva e a leitura de **inclinação ÷ altura** não se altera. Toda exponencial se copia, escalada por um número fixo. Para a base 2, esse número é cerca de 0,693; para a base 3, cerca de 1,099."
+          "text": "Arraste o cursor ao longo de qualquer curva e a leitura de **inclinação ÷ altura** não se altera. Toda exponencial se copia, escalada por um número fixo. Para a base 2, esse número é cerca de 0,693 (o número do qual os passos cada vez menores da escada estavam se aproximando). Para a base 3, é cerca de 1,099."
         },
         {
           "t": "p",
-          "text": "E para exatamente uma base o número de escala é **1**, então a curva da inclinação fica bem em cima da própria curva. Essa base é $e \\approx 2.718$:"
+          "text": "E para exatamente uma base o número de escala é **1**, então a curva da inclinação fica bem em cima da própria curva. Que base é essa?"
         },
         {
           "t": "math",
@@ -49,12 +185,36 @@
           "t": "say",
           "who": "mika",
           "mood": "surprised",
-          "text": "Então $e$ não é aleatório de jeito nenhum. É **o** número cuja curva é sua própria inclinação. Ok, retiro o que disse."
+          "text": "É 2,718 **de novo**! O mesmo número que os passos minúsculos nos deram. Duas caçadas completamente diferentes, um só número. Ok, retiro o que disse: $e$ não é aleatório de jeito nenhum."
         },
         {
-          "t": "note",
-          "aside": true,
-          "text": "O número de escala para a base b é chamado de ln b, o \"logaritmo natural\". Não vamos precisar dele de novo. Vamos usar apenas e."
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Claro que é o mesmo. \"Crescer 100% do que você tem, por segundo, de forma suave\" *significa* inclinação = altura. É um só desejo com duas fantasias."
+        },
+        {
+          "t": "callout",
+          "title": "Toda base é, em segredo, e",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "A régua disse que a base 2 tem inclinação ÷ altura ≈ 0,693. Não é coincidência: 2 é o que $e$ vira depois de 0,693 segundo de crescimento, $2 = e^{0{,}693}$. Então"
+            },
+            {
+              "t": "math",
+              "tex": "2^{t} = \\left(e^{0{,}693}\\right)^{t} = e^{0{,}693\\,t}"
+            },
+            {
+              "t": "play",
+              "id": "base",
+              "text": "A base {scrub|b} é $e$ elevado a {calc|lnb}."
+            },
+            {
+              "t": "p",
+              "text": "Toda base positiva é alguma potência de $e$. Essa potência tem nome, o **logaritmo natural** $\\ln b$, e é exatamente a inclinação ÷ altura que a régua mediu. Bases menores que 1 ganham uma potência negativa: elas encolhem."
+            }
+          ]
         }
       ]
     },
@@ -77,6 +237,15 @@
         {
           "t": "math",
           "tex": "\\frac{d}{dt}\\,e^{at} = a\\,e^{at}"
+        },
+        {
+          "t": "p",
+          "text": "O botão e a base são duas visões da mesma coisa: $e^{at} = \\left(e^{a}\\right)^{t}$. A cada segundo, a curva se multiplica por $e^{a}$."
+        },
+        {
+          "t": "play",
+          "id": "rate",
+          "text": "Com a = {scrub|a} por segundo, cada segundo multiplica a curva por {calc|ea}."
         },
         {
           "t": "predict",
@@ -212,8 +381,10 @@
         {
           "t": "recap",
           "items": [
+            "$b^t$ significa \"multiplicar por b, t vezes\", e t pode ser qualquer coisa: $2^0 = 1$, $2^{-1} = \\tfrac12$, $2^{0{,}5} = \\sqrt2$.",
+            "Crescer 100% por segundo em passos cada vez menores se estabiliza em $e \\approx 2{,}718$. Encolher do mesmo jeito deixa $1/e \\approx 0{,}368$: a régua dos 63% do Capítulo 3.",
             "A inclinação de toda exponencial é uma cópia de si mesma: inclinação ÷ altura é constante.",
-            "$e \\approx 2.718$ é a base em que essa razão é exatamente 1. Com $e^{at}$ a razão é a.",
+            "$e \\approx 2{,}718$ é a base em que essa razão é exatamente 1. Com $e^{at}$ a razão é a.",
             "Tomar a inclinação de $e^{at}$ apenas **multiplica por a**. O cálculo vira álgebra.",
             "**Chute uma exponencial**, substitua na regra e resolva para a. Para o café, a = −1/τ.",
             "Para uma mola, o chute exige $a^2 = -k/m$, e nenhum número comum faz isso. Ainda."
@@ -223,6 +394,25 @@
           "t": "quiz",
           "items": [
             {
+              "id": "ch4-q0",
+              "q": "Cresça 100% por segundo em 1000 passos minúsculos. Depois de um segundo você tem cerca de…",
+              "options": [
+                {
+                  "text": "2,717",
+                  "correct": true,
+                  "why": "$(1 + 1/1000)^{1000} \\approx 2{,}7169$. Mais passos chegam cada vez mais perto de $e \\approx 2{,}71828$, mas nunca passam dele."
+                },
+                {
+                  "text": "2",
+                  "why": "Isso é um passo gigante só. Cada passo minúsculo faz crescer uma pilha que já cresceu, então você acaba com mais."
+                },
+                {
+                  "text": "1000",
+                  "why": "Cada passo acrescenta só 0,1% da pilha, não 1 inteiro. O total fica abaixo de $e$."
+                }
+              ]
+            },
+            {
               "id": "ch4-q1",
               "q": "Qual curva tem inclinação = −0,5 × altura em todo lugar?",
               "options": [
@@ -230,7 +420,7 @@
                   "text": "Decaimento suave",
                   "sketch": "decaying-plain",
                   "correct": true,
-                  "why": "Essa é $e^{-0.5t}$: a razão negativa significa que ela encolhe, e o encolhimento desacelera conforme fica menor."
+                  "why": "Essa é $e^{-0{,}5t}$: a razão negativa significa que ela encolhe, e o encolhimento desacelera conforme fica menor."
                 },
                 {
                   "text": "Crescimento explosivo",
@@ -362,6 +552,60 @@
       "aria": "Parábola de um quadrado com uma linha horizontal em menos quatro que ela nunca alcança.",
       "playSpring": "Reproduzir a mola",
       "pauseSpring": "Pausar a mola"
+    },
+    "ladder": {
+      "title": "A escada das dobras",
+      "xAxis": "tempo t (s)",
+      "yAxis": "altura 2ᵗ",
+      "curve": "2ᵗ, suave",
+      "step": "Tamanho do passo",
+      "tiny": "minúsculo",
+      "look": "Lupa em t =",
+      "readMul": "cada passo multiplica por",
+      "readRise": "subida ÷ altura",
+      "readRate": "subida ÷ altura, por segundo",
+      "riseLabel": "+{pct}%",
+      "status": "Onde quer que você olhe, um passo sobe {pct}% da sua própria altura. Por segundo, isso dá {r}.",
+      "aria": "Gráfico de barras de 2 elevado a t, uma barra por passo, com o passo ampliado destacado e sua subida marcada.",
+      "describe": "Lupa em t = {t} s, altura {h}. Cada passo multiplica por {m}, subindo {pct}% da sua altura.",
+      "help": "Escolha um tamanho de passo e depois arraste no gráfico (ou use o controle deslizante) para mover a lupa.",
+      "pct": "{v}%"
+    },
+    "compound": {
+      "title": "Cresça 100% por segundo, em n passos",
+      "xAxis": "tempo (s)",
+      "yAxis": "quantidade",
+      "smooth": "crescimento suave",
+      "steps": "passo a passo",
+      "mode": "Regra",
+      "growMode": "crescer 100% por segundo",
+      "shrinkMode": "encolher 100% por segundo",
+      "n": "Número de passos em um segundo",
+      "showSmooth": "Mostrar o crescimento suave",
+      "readEach": "cada passo multiplica por",
+      "readTotal": "depois de 1 s",
+      "eLine": "e ≈ 2,718",
+      "invLine": "1/e ≈ 0,368",
+      "growOne": "Um passo gigante: 1 vira 2. Durante o segundo inteiro, cresceu na taxa do início.",
+      "grow": "{n} passos: {v}. Ainda {gap} abaixo de e, e cada divisão extra ajuda menos.",
+      "shrinkOne": "Um passo gigante de −100%: tudo sumiu. O café congelado da June de novo!",
+      "shrink": "{n} passos: sobra {v}, então {pct}% do caminho já foi.",
+      "aria": "Crescimento ao longo de um segundo construído com n passos iguais, com uma linha tracejada em e (ou em 1 sobre e ao encolher).",
+      "help": "Mais passos significa que cada um usa uma taxa mais atualizada. Mude a regra para encolher e reencontre os 63% do Capítulo 3."
+    }
+  },
+  "plays": {
+    "doubling": {
+      "n": "segundos dobrando"
+    },
+    "compound": {
+      "n": "número de passos"
+    },
+    "rate": {
+      "a": "a, por segundo"
+    },
+    "base": {
+      "b": "base b"
     }
   }
 }

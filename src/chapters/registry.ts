@@ -11,7 +11,7 @@ export const CHAPTERS: { ns: string; load: () => Promise<WidgetModule>; plays?: 
   { ns: 'ch01', load: () => import('./ch01/widgets') },
   { ns: 'ch02', load: () => import('./ch02/widgets') },
   { ns: 'ch03', load: () => import('./ch03/widgets') },
-  { ns: 'ch04', load: () => import('./ch04/widgets') },
+  { ns: 'ch04', load: () => import('./ch04/widgets'), plays: () => import('./ch04/plays') },
   { ns: 'ch05', load: () => import('./ch05/widgets') },
   { ns: 'ch06', load: () => import('./ch06/widgets') },
   { ns: 'ch07', load: () => import('./ch07/widgets') },
