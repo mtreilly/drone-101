@@ -70,6 +70,34 @@ Chosen during the Chapter 4/6 extension (`docs/plans/ch04-06-extension.md`).
 | settling time | temps de réponse à 2 % | tiempo de establecimiento | tempo di assestamento | Einschwingzeit | czas ustalania | tempo de acomodação | 整定時間 | 稳定时间 | زمن الاستقرار |
 | natural logarithm | logarithme népérien | logaritmo natural | logaritmo naturale | natürlicher Logarithmus | logarytm naturalny | logaritmo natural | 自然対数 | 自然对数 | اللوغاريتم الطبيعي |
 
+## Chapters 7–11 terms
+
+Chosen during the Chapters 7–11 extension (`docs/plans/ch07-11-extension.md`). Chapter agents add
+rows here as they introduce terms. "Map" in the first column means the term is (also) a
+concept-map label in `common.json` (`map.nodes.<id>`).
+
+| Term (definition) | First ch | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
+|---|---|---|---|---|---|---|---|---|---|---|
+| frequency response: how much a system scales and delays a sine wave at each wiggle speed | ch10 | réponse en fréquence | respuesta en frecuencia | risposta in frequenza | Frequenzgang | charakterystyka częstotliwościowa | resposta em frequência | 周波数応答 | 频率响应 | الاستجابة الترددية |
+| Bode plot: the frequency response drawn as gain and phase against wiggle speed | ch10 | diagramme de Bode | diagrama de Bode | diagramma di Bode | Bode-Diagramm | charakterystyki Bodego (map: wykres Bodego) | diagrama de Bode | ボード線図 | 波特图 | مخطط بود |
+| Map `bode`: "frequency response (Bode plot)" | ch10 | réponse en fréquence (diagramme de Bode) | respuesta en frecuencia (diagrama de Bode) | risposta in frequenza (diagramma di Bode) | Frequenzgang (Bode-Diagramm) | charakterystyka częstotliwościowa (wykres Bodego) | resposta em frequência (diagrama de Bode) | 周波数応答（ボード線図） | 频率响应（波特图） | الاستجابة الترددية (مخطط بود) |
+| motor limits: the motors can only push between 0 and 20 N; a command outside is cut off (map `limits`) | ch08 | limites des moteurs | límites del motor | limiti dei motori | Motorgrenzen | ograniczenia silników | limites do motor | モーター限界 | 电机限制 | حدود المحرك |
+| motor lag: the thrust asked for arrives a moment later; a first-order lag with time constant τm (map `motorlag`) | ch11 | retard des moteurs | retraso de los motores | ritardo dei motori | Motorverzögerung | bezwładność silników | atraso do motor | モーターの遅れ | 电机滞后 | تأخر المحركات |
+| fast vs calm: the trade-off between a quick arrival and quiet motors under sensor noise (map `tradeoff`) | ch11 | rapide ou calme | rápido o tranquilo | veloce o calmo | schnell oder ruhig | szybko czy spokojnie | rápido ou calmo | 速さか落ち着きか | 快还是稳 | السرعة أم الهدوء |
+| underdamped / critically damped / overdamped (`common:regime.*`, shared since the Ch 7–11 pass) | ch06 | sous-amorti / amortissement critique / sur-amorti | subamortiguado / con amortiguamiento crítico / sobreamortiguado | sottosmorzato / a smorzamento critico / sovrasmorzato | unterdämpft / kritisch gedämpft / überdämpft | niedotłumiony / tłumiony krytycznie / przetłumiony | subamortecido / criticamente amortecido / superamortecido | 不足減衰 / 臨界減衰 / 過減衰 | 欠阻尼 / 临界阻尼 / 过阻尼 | تحت التخميد / تخميد حرج / فوق التخميد |
+
+Notes:
+- The map labels were taken from the words the chapters already use (Ch 8's "motor limits"
+  captions, Ch 10's "frequency response"/"Bode plot" sentence, Ch 11's "Motor lag" item and its
+  "motors calm" star), so the map and the prose agree. pl keeps "bezwładność silników" because
+  Ch 11 uses it and a first-order lag is "człon inercyjny"; the Bode-plot map label says
+  "wykres Bodego" where the Ch 10 prose says "charakterystyki Bodego" (shorter in a bubble, same
+  meaning). All need native review.
+- es/it: the "critical" regime is the adjectival form ("con amortiguamiento crítico",
+  "a smorzamento critico") so it reads right both as a readout and inside a sentence.
+- Long map labels wrap by themselves at spaces (and after "-" or "/"). Japanese and Chinese
+  labels have no spaces, so they carry an explicit "\n" where a break is needed.
+
 ## Open terminology questions
 
 Places where one concept currently has two words. Found by comparing the locale files on

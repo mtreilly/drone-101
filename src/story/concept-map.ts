@@ -1,134 +1,8 @@
 import rough from 'roughjs';
-import { h, s } from '../core/dom';
+import { h, prefersReducedMotion, s } from '../core/dom';
 import { tc } from '../core/i18n';
 import { progress } from '../core/progress';
-
-/** Chapter cluster centres (serpentine layout on a 1200×800 sheet). */
-const CENTRES: [number, number][] = [
-  [150, 120],
-  [450, 130],
-  [750, 120],
-  [1050, 130],
-  [1050, 400],
-  [750, 400],
-  [450, 400],
-  [150, 400],
-  [150, 670],
-  [450, 670],
-  [750, 670],
-  [1050, 670],
-];
-
-/** node id → [chapter, dx, dy] */
-const NODES: Record<string, [number, number, number]> = {
-  goal: [0, -55, -35],
-  delay: [0, 50, 40],
-  openloop: [1, -85, -60],
-  feedback: [1, 60, -65],
-  blockdiagram: [1, -95, 20],
-  error: [1, 50, 5],
-  plant: [1, -50, 80],
-  disturbance: [1, 90, 75],
-  kp: [2, 0, -55],
-  sserror: [2, -75, 40],
-  overshoot: [2, 80, 45],
-  derivative: [3, -75, -60],
-  firstorder: [3, 70, -50],
-  tau: [3, 80, 45],
-  integral: [3, -70, 55],
-  power: [4, -70, -60],
-  euler: [4, 70, -5],
-  exponential: [4, -65, 45],
-  guess: [4, 45, 95],
-  complex: [5, -80, -65],
-  spin: [5, 70, -60],
-  spiral: [5, -75, 55],
-  smap: [5, 75, 60],
-  second: [6, -70, -50],
-  wnzeta: [6, 75, -40],
-  critical: [6, -80, 10],
-  mode: [6, 85, 15],
-  sum: [6, 0, 75],
-  laplace: [7, -60, -65],
-  dtos: [7, 70, -45],
-  table: [7, -75, 50],
-  splane: [7, 70, 65],
-  tf: [8, -75, -55],
-  poles: [8, 65, -55],
-  zeros: [8, -70, 55],
-  stability: [8, 75, 55],
-  integralaction: [9, -80, -60],
-  derivativeaction: [9, 75, -45],
-  pid: [9, 0, 20],
-  noise: [9, 20, 85],
-  phaselag: [10, -80, -60],
-  bode: [10, 75, -50],
-  margins: [10, -70, 55],
-  robust: [10, 80, 60],
-  you: [11, 0, 0],
-};
-
-const EDGES: [string, string][] = [
-  ['goal', 'error'],
-  ['openloop', 'feedback'],
-  ['blockdiagram', 'feedback'],
-  ['feedback', 'error'],
-  ['plant', 'blockdiagram'],
-  ['disturbance', 'feedback'],
-  ['error', 'kp'],
-  ['kp', 'sserror'],
-  ['kp', 'overshoot'],
-  ['overshoot', 'derivative'],
-  ['derivative', 'firstorder'],
-  ['firstorder', 'tau'],
-  ['derivative', 'integral'],
-  ['firstorder', 'euler'],
-  ['power', 'exponential'],
-  ['euler', 'exponential'],
-  ['exponential', 'guess'],
-  ['guess', 'complex'],
-  ['complex', 'spin'],
-  ['spin', 'spiral'],
-  ['spiral', 'smap'],
-  ['smap', 'second'],
-  ['overshoot', 'second'],
-  ['second', 'wnzeta'],
-  ['wnzeta', 'critical'],
-  ['wnzeta', 'sum'],
-  ['mode', 'sum'],
-  ['sum', 'laplace'],
-  ['integral', 'laplace'],
-  ['laplace', 'dtos'],
-  ['laplace', 'table'],
-  ['smap', 'splane'],
-  ['laplace', 'splane'],
-  ['splane', 'poles'],
-  ['dtos', 'tf'],
-  ['tf', 'poles'],
-  ['tf', 'zeros'],
-  ['poles', 'stability'],
-  ['sserror', 'integralaction'],
-  ['integral', 'integralaction'],
-  ['derivative', 'derivativeaction'],
-  ['wnzeta', 'derivativeaction'],
-  ['integralaction', 'pid'],
-  ['derivativeaction', 'pid'],
-  ['pid', 'noise'],
-  ['delay', 'phaselag'],
-  ['spin', 'bode'],
-  ['phaselag', 'bode'],
-  ['bode', 'margins'],
-  ['margins', 'robust'],
-  ['stability', 'robust'],
-  ['pid', 'robust'],
-  ['robust', 'you'],
-  ['pid', 'you'],
-];
-
-const pos = (id: string): [number, number] => {
-  const [ch, dx, dy] = NODES[id];
-  return [CENTRES[ch][0] + dx, CENTRES[ch][1] + dy];
-};
+import { CENTRES, CH_LABEL_DY, EDGES, labelLines, labelText, LINE_STEP, NODES, nodePos, nodeSize, VIEWBOX } from './map-layout';
 
 export interface MapOptions {
   /** chapters ≤ upTo are revealed (plus any completed ones) */
@@ -137,12 +11,18 @@ export interface MapOptions {
   compact?: boolean;
 }
 
+/** The last chapter: its map is the whole course, and its links draw in once. */
+const FINALE = CENTRES.length - 1;
+/** Whole draw-in under 1.2 s: each link takes DRAW ms, starting a few ms after the previous one. */
+const DRAW = 320;
+const DRAW_TOTAL = 1150;
+
 /** The growing concept map. Nodes link back to the chapter that introduced them. */
 export function conceptMap(o: MapOptions): HTMLElement {
   const done = new Set(progress.get().completed);
   const revealed = (ch: number) => ch <= o.upTo || done.has(ch);
   const svg = s('svg', {
-    viewBox: '-50 -40 1300 870',
+    viewBox: VIEWBOX.join(' '),
     class: 'concept-map',
     role: 'group',
     'aria-label': tc('map.aria'),
@@ -153,8 +33,8 @@ export function conceptMap(o: MapOptions): HTMLElement {
   EDGES.forEach(([a, b], i) => {
     const ra = revealed(NODES[a][0]);
     const rb = revealed(NODES[b][0]);
-    const [x1, y1] = pos(a);
-    const [x2, y2] = pos(b);
+    const [x1, y1] = nodePos(a);
+    const [x2, y2] = nodePos(b);
     // a gentle bow keeps long links from reading as a tangle of straight wires
     const mx = (x1 + x2) / 2;
     const my = (y1 + y2) / 2;
@@ -170,19 +50,24 @@ export function conceptMap(o: MapOptions): HTMLElement {
   });
   // chapter labels
   CENTRES.forEach(([cx, cy], ch) => {
-    nodes.append(s('text', { x: cx, y: cy - 108, class: `ch-label${revealed(ch) ? '' : ' faded'}`, 'text-anchor': 'middle' }, tc(`chapters.${ch}.short`)));
+    nodes.append(s('text', { x: cx, y: cy + CH_LABEL_DY, class: `ch-label${revealed(ch) ? '' : ' faded'}`, 'text-anchor': 'middle' }, tc(`chapters.${ch}.short`)));
   });
   const listItems: string[] = [];
   for (const id of Object.keys(NODES)) {
     const [ch] = NODES[id];
-    const [x, y] = pos(id);
+    const [x, y] = nodePos(id);
     const show = revealed(ch);
     const label = show ? tc(`map.nodes.${id}`) : '?';
-    const w = Math.max(64, label.length * 9.6 + 30);
+    const { w, h: ht } = nodeSize(label);
+    const lines = labelLines(label);
+    const plain = labelText(label);
     const hi = o.highlight === ch;
-    const g = s('a', { href: `#/ch/${ch}`, 'data-id': id, class: `node${show ? '' : ' locked'}${hi ? ' new' : ''}`, 'aria-label': show ? `${label} — ${tc(`chapters.${ch}.title`)}` : tc('map.locked') });
+    const g = s('a', { href: `#/ch/${ch}`, 'data-id': id, class: `node${show ? '' : ' locked'}${hi ? ' new' : ''}`, 'aria-label': show ? `${plain} — ${tc(`chapters.${ch}.title`)}` : tc('map.locked') });
+    // the lines sit centred on the node; a one-line label keeps its baseline 6 px below the centre
+    const text = s('text', { x, y: y + 6 - ((lines.length - 1) * LINE_STEP) / 2, 'text-anchor': 'middle' });
+    lines.forEach((line, i) => text.append(s('tspan', { x, dy: i ? LINE_STEP : 0 }, line)));
     g.append(
-      rc.ellipse(x, y, w, 44, {
+      rc.ellipse(x, y, w, ht, {
         stroke: 'currentColor',
         strokeWidth: hi ? 2.2 : 1.4,
         roughness: 1.2,
@@ -191,10 +76,10 @@ export function conceptMap(o: MapOptions): HTMLElement {
         seed: id.length * 7 + ch,
         strokeLineDash: show ? undefined : [4, 4],
       }),
-      s('text', { x, y: y + 6, 'text-anchor': 'middle' }, label),
+      text,
     );
     nodes.append(g);
-    if (show) listItems.push(label);
+    if (show) listItems.push(plain);
   }
   svg.append(edges, nodes);
   // hovering or focusing an idea lights up what it connects to
@@ -218,5 +103,67 @@ export function conceptMap(o: MapOptions): HTMLElement {
     n.addEventListener('blur', () => light(null));
   });
   const textList = h('p', { class: 'visually-hidden' }, `${tc('map.listIntro')} ${listItems.join(', ')}.`);
-  return h('div', { class: `concept-map-wrap${o.compact ? ' compact' : ''}` }, h('div', { class: 'concept-map-scroll' }, svg), textList);
+  const scroller = h('div', { class: 'concept-map-scroll' }, svg);
+  const wrap = h('div', { class: `concept-map-wrap${o.compact ? ' compact' : ''}` }, scroller, textList);
+  if (o.highlight !== undefined) whenPlaced(wrap, () => scrollToCluster(scroller, svg, o.highlight!));
+  if (o.highlight === FINALE && !prefersReducedMotion()) drawIn(wrap, edges);
+  return wrap;
+}
+
+/** Runs `fn` once the element is in the page and laid out. */
+function whenPlaced(el: HTMLElement, fn: () => void): void {
+  let tries = 0;
+  const tick = () => {
+    if (el.isConnected && el.clientWidth > 0) fn();
+    else if (++tries < 120) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+/**
+ * On a narrow screen the map scrolls sideways: start with this chapter's cluster in view
+ * (for the finale, "YOU"). Works the same in right-to-left pages, since it moves by the offset.
+ */
+function scrollToCluster(scroller: HTMLElement, svg: SVGSVGElement, ch: number): void {
+  if (scroller.scrollWidth <= scroller.clientWidth + 1) return;
+  const [vx, , vw] = VIEWBOX;
+  const box = svg.getBoundingClientRect();
+  const target = box.left + ((CENTRES[ch][0] - vx) / vw) * box.width;
+  const view = scroller.getBoundingClientRect();
+  scroller.scrollLeft += target - (view.left + view.width / 2);
+}
+
+/**
+ * The finale: the links draw themselves in, chapter by chapter, once, when the map comes into
+ * view, to show the course joining up. Never under reduced motion (the map is then static).
+ */
+function drawIn(wrap: HTMLElement, edges: SVGGElement): void {
+  if (typeof IntersectionObserver === 'undefined') return;
+  const lines = [...edges.querySelectorAll<SVGGElement>('.edge')];
+  // order: by the later chapter of the two ends, so the map grows as the course did
+  const order = lines
+    .map((g, i) => ({ g, i, ch: Math.max(NODES[g.dataset.a!][0], NODES[g.dataset.b!][0]) }))
+    .sort((p, q) => p.ch - q.ch || p.i - q.i)
+    .map((x) => x.g);
+  const stagger = Math.min(15, (DRAW_TOTAL - DRAW) / Math.max(1, order.length - 1));
+  const paths = order.map((g) => [...g.querySelectorAll<SVGPathElement>('path')]);
+  wrap.classList.add('drawing');
+  const io = new IntersectionObserver(
+    (entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      io.disconnect();
+      const ease = getComputedStyle(document.documentElement).getPropertyValue('--ease-out').trim() || 'ease-out';
+      paths.forEach((ps, k) =>
+        ps.forEach((p) => {
+          const len = p.getTotalLength();
+          p.style.strokeDasharray = `${len}`;
+          const anim = p.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: DRAW, delay: k * stagger, easing: ease, fill: 'backwards' });
+          anim.onfinish = () => (p.style.strokeDasharray = '');
+        }),
+      );
+      wrap.classList.remove('drawing');
+    },
+    { threshold: 0.25 },
+  );
+  io.observe(wrap);
 }

@@ -521,6 +521,12 @@ html[dir='rtl'] .say.right .bubble::after {
 .concept-map.focus-mode .edge.hot {
   opacity: 1;
 }
+/* the finale's links wait, unseen, until the map scrolls into view and they draw in */
+@media (prefers-reduced-motion: no-preference) {
+  .concept-map-wrap.drawing .edge {
+    visibility: hidden;
+  }
+}
 .concept-map .hidden-edge {
   opacity: 0.1;
 }
