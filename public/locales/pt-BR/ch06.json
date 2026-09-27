@@ -431,6 +431,86 @@
       ]
     },
     {
+      "id": "arrows",
+      "title": "Setas têm comprimento e ângulo",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Peraí. Os pontos ficam num círculo de raio $\\omega_n$, e o ζ só desliza eles ao redor. Então um ponto é na verdade duas coisas: **quão longe** do 0 e **para que lado**."
+        },
+        {
+          "t": "p",
+          "text": "Toda seta $z = a + b\\,i$ pode ser descrita do outro jeito: pelo seu **comprimento** $|z|$ e pelo seu **ângulo**. Pitágoras dá o comprimento. Para uma seta que aponta para a direita ($a > 0$), o ângulo é aquele cuja subida dividida pelo avanço é $b/a$. O nome dele é **arco tangente**, $\\arctan$: o botão de desfazer da tangente."
+        },
+        {
+          "t": "math",
+          "tex": "|z| = \\sqrt{a^2 + b^2}, \\qquad \\angle z = \\arctan\\frac{b}{a} \\quad (a > 0)"
+        },
+        {
+          "t": "play",
+          "id": "arrowRead",
+          "text": "A seta {scrub|a} + {scrub|b}i tem comprimento {calc|len} e aponta a {calc|ang}° do eixo real."
+        },
+        {
+          "t": "p",
+          "text": "O Capítulo 5 descobriu que multiplicar setas **multiplica os comprimentos e soma os ângulos**. Dividir tem que desfazer isso, então divide os comprimentos e **subtrai** os ângulos."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Então $1/(1+i)$: comprimento $1/\\sqrt 2$, e o ângulo é 45° mais 45°, então 90°? Hmm. Multiplique isso de volta por $1+i$ e dá uma seta apontando para 135°, nada perto de 1."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Menos, então. Comprimento $1/\\sqrt 2$ a −45°. Vezes $\\sqrt 2$ a +45°, e dá comprimento 1 a 0°: exatamente 1. Confere."
+        },
+        {
+          "t": "widget",
+          "id": "arrows"
+        },
+        {
+          "t": "p",
+          "text": "A seta tracejada clarinha é o **gêmeo espelhado** $\\bar z = a - b\\,i$ do Capítulo 5 (os matemáticos chamam de *conjugado*): mesmo comprimento, ângulo oposto. Multiplique uma seta pelo seu gêmeo e os ângulos se cancelam, sobrando um número positivo simples, o comprimento ao quadrado. A tabela do Capítulo 7 vai precisar exatamente disto:"
+        },
+        {
+          "t": "math",
+          "tex": "z\\,\\bar z = |z|^2 = a^2 + b^2, \\qquad (s - i\\omega)(s + i\\omega) = s^2 + \\omega^2"
+        },
+        {
+          "t": "p",
+          "text": "E o círculo? Um polo em $-\\zeta\\omega_n + i\\,\\omega_n\\sqrt{1-\\zeta^2}$ tem comprimento $\\omega_n$. Meça o ângulo θ dele a partir do eixo real *negativo*, e a parte para a esquerda é $\\omega_n\\cos\\theta$. Então $\\zeta = \\cos\\theta$: o amortecimento é o ângulo."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Experimente a segunda opção do widget: 1 + iωτ. É a regra do café do Capítulo 3 encontrando uma oscilação. Dividir por ela encolhe e gira para trás, cada vez mais conforme a oscilação acelera, mas nunca além de um quarto de volta. Aposto que o chuveiro liga para isso."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Comprimento $|z|$",
+              "def": "O tamanho de uma seta: $\\sqrt{a^2+b^2}$ para $z = a + b\\,i$. Multiplicar setas multiplica os comprimentos."
+            },
+            {
+              "term": "Ângulo $\\angle z$",
+              "def": "Para que lado uma seta aponta, medido a partir do eixo real positivo. $\\arctan(b/a)$ para uma seta que aponta para a direita. Multiplicar soma os ângulos, dividir os subtrai."
+            },
+            {
+              "term": "Gêmeo espelhado $\\bar z$",
+              "def": "A seta refletida no eixo real, $a - b\\,i$ (o conjugado). $z\\,\\bar z = |z|^2$."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "wrap",
       "title": "O que sabemos agora",
       "blocks": [
@@ -441,6 +521,7 @@
             "Dois números capturam a personalidade dele: $\\omega_n$ (quão rápido) e $\\zeta$ (quão oscilante).",
             "$\\omega_n = \\sqrt{k/m}$ é a velocidade de oscilação sem amortecedor. $\\zeta = c/c_{\\text{crit}}$ compara o amortecimento com o amortecimento crítico $2\\sqrt{mk}$, que acaba exatamente com o sobressinal.",
             "O movimento é uma mistura de dois termos $e^{st}$. Os dois valores de $s$ ficam sobre um círculo de raio $\\omega_n$ quando o sistema é subamortecido, e se separam ao longo do eixo real quando é superamortecido.",
+            "Uma seta tem **comprimento** e **ângulo** ($\\arctan$). Multiplicar multiplica os comprimentos e soma os ângulos; dividir divide e subtrai. $\\zeta = \\cos\\theta$.",
             "O amortecimento também deixa a oscilação um pouco mais lenta: $\\omega_d = \\omega_n\\sqrt{1-\\zeta^2}$.",
             "Mais amortecimento nem sempre é melhor: depois de $\\zeta = 1$, o valor lento de $s$ se aproxima devagar de zero e tudo fica mais lento.",
             "Para o drone, mais $K_p$ significa menos amortecimento. É por isso que ele ficou mais oscilante."
@@ -632,6 +713,27 @@
       "double": "ambos aqui",
       "band5": "dentro de 5%",
       "sweet": "ζ = 0,7 ultrapassa o alvo em {os}%, mas fica dentro de 5% do alvo depois de {y5} s. ζ = 1 precisa de {r5} s."
+    },
+    "arrows": {
+      "title": "Comprimento, ângulo e 1 ÷ uma seta",
+      "aria": "Um plano com o círculo unitário, uma seta z, seu gêmeo espelhado tracejado e a seta 1 dividido por z, com os ângulos marcados.",
+      "re": "parte real",
+      "im": "parte imaginária",
+      "mode": "Qual seta?",
+      "modeFree": "qualquer seta z",
+      "modeSmoother": "o suavizador, 1 + iωτ",
+      "a": "parte real a",
+      "b": "parte imaginária b",
+      "wt": "velocidade da oscilação × τ (ωτ)",
+      "mirror": "gêmeo",
+      "out": "1 ÷ (1 + iωτ)",
+      "len": "comprimento |z|",
+      "ang": "ângulo de z",
+      "ilen": "comprimento de 1/z",
+      "iang": "ângulo de 1/z",
+      "free": "1/z tem comprimento {ilen} (1 ÷ {len}) e gira para o outro lado, até {iang}. Multiplique as duas e você obtém comprimento {back} a 0°: exatamente 1.",
+      "smooth": "Com ωτ = {wt}, 1 ÷ (1 + iωτ) mantém {ilen} do tamanho e se atrasa {lag}. Oscilações mais rápidas: menores e mais atrasadas, mas nunca além de 90°.",
+      "help": "Deslize a e b para mover z (ou mude para o suavizador e deslize ωτ). O arco azul é o ângulo de z; o arco cinza, o ângulo de 1/z."
     }
   },
   "plays": {
@@ -653,6 +755,10 @@
     },
     "drone": {
       "kp": "ganho Kp, newtons por metro"
+    },
+    "arrowRead": {
+      "a": "parte real a",
+      "b": "parte imaginária b"
     }
   }
 }

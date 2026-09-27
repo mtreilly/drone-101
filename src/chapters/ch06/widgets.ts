@@ -1,5 +1,6 @@
 import { h } from '../../core/dom';
 import { fmt, tc } from '../../core/i18n';
+import { type C, c as cx, mul } from '../../math/complex';
 import { tex } from '../../core/rich-text';
 import { overshootFormula, secondOrderSolution } from '../../math/second-order';
 import { DRONE, DroneSim, HOVER_THRUST, P_ONLY, defaultDroneConfig } from '../../sim/drone-model';
@@ -10,9 +11,11 @@ import { readout, segmented, slider, transport } from '../../ui/controls';
 import { DroneView } from '../../ui/drone-view';
 import { Loop } from '../../ui/loop';
 import { MsdView } from '../../ui/msd-view';
+import { PlaneCanvas } from '../../ui/plane-canvas';
 import { Plot } from '../../ui/plot';
 import { SPlane } from '../../ui/s-plane';
 import './ch06.css';
+import { angleOf, inverse, lengthOf } from './arrows';
 import {
   caption,
   clampToPlane,
@@ -399,4 +402,72 @@ const race: WidgetFactory = (host, ctx) => {
   return () => loop.destroy();
 };
 
-export const widgets: Record<string, WidgetFactory> = { twins, personality, race };
+/** 6e: an arrow's length and angle; dividing divides the lengths and subtracts the angles. */
+const arrows: WidgetFactory = (host, ctx) => {
+  const { t } = ctx;
+  let mode: 'free' | 'smoother' = 'free';
+  // 1/z always points along the twin (it is z̄ ÷ |z|²): start where the two lengths differ clearly
+  let a = 1.5;
+  let b = 1;
+  let wt = 1;
+  host.append(h('p', { class: 'w-title' }, t('title')));
+  const grid = h('div', { class: 'w-grid two' });
+  const left = h('div');
+  const right = h('div');
+  grid.append(left, right);
+  host.append(grid);
+  const plane = new PlaneCanvas(left, { extent: 2.4, label: t('aria'), reLabel: t('re'), imLabel: t('im') });
+  ctx.onCleanup(() => plane.destroy());
+  const rL = readout(t('len'), 'out');
+  const rA = readout(t('ang'), 'out');
+  const rIL = readout(t('ilen'));
+  const rIA = readout(t('iang'));
+  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  right.append(h('div', { class: 'readouts' }, rL.el, rA.el, rIL.el, rIA.el), status);
+  const arrow = (): C => (mode === 'free' ? cx(a, b) : cx(1, wt));
+  const deg = (v: number) => `${fmt(v, 0)}°`;
+  const say = () => {
+    const z = arrow();
+    const iz = inverse(z);
+    const text =
+      mode === 'free'
+        ? t('free', { ilen: fmt(lengthOf(iz), 2), len: fmt(lengthOf(z), 2), iang: deg(angleOf(iz)), back: fmt(lengthOf(mul(z, iz)), 2) })
+        : t('smooth', { wt: fmt(wt, 1), ilen: fmt(lengthOf(iz), 2), lag: deg(-angleOf(iz)) });
+    if (status.textContent !== text) status.textContent = text;
+  };
+  const draw = () => {
+    const z = arrow();
+    const iz = inverse(z);
+    const tooSmall = lengthOf(z) < 0.15;
+    plane.draw([
+      { kind: 'circle', r: 1, color: 'ink3' },
+      { kind: 'arc', r: 0.45, from: 0, to: Math.atan2(z.im, z.re), color: 'out' },
+      { kind: 'arc', r: 0.3, from: 0, to: Math.atan2(iz.im, iz.re), color: 'ink2' },
+      // the twin belongs to "any arrow"; beside the smoother it only clutters the picture
+      ...(mode === 'free' ? [{ kind: 'arrow' as const, to: [z.re, -z.im] as [number, number], color: 'ink3', width: 2, dash: [4, 4], label: t('mirror') }] : []),
+      { kind: 'arrow', to: [z.re, z.im], color: 'out', width: 3.5, label: mode === 'free' ? 'z' : '1 + iωτ' },
+      ...(tooSmall ? [] : [{ kind: 'arrow' as const, to: [iz.re, iz.im] as [number, number], color: 'ink', width: 3, label: mode === 'free' ? '1/z' : t('out') }]),
+    ]);
+    rL.set(fmt(lengthOf(z), 2));
+    rA.set(deg(angleOf(z)));
+    rIL.set(tooSmall ? '—' : fmt(lengthOf(iz), 2));
+    rIA.set(tooSmall ? '—' : deg(angleOf(iz)));
+  };
+  const sA = slider({ label: t('a'), min: -2, max: 2, step: 0.1, value: a, onInput: (v) => ((a = v), draw()), onSettle: say });
+  const sB = slider({ label: t('b'), min: -2, max: 2, step: 0.1, value: b, onInput: (v) => ((b = v), draw()), onSettle: say });
+  const sW = slider({ label: t('wt'), min: 0, max: 2.4, step: 0.1, value: wt, onInput: (v) => ((wt = v), draw()), onSettle: say });
+  const free = h('div', { class: 'w-controls' }, sA.el, sB.el);
+  const smooth = h('div', { class: 'w-controls', style: { display: 'none' } }, sW.el);
+  const seg = segmented(t('mode'), [{ value: 'free', label: t('modeFree') }, { value: 'smoother', label: t('modeSmoother') }], mode, (v) => {
+    mode = v;
+    free.style.display = v === 'free' ? '' : 'none';
+    smooth.style.display = v === 'smoother' ? '' : 'none';
+    draw();
+    say();
+  });
+  host.append(seg.el, free, smooth, h('p', { class: 'w-help' }, t('help')));
+  draw();
+  say();
+};
+
+export const widgets: Record<string, WidgetFactory> = { twins, personality, race, arrows };

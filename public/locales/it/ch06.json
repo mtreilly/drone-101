@@ -431,6 +431,86 @@
       ]
     },
     {
+      "id": "arrows",
+      "title": "Le frecce hanno una lunghezza e un angolo",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Aspetta. I puntini stanno su un cerchio di raggio $\\omega_n$, e ζ li fa solo scorrere lungo il cerchio. Quindi un puntino è in realtà due cose: **quanto è lontano** da 0, e **da che parte**."
+        },
+        {
+          "t": "p",
+          "text": "Ogni freccia $z = a + b\\,i$ si può raccontare anche al contrario: con la sua **lunghezza** $|z|$ e il suo **angolo**. La lunghezza ce la dà Pitagora. Per una freccia che punta a destra ($a > 0$), l'angolo è quello la cui pendenza, salita diviso avanzamento, vale $b/a$. Si chiama **arcotangente**, $\\arctan$: il tasto \"annulla\" della tangente."
+        },
+        {
+          "t": "math",
+          "tex": "|z| = \\sqrt{a^2 + b^2}, \\qquad \\angle z = \\arctan\\frac{b}{a} \\quad (a > 0)"
+        },
+        {
+          "t": "play",
+          "id": "arrowRead",
+          "text": "La freccia {scrub|a} + {scrub|b}i è lunga {calc|len} e punta a {calc|ang}° dall'asse reale."
+        },
+        {
+          "t": "p",
+          "text": "Il Capitolo 5 ha scoperto che moltiplicare le frecce **moltiplica le loro lunghezze e somma i loro angoli**. Dividere deve annullare tutto questo, quindi divide le lunghezze e **sottrae** gli angoli."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Quindi $1/(1+i)$: lunghezza $1/\\sqrt 2$, e l'angolo è 45° più 45°, quindi 90°? Mmh. Rimoltiplicala per $1+i$ e punta a 135°, lontanissimo da 1."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Allora meno. Lunga $1/\\sqrt 2$ a −45°. Per $\\sqrt 2$ a +45°, e viene lunghezza 1 a 0°: esattamente 1. Torna."
+        },
+        {
+          "t": "widget",
+          "id": "arrows"
+        },
+        {
+          "t": "p",
+          "text": "La freccia tratteggiata e sbiadita è la **gemella allo specchio** $\\bar z = a - b\\,i$ del Capitolo 5 (i matematici la chiamano *complesso coniugato*): stessa lunghezza, angolo opposto. Moltiplica una freccia per la sua gemella e gli angoli si annullano, lasciando un semplice numero positivo, la lunghezza al quadrato. La tabella del Capitolo 7 avrà bisogno proprio di questo:"
+        },
+        {
+          "t": "math",
+          "tex": "z\\,\\bar z = |z|^2 = a^2 + b^2, \\qquad (s - i\\omega)(s + i\\omega) = s^2 + \\omega^2"
+        },
+        {
+          "t": "p",
+          "text": "E il cerchio? Un polo in $-\\zeta\\omega_n + i\\,\\omega_n\\sqrt{1-\\zeta^2}$ ha lunghezza $\\omega_n$. Misura il suo angolo θ dall'asse reale *negativo*, e la parte verso sinistra è $\\omega_n\\cos\\theta$. Quindi $\\zeta = \\cos\\theta$: lo smorzamento è l'angolo."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Prova la seconda impostazione del widget: 1 + iωτ. È la regola del caffè del Capitolo 3 che incontra un'oscillazione. Dividere per lei rimpicciolisce e gira all'indietro, sempre di più man mano che l'oscillazione accelera, ma mai oltre un quarto di giro. Scommetto che alla doccia interessa."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Lunghezza $|z|$",
+              "def": "Quanto è lunga una freccia: $\\sqrt{a^2+b^2}$ per $z = a + b\\,i$. Moltiplicare le frecce moltiplica le loro lunghezze."
+            },
+            {
+              "term": "Angolo $\\angle z$",
+              "def": "Da che parte punta una freccia, misurato dall'asse reale positivo. $\\arctan(b/a)$ per una freccia che punta a destra. Moltiplicare somma gli angoli, dividere li sottrae."
+            },
+            {
+              "term": "Gemella allo specchio $\\bar z$",
+              "def": "La freccia ribaltata rispetto all'asse reale, $a - b\\,i$ (il complesso coniugato). $z\\,\\bar z = |z|^2$."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "wrap",
       "title": "Cosa sappiamo adesso",
       "blocks": [
@@ -441,6 +521,7 @@
             "Due numeri ne catturano la personalità: $\\omega_n$ (quanto è rapido) e $\\zeta$ (quanto è saltellante).",
             "$\\omega_n = \\sqrt{k/m}$ è la velocità di oscillazione senza smorzatore. $\\zeta = c/c_{\\text{crit}}$ confronta lo smorzamento con lo smorzamento critico $2\\sqrt{mk}$, quello che elimina appena la sovraelongazione.",
             "Il moto è un miscuglio di due termini $e^{st}$. I due valori di $s$ stanno su un cerchio di raggio $\\omega_n$ quando è sottosmorzato, e si separano lungo l'asse reale quando è sovrasmorzato.",
+            "Una freccia ha una **lunghezza** e un **angolo** ($\\arctan$). Moltiplicare moltiplica le lunghezze e somma gli angoli; dividere divide e sottrae. $\\zeta = \\cos\\theta$.",
             "Lo smorzamento rallenta anche un po' l'oscillazione: $\\omega_d = \\omega_n\\sqrt{1-\\zeta^2}$.",
             "Più smorzamento non è sempre meglio: oltre $\\zeta = 1$ il valore di $s$ lento si avvicina allo zero e tutto rallenta.",
             "Per il drone, più $K_p$ vuol dire meno smorzamento. Ecco perché ballava di più."
@@ -632,6 +713,27 @@
       "double": "tutti e due qui",
       "band5": "entro il 5%",
       "sweet": "ζ = 0,7 va oltre del {os}%, ma è entro il 5% dall'obiettivo dopo {y5} s. A ζ = 1 servono {r5} s."
+    },
+    "arrows": {
+      "title": "Lunghezza, angolo e 1 ÷ una freccia",
+      "aria": "Un piano con il cerchio unitario, una freccia z, la sua gemella allo specchio tratteggiata e la freccia 1 diviso z, con i loro angoli segnati.",
+      "re": "parte reale",
+      "im": "parte immaginaria",
+      "mode": "Quale freccia?",
+      "modeFree": "una freccia z qualsiasi",
+      "modeSmoother": "lo smussatore, 1 + iωτ",
+      "a": "parte reale a",
+      "b": "parte immaginaria b",
+      "wt": "velocità dell'oscillazione × τ (ωτ)",
+      "mirror": "gemella",
+      "out": "1 ÷ (1 + iωτ)",
+      "len": "lunghezza |z|",
+      "ang": "angolo di z",
+      "ilen": "lunghezza di 1/z",
+      "iang": "angolo di 1/z",
+      "free": "1/z è lunga {ilen} (1 ÷ {len}) e girata dall'altra parte, a {iang}. Moltiplica le due frecce e ottieni lunghezza {back} a 0°: esattamente 1.",
+      "smooth": "Con ωτ = {wt}, 1 ÷ (1 + iωτ) conserva {ilen} della grandezza e resta indietro di {lag}. Oscillazioni più rapide: più piccola e più in ritardo, ma mai oltre 90°.",
+      "help": "Fai scorrere a e b per spostare z (oppure passa allo smussatore e fai scorrere ωτ). L'arco blu è l'angolo di z, l'arco grigio l'angolo di 1/z."
     }
   },
   "plays": {
@@ -653,6 +755,10 @@
     },
     "drone": {
       "kp": "guadagno Kp, newton al metro"
+    },
+    "arrowRead": {
+      "a": "parte reale a",
+      "b": "parte immaginaria b"
     }
   }
 }

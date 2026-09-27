@@ -431,6 +431,86 @@
       ]
     },
     {
+      "id": "arrows",
+      "title": "Las flechas tienen longitud y ángulo",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Espera. Los puntos están sobre un círculo de radio $\\omega_n$, y ζ solo los desliza por él. O sea que un punto son en realidad dos cosas: **a qué distancia** está de 0 y **hacia dónde**."
+        },
+        {
+          "t": "p",
+          "text": "Toda flecha $z = a + b\\,i$ se puede describir al revés: por su **longitud** $|z|$ y su **ángulo**. Pitágoras nos da la longitud. Para una flecha que apunta a la derecha ($a > 0$), el ángulo es aquel cuya subida entre avance es $b/a$. Se llama **arcotangente**, $\\arctan$: el botón de deshacer de la tangente."
+        },
+        {
+          "t": "math",
+          "tex": "|z| = \\sqrt{a^2 + b^2}, \\qquad \\angle z = \\arctan\\frac{b}{a} \\quad (a > 0)"
+        },
+        {
+          "t": "play",
+          "id": "arrowRead",
+          "text": "La flecha {scrub|a} + {scrub|b}i mide {calc|len} y apunta a {calc|ang}° del eje real."
+        },
+        {
+          "t": "p",
+          "text": "En el capítulo 5 vimos que multiplicar flechas **multiplica sus longitudes y suma sus ángulos**. Dividir tiene que deshacer eso, así que divide las longitudes y **resta** los ángulos."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Entonces $1/(1+i)$: longitud $1/\\sqrt 2$, y el ángulo es 45° más 45°, o sea, ¿90°? Mmm. Si lo vuelvo a multiplicar por $1+i$, apunta a 135°, nada que ver con 1."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Pues restando. $1/\\sqrt 2$ de longitud a −45°. Por $\\sqrt 2$ a +45°, y queda longitud 1 a 0°: exactamente 1. Cuadra."
+        },
+        {
+          "t": "widget",
+          "id": "arrows"
+        },
+        {
+          "t": "p",
+          "text": "La flecha discontinua y tenue es el **gemelo reflejado** $\\bar z = a - b\\,i$ del capítulo 5 (los matemáticos lo llaman *conjugado*): misma longitud, ángulo opuesto. Multiplica una flecha por su gemelo y los ángulos se cancelan: queda un simple número positivo, la longitud al cuadrado. La tabla del capítulo 7 necesitará justo esto:"
+        },
+        {
+          "t": "math",
+          "tex": "z\\,\\bar z = |z|^2 = a^2 + b^2, \\qquad (s - i\\omega)(s + i\\omega) = s^2 + \\omega^2"
+        },
+        {
+          "t": "p",
+          "text": "¿Y el círculo? Un polo en $-\\zeta\\omega_n + i\\,\\omega_n\\sqrt{1-\\zeta^2}$ tiene longitud $\\omega_n$. Mide su ángulo θ desde el eje real *negativo* y la parte hacia la izquierda es $\\omega_n\\cos\\theta$. Así que $\\zeta = \\cos\\theta$: el amortiguamiento es el ángulo."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Prueba el segundo modo del widget: 1 + iωτ. Es la regla del café del capítulo 3 encontrándose con una oscilación. Dividir entre ella encoge y gira hacia atrás, cada vez más cuanto más rápida es la oscilación, pero nunca más de un cuarto de vuelta. Apuesto a que a la ducha le importa."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Longitud $|z|$",
+              "def": "Lo larga que es una flecha: $\\sqrt{a^2+b^2}$ para $z = a + b\\,i$. Multiplicar flechas multiplica sus longitudes."
+            },
+            {
+              "term": "Ángulo $\\angle z$",
+              "def": "Hacia dónde apunta una flecha, medido desde el eje real positivo. $\\arctan(b/a)$ para una flecha que apunta a la derecha. Multiplicar suma ángulos; dividir los resta."
+            },
+            {
+              "term": "Gemelo reflejado $\\bar z$",
+              "def": "La flecha reflejada respecto al eje real, $a - b\\,i$ (el conjugado). $z\\,\\bar z = |z|^2$."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "wrap",
       "title": "Lo que sabemos ahora",
       "blocks": [
@@ -441,6 +521,7 @@
             "Dos números resumen su personalidad: $\\omega_n$ (lo rápido) y $\\zeta$ (lo saltarín).",
             "$\\omega_n = \\sqrt{k/m}$ es la rapidez de oscilación sin amortiguador. $\\zeta = c/c_{\\text{crit}}$ compara el amortiguamiento con el amortiguamiento crítico $2\\sqrt{mk}$, el justo para eliminar el sobreimpulso.",
             "El movimiento es una mezcla de dos términos $e^{st}$. Los dos valores de $s$ están sobre un círculo de radio $\\omega_n$ cuando está subamortiguado, y se separan a lo largo del eje real cuando está sobreamortiguado.",
+            "Una flecha tiene **longitud** y **ángulo** ($\\arctan$). Multiplicar multiplica longitudes y suma ángulos; dividir divide y resta. $\\zeta = \\cos\\theta$.",
             "El amortiguamiento también frena un poco la oscilación: $\\omega_d = \\omega_n\\sqrt{1-\\zeta^2}$.",
             "Más amortiguamiento no siempre es mejor: pasado $\\zeta = 1$, el valor lento de $s$ se arrastra hacia el cero y todo se ralentiza.",
             "Para el dron, más $K_p$ significa menos amortiguamiento. Por eso se tambaleaba más."
@@ -632,6 +713,27 @@
       "double": "los dos aquí",
       "band5": "dentro del 5 %",
       "sweet": "ζ = 0,7 tiene un sobreimpulso del {os} %, pero queda dentro del 5 % del objetivo tras {y5} s. ζ = 1 necesita {r5} s."
+    },
+    "arrows": {
+      "title": "Longitud, ángulo y 1 ÷ una flecha",
+      "aria": "Un plano con el círculo unidad, una flecha z, su gemelo reflejado discontinuo y la flecha 1 dividido entre z, con sus ángulos marcados.",
+      "re": "parte real",
+      "im": "parte imaginaria",
+      "mode": "¿Qué flecha?",
+      "modeFree": "cualquier flecha z",
+      "modeSmoother": "el suavizador, 1 + iωτ",
+      "a": "parte real a",
+      "b": "parte imaginaria b",
+      "wt": "velocidad de oscilación × τ (ωτ)",
+      "mirror": "gemelo",
+      "out": "1 ÷ (1 + iωτ)",
+      "len": "longitud |z|",
+      "ang": "ángulo de z",
+      "ilen": "longitud de 1/z",
+      "iang": "ángulo de 1/z",
+      "free": "1/z mide {ilen} (1 ÷ {len}) y está girada al revés, hasta {iang}. Multiplica las dos y obtienes longitud {back} a 0°: exactamente 1.",
+      "smooth": "Con ωτ = {wt}, 1 ÷ (1 + iωτ) conserva {ilen} del tamaño y se retrasa {lag}. Oscilaciones más rápidas: más pequeñas y más tardías, pero nunca más de 90°.",
+      "help": "Desliza a y b para mover z (o cambia al suavizador y desliza ωτ). El arco azul es el ángulo de z; el gris, el ángulo de 1/z."
     }
   },
   "plays": {
@@ -653,6 +755,10 @@
     },
     "drone": {
       "kp": "ganancia Kp, newtons por metro"
+    },
+    "arrowRead": {
+      "a": "parte real a",
+      "b": "parte imaginaria b"
     }
   }
 }

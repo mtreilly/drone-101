@@ -431,6 +431,86 @@
       ]
     },
     {
+      "id": "arrows",
+      "title": "Arrows have a length and an angle",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Wait. The dots sit on a circle of radius $\\omega_n$, and ζ just slides them round it. So a dot is really two things: **how far** from 0, and **which way**."
+        },
+        {
+          "t": "p",
+          "text": "Every arrow $z = a + b\\,i$ can be told the other way round: by its **length** $|z|$ and its **angle**. Pythagoras gives the length. For an arrow pointing right ($a > 0$), the angle is the one whose rise over run is $b/a$. Its name is the **arctangent**, $\\arctan$: the tangent's undo button."
+        },
+        {
+          "t": "math",
+          "tex": "|z| = \\sqrt{a^2 + b^2}, \\qquad \\angle z = \\arctan\\frac{b}{a} \\quad (a > 0)"
+        },
+        {
+          "t": "play",
+          "id": "arrowRead",
+          "text": "The arrow {scrub|a} + {scrub|b}i is {calc|len} long and points at {calc|ang}° from the real axis."
+        },
+        {
+          "t": "p",
+          "text": "Chapter 5 found that multiplying arrows **multiplies their lengths and adds their angles**. Dividing has to undo that, so it divides the lengths and **subtracts** the angles."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "So $1/(1+i)$: length $1/\\sqrt 2$, and the angle is 45° plus 45°, so 90°? Hmm. Multiply that back by $1+i$ and it points at 135°, nowhere near 1."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Minus, then. $1/\\sqrt 2$ long at −45°. Times $\\sqrt 2$ at +45°, and it's length 1 at 0°: exactly 1. It checks."
+        },
+        {
+          "t": "widget",
+          "id": "arrows"
+        },
+        {
+          "t": "p",
+          "text": "The faint dashed arrow is the **mirror twin** $\\bar z = a - b\\,i$ from Chapter 5 (mathematicians call it the *conjugate*): same length, opposite angle. Multiply an arrow by its twin and the angles cancel, leaving a plain positive number, the length squared. Chapter 7's table will need exactly this:"
+        },
+        {
+          "t": "math",
+          "tex": "z\\,\\bar z = |z|^2 = a^2 + b^2, \\qquad (s - i\\omega)(s + i\\omega) = s^2 + \\omega^2"
+        },
+        {
+          "t": "p",
+          "text": "And the circle? A pole at $-\\zeta\\omega_n + i\\,\\omega_n\\sqrt{1-\\zeta^2}$ has length $\\omega_n$. Measure its angle θ from the *negative* real axis and the leftward part is $\\omega_n\\cos\\theta$. So $\\zeta = \\cos\\theta$: the damping is the angle."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Try the second setting in the widget: 1 + iωτ. That's Chapter 3's coffee rule meeting a wiggle. Dividing by it shrinks and turns back, more and more as the wiggle speeds up, but never past a quarter turn. I bet the shower cares."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Length $|z|$",
+              "def": "How long an arrow is: $\\sqrt{a^2+b^2}$ for $z = a + b\\,i$. Multiplying arrows multiplies their lengths."
+            },
+            {
+              "term": "Angle $\\angle z$",
+              "def": "Which way an arrow points, from the positive real axis. $\\arctan(b/a)$ for an arrow pointing right. Multiplying adds angles, dividing subtracts them."
+            },
+            {
+              "term": "Mirror twin $\\bar z$",
+              "def": "The arrow flipped across the real axis, $a - b\\,i$ (the conjugate). $z\\,\\bar z = |z|^2$."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "wrap",
       "title": "What we know now",
       "blocks": [
@@ -441,6 +521,7 @@
             "Two numbers capture its personality: $\\omega_n$ (how fast) and $\\zeta$ (how bouncy).",
             "$\\omega_n = \\sqrt{k/m}$ is the swing speed with no damper. $\\zeta = c/c_{\\text{crit}}$ compares the damping with the critical damping $2\\sqrt{mk}$ that just stops the overshoot.",
             "The motion is a mix of two $e^{st}$ terms. The two $s$ values sit on a circle of radius $\\omega_n$ when underdamped, and split along the real axis when overdamped.",
+            "An arrow has a **length** and an **angle** ($\\arctan$). Multiplying multiplies lengths and adds angles; dividing divides and subtracts. $\\zeta = \\cos\\theta$.",
             "Damping also slows the wiggle a little: $\\omega_d = \\omega_n\\sqrt{1-\\zeta^2}$.",
             "More damping isn't always better: past $\\zeta = 1$ the slow $s$ value creeps towards zero and everything slows down.",
             "For the drone, more $K_p$ means less damping. That's why it got wobblier."
@@ -632,6 +713,27 @@
       "double": "both here",
       "band5": "within 5%",
       "sweet": "ζ = 0.7 overshoots by {os}%, but it's within 5% of the target after {y5} s. ζ = 1 needs {r5} s."
+    },
+    "arrows": {
+      "title": "Length, angle and 1 ÷ an arrow",
+      "aria": "A plane with the unit circle, an arrow z, its dashed mirror twin, and the arrow 1 divided by z, with their angles marked.",
+      "re": "real part",
+      "im": "imaginary part",
+      "mode": "Which arrow?",
+      "modeFree": "any arrow z",
+      "modeSmoother": "the smoother, 1 + iωτ",
+      "a": "real part a",
+      "b": "imaginary part b",
+      "wt": "wiggle speed × τ (ωτ)",
+      "mirror": "twin",
+      "out": "1 ÷ (1 + iωτ)",
+      "len": "length |z|",
+      "ang": "angle of z",
+      "ilen": "length of 1/z",
+      "iang": "angle of 1/z",
+      "free": "1/z is {ilen} long (1 ÷ {len}) and turned the other way, to {iang}. Multiply the two and you get length {back} at 0°: exactly 1.",
+      "smooth": "At ωτ = {wt}, 1 ÷ (1 + iωτ) keeps {ilen} of the size and lags {lag}. Faster wiggles: smaller and later, but never past 90°.",
+      "help": "Slide a and b to move z (or switch to the smoother and slide ωτ). The blue arc is the angle of z, the grey arc the angle of 1/z."
     }
   },
   "plays": {
@@ -653,6 +755,10 @@
     },
     "drone": {
       "kp": "gain Kp, newtons per metre"
+    },
+    "arrowRead": {
+      "a": "real part a",
+      "b": "imaginary part b"
     }
   }
 }

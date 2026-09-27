@@ -431,6 +431,86 @@
       ]
     },
     {
+      "id": "arrows",
+      "title": "Les flèches ont une longueur et un angle",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Attends. Les points sont sur un cercle de rayon $\\omega_n$, et ζ les fait juste glisser le long du cercle. Donc un point, c'est en fait deux choses : **à quelle distance** de 0, et **dans quelle direction**."
+        },
+        {
+          "t": "p",
+          "text": "Chaque flèche $z = a + b\\,i$ peut se décrire autrement : par sa **longueur** $|z|$ et son **angle**. Pythagore donne la longueur. Pour une flèche qui pointe vers la droite ($a > 0$), l'angle est celui dont la pente (la montée divisée par l'avancée) vaut $b/a$. Il s'appelle l'**arc tangente**, $\\arctan$ : le bouton « annuler » de la fonction tangente."
+        },
+        {
+          "t": "math",
+          "tex": "|z| = \\sqrt{a^2 + b^2}, \\qquad \\angle z = \\arctan\\frac{b}{a} \\quad (a > 0)"
+        },
+        {
+          "t": "play",
+          "id": "arrowRead",
+          "text": "La flèche {scrub|a} + {scrub|b}i mesure {calc|len} de long et pointe à {calc|ang}° de l'axe réel."
+        },
+        {
+          "t": "p",
+          "text": "Le chapitre 5 a montré que multiplier des flèches **multiplie leurs longueurs et additionne leurs angles**. Diviser doit défaire ça : on divise donc les longueurs et on **soustrait** les angles."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Donc $1/(1+i)$ : longueur $1/\\sqrt 2$, et l'angle, c'est 45° plus 45°, donc 90° ? Hum. Remultiplie ça par $1+i$ et ça pointe à 135°, très loin de 1."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Moins, alors. Longueur $1/\\sqrt 2$ à −45°. Fois $\\sqrt 2$ à +45°, et on obtient une longueur 1 à 0° : exactement 1. Ça colle."
+        },
+        {
+          "t": "widget",
+          "id": "arrows"
+        },
+        {
+          "t": "p",
+          "text": "La flèche pâle en pointillés, c'est le **jumeau miroir** $\\bar z = a - b\\,i$ du chapitre 5 (les mathématiciens l'appellent le *conjugué*) : même longueur, angle opposé. Multiplie une flèche par son jumeau et les angles s'annulent : il reste un simple nombre positif, la longueur au carré. Le tableau du chapitre 7 aura besoin exactement de ça :"
+        },
+        {
+          "t": "math",
+          "tex": "z\\,\\bar z = |z|^2 = a^2 + b^2, \\qquad (s - i\\omega)(s + i\\omega) = s^2 + \\omega^2"
+        },
+        {
+          "t": "p",
+          "text": "Et le cercle ? Un pôle en $-\\zeta\\omega_n + i\\,\\omega_n\\sqrt{1-\\zeta^2}$ a pour longueur $\\omega_n$. Mesure son angle θ depuis l'axe réel *négatif* : la partie vers la gauche vaut $\\omega_n\\cos\\theta$. Donc $\\zeta = \\cos\\theta$ : l'amortissement, c'est l'angle."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Essaie le deuxième réglage de la simulation : 1 + iωτ. C'est la règle du café du chapitre 3 qui rencontre une oscillation. Diviser par elle rétrécit et fait tourner en arrière, de plus en plus quand l'oscillation accélère, mais jamais au-delà d'un quart de tour. Je parie que la douche s'en soucie."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Longueur $|z|$",
+              "def": "La taille d'une flèche : $\\sqrt{a^2+b^2}$ pour $z = a + b\\,i$. Multiplier des flèches multiplie leurs longueurs."
+            },
+            {
+              "term": "Angle $\\angle z$",
+              "def": "La direction d'une flèche, mesurée depuis l'axe réel positif. $\\arctan(b/a)$ pour une flèche qui pointe vers la droite. Multiplier additionne les angles, diviser les soustrait."
+            },
+            {
+              "term": "Jumeau miroir $\\bar z$",
+              "def": "La flèche retournée de l'autre côté de l'axe réel, $a - b\\,i$ (le conjugué). $z\\,\\bar z = |z|^2$."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "wrap",
       "title": "Ce qu'on sait maintenant",
       "blocks": [
@@ -441,6 +521,7 @@
             "Deux nombres résument sa personnalité : $\\omega_n$ (à quelle vitesse) et $\\zeta$ (à quel point ça rebondit).",
             "$\\omega_n = \\sqrt{k/m}$ est la vitesse d'oscillation sans amortisseur. $\\zeta = c/c_{\\text{crit}}$ compare l'amortissement à l'amortissement critique $2\\sqrt{mk}$, celui qui supprime tout juste le dépassement.",
             "Le mouvement est un mélange de deux termes $e^{st}$. Les deux valeurs de $s$ sont sur un cercle de rayon $\\omega_n$ quand c'est sous-amorti, et se séparent le long de l'axe réel quand c'est sur-amorti.",
+            "Une flèche a une **longueur** et un **angle** ($\\arctan$). Multiplier multiplie les longueurs et additionne les angles ; diviser divise et soustrait. $\\zeta = \\cos\\theta$.",
             "L'amortissement ralentit aussi un peu l'oscillation : $\\omega_d = \\omega_n\\sqrt{1-\\zeta^2}$.",
             "Plus d'amortissement, ce n'est pas toujours mieux : au-delà de $\\zeta = 1$, la valeur de $s$ lente se traîne vers zéro et tout ralentit.",
             "Pour le drone, plus de $K_p$ veut dire moins d'amortissement. C'est pour ça qu'il oscillait de plus en plus."
@@ -632,6 +713,27 @@
       "double": "les deux ici",
       "band5": "à moins de 5 %",
       "sweet": "ζ = 0,7 dépasse de {os} %, mais il est à moins de 5 % de la cible après {y5} s. ζ = 1 a besoin de {r5} s."
+    },
+    "arrows": {
+      "title": "Longueur, angle et 1 ÷ une flèche",
+      "aria": "Un plan avec le cercle unité, une flèche z, son jumeau miroir en pointillés, et la flèche 1 divisé par z, avec leurs angles marqués.",
+      "re": "partie réelle",
+      "im": "partie imaginaire",
+      "mode": "Quelle flèche ?",
+      "modeFree": "une flèche z quelconque",
+      "modeSmoother": "le lisseur, 1 + iωτ",
+      "a": "partie réelle a",
+      "b": "partie imaginaire b",
+      "wt": "vitesse d'oscillation × τ (ωτ)",
+      "mirror": "jumeau",
+      "out": "1 ÷ (1 + iωτ)",
+      "len": "longueur |z|",
+      "ang": "angle de z",
+      "ilen": "longueur de 1/z",
+      "iang": "angle de 1/z",
+      "free": "1/z mesure {ilen} de long (1 ÷ {len}) et est tournée dans l'autre sens, à {iang}. Multiplie les deux et tu obtiens une longueur {back} à 0° : exactement 1.",
+      "smooth": "À ωτ = {wt}, 1 ÷ (1 + iωτ) garde {ilen} de la taille et prend {lag} de retard. Oscillations plus rapides : plus petite et plus en retard, mais jamais au-delà de 90°.",
+      "help": "Fais glisser a et b pour déplacer z (ou passe au lisseur et fais glisser ωτ). L'arc bleu est l'angle de z, l'arc gris l'angle de 1/z."
     }
   },
   "plays": {
@@ -653,6 +755,10 @@
     },
     "drone": {
       "kp": "gain Kp, newtons par mètre"
+    },
+    "arrowRead": {
+      "a": "partie réelle a",
+      "b": "partie imaginaire b"
     }
   }
 }

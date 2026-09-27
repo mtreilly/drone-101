@@ -224,7 +224,6 @@ export const KNOWN_GAPS: Record<string, string> = {
   radian: "Phase 5: radians and π are asserted, not built",
   trig: "Phase 5: cosine and sine are never defined",
   spin: "Phase 5: e^{iθ} is quoted before it is built",
-  arrows: "Phase 3: an arrow's length and angle, arctan and dividing are used, never built",
   partialFractions: "Phase 6: partial fractions are used without their reasons",
   logScale:
     "Phase 7: log axes are explained as fitting a range, not as multiplying becoming adding",

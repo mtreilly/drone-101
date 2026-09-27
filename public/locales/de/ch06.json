@@ -431,6 +431,86 @@
       ]
     },
     {
+      "id": "arrows",
+      "title": "Pfeile haben eine Länge und einen Winkel",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Moment. Die Punkte sitzen auf einem Kreis mit Radius $\\omega_n$, und ζ schiebt sie nur darauf herum. Ein Punkt ist also eigentlich zwei Dinge: **wie weit** von 0 weg und **in welche Richtung**."
+        },
+        {
+          "t": "p",
+          "text": "Jeden Pfeil $z = a + b\\,i$ kann man auch andersherum beschreiben: durch seine **Länge** $|z|$ und seinen **Winkel**. Die Länge liefert Pythagoras. Bei einem Pfeil nach rechts ($a > 0$) ist der Winkel derjenige, dessen Steigung (hoch durch rüber) $b/a$ ist. Er heißt **Arkustangens**, $\\arctan$: der Rückgängig-Knopf des Tangens."
+        },
+        {
+          "t": "math",
+          "tex": "|z| = \\sqrt{a^2 + b^2}, \\qquad \\angle z = \\arctan\\frac{b}{a} \\quad (a > 0)"
+        },
+        {
+          "t": "play",
+          "id": "arrowRead",
+          "text": "Der Pfeil {scrub|a} + {scrub|b}i ist {calc|len} lang und zeigt im Winkel {calc|ang}° zur reellen Achse."
+        },
+        {
+          "t": "p",
+          "text": "Kapitel 5 hat gezeigt: Pfeile multiplizieren heißt **ihre Längen multiplizieren und ihre Winkel addieren**. Teilen muss das rückgängig machen, also teilt es die Längen und **subtrahiert** die Winkel."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Also $1/(1+i)$: Länge $1/\\sqrt 2$, und der Winkel ist 45° plus 45°, also 90°? Hm. Multiplizier das zurück mit $1+i$, und es zeigt auf 135°, meilenweit von 1 entfernt."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Dann eben minus. $1/\\sqrt 2$ lang bei −45°. Mal $\\sqrt 2$ bei +45°, und heraus kommt Länge 1 bei 0°: genau 1. Passt."
+        },
+        {
+          "t": "widget",
+          "id": "arrows"
+        },
+        {
+          "t": "p",
+          "text": "Der blasse gestrichelte Pfeil ist der **Spiegelzwilling** $\\bar z = a - b\\,i$ aus Kapitel 5 (in der Mathematik heißt er die *konjugiert komplexe Zahl*): gleiche Länge, entgegengesetzter Winkel. Multiplizier einen Pfeil mit seinem Zwilling, und die Winkel heben sich auf. Übrig bleibt eine schlichte positive Zahl, die Länge zum Quadrat. Genau das braucht die Tabelle in Kapitel 7:"
+        },
+        {
+          "t": "math",
+          "tex": "z\\,\\bar z = |z|^2 = a^2 + b^2, \\qquad (s - i\\omega)(s + i\\omega) = s^2 + \\omega^2"
+        },
+        {
+          "t": "p",
+          "text": "Und der Kreis? Ein Pol bei $-\\zeta\\omega_n + i\\,\\omega_n\\sqrt{1-\\zeta^2}$ hat die Länge $\\omega_n$. Miss seinen Winkel θ zur *negativen* reellen Achse, dann ist der Teil nach links $\\omega_n\\cos\\theta$. Also $\\zeta = \\cos\\theta$: Die Dämpfung ist der Winkel."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Probiert die zweite Einstellung im Widget: 1 + iωτ. Das ist die Kaffeeregel aus Kapitel 3, die auf ein Wackeln trifft. Teilen dadurch staucht und dreht zurück, immer stärker, je schneller das Wackeln wird, aber nie über eine Vierteldrehung hinaus. Wetten, dass das die Dusche interessiert?"
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Länge $|z|$",
+              "def": "Wie lang ein Pfeil ist: $\\sqrt{a^2+b^2}$ für $z = a + b\\,i$. Pfeile multiplizieren multipliziert ihre Längen."
+            },
+            {
+              "term": "Winkel $\\angle z$",
+              "def": "In welche Richtung ein Pfeil zeigt, gemessen von der positiven reellen Achse. $\\arctan(b/a)$ für einen Pfeil nach rechts. Multiplizieren addiert Winkel, Teilen subtrahiert sie."
+            },
+            {
+              "term": "Spiegelzwilling $\\bar z$",
+              "def": "Der Pfeil, an der reellen Achse gespiegelt: $a - b\\,i$ (die konjugiert komplexe Zahl). $z\\,\\bar z = |z|^2$."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "wrap",
       "title": "Was wir jetzt wissen",
       "blocks": [
@@ -441,6 +521,7 @@
             "Zwei Zahlen fassen ihren Charakter zusammen: $\\omega_n$ (wie schnell) und $\\zeta$ (wie hüpfig).",
             "$\\omega_n = \\sqrt{k/m}$ ist das Schwingtempo ohne Dämpfer. $\\zeta = c/c_{\\text{krit}}$ vergleicht die Dämpfung mit der kritischen Dämpfung $2\\sqrt{mk}$, die das Überschwingen gerade verhindert.",
             "Die Bewegung ist eine Mischung aus zwei $e^{st}$-Termen. Die zwei $s$-Werte sitzen bei Unterdämpfung auf einem Kreis mit Radius $\\omega_n$ und teilen sich bei Überdämpfung auf der reellen Achse auf.",
+            "Ein Pfeil hat eine **Länge** und einen **Winkel** ($\\arctan$). Multiplizieren multipliziert die Längen und addiert die Winkel; Teilen teilt und subtrahiert. $\\zeta = \\cos\\theta$.",
             "Dämpfung bremst das Wackeln auch ein wenig: $\\omega_d = \\omega_n\\sqrt{1-\\zeta^2}$.",
             "Mehr Dämpfung ist nicht immer besser: Ab $\\zeta = 1$ kriecht der langsame $s$-Wert Richtung null, und alles wird langsamer.",
             "Bei der Drohne heißt mehr $K_p$ weniger Dämpfung. Deshalb wurde sie wackeliger."
@@ -632,6 +713,27 @@
       "double": "beide hier",
       "band5": "innerhalb von 5 %",
       "sweet": "ζ = 0,7 schwingt um {os} % über, ist aber nach {y5} s innerhalb von 5 % um das Ziel. ζ = 1 braucht {r5} s."
+    },
+    "arrows": {
+      "title": "Länge, Winkel und 1 ÷ ein Pfeil",
+      "aria": "Eine Ebene mit dem Einheitskreis, einem Pfeil z, seinem gestrichelten Spiegelzwilling und dem Pfeil 1 geteilt durch z, mit eingezeichneten Winkeln.",
+      "re": "Realteil",
+      "im": "Imaginärteil",
+      "mode": "Welcher Pfeil?",
+      "modeFree": "beliebiger Pfeil z",
+      "modeSmoother": "der Glätter, 1 + iωτ",
+      "a": "Realteil a",
+      "b": "Imaginärteil b",
+      "wt": "Wackeltempo × τ (ωτ)",
+      "mirror": "Zwilling",
+      "out": "1 ÷ (1 + iωτ)",
+      "len": "Länge |z|",
+      "ang": "Winkel von z",
+      "ilen": "Länge von 1/z",
+      "iang": "Winkel von 1/z",
+      "free": "1/z ist {ilen} lang (1 ÷ {len}) und andersherum gedreht, auf {iang}. Multiplizier die beiden, und du bekommst Länge {back} bei 0°: genau 1.",
+      "smooth": "Bei ωτ = {wt} behält 1 ÷ (1 + iωτ) {ilen} der Größe und hinkt {lag} hinterher. Schnellere Wackler: kleiner und später, aber nie über 90° hinaus.",
+      "help": "Schieb a und b, um z zu bewegen (oder schalte auf den Glätter um und schieb ωτ). Der blaue Bogen ist der Winkel von z, der graue Bogen der Winkel von 1/z."
     }
   },
   "plays": {
@@ -653,6 +755,10 @@
     },
     "drone": {
       "kp": "Verstärkung Kp, Newton pro Meter"
+    },
+    "arrowRead": {
+      "a": "Realteil a",
+      "b": "Imaginärteil b"
     }
   }
 }

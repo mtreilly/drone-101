@@ -1,8 +1,10 @@
+import { c as cx, mul } from '../../math/complex';
 import { roots } from '../../math/poly';
 import { overshootFormula, secondOrderSolution } from '../../math/second-order';
 import { DRONE, HOVER_THRUST, DroneSim, P_ONLY, defaultDroneConfig } from '../../sim/drone-model';
 import { MassSpringDamper } from '../../sim/msd-model';
 import { sample, secondOrderRoots, settling, within } from './helpers';
+import { angleOf, inverse, lengthOf, smoother } from './arrows';
 import { plays } from './plays';
 
 const { m, c } = DRONE;
@@ -121,5 +123,45 @@ describe('chapter 6 numbers', () => {
     expect(plays.drone.outputs.zeta({ kp: 20 }, t)).toBe('0.16');
     expect(plays.drone.outputs.wn({ kp: 20 }, t)).toBe('6.32');
     expect(plays.drone.outputs.droop({ kp: 20 }, t)).toBe('0.25');
+  });
+});
+
+describe('6e: arrows have a length and an angle', () => {
+  const read = (name: string, v: Record<string, number>) => plays.arrowRead.outputs[name](v, (k) => k, (k) => k);
+  it('the play reads 1 + 1i as 1.41 long at 45°, and 3 + 4i as 5 long at 53°', () => {
+    expect(read('len', { a: 1, b: 1 })).toBe('1.41');
+    expect(read('ang', { a: 1, b: 1 })).toBe('45');
+    expect(read('len', { a: 3, b: 4 })).toBe('5.00');
+    expect(read('ang', { a: 3, b: 4 })).toBe('53');
+  });
+
+  it('1/(1+i) is 1/√2 long at −45°, and multiplying back gives exactly 1', () => {
+    const iz = inverse(cx(1, 1));
+    expect(lengthOf(iz)).toBeCloseTo(1 / Math.SQRT2, 12);
+    expect(angleOf(iz)).toBeCloseTo(-45, 12);
+    const back = mul(cx(1, 1), iz);
+    expect(back.re).toBeCloseTo(1, 12);
+    expect(back.im).toBeCloseTo(0, 12);
+  });
+
+  it('a mirror twin cancels the angle: z z̄ = |z|²', () => {
+    const z = cx(0.7, -1.3);
+    const p = mul(z, cx(z.re, -z.im));
+    expect(p.im).toBeCloseTo(0, 12);
+    expect(p.re).toBeCloseTo(lengthOf(z) ** 2, 12);
+  });
+
+  it('ζ = cos θ, with θ measured from the negative real axis', () => {
+    for (const zeta of [0.2, 0.5, 0.9]) {
+      const wn = 3;
+      const theta = Math.atan2(wn * Math.sqrt(1 - zeta * zeta), zeta * wn);
+      expect(Math.cos(theta)).toBeCloseTo(zeta, 12);
+    }
+  });
+
+  it('the smoother keeps 0.71 and lags 45° at ωτ = 1, and never lags past 90°', () => {
+    expect(lengthOf(smoother(1))).toBeCloseTo(0.707, 3);
+    expect(-angleOf(smoother(1))).toBeCloseTo(45, 9);
+    for (const wt of [0.1, 1, 5, 100, 1e4]) expect(-angleOf(smoother(wt))).toBeLessThan(90);
   });
 });

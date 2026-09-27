@@ -220,6 +220,16 @@ summarised under "Open terminology questions" below.
 
 Loop gain keeps its Chapter 10 term everywhere (see "Chapter 10" above); ch08 now introduces it.
 
+### Phase 3: arrows have a length and an angle (ch06)
+
+| Term (definition) | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
+|---|---|---|---|---|---|---|---|---|---|
+| length of an arrow $|z|$ (textbook: modulus; the course keeps the arrow word) | longueur | longitud | lunghezza | Länge | długość | comprimento | 長さ | 长度 | الطول |
+| angle of an arrow $\angle z$ (textbook: argument) | angle | ángulo | angolo | Winkel | kąt | ângulo | 角度 | 角度 | الزاوية |
+| arctangent: the tangent's undo button | arc tangente | arcotangente | arcotangente | Arkustangens | arcus tangens | arco tangente | アークタンジェント（逆正接） | 反正切 | قوس الظل |
+| mirror twin $\bar z$ (conjugate, named once) | jumeau miroir (conjugué) | gemelo reflejado (conjugado) | gemella allo specchio (complesso coniugato) | Spiegelzwilling (konjugiert komplexe Zahl) | lustrzany bliźniak (liczba sprzężona) | gêmeo espelhado (conjugado) | 鏡像の双子（共役複素数） | 镜像孪生（共轭复数） | التوأم المرآتي (المرافق) |
+| rise over run | la montée divisée par l'avancée | subida entre avance | salita diviso avanzamento | hoch durch rüber | wzniesienie podzielone przez przesunięcie | subida dividida pelo avanço | 縦の変化 ÷ 横の変化 | 升高 ÷ 前进 | الصعود مقسومًا على التقدّم الأفقي |
+
 ## Cast gender and address
 
 | Locale | Mika | June | Theo | Reader |
@@ -372,3 +382,14 @@ engineering, then fix every string and move the entry to "Settled decisions".
 - zh-CN: 把回路闭合 as a (verb-phrase) map label; 重根点; 爱弹跳.
 - ar: wiggle is تذبذب in ch08 prose but اهتزازة in ch10's "wiggle speed"; ch11 gust هبّة vs.
   glossary عصفة; لفّة for lap.
+
+**Maths explanations pass, Phase 3**
+- All: ch05's arrow widgets say "along / sideways" while ch06 and ch08 say "real part / imaginary
+  part" (deliberate, as in English); check the switch reads naturally.
+- fr: « arc tangente » or « arctangente »; June's « Ça colle ».
+- es/it/pl/pt-BR: "rise over run" has no settled school idiom; the paraphrases need a check.
+- de: "Kaffeeregel" (not used in de ch03); whether "Länge" needs "(Betrag)" once.
+- pt-BR: ch05 mixes "flecha" and "seta"; "arco tangente" vs. "arcotangente" (VOLP).
+- ja: ch05 mixes 回転子 / スピナー and 鏡の双子 / 鏡像の双子; アークタンジェント vs. 逆正接.
+- zh-CN: ch08 has 镜像双胞胎 once (ch05: 镜像孪生); maybe add 模 once after 长度.
+- ar: قوس الظل vs. الظل العكسي for arctan.

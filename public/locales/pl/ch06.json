@@ -431,6 +431,86 @@
       ]
     },
     {
+      "id": "arrows",
+      "title": "Strzałki mają długość i kąt",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Chwila. Kropki leżą na okręgu o promieniu $\\omega_n$, a ζ tylko przesuwa je po nim. Czyli kropka to tak naprawdę dwie rzeczy: **jak daleko** od 0 i **w którą stronę**."
+        },
+        {
+          "t": "p",
+          "text": "Każdą strzałkę $z = a + b\\,i$ można opisać na odwrót: jej **długością** $|z|$ i jej **kątem**. Długość daje twierdzenie Pitagorasa. Dla strzałki skierowanej w prawo ($a > 0$) kąt to ten, którego nachylenie (wzniesienie podzielone przez przesunięcie) wynosi $b/a$. Nazywa się **arcus tangens**, $\\arctan$: przycisk „cofnij” dla tangensa."
+        },
+        {
+          "t": "math",
+          "tex": "|z| = \\sqrt{a^2 + b^2}, \\qquad \\angle z = \\arctan\\frac{b}{a} \\quad (a > 0)"
+        },
+        {
+          "t": "play",
+          "id": "arrowRead",
+          "text": "Strzałka {scrub|a} + {scrub|b}i ma długość {calc|len} i jest skierowana pod kątem {calc|ang}° od osi rzeczywistej."
+        },
+        {
+          "t": "p",
+          "text": "W rozdziale 5 odkryliśmy, że mnożenie strzałek **mnoży ich długości i dodaje ich kąty**. Dzielenie musi to cofnąć, więc dzieli długości i **odejmuje** kąty."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Czyli $1/(1+i)$: długość $1/\\sqrt 2$, a kąt to 45° plus 45°, czyli 90°? Hmm. Pomnóż to z powrotem przez $1+i$, a wyjdzie strzałka pod kątem 135°, daleko od 1."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "No to minus. Długość $1/\\sqrt 2$ pod kątem −45°. Razy $\\sqrt 2$ pod kątem +45° i wychodzi długość 1 przy 0°: dokładnie 1. Zgadza się."
+        },
+        {
+          "t": "widget",
+          "id": "arrows"
+        },
+        {
+          "t": "p",
+          "text": "Blada przerywana strzałka to **lustrzany bliźniak** $\\bar z = a - b\\,i$ z rozdziału 5 (matematycy nazywają go *liczbą sprzężoną*): ta sama długość, przeciwny kąt. Pomnóż strzałkę przez jej bliźniaka, a kąty się zniosą i zostanie zwykła liczba dodatnia: kwadrat długości. Tabelka z rozdziału 7 będzie potrzebować dokładnie tego:"
+        },
+        {
+          "t": "math",
+          "tex": "z\\,\\bar z = |z|^2 = a^2 + b^2, \\qquad (s - i\\omega)(s + i\\omega) = s^2 + \\omega^2"
+        },
+        {
+          "t": "p",
+          "text": "A okrąg? Biegun w $-\\zeta\\omega_n + i\\,\\omega_n\\sqrt{1-\\zeta^2}$ ma długość $\\omega_n$. Zmierz jego kąt θ od *ujemnej* części osi rzeczywistej, a część skierowana w lewo wyniesie $\\omega_n\\cos\\theta$. Zatem $\\zeta = \\cos\\theta$: tłumienie to kąt."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Wypróbuj drugie ustawienie widżetu: 1 + iωτ. To reguła stygnącej kawy z rozdziału 3, która spotyka wahanie. Dzielenie przez nią skraca i obraca wstecz, tym mocniej, im szybsze wahanie, ale nigdy ponad ćwierć obrotu. Założę się, że prysznic się tym przejmuje."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Długość $|z|$",
+              "def": "Jak długa jest strzałka: $\\sqrt{a^2+b^2}$ dla $z = a + b\\,i$. Mnożenie strzałek mnoży ich długości."
+            },
+            {
+              "term": "Kąt $\\angle z$",
+              "def": "W którą stronę wskazuje strzałka, mierzone od dodatniej części osi rzeczywistej. $\\arctan(b/a)$ dla strzałki skierowanej w prawo. Mnożenie dodaje kąty, dzielenie je odejmuje."
+            },
+            {
+              "term": "Lustrzany bliźniak $\\bar z$",
+              "def": "Strzałka odbita względem osi rzeczywistej, $a - b\\,i$ (liczba sprzężona). $z\\,\\bar z = |z|^2$."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "wrap",
       "title": "Co teraz wiemy",
       "blocks": [
@@ -441,6 +521,7 @@
             "Jego charakter opisują dwie liczby: $\\omega_n$ (jak szybko) i $\\zeta$ (jak skocznie).",
             "$\\omega_n = \\sqrt{k/m}$ to szybkość wahań bez tłumika. $\\zeta = c/c_{\\text{kr}}$ porównuje tłumienie z tłumieniem krytycznym $2\\sqrt{mk}$, które akurat usuwa przeregulowanie.",
             "Ruch jest mieszanką dwóch składników $e^{st}$. Dwie wartości $s$ leżą na okręgu o promieniu $\\omega_n$, gdy układ jest niedotłumiony, i rozdzielają się wzdłuż osi rzeczywistej, gdy jest przetłumiony.",
+            "Strzałka ma **długość** i **kąt** ($\\arctan$). Mnożenie mnoży długości i dodaje kąty; dzielenie dzieli i odejmuje. $\\zeta = \\cos\\theta$.",
             "Tłumienie też trochę spowalnia kołysanie: $\\omega_d = \\omega_n\\sqrt{1-\\zeta^2}$.",
             "Więcej tłumienia to nie zawsze lepiej: powyżej $\\zeta = 1$ powolna wartość $s$ pełznie w stronę zera i wszystko zwalnia.",
             "W dronie więcej $K_p$ oznacza mniej tłumienia. Dlatego robił się coraz bardziej chybotliwy."
@@ -632,6 +713,27 @@
       "double": "obie tutaj",
       "band5": "w granicach 5 %",
       "sweet": "ζ = 0,7 przeregulowuje o {os} %, ale jest w granicach 5 % od celu po {y5} s. ζ = 1 potrzebuje {r5} s."
+    },
+    "arrows": {
+      "title": "Długość, kąt i 1 ÷ strzałka",
+      "aria": "Płaszczyzna z okręgiem jednostkowym, strzałką z, jej przerywanym lustrzanym bliźniakiem i strzałką 1 podzielone przez z, z zaznaczonymi kątami.",
+      "re": "część rzeczywista",
+      "im": "część urojona",
+      "mode": "Która strzałka?",
+      "modeFree": "dowolna strzałka z",
+      "modeSmoother": "wygładzacz, 1 + iωτ",
+      "a": "część rzeczywista a",
+      "b": "część urojona b",
+      "wt": "szybkość wahań × τ (ωτ)",
+      "mirror": "bliźniak",
+      "out": "1 ÷ (1 + iωτ)",
+      "len": "długość |z|",
+      "ang": "kąt z",
+      "ilen": "długość 1/z",
+      "iang": "kąt 1/z",
+      "free": "1/z ma długość {ilen} (1 ÷ {len}) i jest obrócona w drugą stronę, do {iang}. Pomnóż obie, a dostaniesz długość {back} przy 0°: dokładnie 1.",
+      "smooth": "Przy ωτ = {wt} 1 ÷ (1 + iωτ) zachowuje {ilen} wielkości i spóźnia się o {lag}. Szybsze wahania: mniejsze i późniejsze, ale nigdy ponad 90°.",
+      "help": "Przesuwaj a i b, żeby ruszać strzałką z (albo przełącz na wygładzacz i przesuwaj ωτ). Niebieski łuk to kąt z, szary łuk to kąt 1/z."
     }
   },
   "plays": {
@@ -653,6 +755,10 @@
     },
     "drone": {
       "kp": "wzmocnienie Kp, niutony na metr"
+    },
+    "arrowRead": {
+      "a": "część rzeczywista a",
+      "b": "część urojona b"
     }
   }
 }

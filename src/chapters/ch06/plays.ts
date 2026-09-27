@@ -60,4 +60,12 @@ export const plays: Record<string, PlayModel> = {
       droop: (v) => fmt(HOVER_THRUST / v.kp, 2),
     },
   },
+  // "The arrow {a} + {b}i is {len} long and points at {ang}° from the real axis." (a > 0, so arctan is the angle)
+  arrowRead: {
+    inputs: { a: { min: 0.1, max: 3, step: 0.1, value: 1, digits: 1 }, b: { min: 0, max: 3, step: 0.1, value: 1, digits: 1 } },
+    outputs: {
+      len: ({ a, b }) => fmt(Math.hypot(a, b), 2),
+      ang: ({ a, b }) => fmt((Math.atan(b / a) * 180) / Math.PI, 0),
+    },
+  },
 };
