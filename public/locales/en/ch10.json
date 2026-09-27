@@ -162,6 +162,14 @@
               "who": "june",
               "mood": "excited",
               "text": "Equal steps are equal *times*, not equal *pluses*. Like the octaves on a piano!"
+            },
+            {
+              "t": "p",
+              "text": "The squashed ruler has a second gift: on it, **multiplying becomes adding**. ×10 is always one step up, whatever you start from, and ×0.1 one step down. That's why the *gain* axis is squashed too. Around a loop the gains multiply (hand × smoother × pipe), so on this ruler their heights simply add, just like their phase lags. It's Chapter 4's logarithm at work: $\\ln(a\\,b) = \\ln a + \\ln b$."
+            },
+            {
+              "t": "note",
+              "text": "Engineers often write gains in **decibels** (dB): 20 × the base-10 logarithm of the gain, so ×10 is +20 dB, ×1 is 0 dB and ×0.1 is −20 dB. Same squashed ruler, different labels. We stick with plain ×."
             }
           ]
         },
@@ -181,11 +189,11 @@
             },
             {
               "t": "math",
-              "tex": "\\tau\\,\\dot y + y = u,\\quad u = e^{i\\omega t},\\ y = A\\,e^{i\\omega t} \\;\\Rightarrow\\; (1 + i\\omega\\tau)\\,A = 1 \\;\\Rightarrow\\; A = \\frac{1}{1+i\\omega\\tau}"
+              "tex": "\\tau\\,\\dot y + y = u,\\quad u = e^{i\\omega t},\\ y = Y\\,e^{i\\omega t} \\;\\Rightarrow\\; (1 + i\\omega\\tau)\\,Y = 1 \\;\\Rightarrow\\; Y = \\frac{1}{1+i\\omega\\tau}"
             },
             {
               "t": "p",
-              "text": "Put the spinner $e^{i\\omega t}$ into the smoother's rule and the arrow $A$ must satisfy $(1 + i\\omega\\tau)A = 1$. Chapter 6's arrows: $1 + i\\omega\\tau$ has length $\\sqrt{1+\\omega^2\\tau^2}$ and points up at the angle $\\arctan(\\omega\\tau)$. Dividing by it shrinks by that length and turns back by that angle. Slow wiggles barely notice. Fast ones get squashed and lag towards a quarter-turn, but never past it."
+              "text": "Put the spinner $e^{i\\omega t}$ into the smoother's rule and the arrow $Y$ must satisfy $(1 + i\\omega\\tau)\\,Y = 1$. Chapter 6's arrows: $1 + i\\omega\\tau$ has length $\\sqrt{1+\\omega^2\\tau^2}$ and points up at the angle $\\arctan(\\omega\\tau)$. Dividing by it shrinks by that length and turns back by that angle. Slow wiggles barely notice. Fast ones get squashed and lag towards a quarter-turn, but never past it."
             },
             {
               "t": "play",

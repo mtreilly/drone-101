@@ -47,7 +47,7 @@
           "t": "list",
           "items": [
             "**Motorverzögerung (τ ≈ 0,05 s):** Ein Propeller kann sein Tempo nicht sofort ändern. Sein Schub folgt dem Befehl wie der abkühlende Kaffee aus Kapitel 3, eine Verzögerung erster Ordnung: 63 % des Wegs nach 0,05 s. Ein verspäteter Schub ist der Phasenverzug aus Kapitel 10 in Verkleidung.",
-            "**Ein verrauschter Sensor (σ ≈ 2 cm):** Jede Höhenmessung liegt zufällig um etwa 2 cm daneben, tausendmal pro Sekunde. Kapitel 9 hat uns gewarnt: D macht aus diesem Zittern große Schubspitzen.",
+            "**Ein verrauschter Sensor ($\\sigma_n$ ≈ 2 cm, n wie Rauschen, engl. *noise*; nicht das σ eines Pols):** Jede Höhenmessung liegt zufällig um etwa 2 cm daneben, tausendmal pro Sekunde. Kapitel 9 hat uns gewarnt: D macht aus diesem Zittern große Schubspitzen.",
             "**Begrenzte Motoren (0 bis 20 N):** Die Grenze aus Kapitel 8 bleibt. Mit dem Paket wiegt die Drohne 6,9 N, also sind 20 N nur etwa das Dreifache ihres Gewichts, und nach unten ziehen können die Motoren nie. Solange sie am Anschlag sind, pausiert der Haufen (das Anti-Windup aus Kapitel 9).",
             "**D ist gefiltert:** die Lösung aus Kapitel 9. D nimmt die Steigung eines geglätteten Sensorwerts, eine Verzögerung erster Ordnung mit der Zeitkonstante $\\tau_f$, die du wählst. Längeres $\\tau_f$ heißt ruhiger, aber später."
           ]
@@ -192,7 +192,7 @@
         {
           "t": "play",
           "id": "spike",
-          "text": "Mit $\\eff{K_d}$ = {scrub|kd|eff} N·s/m und einem Filter von $\\tau_f$ = {scrub|tf} s verlangt jedes 2-cm-Wackeln des Sensors etwa {calc|spike|eff} N von den Motoren ($K_d\\sigma/\\tau_f$). Zum Schweben braucht es nur 6,9 N."
+          "text": "Mit $\\eff{K_d}$ = {scrub|kd|eff} N·s/m und einem Filter von $\\tau_f$ = {scrub|tf} s verlangt jedes 2-cm-Wackeln des Sensors etwa {calc|spike|eff} N von den Motoren ($K_d\\sigma_n/\\tau_f$). Zum Schweben braucht es nur 6,9 N."
         },
         {
           "t": "callout",
@@ -361,7 +361,7 @@
                 {
                   "text": "Den Ableitungsfilter verlängern oder $K_d$ senken",
                   "correct": true,
-                  "why": "D macht aus Sensorzittern etwa $K_d\\sigma/\\tau_f$ Newton Befehl: 40 N bei $K_d$ = 10 und $\\tau_f$ = 0,005 s, nur 3,5 N bei $K_d$ = 7 und $\\tau_f$ = 0,04 s. Dafür gibst du ein bisschen Ankunftstempo ab."
+                  "why": "D macht aus Sensorzittern etwa $K_d\\sigma_n/\\tau_f$ Newton Befehl: 40 N bei $K_d$ = 10 und $\\tau_f$ = 0,005 s, nur 3,5 N bei $K_d$ = 7 und $\\tau_f$ = 0,04 s. Dafür gibst du ein bisschen Ankunftstempo ab."
                 },
                 {
                   "text": "Mehr $K_d$, für mehr Dämpfung",
@@ -373,7 +373,7 @@
                 },
                 {
                   "text": "Mehr $K_p$",
-                  "why": "P reicht das Zittern direkt durch ($K_p\\sigma$: 0,4 N bei $K_p$ = 20), also heißt mehr P ein bisschen *mehr* Brummen, nicht weniger."
+                  "why": "P reicht das Zittern direkt durch ($K_p\\sigma_n$: 0,4 N bei $K_p$ = 20), also heißt mehr P ein bisschen *mehr* Brummen, nicht weniger."
                 }
               ]
             },

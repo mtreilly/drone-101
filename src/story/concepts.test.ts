@@ -1,8 +1,8 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
-import { CHAPTER_COUNT } from "../chapters/registry";
-import { CONCEPTS, KNOWN_GAPS, type Concept, type Where } from "./concepts";
-import { NODES } from "./map-layout";
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { CHAPTER_COUNT } from '../chapters/registry';
+import { CONCEPTS, KNOWN_GAPS, type Concept, type Where } from './concepts';
+import { NODES } from './map-layout';
 
 /**
  * Reads the English chapters in reading order and holds them to the prerequisite graph in
@@ -20,23 +20,23 @@ interface ChapterText {
   pieces: Piece[];
 }
 
-const MATH_KEYS = new Set(["tex", "alt"]);
+const MATH_KEYS = new Set(['tex', 'alt']);
 const load = (ch: number) =>
   JSON.parse(
     readFileSync(
-      join(process.cwd(), "public/locales/en", `ch${String(ch).padStart(2, "0")}.json`),
-      "utf8",
+      join(process.cwd(), 'public/locales/en', `ch${String(ch).padStart(2, '0')}.json`),
+      'utf8',
     ),
   );
 
 /** every string of a value, with its maths ($…$, tex, alt) collected separately */
 function strings(v: unknown, key: string, out: { text: string[]; math: string[] }): void {
-  if (typeof v === "string") {
+  if (typeof v === 'string') {
     out.text.push(v);
     if (MATH_KEYS.has(key)) out.math.push(v);
     else out.math.push(...(v.match(/\$[^$]+\$/g) ?? []));
   } else if (Array.isArray(v)) v.forEach((x) => strings(x, key, out));
-  else if (v && typeof v === "object") for (const [k, x] of Object.entries(v)) strings(x, k, out);
+  else if (v && typeof v === 'object') for (const [k, x] of Object.entries(v)) strings(x, k, out);
 }
 
 const CHAPTERS: ChapterText[] = Array.from({ length: CHAPTER_COUNT }, (_, ch) => {
@@ -45,11 +45,11 @@ const CHAPTERS: ChapterText[] = Array.from({ length: CHAPTER_COUNT }, (_, ch) =>
   const pieces: Piece[] = [];
   f.sections.forEach((sec: { blocks: unknown[] }, section: number) => {
     const out = { text: [] as string[], math: [] as string[] };
-    strings(sec, "", out);
+    strings(sec, '', out);
     // a widget's own words are read where the widget sits
     for (const [, id] of JSON.stringify(sec.blocks).matchAll(/"t":"widget","id":"(\w+)"/g))
-      strings(widgets[id], "", out);
-    pieces.push({ ch, section, text: out.text.join("\n"), math: out.math.join("\n") });
+      strings(widgets[id], '', out);
+    pieces.push({ ch, section, text: out.text.join('\n'), math: out.math.join('\n') });
   });
   return { sections: f.sections.map((s: { id: string }) => s.id), pieces };
 });
@@ -83,19 +83,19 @@ function problems(id: string): string[] {
     const early = hits(c).filter(
       (p) => p.ch * 1000 + p.section < at && !previews.has(p.ch * 1000 + p.section),
     );
-    if (early.length) out.push(`used before it is built: ${early.map(where).join(", ")}`);
+    if (early.length) out.push(`used before it is built: ${early.map(where).join(', ')}`);
     if (!c.once && !hits(c).some((p) => p.ch > c.builtIn.ch))
-      out.push("never used again after its chapter");
+      out.push('never used again after its chapter');
   }
   return out;
 }
 
-describe("the prerequisite graph", () => {
-  it("names only ideas that exist, with no loops", () => {
+describe('the prerequisite graph', () => {
+  it('names only ideas that exist, with no loops', () => {
     const seen = new Set<string>();
     const visit = (id: string, trail: string[]): void => {
-      expect(CONCEPTS[id], `${trail.join(" → ")} → ${id}`).toBeDefined();
-      expect(trail, `loop: ${[...trail, id].join(" → ")}`).not.toContain(id);
+      expect(CONCEPTS[id], `${trail.join(' → ')} → ${id}`).toBeDefined();
+      expect(trail, `loop: ${[...trail, id].join(' → ')}`).not.toContain(id);
       if (seen.has(id)) return;
       CONCEPTS[id].prereqs.forEach((p) => visit(p, [...trail, id]));
       seen.add(id);
@@ -104,7 +104,7 @@ describe("the prerequisite graph", () => {
     for (const id of Object.keys(KNOWN_GAPS)) expect(CONCEPTS[id], id).toBeDefined();
   });
 
-  it("every concept-map node stands for one idea, built in the chapter the map puts it in", () => {
+  it('every concept-map node stands for one idea, built in the chapter the map puts it in', () => {
     const byNode = new Map(
       Object.entries(CONCEPTS).flatMap(([id, c]) => (c.node ? [[c.node, id]] : [])),
     );
@@ -116,20 +116,25 @@ describe("the prerequisite graph", () => {
     expect(byNode.size).toBe(Object.keys(NODES).length);
   });
 
-  it("the markers find real uses (a pattern that matches nothing checks nothing)", () => {
+  it("a widget's own words are read where the widget sits", () => {
+    const bode = CHAPTERS[10].pieces[CHAPTERS[10].sections.indexOf('bode')];
+    expect(bode.text).toContain('Measured gain against wiggle speed, logarithmic axes.');
+  });
+
+  it('the markers find real uses (a pattern that matches nothing checks nothing)', () => {
     for (const [id, c] of Object.entries(CONCEPTS))
       if (c.uses) expect(hits(c).length, id).toBeGreaterThan(0);
   });
 
   it.each(Object.keys(CONCEPTS).filter((id) => !(id in KNOWN_GAPS)))(
-    "%s is built before it is leaned on",
+    '%s is built before it is leaned on',
     (id) => {
       expect(problems(id)).toEqual([]);
     },
   );
 
   it.each(Object.keys(KNOWN_GAPS))(
-    "%s is still a known gap (remove it from KNOWN_GAPS once fixed)",
+    '%s is still a known gap (remove it from KNOWN_GAPS once fixed)',
     (id) => {
       expect(problems(id), KNOWN_GAPS[id]).not.toEqual([]);
     },

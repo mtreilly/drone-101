@@ -47,7 +47,7 @@
           "t": "list",
           "items": [
             "**Atraso do motor (τ ≈ 0,05 s):** uma hélice não muda de velocidade instantaneamente. O empuxo segue o comando como o café esfriando do Capítulo 3, um atraso de primeira ordem: 63% do caminho depois de 0,05 s. Um empurrão atrasado é a defasagem do Capítulo 10 disfarçada.",
-            "**Um sensor ruidoso (σ ≈ 2 cm):** cada leitura de altura erra por uns 2 cm, ao acaso, mil vezes por segundo. O Capítulo 9 avisou: o D transforma esse tremor em grandes picos de empuxo.",
+            "**Um sensor ruidoso ($\\sigma_n$ ≈ 2 cm, n de ruído, do inglês *noise*; não é o σ de um polo):** cada leitura de altura erra por uns 2 cm, ao acaso, mil vezes por segundo. O Capítulo 9 avisou: o D transforma esse tremor em grandes picos de empuxo.",
             "**Motores limitados (de 0 a 20 N):** o limite do Capítulo 8 continua valendo. Com o pacote, o drone pesa 6,9 N, então 20 N é só cerca de três vezes o seu peso, e os motores nunca conseguem puxar para baixo. Enquanto eles estão no limite, a pilha fica pausada (o anti-windup do Capítulo 9).",
             "**O D é filtrado:** a solução do Capítulo 9. O D pega a inclinação de uma leitura suavizada do sensor, um atraso de primeira ordem com a constante de tempo $\\tau_f$ que você escolher. $\\tau_f$ maior significa mais calma, mas mais atraso."
           ]
@@ -192,7 +192,7 @@
         {
           "t": "play",
           "id": "spike",
-          "text": "Com $\\eff{K_d}$ = {scrub|kd|eff} N·s/m e um filtro de $\\tau_f$ = {scrub|tf} s, cada tremida de 2 cm do sensor pede aos motores cerca de {calc|spike|eff} N ($K_d\\sigma/\\tau_f$). Para pairar, bastam 6,9 N."
+          "text": "Com $\\eff{K_d}$ = {scrub|kd|eff} N·s/m e um filtro de $\\tau_f$ = {scrub|tf} s, cada tremida de 2 cm do sensor pede aos motores cerca de {calc|spike|eff} N ($K_d\\sigma_n/\\tau_f$). Para pairar, bastam 6,9 N."
         },
         {
           "t": "callout",
@@ -361,7 +361,7 @@
                 {
                   "text": "Aumentar o filtro derivativo ou baixar $K_d$",
                   "correct": true,
-                  "why": "O D transforma o tremor do sensor em cerca de $K_d\\sigma/\\tau_f$ newtons de comando: 40 N com $K_d$ = 10 e $\\tau_f$ = 0,005 s, só 3,5 N com $K_d$ = 7 e $\\tau_f$ = 0,04 s. Você abre mão de um pouco de velocidade de chegada."
+                  "why": "O D transforma o tremor do sensor em cerca de $K_d\\sigma_n/\\tau_f$ newtons de comando: 40 N com $K_d$ = 10 e $\\tau_f$ = 0,005 s, só 3,5 N com $K_d$ = 7 e $\\tau_f$ = 0,04 s. Você abre mão de um pouco de velocidade de chegada."
                 },
                 {
                   "text": "Mais $K_d$, para ter mais amortecimento",
@@ -373,7 +373,7 @@
                 },
                 {
                   "text": "Mais $K_p$",
-                  "why": "O P repassa o tremor direto ($K_p\\sigma$: 0,4 N com $K_p$ = 20), então mais P significa um pouco *mais* zumbido, não menos."
+                  "why": "O P repassa o tremor direto ($K_p\\sigma_n$: 0,4 N com $K_p$ = 20), então mais P significa um pouco *mais* zumbido, não menos."
                 }
               ]
             },

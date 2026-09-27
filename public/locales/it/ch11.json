@@ -47,7 +47,7 @@
           "t": "list",
           "items": [
             "**Ritardo dei motori (τ ≈ 0,05 s):** un'elica non può cambiare velocità all'istante. La sua spinta segue il comando come il caffè che si raffredda del Capitolo 3, un ritardo del primo ordine: al 63 % dopo 0,05 s. Una spinta in ritardo è lo sfasamento del Capitolo 10 travestito.",
-            "**Un sensore rumoroso (σ ≈ 2 cm):** ogni lettura dell'altezza sbaglia di circa 2 cm, a caso, mille volte al secondo. Il Capitolo 9 ci aveva avvisati: la D trasforma quel tremolio in grossi picchi di spinta.",
+            "**Un sensore rumoroso ($\\sigma_n$ ≈ 2 cm, n come rumore, in inglese *noise*; non è la σ di un polo):** ogni lettura dell'altezza sbaglia di circa 2 cm, a caso, mille volte al secondo. Il Capitolo 9 ci aveva avvisati: la D trasforma quel tremolio in grossi picchi di spinta.",
             "**Motori limitati (da 0 a 20 N):** il limite del Capitolo 8 resta attivo. Con il pacco il drone pesa 6,9 N, quindi 20 N sono solo circa tre volte il suo peso, e i motori non possono mai tirare verso il basso. Mentre sono al limite, la pila si ferma (l'anti-windup del Capitolo 9).",
             "**La D è filtrata:** la soluzione del Capitolo 9. La D prende la pendenza di una lettura del sensore smussata, un ritardo del primo ordine con la costante di tempo $\\tau_f$ che scegli tu. Un $\\tau_f$ più lungo vuol dire più calma, ma più tardi."
           ]
@@ -192,7 +192,7 @@
         {
           "t": "play",
           "id": "spike",
-          "text": "Con $\\eff{K_d}$ = {scrub|kd|eff} N·s/m e un filtro di $\\tau_f$ = {scrub|tf} s, ogni sobbalzo di 2 cm del sensore chiede ai motori circa {calc|spike|eff} N ($K_d\\sigma/\\tau_f$). Per l'hovering ne bastano 6,9."
+          "text": "Con $\\eff{K_d}$ = {scrub|kd|eff} N·s/m e un filtro di $\\tau_f$ = {scrub|tf} s, ogni sobbalzo di 2 cm del sensore chiede ai motori circa {calc|spike|eff} N ($K_d\\sigma_n/\\tau_f$). Per l'hovering ne bastano 6,9."
         },
         {
           "t": "callout",
@@ -361,7 +361,7 @@
                 {
                   "text": "Allungare il filtro della derivata o abbassare $K_d$",
                   "correct": true,
-                  "why": "La D trasforma il tremolio del sensore in circa $K_d\\sigma/\\tau_f$ newton di comando: 40 N con $K_d$ = 10 e $\\tau_f$ = 0,005 s, solo 3,5 N con $K_d$ = 7 e $\\tau_f$ = 0,04 s. Rinunci a un po' di velocità di arrivo."
+                  "why": "La D trasforma il tremolio del sensore in circa $K_d\\sigma_n/\\tau_f$ newton di comando: 40 N con $K_d$ = 10 e $\\tau_f$ = 0,005 s, solo 3,5 N con $K_d$ = 7 e $\\tau_f$ = 0,04 s. Rinunci a un po' di velocità di arrivo."
                 },
                 {
                   "text": "Più $K_d$, per più smorzamento",
@@ -373,7 +373,7 @@
                 },
                 {
                   "text": "Più $K_p$",
-                  "why": "P fa passare il tremolio così com'è ($K_p\\sigma$: 0,4 N con $K_p$ = 20), quindi più P vuol dire un po' *più* ronzio, non meno."
+                  "why": "P fa passare il tremolio così com'è ($K_p\\sigma_n$: 0,4 N con $K_p$ = 20), quindi più P vuol dire un po' *più* ronzio, non meno."
                 }
               ]
             },

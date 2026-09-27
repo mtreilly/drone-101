@@ -47,7 +47,7 @@
           "t": "list",
           "items": [
             "**Motor lag (τ ≈ 0.05 s):** a propeller can't change speed instantly. Its thrust follows the command like Chapter 3's cooling coffee, a first-order lag: 63% of the way after 0.05 s. A late push is Chapter 10's phase lag in disguise.",
-            "**A noisy sensor (σ ≈ 2 cm):** every height reading is off by about 2 cm, randomly, a thousand times a second. Chapter 9 warned us: D turns that jitter into big thrust spikes.",
+            "**A noisy sensor ($\\sigma_n$ ≈ 2 cm, n for noise; not a pole's σ):** every height reading is off by about 2 cm, randomly, a thousand times a second. Chapter 9 warned us: D turns that jitter into big thrust spikes.",
             "**Limited motors (0 to 20 N):** Chapter 8's limit stays on. With the package the drone weighs 6.9 N, so 20 N is only about three times its weight, and the motors can never pull down. While they are pinned, the pile pauses (Chapter 9's anti-windup).",
             "**D is filtered:** Chapter 9's fix. D takes the slope of a smoothed sensor reading, a first-order lag with the time constant $\\tau_f$ you choose. Longer $\\tau_f$ means calmer, but later."
           ]
@@ -192,7 +192,7 @@
         {
           "t": "play",
           "id": "spike",
-          "text": "With $\\eff{K_d}$ = {scrub|kd|eff} N·s/m and a filter of $\\tau_f$ = {scrub|tf} s, every 2 cm wobble of the sensor asks the motors for about {calc|spike|eff} N ($K_d\\sigma/\\tau_f$). Hovering needs only 6.9 N."
+          "text": "With $\\eff{K_d}$ = {scrub|kd|eff} N·s/m and a filter of $\\tau_f$ = {scrub|tf} s, every 2 cm wobble of the sensor asks the motors for about {calc|spike|eff} N ($K_d\\sigma_n/\\tau_f$). Hovering needs only 6.9 N."
         },
         {
           "t": "callout",
@@ -361,7 +361,7 @@
                 {
                   "text": "Lengthen the derivative filter or lower $K_d$",
                   "correct": true,
-                  "why": "D turns sensor jitter into about $K_d\\sigma/\\tau_f$ newtons of command: 40 N for $K_d$ = 10 and $\\tau_f$ = 0.005 s, only 3.5 N for $K_d$ = 7 and $\\tau_f$ = 0.04 s. You give up a little arrival speed."
+                  "why": "D turns sensor jitter into about $K_d\\sigma_n/\\tau_f$ newtons of command: 40 N for $K_d$ = 10 and $\\tau_f$ = 0.005 s, only 3.5 N for $K_d$ = 7 and $\\tau_f$ = 0.04 s. You give up a little arrival speed."
                 },
                 {
                   "text": "More $K_d$, for more damping",
@@ -373,7 +373,7 @@
                 },
                 {
                   "text": "More $K_p$",
-                  "why": "P passes the jitter straight through ($K_p\\sigma$: 0.4 N at $K_p$ = 20), so more P means a bit *more* buzz, not less."
+                  "why": "P passes the jitter straight through ($K_p\\sigma_n$: 0.4 N at $K_p$ = 20), so more P means a bit *more* buzz, not less."
                 }
               ]
             },

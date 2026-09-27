@@ -261,6 +261,19 @@ Loop gain keeps its Chapter 10 term everywhere (see "Chapter 10" above); ch08 no
 "Bottom / top" of a fraction is denominator / numerator in every locale except English (as
 ch07 already did); the new section follows that.
 
+### Phase 7: the squashed ruler adds, and the wording sweep
+
+| Term (definition) | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
+|---|---|---|---|---|---|---|---|---|---|
+| "multiplying becomes adding" (the squashed ruler, ch10; logarithms, ch04) | multiplier devient additionner | multiplicar se convierte en sumar | moltiplicare diventa sommare | Multiplizieren wird zu Addieren | mnożenie staje się dodawaniem | multiplicar vira somar | 掛け算が足し算になる | 乘法变成加法 | يصبح الضرب جمعًا |
+| decibel (dB): 20 × base-10 log of a gain (named once, ch10) | décibel | decibelio | decibel | Dezibel | decybel | decibel | デシベル | 分贝 | الديسيبل |
+| $\sigma_n$: the sensor-noise size ("n for noise"; never a pole's σ) | n comme *noise* (bruit) | n de ruido, en inglés *noise* | n come rumore, *noise* | n wie Rauschen, engl. *noise* | n jak *noise*, czyli szum | n de ruído, do inglês *noise* | n はノイズ | n 代表噪声 noise | n من noise أي الضوضاء |
+
+Symbols decided in this pass: the drone's own recipe stays $P(s)$ ("P for plant"); ch10's arrow is
+$Y$ (was $A$, which clashed with the partial-fraction constant); the noise size is $\sigma_n$.
+$T$ (thrust, temperature, period) and $k$ (spring, hand speed) stay: each use is local and ch10
+already flags $T$ as a period.
+
 ## Cast gender and address
 
 | Locale | Mika | June | Theo | Reader |
@@ -458,3 +471,8 @@ engineering, then fix every string and move the entry to "Settled decisions".
   corrected in review to "partes laterais" (it said "horizontais").
 - ar: ch07 says جزء for piece, ch08 قطعة.
 - zh-CN: ch08 calls mirror twins 镜像双胞胎 / 镜像伙伴 besides 镜像孪生.
+
+**Maths explanations pass, Phase 7**
+- All but en: "n for noise" only works in English; every locale glosses the English word.
+- de: "Zehnerlogarithmus" (vs. "dekadischer Logarithmus"); ja: ch04 ものさし vs. ch10 物差し.
+- ar: drag is both مقاومة الهواء and قوة السحب in ch01.

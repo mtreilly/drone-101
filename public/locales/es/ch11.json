@@ -47,7 +47,7 @@
           "t": "list",
           "items": [
             "**Retraso de los motores (τ ≈ 0,05 s):** una hélice no puede cambiar de velocidad al instante. Su empuje sigue la orden como el café que se enfría del capítulo 3, un retraso de primer orden: el 63 % del camino al cabo de 0,05 s. Un empujón que llega tarde es el desfase del capítulo 10 disfrazado.",
-            "**Un sensor con ruido (σ ≈ 2 cm):** cada lectura de altura se equivoca unos 2 cm, al azar, mil veces por segundo. El capítulo 9 ya nos avisó: D convierte ese temblor en grandes picos de empuje.",
+            "**Un sensor con ruido ($\\sigma_n$ ≈ 2 cm, n de ruido en inglés, *noise*; no es la σ de un polo):** cada lectura de altura se equivoca unos 2 cm, al azar, mil veces por segundo. El capítulo 9 ya nos avisó: D convierte ese temblor en grandes picos de empuje.",
             "**Motores limitados (de 0 a 20 N):** el límite del capítulo 8 sigue puesto. Con el paquete, el dron pesa 6,9 N, así que 20 N es solo unas tres veces su peso, y los motores nunca pueden tirar hacia abajo. Mientras están clavados, el montón se pausa (el anti-windup del capítulo 9).",
             "**D está filtrada:** el arreglo del capítulo 9. D toma la pendiente de una lectura del sensor suavizada, un retraso de primer orden con la constante de tiempo $\\tau_f$ que tú elijas. Un $\\tau_f$ más largo significa más calma, pero más tarde."
           ]
@@ -192,7 +192,7 @@
         {
           "t": "play",
           "id": "spike",
-          "text": "Con $\\eff{K_d}$ = {scrub|kd|eff} N·s/m y un filtro de $\\tau_f$ = {scrub|tf} s, cada temblor de 2 cm del sensor les pide a los motores unos {calc|spike|eff} N ($K_d\\sigma/\\tau_f$). Para el vuelo estacionario solo hacen falta 6,9 N."
+          "text": "Con $\\eff{K_d}$ = {scrub|kd|eff} N·s/m y un filtro de $\\tau_f$ = {scrub|tf} s, cada temblor de 2 cm del sensor les pide a los motores unos {calc|spike|eff} N ($K_d\\sigma_n/\\tau_f$). Para el vuelo estacionario solo hacen falta 6,9 N."
         },
         {
           "t": "callout",
@@ -361,7 +361,7 @@
                 {
                   "text": "Alargar el filtro de la derivada o bajar $K_d$",
                   "correct": true,
-                  "why": "D convierte el temblor del sensor en unos $K_d\\sigma/\\tau_f$ newtons de orden: 40 N con $K_d$ = 10 y $\\tau_f$ = 0,005 s, solo 3,5 N con $K_d$ = 7 y $\\tau_f$ = 0,04 s. Renuncias a un poco de rapidez de llegada."
+                  "why": "D convierte el temblor del sensor en unos $K_d\\sigma_n/\\tau_f$ newtons de orden: 40 N con $K_d$ = 10 y $\\tau_f$ = 0,005 s, solo 3,5 N con $K_d$ = 7 y $\\tau_f$ = 0,04 s. Renuncias a un poco de rapidez de llegada."
                 },
                 {
                   "text": "Más $K_d$, para tener más amortiguamiento",
@@ -373,7 +373,7 @@
                 },
                 {
                   "text": "Más $K_p$",
-                  "why": "P deja pasar el temblor tal cual ($K_p\\sigma$: 0,4 N con $K_p$ = 20), así que más P significa algo *más* de zumbido, no menos."
+                  "why": "P deja pasar el temblor tal cual ($K_p\\sigma_n$: 0,4 N con $K_p$ = 20), así que más P significa algo *más* de zumbido, no menos."
                 }
               ]
             },

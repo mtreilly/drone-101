@@ -47,7 +47,7 @@
           "t": "list",
           "items": [
             "**Retard des moteurs (τ ≈ 0,05 s) :** une hélice ne change pas de vitesse instantanément. Sa poussée suit la commande comme le café qui refroidit au chapitre 3, un système du premier ordre : 63 % du chemin au bout de 0,05 s. Une poussée en retard, c'est le déphasage du chapitre 10 déguisé.",
-            "**Un capteur bruité (σ ≈ 2 cm) :** chaque mesure de hauteur est fausse d'environ 2 cm, au hasard, mille fois par seconde. Le chapitre 9 nous a prévenus : D transforme ce tremblement en gros pics de poussée.",
+            "**Un capteur bruité ($\\sigma_n$ ≈ 2 cm, n comme *noise*, « bruit » en anglais ; pas le σ d'un pôle) :** chaque mesure de hauteur est fausse d'environ 2 cm, au hasard, mille fois par seconde. Le chapitre 9 nous a prévenus : D transforme ce tremblement en gros pics de poussée.",
             "**Des moteurs limités (0 à 20 N) :** la limite du chapitre 8 reste active. Avec le colis, le drone pèse 6,9 N : 20 N, ce n'est donc qu'environ trois fois son poids, et les moteurs ne peuvent jamais tirer vers le bas. Tant qu'ils sont en butée, le tas se met en pause (l'anti-emballement du chapitre 9).",
             "**D est filtré :** la solution du chapitre 9. D prend la pente d'une mesure du capteur lissée, par un système du premier ordre dont tu choisis la constante de temps $\\tau_f$. Un $\\tau_f$ plus long, c'est plus calme, mais plus tard."
           ]
@@ -192,7 +192,7 @@
         {
           "t": "play",
           "id": "spike",
-          "text": "Avec $\\eff{K_d}$ = {scrub|kd|eff} N·s/m et un filtre de $\\tau_f$ = {scrub|tf} s, chaque tremblement de 2 cm du capteur demande aux moteurs environ {calc|spike|eff} N ($K_d\\sigma/\\tau_f$). Le vol stationnaire n'en demande que 6,9."
+          "text": "Avec $\\eff{K_d}$ = {scrub|kd|eff} N·s/m et un filtre de $\\tau_f$ = {scrub|tf} s, chaque tremblement de 2 cm du capteur demande aux moteurs environ {calc|spike|eff} N ($K_d\\sigma_n/\\tau_f$). Le vol stationnaire n'en demande que 6,9."
         },
         {
           "t": "callout",
@@ -361,7 +361,7 @@
                 {
                   "text": "Allonger le filtre de la dérivée ou baisser $K_d$",
                   "correct": true,
-                  "why": "D transforme le tremblement du capteur en environ $K_d\\sigma/\\tau_f$ newtons de commande : 40 N pour $K_d$ = 10 et $\\tau_f$ = 0,005 s, seulement 3,5 N pour $K_d$ = 7 et $\\tau_f$ = 0,04 s. On sacrifie un peu de vitesse d'arrivée."
+                  "why": "D transforme le tremblement du capteur en environ $K_d\\sigma_n/\\tau_f$ newtons de commande : 40 N pour $K_d$ = 10 et $\\tau_f$ = 0,005 s, seulement 3,5 N pour $K_d$ = 7 et $\\tau_f$ = 0,04 s. On sacrifie un peu de vitesse d'arrivée."
                 },
                 {
                   "text": "Plus de $K_d$, pour plus d'amortissement",
@@ -373,7 +373,7 @@
                 },
                 {
                   "text": "Plus de $K_p$",
-                  "why": "P laisse passer le tremblement tel quel ($K_p\\sigma$ : 0,4 N à $K_p$ = 20), donc plus de P veut dire un peu *plus* de bourdonnement, pas moins."
+                  "why": "P laisse passer le tremblement tel quel ($K_p\\sigma_n$ : 0,4 N à $K_p$ = 20), donc plus de P veut dire un peu *plus* de bourdonnement, pas moins."
                 }
               ]
             },
