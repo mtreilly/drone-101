@@ -25,7 +25,7 @@
         },
         {
           "t": "p",
-          "text": "Primero, una confesión sobre la \"mano normal\" del capítulo 0. Giraba el mando a una **velocidad** proporcional a lo mal que se sentía el agua: velocidad del mando $= k\\cdot\\err{e}$, con $k = 0.8\\,\\%$ del mando por segundo y por °C. Una velocidad proporcional al error significa que la *posición* del mando es el montón de error pasado. Eso es un **controlador I**, con $K_i = k$."
+          "text": "Primero, una confesión sobre la \"mano normal\" del capítulo 0. Giraba el mando a una **velocidad** proporcional a lo mal que se sentía el agua: velocidad del mando $= k\\cdot\\err{e}$, con $k = 0{,}8\\,\\%$ del mando por segundo y por °C. Una velocidad proporcional al error significa que la *posición* del mando es el montón de error pasado. Eso es un **controlador I**, con $K_i = k$."
         },
         {
           "t": "note",
@@ -229,7 +229,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Ahora cerremos el lazo: mano → mando → tubería → piel → mano. Sigue una oscilación en toda su vuelta. Para la mano del capítulo 0, el viaje alrededor del lazo es $G_{\\circ}$ (un circulito por *lazo*, porque $L$ ya es el retardo):"
+          "text": "Ahora cerremos el lazo: mano → mando → tubería → piel → mano. Sigue una oscilación por todo el lazo. Para la mano del capítulo 0, el viaje alrededor del lazo es $G_{\\circ}$ (un circulito por *lazo*, porque $L$ ya es el retardo):"
         },
         {
           "t": "math",
@@ -305,7 +305,7 @@
         },
         {
           "t": "p",
-          "text": "En nuestra ducha, la fase de $G_{\\circ}$ llega a −180° en $\\omega \\approx 0.457$ rad/s, un periodo de oscilación de unos **13,8 s**. La mano normal ($k = 0.008$) tiene un margen de ganancia de solo unos **1,4**, y un margen de fase de unos 22° (donde su ganancia del lazo vale 1, a 0,34 rad/s, la fase es −158°). ¡Muy cerca del borde! La mano más brusca duplica la ganancia: 1,4 ÷ 2 = 0,7, **abismo abajo**. Justo por eso no se estabilizaba nunca."
+          "text": "En nuestra ducha, la fase de $G_{\\circ}$ llega a −180° en $\\omega \\approx 0{,}457$ rad/s, un periodo de oscilación de unos **13,8 s**. La mano normal ($k = 0{,}008$) tiene un margen de ganancia de solo unos **1,4**, y un margen de fase de unos 22° (donde su ganancia del lazo vale 1, a 0,34 rad/s, la fase es −158°). ¡Muy cerca del borde! La mano más brusca duplica la ganancia: 1,4 ÷ 2 = 0,7, **abismo abajo**. Justo por eso no se estabilizaba nunca."
         },
         {
           "t": "predict",
@@ -365,7 +365,7 @@
         },
         {
           "t": "p",
-          "text": "Una **mano de velocidad** (girar el mando mientras el agua se sienta mal) es un controlador I: su borde está en oscilaciones de 13,8 s. Una **mano de posición** (\"está demasiado caliente, pon el mando *aquí*\") actúa como un controlador P: $G_{\\circ}(s) = 45K\\,e^{-2.5s}/(s+1)$. Una mano de posición no tiene montón, así que tampoco sus propios 90°: la tubería y el suavizador solos tienen que llegar a 180°, y eso ocurre con una oscilación más rápida, $\\omega \\approx 0.95$ rad/s (la velocidad del revés de June). Eso da oscilaciones de **6,6 s**, para cualquier $K$ por encima de unos 0,031 de mando por °C. La mayoría de la gente es una mezcla. (La mano robot normal oscila algo más despacio que 13,8 s, unos 15,5 s, porque está justo por dentro del borde\\; las oscilaciones de la mano brusca, de unos 11,6 s, quedan aplastadas porque el mando choca con sus topes.)"
+          "text": "Una **mano de velocidad** (girar el mando mientras el agua se sienta mal) es un controlador I: su borde está en oscilaciones de 13,8 s. Una **mano de posición** (\"está demasiado caliente, pon el mando *aquí*\") actúa como un controlador P: $G_{\\circ}(s) = 45K\\,e^{-2.5s}/(s+1)$. Una mano de posición no tiene montón, así que tampoco sus propios 90°: la tubería y el suavizador solos tienen que llegar a 180°, y eso ocurre con una oscilación más rápida, $\\omega \\approx 0{,}95$ rad/s (la velocidad del revés de June). Eso da oscilaciones de **6,6 s**, para cualquier $K$ por encima de unos 0,031 de mando por °C. La mayoría de la gente es una mezcla. (La mano robot normal oscila algo más despacio que 13,8 s, unos 15,5 s, porque está justo por dentro del borde\\; las oscilaciones de la mano brusca, de unos 11,6 s, quedan aplastadas porque el mando choca con sus topes.)"
         },
         {
           "t": "play",
@@ -414,7 +414,7 @@
           "blocks": [
             {
               "t": "p",
-              "text": "Las ganancias de June tienen $K_i/K_p = 1$ por segundo, que es justo $1/\\tau$. El cero del PI cae sobre el polo del suavizador y lo cancela, y queda $2.25\\,e^{-2.5s}/s$. En el papel, ese lazo llega a −180° en $\\omega = \\pi/5$, una oscilación de 10 s. Pero su lazo está muy pasado el borde, así que el mando va de tope a tope, y esas oscilaciones a golpes llegan cada 6,3 s más o menos: cerca de los 6,6 s de la mano de posición."
+              "text": "Las ganancias de June tienen $K_i/K_p = 1$ por segundo, que es justo $1/\\tau$. El cero del PI cae sobre el polo del suavizador y lo cancela, y queda $2{,}25\\,e^{-2.5s}/s$. En el papel, ese lazo llega a −180° en $\\omega = \\pi/5$, una oscilación de 10 s. Pero su lazo está muy pasado el borde, así que el mando va de tope a tope, y esas oscilaciones a golpes llegan cada 6,3 s más o menos: cerca de los 6,6 s de la mano de posición."
             }
           ]
         },
@@ -422,7 +422,7 @@
           "t": "say",
           "who": "theo",
           "mood": "happy",
-          "text": "El dron aguantaba ganancias grandes porque casi no tenía retardo. Aquí, **robusto** significa suave: deja margen para el retardo. Prueba mis ganancias suaves, más o menos $K_p \\approx 1$ y $K_i \\approx 0.6$."
+          "text": "El dron aguantaba ganancias grandes porque casi no tenía retardo. Aquí, **robusto** significa suave: deja margen para el retardo. Prueba mis ganancias suaves, más o menos $K_p \\approx 1$ y $K_i \\approx 0{,}6$."
         },
         {
           "t": "p",
@@ -557,7 +557,7 @@
                 {
                   "text": "Las oscilaciones crecen en vez de apagarse",
                   "correct": true,
-                  "why": "1,5 es más que el margen de 1,4, así que la ganancia del lazo a −180° pasa de 1: por el abismo abajo."
+                  "why": "1,5 es más que el margen de 1,4, así que la ganancia del lazo a −180° pasa de 1: abismo abajo."
                 },
                 {
                   "text": "Se estabiliza más rápido",
@@ -654,7 +654,7 @@
       },
       "describe": "Margen de ganancia {gm}, margen de fase {pm} grados.",
       "w180": "velocidad de −180°",
-      "period": "periodo de la oscilación sostenida"
+      "period": "periodo en el borde"
     },
     "replay": {
       "title": "Tus oscilaciones del capítulo 0",

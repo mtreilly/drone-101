@@ -15,7 +15,7 @@
         },
         {
           "t": "p",
-          "text": "Um die Drohne zu halten, müssen die Motoren $mg \\approx 4{,}9$ N drücken, und zwar für immer. Ein P-Regler drückt nur, wenn es einen Fehler gibt: $\\eff{T} = K_p\\,\\err{e}$. Um 4,9 N zu drücken, *braucht* er also einen Fehler von $\\err{e} = mg/K_p$. Mit $K_p$ = 20 N/m sind das $\\err e$ = 4,9/20 ≈ 24,5 cm, für immer. Das Durchhängen ist kein Fehler in unserer Einstellung. Es ist der Preis, den P fürs Halten verlangt."
+          "text": "Um die Drohne zu halten, müssen die Motoren $mg \\approx 4{,}9$ N drücken, und zwar für immer. Ein P-Regler drückt nur, wenn es einen Fehler gibt: $\\eff{T} = K_p\\,\\err{e}$. Um 4,9 N zu drücken, *braucht* er also einen Fehler von $\\err{e} = mg/K_p$. Mit $K_p$ = 20 N/m sind das $\\err e$ = 4,9/20 ≈ 24,5 cm, für immer. Das Durchhängen heißt nicht, dass wir falsch eingestellt haben. Es ist der Preis, den P fürs Halten verlangt."
         },
         {
           "t": "say",
@@ -161,7 +161,7 @@
         },
         {
           "t": "p",
-          "text": "Ein Dämpfer drückt gegen die Geschwindigkeit. Also fügen wir einen Term hinzu, der dagegen drückt, wie schnell sich die Drohne bewegt:"
+          "text": "Ein Dämpfer drückt gegen das Tempo. Also fügen wir einen Term hinzu, der dagegen drückt, wie schnell sich die Drohne bewegt:"
         },
         {
           "t": "math",
@@ -272,7 +272,7 @@
           "blocks": [
             {
               "t": "p",
-              "text": "In Kapitel 7 wurde eine Steigung zu „× s“. Eine Fläche ist das Gegenteil, also wird sie zu „÷ s“. Schreib den Regler so, nimm das eigene Rezept der Drohne $P(s) = 1/(ms^2+cs)$ (Schub rein, Höhe raus) und such die Pole mit der Kreisregel aus Kapitel 8, $1 + C\\,P = 0$. Brüche wegmultiplizieren, und heraus kommt dasselbe kubische Polynom, ohne eine einzige Steigung:"
+              "text": "In Kapitel 7 wurde eine Steigung zu „× s“. Eine Fläche ist das Gegenteil, also wird sie zu „÷ s“. Schreib den Regler so, nimm das eigene Rezept der Drohne $P(s) = 1/(ms^2+cs)$ (Schub rein, Höhe raus) und such die Pole wie in Kapitel 8 mit $1 + C\\,P = 0$, der charakteristischen Gleichung des Kreises. Brüche wegmultiplizieren, und heraus kommt dasselbe kubische Polynom, ohne eine einzige Steigung:"
             },
             {
               "t": "math",
@@ -351,7 +351,7 @@
         },
         {
           "t": "p",
-          "text": "Bei den Startwerten ($K_p$ = 20, kein D) liegt die Kante bei 40. Genau da ist Mikas Drohne durchgedreht, und ihr Jojo brauchte etwa eine Sekunde pro Schwung: 6,32 rad/s ist das ωn der P-Drohne aus Kapitel 6. Mit $K_d = 4$ wandert die Kante raus auf 200. Glaub uns nicht einfach: Ändere die Zahlen oben oder die Schieberegler unten und schau auf die Pole, die Mini-Karte und die Sprungantwort."
+          "text": "Bei den Standardwerten ($K_p$ = 20, kein D) liegt die Kante bei 40. Genau da ist Mikas Drohne durchgedreht, und ihr Jojo brauchte etwa eine Sekunde pro Schwung: 6,32 rad/s ist das ωn der P-Drohne aus Kapitel 6. Mit $K_d = 4$ wandert die Kante raus auf 200. Glaub uns nicht einfach: Ändere die Zahlen oben oder die Schieberegler unten und schau auf die Pole, die Mini-Karte und die Sprungantwort."
         },
         {
           "t": "widget",

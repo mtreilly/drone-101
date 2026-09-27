@@ -179,7 +179,7 @@
           "t": "list",
           "items": [
             "**Mitad izquierda = se calma, mitad derecha = se dispara.** La parte real $\\sigma$ es el ritmo al que se encoge o crece $e^{\\sigma t}$.",
-            "**Más a la izquierda = más rápido.** Estabilizarse lleva unos $4/|\\sigma|$ segundos (las líneas verticales discontinuas): las cuatro constantes de tiempo del capítulo 6, ya que $e^{-|\\sigma| t}$ baja del 2 % tras $\\ln 50/|\\sigma| \\approx 3.9/|\\sigma|$ segundos.",
+            "**Más a la izquierda = más rápido.** Estabilizarse lleva unos $4/|\\sigma|$ segundos (las líneas verticales discontinuas): las cuatro constantes de tiempo del capítulo 6, ya que $e^{-|\\sigma| t}$ baja del 2 % tras $\\ln 50/|\\sigma| \\approx 3{,}9/|\\sigma|$ segundos.",
             "**Más arriba = más oscilante.** La altura $\\omega$ es la frecuencia amortiguada del capítulo 6, así que una oscilación dura $2\\pi/\\omega$ segundos.",
             "**El ángulo fija el sobreimpulso.** El ángulo $\\theta$ medido desde el eje real negativo da $\\zeta = \\cos\\theta$ (el círculo del capítulo 6), y el sobreimpulso es $e^{-\\pi|\\sigma|/\\omega}$ (los rayos discontinuos). Cerca del eje real apenas se pasa; cerca del eje vertical, muchísimo. (Es exacto para dos polos y ningún cero, partiendo del reposo. Un cero lo cambia: en la sección siguiente, uno convierte un 12 % en un 15 %.)"
           ]
@@ -256,7 +256,7 @@
           "t": "say",
           "who": "mika",
           "mood": "think",
-          "text": "¿Y si los dos polos están sobre el eje real, uno en $-0.2$ y otro en $-5$?"
+          "text": "¿Y si los dos polos están sobre el eje real, uno en $-0{,}2$ y otro en $-5$?"
         },
         {
           "t": "say",
@@ -267,7 +267,7 @@
         {
           "t": "play",
           "id": "dominant",
-          "text": "Polos reales en −0,2 y −5. Tras {scrub|time} s, al movimiento rápido $e^{-5t}$ le queda {calc|fast} de su valor inicial, y al lento $e^{-0.2t}$ todavía le queda {calc|slow}. Así que decide el polo lento: estabilizarse lleva unos $4/0.2 = 20$ s."
+          "text": "Polos reales en −0,2 y −5. Tras {scrub|time} s, al movimiento rápido $e^{-5t}$ le queda {calc|fast} de su valor inicial, y al lento $e^{-0.2t}$ todavía le queda {calc|slow}. Así que decide el polo lento: estabilizarse lleva unos $4/0{,}2 = 20$ s."
         },
         {
           "t": "vocab",
@@ -292,11 +292,11 @@
           "blocks": [
             {
               "t": "p",
-              "text": "El cuatro es el $\\ln 50 \\approx 3.9$ del capítulo 6, redondeado: el tiempo que tarda la *envolvente* en encogerse al 2 %. La curva real va por dentro de su envolvente, así que a menudo se estabiliza un poco antes. Se estabiliza más tarde cuando los polos están sobre el eje real o cerca de él, porque un polo doble tiene una parte $t\\,e^{-|\\sigma| t}$ que se entretiene."
+              "text": "El cuatro es el $\\ln 50 \\approx 3{,}9$ del capítulo 6, redondeado: el tiempo que tarda la *envolvente* en encogerse al 2 %. La curva real va por dentro de su envolvente, así que a menudo se estabiliza un poco antes. Se estabiliza más tarde cuando los polos están sobre el eje real o cerca de él, porque un polo doble tiene una parte $t\\,e^{-|\\sigma| t}$ que se entretiene."
             },
             {
               "t": "math",
-              "tex": "\\begin{array}{c|ccccc} \\zeta & 0.3 & 0.5 & 0.8 & 0.95 & 1 \\\\ \\hline |\\sigma|\\,T_s & 3.37 & 4.04 & 3.01 & 5.00 & 5.83 \\end{array}"
+              "tex": "\\begin{array}{c|ccccc} \\zeta & 0{,}3 & 0{,}5 & 0{,}8 & 0{,}95 & 1 \\\\ \\hline |\\sigma|\\,T_s & 3{,}37 & 4{,}04 & 3{,}01 & 5{,}00 & 5{,}83 \\end{array}"
             },
             {
               "t": "say",
@@ -318,7 +318,7 @@
         },
         {
           "t": "p",
-          "text": "Aquí tienes un sistema con polos fijos en $-2 \\pm 3i$ y un cero que puedes deslizar. (El $\\eff{K_d}$ de nuestro patio empuja contra la *velocidad* del dron, así que su receta no tiene cero. Empuja en cambio contra la velocidad del *error*, como hará el capítulo 9, y aparece un cero en $-\\eff{K_p}/\\eff{K_d}$: para estos polos eso es $-6.5$, con un sobreimpulso del 15 % en vez del 12 %.)"
+          "text": "Aquí tienes un sistema con polos fijos en $-2 \\pm 3i$ y un cero que puedes deslizar. (El $\\eff{K_d}$ de nuestro patio empuja contra la *velocidad* del dron, así que su receta no tiene cero. Empuja en cambio contra la velocidad del *error*, como hará el capítulo 9, y aparece un cero en $-\\eff{K_p}/\\eff{K_d}$: para estos polos eso es $-6{,}5$, con un sobreimpulso del 15 % en vez del 12 %.)"
         },
         {
           "t": "widget",
@@ -351,7 +351,7 @@
           "blocks": [
             {
               "t": "p",
-              "text": "Un polo es un movimiento que el sistema *hace*; un cero es un movimiento que *se niega a dejar pasar*. Alimenta este sistema (cero en $-3$) exactamente con $e^{-3t}$ y no sale nada de él: solo la oscilación propia del sistema, que se apaga. Sin el cero, $1.3\\,e^{-3t}$ pasaría directamente."
+              "text": "Un polo es un movimiento que el sistema *hace*; un cero es un movimiento que *se niega a dejar pasar*. Alimenta este sistema (cero en $-3$) exactamente con $e^{-3t}$ y no sale nada de él: solo la oscilación propia del sistema, que se apaga. Sin el cero, $1{,}3\\,e^{-3t}$ pasaría directamente."
             },
             {
               "t": "math",
@@ -394,7 +394,7 @@
         },
         {
           "t": "p",
-          "text": "Hora de ser honestos. Nuestros motores pueden empujar entre **0 N** y **20 N** (unas cuatro veces el peso del dron). Abajo, los polos se mueven a la izquierda por una línea de 45° (eso es $\\zeta \\approx 0.71$, el punto ideal del capítulo 6). Las curvas discontinuas son las matemáticas con motores imaginarios e ilimitados; las continuas son motores reales."
+          "text": "Hora de ser honestos. Nuestros motores pueden empujar entre **0 N** y **20 N** (unas cuatro veces el peso del dron). Abajo, los polos se mueven a la izquierda por una línea de 45° (eso es $\\zeta \\approx 0{,}71$, el punto ideal del capítulo 6). Las curvas discontinuas son las matemáticas con motores imaginarios e ilimitados; las continuas son motores reales."
         },
         {
           "t": "widget",
@@ -407,13 +407,13 @@
         },
         {
           "t": "p",
-          "text": "Más allá de unos $-3.9 \\pm 3.9i$ las matemáticas piden más de 20 N. El {eff|empuje naranja} se aplasta contra el límite, y más allá de unos $-6 \\pm 6i$ las matemáticas llegan a querer tirar del dron *hacia abajo*, cosa que las hélices no pueden hacer. El dron real deja de seguir la bonita predicción lineal. Su tiempo de establecimiento deja de mejorar en unos 0,7 s, cerca de $-6.5 \\pm 6.5i$, y más a la izquierda *empeora*, con sobreimpulso extra."
+          "text": "Más allá de unos $-3{,}9 \\pm 3.9i$ las matemáticas piden más de 20 N. El {eff|empuje naranja} se aplasta contra el límite, y más allá de unos $-6 \\pm 6i$ las matemáticas llegan a querer tirar del dron *hacia abajo*, cosa que las hélices no pueden hacer. El dron real deja de seguir la bonita predicción lineal. Su tiempo de establecimiento deja de mejorar en unos 0,7 s, cerca de $-6{,}5 \\pm 6.5i$, y más a la izquierda *empeora*, con sobreimpulso extra."
         },
         {
           "t": "say",
           "who": "june",
           "mood": "surprised",
-          "text": "Lo deslicé hasta $-8 \\pm 8i$. Las matemáticas dicen 0,53 s. El dron real tarda 0,77 s: ¡más lento que en $-6.5$!"
+          "text": "Lo deslicé hasta $-8 \\pm 8i$. Las matemáticas dicen 0,53 s. El dron real tarda 0,77 s: ¡más lento que en $-6{,}5$!"
         },
         {
           "t": "say",
@@ -545,7 +545,7 @@
         },
         {
           "t": "p",
-          "text": "Esta es la razón. El rozamiento retrasa la señal de cada vuelta hasta 90°, y la masa hasta otros 90°, pero juntos solo llegan a 180° con oscilaciones infinitamente rápidas. Así que el control P por sí solo nunca puede desbocar este dron. Un $\\eff{K_p}$ mayor solo hace que la vuelta pase **más cerca** de −1, y más cerca significa menos amortiguamiento: el «más $K_p$, más oscilación» del capítulo 2, ahora en forma de dibujo."
+          "text": "Esta es la razón. El rozamiento retrasa la señal de cada vuelta hasta 90°, y la masa hasta otros 90°, pero juntos solo llegan a 180° con oscilaciones infinitamente rápidas. Así que el control P por sí solo nunca puede desestabilizar este dron. Un $\\eff{K_p}$ mayor solo hace que la vuelta pase **más cerca** de −1, y más cerca significa menos amortiguamiento: el «más $K_p$, más oscilación» del capítulo 2, ahora en forma de dibujo."
         },
         {
           "t": "play",
@@ -604,7 +604,7 @@
                   "why": "La que está más a la izquierda: tiempo de establecimiento ≈ $4/4 = 1$ s."
                 },
                 {
-                  "text": "$-0.5 \\pm 5i$",
+                  "text": "$-0{,}5 \\pm 5i$",
                   "why": "Muy arriba significa muchas oscilaciones rápidas, pero está cerca del eje, así que se apagan despacio (≈ 8 s)."
                 }
               ]
@@ -649,12 +649,12 @@
             },
             {
               "id": "ch8-q4",
-              "q": "Un sistema tiene polos reales en $-0.2$ y $-5$. Pasados dos segundos, ¿cuál sigue dando forma a la respuesta?",
+              "q": "Un sistema tiene polos reales en $-0{,}2$ y $-5$. Pasados dos segundos, ¿cuál sigue dando forma a la respuesta?",
               "options": [
                 {
-                  "text": "El de $-0.2$, cerca del eje",
+                  "text": "El de $-0{,}2$, cerca del eje",
                   "correct": true,
-                  "why": "$e^{-0.2t}$ sigue al 67 % tras 2 s; $e^{-5t}$ ha bajado al 0,005 %. Manda el polo lento, así que estabilizarse lleva unos $4/0.2 = 20$ s."
+                  "why": "$e^{-0.2t}$ sigue al 67 % tras 2 s; $e^{-5t}$ ha bajado al 0,005 %. Manda el polo lento, así que estabilizarse lleva unos $4/0{,}2 = 20$ s."
                 },
                 {
                   "text": "El de $-5$, más a la izquierda",
@@ -662,7 +662,7 @@
                 },
                 {
                   "text": "Los dos por igual",
-                  "why": "Uno se encoge 25 veces más rápido que el otro ($5 \\div 0.2$). Tras medio segundo el rápido está al 8 % y el lento todavía al 90 %."
+                  "why": "Uno se encoge 25 veces más rápido que el otro ($5 \\div 0{,}2$). Tras medio segundo el rápido está al 8 % y el lento todavía al 90 %."
                 }
               ]
             }

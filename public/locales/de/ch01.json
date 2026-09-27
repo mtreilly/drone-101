@@ -1,6 +1,6 @@
 {
   "kicker": "Kapitel 1",
-  "title": "Offener vs. geschlossener Regelkreis",
+  "title": "Steuerung vs. Regelung",
   "question": "Können wir der Drohne einfach *sagen*, welchen Schub sie nehmen soll?",
   "sections": [
     {
@@ -21,7 +21,7 @@
         },
         {
           "t": "p",
-          "text": "Hier die Fakten. Die Drohne wiegt **0,5 kg**, also zieht die Schwerkraft sie mit $0{,}5 \\times 9{,}81 \\approx 4{,}9$ Newton nach unten. Die Propeller drücken mit einem {eff|Schub} $\\eff{T}$ nach oben, den wir wählen. Wenn die Drohne sich bewegt, drückt die Luft ein bisschen dagegen: etwa **1 Newton pro Meter pro Sekunde** Geschwindigkeit."
+          "text": "Hier die Fakten. Die Drohne wiegt **0,5 kg**, also zieht die Schwerkraft sie mit $0{,}5 \\times 9{,}81 \\approx 4{,}9$ Newton nach unten. Die Propeller drücken mit einem {eff|Schub} $\\eff{T}$ nach oben, den wir wählen. Wenn die Drohne sich bewegt, drückt die Luft ein bisschen dagegen: etwa **1 Newton pro Meter pro Sekunde** Tempo."
         },
         {
           "t": "math",
@@ -29,7 +29,7 @@
         },
         {
           "t": "p",
-          "text": "Keine Sorge wegen der Punkte über $\\out{h}$. Sie beschreiben Geschwindigkeit und Beschleunigung; in Kapitel 3 bauen wir beides auf. **Wenn die Drohne stillsteht**, gleichen 4,9 N die Schwerkraft aus: mehr Schub lässt sie steigen, weniger lässt sie fallen. **Wenn sie sich bewegt**, bremst auch der Luftwiderstand; bei 4,9 N wird sie langsamer, bis sie stillsteht."
+          "text": "Keine Sorge wegen der Punkte über $\\out{h}$. Sie beschreiben Tempo und Beschleunigung; in Kapitel 3 bauen wir beides auf. **Wenn die Drohne stillsteht**, gleichen 4,9 N die Schwerkraft aus: mehr Schub lässt sie steigen, weniger lässt sie fallen. **Wenn sie sich bewegt**, bremst auch der Luftwiderstand; bei 4,9 N wird sie langsamer, bis sie stillsteht."
         },
         {
           "t": "note",
@@ -49,7 +49,7 @@
         },
         {
           "t": "p",
-          "text": "So ein Plan heißt **offener Regelkreis** (auch Steuerung): Der Plan bestimmt den Schub, und niemand prüft, was wirklich passiert. Probier’s aus. Wähl einen Steigschub und wie lange gestiegen wird, dann starte."
+          "text": "So ein Plan heißt **Steuerung** (ein offener Wirkungsablauf, engl. *open loop*): Der Plan bestimmt den Schub, und niemand prüft, was wirklich passiert. Probier’s aus. Wähl einen Steigschub und wie lange gestiegen wird, dann starte."
         },
         {
           "t": "widget",
@@ -189,7 +189,7 @@
         },
         {
           "t": "p",
-          "text": "Der entscheidende Unterschied ist dieser eine Pfeil, der vom Ausgang zurück zum Anfang läuft. Deshalb heißt eine Regelung mit Rückkopplung **geschlossener Regelkreis**: Die Information läuft einmal ganz herum. Scroll hoch zum Pakettest: Das Diagramm unter der Drohne leuchtet dort auf, wo gerade etwas los ist."
+          "text": "Der entscheidende Unterschied ist dieser eine Pfeil, der vom Ausgang zurück zum Anfang läuft. Deshalb heißt Regeln mit Rückkopplung **Regelung** oder **geschlossener Regelkreis**: Die Information läuft einmal ganz herum. Scroll hoch zum Pakettest: Das Diagramm unter der Drohne leuchtet dort auf, wo gerade etwas los ist."
         },
         {
           "t": "vocab",
@@ -227,7 +227,7 @@
               "def": "Alles, was die Welt tut und was wir nicht eingeplant haben: Böen, Pakete, jemand drückt die Klospülung."
             },
             {
-              "term": "Offener / geschlossener Regelkreis",
+              "term": "Steuerung / Regelung (geschlossener Regelkreis)",
               "def": "Nach Plan handeln, ohne hinzuschauen / auf das reagieren, was man misst."
             }
           ]
@@ -240,7 +240,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Hier dasselbe Diagramm für den **Tempomat** eines Autos. Der Sollwert ist eine Geschwindigkeit, die Regelstrecke ist das Auto, die Störung ist ein Berg. Der Regler tritt stärker aufs Gas, wenn das Auto langsamer ist, als es sein soll."
+          "text": "Hier dasselbe Diagramm für den **Tempomat** eines Autos. Der Sollwert ist ein Wunschtempo, die Regelstrecke ist das Auto, die Störung ist ein Berg. Der Regler tritt stärker aufs Gas, wenn das Auto langsamer ist, als es sein soll."
         },
         {
           "t": "widget",
@@ -261,8 +261,8 @@
         {
           "t": "recap",
           "items": [
-            "**Offener Regelkreis** heißt: einem Plan folgen, ohne hinzuschauen. Bei ruhigen Bedingungen kann das perfekt sein, und nutzlos, sobald etwas Unerwartetes passiert.",
-            "**Geschlossener Regelkreis (Rückkopplung)** heißt: den Ausgang messen, mit dem Sollwert vergleichen (das ist die **Regelabweichung**) und darauf reagieren.",
+            "**Steuerung** (offener Wirkungsablauf) heißt: einem Plan folgen, ohne hinzuschauen. Bei ruhigen Bedingungen kann das perfekt sein, und nutzlos, sobald etwas Unerwartetes passiert.",
+            "**Regelung** (geschlossener Regelkreis, Rückkopplung) heißt: den Ausgang messen, mit dem Sollwert vergleichen (das ist die **Regelabweichung**) und darauf reagieren.",
             "Rückkopplung wird mit Störungen fertig, von denen sie nie gehört hat: Böen, Pakete, alles Mögliche.",
             "Blockschaltbilder zeigen den Kreis: Sollwert → Fehler → Regler → Regelstrecke → Ausgang → Sensor → wieder zurück.",
             "Unsere einfache Rückkopplungsregel hat den Absturz verhindert. Aber mit Paket hat sie sich etwa 25 cm zu tief eingependelt. Warum?"
@@ -296,7 +296,7 @@
               "options": [
                 {
                   "text": "Ein Toaster mit Zeitschaltuhr",
-                  "why": "Die Zeitschaltuhr prüft nicht, wie braun der Toast ist. Sie folgt einfach dem Plan: offener Regelkreis."
+                  "why": "Die Zeitschaltuhr prüft nicht, wie braun der Toast ist. Sie folgt einfach dem Plan: Steuerung."
                 },
                 {
                   "text": "Ein Raumthermostat",
@@ -305,7 +305,7 @@
                 },
                 {
                   "text": "Eine Waschmaschine mit festem Programm",
-                  "why": "Sie folgt ihrem Programm, egal wie schmutzig die Wäsche ist: offener Regelkreis."
+                  "why": "Sie folgt ihrem Programm, egal wie schmutzig die Wäsche ist: Steuerung."
                 }
               ]
             },
@@ -342,7 +342,7 @@
   ],
   "widgets": {
     "schedule": {
-      "title": "Offener Regelkreis: einen Schubplan programmieren",
+      "title": "Steuerung: einen Schubplan programmieren",
       "slider": {
         "thrust": "Steigschub",
         "time": "Steigen für"
@@ -377,7 +377,7 @@
     "feedback": {
       "title": "Schweben auf 2 m: Plan oder Rückkopplung?",
       "mode": "Modus",
-      "open": "Offener Regelkreis: fest 4,9 N",
+      "open": "Steuerung: fest 4,9 N",
       "closed": "Rückkopplung: auf die Höhe schauen",
       "gust": "Böe ↓",
       "package": "Paket",
@@ -393,7 +393,7 @@
         "thrust": "Schub"
       },
       "status": {
-        "open": "Offener Regelkreis: Schub fest auf 4,9 N, egal was passiert.",
+        "open": "Steuerung: Schub fest auf 4,9 N, egal was passiert.",
         "closed": "Rückkopplung: Schub = 4,9 N + 8 N für jeden Meter zu tief.",
         "crash": "CRASH! Zurücksetzen, auf Rückkopplung umschalten und nochmal versuchen.",
         "predictRun": "Paket kommt bei t = 1 s dran…"
@@ -409,7 +409,7 @@
         "output": "Höhe h",
         "sensor": "Höhensensor",
         "aria": "Blockschaltbild des Regelkreises der Drohne",
-        "description": "Ziel minus gemessene Höhe ergibt den Fehler; der Regler macht aus dem Fehler Schub; Schub und Störungen wirken auf die Drohne; der Sensor misst die Höhe der Drohne, und sie wird zurückgeführt und vom Ziel abgezogen. Im offenen Regelkreis wird nur der Vorwärtsweg gezeigt."
+        "description": "Ziel minus gemessene Höhe ergibt den Fehler; der Regler macht aus dem Fehler Schub; Schub und Störungen wirken auf die Drohne; der Sensor misst die Höhe der Drohne, und sie wird zurückgeführt und vom Ziel abgezogen. Bei der Steuerung wird nur der Vorwärtsweg gezeigt."
       }
     },
     "whiteboard": {
@@ -418,7 +418,7 @@
       "next": "Weiter",
       "counter": "Schritt {n} von {total}",
       "step1": "Mika: „Schub geht rein, Höhe kommt raus. Die Drohne ist ein Kasten, der das eine ins andere verwandelt.“ Wir nennen ihn Regelstrecke.",
-      "step2": "Theo: „Offener Regelkreis: Wir nehmen den Schub aus einem Plan, der nur auf dem Ziel beruht.“",
+      "step2": "Theo: „Steuerung: Wir nehmen den Schub aus einem Plan, der nur auf dem Ziel beruht.“",
       "step3": "June: „Und die Welt drückt auch auf die Drohne: Wind, Pakete. Störungen.“",
       "step4": "Mika: „Also messen wir die Höhe mit einem Sensor…“",
       "step5": "Theo: „…und ziehen sie vom Ziel ab. Diese Differenz ist der Fehler, und der Regler reagiert darauf. Der Kreis ist geschlossen!“",
@@ -433,7 +433,7 @@
         "output": "Höhe h",
         "sensor": "Sensor",
         "aria": "Blockschaltbild, das Schritt für Schritt gezeichnet wird",
-        "description": "Ein Blockschaltbild in fünf Schritten: zuerst nur die Regelstrecke; dann ein Plan im offenen Regelkreis, der sie speist; Störungen, die auf sie wirken; ein Sensor, der den Ausgang misst; und schließlich Fehler, Regler und Summierstelle, die den Kreis schließen."
+        "description": "Ein Blockschaltbild in fünf Schritten: zuerst nur die Regelstrecke; dann eine Steuerung nach Plan, die sie speist; Störungen, die auf sie wirken; ein Sensor, der den Ausgang misst; und schließlich Fehler, Regler und Summierstelle, die den Kreis schließen."
       }
     },
     "cruise": {

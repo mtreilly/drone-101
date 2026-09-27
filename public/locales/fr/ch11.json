@@ -47,7 +47,7 @@
           "t": "list",
           "items": [
             "**Retard des moteurs (τ ≈ 0,05 s) :** une hélice ne change pas de vitesse instantanément. Sa poussée suit la commande comme le café qui refroidit au chapitre 3, un système du premier ordre : 63 % du chemin au bout de 0,05 s. Une poussée en retard, c'est le déphasage du chapitre 10 déguisé.",
-            "**Un capteur bruité ($\\sigma_n$ ≈ 2 cm, n comme *noise*, « bruit » en anglais ; pas le σ d'un pôle) :** chaque mesure de hauteur est fausse d'environ 2 cm, au hasard, mille fois par seconde. Le chapitre 9 nous a prévenus : D transforme ce tremblement en gros pics de poussée.",
+            "**Un capteur bruité ($\\sigma_n$ ≈ 2 cm, n comme *noise*, le mot anglais pour « bruit » ; pas le σ d'un pôle) :** chaque mesure de hauteur est fausse d'environ 2 cm, au hasard, mille fois par seconde. Le chapitre 9 nous a prévenus : D transforme ce tremblement en gros pics de poussée.",
             "**Des moteurs limités (0 à 20 N) :** la limite du chapitre 8 reste active. Avec le colis, le drone pèse 6,9 N : 20 N, ce n'est donc qu'environ trois fois son poids, et les moteurs ne peuvent jamais tirer vers le bas. Tant qu'ils sont en butée, le tas se met en pause (l'anti-emballement du chapitre 9).",
             "**D est filtré :** la solution du chapitre 9. D prend la pente d'une mesure du capteur lissée, par un système du premier ordre dont tu choisis la constante de temps $\\tau_f$. Un $\\tau_f$ plus long, c'est plus calme, mais plus tard."
           ]
@@ -59,7 +59,7 @@
         },
         {
           "t": "callout",
-          "title": "Un retard court, c'est presque un retard pur",
+          "title": "Un moteur un peu lent, c'est presque un retard pur",
           "blocks": [
             {
               "t": "say",
@@ -75,7 +75,7 @@
               "t": "say",
               "who": "june",
               "mood": "excited",
-              "text": "Presque ! Prends un réglage qui gagne les six étoiles (pas de spoiler). Son gain de boucle vaut exactement 1 vers 10 rad/s, là où le chapitre 10 lit la marge de phase. À cette vitesse, un retard pur de 0,05 s coûterait 28°. Le retard des moteurs en coûte 26°."
+              "text": "Presque ! Prends un réglage qui gagne les six étoiles (pas de spoiler). Son gain de boucle vaut exactement 1 vers 10 rad/s, là où le chapitre 10 lit la marge de phase. À cette vitesse, un retard pur de 0,05 s coûterait 28°. Le retard du premier ordre des moteurs en coûte 26°."
             },
             {
               "t": "say",

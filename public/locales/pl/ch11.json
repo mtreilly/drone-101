@@ -46,8 +46,8 @@
         {
           "t": "list",
           "items": [
-            "**Bezwładność silników (τ ≈ 0,05 s):** śmigło nie zmieni prędkości w mgnieniu oka. Jego ciąg podąża za poleceniem jak stygnąca kawa z rozdziału 3, człon inercyjny pierwszego rzędu: po 0,05 s jest w 63 % drogi. Spóźnione pchnięcie to przebrane opóźnienie fazowe z rozdziału 10.",
-            "**Zaszumiony czujnik ($\\sigma_n$ ≈ 2 cm, n jak noise, czyli szum; to nie σ bieguna):** każdy odczyt wysokości jest przekłamany o około 2 cm, losowo, tysiąc razy na sekundę. Rozdział 9 ostrzegał: D zamienia to drżenie w wielkie skoki ciągu.",
+            "**Bezwładność silników (τ ≈ 0,05 s):** śmigło nie zmieni prędkości w mgnieniu oka. Jego ciąg podąża za poleceniem jak stygnąca kawa z rozdziału 3, człon inercyjny pierwszego rzędu: po 0,05 s jest w 63 % drogi. Spóźnione pchnięcie to opóźnienie fazowe z rozdziału 10 w przebraniu.",
+            "**Zaszumiony czujnik ($\\sigma_n$ ≈ 2 cm, n od ang. *noise*, czyli szum; to nie σ bieguna):** każdy odczyt wysokości jest przekłamany o około 2 cm, losowo, tysiąc razy na sekundę. Rozdział 9 ostrzegał: D zamienia to drżenie w wielkie skoki ciągu.",
             "**Ograniczone silniki (od 0 do 20 N):** ograniczenie z rozdziału 8 zostaje. Z paczką dron waży 6,9 N, więc 20 N to tylko około trzy razy więcej niż jego ciężar, a silniki nigdy nie pociągną w dół. Dopóki są na ograniczeniu, stos czeka (anti-windup z rozdziału 9).",
             "**D jest filtrowane:** poprawka z rozdziału 9. D bierze nachylenie wygładzonego odczytu czujnika, członu inercyjnego pierwszego rzędu ze stałą czasową $\\tau_f$, którą wybierasz. Dłuższe $\\tau_f$ to spokojniej, ale później."
           ]
@@ -509,7 +509,7 @@
     },
     "drop": {
       "pkg": "masa paczki, kilogramy",
-      "ki": "wzmocnienie Ki, niutony na metrosekundę",
+      "ki": "wzmocnienie Ki, niutony na metr i sekundę",
       "e": "średni uchyb, centymetry"
     },
     "spike": {

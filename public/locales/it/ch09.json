@@ -169,7 +169,7 @@
         },
         {
           "t": "p",
-          "text": "Guarda l'equazione del drone: l'attrito dà già $-c\\,\\dot h$. Il termine D aggiunge $-K_d\\,\\dot h$ in più, quindi il drone si comporta come se il suo attrito fosse $c + K_d$. Stiamo aggiungendo resistenza dell'aria **via software**."
+          "text": "Guarda l'equazione del drone: l'attrito dà già $-c\\,\\dot h$. Il termine D aggiunge $-K_d\\,\\dot h$ in più, quindi il drone si comporta come se il suo attrito fosse $c + K_d$. Stiamo aggiungendo attrito dell'aria **via software**."
         },
         {
           "t": "play",
@@ -436,7 +436,7 @@
         },
         {
           "t": "p",
-          "text": "Il drone è sospeso a 1 m. A $t = 1$ s spostiamo il riferimento a 1,5 m. Se la D usa la pendenza dell'*errore*, allora l'errore **salta** di mezzo metro in un istante. La sua pendenza è enorme, e anche la spinta."
+          "text": "Il drone è sospeso a 1 m. A $t = 1$ s spostiamo il riferimento a 1,5 m. Se la D usa la pendenza dell'*errore*, allora l'errore **salta** di mezzo metro in un istante. La sua pendenza è enorme, e anche la spinta: un picco quasi impulsivo del comando, che i libri in inglese chiamano *derivative kick*."
         },
         {
           "t": "play",
@@ -474,7 +474,7 @@
         {
           "t": "play",
           "id": "jitter",
-          "text": "Letto ogni millisecondo, un tremolio di 2 cm sembra una velocità di 20 m/s. Attraverso un filtro di $\\tau_f$ = {scrub|tf} s, $K_d$ = 4 trasforma $\\sigma_n$ = 2 cm di rumore in circa $K_d\\sigma_n/\\tau_f$ = {calc|d|eff} N di tremolio della spinta; P aggiunge solo $K_p\\sigma_n$ = 0,3 N (qui $K_p$ = 15)."
+          "text": "Letto ogni millisecondo, un tremolio di 2 cm sembra una velocità di 20 m/s. Attraverso un filtro di $\\tau_f$ = {scrub|tf} s, $K_d$ = 4 trasforma $\\sigma_n$ = 2 cm di rumore in circa $K_d\\sigma_n/\\tau_f$ = {calc|d|eff} N di vibrazione della spinta; P aggiunge solo $K_p\\sigma_n$ = 0,3 N (qui $K_p$ = 15)."
         },
         {
           "t": "widget",
@@ -696,7 +696,7 @@
       "ki": "$K_i$",
       "kd": "$K_d$",
       "antiWindup": "Anti-windup",
-      "targets": "Stelle per: sovraelongazione sotto il {os} %, assestamento (entro il 2 %) sotto i {ts} s, niente abbassamento (sotto 1 cm), e motori inchiodati a un limite per meno di {sat} s.",
+      "targets": "Stelle per: sovraelongazione sotto il {os} %, assestamento (entro il 2%) sotto i {ts} s, niente abbassamento (sotto 1 cm), e motori inchiodati a un limite per meno di {sat} s.",
       "readout": {
         "overshoot": "sovraelongazione",
         "settling": "tempo di assestamento",
@@ -734,7 +734,7 @@
       "filter": "Filtro della derivata $\\tau_f$",
       "filterName": "costante di tempo del filtro della derivata τf",
       "measured": "lettura del sensore",
-      "jitter": "tremolio della spinta",
+      "jitter": "vibrazione della spinta",
       "status": {
         "off": "Un sensore perfetto: motori tranquilli.",
         "chatter": "I motori vibrano! La D sta amplificando il rumore. Prova un filtro più lungo.",
@@ -743,7 +743,7 @@
       },
       "kd": "Guadagno derivativo $K_d$",
       "mean": "altezza media",
-      "help": "Prova $K_d$ = 0: il tremolio scende a circa 0,3 N (solo P), ma allora il drone è smorzato solo dall'attrito. Più D, più rumore."
+      "help": "Prova $K_d$ = 0: la vibrazione scende a circa 0,3 N (solo P), ma allora il drone è smorzato solo dall'attrito. Più D, più rumore."
     },
     "gains": {
       "kp": "guadagno proporzionale Kp",

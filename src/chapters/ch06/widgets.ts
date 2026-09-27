@@ -1,5 +1,5 @@
 import { h } from '../../core/dom';
-import { fmt, tc } from '../../core/i18n';
+import { fmt, tc, percent } from '../../core/i18n';
 import { type C, c as cx, mul } from '../../math/complex';
 import { tex } from '../../core/rich-text';
 import { overshootFormula, secondOrderSolution } from '../../math/second-order';
@@ -268,7 +268,7 @@ const personality: WidgetFactory = (host, ctx) => {
       panelPlots[i].box.classList.toggle('active', regime(zeta) === ['under', 'critical', 'over'][i]);
     });
     const ts = settling(resp.xs, resp.ys, 1, 1);
-    rOS.set(`${fmt(zeta < 1 ? overshootFormula(zeta) : 0, 1)} %`);
+    rOS.set(percent(zeta < 1 ? overshootFormula(zeta) : 0, 1));
     rTs.set(Number.isNaN(ts) ? t('never') : `${fmt(ts, 2)} s`);
     const rootsText = roots[0].im !== 0 ? `${fmt(roots[0].re, 2)} ± ${fmt(Math.abs(roots[0].im), 2)}i` : `${fmtC(roots[0])}, ${fmtC(roots[1])}`;
     rRoots.set(rootsText);

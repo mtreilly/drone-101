@@ -1,6 +1,6 @@
 import './ch11.css';
 import { h } from '../../core/dom';
-import { fmt, getLang, tc } from '../../core/i18n';
+import { fmt, getLang, tc, percent } from '../../core/i18n';
 import { progress } from '../../core/progress';
 import { DroneSim, type PID } from '../../sim/drone-model';
 import type { WidgetFactory } from '../../story/types';
@@ -214,7 +214,7 @@ const mission: WidgetFactory = (host, ctx) => {
   const bestEl = h('p', { class: 'w-help' });
   const values = (r: MissionResult): Record<string, string> => ({
     rise: !Number.isFinite(r.rise) ? '—' : neverSettled(r) ? t('crit.neverRise', { s: fmt(MISSION.gust.start, 0) }) : `${fmt(r.rise, 2)} s`,
-    overshoot: `${fmt(r.overshoot, 1)} %`,
+    overshoot: percent(r.overshoot, 1),
     gust: `${fmt(r.gust * 100, 1)} cm`,
     recover: !Number.isFinite(r.recover) ? '—' : neverBack(r) ? t('crit.neverBack', { s: fmt(MISSION.duration, 0) }) : `${fmt(r.recover, 2)} s`,
     ground: r.ground ? t('touched') : t('clear'),

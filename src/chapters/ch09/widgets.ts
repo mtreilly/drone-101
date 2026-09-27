@@ -1,7 +1,7 @@
 import './ch09.css';
 import { h } from '../../core/dom';
 import { setRich } from '../../core/rich-text';
-import { fmt, tc } from '../../core/i18n';
+import { fmt, tc, percent } from '../../core/i18n';
 import { DRONE } from '../../sim/drone-model';
 import type { WidgetCtx, WidgetFactory } from '../../story/types';
 import { readout, segmented, slider, toggle } from '../../ui/controls';
@@ -99,7 +99,7 @@ const damper: WidgetFactory = (host, ctx) => {
     rDamp.set(`${fmt(DRONE.c + kd, 1)} N·s/m`);
     const z = zetaPD(KP, kd);
     rZeta.set(fmt(z, 2));
-    rOs.set(`${fmt(s.overshoot, 0)} %`, s.overshoot < 5 ? 'good' : '');
+    rOs.set(percent(s.overshoot), s.overshoot < 5 ? 'good' : '');
     const st = damperStatus(ki, kd, s.overshoot, less, KP);
     status.textContent = t(`status.${st}`, { os: fmt(s.overshoot, 0) });
     status.className = `w-status${st === 'unstable' ? ' bad' : st === 'calm' ? ' good' : ''}`;
@@ -204,7 +204,7 @@ const poles: WidgetFactory = (host, ctx) => {
     step.set('r', tr.t.slice(0, shown), tr.r.slice(0, shown));
     const stable = ki < lim;
     const m = stepOf(tr);
-    rOs.set(stable ? `${fmt(m.overshoot, 1)} %` : '—');
+    rOs.set(stable ? percent(m.overshoot, 1) : '—');
     rTs.set(stable && Number.isFinite(m.settling) ? `${fmt(m.settling, 2)} s` : t('never'));
     const worst = slowestPole(ps);
     let text = stable ? t('status.stable', { lim: fmt(lim, 0), s: fmt(worst.re, 2) }) : t('status.unstable', { lim: fmt(lim, 0) });
@@ -285,7 +285,7 @@ const playground: WidgetFactory = (host, ctx) => {
     const tr = stayDown(runUnderCeiling(takeoff(pid(kp, ki, kd, { antiWindup: aw })), 15, ceiling));
     const s = scoreTrace(tr);
     const st = stars(s);
-    rOs.set(`${fmt(s.overshoot, 1)} %`, st.overshoot ? 'good' : 'bad');
+    rOs.set(percent(s.overshoot, 1), st.overshoot ? 'good' : 'bad');
     // a P-only drone does settle, just 24.5 cm low: say why it never gets inside the 2 % band
     rTs.set(Number.isFinite(s.settling) ? `${fmt(s.settling, 2)} s` : t(s.sse > 0.02 * 2 && tr.crashAt === null ? 'neverDroop' : 'never'), st.settling ? 'good' : 'bad');
     rSse.set(`${fmt(s.sse * 100, 1)} cm`, st.sse ? 'good' : 'bad');

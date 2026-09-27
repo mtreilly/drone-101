@@ -529,7 +529,7 @@
             "**I** empilha o erro passado; o único ponto de repouso é erro zero, então ele elimina o desvio residual, que morre com uma constante de tempo de cerca de $K_p/K_i$. Ele acrescenta atraso, então demais faz as coisas balançarem.",
             "**D** empurra contra a velocidade: um amortecedor virtual que se soma ao arrasto $c$, então $\\zeta = (c+K_d)/(2\\sqrt{mK_p})$. Mais D nem sempre é melhor: superamortecido, o drone se arrasta e a pilha transborda.",
             "A malha fechada é $m s^3 + (c + K_d)s^2 + K_p s + K_i$; ela é estável exatamente quando $(c+K_d)K_p > mK_i$.",
-            "Tire D da medição (sem chute) e filtre-o (menos ruído)."
+            "Tire o D da medição (sem chute) e filtre-o (menos ruído)."
           ]
         },
         {
@@ -556,16 +556,16 @@
             },
             {
               "id": "ch9-q3",
-              "q": "Com $K_p = 10$ N/m e $K_d = 1$ N·s/m (drone: $m = 0.5$ kg, $c = 1$ N·s/m), qual é o maior $K_i$ antes da instabilidade?",
+              "q": "Com $K_p = 10$ N/m e $K_d = 1$ N·s/m (drone: $m = 0{,}5$ kg, $c = 1$ N·s/m), qual é o maior $K_i$ antes da instabilidade?",
               "options": [
                 {
                   "text": "20 N/(m·s)",
-                  "why": "Confira a fórmula: $(c + K_d)K_p/m = (1+1)\\cdot 10 / 0.5$. Talvez você tenha esquecido de dividir por $m$."
+                  "why": "Confira a fórmula: $(c + K_d)K_p/m = (1+1)\\cdot 10 / 0{,}5$. Talvez você tenha esquecido de dividir por $m$."
                 },
                 {
                   "text": "40 N/(m·s)",
                   "correct": true,
-                  "why": "$(1 + 1)\\cdot 10 / 0.5 = 40$. Acima disso, dois polos cruzam para o semiplano direito."
+                  "why": "$(1 + 1)\\cdot 10 / 0{,}5 = 40$. Acima disso, dois polos cruzam para o semiplano direito."
                 },
                 {
                   "text": "80 N/(m·s)",

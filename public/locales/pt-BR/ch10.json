@@ -175,7 +175,7 @@
         },
         {
           "t": "p",
-          "text": "O suavizador encolhe as oscilações rápidas, enquanto o cano continua acrescentando atraso de fase. Essas curvas de ganho e fase em função da velocidade de oscilação formam um **diagrama de Bode**. Juntas, elas são a **resposta em frequência** do chuveiro: como ele trata cada velocidade de oscilação. Aqui a entrada é a **temperatura da água misturada**, então as oscilações lentas têm ganho 1. Se usássemos a fração da manopla como entrada, o ganho seria 45 vezes maior. Para obter a resposta em frequência a partir da fórmula, faça $s = i\\omega$: o mesmo truque que encontrou a borda do Capítulo 9. (Funciona porque o chuveiro sozinho é estável, então suas oscilações se assentam num ritmo constante que podemos medir.)"
+          "text": "O suavizador encolhe as oscilações rápidas, enquanto o cano continua acrescentando atraso de fase. Essas curvas de ganho e fase em função da velocidade de oscilação formam um **diagrama de Bode**. Juntas, elas são a **resposta em frequência** do chuveiro: como ele trata cada velocidade de oscilação. Aqui a entrada é a **temperatura da água misturada**, então as oscilações lentas têm ganho 1. Se usássemos a fração da manopla como entrada, o ganho seria 45 vezes maior. Para obter a resposta em frequência a partir da fórmula, faça $s = i\\omega$: o mesmo truque que encontrou a borda do Capítulo 9. (Funciona porque o chuveiro sozinho é estável, então suas oscilações entram num ritmo constante que podemos medir.)"
         },
         {
           "t": "callout",
@@ -283,7 +283,7 @@
             },
             {
               "term": "Margem de fase",
-              "def": "Na velocidade em que o ganho de malha é exatamente 1, quanto atraso de fase *extra* seria preciso para chegar a −180°. Mais é mais seguro; 45°–60° é um alvo comum (o desvio abaixo explica por quê)."
+              "def": "Na velocidade em que o ganho de malha é exatamente 1, quanto atraso de fase *extra* seria preciso para chegar a −180°. Mais é mais seguro; 45°–60° é um alvo comum (o parêntese abaixo explica por quê)."
             }
           ]
         },
@@ -406,7 +406,7 @@
           "t": "say",
           "who": "june",
           "mood": "worried",
-          "text": "…ele caça, quente–frio–quente, a cada 6 segundos, como uma mão de posição no Capítulo 0. Os ganhos grandes empurraram a velocidade de ganho 1 para além da velocidade de −180°. Margem de fase nenhuma."
+          "text": "…ele fica oscilando sem parar, quente–frio–quente, a cada 6 segundos, como uma mão de posição no Capítulo 0. Os ganhos grandes empurraram a velocidade de ganho 1 para além da velocidade de −180°. Margem de fase nenhuma."
         },
         {
           "t": "callout",
@@ -635,7 +635,7 @@
       "gain": "ganho de malha",
       "phase": "fase da malha (°)",
       "loop": "malha mão + chuveiro",
-      "gainAria": "Diagrama de Bode do ganho da malha mão-mais-chuveiro com a linha de ganho igual a um.",
+      "gainAria": "Diagrama de Bode do ganho de malha mão-mais-chuveiro com a linha de ganho igual a um.",
       "phaseAria": "Diagrama de Bode da fase da malha com a linha de −180 graus.",
       "timeAria": "Temperatura ao longo de 60 segundos com esta mão.",
       "temp": "temperatura na cabeça",
@@ -654,7 +654,7 @@
       },
       "describe": "Margem de ganho {gm}, margem de fase {pm} graus.",
       "w180": "velocidade de −180°",
-      "period": "período da caça"
+      "period": "período da oscilação"
     },
     "replay": {
       "title": "Suas oscilações do Capítulo 0",
@@ -743,8 +743,8 @@
     "delaymargin": {
       "kp": "ganho P Kp",
       "ki": "ganho I Ki",
-      "margin": "a margem de fase é {pm}° em {wc} rad/s, então o cano poderia ficar {dm} s mais longo antes que este robô comece a caçar.",
-      "none": "não há margem de fase nenhuma: este robô já está caçando."
+      "margin": "a margem de fase é {pm}° em {wc} rad/s, então o cano poderia ficar {dm} s mais longo antes que este robô comece a oscilar sem parar.",
+      "none": "não há margem de fase nenhuma: este robô já está oscilando sem parar."
     }
   }
 }

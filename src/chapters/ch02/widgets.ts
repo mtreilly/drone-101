@@ -1,5 +1,5 @@
 import { h, prefersReducedMotion } from '../../core/dom';
-import { fmt } from '../../core/i18n';
+import { fmt, percent } from '../../core/i18n';
 import { HOVER_THRUST } from '../../sim/drone-model';
 import type { WidgetFactory } from '../../story/types';
 import { readout, slider, transport } from '../../ui/controls';
@@ -44,7 +44,7 @@ const pcontrol: WidgetFactory = (host, ctx) => {
     } else {
       rFinal.set(`${fmt(run.final, 2)} m`);
       rDroop.set(`${fmt(run.droop * 100, 0)} cm`, run.droop < 0.2 ? 'good' : 'bad');
-      rOver.set(`${fmt(run.overshoot, 0)} %`, run.overshoot < 30 ? 'good' : 'bad');
+      rOver.set(percent(run.overshoot), run.overshoot < 30 ? 'good' : 'bad');
       status.textContent = t('status.flies', { h: fmt(run.final, 2), d: fmt(run.droop * 100, 0), o: fmt(run.overshoot, 0), p: fmt(run.peak, 2) });
     }
     rig.hPlot.describe(status.textContent ?? '');
@@ -187,11 +187,11 @@ const challenge: WidgetFactory = (host, ctx) => {
     sawDroop ||= dOk;
     sawOver ||= oOk;
     droopPlot.setMarkers([{ x: kp, y: d, color: 'err', label: `${fmt(d * 100, 0)} cm` }]);
-    overPlot.setMarkers(Number.isFinite(o) ? [{ x: kp, y: o, color: 'out', label: `${fmt(o, 0)} %` }] : []);
+    overPlot.setMarkers(Number.isFinite(o) ? [{ x: kp, y: o, color: 'out', label: percent(o) }] : []);
     droopPlot.setCursor(kp);
     overPlot.setCursor(kp);
     rD.set(`${fmt(d * 100, 0)} cm`, dOk ? 'good' : 'bad');
-    rO.set(Number.isFinite(o) ? `${fmt(o, 0)} %` : t('noflight'), oOk ? 'good' : 'bad');
+    rO.set(Number.isFinite(o) ? percent(o) : t('noflight'), oOk ? 'good' : 'bad');
     if (sawDroop && sawOver) {
       status.textContent = t('status.impossible', { a: fmt(b.droopNeedsAbove, 1), b: fmt(b.overshootNeedsBelow, 1) });
       status.className = 'w-status bad';

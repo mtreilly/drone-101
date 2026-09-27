@@ -124,7 +124,7 @@
         },
         {
           "t": "p",
-          "text": "Quita el amortiguador y volvemos al capítulo 5: el resorte oscila como $\\cos(\\omega t)$ con $\\omega = \\sqrt{k/m}$. A esa rapidez la llamamos **frecuencia natural** $\\omega_n$: lo rápido que el sistema *quiere* oscilar cuando nada lo frena."
+          "text": "Quita el amortiguador y volvemos al capítulo 5: el resorte oscila como $\\cos(\\omega t)$ con $\\omega = \\sqrt{k/m}$. A esa velocidad la llamamos **frecuencia natural** $\\omega_n$: lo rápido que el sistema *quiere* oscilar cuando nada lo frena."
         },
         {
           "t": "math",
@@ -382,7 +382,7 @@
           "blocks": [
             {
               "t": "p",
-              "text": "Un modo $e^{-at}$ se ha encogido hasta el 2 % cuando $e^{-at} = 0.02$, lo que tarda $t = \\ln 50 / a \\approx 3.9/a$. Con una constante de tiempo $\\tau = 1/a$, son unas cuatro constantes de tiempo: otra vez la regla del capítulo 3. Tras 4τ solo queda $e^{-4} \\approx 1.8\\%$."
+              "text": "Un modo $e^{-at}$ se ha encogido hasta el 2 % cuando $e^{-at} = 0{,}02$, lo que tarda $t = \\ln 50 / a \\approx 3{,}9/a$. Con una constante de tiempo $\\tau = 1/a$, son unas cuatro constantes de tiempo: otra vez la regla del capítulo 3. Tras 4τ solo queda $e^{-4} \\approx 1{,}8\\%$."
             },
             {
               "t": "play",
@@ -411,7 +411,7 @@
         },
         {
           "t": "p",
-          "text": "$\\eff{K_p}$ está *abajo* en la fórmula del amortiguamiento. Subir la ganancia hace el dron más rápido ($\\omega_n$ más grande), pero **menos amortiguado**. Con $\\eff{K_p} = 20$ N/m: $\\zeta = 1/(2\\sqrt{0.5 \\times 20}) \\approx 0.16$. Muy saltarín, tal como vimos. En el mapa, sus dos valores de $s$ están muy arriba y solo un poco a la izquierda del eje vertical. Ahí vive nuestro dron."
+          "text": "$\\eff{K_p}$ está *abajo* en la fórmula del amortiguamiento. Subir la ganancia hace el dron más rápido ($\\omega_n$ más grande), pero **menos amortiguado**. Con $\\eff{K_p} = 20$ N/m: $\\zeta = 1/(2\\sqrt{0.5 \\times 20}) \\approx 0{,}16$. Muy saltarín, tal como vimos. En el mapa, sus dos valores de $s$ están muy arriba y solo un poco a la izquierda del eje vertical. Ahí vive nuestro dron."
         },
         {
           "t": "say",
@@ -442,7 +442,7 @@
         },
         {
           "t": "p",
-          "text": "Toda flecha $z = a + b\\,i$ se puede describir al revés: por su **longitud** $|z|$ y su **ángulo**. Pitágoras nos da la longitud. Para una flecha que apunta a la derecha ($a > 0$), el ángulo es aquel cuya subida entre avance es $b/a$. Se llama **arcotangente**, $\\arctan$: el botón de deshacer de la tangente."
+          "text": "Toda flecha $z = a + b\\,i$ se puede describir al revés: por su **longitud** $|z|$ y su **ángulo**. Pitágoras nos da la longitud. Para una flecha que apunta a la derecha ($a > 0$), el ángulo es aquel cuya tangente (lo que sube dividido entre lo que avanza) es $b/a$. Se llama **arcotangente**, $\\arctan$: el botón de deshacer de la tangente."
         },
         {
           "t": "math",
@@ -519,7 +519,7 @@
           "items": [
             "Un dron con control P obedece **exactamente** la misma ecuación que una masa colgada de un resorte: el controlador es un resorte virtual.",
             "Dos números resumen su personalidad: $\\omega_n$ (lo rápido) y $\\zeta$ (lo saltarín).",
-            "$\\omega_n = \\sqrt{k/m}$ es la rapidez de oscilación sin amortiguador. $\\zeta = c/c_{\\text{crit}}$ compara el amortiguamiento con el amortiguamiento crítico $2\\sqrt{mk}$, el justo para eliminar el sobreimpulso.",
+            "$\\omega_n = \\sqrt{k/m}$ es la velocidad de oscilación sin amortiguador. $\\zeta = c/c_{\\text{crit}}$ compara el amortiguamiento con el amortiguamiento crítico $2\\sqrt{mk}$, el justo para eliminar el sobreimpulso.",
             "El movimiento es una mezcla de dos términos $e^{st}$. Los dos valores de $s$ están sobre un círculo de radio $\\omega_n$ cuando está subamortiguado, y se separan a lo largo del eje real cuando está sobreamortiguado.",
             "Una flecha tiene **longitud** y **ángulo** ($\\arctan$). Multiplicar multiplica longitudes y suma ángulos; dividir divide y resta. $\\zeta = \\cos\\theta$.",
             "El amortiguamiento también frena un poco la oscilación: $\\omega_d = \\omega_n\\sqrt{1-\\zeta^2}$.",
@@ -554,16 +554,16 @@
             },
             {
               "id": "ch6-q2",
-              "q": "Nuestro dron ($m = 0.5$ kg, $c = 1$ N·s/m) con $K_p = 20$ N/m está…",
+              "q": "Nuestro dron ($m = 0{,}5$ kg, $c = 1$ N·s/m) con $K_p = 20$ N/m está…",
               "options": [
                 {
-                  "text": "Subamortiguado, $\\zeta \\approx 0.16$",
+                  "text": "Subamortiguado, $\\zeta \\approx 0{,}16$",
                   "correct": true,
-                  "why": "$\\zeta = 1/(2\\sqrt{0.5\\cdot 20}) = 1/(2\\sqrt{10}) \\approx 0.158$. Muy por debajo de 1, así que saltarín."
+                  "why": "$\\zeta = 1/(2\\sqrt{0.5\\cdot 20}) = 1/(2\\sqrt{10}) \\approx 0{,}158$. Muy por debajo de 1, así que saltarín."
                 },
                 {
                   "text": "Con amortiguamiento crítico, $\\zeta = 1$",
-                  "why": "Para eso haría falta $c = 2\\sqrt{m K_p} \\approx 6.3$ N·s/m, más de seis veces el rozamiento que tenemos."
+                  "why": "Para eso haría falta $c = 2\\sqrt{m K_p} \\approx 6{,}3$ N·s/m, más de seis veces el rozamiento que tenemos."
                 },
                 {
                   "text": "Sobreamortiguado, $\\zeta > 1$",
@@ -586,7 +586,7 @@
                 },
                 {
                   "text": "$c = 1$ N·s/m",
-                  "why": "Ese es el rozamiento del aire de nuestro dron, que aquí da $\\zeta = 0.25$: subamortiguado."
+                  "why": "Ese es el rozamiento del aire de nuestro dron, que aquí da $\\zeta = 0{,}25$: subamortiguado."
                 }
               ]
             },
@@ -595,13 +595,13 @@
               "q": "Usando solo control P, ¿qué $K_p$ haría que el dron tuviera amortiguamiento crítico ($\\zeta = 1$)?",
               "options": [
                 {
-                  "text": "$K_p = 0.5$ N/m",
+                  "text": "$K_p = 0{,}5$ N/m",
                   "correct": true,
-                  "why": "Iguala $c/(2\\sqrt{m K_p}) = 1$ y sale $K_p = c^2/(4m) = 0.5$ N/m. Pero con un resorte tan débil el dron tendría que estar 9,8 m *por debajo* del objetivo solo para sostenerse, así que nunca despega. El control P solo no nos da las dos cosas."
+                  "why": "Iguala $c/(2\\sqrt{m K_p}) = 1$ y sale $K_p = c^2/(4m) = 0{,}5$ N/m. Pero con un resorte tan débil el dron tendría que estar 9,8 m *por debajo* del objetivo solo para sostenerse, así que nunca despega. El control P solo no nos da las dos cosas."
                 },
                 {
                   "text": "$K_p = 20$ N/m",
-                  "why": "Ese es nuestro valor saltarín de siempre, con $\\zeta \\approx 0.16$. Más ganancia significa *menos* amortiguamiento."
+                  "why": "Ese es nuestro valor saltarín de siempre, con $\\zeta \\approx 0{,}16$. Más ganancia significa *menos* amortiguamiento."
                 },
                 {
                   "text": "$K_p = 200$ N/m",
@@ -611,10 +611,10 @@
             },
             {
               "id": "ch6-q4",
-              "q": "Un sistema sobreamortiguado tiene valores de $s$ $-0.2$ y $-10$. ¿Cuál decide cuánto esperas?",
+              "q": "Un sistema sobreamortiguado tiene valores de $s$ $-0{,}2$ y $-10$. ¿Cuál decide cuánto esperas?",
               "options": [
                 {
-                  "text": "$-0.2$",
+                  "text": "$-0{,}2$",
                   "correct": true,
                   "why": "$e^{-0.2t}$ tarda unos 20 s en bajar al 2 %, mientras que $e^{-10t}$ desaparece en 0,4 s. El más cercano al eje vertical es el que manda."
                 },
@@ -686,7 +686,7 @@
       "re": "σ",
       "im": "ω",
       "offMap": "{v} está fuera del mapa ←",
-      "wd": "rapidez de oscilación ωd",
+      "wd": "velocidad de oscilación ωd",
       "noWiggle": "sin oscilación"
     },
     "race": {

@@ -46,8 +46,8 @@
         {
           "t": "list",
           "items": [
-            "**Ritardo dei motori (τ ≈ 0,05 s):** un'elica non può cambiare velocità all'istante. La sua spinta segue il comando come il caffè che si raffredda del Capitolo 3, un ritardo del primo ordine: al 63 % dopo 0,05 s. Una spinta in ritardo è lo sfasamento del Capitolo 10 travestito.",
-            "**Un sensore rumoroso ($\\sigma_n$ ≈ 2 cm, n come rumore, in inglese *noise*; non è la σ di un polo):** ogni lettura dell'altezza sbaglia di circa 2 cm, a caso, mille volte al secondo. Il Capitolo 9 ci aveva avvisati: la D trasforma quel tremolio in grossi picchi di spinta.",
+            "**Ritardo dei motori (τ ≈ 0,05 s):** un'elica non può cambiare velocità all'istante. La sua spinta segue il comando come il caffè che si raffredda del Capitolo 3, un ritardo del primo ordine: al 63% dopo 0,05 s. Una spinta in ritardo è lo sfasamento del Capitolo 10 travestito.",
+            "**Un sensore rumoroso ($\\sigma_n$ ≈ 2 cm, la n sta per l'inglese *noise*, rumore; non è la σ di un polo):** ogni lettura dell'altezza sbaglia di circa 2 cm, a caso, mille volte al secondo. Il Capitolo 9 ci aveva avvisati: la D trasforma quel tremolio in grossi picchi di spinta.",
             "**Motori limitati (da 0 a 20 N):** il limite del Capitolo 8 resta attivo. Con il pacco il drone pesa 6,9 N, quindi 20 N sono solo circa tre volte il suo peso, e i motori non possono mai tirare verso il basso. Mentre sono al limite, la pila si ferma (l'anti-windup del Capitolo 9).",
             "**La D è filtrata:** la soluzione del Capitolo 9. La D prende la pendenza di una lettura del sensore smussata, un ritardo del primo ordine con la costante di tempo $\\tau_f$ che scegli tu. Un $\\tau_f$ più lungo vuol dire più calma, ma più tardi."
           ]
@@ -100,7 +100,7 @@
             },
             {
               "t": "p",
-              "text": "La sua coppia di poli oscillante è davvero così rimbalzante (ζ ≈ 0,33: da sola andrebbe oltre di circa il 33 %). Ma quasi tutta la salita viaggia su due poli lenti e calmi vicino a −1,1 e −2,7, e alla coppia oscillante tocca solo una piccola parte. Anche con motori illimitati il decollo va oltre solo del 7 % circa. Le coppie del Capitolo 10 valgono per il suo anello semplice. Questo ha più pezzi, quindi leggi il suo margine come una distanza di sicurezza, non come una promessa sulla sovraelongazione."
+              "text": "La sua coppia di poli oscillante è davvero così rimbalzante (ζ ≈ 0,33: da sola andrebbe oltre di circa il 33%). Ma quasi tutta la salita viaggia su due poli lenti e calmi vicino a −1,1 e −2,7, e alla coppia oscillante tocca solo una piccola parte. Anche con motori illimitati il decollo va oltre solo del 7% circa. Le coppie del Capitolo 10 valgono per il suo anello semplice. Questo ha più pezzi, quindi leggi il suo margine come una distanza di sicurezza, non come una promessa sulla sovraelongazione."
             }
           ]
         },
@@ -152,7 +152,7 @@
         },
         {
           "t": "p",
-          "text": "I limiti sono quello che noterebbe un cliente della consegna: assestato entro 3 s, mai più del 10 % troppo in alto, spostato dalla raffica non più di una spanna (20 cm), di nuovo a posto 2 s dopo lo sgancio, mai a strisciare per terra, e motori che non ronzano (meno di 0,5 N di tremolio)."
+          "text": "I limiti sono quello che noterebbe un cliente della consegna: assestato entro 3 s, mai più del 10% troppo in alto, spostato dalla raffica non più di una spanna (20 cm), di nuovo a posto 2 s dopo lo sgancio, mai a strisciare per terra, e motori che non ronzano (meno di 0,5 N di vibrazione)."
         },
         {
           "t": "p",
@@ -206,7 +206,7 @@
             },
             {
               "t": "p",
-              "text": "Theo prova con $K_p$ = 20, $K_i$ = 15 e $\\tau_f$ = 0,04 s. La peluria *peggiora*: 0,22 N di tremolio con $K_d$ = 5, 0,41 N con $K_d$ = 10. Senza rumore, lo stesso $K_d$ = 10 è quasi silenzioso."
+              "text": "Theo prova con $K_p$ = 20, $K_i$ = 15 e $\\tau_f$ = 0,04 s. La peluria *peggiora*: 0,22 N di vibrazione con $K_d$ = 5, 0,41 N con $K_d$ = 10. Senza rumore, lo stesso $K_d$ = 10 è quasi silenzioso."
             },
             {
               "t": "say",
@@ -365,7 +365,7 @@
                 },
                 {
                   "text": "Più $K_d$, per più smorzamento",
-                  "why": "Lo smorzamento calma il *moto*, non le frottole del sensore. Con $\\tau_f$ = 0,04 s il tremolio cresce da 0,22 N con $K_d$ = 5 a 0,41 N con $K_d$ = 10."
+                  "why": "Lo smorzamento calma il *moto*, non le frottole del sensore. Con $\\tau_f$ = 0,04 s la vibrazione cresce da 0,22 N con $K_d$ = 5 a 0,41 N con $K_d$ = 10."
                 },
                 {
                   "text": "Spegnere l'integrale",
@@ -451,7 +451,7 @@
       "checklist": "Checklist della missione",
       "crit": {
         "rise": "Raggiungere 2 m (± {bandCm} cm) entro {rise} s e restarci fino alla raffica",
-        "overshoot": "Sovraelongazione sotto il {overshoot} % al decollo",
+        "overshoot": "Sovraelongazione sotto il {overshoot}% al decollo",
         "gust": "Restare entro {gustCm} cm dalla meta dalla raffica fino allo sgancio",
         "recover": "Di nuovo entro ± {bandCm} cm meno di {recover} s dopo lo sgancio",
         "ground": "Non toccare mai terra dopo il decollo",
@@ -464,12 +464,12 @@
       "ready": "Pronto. Regola i guadagni, poi premi Avvia (o Vola all'istante).",
       "flying": "In volo…",
       "hitPage": "Bonk! È volato fuori dal disegno e ha sbattuto contro ciò che c'è sopra. I motori si sono fermati ed è caduto. In una stanza vera, la sovraelongazione finisce contro il soffitto.",
-      "hitNoise": "A sollevarlo è stato il rumore del sensore: il tremolio tagliato spinge più in su che in giù.",
+      "hitNoise": "A sollevarlo è stato il rumore del sensore: la vibrazione tagliata spinge più in su che in giù.",
       "gold": "ORO! Tutte e sei le stelle. Sei un ingegnere del controllo.",
       "stars": "Stelle: {n} su 6. Continua a tarare!",
       "hint": {
         "ground": "È rimasto a terra o ci è ricaduto. Comincia con più Kp: è quello che lo solleva.",
-        "noise": "I motori tremolano: la D trasforma il tremolio del sensore in picchi di spinta. Allunga τf o abbassa Kd.",
+        "noise": "I motori vibrano: la D trasforma il tremolio del sensore in picchi di spinta. Allunga τf o abbassa Kd.",
         "droop": "Resta sotto i 2 m: è l'abbassamento. Un po' di Ki lo sistema.",
         "overshoot": "Va oltre al decollo. Più Kd, o meno Ki.",
         "rise": "Sale troppo piano: a 3 s non si è ancora assestato. Prova un po' più di Ki.",

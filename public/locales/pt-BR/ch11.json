@@ -47,7 +47,7 @@
           "t": "list",
           "items": [
             "**Atraso do motor (τ ≈ 0,05 s):** uma hélice não muda de velocidade instantaneamente. O empuxo segue o comando como o café esfriando do Capítulo 3, um atraso de primeira ordem: 63% do caminho depois de 0,05 s. Um empurrão atrasado é a defasagem do Capítulo 10 disfarçada.",
-            "**Um sensor ruidoso ($\\sigma_n$ ≈ 2 cm, n de ruído, do inglês *noise*; não é o σ de um polo):** cada leitura de altura erra por uns 2 cm, ao acaso, mil vezes por segundo. O Capítulo 9 avisou: o D transforma esse tremor em grandes picos de empuxo.",
+            "**Um sensor ruidoso ($\\sigma_n$ ≈ 2 cm, n do inglês *noise*, ruído; não é o σ de um polo):** cada leitura de altura erra por uns 2 cm, ao acaso, mil vezes por segundo. O Capítulo 9 avisou: o D transforma esse tremor em grandes picos de empuxo.",
             "**Motores limitados (de 0 a 20 N):** o limite do Capítulo 8 continua valendo. Com o pacote, o drone pesa 6,9 N, então 20 N é só cerca de três vezes o seu peso, e os motores nunca conseguem puxar para baixo. Enquanto eles estão no limite, a pilha fica pausada (o anti-windup do Capítulo 9).",
             "**O D é filtrado:** a solução do Capítulo 9. O D pega a inclinação de uma leitura suavizada do sensor, um atraso de primeira ordem com a constante de tempo $\\tau_f$ que você escolher. $\\tau_f$ maior significa mais calma, mas mais atraso."
           ]
@@ -75,7 +75,7 @@
               "t": "say",
               "who": "june",
               "mood": "excited",
-              "text": "Quase! Pegue um ajuste que ganha as seis estrelas (sem spoilers). O ganho da malha dele vale exatamente 1 em cerca de 10 rad/s, onde o Capítulo 10 lê a margem de fase. Ali, um tempo morto de 0,05 s custaria 28°. O atraso do motor custa 26°."
+              "text": "Quase! Pegue um ajuste que ganha as seis estrelas (sem spoilers). O ganho de malha dele vale exatamente 1 em cerca de 10 rad/s, onde o Capítulo 10 lê a margem de fase. Ali, um tempo morto de 0,05 s custaria 28°. O atraso do motor custa 26°."
             },
             {
               "t": "say",
@@ -86,7 +86,7 @@
             {
               "t": "play",
               "id": "lag",
-              "text": "O ganho da malha desse ajuste de seis estrelas vale 1 em cerca de {calc|wc} rad/s. Um atraso do motor de $\\tau_m$ = {scrub|tm} s segura essa oscilação em {calc|lag}°, então a margem de fase cai de 59° para {calc|pm}°."
+              "text": "O ganho de malha desse ajuste de seis estrelas vale 1 em cerca de {calc|wc} rad/s. Um atraso do motor de $\\tau_m$ = {scrub|tm} s segura essa oscilação em {calc|lag}°, então a margem de fase cai de 59° para {calc|pm}°."
             },
             {
               "t": "p",
@@ -379,7 +379,7 @@
             },
             {
               "id": "ch11-q5",
-              "q": "Os motores ficam mais lentos: o atraso deles vai de 0,05 s para 0,1 s. O que acontece com o ajuste de seis estrelas do desvio?",
+              "q": "Os motores ficam mais lentos: o atraso deles vai de 0,05 s para 0,1 s. O que acontece com o ajuste de seis estrelas do parêntese?",
               "options": [
                 {
                   "text": "A margem de fase encolhe, de cerca de 33° para cerca de 21°, então ele oscila mais",

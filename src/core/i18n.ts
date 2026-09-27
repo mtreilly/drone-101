@@ -147,6 +147,12 @@ export function unitLabel(unit: string): string {
   return typeof v === 'string' ? v : unit;
 }
 
+/** A percentage as the language writes it ("25%", "25 %"), from `common:units.percent`. */
+export function percent(n: number, digits = 0): string {
+  const v = find('common', 'units.percent');
+  return interpolate(typeof v === 'string' ? v : '{v}%', { v: fmt(n, digits) });
+}
+
 /** Locale-aware number formatting and a true minus sign. */
 export function fmt(n: number, digits = 2): string {
   if (!Number.isFinite(n)) return n > 0 ? '∞' : n < 0 ? '−∞' : '—';

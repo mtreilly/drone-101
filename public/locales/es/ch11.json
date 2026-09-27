@@ -47,7 +47,7 @@
           "t": "list",
           "items": [
             "**Retraso de los motores (τ ≈ 0,05 s):** una hélice no puede cambiar de velocidad al instante. Su empuje sigue la orden como el café que se enfría del capítulo 3, un retraso de primer orden: el 63 % del camino al cabo de 0,05 s. Un empujón que llega tarde es el desfase del capítulo 10 disfrazado.",
-            "**Un sensor con ruido ($\\sigma_n$ ≈ 2 cm, n de ruido en inglés, *noise*; no es la σ de un polo):** cada lectura de altura se equivoca unos 2 cm, al azar, mil veces por segundo. El capítulo 9 ya nos avisó: D convierte ese temblor en grandes picos de empuje.",
+            "**Un sensor con ruido ($\\sigma_n$ ≈ 2 cm, n de *noise*, que en inglés significa ruido; no es la σ de un polo):** cada lectura de altura se equivoca unos 2 cm, al azar, mil veces por segundo. El capítulo 9 ya nos avisó: D convierte ese temblor en grandes picos de empuje.",
             "**Motores limitados (de 0 a 20 N):** el límite del capítulo 8 sigue puesto. Con el paquete, el dron pesa 6,9 N, así que 20 N es solo unas tres veces su peso, y los motores nunca pueden tirar hacia abajo. Mientras están clavados, el montón se pausa (el anti-windup del capítulo 9).",
             "**D está filtrada:** el arreglo del capítulo 9. D toma la pendiente de una lectura del sensor suavizada, un retraso de primer orden con la constante de tiempo $\\tau_f$ que tú elijas. Un $\\tau_f$ más largo significa más calma, pero más tarde."
           ]
@@ -212,7 +212,7 @@
               "t": "say",
               "who": "mika",
               "mood": "happy",
-              "text": "O sea, que D no calma el ruido, lo amplifica. El amortiguamiento calma el *movimiento*, y el ruido no es movimiento: es el sensor contando mentirijillas."
+              "text": "O sea, que D no calma el ruido, lo amplifica. El amortiguamiento calma el *movimiento*, y el ruido no es movimiento: es el sensor contando mentiritas."
             }
           ]
         },
@@ -365,7 +365,7 @@
                 },
                 {
                   "text": "Más $K_d$, para tener más amortiguamiento",
-                  "why": "El amortiguamiento calma el *movimiento*, no las mentirijillas del sensor. Con $\\tau_f$ = 0,04 s, la vibración crece de 0,22 N con $K_d$ = 5 a 0,41 N con $K_d$ = 10."
+                  "why": "El amortiguamiento calma el *movimiento*, no las mentiritas del sensor. Con $\\tau_f$ = 0,04 s, la vibración crece de 0,22 N con $K_d$ = 5 a 0,41 N con $K_d$ = 10."
                 },
                 {
                   "text": "Desactivar la integral",

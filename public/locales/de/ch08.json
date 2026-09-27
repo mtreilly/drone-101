@@ -17,7 +17,7 @@
           "t": "say",
           "who": "theo",
           "mood": "think",
-          "text": "Gut, denn letztes Kapitel haben wir die $-h(0)$-Teile weggelassen, und die Formel hat gelogen. Vom Schweben aus gemessen **sind** diese Startwerte wirklich null, also verschwinden sie diesmal ehrlich."
+          "text": "Gut, denn letztes Kapitel haben wir die $-h(0)$-Teile weggelassen, und die Formel hat gelogen. Vom Schweben aus gemessen **sind** diese Anfangswerte wirklich null, also verschwinden sie diesmal ehrlich."
         },
         {
           "t": "math",
@@ -29,7 +29,7 @@
           "blocks": [
             {
               "t": "p",
-              "text": "Der Schwebeschub hebt die Schwerkraft auf, also bleiben in der Gleichung der Drohne nur die *Änderungen* übrig. Jetzt nimm die Regel aus Kapitel 7: Jede Steigung wird zu × $s$, minus ihrem Startwert. Vom Schweben aus ist jeder Startwert null, also wird nichts abgezogen:"
+              "text": "Der Schwebeschub hebt die Schwerkraft auf, also bleiben in der Gleichung der Drohne nur die *Änderungen* übrig. Jetzt nimm die Regel aus Kapitel 7: Jede Steigung wird zu × $s$, minus ihrem Anfangswert. Vom Schweben aus ist jeder Anfangswert null, also wird nichts abgezogen:"
             },
             {
               "t": "math",
@@ -53,7 +53,7 @@
         },
         {
           "t": "p",
-          "text": "Im Diagramm stehen weiterhin Höhen über dem Boden. Addiere zur von der Formel vorhergesagten Änderung die Starthöhe von 1 m, dann erhältst du die blaue Höhe im Diagramm."
+          "text": "Im Diagramm stehen weiterhin Höhen über dem Boden. Addiere zur von der Formel vorhergesagten Änderung die Anfangshöhe von 1 m, dann erhältst du die blaue Höhe im Diagramm."
         },
         {
           "t": "say",
@@ -74,11 +74,11 @@
           "items": [
             {
               "term": "Übertragungsfunktion $G(s)$",
-              "def": "Transformierte Ausgangsänderung ÷ transformierte Eingangsänderung, ausgehend vom selben Ruhezustand. Für diese lineare Drohne ist sie ein Quotient aus Polynomen in $s$."
+              "def": "Transformierte Ausgangsänderung ÷ transformierte Eingangsänderung, bei Start aus der Ruhe. Für diese lineare Drohne ist sie ein Quotient aus Polynomen in $s$."
             },
             {
               "term": "Start aus der Ruhe (Anfangswerte null)",
-              "def": "Jede Änderung und ihre Geschwindigkeit ist bei $t = 0$ null, so wie wenn wir vom Schweben aus messen. Dann sind auch die Startwert-Terme aus Kapitel 7 wie $-h(0)$ null, und $G(s)$ erzählt die ganze Geschichte."
+              "def": "Jede Änderung und ihr Tempo ist bei $t = 0$ null, so wie wenn wir vom Schweben aus messen. Dann sind auch die Anfangswert-Terme aus Kapitel 7 wie $-h(0)$ null, und $G(s)$ erzählt die ganze Geschichte."
             }
           ]
         }
@@ -128,7 +128,7 @@
         },
         {
           "t": "p",
-          "text": "Jetzt drehen wir den Spieß um. Statt Verstärkungen zu wählen und die Pole zu suchen, **ziehen wir die Pole** und schauen, was für eine Drohne wir bekommen. Dafür braucht es einen zweiten Knopf, $\\eff{K_d}$: ein Gegendrücken gegen die Geschwindigkeit, das wir in Kapitel 9 richtig kennenlernen. Es kommt zur Luftreibung $c$ dazu, und die zwei Lösungen sind $p$ und sein Spiegelzwilling $\\bar p$ (der Strich dreht das Vorzeichen des Imaginärteils um, wie bei den Zwillingen aus Kapitel 5):"
+          "text": "Jetzt drehen wir den Spieß um. Statt Verstärkungen zu wählen und die Pole zu suchen, **ziehen wir die Pole** und schauen, was für eine Drohne wir bekommen. Dafür braucht es einen zweiten Knopf, $\\eff{K_d}$: ein Gegendrücken gegen das Tempo, das wir in Kapitel 9 richtig kennenlernen. Es kommt zum Luftwiderstand $c$ dazu, und die zwei Lösungen sind $p$ und sein Spiegelzwilling $\\bar p$ (der Strich dreht das Vorzeichen des Imaginärteils um, wie bei den Zwillingen aus Kapitel 5):"
         },
         {
           "t": "math",
@@ -318,7 +318,7 @@
         },
         {
           "t": "p",
-          "text": "Hier ist ein System mit festen Polen bei $-2 \\pm 3i$ und einer Nullstelle, die du verschieben kannst. (Das $\\eff{K_d}$ unseres Spielplatzes drückt gegen die *Geschwindigkeit* der Drohne, also hat sein Rezept keine Nullstelle. Drück stattdessen gegen die Geschwindigkeit des *Fehlers*, wie in Kapitel 9, und eine Nullstelle taucht bei $-\\eff{K_p}/\\eff{K_d}$ auf: Für diese Pole ist das $-6{,}5$, mit 15 % Überschwingen statt 12 %.)"
+          "text": "Hier ist ein System mit festen Polen bei $-2 \\pm 3i$ und einer Nullstelle, die du verschieben kannst. (Das $\\eff{K_d}$ unseres Spielplatzes drückt gegen das *Tempo* der Drohne, also hat sein Rezept keine Nullstelle. Drück stattdessen gegen das Tempo des *Fehlers*, wie in Kapitel 9, und eine Nullstelle taucht bei $-\\eff{K_p}/\\eff{K_d}$ auf: Für diese Pole ist das $-6{,}5$, mit 15 % Überschwingen statt 12 %.)"
         },
         {
           "t": "widget",
@@ -497,7 +497,7 @@
           "t": "say",
           "who": "theo",
           "mood": "think",
-          "text": "Pole bei 0 und −2? Gar kein Wackeln, und ein Pol bei 0, der nie zur Ruhe kommt. Das ist der offene Regelkreis aus Kapitel 1: der Drohne sagen, was sie tun soll, und nie hinschauen. Der Regler sieht den Wunsch gar nicht, June. Er sieht den **Fehler**."
+          "text": "Pole bei 0 und −2? Gar kein Wackeln, und ein Pol bei 0, der nie zur Ruhe kommt. Das ist die Steuerung aus Kapitel 1: der Drohne sagen, was sie tun soll, und nie hinschauen. Der Regler sieht den Wunsch gar nicht, June. Er sieht den **Fehler**."
         },
         {
           "t": "p",
@@ -523,7 +523,7 @@
         },
         {
           "t": "p",
-          "text": "Die Pole des Kreises liegen also dort, wo der Nenner $1 + C(s)\\,P(s)$ null ist. Das ist dasselbe wie $C\\,P = -1$. Lies $C\\,P$ als **eine Runde** durch den Kreis: was erst der Regler und dann die Drohne mit einem Signal machen. An einem Pol bringt eine Runde das Signal gleich groß und umgedreht zurück, und das Minuszeichen im Fehler dreht es wieder um. So hält es sich ganz ohne Wunsch von selbst am Laufen."
+          "text": "Die Pole des Kreises liegen also dort, wo der Nenner $1 + C(s)\\,P(s)$ null ist. Das ist dasselbe wie $C\\,P = -1$. Lies $C\\,P$ als **eine Runde** durch den Kreis (im Lehrbuch: die Übertragungsfunktion des *offenen Kreises*): was erst der Regler und dann die Drohne mit einem Signal machen. An einem Pol bringt eine Runde das Signal gleich groß und umgedreht zurück, und das Minuszeichen im Fehler dreht es wieder um. So hält es sich ganz ohne Wunsch von selbst am Laufen."
         },
         {
           "t": "math",
@@ -545,7 +545,7 @@
         },
         {
           "t": "p",
-          "text": "Und zwar deshalb: Die Luftreibung dreht eine Runde um bis zu 90° zurück, die Masse um bis zu weitere 90°, aber zusammen erreichen sie 180° erst bei unendlich schnellen Wacklern. P-Regelung allein kann diese Drohne also nie zum Kippen bringen. Ein größeres $\\eff{K_p}$ lässt die Runde nur **näher** an −1 vorbeilaufen, und näher heißt weniger Dämpfung: „mehr $K_p$, mehr Wackeln“ aus Kapitel 2, jetzt als Bild."
+          "text": "Und zwar deshalb: Der Luftwiderstand dreht eine Runde um bis zu 90° zurück, die Masse um bis zu weitere 90°, aber zusammen erreichen sie 180° erst bei unendlich schnellen Wacklern. P-Regelung allein kann diese Drohne also nie zum Kippen bringen. Ein größeres $\\eff{K_p}$ lässt die Runde nur **näher** an −1 vorbeilaufen, und näher heißt weniger Dämpfung: „mehr $K_p$, mehr Wackeln“ aus Kapitel 2, jetzt als Bild."
         },
         {
           "t": "play",
@@ -733,7 +733,7 @@
         "hitGround": "Sie ist auf den Boden gekracht. Verschieb einen Pol, um es nochmal zu versuchen.",
         "hitPageMarginal": "Jeder Schwung reichte bis 3 m, gerade genug, um die Seite zu berühren; die Motoren setzten aus, und sie fiel."
       },
-      "negKd": "Kd ist hier negativ: Die Luftreibung dämpft schon stärker, als diese Pole erlauben, also muss der Regler mit der Bewegung mitdrücken.",
+      "negKd": "Kd ist hier negativ: Der Luftwiderstand dämpft schon stärker, als diese Pole erlauben, also muss der Regler mit der Bewegung mitdrücken.",
       "pushWarn": "Der erste Schub liegt über 20 N, mehr als echte Motoren haben. Was das kostet, sehen wir gleich.",
       "challenge": "Mini-Challenge: Überschwingen unter 10 % und in 2 s eingeschwungen",
       "chalOk": "Challenge geschafft! Überschwingen {o} %, eingeschwungen in {s} s.",
@@ -815,7 +815,7 @@
     "gains": {
       "sig": "Abstand der Pole links von der Achse",
       "w": "Höhe der Pole, Omega",
-      "negKd": "Das ist ein *negatives* Kd: Die Luftreibung allein dämpft schon stärker, als diese Pole wollen, also muss der Regler *mit* der Bewegung drücken."
+      "negKd": "Das ist ein *negatives* Kd: Der Luftwiderstand allein dämpft schon stärker, als diese Pole wollen, also muss der Regler *mit* der Bewegung drücken."
     },
     "dominant": {
       "time": "Zeit in Sekunden",

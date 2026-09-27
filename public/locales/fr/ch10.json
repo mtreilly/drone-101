@@ -21,7 +21,7 @@
         },
         {
           "t": "p",
-          "text": "La douche a deux parties lentes : le **tuyau**, un retard pur de 2,5 s, et le **lisseur** : le pommeau et les parois du tuyau qui se réchauffent, avec la constante de temps du chapitre 3, $\\tau = 1$ s (au bout d'1 s, il a comblé 63 % de l'écart vers une nouvelle température)."
+          "text": "La douche a deux parties lentes : le **tuyau**, un retard pur de 2,5 s, et le **lisseur** (un « système du premier ordre », disent les manuels) : le pommeau et les parois du tuyau qui se réchauffent, avec la constante de temps du chapitre 3, $\\tau = 1$ s (au bout d'1 s, il a comblé 63 % de l'écart vers une nouvelle température)."
         },
         {
           "t": "p",
@@ -69,11 +69,11 @@
         },
         {
           "t": "p",
-          "text": "Une oscillation complète, c'est un tour entier du tourniquet du chapitre 5 : 360°, soit 2π radians. Ce qui compte, c'est donc **quelle fraction d'oscillation** le retard recouvre : $L/T$."
+          "text": "Une oscillation complète, c'est un tour entier du tourniquet du chapitre 5 : 360°, soit 2π radians. Ce qui compte, c'est donc **quelle fraction d'une oscillation** le retard recouvre : $L/T$."
         },
         {
           "t": "math",
-          "tex": "\\phi = \\underbrace{\\frac{L}{T}}_{\\text{fraction d'oscillation}}\\cdot 360^\\circ = \\omega L \\text{ radians},\\qquad \\omega = \\frac{2\\pi}{T}"
+          "tex": "\\phi = \\underbrace{\\frac{L}{T}}_{\\text{fraction d'une oscillation}}\\cdot 360^\\circ = \\omega L \\text{ radians},\\qquad \\omega = \\frac{2\\pi}{T}"
         },
         {
           "t": "play",
@@ -155,7 +155,7 @@
           "blocks": [
             {
               "t": "p",
-              "text": "Sur ces graphiques, chaque ×10 est un pas égal le long de l'axe : de 0,1 à 1 prend autant de place que de 1 à 10. Le milieu entre 0,1 et 1 est environ 0,3, pas 0,55. La règle est écrasée pour qu'une oscillation de 100 secondes et une de 3 secondes tiennent sur le même graphique. Regarde le gain du lisseur sur cette règle : plat pour les oscillations lentes, puis il glisse le long d'une droite presque parfaite pour les rapides, avec un coude vers $\\omega = 1/\\tau$."
+              "text": "Sur ces graphiques, chaque ×10 est un pas égal le long de l'axe (les manuels parlent d'**échelle logarithmique**) : de 0,1 à 1 prend autant de place que de 1 à 10. Le milieu entre 0,1 et 1 est environ 0,3, pas 0,55. La règle est écrasée pour qu'une oscillation de 100 secondes et une de 3 secondes tiennent sur le même graphique. Regarde le gain du lisseur sur cette règle : plat pour les oscillations lentes, puis il glisse le long d'une droite presque parfaite pour les rapides, avec un coude vers $\\omega = 1/\\tau$."
             },
             {
               "t": "say",
@@ -257,7 +257,7 @@
         },
         {
           "t": "p",
-          "text": "La rétroaction soustrait (erreur = cible − température). C'est un ×(−1), le demi-tour du chapitre 5 : la vague est retournée une fois. Si le tour de la boucle la retarde *aussi* d'exactement 180°, les deux retournements s'annulent, et chaque correction arrive **parfaitement en rythme** avec l'oscillation, comme quand on pousse une balançoire pile au bon moment. Si la boucle rend la vague à sa taille d'origine (gain 1), l'oscillation s'entretient toute seule ; au-delà de 1, elle grandit. C'est encore le $1 + C\\,P = 0$ du chapitre 8, sur la droite $s = i\\omega$ : un tour qui revient retourné et à pleine taille, c'est $G_{\\circ}(i\\omega) = -1$."
+          "text": "La rétroaction soustrait (erreur = cible − température). C'est un ×(−1), le demi-tour du chapitre 5 : la vague est retournée une fois. Si le tour de la boucle la retarde *aussi* d'exactement 180°, les deux retournements s'annulent, et chaque correction arrive **parfaitement en rythme** avec l'oscillation, comme quand on pousse une balançoire pile au bon moment. Si la boucle rend la vague à sa taille d'origine (gain 1), l'oscillation s'entretient toute seule (les automaticiens disent que la boucle **pompe**) ; au-delà de 1, elle grandit. C'est encore le $1 + C\\,P = 0$ du chapitre 8, sur la droite $s = i\\omega$ : un tour qui revient retourné et à pleine taille, c'est $G_{\\circ}(i\\omega) = -1$."
         },
         {
           "t": "say",
@@ -279,7 +279,7 @@
           "items": [
             {
               "term": "Marge de gain",
-              "def": "Combien de fois on pourrait multiplier le gain du correcteur avant que le gain de boucle atteigne 1 à la vitesse du −180°. En dessous de 1 = on est tombé de la falaise."
+              "def": "Combien de fois on pourrait multiplier le gain du correcteur avant que le gain de boucle atteigne 1 à la vitesse à −180°. En dessous de 1 = on est tombé de la falaise."
             },
             {
               "term": "Marge de phase",
@@ -370,7 +370,7 @@
         {
           "t": "play",
           "id": "pgain",
-          "text": "Une main position avec K = {scrub|K|eff} robinet par °C : à la vitesse du −180° (0,95 rad/s), sa boucle renvoie une oscillation {calc|g} fois plus grande. {calc|verdict}"
+          "text": "Une main position avec K = {scrub|K|eff} robinet par °C : à la vitesse à −180° (0,95 rad/s), sa boucle renvoie une oscillation {calc|g} fois plus grande. {calc|verdict}"
         },
         {
           "t": "say",
@@ -406,7 +406,7 @@
           "t": "say",
           "who": "june",
           "mood": "worried",
-          "text": "…elle pompe (c'est le mot des automaticiens) : chaud–froid–chaud, toutes les 6 secondes, comme une main position au chapitre 0. Les gros gains ont poussé la vitesse de gain 1 au-delà de la vitesse du −180°. Plus aucune marge de phase."
+          "text": "…elle pompe : chaud–froid–chaud, toutes les 6 secondes, comme une main position au chapitre 0. Les gros gains ont poussé la vitesse à gain 1 au-delà de la vitesse à −180°. Plus aucune marge de phase."
         },
         {
           "t": "callout",
@@ -426,7 +426,7 @@
         },
         {
           "t": "p",
-          "text": "P réagit à *maintenant*, I au tas. Ajouter un peu de *maintenant* fait bouger le robinet un peu plus tôt, ce qui rend de la phase : c'est l'**avance de phase**, environ 37° à l'ancienne vitesse du −180° avec les gains de Theo."
+          "text": "P réagit à *maintenant*, I au tas. Ajouter un peu de *maintenant* fait bouger le robinet un peu plus tôt, ce qui rend de la phase : c'est l'**avance de phase**, environ 37° à l'ancienne vitesse à −180° avec les gains de Theo."
         },
         {
           "t": "p",
@@ -434,7 +434,7 @@
         },
         {
           "t": "p",
-          "text": "La robustesse, c'est la vraie leçon. Ton modèle de la douche n'est jamais parfait : le tuyau est peut-être plus long, le chauffe-eau plus faible. Une marge dit à quel point le modèle peut se tromper, avec un nombre qu'on peut sentir. La marge de phase (en radians) divisée par la vitesse de gain 1 donne une **marge de retard** : combien de secondes de tuyau en plus la boucle peut encaisser."
+          "text": "La robustesse, c'est la vraie leçon. Ton modèle de la douche n'est jamais parfait : le tuyau est peut-être plus long, le chauffe-eau plus faible. Une marge dit à quel point le modèle peut se tromper, avec un nombre qu'on peut sentir. La marge de phase (en radians) divisée par la vitesse à gain 1 donne une **marge de retard** : combien de secondes de tuyau en plus la boucle peut encaisser."
         },
         {
           "t": "play",
@@ -599,7 +599,7 @@
       },
       "describe": "Période d'oscillation de {p} secondes ; le retard de 2,5 secondes la décale de {d} degrés.",
       "w": "vitesse d'oscillation ω",
-      "share": "fraction d'oscillation"
+      "share": "fraction d'une oscillation"
     },
     "bode": {
       "title": "Construire un diagramme de Bode, une oscillation à la fois",
@@ -653,7 +653,7 @@
         "over": "Tombé de la falaise (marge de gain × {g}) : les oscillations grandissent jusqu'à ce que le robinet arrive en butée."
       },
       "describe": "Marge de gain {gm}, marge de phase {pm} degrés.",
-      "w180": "vitesse du −180°",
+      "w180": "vitesse à −180°",
       "period": "période de pompage"
     },
     "replay": {

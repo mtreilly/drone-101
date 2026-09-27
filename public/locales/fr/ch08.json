@@ -128,7 +128,7 @@
         },
         {
           "t": "p",
-          "text": "Maintenant, retournons la question. Au lieu de choisir des gains et de trouver les pôles, **faisons glisser les pôles** et regardons quel drone on obtient. Il faut pour ça un deuxième bouton, $\\eff{K_d}$ : une poussée contre la vitesse, qu'on rencontrera vraiment au chapitre 9. Il s'ajoute au frottement $c$, et les deux racines sont $p$ et son jumeau miroir $\\bar p$ (la barre change le signe de la partie imaginaire, comme les jumeaux du chapitre 5) :"
+          "text": "Maintenant, retournons la question. Au lieu de choisir des gains et de trouver les pôles, **faisons glisser les pôles** et regardons quel drone on obtient. Il faut pour ça un deuxième bouton, $\\eff{K_d}$ : une poussée contre la vitesse, qu'on rencontrera vraiment au chapitre 9. Il s'ajoute à la traînée $c$, et les deux racines sont $p$ et son jumeau miroir $\\bar p$ (la barre change le signe de la partie imaginaire, comme les jumeaux du chapitre 5) :"
         },
         {
           "t": "math",
@@ -545,12 +545,12 @@
         },
         {
           "t": "p",
-          "text": "Voilà pourquoi. Le frottement fait reculer un tour de 90° au maximum, et la masse d'encore 90° au maximum, mais ensemble ils n'atteignent 180° que pour des oscillations infiniment rapides. Donc la commande P seule ne peut jamais faire basculer ce drone. Un $\\eff{K_p}$ plus grand fait seulement passer le tour **plus près** de −1, et plus près veut dire moins d'amortissement : le « plus de $K_p$, plus d'oscillations » du chapitre 2, maintenant en image."
+          "text": "Voilà pourquoi. La traînée retarde un tour de boucle de 90° au maximum, et la masse d'encore 90° au maximum, mais ensemble elles n'atteignent 180° que pour des oscillations infiniment rapides. Donc la commande P seule ne peut jamais faire basculer ce drone. Un $\\eff{K_p}$ plus grand fait seulement passer le tour **plus près** de −1, et plus près veut dire moins d'amortissement : le « plus de $K_p$, plus d'oscillations » du chapitre 2, maintenant en image."
         },
         {
           "t": "play",
           "id": "lap",
-          "text": "Avec $\\eff{K_p}$ = {scrub|kp|eff} N/m, le tour passe à {calc|d} de −1, vers {calc|w} rad/s. L'amortissement de la boucle vaut ζ = {calc|z}."
+          "text": "Avec $\\eff{K_p}$ = {scrub|kp|eff} N/m, le tour de boucle passe à {calc|d} du point −1, vers {calc|w} rad/s. L'amortissement de la boucle vaut ζ = {calc|z}."
         },
         {
           "t": "note",
@@ -733,7 +733,7 @@
         "hitGround": "Il s'est écrasé au sol. Déplace un pôle pour réessayer.",
         "hitPageMarginal": "Chaque oscillation atteignait 3 m, juste assez pour toucher la page ; les moteurs ont calé et il est tombé."
       },
-      "negKd": "Kd est négatif ici : le frottement amortit déjà plus que ces pôles ne le permettent, donc le correcteur doit pousser dans le sens du mouvement.",
+      "negKd": "Kd est négatif ici : la traînée amortit déjà plus que ces pôles ne le permettent, donc le correcteur doit pousser dans le sens du mouvement.",
       "pushWarn": "La première poussée dépasse 20 N, plus que ce qu'ont de vrais moteurs. On verra dans un instant ce que ça coûte.",
       "challenge": "Mini-défi : dépassement sous 10 % et temps de réponse sous 2 s",
       "chalOk": "Défi réussi ! Dépassement {o} %, stabilisé en {s} s.",
@@ -815,7 +815,7 @@
     "gains": {
       "sig": "distance des pôles à gauche de l'axe",
       "w": "hauteur des pôles, oméga",
-      "negKd": "C'est un Kd *négatif* : le frottement seul amortit déjà plus que ne le veulent ces pôles, donc le correcteur doit pousser *dans le sens* du mouvement."
+      "negKd": "C'est un Kd *négatif* : la traînée seule amortit déjà plus que ne le veulent ces pôles, donc le correcteur doit pousser *dans le sens* du mouvement."
     },
     "dominant": {
       "time": "temps, en secondes",

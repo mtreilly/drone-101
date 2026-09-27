@@ -15,7 +15,7 @@
         },
         {
           "t": "p",
-          "text": "Para sostener el dron, los motores tienen que empujar $mg \\approx 4.9$ N, para siempre. Un controlador P solo empuja cuando hay error: $\\eff{T} = K_p\\,\\err{e}$. Así que, para empujar 4,9 N, *necesita* un error de $\\err{e} = mg/K_p$. Con $K_p$ = 20 N/m eso es $\\err e$ = 4,9/20 ≈ 24,5 cm, para siempre. La caída no es un fallo de nuestro ajuste. Es el precio que cobra P por sostener cualquier cosa."
+          "text": "Para sostener el dron, los motores tienen que empujar $mg \\approx 4{,}9$ N, para siempre. Un controlador P solo empuja cuando hay error: $\\eff{T} = K_p\\,\\err{e}$. Así que, para empujar 4,9 N, *necesita* un error de $\\err{e} = mg/K_p$. Con $K_p$ = 20 N/m eso es $\\err e$ = 4,9/20 ≈ 24,5 cm, para siempre. La caída no es un fallo de nuestro ajuste. Es el precio que cobra P por sostener cualquier cosa."
         },
         {
           "t": "say",
@@ -84,7 +84,7 @@
             },
             {
               "t": "p",
-              "text": "Así que la caída se extingue como un café que se enfría, con una constante de tiempo de unos $K_p/K_i$ = 2 s con nuestras ganancias. En el mapa del capítulo 8 eso es un polo lento cerca de $-K_i/K_p = -0.5$. (Solo «unos»: la oscilación rápida necesita un momento para apagarse, y con una $K_i$ grande las dos se mezclan. Por eso el número de arriba solo llega hasta 12.)"
+              "text": "Así que la caída se extingue como un café que se enfría, con una constante de tiempo de unos $K_p/K_i$ = 2 s con nuestras ganancias. En el mapa del capítulo 8 eso es un polo lento cerca de $-K_i/K_p = -0{,}5$. (Solo «unos»: la oscilación rápida necesita un momento para apagarse, y con una $K_i$ grande las dos se mezclan. Por eso el número de arriba solo llega hasta 12.)"
             }
           ]
         },
@@ -186,7 +186,7 @@
         },
         {
           "t": "p",
-          "text": "Activa la **gran ganancia I de Mika** y luego añade amortiguamiento. Incluso $K_d = 0.5$ N·s/m lo devuelve a estable (lleva el borde hasta $K_i = 60$): el yoyó sin fin se convierte en un rebote que se apaga. Pero sigue pasándose al menos una cuarta parte, añadas la D que añadas. Ese montón enorme simplemente recuerda demasiado. Ahora quita la $K_i$ de Mika (vuelve a 10) y prueba $K_d \\approx 3$–5: calma. **I y D se compensan**: D te da margen para I, pero no un margen ilimitado."
+          "text": "Activa la **gran ganancia I de Mika** y luego añade amortiguamiento. Incluso $K_d = 0{,}5$ N·s/m lo devuelve a estable (lleva el borde hasta $K_i = 60$): el yoyó sin fin se convierte en un rebote que se apaga. Pero sigue pasándose al menos una cuarta parte, añadas la D que añadas. Ese montón enorme simplemente recuerda demasiado. Ahora quita la $K_i$ de Mika (vuelve a 10) y prueba $K_d \\approx 3$–5: calma. **I y D se compensan**: D te da margen para I, pero no un margen ilimitado."
         },
         {
           "t": "say",
@@ -204,11 +204,11 @@
           "t": "say",
           "who": "theo",
           "mood": "think",
-          "text": "June, ¡es otra vez tu dron de miel del capítulo 6! Pasado $K_d \\approx 5.3$, la pareja rápida está sobreamortiguada. Pero ahora también hay un montón, y un dron lento le da al montón tiempo de llenarse de más."
+          "text": "June, ¡es otra vez tu dron de miel del capítulo 6! Pasado $K_d \\approx 5{,}3$, la pareja rápida está sobreamortiguada. Pero ahora también hay un montón, y un dron lento le da al montón tiempo de llenarse de más."
         },
         {
           "t": "p",
-          "text": "El amortiguamiento crítico está donde ζ = 1: $K_d = 2\\sqrt{m K_p} - c \\approx 5.3$ N·s/m con $K_p$ = 20. Con $K_i$ = 10, pasar de $K_d$ = 4 a 10 lleva el sobreimpulso de 0 a un 8 %, y el tiempo de establecimiento de menos de un segundo a unos 5 s. Más D no siempre es mejor; ahora el widget te lo dice cuando te pasas."
+          "text": "El amortiguamiento crítico está donde ζ = 1: $K_d = 2\\sqrt{m K_p} - c \\approx 5{,}3$ N·s/m con $K_p$ = 20. Con $K_i$ = 10, pasar de $K_d$ = 4 a 10 lleva el sobreimpulso de 0 a un 8 %, y el tiempo de establecimiento de menos de un segundo a unos 5 s. Más D no siempre es mejor; ahora el widget te lo dice cuando te pasas."
         },
         {
           "t": "say",
@@ -371,7 +371,7 @@
               "t": "say",
               "who": "june",
               "mood": "think",
-              "text": "Busca el cero. La I trae uno en $-K_i/K_p = -0.5$, justo al lado de ese polo. Un polo y un cero tan cercanos casi se cancelan, así que ese modo apenas aparece cuando movemos la consigna."
+              "text": "Busca el cero. La I trae uno en $-K_i/K_p = -0{,}5$, justo al lado de ese polo. Un polo y un cero tan cercanos casi se cancelan, así que ese modo apenas aparece cuando movemos la consigna."
             },
             {
               "t": "say",
@@ -556,16 +556,16 @@
             },
             {
               "id": "ch9-q3",
-              "q": "Con $K_p = 10$ N/m y $K_d = 1$ N·s/m (dron: $m = 0.5$ kg, $c = 1$ N·s/m), ¿cuál es la mayor $K_i$ antes de la inestabilidad?",
+              "q": "Con $K_p = 10$ N/m y $K_d = 1$ N·s/m (dron: $m = 0{,}5$ kg, $c = 1$ N·s/m), ¿cuál es la mayor $K_i$ antes de la inestabilidad?",
               "options": [
                 {
                   "text": "20 N/(m·s)",
-                  "why": "Revisa la fórmula: $(c + K_d)K_p/m = (1+1)\\cdot 10 / 0.5$. Quizá se te olvidó dividir entre $m$."
+                  "why": "Revisa la fórmula: $(c + K_d)K_p/m = (1+1)\\cdot 10 / 0{,}5$. Quizá se te olvidó dividir entre $m$."
                 },
                 {
                   "text": "40 N/(m·s)",
                   "correct": true,
-                  "why": "$(1 + 1)\\cdot 10 / 0.5 = 40$. Por encima de eso, dos polos cruzan al semiplano derecho."
+                  "why": "$(1 + 1)\\cdot 10 / 0{,}5 = 40$. Por encima de eso, dos polos cruzan al semiplano derecho."
                 },
                 {
                   "text": "80 N/(m·s)",
