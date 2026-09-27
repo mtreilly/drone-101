@@ -22,7 +22,7 @@ pnpm a11y       # accessibility checks across chapters and languages
 | `src/sim/` | RK4 integrator, delay line, drone / shower / mass-spring models |
 | `src/math/` | complex numbers, polynomial roots, analytic 2nd-order responses, Laplace probe, Bode & margins, step metrics |
 | `src/ui/` | reusable widgets: plot, s-plane, sliders/transport, drone view, shower view, block diagram, mass-spring view |
-| `src/story/` | chapter renderer (dialogue, notes, predict cards, quizzes), characters, concept map |
+| `src/story/` | chapter renderer (dialogue, notes, predict cards, quizzes), characters, concept map, prerequisite graph (`concepts.ts`, checked against the chapters) |
 | `src/chapters/chNN/` | each chapter's interactives (+ tests verifying every number in its text) |
 | `public/locales/{lang}/` | visible text: `common.json` plus one namespace per chapter |
 | `docs/` | course plan, glossary, design notes and extension plans |

@@ -6,7 +6,8 @@
 > **Style:** the house pattern (`AGENTS.md`): build before measuring, picture before symbol, one
 > idea per section, a character's mistake, playable numbers, quieter side trips.
 > **Baseline:** `0.1.0` at `3d836e9` (main, 2026-09-27).
-> **Status (2026-09-27): proposed.** Nothing built yet.
+> **Status (2026-09-27): built.** See "Status: built" at the end for what changed from this plan
+> and what is still open.
 
 Every phase follows the project rules: all text in `public/locales/{lang}/chNN.json` for all 10
 locales in the same commit, new terms in `docs/glossary.md`, `locales.test.ts` green, every stated
@@ -266,6 +267,8 @@ renamed symbol.
 
 ## What's next
 
+(The plan as proposed; see "Status: built" below for what happened.)
+
 1. Phase 2's text-only fixes (A1–A3 first) are cheap and remove a visible contradiction; they
    can land before Phase 1 if wanted.
 2. Phase 1 next, so every later phase has a finish line.
@@ -274,3 +277,66 @@ renamed symbol.
 5. **Later, out of scope here:** a state-space / linearisation bridge (`explainer-research`
    `roadmaps.md` arc R11) and the Ch 10 → Ch 11 drone Bode widget still listed as open in
    `docs/plans/ch07-11-extension.md`.
+
+## Status: built
+
+Built 2026-09-27, one commit per phase, each with English, all nine translations, glossary
+entries and claim tests together (`0.2.0` … `0.8.0`).
+
+| Phase | Commit | What landed |
+|---|---|---|
+| 1 | `62943f8` | `src/story/concepts.ts` + `concepts.test.ts`: the prerequisite graph, read against the English chapters in reading order; `KNOWN_GAPS` started with 14 gaps |
+| 2 | `e5d4367` | ch08 "Closing the loop on paper" + `loop` widget; ch10 delay derived with the probe; A1–A8, B1–B7 |
+| 3 | `d97f3d4` | ch06 "Arrows have a length and an angle" + `arrows` widget; ch07/ch10/ch11 callbacks |
+| 4 | `5866c9f` | ch03 "The slope of a slope" + `slopes` widget; Δ, ∫, τ picture first (ruler's starting-speed line), Δt = τ case; ch04 ties (1 − 1/n)ⁿ to the coffee |
+| 5 | `7a73ef1` | ch05 "Measuring turns" (`turns` widget) and tiny turns (`tiny` widget) before Euler; twins' ½; map tour; Fourier wording |
+| 6 | `eda7888` | ch07 "Undoing a common denominator" + `pieces` widget; one integration by parts, picture first |
+| 7 | `66ea8eb` | ch10 "multiplying becomes adding" and decibels; σₙ for noise; ch00/ch01 wording; `KNOWN_GAPS` empty |
+
+### Deviations from the plan
+
+- **No new chapter ids.** The chapter number is the key for routes, the concept-map layout,
+  progress, `common.json`'s `chapters.N` and the prose ("Chapter 7…") in all ten locales, so
+  every interlude went in as a section of an existing chapter: "Closing the loop" in ch08,
+  "Arrows" in ch06, "The slope of a slope" in ch03, "Measuring turns" in ch05, "Undoing a common
+  denominator" in ch07.
+- **Chapter 7 was slimmed, not split.** Partial fractions moved to their own section and the
+  duplicated integration by parts is gone (the rectangle picture is now the main path). A true
+  7a/7b split would renumber every later chapter.
+- **Chapter 5 was not split** either; it gained two sections instead, so its load went up while
+  its prerequisite gaps closed. Reader sessions (below) should decide whether to split it.
+- **The P(s) letter stays.** Chapter 9 already used it; ch08 now introduces it as "P for plant, not
+  the P of P control". T (thrust / temperature / period) and k (spring / hand speed) also stay:
+  each use is local and ch10 already flags T as a period. The residue/arrow clash is fixed (ch10's
+  arrow is now Y) and the noise size is σₙ.
+- **Phase 1's optional explained/applied/assumed pass** was not run; the marker-based checker
+  covers the gaps this review found.
+
+### Found in review
+
+- The concept checker caught two of this plan's own edits: "63%" written into Chapter 0 before
+  τ exists, and partial fractions never named again after Chapter 7.
+- Translators caught: the Chapter 11 "table" that is a paragraph in Chapter 10; the lost name
+  "integration by parts" after the merge; `K_pσ` still meaning the noise; a pt-BR "sideways"
+  rendered as "horizontal"; Spanish "a veces" ("sometimes") for "a times".
+- Screenshots caught: labels clipping or colliding at 375 px (arc and target labels), reversed
+  tick numbers on right-to-left canvases, a bracketed Arabic legend reordering.
+
+### Validation
+
+- `pnpm test` green on every staged commit (690 tests at the end, verified in a clean worktree
+  before each commit); `concepts.test.ts` ends with `KNOWN_GAPS` empty.
+- `pnpm a11y`: the full suite (154 pages: every page in every language, plus English dark) gave
+  0 violations for Phases 2, 3, 4 and the final tree; Phases 5 and 6 ran the English suite
+  (14 pages), also 0.
+- Screenshots, looked at and fixed where needed: `loop` (en 1280 dark, en 375 light, de 375,
+  ar 1280 dark), `arrows` (en 1280 light, both modes; ar 375), `slopes` (en 1280 dark, de 375
+  dark), `turns` (en 1280 and 375 light, ar 1280 dark), `tiny` (en 1280), `pieces` (en 1280,
+  ar 375), ch10's decibel note (pl 375). Not every widget was shot in every theme × language.
+
+### Still open
+
+- Native review of every new term (the "Open terminology questions" in `docs/glossary.md` list
+  the translators' doubts phase by phase).
+- Reader sessions on Chapters 5 and 7 (see "Process lessons"); they decide the splits above.
+- A state-space / linearisation bridge, and the Ch 10 → Ch 11 drone Bode widget.

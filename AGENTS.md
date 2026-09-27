@@ -196,6 +196,14 @@ Hard-won habits from extending chapters. They apply to any chapter, whatever the
   is only true at the default. Tie it to the starting value or phrase it so it stays true.
 - **Every new section needs a character beat and a small moment**, not only correct prose: a
   mistake, a doubt, a callback, a joke that lands on the widget's result.
+- **Build a tool before a chapter leans on it, and let the graph check it.** Every idea has an
+  entry in `src/story/concepts.ts`: the section that builds it, its prerequisites, text markers
+  of its use and a `defines` pattern proving the section really builds it. `concepts.test.ts`
+  reads the English chapters in order and fails when a marker appears before its section. Add
+  the entry with the section, and never "fix" a failure by loosening a marker.
+- **A rule of thumb states when it holds.** Overshoot from the pole angle, the dominant pole,
+  settling in 4/|σ|, the final value theorem, margin ↔ ζ: say the condition and name the case
+  where it fails, ideally one the reader has already met.
 
 **Right-to-left and mixed scripts**
 - **A little equation must stay one text run.** Splitting "2 × 2 × 2" and "= 8" into separate live
@@ -221,6 +229,11 @@ Hard-won habits from extending chapters. They apply to any chapter, whatever the
 - **Read the translators' reports, not just the test result.** They surface real inconsistencies
   (two terms for one concept across chapters, a label that disagrees with the prose). Fix them or
   record them for native review.
+- **Mirror structure yourself; give translators only strings.** Insert new blocks and keys into
+  every locale first (pairing old and new blocks by `id` and content, never by position), then
+  hand each translator the changed strings with the old English, the new English and the current
+  translation. They cannot break the structure, and they keep what still fits. When the English
+  moves a paragraph, check the moved text still names what the removed one named.
 
 **Checking**
 - **Screenshots find what tests cannot:** clipped curves, a hint touching the line above, a stray
@@ -228,6 +241,9 @@ Hard-won habits from extending chapters. They apply to any chapter, whatever the
   and one long-word language, in light and dark, and look again after fixing.
 - **Pass URLs to axe as separate arguments.** A single string of space-separated URLs is tested as
   one page and reports a false "0 violations".
+- **A check that matches nothing checks nothing.** A test that scans text needs its own guard
+  that the pattern finds something (a regex once stopped reading widget text and every check
+  still passed).
 - **Keep every commit green.** Plan the commit order up front: shared building blocks land first
   (with their tests passing), then each piece of chapter content lands with its English text,
   every translation, its glossary entries and its number tests together.
