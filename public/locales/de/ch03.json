@@ -51,7 +51,7 @@
         },
         {
           "t": "p",
-          "text": "Diese „Steigung in einem Augenblick“ bekommt einen Namen: die **Ableitung**. Wir schreiben sie als winzige Höhenänderung geteilt durch die winzige Zeit, die sie gedauert hat:"
+          "text": "Diese „Steigung in einem Augenblick“ bekommt einen Namen: die **Ableitung**. Wir schreiben sie als winzige Höhenänderung geteilt durch die winzige Zeit, die sie gedauert hat. In Symbolen liest man $\\Delta h / \\Delta t$ als „Höhenänderung durch Zeitänderung“: Der griechische Buchstabe Δ (Delta) steht kurz für **Änderung von**."
         },
         {
           "t": "math",
@@ -89,7 +89,7 @@
         },
         {
           "t": "p",
-          "text": "Das Minuszeichen sagt: „Kühl ab, wenn du wärmer als der Raum bist.“ Die Zahl **τ** (tau, die *Zeitkonstante*) sagt, wie träge die Tasse ist. Bei einer normalen Tasse ist τ ≈ 10 Minuten."
+          "text": "Das Minuszeichen sagt: „Kühl ab, wenn du wärmer als der Raum bist.“ Die Zahl **τ** (tau, die *Zeitkonstante*) sagt, wie träge die Tasse ist. Stell es dir so vor: τ ist die Zeit, die der Kaffee bis zur Zimmertemperatur bräuchte, **wenn er mit seinem Anfangstempo weiter abkühlen würde**. Bei einer normalen Tasse ist τ ≈ 10 Minuten."
         },
         {
           "t": "note",
@@ -134,6 +134,7 @@
           "t": "list",
           "items": [
             "Δt kleiner als τ: Der Faktor liegt zwischen 0 und 1. Der Abstand schrumpft, kein Überschwingen.",
+            "Δt genau τ: Der Faktor ist **0**. Ein Schritt landet genau auf Zimmertemperatur: Das ist das Anfangstempo, ein ganzes τ lang beibehalten.",
             "Δt zwischen τ und 2τ: Der Faktor ist **negativ**. Der Kaffee schießt unter die Zimmertemperatur, dann darüber, und schwingt hin und her, während die Schwünge kleiner werden.",
             "Δt größer als 2τ: Der Faktor ist kleiner als −1. Die Schwünge **wachsen** mit jedem Schritt. Unsinnskaffee."
           ]
@@ -151,6 +152,10 @@
         {
           "t": "p",
           "text": "Mach Δt klein und schalte die glatte Kurve ein. Die handgebauten Punkte landen genau darauf. Diese glatte Form heißt **exponentieller Abfall**. Sie bekommt im nächsten Kapitel ihr eigenes Kapitel."
+        },
+        {
+          "t": "p",
+          "text": "Der echte Kaffee behält sein Anfangstempo nie: Die Steigung schrumpft, während der Abstand schrumpft. Deshalb hat er nach einem τ nur etwa **63 %** des Abstands geschafft, nicht alles. Auf dem Lineal unten ist die gestrichelte Linie das beibehaltene Anfangstempo; die Kurve zeigt, was wirklich passiert. Woher kommen die 63 %? Kapitel 4 baut es auf."
         },
         {
           "t": "h3",
@@ -200,11 +205,11 @@
             },
             {
               "term": "System 1. Ordnung",
-              "def": "Etwas, dessen Änderungstempo davon abhängt, wie weit es noch von seinem Ziel entfernt ist (Kaffee, Tanks). Seine Kurve ist eine Exponentialfunktion."
+              "def": "Etwas, dessen Änderungstempo proportional dazu ist, wie weit es noch von seinem Ziel entfernt ist (Kaffee, Tanks). Seine Kurve ist eine Exponentialfunktion."
             },
             {
               "term": "Zeitkonstante τ",
-              "def": "Wie lange ein System 1. Ordnung braucht, um 63 % der verbleibenden Strecke zu schaffen."
+              "def": "Wie lange ein System 1. Ordnung bis zum Ziel bräuchte, wenn es sein Anfangstempo beibehielte. In Wirklichkeit schafft es in dieser Zeit 63 % der verbleibenden Strecke."
             }
           ]
         }
@@ -240,7 +245,7 @@
         },
         {
           "t": "p",
-          "text": "Dieses „Fläche aufsummieren“ heißt **Integral**:"
+          "text": "Dieses „Fläche aufsummieren“ heißt **Integral**. Sein Zeichen ∫ ist ein gestrecktes S, für **Summe**: eine Summe dünner Streifen. Das kleine $dt$ ist die Breite jedes Streifens, und $0$ und $t$ sagen, wo das Aufsummieren beginnt und aufhört:"
         },
         {
           "t": "math",
@@ -249,6 +254,99 @@
         {
           "t": "note",
           "text": "Mehr Integral brauchen wir vorerst nicht. Es kommt zweimal wieder: in Kapitel 7 (eine Transformation, die eine Fläche misst) und in Kapitel 9 (das „I“ in PID sammelt vergangene Fehler an)."
+        }
+      ]
+    },
+    {
+      "id": "slopes",
+      "title": "Die Steigung einer Steigung",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Kapitel 1 hat uns etwas versprochen. In der Gleichung der Drohne standen **zwei** Punkte über $h$. Ein Punkt ist das Tempo. Und der zweite?"
+        },
+        {
+          "t": "p",
+          "text": "Das Tempo ist selbst eine Kurve, also hat es auch eine Steigung: wie schnell sich das **Tempo** ändert. Das ist die **Beschleunigung**, die Steigung einer Steigung. Unten derselbe Flug dreimal: die Höhe, ihre Steigung (Tempo) und *deren* Steigung (Beschleunigung), alle mit einem gemeinsamen Zeitcursor."
+        },
+        {
+          "t": "predict",
+          "id": "ch3-top-acc",
+          "gate": true,
+          "q": "Ganz oben auf dem Buckel ist das Tempo null. Wie groß ist dort die Beschleunigung?",
+          "options": [
+            {
+              "text": "Auch null: Da bewegt sich nichts",
+              "why": "Das Tempo ist nur einen Augenblick lang null. Es geht von positiv zu negativ, also ändert es sich, und zwar schnell."
+            },
+            {
+              "text": "Negativ: Die Drohne wird schon wieder nach unten gezogen",
+              "correct": true,
+              "why": "Richtig. Das Tempo fällt durch null hindurch, also ist seine Steigung negativ. Einen Augenblick stillstehen heißt nicht, dass nichts drückt."
+            },
+            {
+              "text": "Positiv: Sie ist doch gerade noch gestiegen",
+              "why": "Steigen hat mit dem Tempo zu tun, nicht mit seiner Steigung. Oben schrumpft das Tempo, und das ist eine negative Steigung."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "slopes"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Ich hab null gesagt! Aber oben fällt die Tempokurve *bergab* am steilsten. Null Tempo heißt nicht null Kraft."
+        },
+        {
+          "t": "p",
+          "text": "Zwei Punkte bedeuten die Steigung der Steigung. Es gibt noch eine dritte Schreibweise für Steigungen, mit kleinen **Strichen**: $h'$ (gesprochen „h Strich“) für die Steigung, $h''$ für die Steigung der Steigung. Drei Schreibweisen, eine Idee:"
+        },
+        {
+          "t": "vocab",
+          "title": "Drei Arten, es zu schreiben",
+          "items": [
+            {
+              "term": "$\\dot h = h' = \\frac{dh}{dt}$",
+              "def": "Die Steigung von $h$: ihr Tempo."
+            },
+            {
+              "term": "$\\ddot h = h'' = \\frac{d^2 h}{dt^2}$",
+              "def": "Die Steigung der Steigung: die Beschleunigung."
+            },
+            {
+              "term": "$\\Delta$",
+              "def": "„Änderung von“: $\\Delta t$ ist ein Zeitschritt."
+            },
+            {
+              "term": "$\\int$",
+              "def": "Ein gestrecktes S, für „Summe“: Fläche aufsummieren."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Jetzt liest sich die Gleichung aus Kapitel 1 wie ein Satz. Masse mal Beschleunigung ist gleich allem, was drückt: Schub nach oben, Gewicht nach unten und Luftwiderstand gegen das Tempo. Das ist Newtons Gesetz, Term für Term:"
+        },
+        {
+          "t": "math",
+          "tex": "\\underbrace{0{,}5\\,\\ddot{\\out{h}}}_{\\text{Masse}\\times\\text{Beschleunigung}} = \\underbrace{\\eff{T}}_{\\text{Schub}} - \\underbrace{4{,}9}_{\\text{Gewicht}} - \\underbrace{1{,}0\\,\\dot{\\out{h}}}_{\\text{Widerstand}\\,\\times\\,\\text{Tempo}}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Die Kaffeeregel ging also um sein Tempo, und die Drohnenregel geht um ihre Beschleunigung: eine Steigung tiefer. Kann die Drohne deshalb überschwingen und pendeln, und der Kaffee nie?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Muss so sein. Das Tempo des Kaffees folgt einfach dem Abstand. Das Tempo der Drohne muss erst *aufgebaut* und wieder *abgebaut* werden, also kann sie noch in Bewegung sein, wenn sie ankommt."
         }
       ]
     },
@@ -263,6 +361,7 @@
             "Eine Regel wie „kühl umso schneller ab, je heißer du bist“ legt die ganze Kurve fest: eine **exponentielle** Annäherung.",
             "Die **Zeitkonstante τ** ist ein Lineal: 63 % des Wegs nach τ, 86 % nach 2τ, 95 % nach 3τ.",
             "Wer Kurven mit zu großen Schritten baut, erzeugt falsches Überschwingen und Schwünge, genau wie bei der Dusche.",
+            "Die **Steigung der Steigung** ist die Beschleunigung: $\\ddot h$ oder $h''$. Die Drohnengleichung aus Kapitel 1 ist eine Regel für sie.",
             "Das **Integral** summiert Fläche auf und macht die Ableitung rückgängig."
           ]
         },
@@ -417,7 +516,8 @@
       "read1": "Wert bei 1τ",
       "aria": "Exponentialkurve mit senkrechten Markierungen bei einer, zwei und drei Zeitkonstanten, beschriftet mit 63, 86 und 95 Prozent.",
       "describe": "Zeitkonstante {tau} Minuten. Markierungen bei einer, zwei und drei Zeitkonstanten zeigen 63, 86 und 95 Prozent des Wegs.",
-      "read2": "Wert bei 2τ"
+      "read2": "Wert bei 2τ",
+      "startLine": "Anfangstempo beibehalten"
     },
     "area": {
       "title": "Flächen aufsummieren",
@@ -434,6 +534,28 @@
       "ariaBottom": "Die aufsummierte Fläche über die Zeit, über der echten Höhenkurve.",
       "describe": "Bis {t} s beträgt die aufsummierte Fläche {a} Meter.",
       "help": "Zieh im Tempodiagramm oder nimm den Schieberegler. Streifen über null bringen Höhe dazu, Streifen unter null nehmen sie weg."
+    },
+    "slopes": {
+      "title": "Steigungen von Steigungen",
+      "height": "Höhe",
+      "target": "Ziel 2 m",
+      "speed": "Tempo = Steigung der Höhe",
+      "speedAxis": "Tempo (m/s)",
+      "acc": "Beschleunigung = Steigung des Tempos",
+      "accAxis": "Beschl. (m/s²)",
+      "ariaH": "Höhe der Drohne über 4 Sekunden mit einer Tangente am Zeitcursor.",
+      "ariaV": "Tempo der Drohne über dieselben 4 Sekunden mit einer Tangente am Zeitcursor.",
+      "ariaA": "Beschleunigung der Drohne über dieselben 4 Sekunden, mit dem Wert am Zeitcursor.",
+      "cursor": "Zeitcursor",
+      "readH": "Höhe",
+      "readV": "Tempo",
+      "readA": "Beschleunigung",
+      "up": "Beschleunigung nach oben: Das Tempo wächst (oder ihr Fallen wird langsamer).",
+      "down": "Beschleunigung nach unten: Das Tempo schrumpft (oder ihr Fallen wird schneller).",
+      "steady": "Beschleunigung fast null: Genau hier bleibt das Tempo gleich.",
+      "top": "Oben ist das Tempo null, und trotzdem ist die Beschleunigung {a} m/s²: Die Drohne wird schon wieder nach unten gezogen.",
+      "describe": "Bei {t} s: Höhe {h} m, Tempo {v} m pro Sekunde, Beschleunigung {a} m pro Sekunde zum Quadrat.",
+      "help": "Zieh in einem der Diagramme oder nimm den Schieberegler. Die Tangente an der Höhe liefert das Tempo, die Tangente am Tempo die Beschleunigung."
     }
   }
 }

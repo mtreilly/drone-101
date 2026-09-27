@@ -51,7 +51,7 @@
         },
         {
           "t": "p",
-          "text": "To „nachylenie w jednej chwili” ma swoją nazwę: **pochodna**. Zapisujemy ją jak malutką zmianę wysokości podzieloną przez malutki czas, jaki jej to zajęło:"
+          "text": "To „nachylenie w jednej chwili” ma swoją nazwę: **pochodna**. Zapisujemy ją jak malutką zmianę wysokości podzieloną przez malutki czas, jaki jej to zajęło. W symbolach $\\Delta h / \\Delta t$ czytamy „zmiana wysokości przez zmianę czasu”: grecka litera Δ (delta) to skrót od słowa **zmiana**."
         },
         {
           "t": "math",
@@ -89,7 +89,7 @@
         },
         {
           "t": "p",
-          "text": "Minus mówi „stygnij, gdy jesteś cieplejsza od pokoju”. Liczba **τ** (tau, *stała czasowa*) mówi, jak ospały jest kubek. Dla zwykłego kubka τ ≈ 10 minut."
+          "text": "Minus mówi „stygnij, gdy jesteś cieplejsza od pokoju”. Liczba **τ** (tau, *stała czasowa*) mówi, jak ospały jest kubek. Wyobraź to sobie tak: τ to czas, w jakim kawa doszłaby do temperatury pokojowej, **gdyby cały czas stygła w tempie z samego początku**. Dla zwykłego kubka τ ≈ 10 minut."
         },
         {
           "t": "note",
@@ -134,6 +134,7 @@
           "t": "list",
           "items": [
             "Δt mniejsze niż τ: czynnik jest między 0 a 1. Różnica maleje, bez przeregulowania.",
+            "Δt dokładnie równe τ: czynnik wynosi **0**. Jeden krok ląduje dokładnie na temperaturze pokojowej: to początkowe tempo utrzymane przez całą τ.",
             "Δt między τ a 2τ: czynnik jest **ujemny**. Kawa przestrzeliwuje poniżej temperatury pokoju, potem powyżej, kołysze się w tę i z powrotem, a wahania maleją.",
             "Δt większe niż 2τ: czynnik jest mniejszy niż −1. Wahania **rosną** z każdym krokiem. Kawa bez sensu."
           ]
@@ -151,6 +152,10 @@
         {
           "t": "p",
           "text": "Ustaw małe Δt i włącz gładką krzywą. Ręcznie zbudowane kropki lądują dokładnie na niej. Ten gładki kształt nazywa się **zanikiem wykładniczym**. Następny rozdział jest cały o nim."
+        },
+        {
+          "t": "p",
+          "text": "Prawdziwa kawa nigdy nie utrzymuje początkowego tempa: nachylenie maleje razem z różnicą. Dlatego po jednej τ pokonuje tylko około **63 %** różnicy, a nie całą. Na linijce poniżej przerywana linia to początkowe tempo utrzymane do końca, a krzywa to to, co dzieje się naprawdę. Skąd się bierze 63 %? Zbudujemy to w rozdziale 4."
         },
         {
           "t": "h3",
@@ -200,11 +205,11 @@
             },
             {
               "term": "Układ pierwszego rzędu",
-              "def": "Coś, czego tempo zmiany zależy od tego, jak daleko jest od miejsca, do którego zmierza (kawa, zbiorniki). Jego krzywa to wykładnicza."
+              "def": "Coś, czego tempo zmiany jest proporcjonalne do tego, jak daleko jest od miejsca, do którego zmierza (kawa, zbiorniki). Jego krzywa to wykładnicza."
             },
             {
               "term": "Stała czasowa τ",
-              "def": "Czas, w jakim układ pierwszego rzędu pokonuje 63 % pozostałej drogi."
+              "def": "Czas, w jakim układ pierwszego rzędu doszedłby do celu, gdyby utrzymał początkowe tempo. Naprawdę w tym czasie pokonuje 63 % pozostałej drogi."
             }
           ]
         }
@@ -240,7 +245,7 @@
         },
         {
           "t": "p",
-          "text": "Ta operacja „zbierania pola” nazywa się **całką**:"
+          "text": "Ta operacja „zbierania pola” nazywa się **całką**. Jej znak ∫ to rozciągnięte S, od słowa **suma**: suma cienkich pasków. Małe $dt$ to szerokość każdego paska, a $0$ i $t$ mówią, gdzie zacząć i gdzie skończyć dodawanie:"
         },
         {
           "t": "math",
@@ -249,6 +254,99 @@
         {
           "t": "note",
           "text": "To na razie cała całka, jakiej potrzebujemy. Wróci jeszcze dwa razy: w rozdziale 7 (transformata, która mierzy pole) i w rozdziale 9 („I” w PID gromadzi dawny uchyb)."
+        }
+      ]
+    },
+    {
+      "id": "slopes",
+      "title": "Nachylenie nachylenia",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Rozdział 1 coś nam obiecał. Równanie drona miało **dwie** kropki nad $h$. Jedna kropka to prędkość. A co oznacza druga?"
+        },
+        {
+          "t": "p",
+          "text": "Prędkość sama jest krzywą, więc też ma nachylenie: to, jak szybko zmienia się **prędkość**. To jest **przyspieszenie**, nachylenie nachylenia. Poniżej trzy razy ten sam lot: wysokość, jej nachylenie (prędkość) i nachylenie *tego* nachylenia (przyspieszenie), wszystko z jednym kursorem czasu."
+        },
+        {
+          "t": "predict",
+          "id": "ch3-top-acc",
+          "gate": true,
+          "q": "Na samym szczycie górki prędkość wynosi zero. Jakie jest tam przyspieszenie?",
+          "options": [
+            {
+              "text": "Też zero: nic się nie rusza",
+              "why": "Prędkość jest zerowa tylko przez jedną chwilę. Przechodzi z dodatniej na ujemną, więc się zmienia, i to szybko."
+            },
+            {
+              "text": "Ujemne: dron już jest ściągany z powrotem w dół",
+              "correct": true,
+              "why": "Tak. Prędkość spada przez zero, więc jej nachylenie jest ujemne. Stanąć na chwilę w miejscu to nie to samo, co nie być przez nic pchanym."
+            },
+            {
+              "text": "Dodatnie: przecież przed chwilą się wznosił",
+              "why": "Wznoszenie mówi o prędkości, a nie o jej nachyleniu. Na szczycie prędkość maleje, a to oznacza ujemne nachylenie."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "slopes"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Powiedziałam, że zero! A na szczycie krzywa prędkości najbardziej stromo opada *w dół*. Zerowa prędkość nie oznacza zerowego pchania."
+        },
+        {
+          "t": "p",
+          "text": "Dwie kropki oznaczają nachylenie nachylenia. Jest jeszcze trzeci sposób zapisu nachyleń, z małymi kreseczkami zwanymi **primami**: $h'$ („h prim”) to nachylenie, $h''$ („h bis”) to nachylenie nachylenia. Trzy zapisy, jedna idea:"
+        },
+        {
+          "t": "vocab",
+          "title": "Trzy sposoby zapisu",
+          "items": [
+            {
+              "term": "$\\dot h = h' = \\frac{dh}{dt}$",
+              "def": "Nachylenie $h$: jego prędkość."
+            },
+            {
+              "term": "$\\ddot h = h'' = \\frac{d^2 h}{dt^2}$",
+              "def": "Nachylenie nachylenia: przyspieszenie."
+            },
+            {
+              "term": "$\\Delta$",
+              "def": "„Zmiana”: $\\Delta t$ to krok czasu."
+            },
+            {
+              "term": "$\\int$",
+              "def": "Rozciągnięte S, od słowa „suma”: sumowanie pola."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Teraz równanie z rozdziału 1 czyta się jak zdanie. Masa razy przyspieszenie równa się wszystkiemu, co pcha: ciąg w górę, ciężar w dół i opór przeciw prędkości. To druga zasada dynamiki Newtona, wyraz po wyrazie:"
+        },
+        {
+          "t": "math",
+          "tex": "\\underbrace{0{,}5\\,\\ddot{\\out{h}}}_{\\text{masa}\\times\\text{przyspieszenie}} = \\underbrace{\\eff{T}}_{\\text{ciąg}} - \\underbrace{4{,}9}_{\\text{ciężar}} - \\underbrace{1{,}0\\,\\dot{\\out{h}}}_{\\text{opór}\\,\\times\\,\\text{prędkość}}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Czyli reguła kawy mówiła o jej prędkości, a reguła drona mówi o jego przyspieszeniu: o jedno nachylenie głębiej. Czy to dlatego dron może przestrzelić i się kołysać, a kawa nigdy?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Na pewno. Prędkość kawy po prostu idzie za różnicą. Prędkość drona trzeba *rozpędzić* i *wytracić*, więc może się jeszcze ruszać, kiedy dron dotrze do celu."
         }
       ]
     },
@@ -263,6 +361,7 @@
             "Reguła typu „stygnij tym szybciej, im jesteś cieplejsza” wyznacza całą krzywą: **wykładnicze** dochodzenie do celu.",
             "**Stała czasowa τ** to linijka: 63 % drogi po τ, 86 % po 2τ, 95 % po 3τ.",
             "Budowanie krzywych za dużymi krokami tworzy fałszywe przeregulowanie i wahania, zupełnie jak prysznic.",
+            "**Nachylenie nachylenia** to przyspieszenie: $\\ddot h$ albo $h''$. Równanie drona z rozdziału 1 to reguła właśnie na nie.",
             "**Całka** zbiera pole i odwraca pochodną."
           ]
         },
@@ -417,7 +516,8 @@
       "read1": "wartość po 1τ",
       "aria": "Krzywa wykładnicza z pionowymi znacznikami po jednej, dwóch i trzech stałych czasowych, opisanymi 63, 86 i 95 procent.",
       "describe": "Stała czasowa {tau} minut. Znaczniki po jednej, dwóch i trzech stałych czasowych pokazują 63, 86 i 95 procent drogi.",
-      "read2": "wartość po 2τ"
+      "read2": "wartość po 2τ",
+      "startLine": "początkowe tempo, utrzymane"
     },
     "area": {
       "title": "Sumowanie pola",
@@ -434,6 +534,28 @@
       "ariaBottom": "Zebrane pole w czasie, na tle prawdziwej krzywej wysokości.",
       "describe": "Do chwili {t} s zebrane pole wynosi {a} m.",
       "help": "Przeciągaj po wykresie prędkości albo użyj suwaka. Paski powyżej zera dodają wysokości, paski poniżej zera ją odejmują."
+    },
+    "slopes": {
+      "title": "Nachylenia nachyleń",
+      "height": "wysokość",
+      "target": "cel 2 m",
+      "speed": "prędkość = nachylenie wysokości",
+      "speedAxis": "prędkość (m/s)",
+      "acc": "przyspieszenie = nachylenie prędkości",
+      "accAxis": "przysp. (m/s²)",
+      "ariaH": "Wysokość drona w ciągu 4 sekund ze styczną w miejscu kursora czasu.",
+      "ariaV": "Prędkość drona w ciągu tych samych 4 sekund ze styczną w miejscu kursora czasu.",
+      "ariaA": "Przyspieszenie drona w ciągu tych samych 4 sekund, z wartością w miejscu kursora czasu.",
+      "cursor": "Kursor czasu",
+      "readH": "wysokość",
+      "readV": "prędkość",
+      "readA": "przyspieszenie",
+      "up": "Przyspieszenie w górę: prędkość rośnie (albo spadanie zwalnia).",
+      "down": "Przyspieszenie w dół: prędkość maleje (albo spadanie przyspiesza).",
+      "steady": "Przyspieszenie bliskie zera: prędkość jest tu stała.",
+      "top": "Na szczycie prędkość wynosi zero, a jednak przyspieszenie to {a} m/s²: dron już jest ściągany z powrotem w dół.",
+      "describe": "W chwili {t} s: wysokość {h} m, prędkość {v} m na sekundę, przyspieszenie {a} m na sekundę do kwadratu.",
+      "help": "Przeciągaj po dowolnym wykresie albo użyj suwaka. Styczna do wysokości daje prędkość, a styczna do prędkości daje przyspieszenie."
     }
   }
 }

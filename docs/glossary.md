@@ -230,6 +230,16 @@ Loop gain keeps its Chapter 10 term everywhere (see "Chapter 10" above); ch08 no
 | mirror twin $\bar z$ (conjugate, named once) | jumeau miroir (conjugué) | gemelo reflejado (conjugado) | gemella allo specchio (complesso coniugato) | Spiegelzwilling (konjugiert komplexe Zahl) | lustrzany bliźniak (liczba sprzężona) | gêmeo espelhado (conjugado) | 鏡像の双子（共役複素数） | 镜像孪生（共轭复数） | التوأم المرآتي (المرافق) |
 | rise over run | la montée divisée par l'avancée | subida entre avance | salita diviso avanzamento | hoch durch rüber | wzniesienie podzielone przez przesunięcie | subida dividida pelo avanço | 縦の変化 ÷ 横の変化 | 升高 ÷ 前进 | الصعود مقسومًا على التقدّم الأفقي |
 
+### Phase 4: Chapter 3 foundations
+
+| Term (definition) | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
+|---|---|---|---|---|---|---|---|---|---|
+| prime marks $h'$, $h''$ (how they are read) | primes: h prime, h seconde | primas: h prima | primi: h primo, h secondo | Striche: h Strich | primy: h prim, h bis | linhas: h linha, h duas linhas | プライム | 撇号: h 撇 | الشَّرطات |
+| Δ read as "change in" | variation de | cambio de | variazione di | Änderung von | zmiana | variação de | 〜の変化 | 变化量 | التغيّر في |
+| ∫ "a stretched S, for sum" | un S étiré, pour « somme » | una S estirada, de suma | una S allungata, per "somma" | gestrecktes S für „Summe" | rozciągnięte S, od „suma" | um S esticado, de soma | 引き伸ばしたS（sumのS） | 拉长的 S（sum，求和） | S ممدودة (sum، المجموع) |
+| ruler legend "starting speed, kept up" (τ, picture first) | vitesse de départ gardée | velocidad inicial mantenida | velocità iniziale mantenuta | Anfangstempo beibehalten | początkowe tempo, utrzymane | velocidade inicial mantida | 最初の速さのまま | 保持起始速度 | السرعة الابتدائية، مستمرة |
+| Newton's law (ch03; kept apart from the ch03 cooling law) | loi de Newton | segunda ley de Newton | legge di Newton | Newtons Gesetz | druga zasada dynamiki Newtona | lei de Newton | ニュートンの運動の法則 | 牛顿第二定律 | قانون نيوتن |
+
 ## Cast gender and address
 
 | Locale | Mika | June | Theo | Reader |
@@ -393,3 +403,14 @@ engineering, then fix every string and move the entry to "Settled decisions".
 - ja: ch05 mixes 回転子 / スピナー and 鏡の双子 / 鏡像の双子; アークタンジェント vs. 逆正接.
 - zh-CN: ch08 has 镜像双胞胎 once (ch05: 镜像孪生); maybe add 模 once after 长度.
 - ar: قوس الظل vs. الظل العكسي for arctan.
+
+**Maths explanations pass, Phase 4**
+- es/it: "a times faster" (ch04 §3.2) risks reading as "sometimes faster" ("a veces", "a volte");
+  it and es now say "multiplied by a" (es fixed in review): check both read naturally.
+- es/zh-CN/pl: "Newton's law" became "second law" to keep it apart from the cooling law.
+- de/ja/pt-BR/zh-CN/it: two words for speed in places (de Geschwindigkeit/Tempo, ja 速さ/速度);
+  ch01's drag label ("air drag") vs. ch03's "drag × speed" (same in English).
+- ja: h′ is usually read ダッシュ in classrooms, not プライム.
+- pl: "h bis" vs. "h dwa primy"; "tempo" for the coffee's rate.
+- ar: the ∫ "S for sum" pun keeps the Latin word; الشَّرطات for primes.
+- fr: ch03 §1.15 "le inertie" fixed to "l'inertie" in this pass.

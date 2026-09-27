@@ -51,7 +51,7 @@
         },
         {
           "t": "p",
-          "text": "Esta \"pendiente en un instante\" tiene nombre: la **derivada**. La escribimos como un cambio diminuto de altura dividido por el tiempo diminuto que tardó:"
+          "text": "Esta \"pendiente en un instante\" tiene nombre: la **derivada**. La escribimos como un cambio diminuto de altura dividido por el tiempo diminuto que tardó. En símbolos, $\\Delta h / \\Delta t$ se lee \"cambio de altura entre cambio de tiempo\": la letra griega Δ (delta) es la abreviatura de **cambio de**."
         },
         {
           "t": "math",
@@ -89,7 +89,7 @@
         },
         {
           "t": "p",
-          "text": "El signo menos dice \"enfríate cuando estés más caliente que la habitación\". El número **τ** (tau, la *constante de tiempo*) dice lo lenta que es la taza. Para una taza normal, τ ≈ 10 minutos."
+          "text": "El signo menos dice \"enfríate cuando estés más caliente que la habitación\". El número **τ** (tau, la *constante de tiempo*) dice lo lenta que es la taza. Imagínalo así: τ es lo que tardaría el café en llegar a la temperatura ambiente **si siguiera enfriándose a su velocidad inicial**. Para una taza normal, τ ≈ 10 minutos."
         },
         {
           "t": "note",
@@ -134,6 +134,7 @@
           "t": "list",
           "items": [
             "Δt menor que τ: el factor está entre 0 y 1. La diferencia se encoge, sin sobreimpulso.",
+            "Δt exactamente igual a τ: el factor es **0**. Un solo paso cae justo en la temperatura ambiente: es la velocidad inicial mantenida durante una τ entera.",
             "Δt entre τ y 2τ: el factor es **negativo**. El café se pasa por debajo de la temperatura ambiente, luego por encima, oscilando de un lado a otro mientras las oscilaciones se encogen.",
             "Δt mayor que 2τ: el factor es menor que −1. Las oscilaciones **crecen** en cada paso. Café absurdo."
           ]
@@ -151,6 +152,10 @@
         {
           "t": "p",
           "text": "Haz Δt pequeño y activa la curva suave. Los puntos hechos a mano caen justo encima. Esa forma suave se llama **decaimiento exponencial**. Tiene su propio capítulo, el siguiente."
+        },
+        {
+          "t": "p",
+          "text": "El café de verdad nunca mantiene su velocidad inicial: la pendiente se encoge a medida que se encoge la diferencia. Así que tras una τ solo ha cerrado alrededor del **63 %** de la diferencia, no toda. En la regla de abajo, la línea discontinua es la velocidad inicial mantenida; la curva es lo que pasa de verdad. ¿De dónde sale ese 63 %? El capítulo 4 lo construye."
         },
         {
           "t": "h3",
@@ -200,11 +205,11 @@
             },
             {
               "term": "Sistema de primer orden",
-              "def": "Algo cuya velocidad de cambio depende de lo lejos que esté de adonde se dirige (café, depósitos). Su curva es una exponencial."
+              "def": "Algo cuya velocidad de cambio es proporcional a lo lejos que esté de adonde se dirige (café, depósitos). Su curva es una exponencial."
             },
             {
               "term": "Constante de tiempo τ",
-              "def": "Lo que tarda un sistema de primer orden en recorrer el 63 % de la distancia restante."
+              "def": "Lo que tardaría un sistema de primer orden en llegar si mantuviera su velocidad inicial. En realidad, en ese tiempo recorre el 63 % de la distancia restante."
             }
           ]
         }
@@ -240,7 +245,7 @@
         },
         {
           "t": "p",
-          "text": "Esta operación de \"acumular el área\" se llama **integral**:"
+          "text": "Esta operación de \"acumular el área\" se llama **integral**. Su signo ∫ es una S estirada, de **suma**: una suma de tiras finas. El pequeño $dt$ es el ancho de cada tira, y el $0$ y la $t$ dicen dónde empezar y dónde dejar de sumar:"
         },
         {
           "t": "math",
@@ -249,6 +254,99 @@
         {
           "t": "note",
           "text": "Eso es toda la integral que necesitamos por ahora. Vuelve dos veces: en el capítulo 7 (una transformada que mide un área) y en el capítulo 9 (la \"I\" de PID acumula el error pasado)."
+        }
+      ]
+    },
+    {
+      "id": "slopes",
+      "title": "La pendiente de la pendiente",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "El capítulo 1 nos prometió algo. La ecuación del dron tenía **dos** puntos sobre $h$. Un punto es la velocidad. ¿Y el segundo?"
+        },
+        {
+          "t": "p",
+          "text": "La velocidad también es una curva, así que también tiene pendiente: lo rápido que cambia la **velocidad**. Eso es la **aceleración**, la pendiente de la pendiente. Abajo, el mismo vuelo tres veces: la altura, su pendiente (la velocidad) y la pendiente de *esa* (la aceleración), todo con un mismo cursor de tiempo."
+        },
+        {
+          "t": "predict",
+          "id": "ch3-top-acc",
+          "gate": true,
+          "q": "Justo en lo alto del bulto la velocidad es cero. ¿Cuánto vale ahí la aceleración?",
+          "options": [
+            {
+              "text": "Cero también: nada se mueve",
+              "why": "La velocidad es cero solo durante un instante. Está pasando de positiva a negativa, así que está cambiando, y deprisa."
+            },
+            {
+              "text": "Negativa: algo ya tira del dron hacia abajo",
+              "correct": true,
+              "why": "Exacto. La velocidad está cruzando el cero hacia abajo, así que su pendiente es negativa. Estar quieto un instante no es lo mismo que no tener nada que empuje."
+            },
+            {
+              "text": "Positiva: acaba de estar subiendo",
+              "why": "Subir tiene que ver con la velocidad, no con su pendiente. Arriba del todo la velocidad se está encogiendo, y eso es una pendiente negativa."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "slopes"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "¡Yo dije cero! Pero arriba del todo la curva de velocidad está en su *bajada* más empinada. Velocidad cero no significa empuje cero."
+        },
+        {
+          "t": "p",
+          "text": "Dos puntos significan la pendiente de la pendiente. Hay una tercera forma de escribir pendientes, con unas marquitas llamadas **primas**: $h'$ (\"h prima\") para la pendiente y $h''$ para la pendiente de la pendiente. Tres formas de escribirlo, una sola idea:"
+        },
+        {
+          "t": "vocab",
+          "title": "Tres formas de escribirlo",
+          "items": [
+            {
+              "term": "$\\dot h = h' = \\frac{dh}{dt}$",
+              "def": "La pendiente de $h$: su velocidad."
+            },
+            {
+              "term": "$\\ddot h = h'' = \\frac{d^2 h}{dt^2}$",
+              "def": "La pendiente de la pendiente: la aceleración."
+            },
+            {
+              "term": "$\\Delta$",
+              "def": "\"Cambio de\": $\\Delta t$ es un paso de tiempo."
+            },
+            {
+              "term": "$\\int$",
+              "def": "Una S estirada, de \"suma\": ir sumando área."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Ahora la ecuación del capítulo 1 se lee como una frase. La masa por la aceleración es igual a todo lo que empuja: el empuje hacia arriba, el peso hacia abajo y el rozamiento en contra de la velocidad. Es la segunda ley de Newton, término a término:"
+        },
+        {
+          "t": "math",
+          "tex": "\\underbrace{0.5\\,\\ddot{\\out{h}}}_{\\text{masa}\\times\\text{aceleración}} = \\underbrace{\\eff{T}}_{\\text{empuje}} - \\underbrace{4.9}_{\\text{peso}} - \\underbrace{1.0\\,\\dot{\\out{h}}}_{\\text{rozamiento}\\,\\times\\,\\text{velocidad}}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "O sea, que la regla del café hablaba de su velocidad, y la del dron habla de su aceleración: una pendiente más adentro. ¿Será por eso que el dron puede pasarse de largo y oscilar, y el café nunca?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Tiene que ser eso. La velocidad del café simplemente sigue a la diferencia. La del dron hay que *ganarla* y *gastarla*, así que puede seguir moviéndose cuando llega."
         }
       ]
     },
@@ -263,6 +361,7 @@
             "Una regla como \"enfríate más rápido cuanto más caliente estés\" determina la curva entera: una aproximación **exponencial**.",
             "La **constante de tiempo τ** es una regla de medir: el 63 % del camino tras τ, el 86 % tras 2τ, el 95 % tras 3τ.",
             "Construir curvas con pasos demasiado grandes crea sobreimpulsos y oscilaciones falsos, igual que la ducha.",
+            "La **pendiente de la pendiente** es la aceleración: $\\ddot h$, o $h''$. La ecuación del dron del capítulo 1 es una regla para ella.",
             "La **integral** acumula área y deshace la derivada."
           ]
         },
@@ -417,7 +516,8 @@
       "read1": "valor en 1τ",
       "aria": "Curva exponencial con marcas verticales en una, dos y tres constantes de tiempo, etiquetadas 63, 86 y 95 por ciento.",
       "describe": "Constante de tiempo de {tau} minutos. Las marcas en una, dos y tres constantes de tiempo muestran el 63, el 86 y el 95 por ciento del camino.",
-      "read2": "valor en 2τ"
+      "read2": "valor en 2τ",
+      "startLine": "velocidad inicial mantenida"
     },
     "area": {
       "title": "Sumando áreas",
@@ -434,6 +534,28 @@
       "ariaBottom": "El área acumulada dibujada a lo largo del tiempo, sobre la curva de altura real.",
       "describe": "Hasta {t} s el área acumulada es de {a} metros.",
       "help": "Arrastra sobre la gráfica de velocidad o usa el control deslizante. Las tiras por encima de cero suman altura; las de por debajo la restan."
+    },
+    "slopes": {
+      "title": "Pendientes de pendientes",
+      "height": "altura",
+      "target": "objetivo 2 m",
+      "speed": "velocidad = pendiente de la altura",
+      "speedAxis": "velocidad (m/s)",
+      "acc": "aceleración = pendiente de la velocidad",
+      "accAxis": "acel. (m/s²)",
+      "ariaH": "Altura del dron durante 4 segundos, con una recta tangente en el cursor de tiempo.",
+      "ariaV": "Velocidad del dron durante los mismos 4 segundos, con una recta tangente en el cursor de tiempo.",
+      "ariaA": "Aceleración del dron durante los mismos 4 segundos, con su valor en el cursor de tiempo.",
+      "cursor": "Cursor de tiempo",
+      "readH": "altura",
+      "readV": "velocidad",
+      "readA": "aceleración",
+      "up": "Aceleración hacia arriba: la velocidad está creciendo (o su caída se está frenando).",
+      "down": "Aceleración hacia abajo: la velocidad se está encogiendo (o su caída se está acelerando).",
+      "steady": "Aceleración casi cero: justo aquí la velocidad es constante.",
+      "top": "Velocidad cero arriba del todo, y aun así la aceleración es de {a} m/s²: algo ya tira de él hacia abajo.",
+      "describe": "En {t} s: altura {h} m, velocidad {v} m por segundo, aceleración {a} m por segundo al cuadrado.",
+      "help": "Arrastra sobre cualquiera de las gráficas o usa el control deslizante. La tangente a la altura da la velocidad; la tangente a la velocidad da la aceleración."
     }
   }
 }

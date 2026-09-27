@@ -51,7 +51,7 @@
         },
         {
           "t": "p",
-          "text": "Cette « pente à un instant » a un nom : la **dérivée**. On l'écrit comme un minuscule changement de hauteur divisé par le minuscule temps qu'il a fallu :"
+          "text": "Cette « pente à un instant » a un nom : la **dérivée**. On l'écrit comme un minuscule changement de hauteur divisé par le minuscule temps qu'il a fallu. En symboles, $\\Delta h / \\Delta t$ se lit « variation de hauteur sur variation de temps » : la lettre grecque Δ (delta) veut dire **variation de**."
         },
         {
           "t": "math",
@@ -89,7 +89,7 @@
         },
         {
           "t": "p",
-          "text": "Le signe moins dit « refroidis quand tu es plus chaud que la pièce ». Le nombre **τ** (tau, la *constante de temps*) dit à quel point la tasse est lente. Pour une tasse normale, τ ≈ 10 minutes."
+          "text": "Le signe moins dit « refroidis quand tu es plus chaud que la pièce ». Le nombre **τ** (tau, la *constante de temps*) dit à quel point la tasse est lente. Imagine-le comme ça : τ est le temps que le café mettrait pour atteindre la température de la pièce **s'il continuait à refroidir à sa vitesse de départ**. Pour une tasse normale, τ ≈ 10 minutes."
         },
         {
           "t": "note",
@@ -134,6 +134,7 @@
           "t": "list",
           "items": [
             "Δt plus petit que τ : le facteur est entre 0 et 1. L'écart diminue, pas de dépassement.",
+            "Δt exactement égal à τ : le facteur vaut **0**. Un seul pas tombe pile sur la température de la pièce : c'est la vitesse de départ gardée pendant tout un τ.",
             "Δt entre τ et 2τ : le facteur est **négatif**. Le café passe sous la température de la pièce, puis au-dessus, en oscillant avec des oscillations qui rétrécissent.",
             "Δt plus grand que 2τ : le facteur est inférieur à −1. Les oscillations **grandissent** à chaque pas. Un café absurde."
           ]
@@ -146,11 +147,15 @@
         },
         {
           "t": "note",
-          "text": "C’est une erreur de calcul numérique, pas une nouvelle loi du café. Les simulations du drone utilisent des pas d’intégration vérifiés de 1 ms ; la douche emploie une petite mise à jour exacte pour le inertie thermique du premier ordre. Les oscillations suivantes viennent du modèle, pas de pas de calcul géants."
+          "text": "C’est une erreur de calcul numérique, pas une nouvelle loi du café. Les simulations du drone utilisent des pas d’intégration vérifiés de 1 ms ; la douche emploie une petite mise à jour exacte pour l'inertie thermique du premier ordre. Les oscillations suivantes viennent du modèle, pas de pas de calcul géants."
         },
         {
           "t": "p",
           "text": "Prends un Δt petit et affiche la courbe lisse. Les points construits à la main tombent pile dessus. Cette forme lisse s'appelle une **décroissance exponentielle**. Elle a droit à son propre chapitre juste après."
+        },
+        {
+          "t": "p",
+          "text": "Le vrai café ne garde jamais sa vitesse de départ : la pente diminue à mesure que l'écart diminue. Donc après un τ, il n'a comblé qu'environ **63 %** de l'écart, pas tout. Sur la règle graduée ci-dessous, la droite en pointillés, c'est la vitesse de départ gardée ; la courbe, c'est ce qui se passe vraiment. D'où vient ce 63 % ? Le chapitre 4 le construit."
         },
         {
           "t": "h3",
@@ -200,11 +205,11 @@
             },
             {
               "term": "Système du premier ordre",
-              "def": "Quelque chose dont la vitesse de variation dépend de la distance qui le sépare de là où il va (café, réservoirs). Sa courbe est une exponentielle."
+              "def": "Quelque chose dont la vitesse de variation est proportionnelle à la distance qui le sépare de là où il va (café, réservoirs). Sa courbe est une exponentielle."
             },
             {
               "term": "Constante de temps τ",
-              "def": "Le temps qu'il faut à un système du premier ordre pour parcourir 63 % de la distance restante."
+              "def": "Le temps que mettrait un système du premier ordre pour arriver s'il gardait sa vitesse de départ. En vrai, pendant ce temps, il parcourt 63 % de la distance restante."
             }
           ]
         }
@@ -240,7 +245,7 @@
         },
         {
           "t": "p",
-          "text": "Cette opération « accumuler l'aire » s'appelle l'**intégrale** :"
+          "text": "Cette opération « accumuler l'aire » s'appelle l'**intégrale**. Son signe ∫ est un S étiré, pour **somme** : une somme de fines bandes. Le petit $dt$ est la largeur de chaque bande, et le $0$ et le $t$ disent où commencer et où arrêter d'additionner :"
         },
         {
           "t": "math",
@@ -249,6 +254,99 @@
         {
           "t": "note",
           "text": "C'est tout ce qu'il nous faut d'intégrale pour l'instant. Elle reviendra deux fois : au chapitre 7 (une transformée qui mesure une aire) et au chapitre 9 (le « I » de PID accumule l'erreur passée)."
+        }
+      ]
+    },
+    {
+      "id": "slopes",
+      "title": "La pente de la pente",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Le chapitre 1 nous a promis quelque chose. L'équation du drone avait **deux** points au-dessus de $h$. Un point, c'est la vitesse. Et le deuxième ?"
+        },
+        {
+          "t": "p",
+          "text": "La vitesse est elle-même une courbe, donc elle a aussi une pente : à quelle vitesse la **vitesse** change. C'est l'**accélération**, la pente de la pente. Ci-dessous, le même vol trois fois : la hauteur, sa pente (la vitesse), et la pente de *celle-ci* (l'accélération), toutes sur un seul curseur de temps."
+        },
+        {
+          "t": "predict",
+          "id": "ch3-top-acc",
+          "gate": true,
+          "q": "Tout en haut de la bosse, la vitesse est nulle. Et l'accélération, elle vaut combien là-haut ?",
+          "options": [
+            {
+              "text": "Zéro aussi : plus rien ne bouge",
+              "why": "La vitesse n'est nulle qu'un instant. Elle passe du positif au négatif, donc elle change, et vite."
+            },
+            {
+              "text": "Négative : le drone est déjà tiré vers le bas",
+              "correct": true,
+              "why": "Exact. La vitesse descend en passant par zéro, donc sa pente est négative. Être immobile un instant, ce n'est pas la même chose que rien ne pousse."
+            },
+            {
+              "text": "Positive : il vient de monter",
+              "why": "Monter, ça concerne la vitesse, pas sa pente. En haut, la vitesse diminue : c'est une pente négative."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "slopes"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "J'avais dit zéro ! Mais en haut, la courbe de vitesse descend au plus raide. Vitesse nulle ne veut pas dire poussée nulle."
+        },
+        {
+          "t": "p",
+          "text": "Deux points, c'est la pente de la pente. Il existe une troisième façon d'écrire les pentes, avec de petits traits appelés **primes** : $h'$ (« h prime ») pour la pente, $h''$ (« h seconde ») pour la pente de la pente. Trois écritures, une seule idée :"
+        },
+        {
+          "t": "vocab",
+          "title": "Trois façons de l'écrire",
+          "items": [
+            {
+              "term": "$\\dot h = h' = \\frac{dh}{dt}$",
+              "def": "La pente de $h$ : sa vitesse."
+            },
+            {
+              "term": "$\\ddot h = h'' = \\frac{d^2 h}{dt^2}$",
+              "def": "La pente de la pente : l'accélération."
+            },
+            {
+              "term": "$\\Delta$",
+              "def": "« Variation de » : $\\Delta t$ est un pas de temps."
+            },
+            {
+              "term": "$\\int$",
+              "def": "Un S étiré, pour « somme » : on additionne de l'aire."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Maintenant, l'équation du chapitre 1 se lit comme une phrase. Masse fois accélération égale tout ce qui pousse : la poussée vers le haut, le poids vers le bas, et la traînée contre la vitesse. C'est la loi de Newton, un terme à la fois :"
+        },
+        {
+          "t": "math",
+          "tex": "\\underbrace{0{,}5\\,\\ddot{\\out{h}}}_{\\text{masse}\\times\\text{accélération}} = \\underbrace{\\eff{T}}_{\\text{poussée}} - \\underbrace{4{,}9}_{\\text{poids}} - \\underbrace{1{,}0\\,\\dot{\\out{h}}}_{\\text{traînée}\\,\\times\\,\\text{vitesse}}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Donc la règle du café parlait de sa vitesse, et la règle du drone parle de son accélération : une pente plus loin. C'est pour ça que le drone peut dépasser et osciller, et le café jamais ?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Forcément. La vitesse du café suit juste l'écart. La vitesse du drone doit être *accumulée* puis *dépensée*, donc il peut encore bouger quand il arrive."
         }
       ]
     },
@@ -263,6 +361,7 @@
             "Une règle comme « refroidis d'autant plus vite que tu es chaud » fixe toute la courbe : une approche **exponentielle**.",
             "La **constante de temps τ** est une règle graduée : 63 % du chemin après τ, 86 % après 2τ, 95 % après 3τ.",
             "Construire des courbes avec des pas trop grands crée de faux dépassements et des oscillations, exactement comme la douche.",
+            "La **pente de la pente** est l'accélération : $\\ddot h$, ou $h''$. L'équation du drone du chapitre 1 est une règle pour elle.",
             "L'**intégrale** accumule l'aire et défait la dérivée."
           ]
         },
@@ -417,7 +516,8 @@
       "read1": "valeur à 1τ",
       "aria": "Courbe exponentielle avec des repères verticaux à une, deux et trois constantes de temps, étiquetés 63, 86 et 95 pour cent.",
       "describe": "Constante de temps de {tau} minutes. Les repères à une, deux et trois constantes de temps montrent 63, 86 et 95 pour cent du chemin.",
-      "read2": "valeur à 2τ"
+      "read2": "valeur à 2τ",
+      "startLine": "vitesse de départ gardée"
     },
     "area": {
       "title": "Additionner des aires",
@@ -434,6 +534,28 @@
       "ariaBottom": "L'aire accumulée tracée au cours du temps, superposée à la courbe de hauteur réelle.",
       "describe": "Jusqu'à {t} s, l'aire accumulée est de {a} mètres.",
       "help": "Fais glisser sur le graphique de vitesse ou utilise le curseur. Les bandes au-dessus de zéro ajoutent de la hauteur, celles en dessous en retirent."
+    },
+    "slopes": {
+      "title": "Pentes de pentes",
+      "height": "hauteur",
+      "target": "cible 2 m",
+      "speed": "vitesse = pente de la hauteur",
+      "speedAxis": "vitesse (m/s)",
+      "acc": "accélération = pente de la vitesse",
+      "accAxis": "accél. (m/s²)",
+      "ariaH": "Hauteur du drone sur 4 secondes avec une tangente au niveau du curseur de temps.",
+      "ariaV": "Vitesse du drone sur les mêmes 4 secondes avec une tangente au niveau du curseur de temps.",
+      "ariaA": "Accélération du drone sur les mêmes 4 secondes, avec la valeur au niveau du curseur de temps.",
+      "cursor": "Curseur de temps",
+      "readH": "hauteur",
+      "readV": "vitesse",
+      "readA": "accélération",
+      "up": "Accélération vers le haut : la vitesse augmente (ou sa chute ralentit).",
+      "down": "Accélération vers le bas : la vitesse diminue (ou sa chute s'accélère).",
+      "steady": "Accélération presque nulle : ici, la vitesse est stable.",
+      "top": "Vitesse nulle au sommet, et pourtant l'accélération vaut {a} m/s² : il est déjà tiré vers le bas.",
+      "describe": "À {t} s : hauteur {h} m, vitesse {v} m par seconde, accélération {a} m par seconde au carré.",
+      "help": "Fais glisser sur n'importe quel graphique ou utilise le curseur. La tangente à la hauteur donne la vitesse ; la tangente à la vitesse donne l'accélération."
     }
   }
 }

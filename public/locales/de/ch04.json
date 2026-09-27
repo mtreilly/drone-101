@@ -148,7 +148,7 @@
           "t": "say",
           "who": "june",
           "mood": "happy",
-          "text": "Und ein Riesenschritt von −100 % löscht alles aus. Das ist wieder mein gefrorener Kaffee. Winzige Schritte reparieren das, jedes Mal."
+          "text": "Und das ist mein Kaffee! Teil ein τ in n Handschritte, $\\Delta t = \\tau/n$: Jeder Schritt multipliziert den Abstand mit $1 - \\frac1n$, also ist der Abstand nach einem τ nur noch $\\left(1 - \\frac1n\\right)^n$ von dem, was er war. Ein Riesenschritt ($n = 1$) landet genau auf Zimmertemperatur. Winzige Schritte lassen 36,8 % übrig."
         },
         {
           "t": "note",
@@ -232,7 +232,7 @@
         },
         {
           "t": "p",
-          "text": "Jetzt ist Steigung ÷ Höhe überall auf der Kurve genau **a**. Positives a: Sie wächst (und zwar immer schneller). Negatives a: Sie schrumpft Richtung null, wie der Abstand beim Kaffee. a = 0: Sie bleibt einfach, wo sie ist."
+          "text": "Jetzt ist Steigung ÷ Höhe überall auf der Kurve genau **a**. Stell dir vor, warum: $e^{at}$ ist der Film von $e^{t}$, a-mal schneller abgespielt, also ist jede Steigung a-mal steiler. Positives a: Sie wächst (und zwar immer schneller). Negatives a: Sie schrumpft Richtung null, wie der Abstand beim Kaffee. a = 0: Sie bleibt einfach, wo sie ist."
         },
         {
           "t": "math",
@@ -290,7 +290,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Bei einer **linearen Änderungsregel mit festen Koeffizienten**, wie bei unserem Kaffee, können wir eine Exponentialfunktion versuchen: einsetzen und schauen, welcher Wert von a die Regel erfüllt. Andere Regeln brauchen vielleicht andere Formen."
+          "text": "Bei einer Regel, in der die Steigung einfach feste Zahlen mal die Größe selbst ist (nichts im Quadrat, keine Zahlen, die sich mit der Zeit ändern), wie bei unserer Kaffeeregel, können wir eine Exponentialfunktion versuchen: einsetzen und schauen, welcher Wert von a die Regel erfüllt. Andere Regeln brauchen vielleicht andere Formen."
         },
         {
           "t": "p",
@@ -302,7 +302,7 @@
         },
         {
           "t": "p",
-          "text": "Die Algebra stimmt mit dem Schieberegler überein. Die Steigung des Tipps ist $a \\cdot 70e^{at}$. Die Regel will $-70e^{at}/\\tau$. Das $70e^{at}$ steht auf beiden Seiten und kürzt sich weg:"
+          "text": "Die Algebra stimmt mit dem Schieberegler überein. Die Steigung des Tipps ist $a \\cdot 70e^{at}$ (die 20 ändert sich nie, also ist ihre Steigung 0, und die 70 fährt einfach mit). Die Regel will $-70e^{at}/\\tau$. Das $70e^{at}$ steht auf beiden Seiten und kürzt sich weg:"
         },
         {
           "t": "math",
@@ -328,7 +328,7 @@
         },
         {
           "t": "p",
-          "text": "Die Feder zieht mit der Kraft $-kx$ zurück. Kraft = Masse × Beschleunigung, und die Beschleunigung ist die Steigung der Steigung. Die Regel lautet also:"
+          "text": "Die Feder zieht mit der Kraft $-kx$ zurück. Kraft = Masse × Beschleunigung, und die Beschleunigung ist die Steigung der Steigung (Kapitel 3). Die Regel lautet also:"
         },
         {
           "t": "math",

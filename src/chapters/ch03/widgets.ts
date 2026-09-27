@@ -5,7 +5,7 @@ import { color, withAlpha } from '../../ui/colors';
 import { readout, segmented, slider, toggle, transport } from '../../ui/controls';
 import { Loop } from '../../ui/loop';
 import { Plot } from '../../ui/plot';
-import { COFFEE, coffeeExact, coffeeStep, cumulativeArea, droneRun, tankExact } from './models';
+import { COFFEE, coffeeExact, coffeeStep, cumulativeArea, droneRun, slopeOf, tankExact } from './models';
 import { dragX, nearest } from './plot-drag';
 
 const range = (ys: number[], pad = 0.15): [number, number] => {
@@ -239,7 +239,11 @@ const ruler: WidgetFactory = (host, ctx) => {
   const plot = new Plot(host, {
     x: { label: t('timeAxis'), min: 0, max: 60 },
     y: { label: tc('plots.temp'), min: 0, max: 100 },
-    series: [{ id: 'y', color: 'out', label: t('curve'), ghost: true }],
+    series: [
+      // τ, picture first: the starting speed kept up reaches the end in exactly one τ
+      { id: 'start', color: 'ink2', label: t('startLine'), dash: [6, 4], width: 1.6 },
+      { id: 'y', color: 'out', label: t('curve'), ghost: true },
+    ],
     height: 240,
     label: t('aria'),
   }, ctx.onCleanup);
@@ -253,6 +257,7 @@ const ruler: WidgetFactory = (host, ctx) => {
     if (coffeeMode) plot.setY(0, 100);
     else plot.setY(0, 1.4);
     plot.fn('y', f);
+    plot.set('start', [0, tau], [f(0), end]);
     plot.setLines([
       { kind: 'h', at: end, color: 'sp', label: coffeeMode ? t('room') : t('full') },
       ...[1, 2, 3].map((k) => ({ kind: 'v' as const, at: k * tau, color: 'ink3', dash: [3, 4], width: 1.2, label: `${k}τ` })),
@@ -370,4 +375,72 @@ const area: WidgetFactory = (host, ctx) => {
   return () => loop.destroy();
 };
 
-export const widgets: Record<string, WidgetFactory> = { tangent, coffee, ruler, area };
+/** 3d: the slope of the slope. Height, speed and acceleration share one time cursor. */
+const slopes: WidgetFactory = (host, ctx) => {
+  const { t } = ctx;
+  const run = droneRun(4);
+  const acc = slopeOf(run.t, run.v);
+  const T = run.t[run.t.length - 1];
+  const make = (label: string, ys: number[], color: string, name: string, aria: string, height: number) => {
+    const [lo, hi] = range(ys);
+    const p = new Plot(host, {
+      x: { label: tc('plots.time'), min: 0, max: T },
+      y: { label, min: lo, max: hi },
+      series: [{ id: 'y', color, label: name, width: 2.4 }],
+      height,
+      label: aria,
+    }, ctx.onCleanup);
+    p.set('y', run.t, ys);
+    return p;
+  };
+  host.append(h('p', { class: 'w-title' }, t('title')));
+  const pH = make(tc('plots.height'), run.h, 'out', t('height'), t('ariaH'), 170);
+  pH.setLines([{ kind: 'h', at: 2, color: 'sp', label: t('target') }]);
+  const pV = make(t('speedAxis'), run.v, 'ink', t('speed'), t('ariaV'), 150);
+  const pA = make(t('accAxis'), acc, 'ink2', t('acc'), t('ariaA'), 150);
+  for (const p of [pV, pA]) p.setLines([{ kind: 'h', at: 0, color: 'ink3', dash: [2, 3], width: 1 }]);
+  const rH = readout(t('readH'), 'out');
+  const rV = readout(t('readV'));
+  const rA = readout(t('readA'));
+  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  let cursor = 0;
+  const tangentOn = (p: Plot, ys: number[], slopes: number[], i: number, col: string) => {
+    p.overlay = (c, px, py) => {
+      const w = 0.6;
+      c.strokeStyle = color('ink');
+      c.lineWidth = 2;
+      c.beginPath();
+      c.moveTo(px(run.t[i] - w), py(ys[i] - slopes[i] * w));
+      c.lineTo(px(run.t[i] + w), py(ys[i] + slopes[i] * w));
+      c.stroke();
+      c.fillStyle = color(col);
+      c.beginPath();
+      c.arc(px(run.t[i]), py(ys[i]), 5, 0, Math.PI * 2);
+      c.fill();
+    };
+    p.invalidate();
+  };
+  const setCursor = (x: number, fromSlider = false) => {
+    cursor = x;
+    const i = nearest(run.t, x);
+    const [hh, v, a] = [run.h[i], run.v[i], acc[i]];
+    tangentOn(pH, run.h, run.v, i, 'out');
+    tangentOn(pV, run.v, acc, i, 'ink');
+    for (const p of [pH, pV, pA]) p.setCursor(run.t[i]);
+    pA.setMarkers([{ x: run.t[i], y: a, color: 'ink2', label: `${fmt(a, 1)} m/s²` }]);
+    rH.set(`${fmt(hh, 2)} m`);
+    rV.set(`${fmt(v, 2)} m/s`);
+    rA.set(`${fmt(a, 1)} m/s²`);
+    const key = Math.abs(v) < 0.3 && i > 20 ? 'top' : a > 0.5 ? 'up' : a < -0.5 ? 'down' : 'steady';
+    const msg = t(key, { a: fmt(a, 1) });
+    if (status.textContent !== msg) status.textContent = msg;
+    if (!fromSlider) sl.value = run.t[i];
+    pH.describe(t('describe', { t: fmt(run.t[i], 2), h: fmt(hh, 2), v: fmt(v, 2), a: fmt(a, 1) }));
+  };
+  const sl = slider({ label: t('cursor'), min: 0, max: T, step: 0.01, value: 0, unit: 's', onInput: (v) => setCursor(v, true) });
+  for (const p of [pH, pV, pA]) dragX(p, setCursor);
+  host.append(h('div', { class: 'w-controls' }, sl.el), h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rH.el, rV.el, rA.el)), status, h('p', { class: 'w-help' }, t('help')));
+  setCursor(cursor);
+};
+
+export const widgets: Record<string, WidgetFactory> = { tangent, coffee, ruler, area, slopes };

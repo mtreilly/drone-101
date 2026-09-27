@@ -31,6 +31,16 @@ export interface DroneRun {
   v: number[];
 }
 
+/** The slope of the speed, sample by sample (central differences; one-sided at the ends). */
+export function slopeOf(t: number[], y: number[]): number[] {
+  const n = y.length;
+  return y.map((_, i) => {
+    const a = Math.max(0, i - 1);
+    const b = Math.min(n - 1, i + 1);
+    return (y[b] - y[a]) / (t[b] - t[a]);
+  });
+}
+
 /** The Chapter 2 drone take-off under P control (Kp = 20 N/m), sampled every 10 ms. */
 export function droneRun(seconds = 6): DroneRun {
   const sim = new DroneSim(defaultDroneConfig({ pid: P_ONLY(20) }));

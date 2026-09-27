@@ -51,7 +51,7 @@
         },
         {
           "t": "p",
-          "text": "Questa \"pendenza in un istante\" ha un nome: la **derivata**. La scriviamo come un minuscolo cambiamento di altezza diviso per il minuscolo tempo che ci ha messo:"
+          "text": "Questa \"pendenza in un istante\" ha un nome: la **derivata**. La scriviamo come un minuscolo cambiamento di altezza diviso per il minuscolo tempo che ci ha messo. In simboli, $\\Delta h / \\Delta t$ si legge \"variazione di altezza su variazione di tempo\": la lettera greca Δ (delta) sta per **variazione di**."
         },
         {
           "t": "math",
@@ -89,7 +89,7 @@
         },
         {
           "t": "p",
-          "text": "Il segno meno dice \"raffreddati quando sei più caldo della stanza\". Il numero **τ** (tau, la *costante di tempo*) dice quanto è lenta la tazza. Per una tazza normale, τ ≈ 10 minuti."
+          "text": "Il segno meno dice \"raffreddati quando sei più caldo della stanza\". Il numero **τ** (tau, la *costante di tempo*) dice quanto è lenta la tazza. Immaginala così: τ è il tempo che il caffè impiegherebbe per arrivare a temperatura ambiente **se continuasse a raffreddarsi alla velocità iniziale**. Per una tazza normale, τ ≈ 10 minuti."
         },
         {
           "t": "note",
@@ -134,6 +134,7 @@
           "t": "list",
           "items": [
             "Δt più piccolo di τ: il fattore è tra 0 e 1. La distanza si riduce, niente sovraelongazione.",
+            "Δt esattamente τ: il fattore è **0**. Un solo passo arriva esattamente a temperatura ambiente: è la velocità iniziale mantenuta per un τ intero.",
             "Δt tra τ e 2τ: il fattore è **negativo**. Il caffè va sotto la temperatura della stanza, poi sopra, avanti e indietro, con oscillazioni che si riducono.",
             "Δt più grande di 2τ: il fattore è minore di −1. Le oscillazioni **crescono** a ogni passo. Caffè senza senso."
           ]
@@ -151,6 +152,10 @@
         {
           "t": "p",
           "text": "Rendi Δt piccolo e accendi la curva liscia. I punti costruiti a mano ci cadono proprio sopra. Quella forma liscia si chiama **decadimento esponenziale**. Il prossimo capitolo è tutto suo."
+        },
+        {
+          "t": "p",
+          "text": "Il caffè vero non mantiene mai la sua velocità iniziale: la pendenza si riduce man mano che si riduce la distanza. Così dopo un τ ha coperto solo circa il **63%** della distanza, non tutta. Nel righello qui sotto, la linea tratteggiata è la velocità iniziale mantenuta; la curva è quello che succede davvero. Da dove viene il 63%? Lo costruisce il Capitolo 4."
         },
         {
           "t": "h3",
@@ -200,11 +205,11 @@
             },
             {
               "term": "Sistema del primo ordine",
-              "def": "Qualcosa la cui velocità di cambiamento dipende da quanto è lontano da dove sta andando (caffè, vasche). La sua curva è un esponenziale."
+              "def": "Qualcosa la cui velocità di cambiamento è proporzionale a quanto è lontano da dove sta andando (caffè, vasche). La sua curva è un esponenziale."
             },
             {
               "term": "Costante di tempo τ",
-              "def": "Quanto ci mette un sistema del primo ordine a coprire il 63% della distanza rimanente."
+              "def": "Quanto ci metterebbe un sistema del primo ordine ad arrivare se mantenesse la velocità iniziale. In realtà in quel tempo copre il 63% della distanza rimanente."
             }
           ]
         }
@@ -240,7 +245,7 @@
         },
         {
           "t": "p",
-          "text": "Questa operazione di \"accumulare l'area\" si chiama **integrale**:"
+          "text": "Questa operazione di \"accumulare l'area\" si chiama **integrale**. Il suo simbolo ∫ è una S allungata, per **somma**: una somma di strisce sottili. Il piccolo $dt$ è la larghezza di ogni striscia, e lo $0$ e il $t$ dicono dove iniziare e dove smettere di sommare:"
         },
         {
           "t": "math",
@@ -249,6 +254,99 @@
         {
           "t": "note",
           "text": "Per ora non ci serve altro sull'integrale. Tornerà due volte: nel Capitolo 7 (una trasformata che misura un'area) e nel Capitolo 9 (la \"I\" di PID accumula l'errore passato)."
+        }
+      ]
+    },
+    {
+      "id": "slopes",
+      "title": "La pendenza di una pendenza",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Il Capitolo 1 ci ha fatto una promessa. L'equazione del drone aveva **due** puntini sopra $h$. Un puntino è la velocità. E il secondo?"
+        },
+        {
+          "t": "p",
+          "text": "Anche la velocità è una curva, quindi ha anche lei una pendenza: quanto in fretta cambia la **velocità**. Quella è l'**accelerazione**, la pendenza di una pendenza. Qui sotto, lo stesso volo tre volte: l'altezza, la sua pendenza (la velocità) e la pendenza di *quella* (l'accelerazione), tutte con un solo cursore del tempo."
+        },
+        {
+          "t": "predict",
+          "id": "ch3-top-acc",
+          "gate": true,
+          "q": "Proprio in cima alla gobba la velocità è zero. Quanto vale lì l'accelerazione?",
+          "options": [
+            {
+              "text": "Zero anche lei: niente si muove",
+              "why": "La velocità è zero solo per un istante. Sta passando da positiva a negativa, quindi sta cambiando, e in fretta."
+            },
+            {
+              "text": "Negativa: il drone viene già tirato giù",
+              "correct": true,
+              "why": "Esatto. La velocità sta scendendo attraverso lo zero, quindi la sua pendenza è negativa. Stare fermi per un istante non vuol dire che nessuno spinge."
+            },
+            {
+              "text": "Positiva: fino a un attimo fa stava salendo",
+              "why": "Salire riguarda la velocità, non la sua pendenza. In cima la velocità si sta riducendo, e quella è una pendenza negativa."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "slopes"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Io avevo detto zero! Ma in cima la curva della velocità scende nel punto più *ripido*. Velocità zero non vuol dire spinta zero."
+        },
+        {
+          "t": "p",
+          "text": "Due puntini vogliono dire la pendenza della pendenza. C'è un terzo modo di scrivere le pendenze, con dei segnetti chiamati **primi**: $h'$ (\"h primo\") per la pendenza, $h''$ (\"h secondo\") per la pendenza della pendenza. Tre grafie, un'idea sola:"
+        },
+        {
+          "t": "vocab",
+          "title": "Tre modi di scriverlo",
+          "items": [
+            {
+              "term": "$\\dot h = h' = \\frac{dh}{dt}$",
+              "def": "La pendenza di $h$: la sua velocità."
+            },
+            {
+              "term": "$\\ddot h = h'' = \\frac{d^2 h}{dt^2}$",
+              "def": "La pendenza della pendenza: l'accelerazione."
+            },
+            {
+              "term": "$\\Delta$",
+              "def": "\"Variazione di\": $\\Delta t$ è un passo di tempo."
+            },
+            {
+              "term": "$\\int$",
+              "def": "Una S allungata, per \"somma\": sommare area."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Ora l'equazione del Capitolo 1 si legge come una frase. Massa per accelerazione è uguale a tutto ciò che spinge: la spinta in su, il peso in giù e l'attrito contro la velocità. È la legge di Newton, un termine alla volta:"
+        },
+        {
+          "t": "math",
+          "tex": "\\underbrace{0{,}5\\,\\ddot{\\out{h}}}_{\\text{massa}\\times\\text{accelerazione}} = \\underbrace{\\eff{T}}_{\\text{spinta}} - \\underbrace{4{,}9}_{\\text{peso}} - \\underbrace{1{,}0\\,\\dot{\\out{h}}}_{\\text{attrito}\\,\\times\\,\\text{velocità}}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Quindi la regola del caffè riguardava la sua velocità, e quella del drone riguarda la sua accelerazione: una pendenza più in profondità. È per questo che il drone può fare sovraelongazione e oscillare, e il caffè mai?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Per forza. La velocità del caffè segue semplicemente la distanza. Quella del drone va *accumulata* e poi *consumata*, quindi può muoversi ancora quando arriva."
         }
       ]
     },
@@ -263,6 +361,7 @@
             "Una regola come \"raffreddati più in fretta quanto più sei caldo\" fissa tutta la curva: un avvicinamento **esponenziale**.",
             "La **costante di tempo τ** è un righello: 63% della strada dopo τ, 86% dopo 2τ, 95% dopo 3τ.",
             "Costruire curve con passi troppo grandi crea sovraelongazioni e oscillazioni finte, proprio come la doccia.",
+            "La **pendenza della pendenza** è l'accelerazione: $\\ddot h$, oppure $h''$. L'equazione del drone del Capitolo 1 è una regola per lei.",
             "L'**integrale** accumula l'area e annulla la derivata."
           ]
         },
@@ -417,7 +516,8 @@
       "read1": "valore a 1τ",
       "aria": "Curva esponenziale con tacche verticali a una, due e tre costanti di tempo, etichettate 63, 86 e 95 per cento.",
       "describe": "Costante di tempo {tau} minuti. Le tacche a una, due e tre costanti di tempo mostrano il 63, 86 e 95 per cento della strada.",
-      "read2": "valore a 2τ"
+      "read2": "valore a 2τ",
+      "startLine": "velocità iniziale mantenuta"
     },
     "area": {
       "title": "Sommare aree",
@@ -434,6 +534,28 @@
       "ariaBottom": "L'area accumulata nel tempo, sovrapposta alla curva dell'altezza vera.",
       "describe": "Fino a {t} s l'area accumulata è {a} metri.",
       "help": "Trascina sul grafico della velocità o usa il cursore. Le strisce sopra lo zero aggiungono altezza, quelle sotto lo zero la tolgono."
+    },
+    "slopes": {
+      "title": "Pendenze di pendenze",
+      "height": "altezza",
+      "target": "obiettivo 2 m",
+      "speed": "velocità = pendenza dell'altezza",
+      "speedAxis": "velocità (m/s)",
+      "acc": "accelerazione = pendenza della velocità",
+      "accAxis": "accel. (m/s²)",
+      "ariaH": "Altezza del drone in 4 secondi con una retta tangente al cursore del tempo.",
+      "ariaV": "Velocità del drone negli stessi 4 secondi con una retta tangente al cursore del tempo.",
+      "ariaA": "Accelerazione del drone negli stessi 4 secondi, con il valore al cursore del tempo.",
+      "cursor": "Cursore del tempo",
+      "readH": "altezza",
+      "readV": "velocità",
+      "readA": "accelerazione",
+      "up": "Accelerazione verso l'alto: la velocità cresce (o la caduta rallenta).",
+      "down": "Accelerazione verso il basso: la velocità si riduce (o la caduta accelera).",
+      "steady": "Accelerazione quasi zero: qui la velocità è costante.",
+      "top": "Velocità zero in cima, eppure l'accelerazione è {a} m/s²: il drone viene già tirato giù.",
+      "describe": "A {t} s: altezza {h} m, velocità {v} m al secondo, accelerazione {a} m al secondo quadrato.",
+      "help": "Trascina su uno qualsiasi dei grafici o usa il cursore. La tangente all'altezza dà la velocità; la tangente alla velocità dà l'accelerazione."
     }
   }
 }

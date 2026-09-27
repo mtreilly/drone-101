@@ -216,11 +216,6 @@ export const CONCEPTS: Record<string, Concept> = {
  * closes it. The test fails if a listed gap has quietly been fixed, so the list stays honest.
  */
 export const KNOWN_GAPS: Record<string, string> = {
-  deltaNotation: 'Phase 4: Δ is used in Chapter 3 before it is read as "change in"',
-  tau: "Phase 4: τ is defined by the 63%, not by the starting speed",
-  acceleration: "Phase 4: the slope of a slope is used in Chapter 4 before it is built",
-  primeNotation: "Phase 4: x' and x'' appear in Chapter 4 quizzes without an introduction",
-  euler: "Phase 4: (1 − 1/n)ⁿ is not tied back to the coffee rule",
   radian: "Phase 5: radians and π are asserted, not built",
   trig: "Phase 5: cosine and sine are never defined",
   spin: "Phase 5: e^{iθ} is quoted before it is built",

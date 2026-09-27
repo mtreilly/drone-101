@@ -148,7 +148,7 @@
           "t": "say",
           "who": "june",
           "mood": "happy",
-          "text": "Y un único paso gigante de −100 % lo borra todo. Otra vez mi café congelado. Los pasitos lo arreglan, siempre."
+          "text": "¡Y eso es mi café! Corta una τ en n pasos a mano, $\\Delta t = \\tau/n$: cada paso multiplica la diferencia por $1 - \\frac1n$, así que tras una τ la diferencia es $\\left(1 - \\frac1n\\right)^n$ de lo que era. Un solo paso gigante ($n = 1$) cae justo en la temperatura ambiente. Con pasitos diminutos queda el 36,8 %."
         },
         {
           "t": "note",
@@ -232,7 +232,7 @@
         },
         {
           "t": "p",
-          "text": "Ahora pendiente ÷ altura es exactamente **a**, en toda la curva. a positivo: crece (y cada vez más rápido). a negativo: se encoge hacia cero, como la diferencia del café. a = 0: se queda quieta."
+          "text": "Ahora pendiente ÷ altura es exactamente **a**, en toda la curva. Imagina por qué: $e^{at}$ es la película de $e^{t}$ puesta a una velocidad multiplicada por a, así que cada pendiente también se multiplica por a. a positivo: crece (y cada vez más rápido). a negativo: se encoge hacia cero, como la diferencia del café. a = 0: se queda quieta."
         },
         {
           "t": "math",
@@ -290,7 +290,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Para una **regla de cambio lineal con coeficientes fijos**, como la del café, podemos probar una exponencial: la sustituimos y buscamos el valor de a que cumple la regla. Otros tipos de reglas pueden necesitar otras formas."
+          "text": "Para una regla en la que la pendiente es simplemente números fijos por la propia cosa (nada al cuadrado, ningún número que cambie con el tiempo), como la del café, podemos probar una exponencial: la sustituimos y buscamos el valor de a que cumple la regla. Otros tipos de reglas pueden necesitar otras formas."
         },
         {
           "t": "p",
@@ -302,7 +302,7 @@
         },
         {
           "t": "p",
-          "text": "El álgebra le da la razón al control deslizante. La pendiente de la suposición es $a \\cdot 70e^{at}$. La regla quiere $-70e^{at}/\\tau$. El $70e^{at}$ aparece a los dos lados y se cancela:"
+          "text": "El álgebra le da la razón al control deslizante. La pendiente de la suposición es $a \\cdot 70e^{at}$ (el 20 nunca cambia, así que su pendiente es 0, y el 70 simplemente viene de acompañante). La regla quiere $-70e^{at}/\\tau$. El $70e^{at}$ aparece a los dos lados y se cancela:"
         },
         {
           "t": "math",
@@ -328,7 +328,7 @@
         },
         {
           "t": "p",
-          "text": "El resorte tira hacia atrás con una fuerza $-kx$. Fuerza = masa × aceleración, y la aceleración es la pendiente de la pendiente. Así que la regla es:"
+          "text": "El resorte tira hacia atrás con una fuerza $-kx$. Fuerza = masa × aceleración, y la aceleración es la pendiente de la pendiente (capítulo 3). Así que la regla es:"
         },
         {
           "t": "math",

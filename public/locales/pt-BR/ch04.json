@@ -148,7 +148,7 @@
           "t": "say",
           "who": "june",
           "mood": "happy",
-          "text": "E um único passo gigante de −100% apaga tudo. É o meu café congelado de novo. Passos minúsculos resolvem, sempre."
+          "text": "E esse é o meu café! Corte um τ em n passos à mão, $\\Delta t = \\tau/n$: cada passo multiplica a diferença por $1 - \\frac1n$, então depois de um τ a diferença é $\\left(1 - \\frac1n\\right)^n$ do que era. Um passo gigante ($n = 1$) cai exatamente na temperatura ambiente. Passos minúsculos deixam 36,8%."
         },
         {
           "t": "note",
@@ -232,7 +232,7 @@
         },
         {
           "t": "p",
-          "text": "Agora a inclinação ÷ altura é exatamente **a**, em todos os pontos da curva. a positivo: ela cresce (e cresce cada vez mais rápido). a negativo: ela diminui em direção a zero, como a diferença do café. a = 0: ela simplesmente fica parada."
+          "text": "Agora a inclinação ÷ altura é exatamente **a**, em todos os pontos da curva. Imagine por quê: $e^{at}$ é o filme de $e^{t}$ passado a vezes mais rápido, então toda inclinação fica a vezes mais íngreme. a positivo: ela cresce (e cresce cada vez mais rápido). a negativo: ela diminui em direção a zero, como a diferença do café. a = 0: ela simplesmente fica parada."
         },
         {
           "t": "math",
@@ -290,7 +290,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Para uma **regra de mudança linear com coeficientes fixos**, como a nossa regra do café, podemos tentar uma exponencial: substitua e veja qual valor de a faz a regra ser verdadeira. Outros tipos de regras podem precisar de outras formas."
+          "text": "Para uma regra em que a inclinação é só números fixos vezes a própria coisa (nada ao quadrado, nenhum número que muda com o tempo), como a nossa regra do café, podemos tentar uma exponencial: substitua e veja qual valor de a faz a regra ser verdadeira. Outros tipos de regras podem precisar de outras formas."
         },
         {
           "t": "p",
@@ -302,7 +302,7 @@
         },
         {
           "t": "p",
-          "text": "A álgebra concorda com o controle deslizante. A inclinação da suposição é $a \\cdot 70e^{at}$. A regra quer $-70e^{at}/\\tau$. O $70e^{at}$ aparece em ambos os lados e se cancela:"
+          "text": "A álgebra concorda com o controle deslizante. A inclinação da suposição é $a \\cdot 70e^{at}$ (o 20 nunca muda, então sua inclinação é 0, e o 70 só vai de carona). A regra quer $-70e^{at}/\\tau$. O $70e^{at}$ aparece em ambos os lados e se cancela:"
         },
         {
           "t": "math",
@@ -328,7 +328,7 @@
         },
         {
           "t": "p",
-          "text": "A mola puxa de volta com força $-kx$. Força = massa × aceleração, e aceleração é a inclinação da inclinação. Então a regra é:"
+          "text": "A mola puxa de volta com força $-kx$. Força = massa × aceleração, e aceleração é a inclinação da inclinação (Capítulo 3). Então a regra é:"
         },
         {
           "t": "math",

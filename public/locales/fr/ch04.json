@@ -148,7 +148,7 @@
           "t": "say",
           "who": "june",
           "mood": "happy",
-          "text": "Et un seul pas géant de −100 % efface tout. Revoilà mon café gelé. Les tout petits pas règlent le problème, à chaque fois."
+          "text": "Et c'est mon café ! Découpe un τ en n pas faits à la main, $\\Delta t = \\tau/n$ : chaque pas multiplie l'écart par $1 - \\frac1n$, donc après un τ, l'écart vaut $\\left(1 - \\frac1n\\right)^n$ de ce qu'il était. Un seul pas géant ($n = 1$) tombe pile sur la température de la pièce. De tout petits pas laissent 36,8 %."
         },
         {
           "t": "note",
@@ -232,7 +232,7 @@
         },
         {
           "t": "p",
-          "text": "Maintenant, pente ÷ hauteur vaut exactement **a**, partout sur la courbe. a positif : elle grandit (de plus en plus vite). a négatif : elle diminue vers zéro, comme l'écart du café. a = 0 : elle ne bouge pas."
+          "text": "Maintenant, pente ÷ hauteur vaut exactement **a**, partout sur la courbe. Pourquoi ? $e^{at}$, c'est le film de $e^{t}$ passé a fois plus vite, donc chaque pente est a fois plus raide. a positif : elle grandit (de plus en plus vite). a négatif : elle diminue vers zéro, comme l'écart du café. a = 0 : elle ne bouge pas."
         },
         {
           "t": "math",
@@ -290,7 +290,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Pour une **règle de changement linéaire à coefficients fixes**, comme celle du café, on peut essayer une exponentielle : on la remplace dans la règle et on cherche la valeur de a qui convient. D’autres règles peuvent demander d’autres formes."
+          "text": "Pour une règle où la pente n'est que des nombres fixes fois la chose elle-même (rien au carré, pas de nombres qui changent avec le temps), comme celle du café, on peut essayer une exponentielle : on la remplace dans la règle et on cherche la valeur de a qui convient. D’autres règles peuvent demander d’autres formes."
         },
         {
           "t": "p",
@@ -302,7 +302,7 @@
         },
         {
           "t": "p",
-          "text": "L'algèbre est d'accord avec le curseur. La pente de la supposition est $a \\cdot 70e^{at}$. La règle veut $-70e^{at}/\\tau$. Le $70e^{at}$ apparaît des deux côtés et se simplifie :"
+          "text": "L'algèbre est d'accord avec le curseur. La pente de la supposition est $a \\cdot 70e^{at}$ (le 20 ne change jamais, donc sa pente est 0, et le 70 se laisse juste emmener). La règle veut $-70e^{at}/\\tau$. Le $70e^{at}$ apparaît des deux côtés et se simplifie :"
         },
         {
           "t": "math",
@@ -328,7 +328,7 @@
         },
         {
           "t": "p",
-          "text": "Le ressort tire en arrière avec une force $-kx$. Force = masse × accélération, et l'accélération est la pente de la pente. Donc la règle est :"
+          "text": "Le ressort tire en arrière avec une force $-kx$. Force = masse × accélération, et l'accélération est la pente de la pente (chapitre 3). Donc la règle est :"
         },
         {
           "t": "math",
