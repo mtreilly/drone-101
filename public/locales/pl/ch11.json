@@ -105,6 +105,20 @@
           ]
         },
         {
+          "t": "p",
+          "text": "Rozdział 10 by to narysował. Oto własna pętla drona, sześciogwiazdkowe nastawy raz dookoła: regulator, silniki, dron. Przesuń bezwładność silników i patrz, jak faza wygina się w dół."
+        },
+        {
+          "t": "widget",
+          "id": "droneBode"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Bez bezwładności faza nigdy nie dochodzi do −180°, więc urwiska w ogóle nie ma: choćbyś nie wiem jak mocno podkręcił wzmocnienie, pętla nigdy nie dosięgnęłaby −1 z rozdziału 8. To malutka bezwładność silników buduje urwisko."
+        },
+        {
           "t": "note",
           "text": "Wciąż pomijamy przechylanie, boczny wiatr, słabnące baterie i sto innych rzeczy. Ale pętla wysokości prawdziwego drona wygląda bardzo podobnie do tej."
         },
@@ -401,6 +415,123 @@
       ]
     },
     {
+      "id": "state",
+      "title": "Jeszcze jeden obrazek: płaszczyzna stanu",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Każdy wykres w tym kursie pokazywał wysokość w czasie. Ale sama wysokość nie powie ci, co będzie dalej: 2 m i w górę to nie to samo co 2 m i w dół."
+        },
+        {
+          "t": "p",
+          "text": "Przyszłość wyznaczają dwie liczby: wysokość mierzona od celu, $\\Delta h$, i prędkość $v$. Razem tworzą **stan** drona. Połóż je na jednej płaszczyźnie, wysokość w poziomie, a prędkość w pionie, i cały lot staje się ścieżką jednego ruchomego punktu."
+        },
+        {
+          "t": "p",
+          "text": "Ruchem tego punktu rządzą nachylenia z rozdziału 3, po jednym dla każdej liczby: wysokość zmienia się w tempie prędkości, a prędkość w tempie przyspieszenia z równania z rozdziału 1. Gdy ciąg zawisu mamy już z głowy, a na wierzch dokładamy regulator PD $T = -K_p\\,\\Delta h - K_d\\,v$, obie reguły mieszczą się w jednej tabelce:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\begin{pmatrix}\\Delta h\\\\ v\\end{pmatrix} = \\underbrace{\\begin{pmatrix}0 & 1\\\\ -\\frac{K_p}{m} & -\\frac{c+K_d}{m}\\end{pmatrix}}_{A}\\begin{pmatrix}\\Delta h\\\\ v\\end{pmatrix}"
+        },
+        {
+          "t": "p",
+          "text": "Ta tabelka $A$ to **macierz**: pomnóż przez nią stan, a wyjdzie tempo, w jakim stan się zmienia. Górny wiersz mówi, że wysokość zmienia się w tempie prędkości; dolny wiersz to prawo Newtona."
+        },
+        {
+          "t": "predict",
+          "id": "ch11-state",
+          "gate": true,
+          "q": "Przy $K_p$ = 20 N/m i bez D dron startuje 1 m za nisko i w bezruchu. Jaką ścieżkę kreśli jego stan?",
+          "options": [
+            {
+              "text": "Prosto do środka",
+              "why": "Prosty zjazd wymaga biegunów rzeczywistych. Przy ζ ≈ 0,16 dron przestrzeliwuje i się kołysze, więc ścieżka musi się zawijać."
+            },
+            {
+              "text": "Spiralą do środka",
+              "correct": true,
+              "why": "Tak. Każde wahnięcie wymienia wysokość na prędkość i z powrotem, a opór powietrza z każdym obrotem je zmniejsza: to zwijająca się spirala z rozdziału 5, narysowana w wysokości i prędkości."
+            },
+            {
+              "text": "Okrąg, w nieskończoność",
+              "why": "Do tego trzeba by zupełnie żadnego tłumienia. Opór powietrza zabiera trochę z każdego wahnięcia, więc okrąg zwija się w spiralę."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "statePlane"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "To spirala z rozdziału 5! A kiedy podniosę $K_d$ powyżej około 5,3, spirala się prostuje i wjeżdża do środka wzdłuż dwóch przerywanych linii."
+        },
+        {
+          "t": "p",
+          "text": "Te proste linie to **mody**: zacznij dokładnie na jednej, a stan zjedzie prosto do środka we własnym tempie tego modu. Te tempa to specjalne liczby macierzy, jej **wartości własne**, leżące tam, gdzie $\\det(sI - A) = 0$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\det(sI - A) = s^2 + \\frac{c + K_d}{m}\\,s + \\frac{K_p}{m} = 0"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "To równanie z rozdziału 6! Wartości własne to bieguny. Ten sam dron, nowy obrazek."
+        },
+        {
+          "t": "p",
+          "text": "A plac zabaw z biegunami z rozdziału 8 przez cały czas po cichu robił **sprzężenie zwrotne od stanu**: $T = -K_p\\,\\Delta h - K_d\\,v$ naciska na obie liczby stanu, a wybór dwóch wzmocnień ustawiał oba bieguny. Dodaj do stanu więcej liczb (przechył, obrót, położenie w bok), a macierz urośnie, ale idea zostaje: wartości własne to bieguny, a sprzężenie zwrotne od całego stanu może ustawić je wszystkie."
+        },
+        {
+          "t": "p",
+          "text": "Jeszcze jedno wyznanie. Każda reguła w tym kursie to reguła linii prostej, ale prawdziwe rzeczy się wyginają. Ciąg śmigła rośnie z *kwadratem* jego prędkości obrotowej, $T = k\\,w^2$. W pobliżu zawisu krzywa jest prawie prosta, więc zamieniamy ją na styczną w punkcie zawisu, linijkę z rozdziału 3:"
+        },
+        {
+          "t": "math",
+          "tex": "T \\approx T_0 + 2k\\,w_0\\,\\Delta w"
+        },
+        {
+          "t": "play",
+          "id": "linear",
+          "text": "W zawisie przy $w_0$ = 700 rad/s zakręć śmigłami o {scrub|dw} rad/s szybciej: prawdziwy dodatkowy ciąg to {calc|exact|eff} N, styczna mówi {calc|lin|eff} N, o {calc|err} za mało."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Czyli proste linie wcale nie kłamały. To obrazek w powiększeniu: uczciwy blisko zawisu, tym gorszy, im dalej odlecisz. Dlatego nasza matematyka potrzebowała drona w pobliżu 2 m."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Stan",
+              "def": "Liczby, które wyznaczają przyszłość: dla naszego drona wysokość i prędkość. Jeden punkt na płaszczyźnie stanu."
+            },
+            {
+              "term": "Macierz $A$",
+              "def": "Tabelka liczb, która zamienia stan w tempo jego zmian."
+            },
+            {
+              "term": "Wartości własne",
+              "def": "Specjalne tempa macierzy, tam gdzie $\\det(sI - A) = 0$. Dla macierzy $A$ drona to jego bieguny."
+            },
+            {
+              "term": "Linearyzacja",
+              "def": "Zastąpienie krzywej reguły jej styczną w pobliżu punktu, który cię interesuje (tu: zawisu)."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "next",
       "title": "Dokąd dalej",
       "blocks": [
@@ -412,7 +543,7 @@
           "t": "list",
           "items": [
             "**Linie pierwiastkowe (root locus):** zamiast przeciągać bieguny, przeciągaj *wzmocnienie* i patrz, jak bieguny rysują ścieżki. Od razu widać, które $K_p$ to już za dużo.",
-            "**Sterowanie w przestrzeni stanów:** wiele czujników i silników naraz. Prawdziwy dron musi jednocześnie trzymać przechył, obrót i położenie, a strojenie po jednym pokrętle przestaje działać.",
+            "**Sterowanie w przestrzeni stanów:** pierwszy przedsmak masz już za sobą. Wiele czujników i silników naraz: prawdziwy dron musi jednocześnie trzymać przechył, obrót i położenie, a strojenie po jednym pokrętle przestaje działać.",
             "**Sterowanie cyfrowe:** prawdziwe regulatory działają na komputerach, które próbkują co kilka milisekund. Próbkowanie to też małe opóźnienie, a płaszczyzna s dostaje kuzynkę, płaszczyznę z.",
             "**Filtry Kalmana:** łączą to, co przewiduje model, z tym, co mówi czujnik, więc można używać zaszumionego czujnika bez powolnego filtra.",
             "**Predyktory Smitha i sterowanie predykcyjne (MPC):** regulatory, które noszą w sobie małą symulację, żeby zajrzeć za opóźnienia. To prawdziwe lekarstwo na prysznic.",
@@ -497,6 +628,48 @@
         "fail": "niezaliczone",
         "pending": "jeszcze nierozstrzygnięte"
       }
+    },
+    "droneBode": {
+      "title": "Charakterystyki Bodego samego drona",
+      "w": "prędkość wahań ω (rad/s)",
+      "gain": "wzmocnienie pętli",
+      "phase": "faza (°)",
+      "loop": "raz dookoła pętli",
+      "gainAria": "Wzmocnienie pętli sześciogwiazdkowych nastaw drona w funkcji prędkości wahań, osie logarytmiczne, z pętlą bez bezwładności silników jako bladym duchem.",
+      "phaseAria": "Faza pętli drona w funkcji prędkości wahań, z urwiskiem −180° i zapasem fazy przy prędkości wzmocnienia 1.",
+      "one": "wzmocnienie = 1",
+      "cliff": "−180°",
+      "atCross": "zapas fazy",
+      "gm": "zapas wzmocnienia",
+      "tm": "Bezwładność silników $\\tau_m$",
+      "wc": "prędkość wzmocnienia 1",
+      "pm": "zapas fazy",
+      "lag": "opóźnienie tutaj",
+      "noCliff": "brak urwiska",
+      "noLag": "Bez bezwładności silników: pętla ma wzmocnienie 1 w okolicy {wc} rad/s przy {pm}° zapasu, a jej faza nigdy nie dociera do −180°.",
+      "withLag": "Przy {wc} rad/s, gdzie wzmocnienie pętli wynosi 1, silniki opóźniają wahnięcie o {lag}°: zostaje {pm}° zapasu (bez nich było {pm0}°), a teraz pojawia się urwisko, w odległości × {gm}.",
+      "describe": "Zapas fazy {pm} stopni przy {wc} radianach na sekundę.",
+      "help": "Przesuń bezwładność silników. Blady duch to ta sama pętla z natychmiastowymi silnikami."
+    },
+    "statePlane": {
+      "title": "Dron jako ruchomy punkt",
+      "dh": "uchyb wysokości Δh (m)",
+      "v": "prędkość v (m/s)",
+      "mode": "linie modów (bieguny rzeczywiste)",
+      "path": "ścieżka stanu",
+      "height": "uchyb wysokości",
+      "target": "u celu",
+      "planeAria": "Płaszczyzna stanu: uchyb wysokości w poziomie, prędkość w pionie, ze ścieżką drona startującego 1 m za nisko i liniami modów, gdy bieguny są rzeczywiste.",
+      "timeAria": "Ten sam lot jako uchyb wysokości w czasie.",
+      "poles": "bieguny (wartości własne A)",
+      "state": "stan przy kursorze",
+      "kp": "Wzmocnienie $K_p$",
+      "kd": "Wzmocnienie $K_d$",
+      "at": "Kursor czasu",
+      "spiral": "Bieguny {p}: stan zwija się spiralą do środka, przy każdym wahnięciu wymieniając wysokość na prędkość.",
+      "real": "Bieguny rzeczywiste {p}: bez kołysania. Ścieżka wygina się na wolniejszą linię modu i zjeżdża wzdłuż niej do środka.",
+      "describe": "Kp {kp}, Kd {kd}: po {t} s uchyb wysokości wynosi {h} m, a prędkość {v} m/s.",
+      "help": "Przesuwaj wzmocnienia, żeby zmienić macierz i ścieżkę; przesuwaj kursor czasu, żeby przesuwać kropkę po ścieżce i wykres w czasie jednocześnie."
     }
   },
   "plays": {
@@ -519,6 +692,10 @@
     "gust": {
       "F": "stałe pchnięcie, niutony",
       "kp": "wzmocnienie Kp, niutony na metr"
+    },
+    "linear": {
+      "dw": "dodatkowa prędkość obrotowa, radiany na sekundę",
+      "pct": "{v} %"
     }
   }
 }

@@ -105,6 +105,20 @@
           ]
         },
         {
+          "t": "p",
+          "text": "Le chapitre 10 dessinerait ceci. Voici la boucle du drone lui-même, un tour de boucle du réglage six étoiles : correcteur, moteurs, drone. Fais glisser le retard des moteurs et regarde la phase plonger."
+        },
+        {
+          "t": "widget",
+          "id": "droneBode"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Sans le retard, la phase n'atteint jamais −180°, donc il n'y a aucune falaise : on aurait beau monter le gain autant qu'on veut, la boucle ne pourrait jamais atteindre le −1 du chapitre 8. C'est le minuscule retard des moteurs qui construit la falaise."
+        },
+        {
           "t": "note",
           "text": "On ignore toujours l'inclinaison, le vent latéral, les batteries qui faiblissent et cent autres choses. Mais la boucle d'altitude d'un vrai drone ressemble beaucoup à celle-ci."
         },
@@ -401,6 +415,123 @@
       ]
     },
     {
+      "id": "state",
+      "title": "Une dernière image : le plan d'état",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Chaque graphique de ce cours montrait la hauteur au cours du temps. Mais la hauteur seule ne dit pas ce qui va se passer ensuite : être à 2 m en montant, ce n'est pas être à 2 m en tombant."
+        },
+        {
+          "t": "p",
+          "text": "Deux nombres fixent l'avenir : la hauteur mesurée depuis la cible, $\\Delta h$, et la vitesse $v$. Ensemble, ils forment l'**état** du drone. Place-les sur un même plan, la hauteur à l'horizontale et la vitesse à la verticale, et tout le vol devient le chemin d'un seul point qui bouge."
+        },
+        {
+          "t": "p",
+          "text": "Ses règles sont les pentes du chapitre 3, une pour chaque nombre : la hauteur change au rythme de la vitesse, et la vitesse change au rythme de l'accélération donnée par l'équation du chapitre 1. Une fois la poussée de vol stationnaire prise en compte, et avec une commande PD $T = -K_p\\,\\Delta h - K_d\\,v$ par-dessus, les deux règles tiennent dans un seul tableau :"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\begin{pmatrix}\\Delta h\\\\ v\\end{pmatrix} = \\underbrace{\\begin{pmatrix}0 & 1\\\\ -\\frac{K_p}{m} & -\\frac{c+K_d}{m}\\end{pmatrix}}_{A}\\begin{pmatrix}\\Delta h\\\\ v\\end{pmatrix}"
+        },
+        {
+          "t": "p",
+          "text": "Ce tableau $A$ est une **matrice** : multiplie-la par l'état et il en sort la vitesse à laquelle l'état se déplace. Sa ligne du haut dit que la hauteur change au rythme de la vitesse ; sa ligne du bas, c'est la loi de Newton."
+        },
+        {
+          "t": "predict",
+          "id": "ch11-state",
+          "gate": true,
+          "q": "Avec $K_p$ = 20 N/m et sans D, le drone part immobile, 1 m trop bas. Quel chemin trace son état ?",
+          "options": [
+            {
+              "text": "Tout droit vers le centre",
+              "why": "Une glissade en ligne droite demande des pôles réels. Avec ζ ≈ 0,16, le drone dépasse et oscille, donc le chemin doit s'enrouler."
+            },
+            {
+              "text": "Une spirale vers le centre",
+              "correct": true,
+              "why": "Exact. Chaque oscillation échange de la hauteur contre de la vitesse, puis l'inverse, et la traînée la réduit à chaque tour : la spirale qui rétrécit du chapitre 5, dessinée en hauteur et en vitesse."
+            },
+            {
+              "text": "Un cercle, pour toujours",
+              "why": "Il faudrait pour ça zéro amortissement. La traînée enlève un peu de chaque oscillation, donc le cercle se resserre en spirale."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "statePlane"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "C'est la spirale du chapitre 5 ! Et quand je pousse $K_d$ au-delà d'environ 5,3, la spirale se redresse et glisse vers le centre le long de deux lignes en pointillés."
+        },
+        {
+          "t": "p",
+          "text": "Ces lignes droites sont les **modes** : pars exactement sur l'une d'elles et l'état glisse tout droit vers le centre, au rythme propre de ce mode. Ces rythmes sont les nombres spéciaux de la matrice, ses **valeurs propres**, qu'on trouve là où $\\det(sI - A) = 0$ :"
+        },
+        {
+          "t": "math",
+          "tex": "\\det(sI - A) = s^2 + \\frac{c + K_d}{m}\\,s + \\frac{K_p}{m} = 0"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "C'est l'équation du chapitre 6 ! Les valeurs propres sont les pôles. Même drone, nouvelle image."
+        },
+        {
+          "t": "p",
+          "text": "Et le terrain de jeu des pôles du chapitre 8 faisait discrètement du **retour d'état** depuis le début : $T = -K_p\\,\\Delta h - K_d\\,v$ pousse sur les deux nombres de l'état, et choisir les deux gains plaçait les deux pôles. Donne plus de nombres à l'état (inclinaison, rotation, position latérale) et la matrice grandit, mais l'idée reste : les valeurs propres sont les pôles, et renvoyer tout l'état permet de tous les placer."
+        },
+        {
+          "t": "p",
+          "text": "Encore un aveu. Toutes les règles de ce cours sont des lignes droites, mais les vraies choses sont courbes. La poussée d'une hélice grandit avec le *carré* de sa vitesse de rotation, $T = k\\,w^2$. Près du vol stationnaire, la courbe est presque droite, alors on la remplace par sa tangente au point de vol stationnaire, la règle du chapitre 3 :"
+        },
+        {
+          "t": "math",
+          "tex": "T \\approx T_0 + 2k\\,w_0\\,\\Delta w"
+        },
+        {
+          "t": "play",
+          "id": "linear",
+          "text": "En vol stationnaire à $w_0$ = 700 rad/s, fais tourner les hélices {scrub|dw} rad/s plus vite : la vraie poussée en plus vaut {calc|exact|eff} N, la tangente annonce {calc|lin|eff} N, soit {calc|err} de moins."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Donc les lignes droites n'ont jamais menti. C'est une image zoomée : fidèle près du vol stationnaire, de moins en moins à mesure qu'on s'en éloigne. Voilà pourquoi nos calculs avaient besoin du drone près de 2 m."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "État",
+              "def": "Les nombres qui fixent l'avenir : pour notre drone, la hauteur et la vitesse. Un point sur le plan d'état."
+            },
+            {
+              "term": "Matrice $A$",
+              "def": "Un tableau de nombres qui transforme l'état en la vitesse à laquelle il se déplace."
+            },
+            {
+              "term": "Valeurs propres",
+              "def": "Les rythmes spéciaux d'une matrice, là où $\\det(sI - A) = 0$. Pour la matrice $A$ d'un drone, ce sont ses pôles."
+            },
+            {
+              "term": "Linéarisation",
+              "def": "Remplacer une règle courbe par sa tangente près du point qui t'intéresse (ici, le vol stationnaire)."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "next",
       "title": "Et après ?",
       "blocks": [
@@ -412,7 +543,7 @@
           "t": "list",
           "items": [
             "**Lieu des racines :** au lieu de déplacer les pôles, déplace le *gain* et regarde les pôles tracer des chemins. Tu verrais d'un coup d'œil quel $K_p$ est de trop.",
-            "**Représentation d'état :** plein de capteurs et de moteurs à la fois. Un vrai drone doit tenir ensemble son inclinaison, sa rotation et sa position, et régler un bouton à la fois ne marche plus.",
+            "**Représentation d'état :** tu y as goûté plus haut. Plein de capteurs et de moteurs à la fois : un vrai drone doit tenir ensemble son inclinaison, sa rotation et sa position, et régler un bouton à la fois ne marche plus.",
             "**Commande numérique :** les vrais correcteurs tournent sur des ordinateurs qui échantillonnent toutes les quelques millisecondes. L'échantillonnage est lui aussi un petit retard, et le plan s a un cousin, le plan z.",
             "**Filtres de Kalman :** ils mélangent ce que prédit un modèle et ce que dit le capteur, pour utiliser un capteur bruité sans filtre lent.",
             "**Prédicteurs de Smith et commande prédictive :** des correcteurs qui embarquent une petite simulation pour voir au-delà des retards, le vrai remède de la douche.",
@@ -497,6 +628,48 @@
         "fail": "échoué",
         "pending": "pas encore décidé"
       }
+    },
+    "droneBode": {
+      "title": "Le diagramme de Bode du drone lui-même",
+      "w": "vitesse d'oscillation ω (rad/s)",
+      "gain": "gain de boucle",
+      "phase": "phase (°)",
+      "loop": "un tour de boucle",
+      "gainAria": "Gain de boucle du réglage six étoiles du drone en fonction de la vitesse d'oscillation, axes logarithmiques, avec en fantôme pâle la boucle sans retard des moteurs.",
+      "phaseAria": "Phase de la boucle du drone en fonction de la vitesse d'oscillation, avec la falaise à −180° et la marge de phase à la vitesse à gain 1.",
+      "one": "gain 1",
+      "cliff": "−180°",
+      "atCross": "marge de phase",
+      "gm": "marge de gain",
+      "tm": "Retard des moteurs $\\tau_m$",
+      "wc": "vitesse à gain 1",
+      "pm": "marge de phase",
+      "lag": "retard ici",
+      "noCliff": "pas de falaise",
+      "noLag": "Sans retard des moteurs : la boucle est à gain 1 vers {wc} rad/s avec {pm}° de marge, et sa phase n'atteint jamais −180°.",
+      "withLag": "À {wc} rad/s, là où le gain de boucle vaut 1, les moteurs retiennent l'oscillation de {lag}° : il reste {pm}° de marge (c'était {pm0}° sans eux), et une falaise apparaît maintenant, à × {gm}.",
+      "describe": "Marge de phase {pm} degrés à {wc} radians par seconde.",
+      "help": "Fais glisser le retard des moteurs. Le fantôme pâle est la même boucle avec des moteurs instantanés."
+    },
+    "statePlane": {
+      "title": "Le drone comme un point qui bouge",
+      "dh": "erreur de hauteur Δh (m)",
+      "v": "vitesse v (m/s)",
+      "mode": "lignes des modes (pôles réels)",
+      "path": "chemin de l'état",
+      "height": "erreur de hauteur",
+      "target": "sur la cible",
+      "planeAria": "Le plan d'état : l'erreur de hauteur à l'horizontale, la vitesse à la verticale, avec le chemin du drone parti 1 m trop bas et les lignes des modes quand les pôles sont réels.",
+      "timeAria": "Le même vol, en erreur de hauteur au cours du temps.",
+      "poles": "pôles (valeurs propres de A)",
+      "state": "état au curseur",
+      "kp": "Gain $K_p$",
+      "kd": "Gain $K_d$",
+      "at": "Curseur de temps",
+      "spiral": "Pôles {p} : l'état s'enroule en spirale vers le centre, en échangeant hauteur et vitesse à chaque oscillation.",
+      "real": "Pôles réels {p} : pas d'oscillation. Le chemin s'infléchit vers la ligne du mode le plus lent et glisse le long d'elle jusqu'au centre.",
+      "describe": "Kp {kp}, Kd {kd} : à {t} secondes, l'erreur de hauteur vaut {h} mètres et la vitesse {v} mètres par seconde.",
+      "help": "Fais glisser les gains pour changer la matrice et le chemin ; fais glisser le curseur de temps pour déplacer le point le long du chemin et sur le graphique temporel en même temps."
     }
   },
   "plays": {
@@ -519,6 +692,10 @@
     "gust": {
       "F": "poussée constante, en newtons",
       "kp": "gain Kp, en newtons par mètre"
+    },
+    "linear": {
+      "dw": "rotation en plus, en radians par seconde",
+      "pct": "{v} %"
     }
   }
 }

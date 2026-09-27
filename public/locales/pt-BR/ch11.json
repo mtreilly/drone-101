@@ -105,6 +105,20 @@
           ]
         },
         {
+          "t": "p",
+          "text": "O Capítulo 10 desenharia isto. Aqui está a malha do próprio drone, o ajuste de seis estrelas dando uma volta: controlador, motores, drone. Deslize o atraso do motor e veja a fase se curvar para baixo."
+        },
+        {
+          "t": "widget",
+          "id": "droneBode"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Sem o atraso, a fase nunca chega a −180°, então não existe precipício nenhum: por mais que você aumentasse o ganho, a malha nunca conseguiria alcançar o −1 do Capítulo 8. É o atraso minúsculo dos motores que constrói o precipício."
+        },
+        {
           "t": "note",
           "text": "Ainda ignoramos inclinação, vento lateral, baterias enfraquecendo e uma centena de outras coisas. Mesmo assim, a malha de altitude de um drone real se parece bastante com esta."
         },
@@ -401,6 +415,123 @@
       ]
     },
     {
+      "id": "state",
+      "title": "Mais uma imagem: o plano de estados",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Todo gráfico deste curso mostrou a altura ao longo do tempo. Mas só a altura não diz o que vem depois: estar a 2 m subindo não é o mesmo que estar a 2 m caindo."
+        },
+        {
+          "t": "p",
+          "text": "Dois números definem o futuro: a altura medida a partir do alvo, $\\Delta h$, e a velocidade $v$. Juntos, eles são o **estado** do drone. Coloque os dois em um só plano, altura na horizontal e velocidade na vertical, e o voo inteiro vira o caminho de um único ponto em movimento."
+        },
+        {
+          "t": "p",
+          "text": "As regras dele são as inclinações do Capítulo 3, uma para cada número: a altura muda com a velocidade, e a velocidade muda com a aceleração da equação do Capítulo 1. Com o empuxo de pairar já descontado e o controle PD $T = -K_p\\,\\Delta h - K_d\\,v$ por cima, as duas regras cabem em uma só tabela:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\begin{pmatrix}\\Delta h\\\\ v\\end{pmatrix} = \\underbrace{\\begin{pmatrix}0 & 1\\\\ -\\frac{K_p}{m} & -\\frac{c+K_d}{m}\\end{pmatrix}}_{A}\\begin{pmatrix}\\Delta h\\\\ v\\end{pmatrix}"
+        },
+        {
+          "t": "p",
+          "text": "Essa tabela $A$ é uma **matriz**: multiplique-a pelo estado e sai a velocidade de mudança do estado. A linha de cima diz que a altura muda com a velocidade; a linha de baixo é a lei de Newton."
+        },
+        {
+          "t": "predict",
+          "id": "ch11-state",
+          "gate": true,
+          "q": "Com $K_p$ = 20 N/m e sem D, o drone começa parado, 1 m abaixo do alvo. Que caminho o estado dele desenha?",
+          "options": [
+            {
+              "text": "Direto para o centro",
+              "why": "Um deslize em linha reta precisa de polos reais. Com ζ ≈ 0,16, o drone tem sobressinal e balança, então o caminho precisa se enrolar."
+            },
+            {
+              "text": "Uma espiral até o centro",
+              "correct": true,
+              "why": "Isso. Cada balanço troca altura por velocidade e de volta, e o arrasto o encolhe a cada volta: a espiral que encolhe do Capítulo 5, desenhada em altura e velocidade."
+            },
+            {
+              "text": "Um círculo, para sempre",
+              "why": "Isso exigiria nenhum amortecimento. O arrasto tira um pouquinho de cada balanço, então o círculo encolhe e vira uma espiral."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "statePlane"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "É a espiral do Capítulo 5! E quando eu empurro $K_d$ para além de uns 5,3, a espiral se endireita e desliza para dentro ao longo de duas linhas tracejadas."
+        },
+        {
+          "t": "p",
+          "text": "Essas linhas retas são os **modos**: comece exatamente em cima de uma delas e o estado desliza em linha reta para o centro, no ritmo próprio daquele modo. Os ritmos são os números especiais da matriz, os seus **autovalores**, encontrados onde $\\det(sI - A) = 0$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\det(sI - A) = s^2 + \\frac{c + K_d}{m}\\,s + \\frac{K_p}{m} = 0"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "É a equação do Capítulo 6! Os autovalores são os polos. Mesmo drone, imagem nova."
+        },
+        {
+          "t": "p",
+          "text": "E o playground de polos do Capítulo 8 estava fazendo **realimentação de estados** o tempo todo, sem alarde: $T = -K_p\\,\\Delta h - K_d\\,v$ empurra os dois números do estado, e escolher os dois ganhos posicionava os dois polos. Dê mais números ao estado (inclinação, giro, posição lateral) e a matriz cresce, mas a ideia continua: os autovalores são os polos, e realimentar o estado inteiro permite posicionar todos eles."
+        },
+        {
+          "t": "p",
+          "text": "Mais uma confissão. Toda regra deste curso é uma regra de linha reta, mas as coisas de verdade fazem curva. O empuxo de uma hélice cresce com o *quadrado* do seu giro, $T = k\\,w^2$. Perto do pairar, a curva é quase reta, então a trocamos pela sua tangente no ponto de pairar, a régua do Capítulo 3:"
+        },
+        {
+          "t": "math",
+          "tex": "T \\approx T_0 + 2k\\,w_0\\,\\Delta w"
+        },
+        {
+          "t": "play",
+          "id": "linear",
+          "text": "Pairando em $w_0$ = 700 rad/s, gire as hélices {scrub|dw} rad/s mais rápido: o empuxo extra real é {calc|exact|eff} N, a tangente diz {calc|lin|eff} N, {calc|err} a menos."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Então as linhas retas nunca foram mentira. Elas são uma imagem ampliada: honestas perto do pairar, piores quanto mais você se afasta. É por isso que a nossa matemática precisava do drone perto de 2 m."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Estado",
+              "def": "Os números que definem o futuro: para o nosso drone, altura e velocidade. Um ponto no plano de estados."
+            },
+            {
+              "term": "Matriz $A$",
+              "def": "Uma tabela de números que transforma o estado na sua velocidade de mudança."
+            },
+            {
+              "term": "Autovalores",
+              "def": "Os ritmos especiais de uma matriz, onde $\\det(sI - A) = 0$. Para a $A$ de um drone, eles são os seus polos."
+            },
+            {
+              "term": "Linearização",
+              "def": "Trocar uma regra curva pela sua tangente perto do ponto que interessa (aqui, o pairar)."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "next",
       "title": "Para onde ir agora",
       "blocks": [
@@ -412,7 +543,7 @@
           "t": "list",
           "items": [
             "**Lugar das raízes:** em vez de arrastar polos, arraste o *ganho* e veja os polos traçarem caminhos. Você veria de relance qual $K_p$ é demais.",
-            "**Controle no espaço de estados:** muitos sensores e motores ao mesmo tempo. Um drone de verdade precisa segurar inclinação, giro e posição juntos, e ajustar um botão de cada vez deixa de funcionar.",
+            "**Controle no espaço de estados:** você já provou um pouco disso acima. Muitos sensores e motores ao mesmo tempo: um drone de verdade precisa segurar inclinação, giro e posição juntos, e ajustar um botão de cada vez deixa de funcionar.",
             "**Controle digital:** controladores reais rodam em computadores que amostram a cada poucos milissegundos. A amostragem também é um pequeno atraso, e o plano s ganha um primo, o plano z.",
             "**Filtros de Kalman:** misturam o que um modelo prevê com o que o sensor diz, para você usar um sensor ruidoso sem um filtro lento.",
             "**Preditores de Smith e controle preditivo baseado em modelo:** controladores que carregam uma pequena simulação dentro de si para enxergar além dos atrasos, a verdadeira cura do chuveiro.",
@@ -497,6 +628,48 @@
         "fail": "reprovado",
         "pending": "ainda não decidido"
       }
+    },
+    "droneBode": {
+      "title": "O diagrama de Bode do próprio drone",
+      "w": "velocidade de oscilação ω (rad/s)",
+      "gain": "ganho de malha",
+      "phase": "fase (°)",
+      "loop": "uma volta pela malha",
+      "gainAria": "Ganho de malha do ajuste de seis estrelas do drone em função da velocidade de oscilação, eixos logarítmicos, com a malha sem atraso do motor como um fantasma claro.",
+      "phaseAria": "Fase da malha do drone em função da velocidade de oscilação, com o precipício de −180° e a margem de fase na velocidade de ganho 1.",
+      "one": "ganho 1",
+      "cliff": "−180°",
+      "atCross": "margem de fase",
+      "gm": "margem de ganho",
+      "tm": "Atraso do motor $\\tau_m$",
+      "wc": "velocidade de ganho 1",
+      "pm": "margem de fase",
+      "lag": "atraso ali",
+      "noCliff": "sem precipício",
+      "noLag": "Sem atraso do motor: a malha tem ganho 1 perto de {wc} rad/s com {pm}° de margem, e sua fase nunca chega a −180°.",
+      "withLag": "Em {wc} rad/s, onde o ganho de malha é 1, os motores seguram a oscilação em {lag}°: sobram {pm}° de margem (eram {pm0}° sem eles), e agora aparece um precipício, a × {gm} de distância.",
+      "describe": "Margem de fase de {pm} graus em {wc} radianos por segundo.",
+      "help": "Deslize o atraso do motor. O fantasma claro é a mesma malha com motores instantâneos."
+    },
+    "statePlane": {
+      "title": "O drone como um ponto em movimento",
+      "dh": "erro de altura Δh (m)",
+      "v": "velocidade v (m/s)",
+      "mode": "linhas dos modos (polos reais)",
+      "path": "caminho do estado",
+      "height": "erro de altura",
+      "target": "no alvo",
+      "planeAria": "O plano de estados: erro de altura na horizontal, velocidade na vertical, com o caminho do drone a partir de 1 m abaixo e as linhas dos modos quando os polos são reais.",
+      "timeAria": "O mesmo voo como erro de altura ao longo do tempo.",
+      "poles": "polos (autovalores de A)",
+      "state": "estado no cursor",
+      "kp": "Ganho $K_p$",
+      "kd": "Ganho $K_d$",
+      "at": "Cursor de tempo",
+      "spiral": "Polos {p}: o estado entra em espiral, trocando altura por velocidade a cada balanço.",
+      "real": "Polos reais {p}: nada de balanço. O caminho se curva até a linha do modo mais lento e desliza para dentro ao longo dela.",
+      "describe": "Kp {kp}, Kd {kd}: em {t} segundos, o erro de altura é {h} metros e a velocidade, {v} metros por segundo.",
+      "help": "Deslize os ganhos para mudar a matriz e o caminho; deslize o cursor de tempo para mover o ponto ao longo do caminho e o gráfico no tempo juntos."
     }
   },
   "plays": {
@@ -519,6 +692,10 @@
     "gust": {
       "F": "empurrão constante, newtons",
       "kp": "ganho Kp, newtons por metro"
+    },
+    "linear": {
+      "dw": "giro extra, radianos por segundo",
+      "pct": "{v}%"
     }
   }
 }

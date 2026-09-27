@@ -105,6 +105,20 @@
           ]
         },
         {
+          "t": "p",
+          "text": "Kapitel 10 würde das zeichnen. Hier ist der Kreis der Drohne selbst, die Sechs-Sterne-Einstellung einmal ganz herum: Regler, Motoren, Drohne. Verschieb die Motorverzögerung und schau zu, wie sich die Phase nach unten biegt."
+        },
+        {
+          "t": "widget",
+          "id": "droneBode"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Ohne die Verzögerung kommt die Phase nie bis −180°, also gibt es gar keine Klippe: Egal wie weit du die Verstärkung aufdrehst, der Kreis könnte die −1 aus Kapitel 8 nie erreichen. Erst die winzige Verzögerung der Motoren baut die Klippe."
+        },
+        {
           "t": "note",
           "text": "Wir ignorieren immer noch Kippen, Seitenwind, schwächelnde Akkus und hundert andere Dinge. Der Höhenregelkreis einer echten Drohne sieht aber ziemlich genau so aus."
         },
@@ -401,6 +415,123 @@
       ]
     },
     {
+      "id": "state",
+      "title": "Noch ein Bild: die Zustandsebene",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Jedes Diagramm in diesem Kurs hat die Höhe über die Zeit gezeigt. Aber die Höhe allein verrät nicht, was als Nächstes passiert: Auf 2 m und steigend ist nicht dasselbe wie auf 2 m und fallend."
+        },
+        {
+          "t": "p",
+          "text": "Zwei Zahlen legen die Zukunft fest: die Höhe, gemessen vom Ziel aus, $\\Delta h$, und das Tempo $v$. Zusammen sind sie der **Zustand** der Drohne. Trag sie in eine Ebene ein, die Höhe nach rechts und das Tempo nach oben, und der ganze Flug wird zur Bahn eines einzigen wandernden Punkts."
+        },
+        {
+          "t": "p",
+          "text": "Seine Regeln sind die Steigungen aus Kapitel 3, eine für jede Zahl: Die Höhe ändert sich mit dem Tempo, und das Tempo ändert sich mit der Beschleunigung aus der Gleichung von Kapitel 1. Wenn der Schwebeschub erledigt ist und obendrauf PD-Regelung $T = -K_p\\,\\Delta h - K_d\\,v$ kommt, passen beide Regeln in eine Tabelle:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\begin{pmatrix}\\Delta h\\\\ v\\end{pmatrix} = \\underbrace{\\begin{pmatrix}0 & 1\\\\ -\\frac{K_p}{m} & -\\frac{c+K_d}{m}\\end{pmatrix}}_{A}\\begin{pmatrix}\\Delta h\\\\ v\\end{pmatrix}"
+        },
+        {
+          "t": "p",
+          "text": "Diese Tabelle $A$ ist eine **Matrix**: Multiplizier sie mit dem Zustand, und heraus kommt die Geschwindigkeit des Zustands. Ihre obere Zeile sagt, dass sich die Höhe mit dem Tempo ändert; ihre untere Zeile ist Newtons Gesetz."
+        },
+        {
+          "t": "predict",
+          "id": "ch11-state",
+          "gate": true,
+          "q": "Mit $K_p$ = 20 N/m und ohne D startet die Drohne 1 m zu tief und in Ruhe. Welche Bahn zeichnet ihr Zustand?",
+          "options": [
+            {
+              "text": "Geradewegs in die Mitte",
+              "why": "Ein gerades Hineingleiten braucht reelle Pole. Mit ζ ≈ 0,16 schwingt die Drohne über und pendelt, also muss sich die Bahn einrollen."
+            },
+            {
+              "text": "Eine Spirale in die Mitte",
+              "correct": true,
+              "why": "Richtig. Jeder Schwung tauscht Höhe gegen Tempo und wieder zurück, und der Luftwiderstand macht ihn mit jeder Runde kleiner: die schrumpfende Spirale aus Kapitel 5, gezeichnet in Höhe und Tempo."
+            },
+            {
+              "text": "Ein Kreis, für immer",
+              "why": "Dafür dürfte es überhaupt keine Dämpfung geben. Der Luftwiderstand nimmt jedem Schwung ein bisschen weg, also schrumpft der Kreis zur Spirale."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "statePlane"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Das ist die Spirale aus Kapitel 5! Und wenn ich $K_d$ über etwa 5,3 schiebe, streckt sich die Spirale und gleitet an zwei gestrichelten Linien entlang hinein."
+        },
+        {
+          "t": "p",
+          "text": "Diese geraden Linien sind die **Modi**: Startest du genau auf einer, gleitet der Zustand geradewegs hinein, mit der eigenen Rate dieses Modus. Die Raten sind die besonderen Zahlen der Matrix, ihre **Eigenwerte**, zu finden dort, wo $\\det(sI - A) = 0$ ist:"
+        },
+        {
+          "t": "math",
+          "tex": "\\det(sI - A) = s^2 + \\frac{c + K_d}{m}\\,s + \\frac{K_p}{m} = 0"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Das ist die Gleichung aus Kapitel 6! Die Eigenwerte sind die Pole. Dieselbe Drohne, ein neues Bild."
+        },
+        {
+          "t": "p",
+          "text": "Und der Pol-Spielplatz aus Kapitel 8 hat die ganze Zeit heimlich **Zustandsrückführung** gemacht: $T = -K_p\\,\\Delta h - K_d\\,v$ drückt auf beide Zahlen des Zustands, und mit der Wahl der zwei Verstärkungen haben wir beide Pole platziert. Gib dem Zustand mehr Zahlen (Neigung, Drehung, seitliche Position), und die Matrix wächst, aber die Idee bleibt: Die Eigenwerte sind die Pole, und wer den ganzen Zustand zurückführt, kann sie alle platzieren."
+        },
+        {
+          "t": "p",
+          "text": "Noch ein Geständnis. Jede Regel in diesem Kurs ist eine Geraden-Regel, aber echte Dinge sind krumm. Der Schub eines Propellers wächst mit dem *Quadrat* seiner Drehzahl, $T = k\\,w^2$. Nahe am Schweben ist die Kurve fast gerade, also tauschen wir sie gegen ihre Tangente am Schwebepunkt, das Lineal aus Kapitel 3:"
+        },
+        {
+          "t": "math",
+          "tex": "T \\approx T_0 + 2k\\,w_0\\,\\Delta w"
+        },
+        {
+          "t": "play",
+          "id": "linear",
+          "text": "Beim Schweben mit $w_0$ = 700 rad/s drehst du die Propeller {scrub|dw} rad/s schneller: Der echte Zusatzschub ist {calc|exact|eff} N, die Tangente sagt {calc|lin|eff} N, also {calc|err} zu wenig."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Die geraden Linien waren also nie gelogen. Sie sind ein herangezoomtes Bild: ehrlich nahe am Schweben, umso schlechter, je weiter du dich entfernst. Deshalb brauchte unsere Mathematik die Drohne in der Nähe von 2 m."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Zustand",
+              "def": "Die Zahlen, die die Zukunft festlegen: bei unserer Drohne Höhe und Tempo. Ein Punkt in der Zustandsebene."
+            },
+            {
+              "term": "Matrix $A$",
+              "def": "Eine Zahlentabelle, die aus dem Zustand seine Geschwindigkeit macht."
+            },
+            {
+              "term": "Eigenwerte",
+              "def": "Die besonderen Raten einer Matrix, dort, wo $\\det(sI - A) = 0$ ist. Für das $A$ einer Drohne sind es ihre Pole."
+            },
+            {
+              "term": "Linearisieren",
+              "def": "Eine krumme Regel nahe dem Punkt, der dich interessiert (hier das Schweben), durch ihre Tangente ersetzen."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "next",
       "title": "Wie es weitergeht",
       "blocks": [
@@ -412,7 +543,7 @@
           "t": "list",
           "items": [
             "**Wurzelortskurve:** Statt Pole zu ziehen, ziehst du an der *Verstärkung* und schaust zu, wie die Pole Bahnen zeichnen. Du würdest auf einen Blick sehen, welches $K_p$ zu viel ist.",
-            "**Zustandsraumregelung:** viele Sensoren und Motoren gleichzeitig. Eine echte Drohne muss Neigung, Drehung und Position zusammen halten, und das Einstellen Knopf für Knopf funktioniert nicht mehr.",
+            "**Zustandsraumregelung:** Oben hast du schon einen ersten Vorgeschmack bekommen. Viele Sensoren und Motoren gleichzeitig: Eine echte Drohne muss Neigung, Drehung und Position zusammen halten, und das Einstellen Knopf für Knopf funktioniert nicht mehr.",
             "**Digitale Regelung:** Echte Regler laufen auf Computern, die alle paar Millisekunden abtasten. Auch Abtasten ist eine kleine Verzögerung, und die s-Ebene bekommt eine Cousine, die z-Ebene.",
             "**Kalman-Filter:** mischen, was ein Modell vorhersagt, mit dem, was der Sensor sagt. So kannst du einen verrauschten Sensor ohne langsamen Filter nutzen.",
             "**Smith-Prädiktoren und modellprädiktive Regelung:** Regler, die eine kleine Simulation in sich tragen, um um Verzögerungen herumzuschauen: das eigentliche Heilmittel für die Dusche.",
@@ -497,6 +628,48 @@
         "fail": "nicht bestanden",
         "pending": "noch offen"
       }
+    },
+    "droneBode": {
+      "title": "Das eigene Bode-Diagramm der Drohne",
+      "w": "Wackeltempo ω (rad/s)",
+      "gain": "Kreisverstärkung",
+      "phase": "Phase (°)",
+      "loop": "Runde durch den Kreis",
+      "gainAria": "Kreisverstärkung der Sechs-Sterne-Einstellung der Drohne über dem Wackeltempo, logarithmische Achsen, mit dem Kreis ohne Motorverzögerung als blassem Geist.",
+      "phaseAria": "Phase des Drohnenkreises über dem Wackeltempo, mit der Klippe bei −180° und der Phasenreserve beim Tempo mit Kreisverstärkung 1.",
+      "one": "Verstärkung 1",
+      "cliff": "−180°",
+      "atCross": "Phasenreserve",
+      "gm": "Amplitudenreserve",
+      "tm": "Motorverzögerung $\\tau_m$",
+      "wc": "Tempo mit Kreisverstärkung 1",
+      "pm": "Phasenreserve",
+      "lag": "Verzug dort",
+      "noCliff": "keine Klippe",
+      "noLag": "Keine Motorverzögerung: Der Kreis hat bei etwa {wc} rad/s die Verstärkung 1, mit {pm}° Reserve, und seine Phase erreicht −180° nie.",
+      "withLag": "Bei {wc} rad/s, wo die Kreisverstärkung 1 ist, halten die Motoren den Wackler um {lag}° zurück: {pm}° Reserve bleiben übrig (ohne sie waren es {pm0}°), und jetzt taucht eine Klippe auf, × {gm} entfernt.",
+      "describe": "Phasenreserve {pm} Grad bei {wc} Radiant pro Sekunde.",
+      "help": "Verschieb die Motorverzögerung. Der blasse Geist ist derselbe Kreis mit Motoren, die sofort reagieren."
+    },
+    "statePlane": {
+      "title": "Die Drohne als wandernder Punkt",
+      "dh": "Höhenfehler Δh (m)",
+      "v": "Tempo v (m/s)",
+      "mode": "Modus-Linien (reelle Pole)",
+      "path": "Bahn des Zustands",
+      "height": "Höhenfehler",
+      "target": "am Ziel",
+      "planeAria": "Die Zustandsebene: Höhenfehler nach rechts, Tempo nach oben, mit der Bahn der Drohne ab 1 m zu tief und den Modus-Linien, wenn die Pole reell sind.",
+      "timeAria": "Derselbe Flug als Höhenfehler über die Zeit.",
+      "poles": "Pole (Eigenwerte von A)",
+      "state": "Zustand an der Zeitmarke",
+      "kp": "Verstärkung $K_p$",
+      "kd": "Verstärkung $K_d$",
+      "at": "Zeitmarke",
+      "spiral": "Pole {p}: Der Zustand läuft spiralförmig hinein und tauscht bei jedem Schwung Höhe gegen Tempo.",
+      "real": "Reelle Pole {p}: kein Pendeln. Die Bahn biegt auf die langsamere Modus-Linie ein und gleitet an ihr entlang hinein.",
+      "describe": "Kp {kp}, Kd {kd}: Nach {t} Sekunden ist der Höhenfehler {h} Meter und das Tempo {v} Meter pro Sekunde.",
+      "help": "Verschieb die Verstärkungen, um die Matrix und die Bahn zu ändern; verschieb die Zeitmarke, um den Punkt auf der Bahn und das Zeitdiagramm gemeinsam zu bewegen."
     }
   },
   "plays": {
@@ -519,6 +692,10 @@
     "gust": {
       "F": "gleichmäßiger Druck, Newton",
       "kp": "Verstärkung Kp, Newton pro Meter"
+    },
+    "linear": {
+      "dw": "Zusatzdrehzahl, Radiant pro Sekunde",
+      "pct": "{v} %"
     }
   }
 }

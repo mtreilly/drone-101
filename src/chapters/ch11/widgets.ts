@@ -1,11 +1,13 @@
 import './ch11.css';
 import { h } from '../../core/dom';
-import { fmt, getLang, tc, percent } from '../../core/i18n';
+import { fmt, getLang, percent, tc, unitLabel } from '../../core/i18n';
 import { progress } from '../../core/progress';
 import { DroneSim, type PID } from '../../sim/drone-model';
 import type { WidgetFactory } from '../../story/types';
 import { valueDir } from '../../core/bidi';
-import { slider, transport } from '../../ui/controls';
+import { readout, slider, transport } from '../../ui/controls';
+import { marginPlots } from '../../ui/margin-plots';
+import { logspace } from '../../math/bode';
 import { DroneView } from '../../ui/drone-view';
 import { Loop } from '../../ui/loop';
 import { Plot, type Band } from '../../ui/plot';
@@ -14,6 +16,10 @@ import '../ch09/ch09.css';
 import { emptyTrace, pid, sampleTrace } from '../ch09/pid-tools';
 import { starRow } from '../ch09/stars';
 import { sameCeiling } from '../ch09/page-ceiling';
+import { SIX_STAR } from './plays';
+import { eigenvalues, stateMatrix, statePath } from './state';
+import { tex } from '../../core/rich-text';
+import { formatS } from '../../ui/s-plane';
 import {
   CRITERIA,
   LIMITS,
@@ -23,6 +29,8 @@ import {
   keepTogether,
   sentences,
   missionConfig,
+  missionLoop,
+  missionMargins,
   missionPoles,
   neverBack,
   neverSettled,
@@ -431,4 +439,138 @@ const mission: WidgetFactory = (host, ctx) => {
   };
 };
 
-export const widgets: Record<string, WidgetFactory> = { mission };
+const DRONE_WS = logspace(0, 2, 300);
+
+/**
+ * 11a′: the drone's own Bode plot (Chapter 10's picture for Chapter 11's loop), the six-star tune
+ * with a motor lag you can change. The faint ghost is the loop without the lag: it never reaches
+ * −180°, so it has no gain margin at all; the lag bends the phase down to a cliff.
+ */
+const droneBode: WidgetFactory = (host, ctx) => {
+  const { t } = ctx;
+  let tm = MISSION.motorTau;
+  host.append(h('p', { class: 'w-title' }, t('title')));
+  const plots = marginPlots(ctx.onCleanup, host, t, { ws: DRONE_WS, gainMin: 0.005, gainMax: 50, phaseMin: -270, phaseMax: -90 });
+  const rWc = readout(t('wc'));
+  const rPm = readout(t('pm'), 'out');
+  const rLag = readout(t('lag'), 'eff');
+  const rGm = readout(t('gm'), 'err');
+  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  const none = missionMargins(SIX_STAR, 0);
+  let fresh = true;
+  const say = () => {
+    const m = missionMargins(SIX_STAR, tm);
+    const text =
+      tm === 0
+        ? t('noLag', { wc: fmt(none.wc, 1), pm: fmt(none.pm, 0) })
+        : t('withLag', { wc: fmt(m.wc, 1), lag: fmt(m.lag, 0), pm: fmt(m.pm, 0), pm0: fmt(none.pm, 0), gm: fmt(m.gm, 1) });
+    if (status.textContent !== text) status.textContent = text;
+  };
+  const update = () => {
+    // the ghost is the loop without a motor lag: drawn first, then kept as the ghost when the real
+    // loop replaces it, and never overwritten by later slider moves
+    if (fresh) plots.show(missionLoop(SIX_STAR, 0), 0, false);
+    const m = plots.show(missionLoop(SIX_STAR, tm), 0, fresh);
+    fresh = false;
+    rWc.set(`${fmt(m.wc, 1)} ${unitLabel('rad/s')}`);
+    rPm.set(`${fmt(m.pm, 0)}°`, m.pm > 45 ? 'good' : m.pm < 25 ? 'bad' : '');
+    rLag.set(`${fmt(missionMargins(SIX_STAR, tm).lag, 0)}°`);
+    rGm.set(Number.isFinite(m.gm) && m.gm !== null ? `× ${fmt(m.gm, 1)}` : t('noCliff'));
+    plots.gain?.describe(t('describe', { pm: fmt(m.pm, 0), wc: fmt(m.wc, 1) }));
+  };
+  const sT = slider({ label: t('tm'), min: 0, max: 0.1, step: 0.01, value: tm, unit: 's', digits: 2, color: 'eff', onInput: (v) => ((tm = v), update()), onSettle: say });
+  host.classList.add('pid-widget');
+  host.append(h('div', { class: 'w-controls' }, sT.el), h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rWc.el, rPm.el, rLag.el, rGm.el)), status, h('p', { class: 'w-help' }, t('help')));
+  update();
+  say();
+};
+
+/**
+ * 11d: the state plane. The drone's height error and speed as one moving point; its path under PD
+ * control, the matrix A that moves it, and, when the poles are real, the two straight mode lines.
+ */
+const statePlane: WidgetFactory = (host, ctx) => {
+  const { t } = ctx;
+  let kp = 20;
+  let kd = 0;
+  let at = 0.4;
+  const T = 6;
+  host.append(h('p', { class: 'w-title' }, t('title')));
+  const eq = h('div', { class: 'math-block state-eq' });
+  host.append(eq);
+  const grid = h('div', { class: 'w-grid two' });
+  const left = h('div');
+  const right = h('div');
+  grid.append(left, right);
+  host.append(grid);
+  const plane = new Plot(left, {
+    x: { label: t('dh'), min: -1.2, max: 1.2 },
+    y: { label: t('v'), min: -6, max: 6 },
+    series: [
+      { id: 'modeA', color: 'ink3', label: t('mode'), dash: [5, 4], width: 1.5 },
+      { id: 'modeB', color: 'ink3', dash: [5, 4], width: 1.5 },
+      { id: 'path', color: 'out', label: t('path'), ghost: true },
+    ],
+    height: 260,
+    label: t('planeAria'),
+  }, ctx.onCleanup);
+  plane.setLines([
+    { kind: 'h', at: 0, color: 'ink3', width: 1 },
+    { kind: 'v', at: 0, color: 'ink3', width: 1 },
+  ]);
+  const time = new Plot(right, {
+    x: { label: tc('plots.time'), min: 0, max: T },
+    y: { label: t('dh'), min: -1.2, max: 1.2 },
+    series: [{ id: 'dh', color: 'out', label: t('height'), ghost: true }],
+    height: 200,
+    label: t('timeAria'),
+  }, ctx.onCleanup);
+  time.setLines([{ kind: 'h', at: 0, color: 'sp', dash: [6, 4], label: t('target') }]);
+  const rPoles = readout(t('poles'));
+  const rState = readout(t('state'), 'out');
+  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  right.append(h('div', { class: 'readouts' }, rPoles.el, rState.el), status);
+  let fresh = true;
+  const say = () => {
+    const [p1, p2] = eigenvalues(kp, kd);
+    const real = Math.abs(p1.im) < 1e-9;
+    const text = t(real ? 'real' : 'spiral', { p: real ? `${formatS(p1.re, 0)}, ${formatS(p2.re, 0)}` : formatS(p1.re, Math.abs(p1.im), true) });
+    if (status.textContent !== text) status.textContent = text;
+  };
+  const update = () => {
+    const [[, a12], [a21, a22]] = stateMatrix(kp, kd);
+    const n = (v: number) => fmt(v, Number.isInteger(v) ? 0 : 1);
+    eq.innerHTML = tex(`A = \\begin{pmatrix} 0 & ${n(a12)} \\\\ ${n(a21)} & ${n(a22)} \\end{pmatrix}`, true);
+    const path = statePath(kp, kd, T);
+    plane.clear(fresh);
+    time.clear(fresh);
+    fresh = false;
+    plane.set('path', path.dh, path.v);
+    time.set('dh', path.t, path.dh);
+    const [p1, p2] = eigenvalues(kp, kd);
+    // real poles: along the direction (1, λ) the state slides straight in at rate λ (a mode)
+    const line = (l: number): [number[], number[]] => [[-1.2, 1.2], [-1.2 * l, 1.2 * l]];
+    if (Math.abs(p1.im) < 1e-9) {
+      plane.set('modeA', ...line(p1.re));
+      plane.set('modeB', ...line(p2.re));
+    } else {
+      plane.set('modeA', [], []);
+      plane.set('modeB', [], []);
+    }
+    const i = Math.min(path.t.length - 1, Math.round(at / 0.002));
+    plane.setMarkers([{ x: path.dh[i], y: path.v[i], color: 'out', clamp: true }]);
+    time.setCursor(path.t[i]);
+    rPoles.set(Math.abs(p1.im) < 1e-9 ? `${formatS(p1.re, 0)}, ${formatS(p2.re, 0)}` : formatS(p1.re, Math.abs(p1.im), true));
+    rState.set(`(${fmt(path.dh[i], 2)} ${unitLabel('m')}, ${fmt(path.v[i], 2)} ${unitLabel('m/s')})`);
+    plane.describe(t('describe', { kp: n(kp), kd: n(kd), t: fmt(path.t[i], 1), h: fmt(path.dh[i], 2), v: fmt(path.v[i], 2) }));
+  };
+  const sKp = slider({ label: t('kp'), min: 1, max: 50, step: 1, value: kp, unit: 'N/m', color: 'eff', onInput: (v) => ((kp = v), update()), onSettle: say });
+  const sKd = slider({ label: t('kd'), min: 0, max: 12, step: 0.1, value: kd, unit: 'N·s/m', color: 'eff', onInput: (v) => ((kd = v), update()), onSettle: say });
+  const sT = slider({ label: t('at'), min: 0, max: T, step: 0.02, value: at, unit: 's', onInput: (v) => ((at = v), update()) });
+  for (const el of [sKp.input, sKd.input]) el.addEventListener('change', () => (fresh = true));
+  host.append(h('div', { class: 'w-controls' }, sKp.el, sKd.el, sT.el), h('p', { class: 'w-help' }, t('help')));
+  update();
+  say();
+};
+
+export const widgets: Record<string, WidgetFactory> = { mission, droneBode, statePlane };

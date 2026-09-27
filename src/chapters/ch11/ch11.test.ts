@@ -1,8 +1,11 @@
 import { DRONE, DroneSim, type PID, defaultDroneConfig } from '../../sim/drone-model';
 import { pid, runDrone } from '../ch09/pid-tools';
-import { LIMITS, MISSION, WINDOWS, dSpike, evaluate, hintFor, missionConfig, missionMargins, missionPoles, neverBack, neverSettled, noiseLifted, runMission, starsOnSeeds } from './mission';
+import { LIMITS, MISSION, WINDOWS, dSpike, evaluate, hintFor, missionConfig, missionLoop, missionMargins, missionPoles, neverBack, neverSettled, noiseLifted, runMission, starsOnSeeds } from './mission';
 import { flyMission } from './page-hit';
 import { SIX_STAR, plays } from './plays';
+import { HOVER_SPIN, PROP_K, eigenvalues, extraThrust, statePath } from './state';
+import { logspace, sweep } from '../../math/bode';
+import { roots } from '../../math/poly';
 
 describe('Chapter 11 mission', () => {
   it('a sensible PID earns all six stars (several seeds)', () => {
@@ -367,5 +370,67 @@ describe('the six-star tune: 33° of margin, yet under 10 % overshoot', () => {
     const tr = runDrone(defaultDroneConfig({ params: { ...DRONE, saturate: false, motorTau: MISSION.motorTau }, pid: SIX_STAR, setpoint: () => 2 }), 6, 10);
     const peak = Math.max(...tr.h);
     expect(((peak - 2) / 2) * 100).toBeCloseTo(6.9, 1);
+  });
+});
+
+describe("the drone's own Bode plot", () => {
+  it('without motor lag: gain 1 near 10.8 rad/s, 59° of margin, and the phase never reaches −180°', () => {
+    const m = missionMargins(SIX_STAR, 0);
+    expect(m.wc).toBeCloseTo(10.8, 1);
+    expect(m.pm).toBeCloseTo(58.5, 1);
+    expect(m.gm).toBe(Infinity);
+    const L = missionLoop(SIX_STAR, 0);
+    for (const q of sweep(L.num, L.den, 0, logspace(-2, 4, 400))) expect(q.phase).toBeGreaterThan(-180);
+  });
+
+  it('the 0.05 s motor lag: 9.8 rad/s, 26° held back, 33° left, and a cliff appears × 3.3 away at 20.7 rad/s', () => {
+    const m = missionMargins(SIX_STAR, MISSION.motorTau);
+    expect(m.wc).toBeCloseTo(9.85, 2);
+    expect(m.lag).toBeCloseTo(26.2, 1);
+    expect(m.pm).toBeCloseTo(33.4, 1);
+    expect(m.gm).toBeCloseTo(3.34, 2);
+    expect(m.w180).toBeCloseTo(20.7, 1);
+  });
+});
+
+describe('the state plane', () => {
+  it("A's eigenvalues are the poles of m s² + (c + Kd) s + Kp", () => {
+    for (const [kp, kd] of [[20, 0], [20, 12], [10, 3]]) {
+      const ev = eigenvalues(kp, kd).map((z) => [z.re, Math.abs(z.im)]).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+      const po = roots([DRONE.m, DRONE.c + kd, kp]).map((z) => [z.re, Math.abs(z.im)]).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+      ev.forEach((e, i) => {
+        expect(e[0]).toBeCloseTo(po[i][0], 9);
+        expect(e[1]).toBeCloseTo(po[i][1], 9);
+      });
+    }
+  });
+
+  it('Kp = 20 with no D spirals in from 1 m low; past Kd ≈ 5.3 the poles go real', () => {
+    const p = statePath(20, 0, 6);
+    let flips = 0;
+    for (let i = 1; i < p.v.length; i++) if (Math.sign(p.v[i]) !== Math.sign(p.v[i - 1]) && p.v[i] !== 0) flips++;
+    expect(flips).toBeGreaterThan(4);
+    expect(Math.abs(p.dh[p.dh.length - 1])).toBeLessThan(0.01);
+    const crit = 2 * Math.sqrt(DRONE.m * 20) - DRONE.c;
+    expect(crit).toBeCloseTo(5.32, 2);
+    expect(Math.abs(eigenvalues(20, 5.2)[0].im)).toBeGreaterThan(0);
+    expect(Math.abs(eigenvalues(20, 5.4)[0].im)).toBeLessThan(1e-9);
+  });
+
+  it('with real poles the path slides in along the slower mode line (v ≈ λ_slow Δh)', () => {
+    const p = statePath(20, 12, 6);
+    const slow = Math.max(...eigenvalues(20, 12).map((z) => z.re));
+    const i = p.t.findIndex((x) => x > 3);
+    expect(p.v[i] / p.dh[i]).toBeCloseTo(slow, 2);
+  });
+
+  it('the propeller tangent: 50 rad/s more spin gives 0.73 N, the tangent 0.70 N, 3.4 % too little', () => {
+    const t = (k: string, v?: Record<string, string | number>) => (k === 'pct' ? `${v?.v}%` : k);
+    const out = (name: string, dw: number) => plays.linear.outputs[name]({ dw }, t, t);
+    expect(out('exact', 50)).toBe('0.73');
+    expect(out('lin', 50)).toBe('0.70');
+    expect(out('err', 50)).toBe('3.4%');
+    expect(extraThrust(0)).toBe(0);
+    expect(PROP_K * HOVER_SPIN ** 2).toBeCloseTo(DRONE.m * DRONE.g, 9);
   });
 });

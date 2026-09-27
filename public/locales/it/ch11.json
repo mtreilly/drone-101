@@ -105,6 +105,20 @@
           ]
         },
         {
+          "t": "p",
+          "text": "Il Capitolo 10 disegnerebbe proprio questo. Ecco l'anello del drone, un giro della taratura a sei stelle: controllore, motori, drone. Fai scorrere il ritardo dei motori e guarda la fase piegarsi verso il basso."
+        },
+        {
+          "t": "widget",
+          "id": "droneBode"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Senza il ritardo la fase non arriva mai a −180°, quindi non c'è nessun precipizio: per quanto alzassi il guadagno, l'anello non potrebbe mai raggiungere il −1 del Capitolo 8. È il minuscolo ritardo dei motori a costruire il precipizio."
+        },
+        {
           "t": "note",
           "text": "Ignoriamo ancora l'inclinazione, il vento laterale, le batterie che calano e cento altre cose. Però l'anello di quota di un drone vero somiglia parecchio a questo."
         },
@@ -401,6 +415,123 @@
       ]
     },
     {
+      "id": "state",
+      "title": "Un'ultima immagine: il piano di stato",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Ogni grafico di questo corso mostrava l'altezza nel tempo. Ma l'altezza da sola non ti dice cosa succede dopo: a 2 m e in salita non è come a 2 m e in discesa."
+        },
+        {
+          "t": "p",
+          "text": "Due numeri fissano il futuro: l'altezza misurata dall'obiettivo, $\\Delta h$, e la velocità $v$. Insieme sono lo **stato** del drone. Mettili su un piano, l'altezza in orizzontale e la velocità in verticale, e tutto il volo diventa il percorso di un solo punto in movimento."
+        },
+        {
+          "t": "p",
+          "text": "Le sue regole sono le pendenze del Capitolo 3, una per ogni numero: la pendenza dell'altezza è la velocità, e la pendenza della velocità è l'accelerazione dell'equazione del Capitolo 1. Messa da parte la spinta di hovering e aggiunto sopra il controllo PD $T = -K_p\\,\\Delta h - K_d\\,v$, le due regole stanno in una sola tabella:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\begin{pmatrix}\\Delta h\\\\ v\\end{pmatrix} = \\underbrace{\\begin{pmatrix}0 & 1\\\\ -\\frac{K_p}{m} & -\\frac{c+K_d}{m}\\end{pmatrix}}_{A}\\begin{pmatrix}\\Delta h\\\\ v\\end{pmatrix}"
+        },
+        {
+          "t": "p",
+          "text": "Quella tabella $A$ è una **matrice**: moltiplicala per lo stato e ne esce la velocità dello stato. La riga in alto dice che l'altezza cambia con la velocità; la riga in basso è la legge di Newton."
+        },
+        {
+          "t": "predict",
+          "id": "ch11-state",
+          "gate": true,
+          "q": "Con $K_p$ = 20 N/m e niente D, il drone parte fermo, 1 m più in basso. Che percorso traccia il suo stato?",
+          "options": [
+            {
+              "text": "Dritto verso il centro",
+              "why": "Una scivolata dritta richiede poli reali. Con ζ ≈ 0,16 il drone va oltre e oscilla, quindi il percorso deve arricciarsi."
+            },
+            {
+              "text": "Una spirale verso il centro",
+              "correct": true,
+              "why": "Esatto. Ogni oscillazione scambia altezza con velocità e viceversa, e l'attrito dell'aria la riduce a ogni giro: la spirale che si stringe del Capitolo 5, disegnata in altezza e velocità."
+            },
+            {
+              "text": "Un cerchio, per sempre",
+              "why": "Servirebbe uno smorzamento pari a zero. L'attrito dell'aria toglie un po' a ogni oscillazione, quindi il cerchio si stringe in una spirale."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "statePlane"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "È la spirale del Capitolo 5! E quando spingo $K_d$ oltre circa 5,3, la spirale si raddrizza e scivola dentro lungo due linee tratteggiate."
+        },
+        {
+          "t": "p",
+          "text": "Quelle rette sono i **modi**: parti esattamente su una di esse e lo stato scivola dritto verso il centro, al ritmo proprio di quel modo. Quei ritmi sono i numeri speciali della matrice, i suoi **autovalori**, e si trovano dove $\\det(sI - A) = 0$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\det(sI - A) = s^2 + \\frac{c + K_d}{m}\\,s + \\frac{K_p}{m} = 0"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "È l'equazione del Capitolo 6! Gli autovalori sono i poli. Stesso drone, immagine nuova."
+        },
+        {
+          "t": "p",
+          "text": "E il parco giochi dei poli del Capitolo 8 faceva di nascosto **retroazione dello stato** fin dall'inizio: $T = -K_p\\,\\Delta h - K_d\\,v$ spinge su entrambi i numeri dello stato, e scegliere i due guadagni piazzava entrambi i poli. Dai allo stato più numeri (inclinazione, rotazione, posizione laterale) e la matrice cresce, ma l'idea resta: gli autovalori sono i poli, e riportare indietro tutto lo stato permette di piazzarli tutti."
+        },
+        {
+          "t": "p",
+          "text": "Un'ultima confessione. Ogni regola di questo corso è lineare, una linea retta, ma le cose vere sono curve. La spinta di un'elica cresce con il *quadrato* della sua rotazione, $T = k\\,w^2$. Vicino all'hovering la curva è quasi dritta, quindi la sostituiamo con la sua tangente nel punto di hovering, il righello del Capitolo 3:"
+        },
+        {
+          "t": "math",
+          "tex": "T \\approx T_0 + 2k\\,w_0\\,\\Delta w"
+        },
+        {
+          "t": "play",
+          "id": "linear",
+          "text": "In hovering a $w_0$ = 700 rad/s, fai girare le eliche {scrub|dw} rad/s più veloci: la spinta extra vera è {calc|exact|eff} N, la tangente dice {calc|lin|eff} N, {calc|err} in meno."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Quindi le rette non sono mai state una bugia. Sono un'immagine ingrandita: onesta vicino all'hovering, sempre peggio più ti allontani. Ecco perché la nostra matematica voleva il drone vicino ai 2 m."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Stato",
+              "def": "I numeri che fissano il futuro: per il nostro drone, altezza e velocità. Un punto sul piano di stato."
+            },
+            {
+              "term": "Matrice $A$",
+              "def": "Una tabella di numeri che trasforma lo stato nella sua velocità."
+            },
+            {
+              "term": "Autovalori",
+              "def": "I ritmi speciali di una matrice, dove $\\det(sI - A) = 0$. Per la $A$ di un drone sono i suoi poli."
+            },
+            {
+              "term": "Linearizzazione",
+              "def": "Sostituire una regola curva con la sua tangente vicino al punto che ti interessa (qui, l'hovering)."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "next",
       "title": "Dove andare adesso",
       "blocks": [
@@ -412,7 +543,7 @@
           "t": "list",
           "items": [
             "**Luogo delle radici:** invece di trascinare i poli, trascina il *guadagno* e guarda i poli tracciare percorsi. Vedresti a colpo d'occhio quale $K_p$ è troppo.",
-            "**Controllo nello spazio degli stati:** tanti sensori e motori insieme. Un drone vero deve tenere inclinazione, rotazione e posizione tutte assieme, e tarare una manopola alla volta smette di funzionare.",
+            "**Controllo nello spazio degli stati:** qui sopra ne hai avuto un primo assaggio. Tanti sensori e motori insieme: un drone vero deve tenere inclinazione, rotazione e posizione tutte assieme, e tarare una manopola alla volta smette di funzionare.",
             "**Controllo digitale:** i controllori veri girano su computer che campionano ogni pochi millisecondi. Anche il campionamento è un piccolo ritardo, e il piano s ha un cugino, il piano z.",
             "**Filtri di Kalman:** mescolano quello che prevede un modello con quello che dice il sensore, così puoi usare un sensore rumoroso senza un filtro lento.",
             "**Predittori di Smith e controllo predittivo basato su modello:** controllori che si portano dentro una piccola simulazione per vedere oltre i ritardi, la vera cura della doccia.",
@@ -497,6 +628,48 @@
         "fail": "non superato",
         "pending": "non ancora deciso"
       }
+    },
+    "droneBode": {
+      "title": "Il diagramma di Bode del drone",
+      "w": "velocità di oscillazione ω (rad/s)",
+      "gain": "guadagno d'anello",
+      "phase": "fase (°)",
+      "loop": "un giro dell'anello",
+      "gainAria": "Guadagno d'anello della taratura a sei stelle del drone rispetto alla velocità di oscillazione, su assi logaritmici, con l'anello senza ritardo dei motori come fantasma tenue.",
+      "phaseAria": "Fase dell'anello del drone rispetto alla velocità di oscillazione, con il precipizio a −180° e il margine di fase alla velocità di guadagno 1.",
+      "one": "guadagno 1",
+      "cliff": "−180°",
+      "atCross": "margine di fase",
+      "gm": "margine di guadagno",
+      "tm": "Ritardo dei motori $\\tau_m$",
+      "wc": "velocità di guadagno 1",
+      "pm": "margine di fase",
+      "lag": "ritardo lì",
+      "noCliff": "nessun precipizio",
+      "noLag": "Senza ritardo dei motori: l'anello ha guadagno 1 vicino a {wc} rad/s con {pm}° di margine, e la sua fase non arriva mai a −180°.",
+      "withLag": "A {wc} rad/s, dove il guadagno d'anello vale 1, i motori trattengono l'oscillazione di {lag}°: restano {pm}° di margine (senza di loro erano {pm0}°), e ora compare un precipizio, a × {gm} di distanza.",
+      "describe": "Margine di fase {pm} gradi a {wc} radianti al secondo.",
+      "help": "Fai scorrere il ritardo dei motori. Il fantasma tenue è lo stesso anello con motori istantanei."
+    },
+    "statePlane": {
+      "title": "Il drone come un punto in movimento",
+      "dh": "errore di altezza Δh (m)",
+      "v": "velocità v (m/s)",
+      "mode": "rette dei modi (poli reali)",
+      "path": "percorso dello stato",
+      "height": "errore di altezza",
+      "target": "sull'obiettivo",
+      "planeAria": "Il piano di stato: errore di altezza in orizzontale, velocità in verticale, con il percorso del drone partito 1 m più in basso e le rette dei modi quando i poli sono reali.",
+      "timeAria": "Lo stesso volo come errore di altezza nel tempo.",
+      "poles": "poli (autovalori di A)",
+      "state": "stato al cursore",
+      "kp": "Guadagno $K_p$",
+      "kd": "Guadagno $K_d$",
+      "at": "Cursore del tempo",
+      "spiral": "Poli {p}: lo stato entra a spirale, scambiando altezza con velocità a ogni oscillazione.",
+      "real": "Poli reali {p}: niente oscillazioni. Il percorso si piega sulla retta del modo più lento e scivola dentro lungo di essa.",
+      "describe": "Kp {kp}, Kd {kd}: a {t} secondi l'errore di altezza è {h} metri e la velocità {v} metri al secondo.",
+      "help": "Fai scorrere i guadagni per cambiare la matrice e il percorso; fai scorrere il cursore del tempo per muovere insieme il punto lungo il percorso e il grafico nel tempo."
     }
   },
   "plays": {
@@ -519,6 +692,10 @@
     "gust": {
       "F": "spinta costante, in newton",
       "kp": "guadagno Kp, in newton al metro"
+    },
+    "linear": {
+      "dw": "rotazione in più, radianti al secondo",
+      "pct": "{v}%"
     }
   }
 }

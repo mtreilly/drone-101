@@ -275,6 +275,23 @@ $Y$ (was $A$, which clashed with the partial-fraction constant); the noise size 
 $T$ (thrust, temperature, period) and $k$ (spring, hand speed) stay: each use is local and ch10
 already flags $T$ as a period.
 
+### Chapter 11 additions: the drone's Bode plot and the state plane
+
+| Term (definition) | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
+|---|---|---|---|---|---|---|---|---|---|
+| state: the numbers that pin down the future (height error and speed) | état | estado | stato | Zustand | stan | estado | 状態 | 状态 | الحالة |
+| state plane: height across, speed up (textbooks: phase plane, avoided next to the Bode phase) | plan d'état | plano de estados | piano di stato | Zustandsebene | płaszczyzna stanu | plano de estados | 状態平面 | 状态平面 | مستوى الحالة |
+| Map `statespace` | espace d'état | espacio de estados | spazio degli stati | Zustandsraum | przestrzeń stanów | espaço de estados | 状態空間 | 状态空间 | فضاء الحالة |
+| matrix $A$ | matrice | matriz | matrice | Matrix | macierz | matriz | 行列 | 矩阵 | المصفوفة |
+| eigenvalues (= the poles) | valeurs propres | valores propios | autovalori | Eigenwerte | wartości własne | autovalores | 固有値 | 特征值 | القيم الذاتية |
+| state feedback | retour d'état | realimentación del estado | retroazione dello stato | Zustandsrückführung | sprzężenie zwrotne od stanu | realimentação de estados | 状態フィードバック | 状态反馈 | التغذية الراجعة للحالة |
+| linearising: a curve replaced by its tangent near hover | linéarisation | linealizar | linearizzazione | Linearisieren | linearyzacja | linearização | 線形化 | 线性化 | الخطْيَنة (التقريب الخطي) |
+
+The drone's Bode widget reuses Chapter 10's loop-gain, margin and "cliff" terms unchanged.
+"The state's velocity" is rephrased as "the rate of change of the state" in pl, pt-BR, zh-CN and
+ar so it never reads as the drone's speed v. Still for a native reviewer: "state plane" against
+the textbook "phase plane" in every locale; es "valores propios" vs. "autovalores"; ar الخطْيَنة.
+
 ## Cast gender and address
 
 | Locale | Mika | June | Theo | Reader |

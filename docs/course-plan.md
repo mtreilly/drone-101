@@ -301,6 +301,9 @@ Legend for each chapter: **Q** = driving question · **Idea** = the one new idea
 - **Check:** Self-assessment of the mission, then four quiz items on the finale's own ideas (package drop and the integral, the noise/filter trade, motor lag eating phase margin: about 33° → 21°).
 - **Map:** everything connected, with the finale's own nodes `motor limits`, `motor lag` and `fast vs calm`; final node `You`.
 
+- **Added later (2026-09-27):** the drone's own Bode plot beside the motor-lag side trip (the lag
+  builds the −180° cliff), and a closing section "One more picture: the state plane" (state,
+  matrix, eigenvalues = poles, state feedback, linearising) before "Where to go next".
 ---
 
 ## 2. Technical plan

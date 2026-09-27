@@ -105,6 +105,20 @@
           ]
         },
         {
+          "t": "p",
+          "text": "Chapter 10 would draw this. Here is the drone's own loop, the six-star tune once around: controller, motors, drone. Slide the motor lag and watch the phase bend down."
+        },
+        {
+          "t": "widget",
+          "id": "droneBode"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Without the lag the phase never gets to −180°, so there's no cliff at all: however far you turned the gain up, the loop could never reach Chapter 8's −1. The motors' tiny lag is what builds the cliff."
+        },
+        {
           "t": "note",
           "text": "We still ignore tilting, sideways wind, batteries sagging and a hundred other things. A real drone's altitude loop looks a lot like this one, though."
         },
@@ -401,6 +415,123 @@
       ]
     },
     {
+      "id": "state",
+      "title": "One more picture: the state plane",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Every plot in this course showed height over time. But height alone can't tell you what happens next: at 2 m and climbing is not at 2 m and falling."
+        },
+        {
+          "t": "p",
+          "text": "Two numbers pin down the future: the height measured from the target, $\\Delta h$, and the speed $v$. Together they are the drone's **state**. Put them on one plane, height across and speed up, and the whole flight becomes the path of one moving point."
+        },
+        {
+          "t": "p",
+          "text": "Its rules are Chapter 3's slopes, one for each number: the height changes at the speed, and the speed changes at the acceleration from Chapter 1's equation. With the hover thrust handled and PD control $T = -K_p\\,\\Delta h - K_d\\,v$ on top, both rules fit in one table:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\begin{pmatrix}\\Delta h\\\\ v\\end{pmatrix} = \\underbrace{\\begin{pmatrix}0 & 1\\\\ -\\frac{K_p}{m} & -\\frac{c+K_d}{m}\\end{pmatrix}}_{A}\\begin{pmatrix}\\Delta h\\\\ v\\end{pmatrix}"
+        },
+        {
+          "t": "p",
+          "text": "That table $A$ is a **matrix**: multiply it into the state and out comes the state's velocity. Its top row says the height changes at the speed; its bottom row is Newton's law."
+        },
+        {
+          "t": "predict",
+          "id": "ch11-state",
+          "gate": true,
+          "q": "With $K_p$ = 20 N/m and no D, the drone starts 1 m low and still. What path does its state trace?",
+          "options": [
+            {
+              "text": "Straight into the middle",
+              "why": "A straight slide needs real poles. With ζ ≈ 0.16 the drone overshoots and swings, so the path has to curl."
+            },
+            {
+              "text": "A spiral into the middle",
+              "correct": true,
+              "why": "Right. Each swing trades height for speed and back, and the drag shrinks it every turn: Chapter 5's shrinking spiral, drawn in height and speed."
+            },
+            {
+              "text": "A circle, forever",
+              "why": "That needs no damping at all. The drag takes a little out of every swing, so the circle shrinks into a spiral."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "statePlane"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "It's Chapter 5's spiral! And when I push $K_d$ past about 5.3, the spiral straightens out and slides in along two dashed lines."
+        },
+        {
+          "t": "p",
+          "text": "Those straight lines are the **modes**: start exactly on one and the state slides straight in at that mode's own rate. The rates are the matrix's special numbers, its **eigenvalues**, found where $\\det(sI - A) = 0$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\det(sI - A) = s^2 + \\frac{c + K_d}{m}\\,s + \\frac{K_p}{m} = 0"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "That's Chapter 6's equation! The eigenvalues are the poles. Same drone, new picture."
+        },
+        {
+          "t": "p",
+          "text": "And Chapter 8's pole playground was quietly doing **state feedback** all along: $T = -K_p\\,\\Delta h - K_d\\,v$ pushes on both numbers of the state, and choosing the two gains placed both poles. Give the state more numbers (tilt, spin, sideways position) and the matrix grows, but the idea stays: the eigenvalues are the poles, and feeding back the whole state can place them all."
+        },
+        {
+          "t": "p",
+          "text": "One more confession. Every rule in this course is a straight-line rule, but real things curve. A propeller's thrust grows with the *square* of its spin, $T = k\\,w^2$. Near hover the curve is almost straight, so we swap it for its tangent at the hover, Chapter 3's ruler:"
+        },
+        {
+          "t": "math",
+          "tex": "T \\approx T_0 + 2k\\,w_0\\,\\Delta w"
+        },
+        {
+          "t": "play",
+          "id": "linear",
+          "text": "Hovering at $w_0$ = 700 rad/s, spin the propellers {scrub|dw} rad/s faster: the true extra thrust is {calc|exact|eff} N, the tangent says {calc|lin|eff} N, {calc|err} too little."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "So the straight lines were never a lie. They're a zoomed-in picture: honest near the hover, worse the further you stray. That's why our maths needed the drone near 2 m."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "State",
+              "def": "The numbers that pin down the future: for our drone, height and speed. One point on the state plane."
+            },
+            {
+              "term": "Matrix $A$",
+              "def": "A table of numbers that turns the state into its velocity."
+            },
+            {
+              "term": "Eigenvalues",
+              "def": "The special rates of a matrix, where $\\det(sI - A) = 0$. For a drone's $A$ they are its poles."
+            },
+            {
+              "term": "Linearising",
+              "def": "Replacing a curved rule by its tangent near the point you care about (here, the hover)."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "next",
       "title": "Where to go next",
       "blocks": [
@@ -412,7 +543,7 @@
           "t": "list",
           "items": [
             "**Root locus:** instead of dragging poles, drag the *gain* and watch the poles trace paths. You'd see at a glance which $K_p$ is too much.",
-            "**State-space control:** many sensors and motors at once. A real drone must hold tilt, spin and position together, and one-knob-at-a-time tuning stops working.",
+            "**State-space control:** you've had a first taste above. Next come many sensors and motors at once. A real drone must hold tilt, spin and position together, and one-knob-at-a-time tuning stops working.",
             "**Digital control:** real controllers run on computers that sample every few milliseconds. Sampling is a small delay too, and the s-plane gets a cousin, the z-plane.",
             "**Kalman filters:** blend what a model predicts with what the sensor says, so you can use a noisy sensor without a slow filter.",
             "**Smith predictors and model predictive control:** controllers that carry a little simulation inside them to see around delays, the shower's real cure.",
@@ -497,6 +628,48 @@
         "fail": "failed",
         "pending": "not decided yet"
       }
+    },
+    "droneBode": {
+      "title": "The drone's own Bode plot",
+      "w": "wiggle speed ω (rad/s)",
+      "gain": "loop gain",
+      "phase": "phase (°)",
+      "loop": "once around the loop",
+      "gainAria": "Loop gain of the drone's six-star tune against wiggle speed, logarithmic axes, with the loop without motor lag as a faint ghost.",
+      "phaseAria": "Phase of the drone's loop against wiggle speed, with the −180° cliff and the phase margin at the gain-of-1 speed.",
+      "one": "gain 1",
+      "cliff": "−180°",
+      "atCross": "phase margin",
+      "gm": "gain margin",
+      "tm": "Motor lag $\\tau_m$",
+      "wc": "gain-of-1 speed",
+      "pm": "phase margin",
+      "lag": "lag there",
+      "noCliff": "no cliff",
+      "noLag": "No motor lag: the loop is at gain 1 near {wc} rad/s with {pm}° of margin, and its phase never reaches −180°.",
+      "withLag": "At {wc} rad/s, where the loop gain is 1, the motors hold the wiggle back {lag}°: {pm}° of margin is left (it was {pm0}° without them), and now a cliff appears, × {gm} away.",
+      "describe": "Phase margin {pm} degrees at {wc} radians per second.",
+      "help": "Slide the motor lag. The faint ghost is the same loop with instant motors."
+    },
+    "statePlane": {
+      "title": "The drone as a moving point",
+      "dh": "height error Δh (m)",
+      "v": "speed v (m/s)",
+      "mode": "mode lines (real poles)",
+      "path": "path of the state",
+      "height": "height error",
+      "target": "on target",
+      "planeAria": "The state plane: height error across, speed up, with the path of the drone from 1 m low and the mode lines when the poles are real.",
+      "timeAria": "The same flight as height error over time.",
+      "poles": "poles (eigenvalues of A)",
+      "state": "state at the cursor",
+      "kp": "Gain $K_p$",
+      "kd": "Gain $K_d$",
+      "at": "Time cursor",
+      "spiral": "Poles {p}: the state spirals in, trading height for speed on every swing.",
+      "real": "Real poles {p}: no swinging. The path bends onto the slower mode line and slides in along it.",
+      "describe": "Kp {kp}, Kd {kd}: at {t} seconds the height error is {h} metres and the speed {v} metres per second.",
+      "help": "Slide the gains to change the matrix and the path; slide the time cursor to move the dot along the path and the time plot together."
     }
   },
   "plays": {
@@ -519,6 +692,10 @@
     "gust": {
       "F": "steady push, newtons",
       "kp": "gain Kp, newtons per metre"
+    },
+    "linear": {
+      "dw": "extra spin, radians per second",
+      "pct": "{v}%"
     }
   }
 }

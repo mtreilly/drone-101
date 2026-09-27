@@ -70,6 +70,7 @@ export const NODES: Record<string, [number, number, number]> = {
   motorlag: [11, -50, -60],
   you: [11, 10, 15],
   tradeoff: [11, 40, 115],
+  statespace: [11, -120, 80],
 };
 
 export const EDGES: [string, string][] = [
@@ -137,6 +138,9 @@ export const EDGES: [string, string][] = [
   ['spin', 'bode'],
   ['phaselag', 'bode'],
   ['bode', 'margins'],
+  // the state plane: the poles are the eigenvalues, and Ch 8's pole placement was state feedback
+  ['poles', 'statespace'],
+  ['statespace', 'you'],
   // one lap round the loop, C·P = −1: Ch 8's closed loop is Ch 10's cliff
   ['blockdiagram', 'closedloop'],
   ['closedloop', 'tf'],

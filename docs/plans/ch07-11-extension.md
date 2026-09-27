@@ -3070,8 +3070,8 @@ new sentences. Each chapter's own detailed order is at the end of its phase.
 - **Root locus for real:** Ch 8's playground with a "split on the real axis" mode plus Ch 9's
   `play:cliff` following is one step from "drag the gain and watch the poles move" (the outline's
   first "where next" topic). Consider a Ch 9 side trip that does exactly that with Ki.
-- **A Ch 10 → Ch 11 bridge widget:** the drone's own Bode plot with the motor lag on/off, using
-  the shared `loopMargins` helper, would let Ch 11's "25° of phase margin" be *seen*.
+- ~~**A Ch 10 → Ch 11 bridge widget**~~ built 2026-09-27 as `ch11:droneBode` (see
+  `docs/plans/maths-explanations.md`, "Closed out afterwards").
 - **Audit Chapters 0–3 and 5** with the same terms-before-use table; Ch 5 is the source of most
   bridges (spinners, degrees, ×(−1) as a half-turn) that Ch 7 and Ch 10 want to cite.
 - **Delight pass** (as done for Ch 4/6): voice share per chapter (Ch 8 `poles` and Ch 9 `poles`

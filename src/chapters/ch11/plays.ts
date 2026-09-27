@@ -3,6 +3,7 @@ import { DRONE } from '../../sim/drone-model';
 import type { PlayModel } from '../../story/play';
 import { pid } from '../ch09/pid-tools';
 import { MISSION, missionMargins } from './mission';
+import { extraThrust, tangentThrust } from './state';
 
 /** Loaded weight: the drone plus its package, N. */
 const LOADED = (DRONE.m + MISSION.pkgMass) * DRONE.g;
@@ -69,5 +70,15 @@ export const plays: Record<string, PlayModel> = {
       kp: { min: 5, max: 50, step: 1, value: 20, unit: 'N/m' },
     },
     outputs: { dev: ({ F, kp }) => fmt((F / kp) * 100, 1) },
+  },
+  // "Hovering at w0 = 700 rad/s, spin the propellers {dw} rad/s faster: the true extra thrust is {exact} N, the
+  //  tangent says {lin} N, {err} too little." (T = k w², tangent at the hover)
+  linear: {
+    inputs: { dw: { min: 10, max: 300, step: 10, value: 50, unit: 'rad/s' } },
+    outputs: {
+      exact: ({ dw }) => fmt(extraThrust(dw), 2),
+      lin: ({ dw }) => fmt(tangentThrust(dw), 2),
+      err: ({ dw }, t) => t('pct', { v: fmt((100 * (extraThrust(dw) - tangentThrust(dw))) / extraThrust(dw), 1) }),
+    },
   },
 };

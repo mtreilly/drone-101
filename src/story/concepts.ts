@@ -207,6 +207,21 @@ export const CONCEPTS: Record<string, Concept> = {
   robust: { builtIn: at(10, 'design'), prereqs: ['margins'], node: 'robust' },
   // Chapter 11
   motorlag: { builtIn: at(11, 'briefing'), prereqs: ['firstorder', 'margins'], node: 'motorlag' },
+  stateSpace: {
+    builtIn: at(11, 'state'),
+    prereqs: ['acceleration', 'poles', 'wnzeta'],
+    node: 'statespace',
+    uses: [/state[- ]space/i, /state feedback/i],
+    defines: /eigenvalue/i,
+    once: true,
+  },
+  linearising: {
+    builtIn: at(11, 'state'),
+    prereqs: ['derivative'],
+    uses: [/lineari[sz]/i],
+    defines: /tangent/i,
+    once: true,
+  },
   tradeoff: { builtIn: at(11, 'reflect'), prereqs: ['pid', 'noise'], node: 'tradeoff' },
   you: { builtIn: at(11, 'reflect'), prereqs: ['tradeoff'], node: 'you' },
 };

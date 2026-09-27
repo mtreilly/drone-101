@@ -336,7 +336,22 @@ entries and claim tests together (`0.2.0` … `0.8.0`).
 
 ### Still open
 
-- Native review of every new term (the "Open terminology questions" in `docs/glossary.md` list
-  the translators' doubts phase by phase).
 - Reader sessions on Chapters 5 and 7 (see "Process lessons"); they decide the splits above.
-- A state-space / linearisation bridge, and the Ch 10 → Ch 11 drone Bode widget.
+
+### Closed out afterwards (2026-09-27)
+
+- **Terminology review:** every open terminology question was researched against the per-locale
+  teaching sources and settled; the decisions are applied to every string and recorded in
+  `docs/glossary.md` ("Terminology review"). What still wants a native speaker is listed there
+  under "Still for a native reviewer".
+- **The Ch 10 → Ch 11 drone Bode widget** (`ch11:droneBode`): the six-star loop's gain and phase
+  with the motor lag on a slider and the instant-motor loop as a ghost. Without the lag the phase
+  never reaches −180° (no cliff, 59° of margin at 10.8 rad/s); the 0.05 s lag holds the wiggle
+  back 26°, leaves 33° and creates a cliff × 3.3 away at 20.7 rad/s. The margin plots are now one
+  shared helper (`src/ui/margin-plots.ts`) used by Chapters 10 and 11.
+- **The state-space / linearisation bridge** (`ch11` section "One more picture: the state
+  plane", widget `statePlane`): the drone's state (Δh, v), the matrix A, the path spiralling in
+  (Chapter 5) or sliding in along the mode lines past Kd ≈ 5.3, eigenvalues = Chapter 6's poles,
+  Chapter 8's pole placement as state feedback, and linearising T = k w² by its tangent at the
+  hover (3.4 % too little at +50 rad/s). New concepts `stateSpace` and `linearising` in the graph,
+  map node "state space".
