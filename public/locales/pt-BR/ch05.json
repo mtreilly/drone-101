@@ -59,16 +59,86 @@
       ]
     },
     {
+      "id": "turns",
+      "title": "Medindo voltas",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Se i é um quarto de volta, vamos passar o dia inteiro girando setas. Então como dizemos *o quanto* uma seta girou?"
+        },
+        {
+          "t": "p",
+          "text": "Graus são um costume antigo: 360 deles numa volta, porque um calendário antigo gostava de 360. Os matemáticos medem uma volta com o próprio círculo. Role uma roda de raio 1 e veja quanto o seu aro percorre. Um **radiano** é o ângulo cujo arco tem exatamente **um raio** de comprimento."
+        },
+        {
+          "t": "predict",
+          "id": "ch5-full-turn",
+          "gate": true,
+          "q": "Quantos radianos formam uma volta completa?",
+          "options": [
+            {
+              "text": "360",
+              "why": "Isso são graus. Um radiano é bem maior que um grau: vale cerca de 57 deles."
+            },
+            {
+              "text": "Um pouco mais de 6",
+              "correct": true,
+              "why": "Isso. O aro inteiro de uma roda de raio 1 mede 2π ≈ 6,28 raios, então uma volta completa é 2π radianos. Meia volta é π ≈ 3,14."
+            },
+            {
+              "text": "Exatamente 1",
+              "why": "Um radiano só rola um raio de aro, cerca de um sexto da volta."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "turns"
+        },
+        {
+          "t": "p",
+          "text": "Acompanhe a ponta da seta enquanto ela gira. Sua sombra no eixo real se chama **cosseno** do ângulo, $\\cos\\theta$; sua sombra no eixo lateral é o **seno**, $\\sin\\theta$. Gire sem parar e as duas sombras traçam ondas, o seno um quarto de volta atrás do cosseno."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Entendi. Então um girador a 2 radianos por segundo dá duas voltas por segundo!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Duas vezes por segundo seriam 2 voltas, $4\\pi$ radianos. Dois radianos por segundo é uma volta completa a cada $2\\pi/2 \\approx 3{,}14$ segundos."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Radiano",
+              "def": "O ângulo cujo arco tem um raio de comprimento. Uma volta completa é $2\\pi$ radianos, meia volta é $\\pi$."
+            },
+            {
+              "term": "Cosseno e seno",
+              "def": "As sombras de uma seta de comprimento 1 no ângulo θ: $\\cos\\theta$ ao longo do eixo real, $\\sin\\theta$ de lado."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "spin",
       "title": "Um número que gira",
       "blocks": [
         {
           "t": "p",
-          "text": "Um **radiano** é uma forma de medir um ângulo. Uma volta completa é $2\\pi$ radianos, então um girador a 2 radianos por segundo dá uma volta completa em cerca de 3,14 segundos. O símbolo ω nos diz essa velocidade de giro."
+          "text": "Velocidades de giro são medidas em radianos por segundo: um girador a 2 radianos por segundo dá uma volta completa em $2\\pi/2 \\approx 3{,}14$ segundos. O símbolo ω nos diz essa velocidade de giro."
         },
         {
           "t": "p",
-          "text": "Agora imagine um ponto percorrendo um círculo a uma velocidade constante, ω radianos por segundo. Para onde aponta sua **velocidade**? Sempre ao longo do círculo, que está um **quarto de volta** à frente da seta que aponta para o ponto."
+          "text": "Agora imagine um ponto percorrendo um círculo a uma velocidade constante, ω radianos por segundo. Para onde aponta sua **velocidade**? (Aqui é a velocidade do Capítulo 3 com uma direção, então a velocidade de uma seta em movimento também é uma seta: para onde sua ponta se move, e com que rapidez.) Sempre ao longo do círculo, que está um **quarto de volta** à frente da seta que aponta para o ponto."
         },
         {
           "t": "p",
@@ -79,6 +149,30 @@
           "who": "theo",
           "mood": "surprised",
           "text": "Espere. \"A inclinação é um número fixo vezes ela mesma\" é exatamente a propriedade da **exponencial** do Capítulo 4! Com a = iω."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Mas espera aí. No Capítulo 4, uma potência significava \"quanta multiplicação já aconteceu\". O que $e$ elevado a $i\\theta$ poderia sequer significar? Multiplicar por $e$, $i\\theta$ vezes?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Construa do jeito do Capítulo 4. $e$ era $n$ passos minúsculos, cada um crescendo $\\frac1n$. Agora faça de cada passo minúsculo um empurrãozinho *para o lado*."
+        },
+        {
+          "t": "math",
+          "tex": "e^{i\\theta} = \\lim_{n\\to\\infty}\\left(1 + \\frac{i\\theta}{n}\\right)^{n}"
+        },
+        {
+          "t": "widget",
+          "id": "tiny"
+        },
+        {
+          "t": "p",
+          "text": "Cada passo gira a seta por um ângulo minúsculo, cerca de $\\theta/n$ radianos, e a estica um pouquinho. Com mais passos o esticamento some e o caminho pousa no círculo, exatamente θ radianos adiante. É por isso que usamos radianos: os empurrõezinhos laterais se somam ao longo do aro. Então $e^{i\\theta}$ é simplesmente o ponto do círculo no ângulo θ."
         },
         {
           "t": "p",
@@ -147,6 +241,10 @@
           "tex": "x(t) = \\tfrac12\\left(e^{i\\omega t} + e^{-i\\omega t}\\right) = \\cos(\\omega t),\\qquad \\omega = \\sqrt{k/m}"
         },
         {
+          "t": "note",
+          "text": "O ½ está ali porque cada gêmeo traz metade: o widget soma dois giradores de tamanho inteiro, então a soma dele oscila até 2. E este par começa solto a partir de 1 m, em repouso. Se ele já começar em movimento, os dois gêmeos apenas partem com inclinações opostas; a soma continua na reta real."
+        },
+        {
           "t": "p",
           "text": "Por que o gêmeo está sempre lá? A regra da mola só tem números reais ($m$ e $k$, nenhum $i$). Vire uma solução de cabeça para baixo, trocando cada $i$ por $-i$, e a regra não percebe a diferença: a imagem espelhada também é uma solução. Então, para qualquer coisa real, os giradores vêm em **pares espelhados**, e juntos suas partes laterais se cancelam, deixando uma oscilação real que podemos medir."
         }
@@ -207,7 +305,7 @@
             "**Metade direita** (σ > 0): a espiral cresce, a oscilação explode.",
             "**Na linha vertical** (σ = 0): um círculo perfeito, uma oscilação que continua para sempre.",
             "**Na linha horizontal** (ω = 0): nenhum giro, apenas as exponenciais simples do Capítulo 4.",
-            "**Mais para cima**: giro mais rápido, oscilações mais rápidas. **Mais para a esquerda**: desaparecimento mais rápido."
+            "**Mais longe da linha horizontal** (para cima ou para baixo): giro mais rápido, oscilações mais rápidas. **Mais para a esquerda**: desaparecimento mais rápido."
           ]
         },
         {
@@ -228,7 +326,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Uma última surpresa. Pegue giradores de velocidades diferentes (1, 3, 5, 7… vezes mais rápido), encolha cada um na medida certa e some suas sombras. Com o suficiente deles, você pode construir quase *qualquer* forma, até mesmo uma onda quadrada com cantos afiados."
+          "text": "Uma última surpresa. Pegue giradores de velocidades diferentes (1, 3, 5, 7… vezes mais rápido), encolha cada um, comece cada um exatamente no ângulo certo e some suas sombras. Com o suficiente deles, você pode construir uma enorme variedade de formas, até mesmo uma onda quadrada com cantos afiados."
         },
         {
           "t": "widget",
@@ -252,7 +350,9 @@
           "t": "recap",
           "items": [
             "Números são flechas. Multiplicar gira e estica elas. **i** é um quarto de volta, então $i^2 = -1$.",
+            "Um **radiano** é o ângulo cujo arco tem um raio de comprimento: uma volta completa é $2\\pi$. **cos θ** e **sin θ** são as sombras de uma seta girada.",
             "$e^{i\\omega t}$ é um ponto girando em torno de um círculo. Sua sombra é uma onda cosseno.",
+            "$e^{i\\theta}$, construído com passos minúsculos para o lado $\\left(1 + \\frac{i\\theta}{n}\\right)^n$, é o ponto do círculo no ângulo θ.",
             "Ondulações reais vêm de **giradores espelhados gêmeos** cujas partes laterais se cancelam.",
             "$e^{st}$ com $s = \\sigma + i\\omega$ gira *e* cresce ou encolhe: uma espiral. Sua sombra é uma ondulação que cresce ou morre.",
             "O **mapa de s**: à esquerda acalma, à direita explode, para cima significa ondulações mais rápidas."
@@ -429,6 +529,45 @@
       "status": "{n} giradores adicionados. O mais rápido gira {f}× mais rápido que o primeiro.",
       "aria": "Uma onda quadrada e a soma das sombras de um número escolhido de giradores que a aproximam.",
       "statusOne": "Apenas um girador: uma oscilação simples, nada de quadrado nela ainda."
+    },
+    "turns": {
+      "title": "Medindo voltas em raios",
+      "aria": "Um círculo de raio 1 com uma seta no ângulo teta, seu arco destacado e as sombras da ponta da seta nos dois eixos.",
+      "re": "ao longo",
+      "im": "de lado",
+      "theta": "Ângulo θ",
+      "radUnit": "rad",
+      "thetaAxis": "ângulo θ (radianos)",
+      "shadowAxis": "sombra",
+      "cos": "cos θ (sombra ao longo)",
+      "sin": "sin θ (sombra de lado)",
+      "plotAria": "O cosseno e o seno do ângulo, traçados de 0 até o ângulo escolhido.",
+      "readRad": "radianos",
+      "readTurns": "voltas",
+      "readDeg": "graus",
+      "readCos": "cos θ",
+      "readSin": "sin θ",
+      "oneRadian": "Um radiano: o arco tem exatamente um raio de comprimento (cerca de 57°).",
+      "half": "Meia volta: π ≈ 3,14 radianos. As sombras estão em −1 e 0.",
+      "full": "Uma volta completa: 2π ≈ 6,28 radianos, de volta ao ponto de partida.",
+      "any": "O arco tem {r} raios de comprimento: {d}°.",
+      "describe": "Ângulo de {r} radianos: cosseno {c}, seno {s}.",
+      "help": "Arraste θ. O arco laranja é a distância rolada ao longo do aro, medida em raios."
+    },
+    "tiny": {
+      "title": "Girando em passos minúsculos para o lado",
+      "aria": "Os produtos parciais de 1 mais i teta sobre n, desenhados como um caminho que sai de 1 em direção ao ponto do círculo de raio 1 no ângulo teta.",
+      "re": "ao longo",
+      "im": "de lado",
+      "n": "Número de passos n",
+      "theta": "Ângulo θ",
+      "radUnit": "rad",
+      "readLen": "comprimento",
+      "readAng": "ângulo",
+      "readGoal": "mirando em θ =",
+      "one": "Um passo gigante: 1 + iθ, bem longe do círculo (comprimento {len}).",
+      "many": "{n} passos: comprimento {len}, ângulo {ang} rad. Mais passos: o comprimento se aproxima devagar de 1 e o ângulo de θ = {th}.",
+      "help": "Arraste n para cortar a volta em empurrõezinhos menores e mais numerosos; arraste θ para mudar para onde ela vai."
     }
   }
 }

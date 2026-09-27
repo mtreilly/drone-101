@@ -59,16 +59,86 @@
       ]
     },
     {
+      "id": "turns",
+      "title": "Mesurer les tours",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Si i est un quart de tour, on va passer notre temps à faire tourner des flèches. Alors comment dire *de combien* une flèche a tourné ?"
+        },
+        {
+          "t": "p",
+          "text": "Les degrés sont une vieille habitude : 360 dans un tour, parce qu'un ancien calendrier aimait bien 360. Les mathématiciens mesurent un tour avec le cercle lui-même. Fais rouler une roue de rayon 1 et regarde quelle distance parcourt son bord. Un **radian**, c'est l'angle dont l'arc mesure exactement **un rayon** de long."
+        },
+        {
+          "t": "predict",
+          "id": "ch5-full-turn",
+          "gate": true,
+          "q": "Combien de radians font un tour complet ?",
+          "options": [
+            {
+              "text": "360",
+              "why": "Ça, ce sont des degrés. Un radian est bien plus grand qu'un degré : il en vaut environ 57."
+            },
+            {
+              "text": "Un peu plus de 6",
+              "correct": true,
+              "why": "Exact. Le bord entier d'une roue de rayon 1 mesure 2π ≈ 6,28 rayons, donc un tour complet vaut 2π radians. Un demi-tour vaut π ≈ 3,14."
+            },
+            {
+              "text": "Exactement 1",
+              "why": "Un radian ne fait rouler qu'un seul rayon de bord, environ un sixième du tour."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "turns"
+        },
+        {
+          "t": "p",
+          "text": "Suis la pointe de la flèche pendant qu'elle tourne. Son ombre sur l'axe réel s'appelle le **cosinus** de l'angle, $\\cos\\theta$ ; son ombre sur l'axe de côté, c'est le **sinus**, $\\sin\\theta$. Tourne régulièrement et les deux ombres dessinent des ondes, le sinus un quart de tour en retard sur le cosinus."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Compris. Donc un tourniquet à 2 radians par seconde fait deux tours par seconde !"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Deux tours par seconde, ce serait $4\\pi$ radians. Deux radians par seconde, c'est un tour complet toutes les $2\\pi/2 \\approx 3{,}14$ secondes."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Radian",
+              "def": "L'angle dont l'arc mesure un rayon de long. Un tour complet vaut $2\\pi$ radians, un demi-tour vaut $\\pi$."
+            },
+            {
+              "term": "Cosinus et sinus",
+              "def": "Les ombres d'une flèche de longueur 1 à l'angle θ : $\\cos\\theta$ le long de l'axe réel, $\\sin\\theta$ sur le côté."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "spin",
       "title": "Un nombre qui tourne",
       "blocks": [
         {
           "t": "p",
-          "text": "Un **radian** est une unité d’angle. Un tour complet vaut $2\\pi$ radians ; une flèche qui tourne à 2 radians par seconde fait donc un tour en environ 3,14 secondes. Le symbole ω indique cette vitesse de rotation."
+          "text": "Les vitesses de rotation se mesurent en radians par seconde : une flèche qui tourne à 2 radians par seconde fait un tour complet en $2\\pi/2 \\approx 3{,}14$ secondes. Le symbole ω indique cette vitesse de rotation."
         },
         {
           "t": "p",
-          "text": "Maintenant, imagine un point qui fait le tour d'un cercle à vitesse constante, ω radians par seconde. Vers où pointe sa **vitesse** ? Toujours le long du cercle, c'est-à-dire un **quart de tour** en avance sur la flèche qui mène au point."
+          "text": "Maintenant, imagine un point qui fait le tour d'un cercle à vitesse constante, ω radians par seconde. Vers où pointe sa **vitesse** ? (Ici, c'est la vitesse du chapitre 3 avec une direction en plus : la vitesse d'une flèche qui bouge est donc elle aussi une flèche, qui dit dans quel sens sa pointe avance, et à quelle allure.) Toujours le long du cercle, c'est-à-dire un **quart de tour** en avance sur la flèche qui mène au point."
         },
         {
           "t": "p",
@@ -79,6 +149,30 @@
           "who": "theo",
           "mood": "surprised",
           "text": "Attends. « La pente est un nombre fixe fois elle-même », c'est exactement la propriété de l'**exponentielle** du chapitre 4 ! Avec a = iω."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Mais attends. Au chapitre 4, une puissance voulait dire « combien de multiplication a eu lieu ». Qu'est-ce que $e$ puissance $i\\theta$ pourrait bien vouloir dire ? Multiplier par $e$, $i\\theta$ fois ?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Construisons-le à la manière du chapitre 4. $e$, c'était $n$ tout petits pas où l'on grandit de $\\frac1n$. Cette fois, fais de chaque petit pas une petite poussée *de côté*."
+        },
+        {
+          "t": "math",
+          "tex": "e^{i\\theta} = \\lim_{n\\to\\infty}\\left(1 + \\frac{i\\theta}{n}\\right)^{n}"
+        },
+        {
+          "t": "widget",
+          "id": "tiny"
+        },
+        {
+          "t": "p",
+          "text": "Chaque pas fait tourner la flèche d'un tout petit angle, environ $\\theta/n$ radians, et l'allonge un tout petit peu. Avec plus de pas, l'allongement disparaît et le chemin tombe sur le cercle, exactement à θ radians du départ. Voilà pourquoi les radians : les petites poussées de côté s'additionnent le long du bord. Donc $e^{i\\theta}$, c'est tout simplement le point du cercle à l'angle θ."
         },
         {
           "t": "p",
@@ -147,6 +241,10 @@
           "tex": "x(t) = \\tfrac12\\left(e^{i\\omega t} + e^{-i\\omega t}\\right) = \\cos(\\omega t),\\qquad \\omega = \\sqrt{k/m}"
         },
         {
+          "t": "note",
+          "text": "Le ½ est là parce que chaque jumeau apporte la moitié : le widget additionne deux tourniquets de taille normale, donc sa somme va jusqu'à 2. Et cette paire part lâchée à 1 m, au repos. Lance-la avec une vitesse et les deux jumeaux démarrent simplement avec des inclinaisons opposées ; leur somme reste toujours sur la droite réelle."
+        },
+        {
           "t": "p",
           "text": "Pourquoi le jumeau est-il toujours là ? La règle du ressort ne contient que des nombres réels ($m$ et $k$, pas de $i$). Retourne une solution de haut en bas, en changeant chaque $i$ en $-i$, et la règle ne voit pas la différence : l'image miroir est aussi une solution. Donc pour tout ce qui est réel, les tourniquets viennent par **paires miroirs**, et ensemble leurs parties de côté s'annulent : il reste une vraie oscillation qu'on peut mesurer."
         }
@@ -207,7 +305,7 @@
             "**Moitié droite** (σ > 0) : la spirale grandit, l'oscillation explose.",
             "**Sur la ligne verticale** (σ = 0) : un cercle parfait, une oscillation qui dure pour toujours.",
             "**Sur la ligne horizontale** (ω = 0) : aucune rotation, juste les exponentielles simples du chapitre 4.",
-            "**Plus haut** : ça tourne plus vite, les oscillations sont plus rapides. **Plus à gauche** : ça s'éteint plus vite."
+            "**Plus loin de la ligne horizontale** (vers le haut ou vers le bas) : ça tourne plus vite, les oscillations sont plus rapides. **Plus à gauche** : ça s'éteint plus vite."
           ]
         },
         {
@@ -228,7 +326,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Une dernière surprise. Prends des tourniquets de vitesses différentes (1, 3, 5, 7… fois plus rapides), rétrécis chacun juste comme il faut, et additionne leurs ombres. Avec assez de tourniquets, tu peux construire presque *n'importe quelle* forme, même un signal carré avec des coins pointus."
+          "text": "Une dernière surprise. Prends des tourniquets de vitesses différentes (1, 3, 5, 7… fois plus rapides), rétrécis chacun et fais-le démarrer juste au bon angle, puis additionne leurs ombres. Avec assez de tourniquets, tu peux construire une énorme variété de formes, même un signal carré avec des coins pointus."
         },
         {
           "t": "widget",
@@ -252,7 +350,9 @@
           "t": "recap",
           "items": [
             "Les nombres sont des flèches. Multiplier les fait tourner et les étire. **i** est un quart de tour, donc $i^2 = -1$.",
+            "Un **radian**, c'est l'angle dont l'arc mesure un rayon de long : un tour complet vaut $2\\pi$. **cos θ** et **sin θ** sont les ombres d'une flèche qui a tourné.",
             "$e^{i\\omega t}$ est un point qui tourne sur un cercle. Son ombre est une onde cosinus.",
+            "$e^{i\\theta}$, construit par tout petits pas de côté $\\left(1 + \\frac{i\\theta}{n}\\right)^n$, est le point du cercle à l'angle θ.",
             "Les vraies oscillations viennent de **tourniquets jumeaux miroirs** dont les parties de côté s'annulent.",
             "$e^{st}$ avec $s = \\sigma + i\\omega$ tourne *et* grandit ou rétrécit : une spirale. Son ombre est une oscillation qui grandit ou s'éteint.",
             "La **carte de s** : à gauche ça se calme, à droite ça explose, plus haut les oscillations sont plus rapides."
@@ -429,6 +529,45 @@
       "status": "{n} tourniquets ajoutés. Le plus rapide tourne {f}× plus vite que le premier.",
       "aria": "Un signal carré et la somme d'un nombre choisi d'ombres de tourniquets qui l'approche.",
       "statusOne": "Un seul tourniquet : une simple oscillation, rien de carré pour l'instant."
+    },
+    "turns": {
+      "title": "Mesurer les tours en rayons",
+      "aria": "Un cercle de rayon 1 avec une flèche à l'angle thêta, son arc mis en évidence, et les ombres de la pointe de la flèche sur les deux axes.",
+      "re": "en avant",
+      "im": "de côté",
+      "theta": "Angle θ",
+      "radUnit": "rad",
+      "thetaAxis": "angle θ (radians)",
+      "shadowAxis": "ombre",
+      "cos": "cos θ (ombre en avant)",
+      "sin": "sin θ (ombre de côté)",
+      "plotAria": "Le cosinus et le sinus de l'angle, tracés de 0 jusqu'à l'angle choisi.",
+      "readRad": "radians",
+      "readTurns": "tours",
+      "readDeg": "degrés",
+      "readCos": "cos θ",
+      "readSin": "sin θ",
+      "oneRadian": "Un radian : l'arc mesure exactement un rayon de long (environ 57°).",
+      "half": "Un demi-tour : π ≈ 3,14 radians. Les ombres sont à −1 et 0.",
+      "full": "Un tour complet : 2π ≈ 6,28 radians, retour au point de départ.",
+      "any": "L'arc mesure {r} rayons : {d}°.",
+      "describe": "Angle de {r} radians : cosinus {c}, sinus {s}.",
+      "help": "Fais glisser θ. L'arc orange est la distance parcourue en roulant le long du bord, mesurée en rayons."
+    },
+    "tiny": {
+      "title": "Tourner par tout petits pas de côté",
+      "aria": "Les produits successifs de 1 plus i thêta sur n, dessinés comme un chemin qui part de 1 vers le point du cercle de rayon 1 à l'angle thêta.",
+      "re": "en avant",
+      "im": "de côté",
+      "n": "Nombre de pas n",
+      "theta": "Angle θ",
+      "radUnit": "rad",
+      "readLen": "longueur",
+      "readAng": "angle",
+      "readGoal": "objectif θ =",
+      "one": "Un seul pas géant : 1 + iθ, loin du cercle (longueur {len}).",
+      "many": "{n} pas : longueur {len}, angle {ang} rad. Avec plus de pas, la longueur se rapproche de 1 et l'angle de θ = {th}.",
+      "help": "Fais glisser n pour découper le tour en poussées plus nombreuses et plus petites ; fais glisser θ pour changer sa destination."
     }
   }
 }

@@ -59,16 +59,86 @@
       ]
     },
     {
+      "id": "turns",
+      "title": "Medir giros",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Si i es un cuarto de vuelta, nos vamos a pasar el día girando flechas. Entonces, ¿cómo decimos *cuánto* ha girado una flecha?"
+        },
+        {
+          "t": "p",
+          "text": "Los grados son una vieja costumbre: 360 en una vuelta, porque a un calendario antiguo le gustaba el 360. Los matemáticos miden un giro con el propio círculo. Haz rodar una rueda de radio 1 y mira cuánto avanza su borde. Un **radián** es el ángulo cuyo arco mide exactamente **un radio**."
+        },
+        {
+          "t": "predict",
+          "id": "ch5-full-turn",
+          "gate": true,
+          "q": "¿Cuántos radianes hay en una vuelta completa?",
+          "options": [
+            {
+              "text": "360",
+              "why": "Eso son grados. Un radián es mucho más grande que un grado: unos 57 grados."
+            },
+            {
+              "text": "Un poco más de 6",
+              "correct": true,
+              "why": "¡Exacto! El borde entero de una rueda de radio 1 mide 2π ≈ 6,28 radios, así que una vuelta completa son 2π radianes. Media vuelta es π ≈ 3,14."
+            },
+            {
+              "text": "Exactamente 1",
+              "why": "Un radián solo recorre un radio de borde, más o menos una sexta parte de la vuelta."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "turns"
+        },
+        {
+          "t": "p",
+          "text": "Sigue la punta de la flecha mientras gira. Su sombra sobre el eje real se llama **coseno** del ángulo, $\\cos\\theta$; su sombra sobre el eje de lado es el **seno**, $\\sin\\theta$. Gira a ritmo constante y las dos sombras dibujan ondas, el seno un cuarto de vuelta por detrás del coseno."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "¡Entendido! Así que una flecha que gira a 2 radianes por segundo da dos vueltas cada segundo."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Dos vueltas por segundo serían $4\\pi$ radianes por segundo. A 2 radianes por segundo da una vuelta completa cada $2\\pi/2 \\approx 3.14$ segundos."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Radián",
+              "def": "El ángulo cuyo arco mide un radio. Una vuelta completa son $2\\pi$ radianes; media vuelta, $\\pi$."
+            },
+            {
+              "term": "Coseno y seno",
+              "def": "Las sombras de una flecha de longitud 1 con ángulo θ: $\\cos\\theta$ a lo largo del eje real, $\\sin\\theta$ de lado."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "spin",
       "title": "Un número que gira",
       "blocks": [
         {
           "t": "p",
-          "text": "Un **radián** es una unidad de ángulo. Una vuelta completa son $2\\pi$ radianes. A la flecha que gira la llamaremos **girador**: a 2 radianes por segundo da una vuelta en unos 3,14 segundos. El símbolo ω indica esa velocidad de giro."
+          "text": "Las velocidades de giro se miden en radianes por segundo. A la flecha que gira la llamaremos **girador**: a 2 radianes por segundo da una vuelta completa en $2\\pi/2 \\approx 3.14$ segundos. El símbolo ω indica esa velocidad de giro."
         },
         {
           "t": "p",
-          "text": "Ahora imagina un punto que da vueltas a un círculo a velocidad constante, ω radianes por segundo. ¿Hacia dónde apunta su **velocidad**? Siempre a lo largo del círculo, que está **un cuarto de vuelta** por delante de la flecha que va al punto."
+          "text": "Ahora imagina un punto que da vueltas a un círculo a velocidad constante, ω radianes por segundo. ¿Hacia dónde apunta su **velocidad**? (Es la velocidad del capítulo 3, pero con dirección: la velocidad de una flecha que se mueve también es una flecha, que dice hacia dónde va su punta y lo rápido que va.) Siempre a lo largo del círculo, que está **un cuarto de vuelta** por delante de la flecha que va al punto."
         },
         {
           "t": "p",
@@ -79,6 +149,30 @@
           "who": "theo",
           "mood": "surprised",
           "text": "Espera. \"La pendiente es un número fijo por sí misma\" es exactamente la propiedad **exponencial** del capítulo 4. ¡Con a = iω!"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Pero espera. En el capítulo 4, una potencia significaba \"cuánto se ha multiplicado\". ¿Qué querría decir $e$ elevado a $i\\theta$? ¿Multiplicar por $e$ $i\\theta$ veces?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Constrúyelo como en el capítulo 4. $e$ eran $n$ pasitos, cada uno creciendo $\\frac1n$. Ahora haz que cada pasito sea un empujoncito *de lado*."
+        },
+        {
+          "t": "math",
+          "tex": "e^{i\\theta} = \\lim_{n\\to\\infty}\\left(1 + \\frac{i\\theta}{n}\\right)^{n}"
+        },
+        {
+          "t": "widget",
+          "id": "tiny"
+        },
+        {
+          "t": "p",
+          "text": "Cada paso gira la flecha un ángulo diminuto, unos $\\theta/n$ radianes, y la estira un poquito. Con más pasos el estiramiento desaparece y el camino cae sobre el círculo, justo θ radianes más allá. Por eso usamos radianes: los empujoncitos de lado se van sumando a lo largo del borde. Así que $e^{i\\theta}$ es simplemente el punto del círculo con ángulo θ."
         },
         {
           "t": "p",
@@ -147,6 +241,10 @@
           "tex": "x(t) = \\tfrac12\\left(e^{i\\omega t} + e^{-i\\omega t}\\right) = \\cos(\\omega t),\\qquad \\omega = \\sqrt{k/m}"
         },
         {
+          "t": "note",
+          "text": "El ½ está porque cada gemelo aporta la mitad: el widget suma dos giradores de tamaño completo, así que su suma llega hasta 2. Además, esta pareja arranca soltada desde 1 m, en reposo. Si la pones en marcha con velocidad, los dos gemelos simplemente empiezan con inclinaciones opuestas, y su suma sigue sin salirse de la recta real."
+        },
+        {
           "t": "p",
           "text": "¿Por qué siempre está el gemelo? La regla del muelle solo tiene números reales ($m$ y $k$, ninguna $i$). Voltea una solución de arriba abajo, convirtiendo cada $i$ en $-i$, y la regla no nota la diferencia: la imagen reflejada también es una solución. Así que, para cualquier cosa real, los giradores vienen en **parejas reflejadas**, y al juntarlos sus partes de lado se cancelan y queda una oscilación real que podemos medir."
         }
@@ -207,7 +305,7 @@
             "**Mitad derecha** (σ > 0): la espiral crece y la oscilación se dispara.",
             "**Sobre la línea vertical** (σ = 0): un círculo perfecto, una oscilación que dura para siempre.",
             "**Sobre la línea horizontal** (ω = 0): nada de giro, solo las exponenciales normales del capítulo 4.",
-            "**Más arriba**: giro más rápido, oscilaciones más rápidas. **Más a la izquierda**: se apaga más rápido."
+            "**Más lejos de la línea horizontal** (arriba o abajo): giro más rápido, oscilaciones más rápidas. **Más a la izquierda**: se apaga más rápido."
           ]
         },
         {
@@ -228,7 +326,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Una última sorpresa. Toma giradores de distintas velocidades (1, 3, 5, 7… veces más rápidos), encoge cada uno en su justa medida y suma sus sombras. Con suficientes puedes construir casi *cualquier* forma, incluso una onda cuadrada con esquinas afiladas."
+          "text": "Una última sorpresa. Toma giradores de distintas velocidades (1, 3, 5, 7… veces más rápidos), encoge cada uno en su justa medida, hazlo empezar justo en el ángulo adecuado y suma sus sombras. Con suficientes puedes construir un montón de formas distintas, incluso una onda cuadrada con esquinas afiladas."
         },
         {
           "t": "widget",
@@ -252,7 +350,9 @@
           "t": "recap",
           "items": [
             "Los números son flechas. Multiplicar las gira y las estira. **i** es un cuarto de vuelta, así que $i^2 = -1$.",
+            "Un **radián** es el ángulo cuyo arco mide un radio: una vuelta completa son $2\\pi$. **cos θ** y **sin θ** son las sombras de una flecha girada.",
             "$e^{i\\omega t}$ es un punto que gira alrededor de un círculo. Su sombra es una onda coseno.",
+            "$e^{i\\theta}$, construido con pasitos de lado $\\left(1 + \\frac{i\\theta}{n}\\right)^n$, es el punto del círculo con ángulo θ.",
             "Las oscilaciones reales vienen de **giradores gemelos reflejados** cuyas partes de lado se cancelan.",
             "$e^{st}$ con $s = \\sigma + i\\omega$ gira *y* crece o se encoge: una espiral. Su sombra es una oscilación que crece o se apaga.",
             "El **mapa de s**: a la izquierda se calma, a la derecha se dispara, más arriba significa oscilaciones más rápidas."
@@ -429,6 +529,45 @@
       "status": "{n} giradores sumados. El más rápido gira {f} veces más rápido que el primero.",
       "aria": "Una onda cuadrada y la suma de un número elegido de sombras de giradores que la aproxima.",
       "statusOne": "Un solo girador: una oscilación normal, nada cuadrada todavía."
+    },
+    "turns": {
+      "title": "Medir giros en radios",
+      "aria": "Un círculo de radio 1 con una flecha de ángulo theta, su arco resaltado y las sombras de la punta de la flecha sobre los dos ejes.",
+      "re": "a lo largo",
+      "im": "de lado",
+      "theta": "Ángulo θ",
+      "radUnit": "rad",
+      "thetaAxis": "ángulo θ (radianes)",
+      "shadowAxis": "sombra",
+      "cos": "cos θ (sombra a lo largo)",
+      "sin": "sin θ (sombra de lado)",
+      "plotAria": "El coseno y el seno del ángulo, dibujados desde 0 hasta el ángulo elegido.",
+      "readRad": "radianes",
+      "readTurns": "vueltas",
+      "readDeg": "grados",
+      "readCos": "cos θ",
+      "readSin": "sin θ",
+      "oneRadian": "Un radián: el arco mide exactamente un radio (unos 57°).",
+      "half": "Media vuelta: π ≈ 3,14 radianes. Las sombras están en −1 y 0.",
+      "full": "Una vuelta completa: 2π ≈ 6,28 radianes, de vuelta al punto de partida.",
+      "any": "El arco mide {r} radios: {d}°.",
+      "describe": "Ángulo de {r} radianes: coseno {c}, seno {s}.",
+      "help": "Desliza θ. El arco naranja es la distancia recorrida a lo largo del borde, medida en radios."
+    },
+    "tiny": {
+      "title": "Girar a pasitos de lado",
+      "aria": "Los productos parciales de 1 más i theta entre n, dibujados como un camino que sale de 1 hacia el punto del círculo unidad con ángulo theta.",
+      "re": "a lo largo",
+      "im": "de lado",
+      "n": "Número de pasos n",
+      "theta": "Ángulo θ",
+      "radUnit": "rad",
+      "readLen": "longitud",
+      "readAng": "ángulo",
+      "readGoal": "objetivo θ =",
+      "one": "Un solo paso gigante: 1 + iθ, muy lejos del círculo (longitud {len}).",
+      "many": "{n} pasos: longitud {len}, ángulo {ang} rad. Con más pasos, la longitud se acerca a 1 y el ángulo a θ = {th}.",
+      "help": "Desliza n para cortar el giro en más empujoncitos, más pequeños; desliza θ para cambiar hacia dónde va."
     }
   }
 }

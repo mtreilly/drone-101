@@ -59,16 +59,86 @@
       ]
     },
     {
+      "id": "turns",
+      "title": "Mierzenie obrotów",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Skoro i to ćwierć obrotu, będziemy obracać strzałki przez cały dzień. Jak więc powiedzieć, *o ile* strzałka się obróciła?"
+        },
+        {
+          "t": "p",
+          "text": "Stopnie to stary nawyk: 360 na obrót, bo pewien starożytny kalendarz lubił liczbę 360. Matematycy mierzą obrót samym okręgiem. Potocz koło o promieniu 1 i zobacz, jaką drogę przebędzie jego obręcz. **Radian** to kąt, którego łuk ma długość dokładnie **jednego promienia**."
+        },
+        {
+          "t": "predict",
+          "id": "ch5-full-turn",
+          "gate": true,
+          "q": "Ile radianów ma jeden pełny obrót?",
+          "options": [
+            {
+              "text": "360",
+              "why": "To są stopnie. Radian jest dużo większy od stopnia: to około 57 stopni."
+            },
+            {
+              "text": "Trochę więcej niż 6",
+              "correct": true,
+              "why": "Zgadza się. Cała obręcz koła o promieniu 1 ma długość 2π ≈ 6,28 promienia, więc pełny obrót to 2π radianów. Pół obrotu to π ≈ 3,14."
+            },
+            {
+              "text": "Dokładnie 1",
+              "why": "Jeden radian to tylko jeden promień przetoczonej obręczy, mniej więcej jedna szósta drogi dookoła."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "turns"
+        },
+        {
+          "t": "p",
+          "text": "Śledź grot strzałki, gdy się obraca. Jego cień na osi rzeczywistej to **cosinus** kąta, $\\cos\\theta$; jego cień na osi bocznej to **sinus**, $\\sin\\theta$. Obracaj równo, a oba cienie narysują fale, przy czym sinus spóźnia się o ćwierć obrotu za cosinusem."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Już wiem. Czyli bączek przy 2 radianach na sekundę robi dwa obroty na sekundę!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Dwa obroty na sekundę to byłoby $4\\pi$ radianów na sekundę. Dwa radiany na sekundę to jeden pełny obrót co $2\\pi/2 \\approx 3{,}14$ sekundy."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Radian",
+              "def": "Kąt, którego łuk ma długość jednego promienia. Pełny obrót to $2\\pi$ radianów, pół obrotu to $\\pi$."
+            },
+            {
+              "term": "Cosinus i sinus",
+              "def": "Cienie strzałki o długości 1 pod kątem θ: $\\cos\\theta$ wzdłuż osi rzeczywistej, $\\sin\\theta$ w bok."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "spin",
       "title": "Liczba, która wiruje",
       "blocks": [
         {
           "t": "p",
-          "text": "**Radian** to jednostka kąta. Pełny obrót ma $2\\pi$ radianów, więc wirujący punkt przy 2 radianach na sekundę wykonuje obrót w około 3,14 sekundy. Symbol ω oznacza tę prędkość obrotu."
+          "text": "Prędkość obrotu mierzymy w radianach na sekundę: bączek przy 2 radianach na sekundę wykonuje pełny obrót w $2\\pi/2 \\approx 3{,}14$ sekundy. Symbol ω oznacza tę prędkość obrotu."
         },
         {
           "t": "p",
-          "text": "Teraz wyobraź sobie punkt biegnący po okręgu ze stałą prędkością, ω radianów na sekundę. Gdzie wskazuje jego **prędkość**? Zawsze wzdłuż okręgu, czyli **ćwierć obrotu** przed strzałką do punktu."
+          "text": "Teraz wyobraź sobie punkt biegnący po okręgu ze stałą prędkością, ω radianów na sekundę. Gdzie wskazuje jego **prędkość**? (To prędkość z rozdziału 3, tylko z kierunkiem, więc prędkość poruszającej się strzałki też jest strzałką: w którą stronę idzie jej grot i jak szybko.) Zawsze wzdłuż okręgu, czyli **ćwierć obrotu** przed strzałką do punktu."
         },
         {
           "t": "p",
@@ -79,6 +149,30 @@
           "who": "theo",
           "mood": "surprised",
           "text": "Chwila. „Nachylenie to stała liczba razy ono samo” to dokładnie własność **wykładniczej** z rozdziału 4! Z a = iω."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Ale zaraz. W rozdziale 4 potęga oznaczała „ile razy mnożyliśmy”. Co w ogóle miałoby znaczyć $e$ do potęgi $i\\theta$? Pomnożyć przez $e$ $i\\theta$ razy?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Zbudujmy to jak w rozdziale 4. $e$ to było $n$ malutkich kroków wzrostu o $\\frac1n$. Niech każdy malutki krok będzie zamiast tego małym pchnięciem *w bok*."
+        },
+        {
+          "t": "math",
+          "tex": "e^{i\\theta} = \\lim_{n\\to\\infty}\\left(1 + \\frac{i\\theta}{n}\\right)^{n}"
+        },
+        {
+          "t": "widget",
+          "id": "tiny"
+        },
+        {
+          "t": "p",
+          "text": "Każdy krok obraca strzałkę o malutki kąt, około $\\theta/n$ radianów, i odrobinę ją wydłuża. Przy większej liczbie kroków wydłużanie znika, a ścieżka ląduje na okręgu, dokładnie θ radianów dalej. Właśnie dlatego radiany: malutkie pchnięcia w bok sumują się wzdłuż obręczy. Czyli $e^{i\\theta}$ to po prostu punkt na okręgu pod kątem θ."
         },
         {
           "t": "p",
@@ -147,6 +241,10 @@
           "tex": "x(t) = \\tfrac12\\left(e^{i\\omega t} + e^{-i\\omega t}\\right) = \\cos(\\omega t),\\qquad \\omega = \\sqrt{k/m}"
         },
         {
+          "t": "note",
+          "text": "½ jest tu dlatego, że każdy z bliźniaków wnosi połowę: widżet dodaje dwa pełnowymiarowe bączki, więc ich suma wychyla się do 2. Ta para startuje puszczona z 1 m, ze spoczynku. Jeśli nadasz jej ruch, bliźniaki po prostu zaczną od przeciwnych przechyłów; ich suma i tak zostanie na osi rzeczywistej."
+        },
+        {
           "t": "p",
           "text": "Dlaczego bliźniak zawsze tam jest? Reguła sprężyny zawiera tylko liczby rzeczywiste ($m$ i $k$, żadnego $i$). Odwróć rozwiązanie do góry nogami, zamieniając każde $i$ na $-i$, a reguła nie zauważy różnicy: lustrzane odbicie też jest rozwiązaniem. Dlatego dla wszystkiego, co rzeczywiste, bączki występują w **lustrzanych parach**, a razem ich części boczne się znoszą i zostaje prawdziwe kołysanie, które możemy zmierzyć."
         }
@@ -207,7 +305,7 @@
             "**Prawa połowa** (σ > 0): spirala rośnie, kołysanie eksploduje.",
             "**Na pionowej linii** (σ = 0): idealny okrąg, kołysanie, które trwa w nieskończoność.",
             "**Na poziomej linii** (ω = 0): żadnego wirowania, tylko zwykłe wykładnicze z rozdziału 4.",
-            "**Wyżej**: szybsze wirowanie, szybsze kołysanie. **Bardziej w lewo**: szybsze wygasanie."
+            "**Dalej od poziomej linii** (w górę lub w dół): szybsze wirowanie, szybsze kołysanie. **Bardziej w lewo**: szybsze wygasanie."
           ]
         },
         {
@@ -228,7 +326,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Ostatnia niespodzianka. Weź bączki o różnych prędkościach (1, 3, 5, 7… razy szybsze), każdy odpowiednio zmniejsz i dodaj ich cienie. Mając ich wystarczająco dużo, zbudujesz prawie *dowolny* kształt, nawet falę prostokątną z ostrymi narożnikami."
+          "text": "Ostatnia niespodzianka. Weź bączki o różnych prędkościach (1, 3, 5, 7… razy szybsze), każdy odpowiednio zmniejsz i ustaw pod właściwym kątem startowym, a potem dodaj ich cienie. Mając ich wystarczająco dużo, zbudujesz ogromną gamę kształtów, nawet falę prostokątną z ostrymi narożnikami."
         },
         {
           "t": "widget",
@@ -252,7 +350,9 @@
           "t": "recap",
           "items": [
             "Liczby to strzałki. Mnożenie je obraca i rozciąga. **i** to ćwierć obrotu, więc $i^2 = -1$.",
+            "**Radian** to kąt, którego łuk ma długość jednego promienia: pełny obrót to $2\\pi$. **cos θ** i **sin θ** to cienie obróconej strzałki.",
             "$e^{i\\omega t}$ to punkt wirujący po okręgu. Jego cień to fala cosinusa.",
+            "$e^{i\\theta}$, zbudowane z malutkich kroków w bok $\\left(1 + \\frac{i\\theta}{n}\\right)^n$, to punkt na okręgu pod kątem θ.",
             "Prawdziwe kołysania biorą się z **lustrzanych bliźniaczych bączków**, których części boczne się znoszą.",
             "$e^{st}$, gdzie $s = \\sigma + i\\omega$, wiruje *i* rośnie albo maleje: to spirala. Jej cień to rosnące albo wygasające kołysanie.",
             "**Mapa s**: po lewej się uspokaja, po prawej wybucha, wyżej znaczy szybsze kołysanie."
@@ -429,6 +529,45 @@
       "status": "Dodane bączki: {n}. Najszybszy wiruje {f}× szybciej niż pierwszy.",
       "aria": "Fala prostokątna i przybliżająca ją suma wybranej liczby cieni bączków.",
       "statusOne": "Tylko jeden bączek: zwykłe kołysanie, jeszcze nic prostokątnego."
+    },
+    "turns": {
+      "title": "Mierzenie obrotów w promieniach",
+      "aria": "Okrąg o promieniu 1 ze strzałką pod kątem theta, zaznaczonym łukiem i cieniami grotu strzałki na obu osiach.",
+      "re": "wzdłuż",
+      "im": "w bok",
+      "theta": "Kąt θ",
+      "radUnit": "rad",
+      "thetaAxis": "kąt θ (radiany)",
+      "shadowAxis": "cień",
+      "cos": "cos θ (cień wzdłuż)",
+      "sin": "sin θ (cień w bok)",
+      "plotAria": "Cosinus i sinus kąta, narysowane od 0 do wybranego kąta.",
+      "readRad": "radiany",
+      "readTurns": "obroty",
+      "readDeg": "stopnie",
+      "readCos": "cos θ",
+      "readSin": "sin θ",
+      "oneRadian": "Jeden radian: łuk ma długość dokładnie jednego promienia (około 57°).",
+      "half": "Pół obrotu: π ≈ 3,14 radiana. Cienie są w −1 i 0.",
+      "full": "Pełny obrót: 2π ≈ 6,28 radiana, z powrotem tam, gdzie zaczęliśmy.",
+      "any": "Łuk ma długość {r} promienia: {d}°.",
+      "describe": "Kąt {r} rad: cosinus {c}, sinus {s}.",
+      "help": "Przesuwaj θ. Pomarańczowy łuk to droga przetoczona po obręczy, mierzona w promieniach."
+    },
+    "tiny": {
+      "title": "Obracanie malutkimi krokami w bok",
+      "aria": "Iloczyny częściowe 1 plus i theta przez n, narysowane jako ścieżka od 1 w stronę punktu na okręgu jednostkowym pod kątem theta.",
+      "re": "wzdłuż",
+      "im": "w bok",
+      "n": "Liczba kroków n",
+      "theta": "Kąt θ",
+      "radUnit": "rad",
+      "readLen": "długość",
+      "readAng": "kąt",
+      "readGoal": "cel: θ =",
+      "one": "Jeden gigantyczny krok: 1 + iθ, daleko od okręgu (długość {len}).",
+      "many": "Liczba kroków {n}: długość {len}, kąt {ang} rad. Więcej kroków: długość pełznie do 1, a kąt do θ = {th}.",
+      "help": "Przesuwaj n, żeby pociąć obrót na więcej mniejszych pchnięć; przesuwaj θ, żeby zmienić, dokąd zmierza."
     }
   }
 }

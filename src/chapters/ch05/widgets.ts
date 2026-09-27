@@ -9,7 +9,7 @@ import { SPlane } from '../../ui/s-plane';
 import { type Item, type Pt, PlaneCanvas } from '../../ui/plane-canvas';
 import { SpiralCanvas } from './canvases';
 import '../ch03/polish.css';
-import { shadow, spiralDuration, spiralPoint, squareWave, squareWavePartial } from './models';
+import { shadow, spiralDuration, spiralPoint, squareWave, squareWavePartial, tinyTurns } from './models';
 
 const fmtC = (z: C): string => {
   const re = Math.abs(z.re) < 1e-9 ? 0 : z.re;
@@ -465,4 +465,120 @@ const fourier: WidgetFactory = (host, ctx) => {
   draw();
 };
 
-export const widgets: Record<string, WidgetFactory> = { rotate, spinner, twins, smap, fourier };
+/** 5b′: measuring turns. A radian is the angle whose arc is one radius; cos and sin are the shadows. */
+const turns: WidgetFactory = (host, ctx) => {
+  const { t } = ctx;
+  let theta = 1;
+  const TWO_PI = 2 * Math.PI;
+  const grid = h('div', { class: 'w-grid side' });
+  const left = h('div');
+  const right = h('div');
+  grid.append(left, right);
+  host.append(h('p', { class: 'w-title' }, t('title')), grid);
+  const plane = new PlaneCanvas(left, { extent: 1.5, label: t('aria'), reLabel: t('re'), imLabel: t('im') });
+  const plot = new Plot(right, {
+    x: { label: t('thetaAxis'), min: 0, max: TWO_PI },
+    y: { label: t('shadowAxis'), min: -1.2, max: 1.2 },
+    series: [
+      { id: 'cos', color: 'out', label: t('cos') },
+      { id: 'sin', color: 'ink2', label: t('sin'), dash: [5, 4], width: 2 },
+    ],
+    height: 220,
+    label: t('plotAria'),
+  }, ctx.onCleanup);
+  plot.setLines([
+    { kind: 'v', at: Math.PI, color: 'ink3', dash: [3, 4], width: 1.2, label: 'π' },
+    { kind: 'v', at: TWO_PI, color: 'ink3', dash: [3, 4], width: 1.2, label: '2π' },
+  ]);
+  const rRad = readout(t('readRad'), 'out');
+  const rTurn = readout(t('readTurns'));
+  const rDeg = readout(t('readDeg'));
+  const rCos = readout(t('readCos'), 'out');
+  const rSin = readout(t('readSin'));
+  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  const say = () => {
+    const near = (v: number) => Math.abs(theta - v) < 0.03;
+    const key = near(1) ? 'oneRadian' : near(Math.PI) ? 'half' : near(TWO_PI) ? 'full' : 'any';
+    const text = t(key, { r: fmt(theta, 2), d: fmt((theta * 180) / Math.PI, 0) });
+    if (status.textContent !== text) status.textContent = text;
+  };
+  const draw = () => {
+    const x = Math.cos(theta);
+    const y = Math.sin(theta);
+    plane.draw([
+      { kind: 'circle', r: 1, color: 'ink3' },
+      // the arc's length in radii is in the readouts and the status line, clear of the arrow
+      { kind: 'arc', r: 1, from: 0, to: theta, color: 'eff' },
+      { kind: 'line', from: [x, y], to: [x, 0], color: 'out', dash: [3, 3], width: 1.4 },
+      { kind: 'line', from: [x, y], to: [0, y], color: 'ink2', dash: [3, 3], width: 1.4 },
+      { kind: 'dot', at: [x, 0], color: 'out', r: 5 },
+      { kind: 'dot', at: [0, y], color: 'ink2', r: 5 },
+      { kind: 'arrow', to: [x, y], color: 'ink', width: 3 },
+    ]);
+    const xs: number[] = [];
+    for (let k = 0; k <= 200; k++) xs.push((theta * k) / 200);
+    plot.set('cos', xs, xs.map(Math.cos));
+    plot.set('sin', xs, xs.map(Math.sin));
+    plot.setCursor(theta);
+    rRad.set(fmt(theta, 2));
+    rTurn.set(fmt(theta / TWO_PI, 2));
+    rDeg.set(`${fmt((theta * 180) / Math.PI, 0)}°`);
+    rCos.set(fmt(x, 2));
+    rSin.set(fmt(y, 2));
+    plot.describe(t('describe', { r: fmt(theta, 2), c: fmt(x, 2), s: fmt(y, 2) }));
+  };
+  const sl = slider({ label: t('theta'), min: 0, max: TWO_PI, step: 0.01, value: theta, format: (v) => `${fmt(v, 2)} ${t('radUnit')}`, onInput: (v) => ((theta = v), draw()), onSettle: say });
+  right.append(h('div', { class: 'readouts' }, rRad.el, rTurn.el, rDeg.el, rCos.el, rSin.el), status);
+  host.append(h('div', { class: 'w-controls' }, sl.el), h('p', { class: 'w-help' }, t('help')));
+  draw();
+  say();
+  return () => plane.destroy();
+};
+
+/** 5b″: e^(iθ) built from n tiny sideways nudges, the Chapter 4 way. */
+const tiny: WidgetFactory = (host, ctx) => {
+  const { t } = ctx;
+  let n = 4;
+  let theta = 2;
+  const grid = h('div', { class: 'w-grid side' });
+  const left = h('div');
+  const right = h('div');
+  grid.append(left, right);
+  host.append(h('p', { class: 'w-title' }, t('title')), grid);
+  const plane = new PlaneCanvas(left, { extent: 2.3, label: t('aria'), reLabel: t('re'), imLabel: t('im') });
+  const rLen = readout(t('readLen'), 'out');
+  const rAng = readout(t('readAng'), 'out');
+  const rGoal = readout(t('readGoal'));
+  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  const say = () => {
+    const z = tinyTurns(theta, n)[n];
+    const text = t(n === 1 ? 'one' : 'many', { n: String(n), len: fmt(Math.hypot(z.re, z.im), 2), ang: fmt(Math.atan2(z.im, z.re), 2), th: fmt(theta, 2) });
+    if (status.textContent !== text) status.textContent = text;
+  };
+  const draw = () => {
+    const pts = tinyTurns(theta, n);
+    const z = pts[n];
+    plane.draw([
+      { kind: 'circle', r: 1, color: 'ink3' },
+      // the target sits on the rim; its short label goes inside the circle, clear of the path
+      { kind: 'dot', at: [Math.cos(theta), Math.sin(theta)], color: 'sp', r: 7, ring: true, label: 'θ', labelAt: 'below' },
+      { kind: 'path', pts: pts.map((p) => [p.re, p.im] as [number, number]), color: 'eff', width: 2 },
+      ...pts.slice(1, -1).map((p) => ({ kind: 'dot' as const, at: [p.re, p.im] as [number, number], color: 'eff', r: n > 30 ? 1.5 : 3 })),
+      { kind: 'arrow', to: [z.re, z.im], color: 'out', width: 3 },
+    ]);
+    rLen.set(fmt(Math.hypot(z.re, z.im), 2));
+    rAng.set(`${fmt(Math.atan2(z.im, z.re), 2)} ${t('radUnit')}`);
+    rGoal.set(`${fmt(theta, 2)} ${t('radUnit')}`);
+  };
+  const sN = slider({ label: t('n'), min: 1, max: 60, step: 1, value: n, onInput: (v) => ((n = v), draw()), onSettle: say });
+  const sT = slider({ label: t('theta'), min: 0.2, max: 3, step: 0.1, value: theta, format: (v) => `${fmt(v, 1)} ${t('radUnit')}`, onInput: (v) => ((theta = v), draw()), onSettle: say });
+  right.append(h('div', { class: 'readouts' }, rLen.el, rAng.el, rGoal.el), status);
+  host.append(h('div', { class: 'w-controls' }, sN.el, sT.el), h('p', { class: 'w-help' }, t('help')));
+  draw();
+  say();
+  return () => plane.destroy();
+};
+
+export const widgets: Record<string, WidgetFactory> = {
+  turns,
+  tiny, rotate, spinner, twins, smap, fourier };

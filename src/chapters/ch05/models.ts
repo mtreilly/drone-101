@@ -33,3 +33,14 @@ export const squareWave = (t: number): number => {
 
 /** How long to draw a spiral before it grows beyond `limit` (for plots). */
 export const spiralDuration = (sigma: number, max = 8, limit = 3): number => (sigma > 0 ? Math.min(max, Math.log(limit) / sigma) : max);
+
+/**
+ * e^(iθ) the Chapter 4 way: n tiny sideways nudges, each "multiply by (1 + iθ/n)". Returns every
+ * partial product, from 1 to (1 + iθ/n)ⁿ; as n grows the last one lands on the circle at angle θ.
+ */
+export function tinyTurns(theta: number, n: number): C[] {
+  const step = c(1, theta / n);
+  const out = [c(1)];
+  for (let k = 0; k < n; k++) out.push(mul(out[out.length - 1], step));
+  return out;
+}

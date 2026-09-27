@@ -1,5 +1,5 @@
 import { abs, c, sub } from '../../math/complex';
-import { I, rotateBy, shadow, spiralPoint, squareWavePartial, twinSum } from './models';
+import { I, rotateBy, shadow, spiralPoint, squareWavePartial, tinyTurns, twinSum } from './models';
 
 describe('Chapter 5 numbers', () => {
   it('two quarter turns are a half turn: i·i·3 = −3', () => {
@@ -52,5 +52,39 @@ describe('Chapter 5 numbers', () => {
     // jump from −1 to +1 is 2 tall; 9% of 2 ≈ 0.18 above the flat top
     expect(peak).toBeGreaterThan(1.17);
     expect(peak).toBeLessThan(1.19);
+  });
+});
+
+describe('5b: measuring turns and building e^(iθ) from tiny turns', () => {
+  it('a radian is about 57°, a full turn 2π ≈ 6.28 radians, and one radian is about a sixth of a turn', () => {
+    expect((180 / Math.PI)).toBeCloseTo(57.3, 1);
+    expect(2 * Math.PI).toBeCloseTo(6.28, 2);
+    expect(1 / (2 * Math.PI)).toBeCloseTo(1 / 6, 1);
+  });
+
+  it('the sine trails the cosine by a quarter turn; at half a turn the shadows are −1 and 0', () => {
+    for (const th of [0.3, 1, 2.5]) expect(Math.sin(th)).toBeCloseTo(Math.cos(th - Math.PI / 2), 12);
+    expect(Math.cos(Math.PI)).toBeCloseTo(-1, 12);
+    expect(Math.sin(Math.PI)).toBeCloseTo(0, 12);
+  });
+
+  it("2 rad/s is one turn every π ≈ 3.14 s", () => {
+    expect((2 * Math.PI) / 2).toBeCloseTo(3.14, 2);
+  });
+
+  it('(1 + iθ/n)ⁿ lands on the circle at angle θ as n grows; one giant step is far off', () => {
+    const one = tinyTurns(2, 1)[1];
+    expect(abs(one)).toBeCloseTo(Math.sqrt(5), 12);
+    for (const theta of [0.5, 2, 3]) {
+      const z = tinyTurns(theta, 5000)[5000];
+      expect(abs(z)).toBeCloseTo(1, 2);
+      expect(Math.atan2(z.im, z.re)).toBeCloseTo(theta, 3);
+      // each step turns by about θ/n
+      const [a, b] = tinyTurns(theta, 60);
+      expect(Math.atan2(b.im, b.re) - Math.atan2(a.im, a.re)).toBeCloseTo(theta / 60, 3);
+    }
+    // the length creeps down towards 1 as n grows
+    const lens = [1, 4, 16, 64].map((n) => abs(tinyTurns(2, n)[n]));
+    lens.slice(1).forEach((l, i) => expect(l).toBeLessThan(lens[i]));
   });
 });

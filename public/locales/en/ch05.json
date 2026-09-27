@@ -59,16 +59,86 @@
       ]
     },
     {
+      "id": "turns",
+      "title": "Measuring turns",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "If i is a quarter turn, we're going to be spinning arrows all day. So how do we say *how much* an arrow has turned?"
+        },
+        {
+          "t": "p",
+          "text": "Degrees are an old habit: 360 of them in a turn, because an ancient calendar liked 360. Mathematicians measure a turn with the circle itself. Roll a wheel of radius 1 and see how far its rim travels. A **radian** is the angle whose arc is exactly **one radius** long."
+        },
+        {
+          "t": "predict",
+          "id": "ch5-full-turn",
+          "gate": true,
+          "q": "How many radians make one full turn?",
+          "options": [
+            {
+              "text": "360",
+              "why": "That's degrees. A radian is much bigger than a degree: about 57 of them."
+            },
+            {
+              "text": "A bit more than 6",
+              "correct": true,
+              "why": "Right. The whole rim of a radius-1 wheel is 2π ≈ 6.28 radii long, so a full turn is 2π radians. Half a turn is π ≈ 3.14."
+            },
+            {
+              "text": "Exactly 1",
+              "why": "One radian only rolls one radius of rim, about a sixth of the way round."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "turns"
+        },
+        {
+          "t": "p",
+          "text": "Follow the arrow's tip as it turns. Its shadow on the real axis is called the **cosine** of the angle, $\\cos\\theta$; its shadow on the sideways axis is the **sine**, $\\sin\\theta$. Turn steadily and both shadows trace waves, the sine a quarter turn behind the cosine."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Got it. So a spinner at 2 radians per second goes round twice a second!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Twice a second would be 2 turns, $4\\pi$ radians. Two radians per second is one full turn every $2\\pi/2 \\approx 3.14$ seconds."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Radian",
+              "def": "The angle whose arc is one radius long. A full turn is $2\\pi$ radians, half a turn is $\\pi$."
+            },
+            {
+              "term": "Cosine and sine",
+              "def": "The shadows of a length-1 arrow at angle θ: $\\cos\\theta$ along the real axis, $\\sin\\theta$ sideways."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "spin",
       "title": "A number that spins",
       "blocks": [
         {
           "t": "p",
-          "text": "A **radian** is a way to measure an angle. One full turn is $2\\pi$ radians, so a spinner at 2 radians per second makes one full turn in about 3.14 seconds. The symbol ω tells us that turning speed."
+          "text": "Speeds of turning are measured in radians per second: a spinner at 2 radians per second makes one full turn in $2\\pi/2 \\approx 3.14$ seconds. The symbol ω tells us that turning speed."
         },
         {
           "t": "p",
-          "text": "Now picture a point running around a circle at a steady speed, ω radians per second. Where does its **velocity** point? Always along the circle, which is a **quarter turn** ahead of the arrow to the point."
+          "text": "Now picture a point running around a circle at a steady speed, ω radians per second. Where does its **velocity** point? (Velocity is Chapter 3's speed with a direction, so a moving arrow's velocity is an arrow too: which way its tip moves, and how fast.) Always along the circle, which is a **quarter turn** ahead of the arrow to the point."
         },
         {
           "t": "p",
@@ -79,6 +149,30 @@
           "who": "theo",
           "mood": "surprised",
           "text": "Wait. \"The slope is a fixed number times itself\" is exactly the **exponential** property from Chapter 4! With a = iω."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "But hang on. In Chapter 4 a power meant \"how much multiplying has happened\". What would $e$ to the power $i\\theta$ even mean? Multiply by $e$, $i\\theta$ times?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Build it the Chapter 4 way. $e$ was $n$ tiny steps of growing by $\\frac1n$. Make each tiny step a little nudge *sideways* instead."
+        },
+        {
+          "t": "math",
+          "tex": "e^{i\\theta} = \\lim_{n\\to\\infty}\\left(1 + \\frac{i\\theta}{n}\\right)^{n}"
+        },
+        {
+          "t": "widget",
+          "id": "tiny"
+        },
+        {
+          "t": "p",
+          "text": "Each step turns the arrow by a tiny angle, about $\\theta/n$ radians, and stretches it a tiny bit. With more steps the stretching fades away and the path lands on the circle, exactly θ radians round. That's why radians: the tiny sideways nudges add up along the rim. So $e^{i\\theta}$ is simply the point on the circle at angle θ."
         },
         {
           "t": "p",
@@ -147,6 +241,10 @@
           "tex": "x(t) = \\tfrac12\\left(e^{i\\omega t} + e^{-i\\omega t}\\right) = \\cos(\\omega t),\\qquad \\omega = \\sqrt{k/m}"
         },
         {
+          "t": "note",
+          "text": "The ½ is there because the twins each bring half: the widget adds two full-size spinners, so its sum swings to 2. And this pair starts released from 1 m, at rest. Start it moving and the two twins just begin at opposite tilts; their sum still stays on the real line."
+        },
+        {
           "t": "p",
           "text": "Why is the twin always there? The spring's rule has only real numbers in it ($m$ and $k$, no $i$). Flip a solution top to bottom, turning every $i$ into $-i$, and the rule can't tell the difference: the mirror image is a solution too. So for anything real the spinners come in **mirror pairs**, and together their sideways parts cancel, leaving a real wiggle we can measure."
         }
@@ -207,7 +305,7 @@
             "**Right half** (σ > 0): the spiral grows, the wiggle explodes.",
             "**On the vertical line** (σ = 0): a perfect circle, a wiggle that goes on forever.",
             "**On the horizontal line** (ω = 0): no spin at all, just the plain exponentials from Chapter 4.",
-            "**Further up**: faster spinning, faster wiggles. **Further left**: faster fading."
+            "**Further from the horizontal line** (up or down): faster spinning, faster wiggles. **Further left**: faster fading."
           ]
         },
         {
@@ -228,7 +326,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "One last surprise. Take spinners of different speeds (1, 3, 5, 7… times as fast), shrink each one just right, and add their shadows. With enough of them you can build almost *any* shape, even a square wave with sharp corners."
+          "text": "One last surprise. Take spinners of different speeds (1, 3, 5, 7… times as fast), shrink each one and start it at just the right angle, then add their shadows. With enough of them you can build a huge range of shapes, even a square wave with sharp corners."
         },
         {
           "t": "widget",
@@ -252,7 +350,9 @@
           "t": "recap",
           "items": [
             "Numbers are arrows. Multiplying rotates and stretches them. **i** is a quarter turn, so $i^2 = -1$.",
+            "A **radian** is the angle whose arc is one radius long: a full turn is $2\\pi$. **cos θ** and **sin θ** are the shadows of a turned arrow.",
             "$e^{i\\omega t}$ is a point spinning around a circle. Its shadow is a cosine wave.",
+            "$e^{i\\theta}$, built from tiny sideways steps $\\left(1 + \\frac{i\\theta}{n}\\right)^n$, is the point on the circle at angle θ.",
             "Real wiggles come from **mirror-twin spinners** whose sideways parts cancel.",
             "$e^{st}$ with $s = \\sigma + i\\omega$ spins *and* grows or shrinks: a spiral. Its shadow is a growing or dying wiggle.",
             "The **map of s**: left calms down, right blows up, up means faster wiggles."
@@ -429,6 +529,45 @@
       "status": "{n} spinners added. The fastest spins {f}× as fast as the first.",
       "aria": "A square wave and the sum of a chosen number of spinner shadows approximating it.",
       "statusOne": "Just one spinner: a plain wiggle, nothing square about it yet."
+    },
+    "turns": {
+      "title": "Measuring turns in radii",
+      "aria": "A circle of radius 1 with an arrow at angle theta, its arc highlighted, and the arrow tip's shadows on both axes.",
+      "re": "along",
+      "im": "sideways",
+      "theta": "Angle θ",
+      "radUnit": "rad",
+      "thetaAxis": "angle θ (radians)",
+      "shadowAxis": "shadow",
+      "cos": "cos θ (along shadow)",
+      "sin": "sin θ (sideways shadow)",
+      "plotAria": "The cosine and sine of the angle, traced from 0 up to the chosen angle.",
+      "readRad": "radians",
+      "readTurns": "turns",
+      "readDeg": "degrees",
+      "readCos": "cos θ",
+      "readSin": "sin θ",
+      "oneRadian": "One radian: the arc is exactly one radius long (about 57°).",
+      "half": "Half a turn: π ≈ 3.14 radians. The shadows are at −1 and 0.",
+      "full": "A full turn: 2π ≈ 6.28 radians, back where we started.",
+      "any": "The arc is {r} radii long: {d}°.",
+      "describe": "Angle {r} radians: cosine {c}, sine {s}.",
+      "help": "Slide θ. The orange arc is the distance rolled along the rim, measured in radii."
+    },
+    "tiny": {
+      "title": "Turning in tiny sideways steps",
+      "aria": "The partial products of 1 plus i theta over n, drawn as a path from 1 towards the point on the unit circle at angle theta.",
+      "re": "along",
+      "im": "sideways",
+      "n": "Number of steps n",
+      "theta": "Angle θ",
+      "radUnit": "rad",
+      "readLen": "length",
+      "readAng": "angle",
+      "readGoal": "aiming for θ =",
+      "one": "One giant step: 1 + iθ, far off the circle (length {len}).",
+      "many": "{n} steps: length {len}, angle {ang} rad. More steps: the length creeps to 1 and the angle to θ = {th}.",
+      "help": "Slide n to cut the turn into more, smaller nudges; slide θ to change where it is heading."
     }
   }
 }

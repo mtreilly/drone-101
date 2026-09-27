@@ -59,16 +59,86 @@
       ]
     },
     {
+      "id": "turns",
+      "title": "Drehungen messen",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Wenn i eine Vierteldrehung ist, werden wir den ganzen Tag Pfeile drehen. Wie sagen wir also, *wie weit* sich ein Pfeil gedreht hat?"
+        },
+        {
+          "t": "p",
+          "text": "Grad sind eine alte Gewohnheit: 360 Stück pro Umdrehung, weil ein uralter Kalender die 360 mochte. Mathematiker messen eine Umdrehung mit dem Kreis selbst. Roll ein Rad mit Radius 1 und schau, wie weit sein Rand kommt. Ein **Radiant** ist der Winkel, dessen Bogen genau **einen Radius** lang ist."
+        },
+        {
+          "t": "predict",
+          "id": "ch5-full-turn",
+          "gate": true,
+          "q": "Wie viele Radiant ergeben eine volle Umdrehung?",
+          "options": [
+            {
+              "text": "360",
+              "why": "Das sind Grad. Ein Radiant ist viel größer als ein Grad: etwa 57 davon."
+            },
+            {
+              "text": "Etwas mehr als 6",
+              "correct": true,
+              "why": "Richtig. Der ganze Rand eines Rads mit Radius 1 ist 2π ≈ 6,28 Radien lang, also ist eine volle Umdrehung 2π Radiant. Eine halbe Drehung ist π ≈ 3,14."
+            },
+            {
+              "text": "Genau 1",
+              "why": "Ein Radiant rollt nur einen Radius Rand ab, etwa ein Sechstel der Runde."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "turns"
+        },
+        {
+          "t": "p",
+          "text": "Folge der Pfeilspitze, während sich der Pfeil dreht. Ihr Schatten auf der reellen Achse heißt **Kosinus** des Winkels, $\\cos\\theta$; ihr Schatten auf der seitlichen Achse ist der **Sinus**, $\\sin\\theta$. Dreh gleichmäßig, und beide Schatten zeichnen Wellen, der Sinus eine Vierteldrehung hinter dem Kosinus."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Verstanden. Ein Dreher mit 2 Radiant pro Sekunde läuft also zweimal pro Sekunde herum!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Zweimal pro Sekunde wären 2 Umdrehungen, also $4\\pi$ Radiant. Bei 2 Radiant pro Sekunde dauert eine volle Umdrehung $2\\pi/2 \\approx 3{,}14$ Sekunden."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Radiant",
+              "def": "Der Winkel, dessen Bogen einen Radius lang ist. Eine volle Umdrehung sind $2\\pi$ Radiant, eine halbe Drehung $\\pi$."
+            },
+            {
+              "term": "Kosinus und Sinus",
+              "def": "Die Schatten eines Pfeils der Länge 1 beim Winkel θ: $\\cos\\theta$ entlang der reellen Achse, $\\sin\\theta$ seitlich."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "spin",
       "title": "Eine Zahl, die sich dreht",
       "blocks": [
         {
           "t": "p",
-          "text": "Ein **Radiant** ist eine Einheit für Winkel. Eine volle Umdrehung sind $2\\pi$ Radiant; bei 2 Radiant pro Sekunde dauert eine Umdrehung also etwa 3,14 Sekunden. Das Zeichen ω steht für dieses Drehtempo."
+          "text": "Drehtempo misst man in Radiant pro Sekunde: Ein Dreher mit 2 Radiant pro Sekunde schafft eine volle Umdrehung in $2\\pi/2 \\approx 3{,}14$ Sekunden. Das Zeichen ω steht für dieses Drehtempo."
         },
         {
           "t": "p",
-          "text": "Stell dir jetzt einen Punkt vor, der mit festem Tempo im Kreis läuft, ω Radiant pro Sekunde. Wohin zeigt seine **Geschwindigkeit**? Immer am Kreis entlang, also eine **Vierteldrehung** vor dem Pfeil zum Punkt."
+          "text": "Stell dir jetzt einen Punkt vor, der mit festem Tempo im Kreis läuft, ω Radiant pro Sekunde. Wohin zeigt seine **Geschwindigkeit**? (Geschwindigkeit ist das Tempo aus Kapitel 3 plus eine Richtung. Die Geschwindigkeit eines bewegten Pfeils ist also auch ein Pfeil: wohin sich seine Spitze bewegt und wie schnell.) Immer am Kreis entlang, also eine **Vierteldrehung** vor dem Pfeil zum Punkt."
         },
         {
           "t": "p",
@@ -79,6 +149,30 @@
           "who": "theo",
           "mood": "surprised",
           "text": "Moment. „Die Steigung ist eine feste Zahl mal sie selbst“ ist genau die **exponentielle** Eigenschaft aus Kapitel 4! Mit a = iω."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Aber Moment mal. In Kapitel 4 hieß eine Potenz „wie oft schon multipliziert wurde“. Was soll $e$ hoch $i\\theta$ dann überhaupt heißen? Mit $e$ multiplizieren, und das $i\\theta$-mal?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Bau es wie in Kapitel 4. $e$ waren $n$ winzige Schritte, in denen es jeweils um $\\frac1n$ wächst. Mach jeden winzigen Schritt stattdessen zu einem kleinen Stups *seitwärts*."
+        },
+        {
+          "t": "math",
+          "tex": "e^{i\\theta} = \\lim_{n\\to\\infty}\\left(1 + \\frac{i\\theta}{n}\\right)^{n}"
+        },
+        {
+          "t": "widget",
+          "id": "tiny"
+        },
+        {
+          "t": "p",
+          "text": "Jeder Schritt dreht den Pfeil um einen winzigen Winkel, etwa $\\theta/n$ Radiant, und streckt ihn ein winziges bisschen. Mit mehr Schritten verschwindet das Strecken, und der Weg landet auf dem Kreis, genau θ Radiant weit herum. Darum Radiant: Die winzigen Stupse seitwärts summieren sich am Rand entlang. $e^{i\\theta}$ ist also einfach der Punkt auf dem Kreis beim Winkel θ."
         },
         {
           "t": "p",
@@ -147,6 +241,10 @@
           "tex": "x(t) = \\tfrac12\\left(e^{i\\omega t} + e^{-i\\omega t}\\right) = \\cos(\\omega t),\\qquad \\omega = \\sqrt{k/m}"
         },
         {
+          "t": "note",
+          "text": "Das ½ steht da, weil jeder Zwilling die Hälfte beiträgt: Das Bild oben zählt zwei Dreher in voller Größe zusammen, also schwingt seine Summe bis 2. Und dieses Paar startet in Ruhe, losgelassen bei 1 m. Gib ihm Schwung, dann starten die beiden Zwillinge einfach mit entgegengesetzter Neigung; ihre Summe bleibt trotzdem auf der reellen Achse."
+        },
+        {
           "t": "p",
           "text": "Warum ist der Zwilling immer da? In der Regel der Feder stehen nur reelle Zahlen ($m$ und $k$, kein $i$). Spiegle eine Lösung von oben nach unten, sodass aus jedem $i$ ein $-i$ wird, und die Regel merkt keinen Unterschied: Das Spiegelbild ist auch eine Lösung. Bei allem Echten kommen die Dreher also in **Spiegelpaaren**. Zusammen heben sich ihre seitlichen Teile auf, und übrig bleibt ein echtes Wackeln, das wir messen können."
         }
@@ -207,7 +305,7 @@
             "**Rechte Hälfte** (σ > 0): Die Spirale wächst, das Wackeln explodiert.",
             "**Auf der senkrechten Linie** (σ = 0): ein perfekter Kreis, ein Wackeln, das ewig weitergeht.",
             "**Auf der waagerechten Linie** (ω = 0): überhaupt kein Drehen, nur die schlichten Exponentialfunktionen aus Kapitel 4.",
-            "**Weiter oben**: schnelleres Drehen, schnelleres Wackeln. **Weiter links**: schnelleres Abklingen."
+            "**Weiter weg von der waagerechten Linie** (nach oben oder unten): schnelleres Drehen, schnelleres Wackeln. **Weiter links**: schnelleres Abklingen."
           ]
         },
         {
@@ -228,7 +326,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Eine letzte Überraschung. Nimm Dreher mit verschiedenen Tempi (1-, 3-, 5-, 7-mal so schnell…), schrumpf jeden genau richtig und zähl ihre Schatten zusammen. Mit genug davon kannst du fast *jede* Form bauen, sogar eine Rechteckwelle mit scharfen Ecken."
+          "text": "Eine letzte Überraschung. Nimm Dreher mit verschiedenen Tempi (1-, 3-, 5-, 7-mal so schnell…), schrumpf jeden genau richtig, lass ihn beim genau richtigen Winkel starten und zähl dann ihre Schatten zusammen. Mit genug davon kannst du eine riesige Vielfalt an Formen bauen, sogar eine Rechteckwelle mit scharfen Ecken."
         },
         {
           "t": "widget",
@@ -252,7 +350,9 @@
           "t": "recap",
           "items": [
             "Zahlen sind Pfeile. Multiplizieren dreht und streckt sie. **i** ist eine Vierteldrehung, also $i^2 = -1$.",
+            "Ein **Radiant** ist der Winkel, dessen Bogen einen Radius lang ist: Eine volle Umdrehung sind $2\\pi$. **cos θ** und **sin θ** sind die Schatten eines gedrehten Pfeils.",
             "$e^{i\\omega t}$ ist ein Punkt, der sich im Kreis dreht. Sein Schatten ist eine Kosinuswelle.",
+            "$e^{i\\theta}$, gebaut aus winzigen Schritten seitwärts $\\left(1 + \\frac{i\\theta}{n}\\right)^n$, ist der Punkt auf dem Kreis beim Winkel θ.",
             "Echtes Wackeln kommt von **Spiegelzwilling-Drehern**, deren seitliche Teile sich aufheben.",
             "$e^{st}$ mit $s = \\sigma + i\\omega$ dreht sich *und* wächst oder schrumpft: eine Spirale. Ihr Schatten ist ein wachsendes oder abklingendes Wackeln.",
             "Die **Karte von s**: links beruhigt sich alles, rechts explodiert es, weiter oben wackelt es schneller."
@@ -429,6 +529,45 @@
       "status": "{n} Dreher zusammengezählt. Der schnellste dreht sich {f}-mal so schnell wie der erste.",
       "aria": "Eine Rechteckwelle und die Summe einer gewählten Anzahl von Dreherschatten, die sich ihr annähern.",
       "statusOne": "Nur ein Dreher: ein schlichtes Wackeln, noch gar nichts Eckiges daran."
+    },
+    "turns": {
+      "title": "Drehungen in Radien messen",
+      "aria": "Ein Kreis mit Radius 1 und ein Pfeil beim Winkel Theta, mit hervorgehobenem Bogen und den Schatten der Pfeilspitze auf beiden Achsen.",
+      "re": "entlang",
+      "im": "seitlich",
+      "theta": "Winkel θ",
+      "radUnit": "rad",
+      "thetaAxis": "Winkel θ (Radiant)",
+      "shadowAxis": "Schatten",
+      "cos": "cos θ (Schatten entlang)",
+      "sin": "sin θ (seitlicher Schatten)",
+      "plotAria": "Kosinus und Sinus des Winkels, aufgezeichnet von 0 bis zum gewählten Winkel.",
+      "readRad": "Radiant",
+      "readTurns": "Umdrehungen",
+      "readDeg": "Grad",
+      "readCos": "cos θ",
+      "readSin": "sin θ",
+      "oneRadian": "Ein Radiant: Der Bogen ist genau einen Radius lang (etwa 57°).",
+      "half": "Eine halbe Drehung: π ≈ 3,14 Radiant. Die Schatten liegen bei −1 und 0.",
+      "full": "Eine volle Umdrehung: 2π ≈ 6,28 Radiant, zurück am Start.",
+      "any": "Der Bogen ist {r} Radien lang: {d}°.",
+      "describe": "Winkel {r} Radiant: Kosinus {c}, Sinus {s}.",
+      "help": "Zieh θ. Der orange Bogen ist die Strecke, die am Rand entlang abgerollt wurde, gemessen in Radien."
+    },
+    "tiny": {
+      "title": "Drehen in winzigen Schritten seitwärts",
+      "aria": "Die Teilprodukte von 1 plus i Theta durch n, gezeichnet als Weg von 1 zum Punkt auf dem Einheitskreis beim Winkel Theta.",
+      "re": "entlang",
+      "im": "seitlich",
+      "n": "Anzahl der Schritte n",
+      "theta": "Winkel θ",
+      "radUnit": "rad",
+      "readLen": "Länge",
+      "readAng": "Winkel",
+      "readGoal": "Ziel: θ =",
+      "one": "Ein Riesenschritt: 1 + iθ, weit weg vom Kreis (Länge {len}).",
+      "many": "{n} Schritte: Länge {len}, Winkel {ang} rad. Mehr Schritte: Die Länge kriecht gegen 1 und der Winkel gegen θ = {th}.",
+      "help": "Zieh n, um die Drehung in mehr, kleinere Stupse zu teilen; zieh θ, um das Ziel der Drehung zu ändern."
     }
   }
 }

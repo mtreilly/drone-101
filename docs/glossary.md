@@ -240,6 +240,15 @@ Loop gain keeps its Chapter 10 term everywhere (see "Chapter 10" above); ch08 no
 | ruler legend "starting speed, kept up" (τ, picture first) | vitesse de départ gardée | velocidad inicial mantenida | velocità iniziale mantenuta | Anfangstempo beibehalten | początkowe tempo, utrzymane | velocidade inicial mantida | 最初の速さのまま | 保持起始速度 | السرعة الابتدائية، مستمرة |
 | Newton's law (ch03; kept apart from the ch03 cooling law) | loi de Newton | segunda ley de Newton | legge di Newton | Newtons Gesetz | druga zasada dynamiki Newtona | lei de Newton | ニュートンの運動の法則 | 牛顿第二定律 | قانون نيوتن |
 
+### Phase 5: measuring turns (ch05)
+
+| Term (definition) | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
+|---|---|---|---|---|---|---|---|---|---|
+| radian: the angle whose arc is one radius (widget unit "rad") | radian | radián | radiante | Radiant | radian | radiano | ラジアン | 弧度 | الراديان (unit written out: راديان) |
+| cosine / sine, as the arrow tip's shadows | cosinus / sinus | coseno / seno | coseno / seno | Kosinus / Sinus | cosinus / sinus | cosseno / seno | コサイン / サイン | 余弦 / 正弦 | جيب التمام / جيب الزاوية |
+| arc / rim (of the radius-1 wheel) | arc / bord | arco / borde | arco / bordo | Bogen / Rand | łuk / obręcz | arco / aro | 弧 / 縁 | 弧 / 轮缘 | القوس / الحافة |
+| nudge: one tiny sideways step of (1 + iθ/n) | petite poussée | empujoncito | spintarella | Stups (not "Schubs": thrust) | pchnięcie w bok | empurrãozinho | 横向きのひと押し | 轻轻推一下 | دفعة خفيفة |
+
 ## Cast gender and address
 
 | Locale | Mika | June | Theo | Reader |
@@ -414,3 +423,15 @@ engineering, then fix every string and move the entry to "Settled decisions".
 - pl: "h bis" vs. "h dwa primy"; "tempo" for the coffee's rate.
 - ar: the ∫ "S for sum" pun keeps the Latin word; الشَّرطات for primes.
 - fr: ch03 §1.15 "le inertie" fixed to "l'inertie" in this pass.
+
+**Maths explanations pass, Phase 5**
+- All: velocity vs speed is one word in most locales (it/es/pt-BR/zh-CN "velocità/velocidad/
+  velocidade/速度"); ch05 now says "Chapter 3's speed with a direction". es may prefer "rapidez".
+- ja: ch05's axis labels call the real axis たて (and the imaginary よこ), which reads as vertical;
+  the new widgets follow them. Needs a decision for the whole chapter.
+- zh-CN: three words for the real-axis direction in ch05 widgets (沿方向 / 沿向 / 沿); 轮缘 may be
+  literary; the shadow is 投影 in maths and 影子 in prose.
+- pt-BR: "sin θ" kept in labels (schools write "sen θ"); ch05 maths decimals mix `{,}` and ".".
+- ar: the radian unit is written out (راديان), so canvas labels are longer; spinner دوّار vs.
+  السهم الدوار; wiggle تذبذب / تموّج / اهتزازة across chapters.
+- es: "girador" is first defined in §2 but "spinner" now appears in the new turns section.

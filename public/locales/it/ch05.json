@@ -59,16 +59,86 @@
       ]
     },
     {
+      "id": "turns",
+      "title": "Misurare i giri",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Se i è un quarto di giro, passeremo le giornate a far girare frecce. Allora come diciamo *di quanto* ha girato una freccia?"
+        },
+        {
+          "t": "p",
+          "text": "I gradi sono una vecchia abitudine: 360 in un giro, perché a un antico calendario piaceva il 360. I matematici misurano un giro con il cerchio stesso. Fai rotolare una ruota di raggio 1 e guarda quanta strada fa il suo bordo. Un **radiante** è l'angolo il cui arco è lungo esattamente **un raggio**."
+        },
+        {
+          "t": "predict",
+          "id": "ch5-full-turn",
+          "gate": true,
+          "q": "Quanti radianti fanno un giro completo?",
+          "options": [
+            {
+              "text": "360",
+              "why": "Quelli sono i gradi. Un radiante è molto più grande di un grado: ne vale circa 57."
+            },
+            {
+              "text": "Poco più di 6",
+              "correct": true,
+              "why": "Esatto. Il bordo intero di una ruota di raggio 1 è lungo 2π ≈ 6,28 raggi, quindi un giro completo è 2π radianti. Mezzo giro è π ≈ 3,14."
+            },
+            {
+              "text": "Esattamente 1",
+              "why": "Un radiante fa rotolare solo un raggio di bordo, circa un sesto del giro."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "turns"
+        },
+        {
+          "t": "p",
+          "text": "Segui la punta della freccia mentre gira. La sua ombra sull'asse reale si chiama **coseno** dell'angolo, $\\cos\\theta$; la sua ombra sull'asse di lato è il **seno**, $\\sin\\theta$. Gira a velocità costante ed entrambe le ombre disegnano onde, con il seno un quarto di giro dietro il coseno."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Capito. Quindi una trottola a 2 radianti al secondo fa due giri al secondo!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Due giri al secondo sarebbero $4\\pi$ radianti al secondo. Due radianti al secondo fanno un giro completo ogni $2\\pi/2 \\approx 3{,}14$ secondi."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Radiante",
+              "def": "L'angolo il cui arco è lungo un raggio. Un giro completo è $2\\pi$ radianti, mezzo giro è $\\pi$."
+            },
+            {
+              "term": "Coseno e seno",
+              "def": "Le ombre di una freccia di lunghezza 1 ad angolo θ: $\\cos\\theta$ lungo l'asse reale, $\\sin\\theta$ di lato."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "spin",
       "title": "Un numero che gira",
       "blocks": [
         {
           "t": "p",
-          "text": "Un **radiante** è un’unità per gli angoli. Un giro completo vale $2\\pi$ radianti; quindi una trottola a 2 radianti al secondo compie un giro in circa 3,14 secondi. Il simbolo ω indica questa velocità di rotazione."
+          "text": "Le velocità di rotazione si misurano in radianti al secondo: una trottola a 2 radianti al secondo compie un giro completo in $2\\pi/2 \\approx 3{,}14$ secondi. Il simbolo ω indica questa velocità di rotazione."
         },
         {
           "t": "p",
-          "text": "Ora immagina un punto che corre lungo un cerchio a velocità costante, ω radianti al secondo. Dove punta la sua **velocità**? Sempre lungo il cerchio, cioè un **quarto di giro** avanti rispetto alla freccia che va al punto."
+          "text": "Ora immagina un punto che corre lungo un cerchio a velocità costante, ω radianti al secondo. Dove punta la sua **velocità**? (Qui la velocità è quella del Capitolo 3 con in più una direzione: per una freccia che si muove, anche la velocità è una freccia, che dice da che parte va la punta e quanto in fretta.) Sempre lungo il cerchio, cioè un **quarto di giro** avanti rispetto alla freccia che va al punto."
         },
         {
           "t": "p",
@@ -79,6 +149,30 @@
           "who": "theo",
           "mood": "surprised",
           "text": "Aspetta. \"La pendenza è un numero fisso per se stessa\" è esattamente la proprietà **esponenziale** del Capitolo 4! Con a = iω."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Ma aspetta un attimo. Nel Capitolo 4 una potenza voleva dire \"quante moltiplicazioni sono state fatte\". Che cosa vorrebbe mai dire $e$ elevato a $i\\theta$? Moltiplicare per $e$, $i\\theta$ volte?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Costruiamolo come nel Capitolo 4. $e$ era $n$ passi piccolissimi, ognuno una crescita di $\\frac1n$. Stavolta fai di ogni passettino una piccola spintarella *di lato*."
+        },
+        {
+          "t": "math",
+          "tex": "e^{i\\theta} = \\lim_{n\\to\\infty}\\left(1 + \\frac{i\\theta}{n}\\right)^{n}"
+        },
+        {
+          "t": "widget",
+          "id": "tiny"
+        },
+        {
+          "t": "p",
+          "text": "Ogni passo ruota la freccia di un angolo piccolissimo, circa $\\theta/n$ radianti, e la allunga un pochino. Con più passi l'allungamento sparisce e il percorso atterra sul cerchio, esattamente θ radianti più in là. Ecco perché i radianti: le spintarelle di lato si sommano lungo il bordo. Quindi $e^{i\\theta}$ è semplicemente il punto del cerchio ad angolo θ."
         },
         {
           "t": "p",
@@ -147,6 +241,10 @@
           "tex": "x(t) = \\tfrac12\\left(e^{i\\omega t} + e^{-i\\omega t}\\right) = \\cos(\\omega t),\\qquad \\omega = \\sqrt{k/m}"
         },
         {
+          "t": "note",
+          "text": "Il fattore ½ c'è perché ciascuna gemella porta metà: il widget somma due trottole a grandezza piena, quindi la sua somma oscilla fino a 2. E questa coppia parte lasciata andare da 1 m, da ferma. Se la fai partire in movimento, le due gemelle cominciano semplicemente con inclinazioni opposte; la loro somma resta comunque sulla retta reale."
+        },
+        {
           "t": "p",
           "text": "Perché la gemella c'è sempre? Nella regola della molla ci sono solo numeri reali ($m$ e $k$, nessuna $i$). Capovolgi una soluzione dall'alto in basso, trasformando ogni $i$ in $-i$, e la regola non vede la differenza: anche l'immagine allo specchio è una soluzione. Quindi per qualsiasi cosa reale le trottole arrivano in **coppie allo specchio**, e insieme le loro parti di lato si annullano, lasciando un'oscillazione reale che possiamo misurare."
         }
@@ -207,7 +305,7 @@
             "**Metà destra** (σ > 0): la spirale si allarga, l'oscillazione esplode.",
             "**Sulla linea verticale** (σ = 0): un cerchio perfetto, un'oscillazione che continua per sempre.",
             "**Sulla linea orizzontale** (ω = 0): nessuna rotazione, solo i semplici esponenziali del Capitolo 4.",
-            "**Più in alto**: rotazione più veloce, oscillazioni più rapide. **Più a sinistra**: si spegne più in fretta."
+            "**Più lontano dalla linea orizzontale** (in alto o in basso): rotazione più veloce, oscillazioni più rapide. **Più a sinistra**: si spegne più in fretta."
           ]
         },
         {
@@ -228,7 +326,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Un'ultima sorpresa. Prendi trottole di velocità diverse (1, 3, 5, 7… volte più veloci), rimpicciolisci ognuna nel modo giusto e somma le loro ombre. Con abbastanza trottole puoi costruire quasi *qualsiasi* forma, persino un'onda quadra con gli spigoli vivi."
+          "text": "Un'ultima sorpresa. Prendi trottole di velocità diverse (1, 3, 5, 7… volte più veloci), rimpicciolisci ognuna e falla partire proprio all'angolo giusto, poi somma le loro ombre. Con abbastanza trottole puoi costruire una varietà enorme di forme, persino un'onda quadra con gli spigoli vivi."
         },
         {
           "t": "widget",
@@ -252,7 +350,9 @@
           "t": "recap",
           "items": [
             "I numeri sono frecce. Moltiplicare le ruota e le allunga. **i** è un quarto di giro, quindi $i^2 = -1$.",
+            "Un **radiante** è l'angolo il cui arco è lungo un raggio: un giro completo è $2\\pi$. **cos θ** e **sin θ** sono le ombre di una freccia ruotata.",
             "$e^{i\\omega t}$ è un punto che gira attorno a un cerchio. La sua ombra è un'onda coseno.",
+            "$e^{i\\theta}$, costruito con passi piccolissimi di lato $\\left(1 + \\frac{i\\theta}{n}\\right)^n$, è il punto del cerchio ad angolo θ.",
             "Le oscillazioni reali nascono da **trottole gemelle allo specchio** le cui parti di lato si annullano.",
             "$e^{st}$ con $s = \\sigma + i\\omega$ gira *e* cresce o cala: una spirale. La sua ombra è un'oscillazione che cresce o si spegne.",
             "La **mappa di s**: a sinistra si calma, a destra esplode, più in alto vuol dire oscillazioni più rapide."
@@ -429,6 +529,45 @@
       "status": "{n} trottole aggiunte. La più veloce gira {f}× più veloce della prima.",
       "aria": "Un'onda quadra e la somma di un numero scelto di ombre di trottole che la approssima.",
       "statusOne": "Una sola trottola: una semplice oscillazione, ancora niente di quadrato."
+    },
+    "turns": {
+      "title": "Misurare i giri in raggi",
+      "aria": "Un cerchio di raggio 1 con una freccia ad angolo theta, il suo arco evidenziato e le ombre della punta della freccia su entrambi gli assi.",
+      "re": "in avanti",
+      "im": "di lato",
+      "theta": "Angolo θ",
+      "radUnit": "rad",
+      "thetaAxis": "angolo θ (radianti)",
+      "shadowAxis": "ombra",
+      "cos": "cos θ (ombra in avanti)",
+      "sin": "sin θ (ombra di lato)",
+      "plotAria": "Il coseno e il seno dell'angolo, tracciati da 0 fino all'angolo scelto.",
+      "readRad": "radianti",
+      "readTurns": "giri",
+      "readDeg": "gradi",
+      "readCos": "cos θ",
+      "readSin": "sin θ",
+      "oneRadian": "Un radiante: l'arco è lungo esattamente un raggio (circa 57°).",
+      "half": "Mezzo giro: π ≈ 3,14 radianti. Le ombre sono a −1 e 0.",
+      "full": "Un giro completo: 2π ≈ 6,28 radianti, di nuovo al punto di partenza.",
+      "any": "L'arco è lungo {r} raggi: {d}°.",
+      "describe": "Angolo {r} radianti: coseno {c}, seno {s}.",
+      "help": "Fai scorrere θ. L'arco arancione è la strada fatta rotolando lungo il bordo, misurata in raggi."
+    },
+    "tiny": {
+      "title": "Girare a passi piccolissimi di lato",
+      "aria": "I prodotti parziali di 1 più i theta su n, disegnati come un percorso da 1 verso il punto del cerchio unitario ad angolo theta.",
+      "re": "in avanti",
+      "im": "di lato",
+      "n": "Numero di passi n",
+      "theta": "Angolo θ",
+      "radUnit": "rad",
+      "readLen": "lunghezza",
+      "readAng": "angolo",
+      "readGoal": "obiettivo θ =",
+      "one": "Un unico passo gigante: 1 + iθ, ben lontano dal cerchio (lunghezza {len}).",
+      "many": "{n} passi: lunghezza {len}, angolo {ang} rad. Con più passi la lunghezza si avvicina piano piano a 1 e l'angolo a θ = {th}.",
+      "help": "Fai scorrere n per dividere il giro in più spintarelle, più piccole; fai scorrere θ per cambiare dove è diretto."
     }
   }
 }
