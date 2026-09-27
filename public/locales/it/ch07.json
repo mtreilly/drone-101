@@ -302,43 +302,29 @@
         },
         {
           "t": "p",
-          "text": "Ecco il calcolo mancante. Spostare la pendenza da $f$ alla sonda che cala si chiama **integrazione per parti**. La parentesi $\\big[\\,\\cdot\\,\\big]_0^\\infty$ vuol dire \"valore all'estremo lontano meno valore all'inizio\". Se il segnale pesato svanisce all'estremo lontano (la stessa condizione di prima: $s$ deve battere la crescita del segnale), sul bordo resta solo il valore di partenza:"
+          "text": "Ecco il calcolo mancante, come immagine. Un prodotto cambia per due motivi. $f$ cambia mentre la sonda sta ferma, e la sonda cambia mentre $f$ sta ferma. Immagina un rettangolo con lati $f$ ed $e^{-st}$: cresce lungo un lato, poi lungo l'altro. Questa mossa ha un nome: **integrazione per parti**."
         },
         {
           "t": "math",
-          "tex": "\\begin{aligned} \\int_0^\\infty f'(t)e^{-st}\\,dt &= \\big[f(t)e^{-st}\\big]_0^\\infty \\\\ &\\quad + s\\!\\int_0^\\infty f(t)e^{-st}\\,dt \\\\ &= -f(0)+sF(s) \\end{aligned}"
+          "tex": "\\big(f\\,e^{-st}\\big)' = f'\\,e^{-st} - s\\,f\\,e^{-st}"
         },
         {
-          "t": "callout",
-          "title": "L'area disfa la pendenza, anche per un prodotto",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Un prodotto cambia per due motivi. $f$ cambia mentre la sonda sta ferma, e la sonda cambia mentre $f$ sta ferma. Immagina un rettangolo con lati $f$ ed $e^{-st}$: cresce lungo un lato, poi lungo l'altro."
-            },
-            {
-              "t": "math",
-              "tex": "\\big(f\\,e^{-st}\\big)' = f'\\,e^{-st} - s\\,f\\,e^{-st}"
-            },
-            {
-              "t": "p",
-              "text": "Somma quei cambiamenti da 0 a ∞ (Capitolo 3: l'area disfa la pendenza) e ottieni il valore alla fine meno il valore all'inizio:"
-            },
-            {
-              "t": "math",
-              "tex": "\\big[f\\,e^{-st}\\big]_0^\\infty = \\int_0^\\infty f'\\,e^{-st}\\,dt - s\\,F(s)"
-            },
-            {
-              "t": "p",
-              "text": "All'estremo lontano la sonda ha schiacciato tutto a zero, quindi il lato sinistro è solo $0 - f(0)$. Porta $s\\,F(s)$ dall'altra parte ed ecco la regola."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "happy",
-              "text": "Quindi $f(0)$ non è un trucchetto. È il rettangolo da cui siamo partiti."
-            }
-          ]
+          "t": "p",
+          "text": "Somma quei cambiamenti da 0 a ∞ (Capitolo 3: l'area disfa la pendenza) e ottieni il valore alla fine meno il valore all'inizio. È questo che vuol dire la parentesi $\\big[\\,\\cdot\\,\\big]_0^\\infty$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\big[f\\,e^{-st}\\big]_0^\\infty = \\int_0^\\infty f'\\,e^{-st}\\,dt - s\\,F(s)"
+        },
+        {
+          "t": "p",
+          "text": "All'estremo lontano la sonda ha schiacciato tutto a zero (purché $s$ batta la crescita del segnale), quindi il lato sinistro è solo $0 - f(0)$. Porta $s\\,F(s)$ dall'altra parte ed ecco la regola."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Quindi $f(0)$ non è un trucchetto. È il rettangolo da cui siamo partiti."
         },
         {
           "t": "p",
@@ -402,6 +388,66 @@
       ]
     },
     {
+      "id": "pieces",
+      "title": "Sciogliere un denominatore comune",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Ogni risposta che otterremo uscirà come una frazione grande. Ma la nostra tabella conosce solo quelle piccole: $\\frac1s$, $\\frac{1}{s-a}$, i seni. Come spezziamo una frazione grande in pezzi della tabella?"
+        },
+        {
+          "t": "p",
+          "text": "A scuola sommavi le frazioni trovando un denominatore comune. Qui andiamo **all'indietro**: partiamo da una frazione sola e cerchiamo i pezzi piccoli che sommati la danno. Si chiama scomporre in **fratti semplici**:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{1}{s} + \\frac{1}{s+2} = \\frac{2s + 2}{s\\,(s+2)} \\qquad\\text{so}\\qquad \\frac{2s+2}{s\\,(s+2)} = \\frac{A}{s} + \\frac{B}{s+2}"
+        },
+        {
+          "t": "p",
+          "text": "Cosa va al numeratore di ogni pezzo? **Un'incognita per ogni potenza di $s$ nel suo denominatore.** Un denominatore come $s$ o $s + 2$ riceve un semplice numero. Un denominatore di secondo grado come $s^2 + 2s + 5$ riceve $B\\,s + C$: due incognite, perché un polinomio di secondo grado ha posto per due."
+        },
+        {
+          "t": "widget",
+          "id": "pieces"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Ogni cursore muove un pezzo, e i pezzi si sommano anche nel tempo. Il pezzo $A$ è un gradino; il pezzo di secondo grado è un'oscillazione che si spegne. E la frazione grande a destra è la loro somma."
+        },
+        {
+          "t": "p",
+          "text": "Per trovare i numeri dei pezzi di primo grado c'è una scorciatoia, il **trucco del coprire**. Moltiplica per il denominatore del pezzo, poi dai a $s$ il valore che lo annulla: tutti gli altri pezzi spariscono e resta solo il suo numeratore."
+        },
+        {
+          "t": "math",
+          "tex": "A = \\Big[s \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=0} = \\frac{2}{2} = 1, \\qquad B = \\Big[(s+2) \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=-2} = \\frac{-2}{-2} = 1"
+        },
+        {
+          "t": "p",
+          "text": "Un denominatore di secondo grado ha bisogno di un'ultima mossa prima che la tabella sappia leggerlo: portalo nella forma $(s + \\sigma)^2 + \\omega^2$ **completando il quadrato**, cioè dimezzando il numero di mezzo ed elevandolo al quadrato. Così $s^2 + 2s + 5 = (s + 1)^2 + 4$: un coseno e un seno smorzati con $\\sigma = 1$ e $\\omega = 2$."
+        },
+        {
+          "t": "callout",
+          "title": "I pezzi complessi arrivano in coppia",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Spezza ancora il polinomio di secondo grado e trovi le sue due radici, una coppia allo specchio $p$ e $\\bar p$. Anche i loro numeratori sono gemelli allo specchio, $B$ e $\\bar B$. Riportati nel tempo sono le gemelle del Capitolo 5, quindi le parti di lato si annullano: la somma è un unico coseno reale che si restringe e parte dall'angolo di $B$ (le frecce del Capitolo 6)."
+            },
+            {
+              "t": "math",
+              "tex": "\\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\;\\Longrightarrow\\; B\\,e^{pt} + \\bar B\\,e^{\\bar p t} = 2|B|\\,e^{\\sigma t}\\cos\\!\\big(\\omega t + \\angle B\\big)"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "solve",
       "title": "Risolvere il drone con l'algebra",
       "blocks": [
@@ -441,7 +487,7 @@
         },
         {
           "t": "p",
-          "text": "**Passo 3:** spezzalo in pezzi che compaiono nella nostra tabella (*fratti semplici*: l'operazione inversa del \"denominatore comune\" di scuola):"
+          "text": "**Passo 3:** spezzalo in pezzi della tabella, come nella sezione qui sopra: un numero al numeratore del pezzo in $s$, e $B s + C$ al numeratore di quello di secondo grado:"
         },
         {
           "t": "math",
@@ -515,7 +561,7 @@
           "blocks": [
             {
               "t": "p",
-              "text": "Il secondo pezzo non è ancora nella nostra tabella: il suo denominatore è un semplice polinomio di secondo grado. Portalo nella forma $(s+\\sigma)^2 + \\omega^2$ (il completamento del quadrato del Capitolo 6) e coincide esattamente con le righe del seno smorzato. Il numeratore si divide allo stesso modo, una parte per la riga del coseno e una per quella del seno:"
+              "text": "Il secondo pezzo non è ancora nella nostra tabella: il suo denominatore è un semplice polinomio di secondo grado. Portalo nella forma $(s+\\sigma)^2 + \\omega^2$ (completando il quadrato, come nella sezione qui sopra) e coincide esattamente con le righe del seno smorzato. Il numeratore si divide allo stesso modo, una parte per la riga del coseno e una per quella del seno:"
             },
             {
               "t": "math",
@@ -613,6 +659,7 @@
             "**Esplode esattamente dove vive il segnale**: $e^{at}$ dà $1/(s-a)$, che esplode in $s = a$. Per $s$ complesse la sonda ferma la rotazione dei segnali che girano. Disegniamo tutto questo sul **piano s**.",
             "Le pendenze diventano moltiplicazioni: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. Lo $f(0)$ ricorda da dove è partito il segnale. Dimenticalo e la tua risposta parte dal posto sbagliato.",
             "Abbiamo ricavato la nostra tabella: $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$, e la versione spostata per i seni smorzati. Le aree si scalano e si sommano, quindi possiamo trasformare un'equazione termine per termine.",
+            "Le frazioni grandi si spezzano in **fratti semplici**: un'incognita per ogni potenza di $s$ in ciascun denominatore, trovata con il trucco del coprire. Un denominatore di secondo grado diventa un coseno e un seno che si restringono.",
             "Trasforma, fai l'algebra, spezza in pezzi della tabella, leggi la risposta. Il pezzo $A/s$ è dove si assesta il drone, abbassamento compreso. Coincide esattamente con la simulazione, **purché tu tenga i valori di partenza**."
           ]
         },
@@ -861,6 +908,20 @@
       "hidden": "Partendo da terra i termini mancanti valgono zero, quindi l'errore si nasconde. Metti il drone su una mensola per scoprirlo.",
       "fixed": "I termini −h(0) sono tornati nei Passi 1 e 2 qui sopra.",
       "rk4": "La simulazione fa passi da 1 ms, come i passettini del Capitolo 4, ma a ogni passo dà quattro sbirciate per mirare meglio. Questa ricetta si chiama RK4."
+    },
+    "pieces": {
+      "title": "I pezzi e la loro somma",
+      "y": "valore",
+      "stepPiece": "pezzo A/s: un gradino",
+      "wigglePiece": "pezzo (Bs + C)/(s² + 2s + 5): un'oscillazione che si spegne",
+      "sum": "la loro somma",
+      "plotAria": "Il pezzo gradino, il pezzo oscillazione che si spegne e la loro somma nel tempo.",
+      "A": "Numeratore del pezzo in s, A",
+      "B": "La parte in s del numeratore di secondo grado, B",
+      "C": "La parte semplice del numeratore di secondo grado, C",
+      "status": "Si assesta su A = {A}: il pezzo in s è l'unico che dura. Il numeratore della frazione grande ha i numeri {top}.",
+      "describe": "A = {A}, B = {B}, C = {C}.",
+      "help": "Sposta A, B e C. Ogni pezzo è una riga della nostra tabella; la somma è la risposta intera."
     }
   },
   "plays": {

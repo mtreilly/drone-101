@@ -249,6 +249,18 @@ Loop gain keeps its Chapter 10 term everywhere (see "Chapter 10" above); ch08 no
 | arc / rim (of the radius-1 wheel) | arc / bord | arco / borde | arco / bordo | Bogen / Rand | łuk / obręcz | arco / aro | 弧 / 縁 | 弧 / 轮缘 | القوس / الحافة |
 | nudge: one tiny sideways step of (1 + iθ/n) | petite poussée | empujoncito | spintarella | Stups (not "Schubs": thrust) | pchnięcie w bok | empurrãozinho | 横向きのひと押し | 轻轻推一下 | دفعة خفيفة |
 
+### Phase 6: undoing a common denominator (ch07)
+
+| Term (definition) | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
+|---|---|---|---|---|---|---|---|---|---|
+| section "Undoing a common denominator" | Défaire un dénominateur commun | Deshacer un denominador común | Sciogliere un denominatore comune | Einen Hauptnenner rückgängig machen | Cofamy sprowadzanie do wspólnego mianownika | Desfazendo um denominador comum | 通分を元に戻す | 把通分倒过来 | عكس توحيد المقامات |
+| partial fractions (ch07's existing word) | décomposition en éléments simples | fracciones simples | fratti semplici | Partialbruchzerlegung | ułamki proste | frações parciais | 部分分数分解 | 部分分式 | الكسور الجزئية |
+| cover-up trick | astuce du cache | truco de tapar | trucco del coprire | Zuhalte-Trick | sztuczka z zakrywaniem | truque do encobrimento | 隠す技（カバーアップ法） | 遮盖法 | حيلة التغطية |
+| integration by parts (named again in §2) | intégration par parties | integración por partes | integrazione per parti | partielle Integration | całkowanie przez części | integração por partes | 部分積分 | 分部积分 | التكامل بالتجزئة |
+
+"Bottom / top" of a fraction is denominator / numerator in every locale except English (as
+ch07 already did); the new section follows that.
+
 ## Cast gender and address
 
 | Locale | Mika | June | Theo | Reader |
@@ -435,3 +447,14 @@ engineering, then fix every string and move the entry to "Settled decisions".
 - ar: the radian unit is written out (راديان), so canvas labels are longer; spinner دوّار vs.
   السهم الدوار; wiggle تذبذب / تموّج / اهتزازة across chapters.
 - es: "girador" is first defined in §2 but "spinner" now appears in the new turns section.
+
+**Maths explanations pass, Phase 6**
+- All: "integration by parts" was named again after the review found the merged derivation had
+  lost the term (the sentence was added by the reviewer; check it reads naturally).
+- es: "partes de lado" (sideways) next to ch07's older "a lo largo"; "trozos de primer grado".
+- it: ch07's sine row says "parti orizzontali", ch05 and the new callout "parti di lato".
+- pl: `docs/glossary.md` says "para sprzężona" for mirror pair, the prose "lustrzana para".
+- pt-BR: ch07 uses both "denominador" and "partes de baixo"; the callout's "sideways parts" was
+  corrected in review to "partes laterais" (it said "horizontais").
+- ar: ch07 says جزء for piece, ch08 قطعة.
+- zh-CN: ch08 calls mirror twins 镜像双胞胎 / 镜像伙伴 besides 镜像孪生.

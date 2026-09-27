@@ -302,43 +302,29 @@
         },
         {
           "t": "p",
-          "text": "Voici le calcul manquant. Déplacer la pente de $f$ sur la sonde décroissante s'appelle une **intégration par parties**. Le crochet $\\big[\\,\\cdot\\,\\big]_0^\\infty$ veut dire « valeur au bout moins valeur au départ ». Si le signal pondéré s'éteint au loin (même condition qu'avant : $s$ doit battre la croissance du signal), le seul bord qui reste est sa valeur de départ :"
+          "text": "Voici le calcul manquant, en image. Un produit change pour deux raisons. $f$ change pendant que la sonde ne bouge pas, et la sonde change pendant que $f$ ne bouge pas. Imagine un rectangle de côtés $f$ et $e^{-st}$ : il grandit le long d'un côté, puis le long de l'autre. Cette astuce a un nom : l'**intégration par parties**."
         },
         {
           "t": "math",
-          "tex": "\\begin{aligned} \\int_0^\\infty f'(t)e^{-st}\\,dt &= \\big[f(t)e^{-st}\\big]_0^\\infty \\\\ &\\quad + s\\!\\int_0^\\infty f(t)e^{-st}\\,dt \\\\ &= -f(0)+sF(s) \\end{aligned}"
+          "tex": "\\big(f\\,e^{-st}\\big)' = f'\\,e^{-st} - s\\,f\\,e^{-st}"
         },
         {
-          "t": "callout",
-          "title": "L'aire défait la pente, même pour un produit",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Un produit change pour deux raisons. $f$ change pendant que la sonde ne bouge pas, et la sonde change pendant que $f$ ne bouge pas. Imagine un rectangle de côtés $f$ et $e^{-st}$ : il grandit le long d'un côté, puis le long de l'autre."
-            },
-            {
-              "t": "math",
-              "tex": "\\big(f\\,e^{-st}\\big)' = f'\\,e^{-st} - s\\,f\\,e^{-st}"
-            },
-            {
-              "t": "p",
-              "text": "Additionne ces changements de 0 à ∞ (chapitre 3 : l'aire défait la pente) et tu obtiens la valeur au bout moins la valeur au départ :"
-            },
-            {
-              "t": "math",
-              "tex": "\\big[f\\,e^{-st}\\big]_0^\\infty = \\int_0^\\infty f'\\,e^{-st}\\,dt - s\\,F(s)"
-            },
-            {
-              "t": "p",
-              "text": "Au bout, la sonde a tout écrasé à zéro, donc le côté gauche vaut juste $0 - f(0)$. Fais passer $s\\,F(s)$ de l'autre côté et voilà la règle."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "happy",
-              "text": "Donc $f(0)$ n'est pas un bricolage. C'est le rectangle de départ."
-            }
-          ]
+          "t": "p",
+          "text": "Additionne ces changements de 0 à ∞ (chapitre 3 : l'aire défait la pente) et tu obtiens la valeur au bout moins la valeur au départ. C'est ce que veut dire le crochet $\\big[\\,\\cdot\\,\\big]_0^\\infty$ :"
+        },
+        {
+          "t": "math",
+          "tex": "\\big[f\\,e^{-st}\\big]_0^\\infty = \\int_0^\\infty f'\\,e^{-st}\\,dt - s\\,F(s)"
+        },
+        {
+          "t": "p",
+          "text": "Au bout, la sonde a tout écrasé à zéro (tant que $s$ bat la croissance du signal), donc le côté gauche vaut juste $0 - f(0)$. Fais passer $s\\,F(s)$ de l'autre côté et voilà la règle."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Donc $f(0)$ n'est pas un bricolage. C'est le rectangle de départ."
         },
         {
           "t": "p",
@@ -402,6 +388,66 @@
       ]
     },
     {
+      "id": "pieces",
+      "title": "Défaire un dénominateur commun",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Toutes nos réponses vont sortir sous la forme d'une seule grosse fraction. Mais notre table ne connaît que des petites : $\\frac1s$, $\\frac{1}{s-a}$, les sinus. Comment casser une grosse fraction en morceaux de la table ?"
+        },
+        {
+          "t": "p",
+          "text": "À l'école, tu additionnais des fractions en les mettant au même dénominateur. Ici, on fait le chemin **à l'envers** : on part d'une seule fraction et on cherche les petits morceaux dont elle est la somme. Ça s'appelle la **décomposition en éléments simples** :"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{1}{s} + \\frac{1}{s+2} = \\frac{2s + 2}{s\\,(s+2)} \\qquad\\text{so}\\qquad \\frac{2s+2}{s\\,(s+2)} = \\frac{A}{s} + \\frac{B}{s+2}"
+        },
+        {
+          "t": "p",
+          "text": "Que met-on au numérateur de chaque morceau ? **Une inconnue pour chaque puissance de $s$ dans son dénominateur.** Un dénominateur comme $s$ ou $s + 2$ reçoit un simple nombre. Un dénominateur du second degré comme $s^2 + 2s + 5$ reçoit $B\\,s + C$ : deux inconnues, parce qu'un polynôme du second degré a de la place pour deux."
+        },
+        {
+          "t": "widget",
+          "id": "pieces"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Chaque curseur fait bouger un morceau, et dans le temps aussi, les morceaux s'additionnent tout simplement. Le morceau $A$ est un échelon ; le morceau du second degré est une oscillation qui s'éteint. Et la grosse fraction de droite, c'est leur somme."
+        },
+        {
+          "t": "p",
+          "text": "Pour trouver les nombres des morceaux du premier degré, il y a un raccourci : l'**astuce du cache**. Multiplie par le dénominateur du morceau, puis donne à $s$ la valeur qui l'annule : tous les autres morceaux disparaissent et il ne reste que son numérateur."
+        },
+        {
+          "t": "math",
+          "tex": "A = \\Big[s \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=0} = \\frac{2}{2} = 1, \\qquad B = \\Big[(s+2) \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=-2} = \\frac{-2}{-2} = 1"
+        },
+        {
+          "t": "p",
+          "text": "Un dénominateur du second degré demande encore un geste avant que la table sache le lire : on le met sous la forme $(s + \\sigma)^2 + \\omega^2$ en **complétant le carré**, c'est-à-dire en prenant la moitié du nombre du milieu et en l'élevant au carré. Ainsi $s^2 + 2s + 5 = (s + 1)^2 + 4$ : un cosinus et un sinus amortis, avec $\\sigma = 1$ et $\\omega = 2$."
+        },
+        {
+          "t": "callout",
+          "title": "Les morceaux complexes vont par jumeaux",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Découpe encore le polynôme du second degré et tu tombes sur ses deux racines, une paire miroir $p$ et $\\bar p$. Leurs numérateurs sont aussi des jumeaux miroirs, $B$ et $\\bar B$. De retour dans le temps, ce sont les jumeaux du chapitre 5, donc les parties « de côté » s'annulent : la somme est un seul cosinus réel qui rétrécit et qui démarre à l'angle de $B$ (les flèches du chapitre 6)."
+            },
+            {
+              "t": "math",
+              "tex": "\\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\;\\Longrightarrow\\; B\\,e^{pt} + \\bar B\\,e^{\\bar p t} = 2|B|\\,e^{\\sigma t}\\cos\\!\\big(\\omega t + \\angle B\\big)"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "solve",
       "title": "Résoudre le drone avec de l'algèbre",
       "blocks": [
@@ -441,7 +487,7 @@
         },
         {
           "t": "p",
-          "text": "**Étape 3 :** on découpe en morceaux qui figurent dans notre table (*décomposition en éléments simples* : on défait l'étape « mettre au même dénominateur » de l'école) :"
+          "text": "**Étape 3 :** on découpe en morceaux de la table, comme dans la section précédente : un nombre au numérateur du morceau en $s$, et $B s + C$ au numérateur du morceau du second degré :"
         },
         {
           "t": "math",
@@ -515,7 +561,7 @@
           "blocks": [
             {
               "t": "p",
-              "text": "Le second morceau n'est pas encore dans notre table : son dénominateur est un simple polynôme du second degré. Mets-le sous la forme $(s+\\sigma)^2 + \\omega^2$ (en complétant le carré comme au chapitre 6) et il colle exactement aux lignes du sinus amorti. Le numérateur se découpe de la même façon, une partie pour la ligne du cosinus et une pour celle du sinus :"
+              "text": "Le second morceau n'est pas encore dans notre table : son dénominateur est un simple polynôme du second degré. Mets-le sous la forme $(s+\\sigma)^2 + \\omega^2$ (en complétant le carré, comme dans la section précédente) et il colle exactement aux lignes du sinus amorti. Le numérateur se découpe de la même façon, une partie pour la ligne du cosinus et une pour celle du sinus :"
             },
             {
               "t": "math",
@@ -613,6 +659,7 @@
             "Elle **explose exactement là où vit le signal** : $e^{at}$ donne $1/(s-a)$, qui explose en $s = a$. Pour un $s$ complexe, la sonde « dé-tourne » les signaux qui tournent. On dessine tout ça sur le **plan s**.",
             "Les pentes deviennent des multiplications : $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. Le $f(0)$ se souvient d'où le signal est parti. Oublie-le et ta réponse démarre au mauvais endroit.",
             "On a démontré notre propre table : $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$, et la version décalée pour les sinus amortis. Les aires se mettent à l'échelle et s'additionnent, donc on peut transformer une équation terme par terme.",
+            "Les grosses fractions se découpent en **éléments simples** : une inconnue par puissance de $s$ dans chaque dénominateur, trouvées avec l'astuce du cache. Un dénominateur du second degré devient un cosinus et un sinus qui rétrécissent.",
             "Transformer, faire l'algèbre, découper en morceaux de la table, lire la réponse. Le morceau $A/s$ dit où le drone se stabilise, affaissement compris. Ça colle exactement à la simulation, **à condition de garder les valeurs de départ**."
           ]
         },
@@ -861,6 +908,20 @@
       "hidden": "Depuis le sol, les termes oubliés valent zéro, donc l'erreur se cache. Pose le drone sur un rebord pour la démasquer.",
       "fixed": "Les termes en −h(0) sont de retour dans les étapes 1 et 2 ci-dessus.",
       "rk4": "La simulation avance par pas de 1 ms, comme les tout petits pas du chapitre 4, mais chaque pas jette quatre coups d'œil pour mieux viser. On appelle cette recette RK4."
+    },
+    "pieces": {
+      "title": "Les morceaux et leur somme",
+      "y": "valeur",
+      "stepPiece": "morceau A/s : un échelon",
+      "wigglePiece": "morceau (Bs + C)/(s² + 2s + 5) : une oscillation qui s'éteint",
+      "sum": "leur somme",
+      "plotAria": "Le morceau échelon, le morceau oscillation qui s'éteint et leur somme au fil du temps.",
+      "A": "Numérateur du morceau en s, A",
+      "B": "La partie en s du numérateur du second degré, B",
+      "C": "La partie constante du numérateur du second degré, C",
+      "status": "Il se stabilise à A = {A} : le morceau en s est le seul qui dure. Le numérateur de la grosse fraction a pour nombres {top}.",
+      "describe": "A = {A}, B = {B}, C = {C}.",
+      "help": "Fais glisser A, B et C. Chaque morceau est une ligne de notre table ; la somme est la réponse entière."
     }
   },
   "plays": {

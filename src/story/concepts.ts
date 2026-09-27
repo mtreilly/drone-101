@@ -216,7 +216,6 @@ export const CONCEPTS: Record<string, Concept> = {
  * closes it. The test fails if a listed gap has quietly been fixed, so the list stays honest.
  */
 export const KNOWN_GAPS: Record<string, string> = {
-  partialFractions: "Phase 6: partial fractions are used without their reasons",
   logScale:
     "Phase 7: log axes are explained as fitting a range, not as multiplying becoming adding",
 };

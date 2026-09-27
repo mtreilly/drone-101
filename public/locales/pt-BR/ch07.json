@@ -302,43 +302,29 @@
         },
         {
           "t": "p",
-          "text": "Aqui está a álgebra que faltava. Passar a inclinação de $f$ para a sonda que encolhe se chama **integração por partes**. O colchete $\\big[\\,\\cdot\\,\\big]_0^\\infty$ quer dizer \"valor lá no fim menos valor no começo\". Se o sinal ponderado some lá no fim (a mesma condição de antes: $s$ precisa vencer o crescimento do sinal), a única borda que sobra é o valor inicial:"
+          "text": "Aqui está a álgebra que faltava, em forma de desenho. Um produto muda por dois motivos. $f$ muda enquanto a sonda fica parada, e a sonda muda enquanto $f$ fica parado. Imagine um retângulo com lados $f$ e $e^{-st}$: ele cresce ao longo de um lado, depois ao longo do outro. Esse passo tem nome: **integração por partes**."
         },
         {
           "t": "math",
-          "tex": "\\begin{aligned} \\int_0^\\infty f'(t)e^{-st}\\,dt &= \\big[f(t)e^{-st}\\big]_0^\\infty \\\\ &\\quad + s\\!\\int_0^\\infty f(t)e^{-st}\\,dt \\\\ &= -f(0)+sF(s) \\end{aligned}"
+          "tex": "\\big(f\\,e^{-st}\\big)' = f'\\,e^{-st} - s\\,f\\,e^{-st}"
         },
         {
-          "t": "callout",
-          "title": "A área desfaz a inclinação, até para um produto",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Um produto muda por dois motivos. $f$ muda enquanto a sonda fica parada, e a sonda muda enquanto $f$ fica parado. Imagine um retângulo com lados $f$ e $e^{-st}$: ele cresce ao longo de um lado, depois ao longo do outro."
-            },
-            {
-              "t": "math",
-              "tex": "\\big(f\\,e^{-st}\\big)' = f'\\,e^{-st} - s\\,f\\,e^{-st}"
-            },
-            {
-              "t": "p",
-              "text": "Some essas mudanças de 0 a ∞ (Capítulo 3: a área desfaz a inclinação) e você obtém o valor no fim menos o valor no começo:"
-            },
-            {
-              "t": "math",
-              "tex": "\\big[f\\,e^{-st}\\big]_0^\\infty = \\int_0^\\infty f'\\,e^{-st}\\,dt - s\\,F(s)"
-            },
-            {
-              "t": "p",
-              "text": "Lá no fim a sonda já espremeu tudo até zero, então o lado esquerdo é só $0 - f(0)$. Passe $s\\,F(s)$ para o outro lado e aí está a regra."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "happy",
-              "text": "Então $f(0)$ não é gambiarra. É o retângulo com que começamos."
-            }
-          ]
+          "t": "p",
+          "text": "Some essas mudanças de 0 a ∞ (Capítulo 3: a área desfaz a inclinação) e você obtém o valor no fim menos o valor no começo. É isso que o colchete $\\big[\\,\\cdot\\,\\big]_0^\\infty$ quer dizer:"
+        },
+        {
+          "t": "math",
+          "tex": "\\big[f\\,e^{-st}\\big]_0^\\infty = \\int_0^\\infty f'\\,e^{-st}\\,dt - s\\,F(s)"
+        },
+        {
+          "t": "p",
+          "text": "Lá no fim a sonda já espremeu tudo até zero (desde que $s$ vença o crescimento do sinal), então o lado esquerdo é só $0 - f(0)$. Passe $s\\,F(s)$ para o outro lado e aí está a regra."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Então $f(0)$ não é gambiarra. É o retângulo com que começamos."
         },
         {
           "t": "p",
@@ -402,6 +388,66 @@
       ]
     },
     {
+      "id": "pieces",
+      "title": "Desfazendo um denominador comum",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Toda resposta que vamos obter sai como uma fração grande. Mas nossa tabela só conhece as pequenas: $\\frac1s$, $\\frac{1}{s-a}$, os senos. Como quebramos uma fração grande em pedaços da tabela?"
+        },
+        {
+          "t": "p",
+          "text": "Na escola, você somava frações achando um denominador comum. Aqui vamos **de trás para a frente**: partimos de uma fração só e achamos os pedacinhos que somados dão ela. Isso se chama dividir em **frações parciais**:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{1}{s} + \\frac{1}{s+2} = \\frac{2s + 2}{s\\,(s+2)} \\qquad\\text{então}\\qquad \\frac{2s+2}{s\\,(s+2)} = \\frac{A}{s} + \\frac{B}{s+2}"
+        },
+        {
+          "t": "p",
+          "text": "O que vai em cima de cada pedaço? **Uma incógnita para cada potência de $s$ no seu denominador.** Um denominador como $s$ ou $s + 2$ ganha um número simples. Um denominador quadrático como $s^2 + 2s + 5$ ganha $B\\,s + C$: duas incógnitas, porque numa quadrática cabem duas."
+        },
+        {
+          "t": "widget",
+          "id": "pieces"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Cada controle deslizante move um pedaço, e no tempo os pedaços também simplesmente se somam. O pedaço $A$ é um degrau; o pedaço quadrático é uma oscilação que vai sumindo. E a fração grande à direita é o que eles somam."
+        },
+        {
+          "t": "p",
+          "text": "Para achar os números dos pedaços de primeira potência existe um atalho, o **truque do encobrimento**. Multiplique pelo denominador do pedaço e depois ponha em $s$ o valor que o zera: todos os outros pedaços somem e só sobra o que está em cima dele."
+        },
+        {
+          "t": "math",
+          "tex": "A = \\Big[s \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=0} = \\frac{2}{2} = 1, \\qquad B = \\Big[(s+2) \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=-2} = \\frac{-2}{-2} = 1"
+        },
+        {
+          "t": "p",
+          "text": "Um denominador quadrático precisa de mais um passo antes que a tabela consiga lê-lo: empurre-o para a forma $(s + \\sigma)^2 + \\omega^2$ **completando o quadrado**, pegando a metade do número do meio e elevando ao quadrado. Assim $s^2 + 2s + 5 = (s + 1)^2 + 4$: um cosseno e um seno que decaem, com $\\sigma = 1$ e $\\omega = 2$."
+        },
+        {
+          "t": "callout",
+          "title": "Pedaços complexos vêm em gêmeos",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Divida a quadrática mais um pouco e você encontra suas duas raízes, um par espelhado $p$ e $\\bar p$. Os numeradores delas também são gêmeos espelhados, $B$ e $\\bar B$. De volta ao tempo, são os gêmeos do Capítulo 5, então as partes laterais se cancelam: a soma é um único cosseno real que encolhe e começa no ângulo de $B$ (as setas do Capítulo 6)."
+            },
+            {
+              "t": "math",
+              "tex": "\\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\;\\Longrightarrow\\; B\\,e^{pt} + \\bar B\\,e^{\\bar p t} = 2|B|\\,e^{\\sigma t}\\cos\\!\\big(\\omega t + \\angle B\\big)"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "solve",
       "title": "Resolvendo o drone com álgebra",
       "blocks": [
@@ -441,7 +487,7 @@
         },
         {
           "t": "p",
-          "text": "**Passo 3:** divida em partes que aparecem na nossa tabela (*frações parciais*: desfazendo o passo do \"denominador comum\" da escola):"
+          "text": "**Passo 3:** divida em pedaços da tabela, como na seção acima: um número em cima do pedaço de $s$, e $B s + C$ em cima do quadrático:"
         },
         {
           "t": "math",
@@ -515,7 +561,7 @@
           "blocks": [
             {
               "t": "p",
-              "text": "O segundo pedaço ainda não está na nossa tabela: o denominador dele é uma quadrática comum. Empurre-o para a forma $(s+\\sigma)^2 + \\omega^2$ (o completar o quadrado do Capítulo 6) e ele bate exatamente com as linhas do seno que decai. O numerador se divide do mesmo jeito, uma parte para a linha do cosseno e outra para a linha do seno:"
+              "text": "O segundo pedaço ainda não está na nossa tabela: o denominador dele é uma quadrática comum. Empurre-o para a forma $(s+\\sigma)^2 + \\omega^2$ (completando o quadrado, como na seção acima) e ele bate exatamente com as linhas do seno que decai. O numerador se divide do mesmo jeito, uma parte para a linha do cosseno e outra para a linha do seno:"
             },
             {
               "t": "math",
@@ -613,6 +659,7 @@
             "Ela **explode exatamente onde o sinal vive**: $e^{at}$ dá $1/(s-a)$, que vai para o infinito em $s = a$. Para $s$ complexo, a sonda desenrola sinais que giram. Traçamos tudo isso no **plano s**.",
             "Inclinações viram multiplicação: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. O $f(0)$ lembra onde o sinal começou. Esqueça-o e sua resposta começa no lugar errado.",
             "Deduzimos nossa própria tabela: $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$ e a versão deslocada para senos que decaem. As áreas escalam e somam, então podemos transformar uma equação termo a termo.",
+            "Frações grandes se dividem em **frações parciais**: uma incógnita por potência de $s$ em cada denominador, achadas com o truque do encobrimento. Um denominador quadrático vira um cosseno e um seno que encolhem.",
             "Transforme, faça a álgebra, divida em pedaços da tabela, leia a resposta. O pedaço $A/s$ é onde o drone se estabiliza, com desvio residual e tudo. Ele bate exatamente com a simulação, **desde que você mantenha os valores iniciais**."
           ]
         },
@@ -861,6 +908,20 @@
       "hidden": "Partindo do chão, os termos que faltam são zero, então o erro fica escondido. Coloque o drone numa plataforma para pegá-lo.",
       "fixed": "Os termos −h(0) voltaram nos Passos 1 e 2 acima.",
       "rk4": "A simulação dá passos de 1 ms, como os passos minúsculos do Capítulo 4, mas cada passo espia quatro vezes para mirar melhor. Essa receita se chama RK4."
+    },
+    "pieces": {
+      "title": "Os pedaços e sua soma",
+      "y": "valor",
+      "stepPiece": "pedaço A/s: um degrau",
+      "wigglePiece": "pedaço (Bs + C)/(s² + 2s + 5): uma oscilação que some",
+      "sum": "a soma deles",
+      "plotAria": "O pedaço degrau, o pedaço da oscilação que some e a soma deles ao longo do tempo.",
+      "A": "Numerador do pedaço de s, A",
+      "B": "A parte com s do numerador quadrático, B",
+      "C": "A parte simples do numerador quadrático, C",
+      "status": "A soma se estabiliza em A = {A}: o pedaço de s é o único que dura. O numerador da fração grande tem os números {top}.",
+      "describe": "A = {A}, B = {B}, C = {C}.",
+      "help": "Mova A, B e C. Cada pedaço é uma linha da nossa tabela; a soma é a resposta inteira."
     }
   },
   "plays": {

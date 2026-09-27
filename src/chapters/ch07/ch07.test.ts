@@ -2,7 +2,7 @@ import { c, abs, add, div, mul, sub } from '../../math/complex';
 import { laplaceNumeric, laplaceReal, table } from '../../math/laplace';
 import { DRONE, DroneSim, P_ONLY, defaultDroneConfig } from '../../sim/drone-model';
 import { plays } from './plays';
-import { dampedCos, derivativeRule, fromFunction, fromPoints, solveDrone, spreadCount, unspinExtent, unspinIntegral, unspinLimit } from './tools';
+import { combinedTop, dampedCos, derivativeRule, fromFunction, fromPoints, solveDrone, spreadCount, stepPiece, unspinExtent, unspinIntegral, unspinLimit, wigglePiece } from './tools';
 import { autoRange } from '../../ui/plot-layout';
 
 const P = (kp: number, h0: number) => ({ m: DRONE.m, c: DRONE.c, g: DRONE.g, kp, r: 2, h0, v0: 0 });
@@ -417,5 +417,40 @@ describe('chapter 7 plays', () => {
     expect(solveDrone(P(20, 1), false).f(0)).toBeCloseTo(0, 12);
     expect(solveDrone(P(20, 1)).f(0)).toBeCloseTo(1, 12);
     expect(solveDrone(P(20, 1)).A).toBeCloseTo(1.755, 3);
+  });
+});
+
+describe('7c′: undoing a common denominator', () => {
+  it('1/s + 1/(s+2) = (2s + 2)/(s(s+2)), and the cover-up trick finds A = B = 1', () => {
+    for (const s of [0.7, 2, 5]) expect(1 / s + 1 / (s + 2)).toBeCloseTo((2 * s + 2) / (s * (s + 2)), 12);
+    const F = (s: number) => (2 * s + 2) / (s * (s + 2));
+    expect(((x) => x * F(x))(1e-9)).toBeCloseTo(1, 6);
+    expect(((x) => (x + 2) * F(x))(-2 + 1e-9)).toBeCloseTo(1, 6);
+  });
+
+  it('s² + 2s + 5 = (s + 1)² + 4, and each piece is its table row in time', () => {
+    for (const s of [-3, 0, 1.5]) expect(s * s + 2 * s + 5).toBeCloseTo((s + 1) ** 2 + 4, 12);
+    const [A, B, Cc] = [1, -1, -1];
+    for (const s of [1, 2.5]) {
+      const want = A / s + (B * s + Cc) / (s * s + 2 * s + 5);
+      expect(laplaceReal((t) => stepPiece(A)() + wigglePiece(B, Cc)(t), s)).toBeCloseTo(want, 4);
+    }
+  });
+
+  it('the pieces add up to one fraction: top (A + B)s² + (2A + C)s + 5A over s(s² + 2s + 5)', () => {
+    const [A, B, Cc] = [1.5, -0.5, 2];
+    const [a2, a1, a0] = combinedTop(A, B, Cc);
+    for (const s of [0.5, 3]) expect(A / s + (B * s + Cc) / (s * s + 2 * s + 5)).toBeCloseTo((a2 * s * s + a1 * s + a0) / (s * (s * s + 2 * s + 5)), 12);
+  });
+
+  it('mirror-twin tops give one real shrinking cosine: B e^{pt} + B̄ e^{p̄t} = 2|B| e^{σt} cos(ωt + ∠B)', () => {
+    const B = c(0.3, -0.7);
+    const p = c(-1, 2);
+    for (const t of [0, 0.4, 1.3]) {
+      const ept = c(Math.exp(p.re * t) * Math.cos(p.im * t), Math.exp(p.re * t) * Math.sin(p.im * t));
+      const sum = add(mul(B, ept), mul(c(B.re, -B.im), c(ept.re, -ept.im)));
+      expect(sum.im).toBeCloseTo(0, 12);
+      expect(sum.re).toBeCloseTo(2 * abs(B) * Math.exp(p.re * t) * Math.cos(p.im * t + Math.atan2(B.im, B.re)), 12);
+    }
   });
 });

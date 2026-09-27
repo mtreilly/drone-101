@@ -302,43 +302,29 @@
         },
         {
           "t": "p",
-          "text": "Aquí está el álgebra que faltaba. Pasar la pendiente de $f$ a la sonda que se encoge se llama **integración por partes**. El corchete $\\big[\\,\\cdot\\,\\big]_0^\\infty$ significa «valor en el extremo lejano menos valor al principio». Si la señal ponderada se apaga en el extremo lejano (la misma condición de antes: $s$ tiene que ganarle al crecimiento de la señal), el único borde que queda es su valor inicial:"
+          "text": "Aquí está el álgebra que faltaba, en forma de dibujo. Un producto cambia por dos razones: $f$ cambia mientras la sonda se queda quieta, y la sonda cambia mientras $f$ se queda quieta. Imagina un rectángulo de lados $f$ y $e^{-st}$: crece por un lado y luego por el otro. Este paso tiene nombre: **integración por partes**."
         },
         {
           "t": "math",
-          "tex": "\\begin{aligned} \\int_0^\\infty f'(t)e^{-st}\\,dt &= \\big[f(t)e^{-st}\\big]_0^\\infty \\\\ &\\quad + s\\!\\int_0^\\infty f(t)e^{-st}\\,dt \\\\ &= -f(0)+sF(s) \\end{aligned}"
+          "tex": "\\big(f\\,e^{-st}\\big)' = f'\\,e^{-st} - s\\,f\\,e^{-st}"
         },
         {
-          "t": "callout",
-          "title": "El área deshace la pendiente, incluso en un producto",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Un producto cambia por dos motivos. $f$ cambia mientras la sonda se queda quieta, y la sonda cambia mientras $f$ se queda quieta. Imagina un rectángulo de lados $f$ y $e^{-st}$: crece por un lado y luego por el otro."
-            },
-            {
-              "t": "math",
-              "tex": "\\big(f\\,e^{-st}\\big)' = f'\\,e^{-st} - s\\,f\\,e^{-st}"
-            },
-            {
-              "t": "p",
-              "text": "Suma esos cambios de 0 a ∞ (capítulo 3: el área deshace la pendiente) y obtienes el valor al final menos el valor al principio:"
-            },
-            {
-              "t": "math",
-              "tex": "\\big[f\\,e^{-st}\\big]_0^\\infty = \\int_0^\\infty f'\\,e^{-st}\\,dt - s\\,F(s)"
-            },
-            {
-              "t": "p",
-              "text": "En el extremo lejano la sonda lo ha aplastado todo a cero, así que el lado izquierdo es simplemente $0 - f(0)$. Pasa $s\\,F(s)$ al otro lado y ahí está la regla."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "happy",
-              "text": "Así que $f(0)$ no es un apaño. Es el rectángulo con el que empezamos."
-            }
-          ]
+          "t": "p",
+          "text": "Suma esos cambios de 0 a ∞ (capítulo 3: el área deshace la pendiente) y obtienes el valor del final menos el valor del principio. Eso es lo que significa el corchete $\\big[\\,\\cdot\\,\\big]_0^\\infty$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\big[f\\,e^{-st}\\big]_0^\\infty = \\int_0^\\infty f'\\,e^{-st}\\,dt - s\\,F(s)"
+        },
+        {
+          "t": "p",
+          "text": "En el extremo lejano la sonda lo ha aplastado todo hasta cero (siempre que $s$ le gane al crecimiento de la señal), así que el lado izquierdo es simplemente $0 - f(0)$. Pasa $s\\,F(s)$ al otro lado y ahí tienes la regla."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Así que $f(0)$ no es ningún apaño. Es el rectángulo con el que empezamos."
         },
         {
           "t": "p",
@@ -402,6 +388,66 @@
       ]
     },
     {
+      "id": "pieces",
+      "title": "Deshacer un denominador común",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Todas las respuestas que saquemos van a salir como una fracción grande. Pero nuestra tabla solo conoce fracciones pequeñas: $\\frac1s$, $\\frac{1}{s-a}$, los senos. ¿Cómo partimos una fracción grande en trozos de la tabla?"
+        },
+        {
+          "t": "p",
+          "text": "En el colegio sumabas fracciones buscando un denominador común. Aquí vamos **al revés**: empezamos con una sola fracción y buscamos los trozos pequeños que suman eso. Se llama descomponer en **fracciones simples**:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{1}{s} + \\frac{1}{s+2} = \\frac{2s + 2}{s\\,(s+2)} \\qquad\\text{así que}\\qquad \\frac{2s+2}{s\\,(s+2)} = \\frac{A}{s} + \\frac{B}{s+2}"
+        },
+        {
+          "t": "p",
+          "text": "¿Qué va en el numerador de cada trozo? **Una incógnita por cada potencia de $s$ de su denominador.** Un denominador como $s$ o $s + 2$ recibe un número sin más. Un denominador cuadrático como $s^2 + 2s + 5$ recibe $B\\,s + C$: dos incógnitas, porque en una cuadrática caben dos."
+        },
+        {
+          "t": "widget",
+          "id": "pieces"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Cada deslizador mueve un trozo, y los trozos también se suman sin más en el tiempo. El trozo $A$ es un escalón; el trozo cuadrático es una oscilación que se apaga. Y la fracción grande de la derecha es lo que suman entre todos."
+        },
+        {
+          "t": "p",
+          "text": "Para encontrar los números de los trozos de primer grado hay un atajo, el **truco de tapar**. Multiplica por el denominador del trozo y luego pon en $s$ el valor que lo anula: todos los demás trozos desaparecen y solo queda su numerador."
+        },
+        {
+          "t": "math",
+          "tex": "A = \\Big[s \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=0} = \\frac{2}{2} = 1, \\qquad B = \\Big[(s+2) \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=-2} = \\frac{-2}{-2} = 1"
+        },
+        {
+          "t": "p",
+          "text": "Un denominador cuadrático necesita un paso más antes de que la tabla pueda leerlo: llevarlo a la forma $(s + \\sigma)^2 + \\omega^2$ **completando el cuadrado**, tomando la mitad del número del medio y elevándola al cuadrado. Así, $s^2 + 2s + 5 = (s + 1)^2 + 4$: un coseno y un seno amortiguados con $\\sigma = 1$ y $\\omega = 2$."
+        },
+        {
+          "t": "callout",
+          "title": "Los trozos complejos vienen en gemelos",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Parte la cuadrática un poco más y te encuentras con sus dos raíces, una pareja reflejada $p$ y $\\bar p$. Sus numeradores también son gemelos reflejados, $B$ y $\\bar B$. De vuelta en el tiempo son los gemelos del capítulo 5, así que las partes de lado se cancelan: la suma es un único coseno real que se encoge y que empieza en el ángulo de $B$ (las flechas del capítulo 6)."
+            },
+            {
+              "t": "math",
+              "tex": "\\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\;\\Longrightarrow\\; B\\,e^{pt} + \\bar B\\,e^{\\bar p t} = 2|B|\\,e^{\\sigma t}\\cos\\!\\big(\\omega t + \\angle B\\big)"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "solve",
       "title": "Resolver el dron con álgebra",
       "blocks": [
@@ -441,7 +487,7 @@
         },
         {
           "t": "p",
-          "text": "**Paso 3:** pártelo en trozos que aparezcan en nuestra tabla (*fracciones simples*: deshacer el paso de \"común denominador\" del colegio):"
+          "text": "**Paso 3:** pártelo en trozos de la tabla, como en la sección anterior: un número en el numerador del trozo en $s$, y $B s + C$ en el numerador del cuadrático:"
         },
         {
           "t": "math",
@@ -515,7 +561,7 @@
           "blocks": [
             {
               "t": "p",
-              "text": "El segundo trozo todavía no está en nuestra tabla: su denominador es una cuadrática normal. Llévala a la forma $(s+\\sigma)^2 + \\omega^2$ (completar el cuadrado, como en el capítulo 6) y encaja exactamente con las filas del seno amortiguado. El numerador se reparte igual, una parte para la fila del coseno y otra para la del seno:"
+              "text": "El segundo trozo todavía no está en nuestra tabla: su denominador es una cuadrática normal. Llévala a la forma $(s+\\sigma)^2 + \\omega^2$ (completar el cuadrado, como en la sección anterior) y encaja exactamente con las filas del seno amortiguado. El numerador se reparte igual, una parte para la fila del coseno y otra para la del seno:"
             },
             {
               "t": "math",
@@ -613,6 +659,7 @@
             "**Explota justo donde vive la señal**: $e^{at}$ da $1/(s-a)$, que se dispara en $s = a$. Con $s$ complejas, la sonda deshace el giro de las señales que giran. Todo esto lo dibujamos en el **plano s**.",
             "Las pendientes se convierten en multiplicaciones: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. El $f(0)$ recuerda dónde empezó la señal. Olvídalo y tu respuesta empieza en el sitio equivocado.",
             "Dedujimos nuestra propia tabla: $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$ y la versión desplazada para senos amortiguados. Las áreas se escalan y se suman, así que podemos transformar una ecuación término a término.",
+            "Las fracciones grandes se descomponen en **fracciones simples**: una incógnita por cada potencia de $s$ de cada denominador, que se encuentran con el truco de tapar. Un denominador cuadrático se convierte en un coseno y un seno que se encogen.",
             "Transforma, haz álgebra, divide en trozos de la tabla, lee la respuesta. El trozo $A/s$ es donde se queda el dron, caída incluida. Coincide exactamente con la simulación, **siempre que conserves los valores iniciales**."
           ]
         },
@@ -861,6 +908,20 @@
       "hidden": "Desde el suelo los términos que faltan valen cero, así que el error se esconde. Pon el dron sobre una repisa para pillarlo.",
       "fixed": "Los términos −h(0) han vuelto a los pasos 1 y 2 de arriba.",
       "rk4": "La simulación da pasos de 1 ms, como los pasos diminutos del capítulo 4, pero en cada paso echa cuatro vistazos para apuntar mejor. A esa receta se le llama RK4."
+    },
+    "pieces": {
+      "title": "Los trozos y su suma",
+      "y": "valor",
+      "stepPiece": "Trozo A/s: un escalón",
+      "wigglePiece": "Trozo (Bs + C)/(s² + 2s + 5): una oscilación que se apaga",
+      "sum": "su suma",
+      "plotAria": "El trozo escalón, el trozo de la oscilación que se apaga y su suma a lo largo del tiempo.",
+      "A": "Numerador del trozo en s, A",
+      "B": "La parte en s del numerador cuadrático, B",
+      "C": "La parte suelta del numerador cuadrático, C",
+      "status": "Se asienta en A = {A}: el trozo en s es el único que perdura. El numerador de la fracción grande tiene los números {top}.",
+      "describe": "A = {A}, B = {B}, C = {C}.",
+      "help": "Mueve A, B y C. Cada trozo es una fila de nuestra tabla; la suma es la respuesta completa."
     }
   },
   "plays": {

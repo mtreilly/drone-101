@@ -302,43 +302,29 @@
         },
         {
           "t": "p",
-          "text": "Oto brakujący rachunek. Przeniesienie nachylenia z $f$ na zanikającą sondę nazywa się **całkowaniem przez części**. Nawias $\\big[\\,\\cdot\\,\\big]_0^\\infty$ oznacza „wartość na dalekim końcu minus wartość na początku”. Jeśli ważony sygnał zanika na dalekim końcu (ten sam warunek co wcześniej: $s$ musi przegonić wzrost sygnału), na brzegu pozostaje tylko wartość początkowa:"
+          "text": "Oto brakujący rachunek, w formie obrazka. Iloczyn zmienia się z dwóch powodów. $f$ się zmienia, gdy sonda stoi w miejscu, a sonda się zmienia, gdy $f$ stoi w miejscu. Wyobraź sobie prostokąt o bokach $f$ i $e^{-st}$: rośnie wzdłuż jednego boku, potem wzdłuż drugiego. Ten ruch ma swoją nazwę: **całkowanie przez części**."
         },
         {
           "t": "math",
-          "tex": "\\begin{aligned} \\int_0^\\infty f'(t)e^{-st}\\,dt &= \\big[f(t)e^{-st}\\big]_0^\\infty \\\\ &\\quad + s\\!\\int_0^\\infty f(t)e^{-st}\\,dt \\\\ &= -f(0)+sF(s) \\end{aligned}"
+          "tex": "\\big(f\\,e^{-st}\\big)' = f'\\,e^{-st} - s\\,f\\,e^{-st}"
         },
         {
-          "t": "callout",
-          "title": "Pole cofa nachylenie, nawet dla iloczynu",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Iloczyn zmienia się z dwóch powodów. $f$ się zmienia, gdy sonda stoi w miejscu, a sonda się zmienia, gdy $f$ stoi w miejscu. Wyobraź sobie prostokąt o bokach $f$ i $e^{-st}$: rośnie wzdłuż jednego boku, potem wzdłuż drugiego."
-            },
-            {
-              "t": "math",
-              "tex": "\\big(f\\,e^{-st}\\big)' = f'\\,e^{-st} - s\\,f\\,e^{-st}"
-            },
-            {
-              "t": "p",
-              "text": "Zsumuj te zmiany od 0 do ∞ (rozdział 3: pole cofa nachylenie), a dostaniesz wartość na końcu minus wartość na początku:"
-            },
-            {
-              "t": "math",
-              "tex": "\\big[f\\,e^{-st}\\big]_0^\\infty = \\int_0^\\infty f'\\,e^{-st}\\,dt - s\\,F(s)"
-            },
-            {
-              "t": "p",
-              "text": "Na dalekim końcu sonda zgniotła wszystko do zera, więc lewa strona to po prostu $0 - f(0)$. Przenieś $s\\,F(s)$ na drugą stronę i masz regułę."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "happy",
-              "text": "Czyli $f(0)$ to nie żadna naciągana poprawka. To prostokąt, od którego zaczęliśmy."
-            }
-          ]
+          "t": "p",
+          "text": "Zsumuj te zmiany od 0 do ∞ (rozdział 3: pole cofa nachylenie), a dostaniesz wartość na końcu minus wartość na początku. To właśnie oznacza nawias $\\big[\\,\\cdot\\,\\big]_0^\\infty$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\big[f\\,e^{-st}\\big]_0^\\infty = \\int_0^\\infty f'\\,e^{-st}\\,dt - s\\,F(s)"
+        },
+        {
+          "t": "p",
+          "text": "Na dalekim końcu sonda zgniotła wszystko do zera (o ile $s$ przegania wzrost sygnału), więc lewa strona to po prostu $0 - f(0)$. Przenieś $s\\,F(s)$ na drugą stronę i masz regułę."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Czyli $f(0)$ to nie żadna naciągana poprawka. To prostokąt, od którego zaczęliśmy."
         },
         {
           "t": "p",
@@ -402,6 +388,66 @@
       ]
     },
     {
+      "id": "pieces",
+      "title": "Cofamy sprowadzanie do wspólnego mianownika",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Każda odpowiedź, jaką dostaniemy, wychodzi jako jeden wielki ułamek. A nasza tabelka zna tylko małe: $\\frac1s$, $\\frac{1}{s-a}$, sinusy. Jak rozbić wielki ułamek na kawałki z tabelki?"
+        },
+        {
+          "t": "p",
+          "text": "W szkole dodawało się ułamki, sprowadzając je do wspólnego mianownika. Tutaj idziemy **wstecz**: zaczynamy od jednego ułamka i szukamy małych kawałków, które się do niego sumują. To się nazywa rozkład na **ułamki proste**:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{1}{s} + \\frac{1}{s+2} = \\frac{2s + 2}{s\\,(s+2)} \\qquad\\text{więc}\\qquad \\frac{2s+2}{s\\,(s+2)} = \\frac{A}{s} + \\frac{B}{s+2}"
+        },
+        {
+          "t": "p",
+          "text": "Co trafia do licznika każdego kawałka? **Jedna niewiadoma na każdą potęgę $s$ w jego mianowniku.** Mianownik taki jak $s$ albo $s + 2$ dostaje zwykłą liczbę. Mianownik kwadratowy, taki jak $s^2 + 2s + 5$, dostaje $B\\,s + C$: dwie niewiadome, bo trójmian kwadratowy ma miejsce na dwie."
+        },
+        {
+          "t": "widget",
+          "id": "pieces"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Każdy suwak rusza jednym kawałkiem, a w czasie kawałki też po prostu się sumują. Kawałek $A$ to skok, kawałek kwadratowy to kołysanie, które wygasa. A wielki ułamek po prawej to ich suma."
+        },
+        {
+          "t": "p",
+          "text": "Do znalezienia liczb w kawałkach pierwszego stopnia jest skrót: **sztuczka z zakrywaniem**. Pomnóż przez mianownik kawałka, a potem ustaw $s$ na wartość, która go zeruje: wszystkie inne kawałki znikają i zostaje tylko jego licznik."
+        },
+        {
+          "t": "math",
+          "tex": "A = \\Big[s \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=0} = \\frac{2}{2} = 1, \\qquad B = \\Big[(s+2) \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=-2} = \\frac{-2}{-2} = 1"
+        },
+        {
+          "t": "p",
+          "text": "Mianownik kwadratowy potrzebuje jeszcze jednego ruchu, zanim tabelka go odczyta: wciśnij go w kształt $(s + \\sigma)^2 + \\omega^2$ przez **dopełnianie do kwadratu**, czyli weź połowę środkowej liczby i podnieś ją do kwadratu. Tak więc $s^2 + 2s + 5 = (s + 1)^2 + 4$: gasnący cosinus i sinus z $\\sigma = 1$ i $\\omega = 2$."
+        },
+        {
+          "t": "callout",
+          "title": "Zespolone kawałki chodzą w parach bliźniaków",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Rozłóż trójmian kwadratowy dalej, a spotkasz jego dwa pierwiastki, lustrzaną parę $p$ i $\\bar p$. Ich liczniki też są lustrzanymi bliźniakami, $B$ i $\\bar B$. Z powrotem w czasie to bliźniaki z rozdziału 5, więc części boczne się znoszą: suma to jeden rzeczywisty, gasnący cosinus, który startuje pod kątem $B$ (strzałki z rozdziału 6)."
+            },
+            {
+              "t": "math",
+              "tex": "\\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\;\\Longrightarrow\\; B\\,e^{pt} + \\bar B\\,e^{\\bar p t} = 2|B|\\,e^{\\sigma t}\\cos\\!\\big(\\omega t + \\angle B\\big)"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "solve",
       "title": "Rozwiązujemy drona algebrą",
       "blocks": [
@@ -441,7 +487,7 @@
         },
         {
           "t": "p",
-          "text": "**Krok 3:** rozbij to na kawałki, które występują w naszej tabelce (*ułamki proste*: odwracanie szkolnego „sprowadzania do wspólnego mianownika”):"
+          "text": "**Krok 3:** rozbij to na kawałki z tabelki, jak w części powyżej: jedna liczba w liczniku kawałka z $s$ i $B s + C$ w liczniku kawałka kwadratowego:"
         },
         {
           "t": "math",
@@ -515,7 +561,7 @@
           "blocks": [
             {
               "t": "p",
-              "text": "Drugiego kawałka nie ma jeszcze w tabelce: jego mianownik to zwykły trójmian kwadratowy. Wciśnij go w kształt $(s+\\sigma)^2 + \\omega^2$ (dopełnianie do kwadratu z rozdziału 6), a będzie dokładnie pasował do wierszy z gasnącym sinusem. Licznik dzieli się tak samo, jedna część na wiersz z cosinusem, druga na wiersz z sinusem:"
+              "text": "Drugiego kawałka nie ma jeszcze w tabelce: jego mianownik to zwykły trójmian kwadratowy. Wciśnij go w kształt $(s+\\sigma)^2 + \\omega^2$ (dopełnianie do kwadratu, jak w części powyżej), a będzie dokładnie pasował do wierszy z gasnącym sinusem. Licznik dzieli się tak samo, jedna część na wiersz z cosinusem, druga na wiersz z sinusem:"
             },
             {
               "t": "math",
@@ -613,6 +659,7 @@
             "**Wybucha dokładnie tam, gdzie mieszka sygnał**: $e^{at}$ daje $1/(s-a)$, co wybucha przy $s = a$. Dla zespolonych $s$ sonda odkręca wirujące sygnały. Wszystko to rysujemy na **płaszczyźnie s**.",
             "Nachylenia stają się mnożeniem: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. $f(0)$ pamięta, gdzie sygnał się zaczął. Zapomnij o nim, a odpowiedź zacznie w złym miejscu.",
             "Wyprowadziliśmy własną tabelkę: $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$ i przesuniętą wersję dla gasnących sinusów. Pola skalują się i dodają, więc równanie możemy transformować składnik po składniku.",
+            "Wielkie ułamki rozkładają się na **ułamki proste**: jedna niewiadoma na każdą potęgę $s$ w każdym mianowniku, znaleziona sztuczką z zakrywaniem. Mianownik kwadratowy staje się gasnącym cosinusem i sinusem.",
             "Transformuj, zrób algebrę, rozbij na kawałki z tabelki, odczytaj odpowiedź. Kawałek $A/s$ mówi, gdzie dron się ustali, razem ze zwisem. Zgadza się z symulacją dokładnie, **pod warunkiem, że zachowasz wartości początkowe**."
           ]
         },
@@ -861,6 +908,20 @@
       "hidden": "Przy starcie z ziemi brakujące składniki są zerowe, więc błąd się chowa. Postaw drona na półce, żeby go przyłapać.",
       "fixed": "Składniki z −h(0) wróciły do kroków 1 i 2 powyżej.",
       "rk4": "Symulacja robi kroki co 1 ms, jak drobne kroki z rozdziału 4, ale w każdym kroku zagląda cztery razy, żeby lepiej celować. Ten przepis nazywa się RK4 (metoda Rungego–Kutty)."
+    },
+    "pieces": {
+      "title": "Kawałki i ich suma",
+      "y": "wartość",
+      "stepPiece": "kawałek A/s: skok",
+      "wigglePiece": "kawałek (Bs + C)/(s² + 2s + 5): gasnące kołysanie",
+      "sum": "ich suma",
+      "plotAria": "Kawałek skoku, kawałek gasnącego kołysania i ich suma w czasie.",
+      "A": "Licznik kawałka z s, A",
+      "B": "Część z s w liczniku kawałka kwadratowego, B",
+      "C": "Stała część licznika kawałka kwadratowego, C",
+      "status": "Ustala się na A = {A}: kawałek z s to jedyny, który zostaje na stałe. Licznik wielkiego ułamka ma liczby {top}.",
+      "describe": "A = {A}, B = {B}, C = {C}.",
+      "help": "Przesuwaj A, B i C. Każdy kawałek to jeden wiersz naszej tabelki, a suma to cała odpowiedź."
     }
   },
   "plays": {

@@ -302,43 +302,29 @@
         },
         {
           "t": "p",
-          "text": "Here is the missing algebra. Moving the slope from $f$ onto the shrinking probe is called **integration by parts**. The bracket $\\big[\\,\\cdot\\,\\big]_0^\\infty$ means \"value at the far end minus value at the start\". If the weighted signal fades away at the far end (the same condition as before: $s$ must beat the signal's growth), the only edge left is its starting value:"
+          "text": "Here is the missing algebra, as a picture. A product changes for two reasons. $f$ changes while the probe holds still, and the probe changes while $f$ holds still. Picture a rectangle with sides $f$ and $e^{-st}$: it grows along one side, then along the other. This move has a name: **integration by parts**."
         },
         {
           "t": "math",
-          "tex": "\\begin{aligned} \\int_0^\\infty f'(t)e^{-st}\\,dt &= \\big[f(t)e^{-st}\\big]_0^\\infty \\\\ &\\quad + s\\!\\int_0^\\infty f(t)e^{-st}\\,dt \\\\ &= -f(0)+sF(s) \\end{aligned}"
+          "tex": "\\big(f\\,e^{-st}\\big)' = f'\\,e^{-st} - s\\,f\\,e^{-st}"
         },
         {
-          "t": "callout",
-          "title": "Area undoes slope, even for a product",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "A product changes for two reasons. $f$ changes while the probe holds still, and the probe changes while $f$ holds still. Picture a rectangle with sides $f$ and $e^{-st}$: it grows along one side, then along the other."
-            },
-            {
-              "t": "math",
-              "tex": "\\big(f\\,e^{-st}\\big)' = f'\\,e^{-st} - s\\,f\\,e^{-st}"
-            },
-            {
-              "t": "p",
-              "text": "Add up those changes from 0 to ∞ (Chapter 3: area undoes slope) and you get the value at the end minus the value at the start:"
-            },
-            {
-              "t": "math",
-              "tex": "\\big[f\\,e^{-st}\\big]_0^\\infty = \\int_0^\\infty f'\\,e^{-st}\\,dt - s\\,F(s)"
-            },
-            {
-              "t": "p",
-              "text": "At the far end the probe has squashed everything to zero, so the left side is just $0 - f(0)$. Move $s\\,F(s)$ across and there's the rule."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "happy",
-              "text": "So $f(0)$ isn't a fudge. It's the rectangle we started with."
-            }
-          ]
+          "t": "p",
+          "text": "Add up those changes from 0 to ∞ (Chapter 3: area undoes slope) and you get the value at the end minus the value at the start. That is what the bracket $\\big[\\,\\cdot\\,\\big]_0^\\infty$ means:"
+        },
+        {
+          "t": "math",
+          "tex": "\\big[f\\,e^{-st}\\big]_0^\\infty = \\int_0^\\infty f'\\,e^{-st}\\,dt - s\\,F(s)"
+        },
+        {
+          "t": "p",
+          "text": "At the far end the probe has squashed everything to zero (as long as $s$ beats the signal's growth), so the left side is just $0 - f(0)$. Move $s\\,F(s)$ across and there's the rule."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "So $f(0)$ isn't a fudge. It's the rectangle we started with."
         },
         {
           "t": "p",
@@ -402,6 +388,66 @@
       ]
     },
     {
+      "id": "pieces",
+      "title": "Undoing a common denominator",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Every answer we'll get comes out as one big fraction. But our table only knows small ones: $\\frac1s$, $\\frac{1}{s-a}$, the sines. How do we break a big fraction into table pieces?"
+        },
+        {
+          "t": "p",
+          "text": "At school you added fractions by finding a common bottom. Here we go **backwards**: start from one fraction and find the small pieces that add up to it. That is called splitting into **partial fractions**:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{1}{s} + \\frac{1}{s+2} = \\frac{2s + 2}{s\\,(s+2)} \\qquad\\text{so}\\qquad \\frac{2s+2}{s\\,(s+2)} = \\frac{A}{s} + \\frac{B}{s+2}"
+        },
+        {
+          "t": "p",
+          "text": "What goes on top of each piece? **One unknown for every power of $s$ in its bottom.** A bottom like $s$ or $s + 2$ gets a plain number. A quadratic bottom like $s^2 + 2s + 5$ gets $B\\,s + C$: two unknowns, because a quadratic has room for two."
+        },
+        {
+          "t": "widget",
+          "id": "pieces"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Each slider moves one piece, and the pieces just add up in time too. The $A$ piece is a step; the quadratic piece is a wiggle that dies away. And the big fraction on the right is what they add up to."
+        },
+        {
+          "t": "p",
+          "text": "Finding the numbers has a shortcut for the first-power pieces, the **cover-up trick**. Multiply by the piece's bottom, then set $s$ to the value that makes it zero: every other piece vanishes and only its top is left."
+        },
+        {
+          "t": "math",
+          "tex": "A = \\Big[s \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=0} = \\frac{2}{2} = 1, \\qquad B = \\Big[(s+2) \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=-2} = \\frac{-2}{-2} = 1"
+        },
+        {
+          "t": "p",
+          "text": "A quadratic bottom needs one more move before the table can read it: push it into the shape $(s + \\sigma)^2 + \\omega^2$ by **completing the square**, halving the middle number and squaring it. So $s^2 + 2s + 5 = (s + 1)^2 + 4$: a decaying cosine and sine with $\\sigma = 1$ and $\\omega = 2$."
+        },
+        {
+          "t": "callout",
+          "title": "Complex pieces come in twins",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Split the quadratic further and you meet its two roots, a mirror pair $p$ and $\\bar p$. Their tops are mirror twins too, $B$ and $\\bar B$. Back in time that's Chapter 5's twins, so the sideways parts cancel: the sum is one real, shrinking cosine that starts at the angle of $B$ (Chapter 6's arrows)."
+            },
+            {
+              "t": "math",
+              "tex": "\\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\;\\Longrightarrow\\; B\\,e^{pt} + \\bar B\\,e^{\\bar p t} = 2|B|\\,e^{\\sigma t}\\cos\\!\\big(\\omega t + \\angle B\\big)"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "solve",
       "title": "Solving the drone with algebra",
       "blocks": [
@@ -441,7 +487,7 @@
         },
         {
           "t": "p",
-          "text": "**Step 3:** split it into pieces that appear in our table (*partial fractions*: undoing the \"common denominator\" step from school):"
+          "text": "**Step 3:** split it into table pieces, as in the section above: one number on top of the $s$ piece, and $B s + C$ on top of the quadratic one:"
         },
         {
           "t": "math",
@@ -515,7 +561,7 @@
           "blocks": [
             {
               "t": "p",
-              "text": "The second piece isn't in our table yet: its bottom is a plain quadratic. Push it into the shape $(s+\\sigma)^2 + \\omega^2$ (Chapter 6's completing the square) and it matches the decaying-sine rows exactly. The top splits the same way, one part for the cosine row and one for the sine row:"
+              "text": "The second piece isn't in our table yet: its bottom is a plain quadratic. Push it into the shape $(s+\\sigma)^2 + \\omega^2$ (completing the square, as in the section above) and it matches the decaying-sine rows exactly. The top splits the same way, one part for the cosine row and one for the sine row:"
             },
             {
               "t": "math",
@@ -613,6 +659,7 @@
             "It **explodes exactly where the signal lives**: $e^{at}$ gives $1/(s-a)$, which blows up at $s = a$. For complex $s$ the probe unspins spinning signals. We plot all of this on the **s-plane**.",
             "Slopes become multiplication: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. The $f(0)$ remembers where the signal started. Forget it and your answer starts in the wrong place.",
             "We derived our own table: $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$, and the shifted version for decaying sines. Areas scale and add, so we can transform an equation term by term.",
+            "Big fractions split into **partial fractions**: one unknown per power of $s$ in each bottom, found with the cover-up trick. A quadratic bottom becomes a shrinking cosine and sine.",
             "Transform, do algebra, split into table pieces, read off the answer. The $A/s$ piece is where the drone settles, droop and all. It matches the simulation exactly, **as long as you keep the starting values**."
           ]
         },
@@ -861,6 +908,20 @@
       "hidden": "From the ground the missing terms are zero, so the mistake hides. Put the drone on a ledge to catch it.",
       "fixed": "The −h(0) terms are back in Steps 1 and 2 above.",
       "rk4": "The simulation takes 1 ms steps, like Chapter 4's tiny steps, but each step peeks four times to aim better. People call that recipe RK4."
+    },
+    "pieces": {
+      "title": "Pieces and their sum",
+      "y": "value",
+      "stepPiece": "A/s piece: a step",
+      "wigglePiece": "(Bs + C)/(s² + 2s + 5) piece: a fading wiggle",
+      "sum": "their sum",
+      "plotAria": "The step piece, the fading wiggle piece and their sum over time.",
+      "A": "Top of the s piece, A",
+      "B": "The s part of the quadratic top, B",
+      "C": "The plain part of the quadratic top, C",
+      "status": "It settles at A = {A}: the s piece is the only one that lasts. The big fraction's top has the numbers {top}.",
+      "describe": "A = {A}, B = {B}, C = {C}.",
+      "help": "Slide A, B and C. Each piece is one row of our table; the sum is the whole answer."
     }
   },
   "plays": {

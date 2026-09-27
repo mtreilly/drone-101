@@ -14,7 +14,7 @@ import { prefersReducedMotion } from '../../core/dom';
 import { Plot } from '../../ui/plot';
 import { niceTicks } from '../../ui/plot-layout';
 import { iconButton, mark, nameMathOptions, onInteractStart, sample } from '../ch06/helpers';
-import { DRAW_T, dampedCos, derivativeRule, fromFunction, fromPoints, solveDrone, spreadCount, unspinExtent, unspinIntegral, unspinLimit } from './tools';
+import { DRAW_T, combinedTop, dampedCos, derivativeRule, fromFunction, fromPoints, solveDrone, spreadCount, stepPiece, unspinExtent, unspinIntegral, unspinLimit, wigglePiece } from './tools';
 
 /** `osc`: the signal swings both ways, so for s ≤ a its area sloshes back and forth instead of running off. */
 type Sig = { f: (t: number) => number; F: (s: number) => number; a: number; yMin: number; yMax: number; osc?: boolean };
@@ -791,4 +791,72 @@ const solve: WidgetFactory = (host, ctx) => {
   return () => cancelAnimationFrame(morphing);
 };
 
-export const widgets: Record<string, WidgetFactory> = { probe, explode, unspin, derivRule, table: tableW, solve };
+/** 7c′: undoing a common denominator. Two table pieces, their sum in time, and the one fraction they add up to. */
+const pieces: WidgetFactory = (host, ctx) => {
+  const { t } = ctx;
+  mark(host);
+  let [A, B, C] = [1, -1, -1];
+  const T1 = 6;
+  host.append(h('p', { class: 'w-title' }, t('title')));
+  const eq = h('div', { class: 'math-block pieces-eq' });
+  host.append(eq);
+  const plot = new Plot(host, {
+    x: { label: tc('plots.time'), min: 0, max: T1 },
+    y: { label: t('y'), min: -1.5, max: 2.5 },
+    series: [
+      { id: 'step', color: 'ink2', label: t('stepPiece'), dash: [6, 4], width: 2 },
+      { id: 'wig', color: 'ink3', label: t('wigglePiece'), dash: [2, 4], width: 2 },
+      { id: 'sum', color: 'out', label: t('sum') },
+    ],
+    height: 230,
+    label: t('plotAria'),
+  }, ctx.onCleanup);
+  plot.setLines([{ kind: 'h', at: 0, color: 'ink3', dash: [2, 3], width: 1 }]);
+  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  const num = (v: number) => fmt(v, Number.isInteger(v) ? 0 : 1);
+  /** a polynomial in s as people write it: no zero terms, no "1 s", signs between terms */
+  const poly = (cs: number[]): string => {
+    const deg = cs.length - 1;
+    const terms = cs
+      .map((k, i) => ({ k, p: deg - i }))
+      .filter(({ k }) => k !== 0)
+      .map(({ k, p }, j) => {
+        const mag = Math.abs(k) === 1 && p > 0 ? '' : num(Math.abs(k));
+        const pow = p === 0 ? '' : p === 1 ? 's' : `s^${p}`;
+        const sign = k < 0 ? '-' : j ? '+' : '';
+        return `${sign} ${mag}${mag && pow ? '\\,' : ''}${pow}`;
+      });
+    return terms.length ? terms.join(' ').trim() : '0';
+  };
+  const say = () => {
+    const [a2, a1, a0] = combinedTop(A, B, C);
+    const text = t('status', { A: num(A), top: `${num(a2)}, ${num(a1)}, ${num(a0)}` });
+    if (status.textContent !== text) status.textContent = text;
+  };
+  const draw = () => {
+    const [a2, a1, a0] = combinedTop(A, B, C);
+    eq.innerHTML = tex(
+      `\\frac{${poly([A])}}{s} + \\frac{${poly([B, C])}}{s^2 + 2s + 5}\\;\\;\\longleftrightarrow\\;\\; \\frac{${poly([a2, a1, a0])}}{s\\,(s^2 + 2s + 5)}`,
+      true,
+    );
+    const step = stepPiece(A);
+    const wig = wigglePiece(B, C);
+    const d = sample(step, T1, 300);
+    plot.set('step', d.xs, d.ys);
+    const w = sample(wig, T1, 300);
+    plot.set('wig', w.xs, w.ys);
+    const u = sample((x) => step() + wig(x), T1, 300);
+    plot.set('sum', u.xs, u.ys);
+    plot.describe(t('describe', { A: num(A), B: num(B), C: num(C) }));
+  };
+  const mk = (key: string, v: number, set: (x: number) => void) =>
+    slider({ label: t(key), min: -2, max: 2, step: 0.5, value: v, onInput: (x) => (set(x), draw()), onSettle: say });
+  const sA = mk('A', A, (x) => (A = x));
+  const sB = mk('B', B, (x) => (B = x));
+  const sC = mk('C', C, (x) => (C = x));
+  host.append(h('div', { class: 'w-controls' }, sA.el, sB.el, sC.el), status, h('p', { class: 'w-help' }, t('help')));
+  draw();
+  say();
+};
+
+export const widgets: Record<string, WidgetFactory> = { probe, explode, unspin, derivRule, table: tableW, pieces, solve };

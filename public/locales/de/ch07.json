@@ -302,43 +302,29 @@
         },
         {
           "t": "p",
-          "text": "Hier ist die fehlende Rechnung. Die Steigung von $f$ auf die abklingende Sonde zu übertragen heißt **partielle Integration**. Die Klammer $\\big[\\,\\cdot\\,\\big]_0^\\infty$ bedeutet „Wert am fernen Ende minus Wert am Anfang“. Klingt das gewichtete Signal am fernen Ende ab (dieselbe Bedingung wie vorhin: $s$ muss das Wachstum des Signals schlagen), bleibt am Rand nur sein Anfangswert:"
+          "text": "Hier ist die fehlende Rechnung, als Bild. Ein Produkt ändert sich aus zwei Gründen. $f$ ändert sich, während die Sonde stillhält, und die Sonde ändert sich, während $f$ stillhält. Stell dir ein Rechteck mit den Seiten $f$ und $e^{-st}$ vor: Es wächst entlang der einen Seite, dann entlang der anderen. Dieser Schritt hat einen Namen: **partielle Integration**."
         },
         {
           "t": "math",
-          "tex": "\\begin{aligned} \\int_0^\\infty f'(t)e^{-st}\\,dt &= \\big[f(t)e^{-st}\\big]_0^\\infty \\\\ &\\quad + s\\!\\int_0^\\infty f(t)e^{-st}\\,dt \\\\ &= -f(0)+sF(s) \\end{aligned}"
+          "tex": "\\big(f\\,e^{-st}\\big)' = f'\\,e^{-st} - s\\,f\\,e^{-st}"
         },
         {
-          "t": "callout",
-          "title": "Fläche macht Steigung rückgängig, auch bei einem Produkt",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Ein Produkt ändert sich aus zwei Gründen. $f$ ändert sich, während die Sonde stillhält, und die Sonde ändert sich, während $f$ stillhält. Stell dir ein Rechteck mit den Seiten $f$ und $e^{-st}$ vor: Es wächst entlang der einen Seite, dann entlang der anderen."
-            },
-            {
-              "t": "math",
-              "tex": "\\big(f\\,e^{-st}\\big)' = f'\\,e^{-st} - s\\,f\\,e^{-st}"
-            },
-            {
-              "t": "p",
-              "text": "Summier diese Änderungen von 0 bis ∞ auf (Kapitel 3: Fläche macht Steigung rückgängig), und du bekommst den Wert am Ende minus den Wert am Anfang:"
-            },
-            {
-              "t": "math",
-              "tex": "\\big[f\\,e^{-st}\\big]_0^\\infty = \\int_0^\\infty f'\\,e^{-st}\\,dt - s\\,F(s)"
-            },
-            {
-              "t": "p",
-              "text": "Am fernen Ende hat die Sonde alles auf null gedrückt, also ist die linke Seite einfach $0 - f(0)$. Bring $s\\,F(s)$ auf die andere Seite, und da ist die Regel."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "happy",
-              "text": "$f(0)$ ist also kein Trick. Es ist das Rechteck, mit dem wir angefangen haben."
-            }
-          ]
+          "t": "p",
+          "text": "Summier diese Änderungen von 0 bis ∞ auf (Kapitel 3: Fläche macht Steigung rückgängig), und du bekommst den Wert am Ende minus den Wert am Anfang. Genau das bedeutet die Klammer $\\big[\\,\\cdot\\,\\big]_0^\\infty$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\big[f\\,e^{-st}\\big]_0^\\infty = \\int_0^\\infty f'\\,e^{-st}\\,dt - s\\,F(s)"
+        },
+        {
+          "t": "p",
+          "text": "Am fernen Ende hat die Sonde alles auf null gedrückt (solange $s$ das Wachstum des Signals schlägt), also ist die linke Seite einfach $0 - f(0)$. Bring $s\\,F(s)$ auf die andere Seite, und da ist die Regel."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "$f(0)$ ist also kein Trick. Es ist das Rechteck, mit dem wir angefangen haben."
         },
         {
           "t": "p",
@@ -402,6 +388,66 @@
       ]
     },
     {
+      "id": "pieces",
+      "title": "Einen Hauptnenner rückgängig machen",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Jede Antwort, die wir bekommen, kommt als ein großer Bruch heraus. Aber unsere Tabelle kennt nur kleine: $\\frac1s$, $\\frac{1}{s-a}$, die Sinusse. Wie zerlegen wir einen großen Bruch in Tabellenstücke?"
+        },
+        {
+          "t": "p",
+          "text": "In der Schule hast du Brüche addiert, indem du einen Hauptnenner gesucht hast. Hier gehen wir **rückwärts**: Wir starten mit einem Bruch und suchen die kleinen Stücke, die zusammen genau ihn ergeben. Das heißt **Partialbruchzerlegung**:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{1}{s} + \\frac{1}{s+2} = \\frac{2s + 2}{s\\,(s+2)} \\qquad\\text{so}\\qquad \\frac{2s+2}{s\\,(s+2)} = \\frac{A}{s} + \\frac{B}{s+2}"
+        },
+        {
+          "t": "p",
+          "text": "Was kommt in den Zähler jedes Stücks? **Eine Unbekannte für jede Potenz von $s$ in seinem Nenner.** Ein Nenner wie $s$ oder $s + 2$ bekommt eine schlichte Zahl. Ein quadratischer Nenner wie $s^2 + 2s + 5$ bekommt $B\\,s + C$: zwei Unbekannte, weil ein quadratisches Polynom Platz für zwei hat."
+        },
+        {
+          "t": "widget",
+          "id": "pieces"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Jeder Schieberegler bewegt ein Stück, und in der Zeit addieren sich die Stücke einfach auch. Das Stück $A$ ist ein Sprung, das quadratische Stück ist ein Wackeln, das ausstirbt. Und der große Bruch rechts ist das, was sie zusammen ergeben."
+        },
+        {
+          "t": "p",
+          "text": "Für die Stücke mit erster Potenz gibt es beim Finden der Zahlen eine Abkürzung, den **Zuhalte-Trick**. Multiplizier mit dem Nenner des Stücks und setz dann für $s$ den Wert ein, der ihn null macht: Jedes andere Stück verschwindet, und nur sein Zähler bleibt übrig."
+        },
+        {
+          "t": "math",
+          "tex": "A = \\Big[s \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=0} = \\frac{2}{2} = 1, \\qquad B = \\Big[(s+2) \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=-2} = \\frac{-2}{-2} = 1"
+        },
+        {
+          "t": "p",
+          "text": "Ein quadratischer Nenner braucht noch einen Handgriff, bevor die Tabelle ihn lesen kann: Bring ihn mit der **quadratischen Ergänzung** in die Form $(s + \\sigma)^2 + \\omega^2$, also die mittlere Zahl halbieren und quadrieren. So wird $s^2 + 2s + 5 = (s + 1)^2 + 4$: ein abklingender Kosinus und Sinus mit $\\sigma = 1$ und $\\omega = 2$."
+        },
+        {
+          "t": "callout",
+          "title": "Komplexe Stücke kommen als Zwillinge",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Zerleg das quadratische Polynom weiter, und du triffst seine zwei Nullstellen, ein Spiegelpaar $p$ und $\\bar p$. Ihre Zähler sind auch Spiegelzwillinge, $B$ und $\\bar B$. Zurück in der Zeit sind das die Zwillinge aus Kapitel 5, also heben sich die seitlichen Teile auf: Die Summe ist ein einziger reeller, schrumpfender Kosinus, der beim Winkel von $B$ startet (die Pfeile aus Kapitel 6)."
+            },
+            {
+              "t": "math",
+              "tex": "\\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\;\\Longrightarrow\\; B\\,e^{pt} + \\bar B\\,e^{\\bar p t} = 2|B|\\,e^{\\sigma t}\\cos\\!\\big(\\omega t + \\angle B\\big)"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "solve",
       "title": "Die Drohne mit Algebra lösen",
       "blocks": [
@@ -441,7 +487,7 @@
         },
         {
           "t": "p",
-          "text": "**Schritt 3:** Zerleg es in Stücke, die in unserer Tabelle stehen (*Partialbruchzerlegung*: der „Hauptnenner“-Schritt aus der Schule, nur rückwärts):"
+          "text": "**Schritt 3:** Zerleg es in Tabellenstücke, wie im Abschnitt oben: eine Zahl in den Zähler des $s$-Stücks und $B s + C$ in den Zähler des quadratischen:"
         },
         {
           "t": "math",
@@ -515,7 +561,7 @@
           "blocks": [
             {
               "t": "p",
-              "text": "Das zweite Stück steht noch nicht in unserer Tabelle: Sein Nenner ist ein schlichtes quadratisches Polynom. Bring es in die Form $(s+\\sigma)^2 + \\omega^2$ (die quadratische Ergänzung aus Kapitel 6), und es passt genau zu den Zeilen mit dem abklingenden Sinus. Der Zähler teilt sich genauso auf, ein Teil für die Kosinuszeile und einer für die Sinuszeile:"
+              "text": "Das zweite Stück steht noch nicht in unserer Tabelle: Sein Nenner ist ein schlichtes quadratisches Polynom. Bring es in die Form $(s+\\sigma)^2 + \\omega^2$ (quadratische Ergänzung, wie im Abschnitt oben), und es passt genau zu den Zeilen mit dem abklingenden Sinus. Der Zähler teilt sich genauso auf, ein Teil für die Kosinuszeile und einer für die Sinuszeile:"
             },
             {
               "t": "math",
@@ -613,6 +659,7 @@
             "Sie **explodiert genau dort, wo das Signal wohnt**: $e^{at}$ ergibt $1/(s-a)$, und das explodiert bei $s = a$. Bei komplexem $s$ dreht die Sonde drehende Signale zurück. All das zeichnen wir in die **s-Ebene**.",
             "Aus Steigungen wird Multiplikation: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. Das $f(0)$ merkt sich, wo das Signal angefangen hat. Vergiss es, und deine Antwort startet an der falschen Stelle.",
             "Wir haben unsere eigene Tabelle hergeleitet: $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$ und die verschobene Version für abklingende Sinusse. Flächen skalieren und addieren sich, also dürfen wir eine Gleichung Term für Term transformieren.",
+            "Große Brüche zerfallen per **Partialbruchzerlegung**: eine Unbekannte pro Potenz von $s$ in jedem Nenner, gefunden mit dem Zuhalte-Trick. Aus einem quadratischen Nenner wird ein schrumpfender Kosinus und Sinus.",
             "Transformieren, Algebra machen, in Tabellenstücke zerlegen, Antwort ablesen. Das Stück $A/s$ zeigt, wo sich die Drohne einpendelt, samt Durchhängen. Das passt exakt zur Simulation, **solange du die Startwerte mitnimmst**."
           ]
         },
@@ -861,6 +908,20 @@
       "hidden": "Vom Boden aus sind die fehlenden Terme null, also versteckt sich der Fehler. Setz die Drohne auf einen Sims, um ihn zu erwischen.",
       "fixed": "Die −h(0)-Terme sind oben in Schritt 1 und 2 zurück.",
       "rk4": "Die Simulation macht Schritte von 1 ms, wie die winzigen Schritte aus Kapitel 4, aber jeder Schritt schaut viermal hin, um besser zu zielen. Dieses Rezept nennt man RK4."
+    },
+    "pieces": {
+      "title": "Stücke und ihre Summe",
+      "y": "Wert",
+      "stepPiece": "Stück A/s: ein Sprung",
+      "wigglePiece": "Stück (Bs + C)/(s² + 2s + 5): ein abklingendes Wackeln",
+      "sum": "ihre Summe",
+      "plotAria": "Das Sprung-Stück, das abklingende Wackel-Stück und ihre Summe im Zeitverlauf.",
+      "A": "Zähler des s-Stücks, A",
+      "B": "Der s-Teil des quadratischen Zählers, B",
+      "C": "Der reine Zahlenteil des quadratischen Zählers, C",
+      "status": "Es pendelt sich bei A = {A} ein: Das s-Stück ist das einzige, das bleibt. Der Zähler des großen Bruchs hat die Zahlen {top}.",
+      "describe": "A = {A}, B = {B}, C = {C}.",
+      "help": "Schieb A, B und C. Jedes Stück ist eine Zeile unserer Tabelle; die Summe ist die ganze Antwort."
     }
   },
   "plays": {

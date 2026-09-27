@@ -164,3 +164,14 @@ export function spreadCount(xs: readonly number[], gap = 0.25): number {
   }
   return n;
 }
+
+/**
+ * The "pieces" widget's fraction A/s + (Bs + C)/(s² + 2s + 5) back in time. The bottom is
+ * (s + 1)² + 4, so the second piece is e^(−t)·(B cos 2t + (C − B)/2 · sin 2t): one number per power
+ * of s on top, and each piece one row of the table.
+ */
+export const PIECES_BOTTOM = [1, 2, 5] as const;
+export const stepPiece = (A: number) => (): number => A;
+export const wigglePiece = (B: number, C: number) => (t: number): number => Math.exp(-t) * (B * Math.cos(2 * t) + ((C - B) / 2) * Math.sin(2 * t));
+/** Top of the combined fraction over s(s² + 2s + 5): (A + B)s² + (2A + C)s + 5A. */
+export const combinedTop = (A: number, B: number, C: number): [number, number, number] => [A + B, 2 * A + C, 5 * A];
