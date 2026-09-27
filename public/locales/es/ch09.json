@@ -145,7 +145,7 @@
         },
         {
           "t": "p",
-          "text": "Ese es el error de Mika, y es muy común: la integral arregla la caída, pero añade **retraso**, y el retraso hace oscilar las cosas (eso nos lo enseñó la ducha). Necesitamos algo que empuje en contra de la *velocidad*."
+          "text": "Ese es el error de Mika, y es muy común: la integral arregla la caída, pero añade **retraso**, y el retraso hace oscilar las cosas (eso nos lo enseñó la ducha). Necesitamos algo que empuje en contra de la *velocidad*. (Según las matemáticas, sus oscilaciones deberían crecer para siempre. Se frenan en torno al medio metro solo porque el empuje llega a 0 N en cada oscilación: las hélices no pueden tirar hacia abajo, el límite del capítulo 8.)"
         }
       ]
     },
@@ -256,7 +256,7 @@
           "t": "say",
           "who": "theo",
           "mood": "surprised",
-          "text": "La gravedad ha *desaparecido* de la ecuación. Ese es el mata-caídas en forma de álgebra: a la altura final le da igual $mg$."
+          "text": "La gravedad ha *desaparecido* de la ecuación. Ese es el mata-caídas en forma de álgebra: a la altura final le da igual $mg$. Siempre que llegue a estabilizarse, claro. El dron de Mika con $K_i = 50$ nunca lo hizo."
         },
         {
           "t": "p",
@@ -272,7 +272,7 @@
           "blocks": [
             {
               "t": "p",
-              "text": "En el capítulo 7 una pendiente se convertía en «× s». Un área es lo contrario, así que se convierte en «÷ s». Escribe así el controlador, usa la propia receta del dron $P(s) = 1/(ms^2+cs)$ (entra empuje, sale altura) y busca los polos como en el capítulo 8. Quita los denominadores y sale la misma cúbica, sin tomar ni una sola pendiente:"
+              "text": "En el capítulo 7 una pendiente se convertía en «× s». Un área es lo contrario, así que se convierte en «÷ s». Escribe así el controlador, usa la propia receta del dron $P(s) = 1/(ms^2+cs)$ (entra empuje, sale altura) y busca los polos con la regla del lazo del capítulo 8, $1 + C\\,P = 0$. Quita los denominadores y sale la misma cúbica, sin tomar ni una sola pendiente:"
             },
             {
               "t": "math",

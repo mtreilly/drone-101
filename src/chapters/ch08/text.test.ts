@@ -1,8 +1,10 @@
+import { type C, add, c, div, mul, polyval } from '../../math/complex';
 import { stepMetrics } from '../../math/metrics';
 import { roots } from '../../math/poly';
 import { DRONE, DroneSim, HOVER_THRUST, defaultDroneConfig } from '../../sim/drone-model';
 import { RK4 } from '../../sim/integrator';
 import { limitRun, pd } from './limit';
+import { closest, lapAngle, loopZeta } from './loop';
 import { plays, zeroOvershoot } from './plays';
 import { budgetRadius, gainsFromPoles, noZeroResponse, recipeGain, stepFromPoles, zeroResponse } from './poles';
 
@@ -312,5 +314,47 @@ describe('chapter 8 text: recap and quiz', () => {
       const sim = new DroneSim(defaultDroneConfig({ pid: pd(g.kp, g.kd), h0: 1 }));
       expect(sim.thrust).toBeCloseTo(HOVER_THRUST + m * (re * re + im * im), 9);
     }
+  });
+});
+
+describe('chapter 8 text: closing the loop on paper', () => {
+  const P = (s: C) => div(c(1), c(m * (s.re * s.re - s.im * s.im) + DRONE.c * s.re, m * 2 * s.re * s.im + DRONE.c * s.im));
+  it('C·P/(1 + C·P) is the recipe Kp/(ms² + cs + Kp) at any s', () => {
+    for (const s of [c(0.3, 1.7), c(-2, 4), c(1.5, -0.5)]) {
+      const L = mul(c(20), P(s));
+      const closed = div(L, add(c(1), L));
+      const recipe = div(c(20), polyval([m, DRONE.c, 20], s));
+      expect(closed.re).toBeCloseTo(recipe.re, 12);
+      expect(closed.im).toBeCloseTo(recipe.im, 12);
+    }
+  });
+
+  it("June's multiply-along-the-line recipe has poles at 0 and −2: the open loop", () => {
+    const r = roots([m, DRONE.c, 0]).map((z) => z.re).sort((a, b) => a - b);
+    expect(r[0]).toBeCloseTo(-2, 12);
+    expect(r[1]).toBeCloseTo(0, 12);
+  });
+
+  it('a lap is turned back between 90° and 180° and never reaches −1, for any Kp', () => {
+    for (const kp of [1, 5, 20, 80]) {
+      for (let w = 0.05; w < 400; w *= 1.1) {
+        expect(lapAngle(kp, w)).toBeLessThan(-90);
+        expect(lapAngle(kp, w)).toBeGreaterThan(-180);
+      }
+      expect(closest(kp).d).toBeGreaterThan(0.1);
+    }
+  });
+
+  it('more Kp brings the lap closer to −1, near the drone’s own swing speed, with less damping', () => {
+    const ds = [2, 5, 10, 20, 40, 80].map((kp) => closest(kp).d);
+    ds.slice(1).forEach((d, i) => expect(d).toBeLessThan(ds[i]));
+    for (const kp of [5, 20, 80]) expect(Math.abs(closest(kp).w - Math.sqrt(kp / m)) / Math.sqrt(kp / m)).toBeLessThan(0.1);
+    expect(loopZeta(20)).toBeLessThan(loopZeta(5));
+  });
+
+  it('the lap sentence: Kp = 20 comes within 0.30 of −1 at about 6.5 rad/s, ζ = 0.16', () => {
+    expect(out('lap', 'd', { kp: 20 })).toBe('0.30');
+    expect(out('lap', 'w', { kp: 20 })).toBe('6.5');
+    expect(out('lap', 'z', { kp: 20 })).toBe('0.16');
   });
 });

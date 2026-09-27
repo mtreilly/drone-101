@@ -186,7 +186,7 @@
           "t": "say",
           "who": "june",
           "mood": "excited",
-          "text": "Cuando la sonda gira exactamente a 2, la señal deja de girar, todos los trocitos apuntan hacia el mismo lado y el total se dispara. Cuando no coinciden, las flechas se enroscan y se cancelan."
+          "text": "Cuando la sonda gira exactamente a 2, la señal deja de girar, todos los trocitos apuntan hacia el mismo lado y el total es lo más grande posible: $1/\\sigma$, que se dispara hacia el infinito cuando σ se encoge hasta 0. Cuando no coinciden, las flechas se enroscan y se cancelan."
         },
         {
           "t": "p",
@@ -381,6 +381,10 @@
           "text": "Y la última fila no necesitó trabajo nuevo: multiplicar por $e^{-\\sigma t}$ simplemente **desplaza** $s$ a $s+\\sigma$. Cuatro filas, todas deducidas, todas comprobadas."
         },
         {
+          "t": "note",
+          "text": "Un aviso honesto. El área solo existe a la derecha del ritmo más lento de la señal: para $e^{-t} + e^{-5t}$ se rinde en $s = -1$, mucho antes de $-5$. La fracción $\\frac{1}{s+1} + \\frac{1}{s+5}$ sigue tan tranquila y aun así explota en los dos puntos. A partir de aquí nos fiamos de la fracción en todas partes, incluso donde la máquina de áreas se rindió. Los matemáticos han comprobado que es seguro."
+        },
+        {
           "t": "p",
           "text": "Una regla más que hemos usado sin decirlo. La máquina de áreas es justa: haz una señal 3 veces más alta y cada rebanada de su área es 3 veces más alta, así que el área entera también. Suma dos señales y sus áreas se suman. Los matemáticos llaman a esto **linealidad**."
         },
@@ -465,13 +469,19 @@
             },
             {
               "t": "p",
-              "text": "Y $s\\,\\out{H}$ cerca de $s = 0$ es donde acaba el dron a la larga. La altura final sale directamente del álgebra, sin necesidad de simular."
+              "text": "Y $s\\,\\out{H}$ cerca de $s = 0$ es donde acaba el dron a la larga, si es que llega a estabilizarse. La altura final sale directamente del álgebra, sin necesidad de simular."
             },
             {
               "t": "say",
               "who": "mika",
               "mood": "surprised",
               "text": "Un momento. ¿Podemos leer dónde se *queda* sin resolver nada? Esto parece hacer trampa."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Es hacer trampa, salvo que todo lo demás se apague. Aquí los otros trozos son la oscilación propia del dron, y se extinguen, así que lo que queda es $A$. Si el denominador tuviera una raíz en la mitad derecha, $A/s$ seguiría estando en la fracción, pero un trozo que crece lo taparía y el dron nunca se estabilizaría en ningún sitio. El capítulo 8 enseña cómo comprobarlo."
             }
           ]
         },

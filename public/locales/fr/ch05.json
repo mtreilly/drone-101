@@ -148,7 +148,7 @@
         },
         {
           "t": "p",
-          "text": "C'est la règle pour tout ce qui est réel : les tourniquets viennent toujours par **paires miroirs**, donc leurs parties de côté s'annulent et il reste une vraie oscillation qu'on peut mesurer."
+          "text": "Pourquoi le jumeau est-il toujours là ? La règle du ressort ne contient que des nombres réels ($m$ et $k$, pas de $i$). Retourne une solution de haut en bas, en changeant chaque $i$ en $-i$, et la règle ne voit pas la différence : l'image miroir est aussi une solution. Donc pour tout ce qui est réel, les tourniquets viennent par **paires miroirs**, et ensemble leurs parties de côté s'annulent : il reste une vraie oscillation qu'on peut mesurer."
         }
       ]
     },
@@ -326,9 +326,9 @@
               "q": "Pourquoi les tourniquets d'une vraie oscillation physique viennent-ils toujours par paires miroirs ?",
               "options": [
                 {
-                  "text": "Pour que leurs parties de côté s'annulent et que la somme soit un nombre réel",
+                  "text": "La règle ne contient que des nombres réels, donc l'image miroir d'un tourniquet la résout aussi",
                   "correct": true,
-                  "why": "Un tourniquet et son jumeau ont des parties de côté égales et opposées. Additionnées, seule la partie « en avant » (une vraie oscillation) survit."
+                  "why": "Retourne $e^{i\\omega t}$ de haut en bas et tu obtiens $e^{-i\\omega t}$. Une règle sans $i$ ne peut pas les distinguer, donc les deux sont des solutions, et un vrai mouvement utilise les deux : leurs parties de côté s'annulent."
                 },
                 {
                   "text": "Parce que $i^2 = -1$",

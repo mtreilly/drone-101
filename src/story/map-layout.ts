@@ -58,6 +58,7 @@ export const NODES: Record<string, [number, number, number]> = {
   limits: [8, -30, -60],
   zeros: [8, -70, 105],
   stability: [8, 65, 75],
+  closedloop: [8, 50, 150],
   integralaction: [9, -45, -60],
   derivativeaction: [9, 55, 0],
   pid: [9, -35, 70],
@@ -136,6 +137,10 @@ export const EDGES: [string, string][] = [
   ['spin', 'bode'],
   ['phaselag', 'bode'],
   ['bode', 'margins'],
+  // one lap round the loop, C·P = −1: Ch 8's closed loop is Ch 10's cliff
+  ['blockdiagram', 'closedloop'],
+  ['closedloop', 'tf'],
+  ['closedloop', 'margins'],
   ['margins', 'robust'],
   ['stability', 'robust'],
   ['pid', 'robust'],

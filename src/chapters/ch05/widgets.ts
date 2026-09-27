@@ -6,7 +6,8 @@ import { readout, slider, toggle, transport } from '../../ui/controls';
 import { Loop } from '../../ui/loop';
 import { Plot } from '../../ui/plot';
 import { SPlane } from '../../ui/s-plane';
-import { type Item, type Pt, PlaneCanvas, SpiralCanvas } from './canvases';
+import { type Item, type Pt, PlaneCanvas } from '../../ui/plane-canvas';
+import { SpiralCanvas } from './canvases';
 import '../ch03/polish.css';
 import { shadow, spiralDuration, spiralPoint, squareWave, squareWavePartial } from './models';
 

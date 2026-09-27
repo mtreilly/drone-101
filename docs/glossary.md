@@ -203,6 +203,23 @@ pass; first used in ch06):
 |---|---|---|---|---|---|---|---|---|
 | sous-amorti / amortissement critique / sur-amorti | subamortiguado / con amortiguamiento crítico / sobreamortiguado | sottosmorzato / a smorzamento critico / sovrasmorzato | unterdämpft / kritisch gedämpft / überdämpft | niedotłumiony / tłumiony krytycznie / przetłumiony | subamortecido / criticamente amortecido / superamortecido | 不足減衰 / 臨界減衰 / 過減衰 | 欠阻尼 / 临界阻尼 / 过阻尼 | تحت التخميد / تخميد حرج / فوق التخميد |
 
+## Maths explanations pass
+
+Terms added by `docs/plans/maths-explanations.md`, phase by phase. The translators' full reports are
+summarised under "Open terminology questions" below.
+
+### Phase 2: closing the loop (ch08), delay and margins (ch10)
+
+| Term (definition) | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
+|---|---|---|---|---|---|---|---|---|---|
+| lap: one trip round the feedback loop, $C\,P$ (the loop gain's everyday name) | un tour (de boucle) | una vuelta (al lazo) | giro (dell'anello) | Runde (durch den Kreis) | okrążenie (pętli) | uma volta (pela malha) | 1周（ループ1周） | 绕回路一圈 / 一圈 | لفّة |
+| Map `closedloop` / ch08 section "Closing the loop on paper" | fermer la boucle | cerrar el lazo | chiudere l'anello | den Kreis schließen | zamykanie pętli | fechando a malha | ループを閉じる | 把回路闭合 | إغلاق الحلقة |
+| "P for plant": why the drone's own recipe is $P(s)$ | P comme **procédé** (ch01's « système ») | P de **planta** | P come *plant*, **impianto** | P für die Regelstrecke (englisch **plant**) | P od ang. *plant*, czyli **obiekt** | P de **planta** | 制御対象（プラント）のP | P（被控对象） | P من الكلمة الإنجليزية plant |
+| double dot: the two poles met at ζ = 1 (ch06) | point double | punto doble | puntino doppio | doppelter Punkt (not "Doppelpunkt") | podwójna kropka | ponto duplo | 二重の点 | 重根点 | نقطة مزدوجة |
+| reservoir feeding the ch03 tank (the tank keeps its old word) | grand bassin | gran embalse | serbatoio (vasca = tank) | Becken | rezerwuar | reservatório | 大きな貯水槽 | 大水库 | حوض كبير |
+
+Loop gain keeps its Chapter 10 term everywhere (see "Chapter 10" above); ch08 now introduces it.
+
 ## Cast gender and address
 
 | Locale | Mika | June | Theo | Reader |
@@ -340,3 +357,18 @@ engineering, then fix every string and move the entry to "Settled decisions".
 - RTL layout of the Arabic `\text{}` inside the ch10 formula `\frac{1}{i\omega}: …`; arrow direction
   in ch01's recap chain (ch10 uses ←).
 - Unit wording in play labels ("بالنيوتن لكل متر·ثانية").
+
+**Maths explanations pass, Phase 2** (from the translators' reports)
+- All: "lap" is an everyday coinage in every locale (textbooks say open-loop transfer function);
+  check it reads naturally next to "loop gain".
+- fr: « le tour passe à {d} de −1 » and « le frottement fait reculer un tour de 90° » read tight.
+- es: "vuelta" also means a rotation (media vuelta); ch08 avoids putting the two meanings together.
+  "embalse" may suggest a dam; "desbocar" for "tip over"; "saltarín" for bouncy.
+- it: "rotazione all'indietro" (ch10 turn-back by ωL); a reviewer may prefer "sfasamento".
+- de: "Kreisregel" (coinage, ch09), "Rundengröße/Rundenwinkel", "hüpfig" for bouncy.
+- pl: „okrążenie" as the everyday name for C·P; the "P od plant" sentence.
+- pt-BR: "ganho de malha" (glossary) vs. "ganho da malha" (ch11 prose); "saltitante".
+- ja: 二重の点, 弾みやすい, 1周 as a noun; ch05 スピナー vs. ch10 回転子 for the same spinner.
+- zh-CN: 把回路闭合 as a (verb-phrase) map label; 重根点; 爱弹跳.
+- ar: wiggle is تذبذب in ch08 prose but اهتزازة in ch10's "wiggle speed"; ch11 gust هبّة vs.
+  glossary عصفة; لفّة for lap.

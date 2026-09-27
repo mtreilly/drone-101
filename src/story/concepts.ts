@@ -162,10 +162,11 @@ export const CONCEPTS: Record<string, Concept> = {
   zeros: { builtIn: at(8, "zeros"), prereqs: ["poles"], node: "zeros" },
   limits: { builtIn: at(8, "limits"), prereqs: ["poles"], node: "limits" },
   closedLoop: {
-    builtIn: at(8, "loop"),
-    prereqs: ["tf", "blockdiagram"],
-    uses: [/1 ?\+ ?C\(s\)/, /1 ?\+ ?CG/, /1 ?\+ ?GC/],
-    defines: /\\frac\{C(\(s\))?\\?,?\s?G(\(s\))?\}\{1 ?\+/,
+    builtIn: at(8, 'loop'),
+    prereqs: ['tf', 'blockdiagram'],
+    node: 'closedloop',
+    uses: [/1 ?\+ ?C\(s\)/, /1 ?\+ ?C\\,P/],
+    defines: /\\frac\{C\\,P\}\{1 \+ C\\,P\}/,
   },
   // Chapter 9
   integralaction: {
@@ -225,8 +226,6 @@ export const KNOWN_GAPS: Record<string, string> = {
   spin: "Phase 5: e^{iθ} is quoted before it is built",
   arrows: "Phase 3: an arrow's length and angle, arctan and dividing are used, never built",
   partialFractions: "Phase 6: partial fractions are used without their reasons",
-  closedLoop: "Phase 2: 1 + C(s)P(s) = 0 appears without closed-loop algebra",
-  delayTf: "Phase 2: e^{−Ls} is argued from one line of the map",
   logScale:
     "Phase 7: log axes are explained as fitting a range, not as multiplying becoming adding",
 };

@@ -181,7 +181,7 @@
             "**Linke Hälfte = beruhigt sich, rechte Hälfte = explodiert.** Der Realteil $\\sigma$ ist die Schrumpf- oder Wachstumsrate von $e^{\\sigma t}$.",
             "**Weiter links = schneller.** Das Einschwingen dauert etwa $4/|\\sigma|$ Sekunden (die gestrichelten senkrechten Linien): die vier Zeitkonstanten aus Kapitel 6, denn $e^{-|\\sigma| t}$ liegt nach $\\ln 50/|\\sigma| \\approx 3{,}9/|\\sigma|$ Sekunden unter 2 %.",
             "**Weiter oben = wackeliger.** Die Höhe $\\omega$ ist die gedämpfte Eigenkreisfrequenz aus Kapitel 6, also dauert ein Wackler $2\\pi/\\omega$ Sekunden.",
-            "**Der Winkel bestimmt das Überschwingen.** Der Winkel $\\theta$ zur negativen reellen Achse liefert $\\zeta = \\cos\\theta$ (der Kreis aus Kapitel 6), und das Überschwingen ist $e^{-\\pi|\\sigma|/\\omega}$ (die gestrichelten Strahlen). Nahe der reellen Achse schwingt sie kaum über, nahe der senkrechten Achse stark."
+            "**Der Winkel bestimmt das Überschwingen.** Der Winkel $\\theta$ zur negativen reellen Achse liefert $\\zeta = \\cos\\theta$ (der Kreis aus Kapitel 6), und das Überschwingen ist $e^{-\\pi|\\sigma|/\\omega}$ (die gestrichelten Strahlen). Nahe der reellen Achse schwingt sie kaum über, nahe der senkrechten Achse stark. (Exakt für zwei Pole ohne Nullstelle, Start aus der Ruhe. Eine Nullstelle ändert das: Im nächsten Abschnitt macht eine aus 12 % dann 15 %.)"
           ]
         },
         {
@@ -282,7 +282,7 @@
             },
             {
               "term": "Dominanter Pol",
-              "def": "Der Pol, der der senkrechten Achse am nächsten liegt. Seine langsame Bewegung überdauert die anderen, also bestimmt er die Einschwingzeit."
+              "def": "Der Pol, der der senkrechten Achse am nächsten liegt. Seine langsame Bewegung überdauert die anderen, also bestimmt er meist die Einschwingzeit, außer eine Nullstelle sitzt fast direkt auf ihm (Kapitel 9 hat so eine)."
             }
           ]
         },
@@ -314,7 +314,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Auch der Zähler kann null werden. Diese Punkte heißen **Nullstellen**, gezeichnet als ○. Meist ändern sie, **wie stark** die Bewegung jedes Pols am Ausgang erscheint. Liegt eine Nullstelle genau auf einem Pol, kürzt sich der gemeinsame Faktor, und dieser Pol verschwindet aus diesem Rezept von Eingang zu Ausgang."
+          "text": "Auch der Zähler kann null werden. Diese Punkte heißen **Nullstellen**, gezeichnet als ○. Meist ändern sie, **wie stark** die Bewegung jedes Pols am Ausgang erscheint. Liegt eine Nullstelle genau auf einem Pol, kürzt sich der gemeinsame Faktor, und dieser Pol verschwindet aus diesem Rezept von Eingang zu Ausgang. Im System steckt er aber immer noch: Stups die Drohne auf anderem Weg an, mit einer Böe, und diese Bewegung ist wieder da. Das ist sehr wichtig, wenn der versteckte Pol rechts liegt."
         },
         {
           "t": "p",
@@ -470,6 +470,108 @@
       ]
     },
     {
+      "id": "loop",
+      "title": "Den Kreis auf dem Papier schließen",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "In Kapitel 1 haben wir den Kreis als Kästchen und Pfeile gezeichnet. Im s-Land **multipliziert** jedes Kästchen einfach. Können die Kästchen die Algebra für uns erledigen?"
+        },
+        {
+          "t": "p",
+          "text": "Gib jedem Kästchen sein Rezept. Der Regler ist $C(s)$, vorerst einfach $\\eff{K_p}$. Die Drohne allein, Schubänderung rein und Höhenänderung raus, ist $P(s) = \\frac{1}{ms^2 + cs}$: P für die Regelstrecke (englisch **plant**, das Wort aus Kapitel 1), nicht das P vom P-Regler. Sie kommt direkt aus der Gleichung der Drohne, genau wie das Rezept oben."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Ganz einfach. Der Wunsch geht durch den Regler, dann durch die Drohne. Entlang der Linie multiplizieren!"
+        },
+        {
+          "t": "math",
+          "tex": "\\Delta\\out{H} \\overset{?}{=} C\\,P\\,\\Delta\\sp{R} = \\frac{\\eff{K_p}}{ms^2 + cs}\\,\\Delta\\sp{R}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Pole bei 0 und −2? Gar kein Wackeln, und ein Pol bei 0, der nie zur Ruhe kommt. Das ist der offene Regelkreis aus Kapitel 1: der Drohne sagen, was sie tun soll, und nie hinschauen. Der Regler sieht den Wunsch gar nicht, June. Er sieht den **Fehler**."
+        },
+        {
+          "t": "p",
+          "text": "Der Pfeil von der Drohne zurück ist der ganze Sinn der Rückkopplung. Der Regler arbeitet mit $\\Delta\\sp{R} - \\Delta\\out{H}$, also taucht der Ausgang auf beiden Seiten auf. Sammle ihn und teile:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\Delta\\out{H} &= C\\,P\\,\\big(\\Delta\\sp{R} - \\Delta\\out{H}\\big) \\\\ \\Delta\\out{H}\\,\\big(1 + C\\,P\\big) &= C\\,P\\,\\Delta\\sp{R} \\\\ \\Delta\\out{H} &= \\frac{C\\,P}{1 + C\\,P}\\,\\Delta\\sp{R} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Setz $C = \\eff{K_p}$ und $P = 1/(ms^2+cs)$ ein und multipliziere dann Zähler und Nenner mit $ms^2 + cs$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{C\\,P}{1 + C\\,P} = \\frac{\\eff{K_p}/(ms^2+cs)}{1 + \\eff{K_p}/(ms^2+cs)} = \\frac{\\eff{K_p}}{ms^2 + cs + \\eff{K_p}}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Das ist das Rezept vom Anfang dieses Kapitels! Wir haben es zweimal bekommen: einmal aus der Gleichung der Drohne, einmal aus den Kästchen."
+        },
+        {
+          "t": "p",
+          "text": "Die Pole des Kreises liegen also dort, wo der Nenner $1 + C(s)\\,P(s)$ null ist. Das ist dasselbe wie $C\\,P = -1$. Lies $C\\,P$ als **eine Runde** durch den Kreis: was erst der Regler und dann die Drohne mit einem Signal machen. An einem Pol bringt eine Runde das Signal gleich groß und umgedreht zurück, und das Minuszeichen im Fehler dreht es wieder um. So hält es sich ganz ohne Wunsch von selbst am Laufen."
+        },
+        {
+          "t": "math",
+          "tex": "1 + C(s)\\,P(s) = 0 \\quad\\Longleftrightarrow\\quad C(s)\\,P(s) = -1"
+        },
+        {
+          "t": "p",
+          "text": "Probier es an einem gleichmäßigen Wackeln aus, $s = i\\omega$. Eine Runde macht aus dem Pfeil des Wacklers $C(i\\omega)\\,P(i\\omega)$: kürzer oder länger und zurückgedreht. Das Widget zeichnet diesen Pfeil für jedes Wackeltempo, dazu den Punkt −1, den er erreichen müsste."
+        },
+        {
+          "t": "widget",
+          "id": "loop"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Egal wie weit ich $\\eff{K_p}$ hochschiebe, die Kurve biegt sich Richtung −1, berührt den Punkt aber nie. Am nächsten kommt sie etwa beim eigenen Schwungtempo der Drohne."
+        },
+        {
+          "t": "p",
+          "text": "Und zwar deshalb: Die Luftreibung dreht eine Runde um bis zu 90° zurück, die Masse um bis zu weitere 90°, aber zusammen erreichen sie 180° erst bei unendlich schnellen Wacklern. P-Regelung allein kann diese Drohne also nie zum Kippen bringen. Ein größeres $\\eff{K_p}$ lässt die Runde nur **näher** an −1 vorbeilaufen, und näher heißt weniger Dämpfung: „mehr $K_p$, mehr Wackeln“ aus Kapitel 2, jetzt als Bild."
+        },
+        {
+          "t": "play",
+          "id": "lap",
+          "text": "Mit $\\eff{K_p}$ = {scrub|kp|eff} N/m kommt die Runde bis auf {calc|d} an −1 heran, bei etwa {calc|w} rad/s. Die Dämpfung des Kreises ist ζ = {calc|z}."
+        },
+        {
+          "t": "note",
+          "text": "Merk dir dieses Bild. In Kapitel 9 fügt der I-Knopf einen Haufen hinzu, weitere 90° Verzögerung, und die Kurve kann −1 endlich erreichen. In Kapitel 10 macht das Rohr der Dusche dasselbe, und die Runde $C\\,P$ bekommt einen eigenen Namen."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Geschlossener Regelkreis",
+              "def": "Ein Regler, der mit dem Fehler arbeitet, sodass der Ausgang in seinen eigenen Eingang zurückgeführt wird: $\\Delta H = \\frac{C\\,P}{1 + C\\,P}\\,\\Delta R$."
+            },
+            {
+              "term": "Kreisverstärkung $C(s)\\,P(s)$",
+              "def": "Was eine Runde durch den Kreis mit einem Signal macht. Die Pole des geschlossenen Regelkreises liegen dort, wo sie −1 ist."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "wrap",
       "title": "Was wir jetzt wissen",
       "blocks": [
@@ -481,6 +583,7 @@
             "Linke Hälfte = stabil, rechte Hälfte = explodiert. Weiter links = schneller (schwingt in etwa $4/|\\sigma|$ s ein, eine Faustregel), weiter oben = wackeliger (ein Wackler = $2\\pi/\\omega$ s), Winkel = Dämpfung $\\zeta$ = Überschwingen $e^{-\\pi|\\sigma|/\\omega}$. Der Pol, der der Achse am nächsten liegt, ist der Boss.",
             "Komplexe Pole kommen immer in Spiegelpaaren.",
             "**Nullstellen** (○) ändern, wie viel du von jedem Modus bekommst. Nahe am Ursprung geben sie einen Tritt dazu: das $1/|z|$-Fache der Steigung.",
+            "Schließ den Kreis auf dem Papier, und das Rezept ist $\\frac{C\\,P}{1 + C\\,P}$. Die Pole liegen dort, wo eine Runde durch den Kreis, $C\\,P$, gleich −1 ist.",
             "Der erste Schub ist $mg + m|p|^2$ bei einem Sprung um 1 m, also brauchen weit entfernte Pole Schub, den die Motoren nicht haben."
           ]
         },
@@ -682,6 +785,22 @@
       "capped": "Die Mathematik will {p} N; bei 20 N ist für die Motoren Schluss. Echtes Einschwingen {s} s, und kein „weiter links“ bringt es unter etwa {b} s.",
       "fantasy": "Ausgedachte Motoren liefern fröhlich {p} N. Schalte die Grenzen wieder ein.",
       "fine": "Im Bereich der Motoren: Mathematik und Wirklichkeit stimmen überein."
+    },
+    "loop": {
+      "title": "Einmal durch den Kreis",
+      "aria": "Eine Ebene mit dem markierten Punkt minus 1, der Kurve einer Runde durch den Kreis für jedes Wackeltempo und einem Pfeil zur Runde beim gewählten Tempo.",
+      "re": "Realteil",
+      "im": "Imaginärteil",
+      "kp": "Regler $K_p$",
+      "w": "Wackeltempo ω",
+      "lap": "C·P",
+      "cliff": "−1",
+      "size": "Rundengröße |C·P|",
+      "angle": "Rundenwinkel",
+      "distance": "Abstand zu −1",
+      "zeta": "Dämpfung ζ",
+      "status": "Am nächsten an −1: {d}, bei etwa {w} rad/s. Der Winkel bleibt über −180°, also kommt die Runde nie dort an. Dämpfung ζ = {z}.",
+      "help": "Schieb ω, um den Pfeil entlang der Kurve zu bewegen; schieb Kp, um die ganze Kurve zu strecken. Die gestrichelte Linie ist der Abstand zu −1."
     }
   },
   "plays": {
@@ -715,6 +834,9 @@
     "zeroKick": {
       "z": "Abstand der Nullstelle von 0",
       "pct": "{v} %"
+    },
+    "lap": {
+      "kp": "Proportionalverstärkung Kp, Newton pro Meter"
     }
   }
 }

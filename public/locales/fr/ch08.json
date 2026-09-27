@@ -181,7 +181,7 @@
             "**Moitié gauche = ça se calme, moitié droite = ça explose.** La partie réelle $\\sigma$ est le taux de rétrécissement ou de croissance de $e^{\\sigma t}$.",
             "**Plus à gauche = plus rapide.** Le temps de réponse vaut environ $4/|\\sigma|$ secondes (les lignes verticales en tirets) : les quatre constantes de temps du chapitre 6, car $e^{-|\\sigma| t}$ passe sous 2 % après $\\ln 50/|\\sigma| \\approx 3{,}9/|\\sigma|$ secondes.",
             "**Plus haut = plus oscillant.** La hauteur $\\omega$ est la pseudo-pulsation du chapitre 6, donc une oscillation dure $2\\pi/\\omega$ secondes.",
-            "**L'angle fixe le dépassement.** L'angle $\\theta$ mesuré depuis l'axe réel négatif donne $\\zeta = \\cos\\theta$ (le cercle du chapitre 6), et le dépassement vaut $e^{-\\pi|\\sigma|/\\omega}$ (les rayons en tirets). Près de l'axe réel, ça dépasse à peine ; près de l'axe vertical, beaucoup."
+            "**L'angle fixe le dépassement.** L'angle $\\theta$ mesuré depuis l'axe réel négatif donne $\\zeta = \\cos\\theta$ (le cercle du chapitre 6), et le dépassement vaut $e^{-\\pi|\\sigma|/\\omega}$ (les rayons en tirets). Près de l'axe réel, ça dépasse à peine ; près de l'axe vertical, beaucoup. (C'est exact pour deux pôles sans zéro, en partant du repos. Un zéro change la donne : dans la section suivante, l'un d'eux fait passer 12 % à 15 %.)"
           ]
         },
         {
@@ -282,7 +282,7 @@
             },
             {
               "term": "Pôle dominant",
-              "def": "Le pôle le plus proche de l'axe vertical. Son mouvement lent dure plus longtemps que les autres, donc c'est lui qui fixe le temps de réponse."
+              "def": "Le pôle le plus proche de l'axe vertical. Son mouvement lent dure plus longtemps que les autres, donc c'est en général lui qui fixe le temps de réponse, sauf si un zéro est posé presque sur lui (le chapitre 9 en a un)."
             }
           ]
         },
@@ -314,7 +314,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Le numérateur peut s'annuler lui aussi. Ces points sont les **zéros**, dessinés par des ○. En général, ils changent **la quantité** de chaque mouvement de pôle qui apparaît dans la sortie. Si un zéro tombe exactement sur un pôle, le facteur commun se simplifie et ce pôle disparaît de cette recette entrée-sortie."
+          "text": "Le numérateur peut s'annuler lui aussi. Ces points sont les **zéros**, dessinés par des ○. En général, ils changent **la quantité** de chaque mouvement de pôle qui apparaît dans la sortie. Si un zéro tombe exactement sur un pôle, le facteur commun se simplifie et ce pôle disparaît de cette recette entrée-sortie. Il est pourtant toujours dans le système : pousse le drone autrement, avec une rafale, et ce mouvement revient. C'est très important si le pôle caché est à droite."
         },
         {
           "t": "p",
@@ -470,6 +470,108 @@
       ]
     },
     {
+      "id": "loop",
+      "title": "Fermer la boucle sur le papier",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Au chapitre 1, on a dessiné la boucle avec des boîtes et des flèches. Dans le monde de s, chaque boîte se contente de **multiplier**. Est-ce que les boîtes peuvent faire l'algèbre à notre place ?"
+        },
+        {
+          "t": "p",
+          "text": "Donne sa recette à chaque boîte. Le correcteur, c'est $C(s)$, pour l'instant simplement $\\eff{K_p}$. Le drone tout seul, changement de poussée en entrée et changement de hauteur en sortie, c'est $P(s) = \\frac{1}{ms^2 + cs}$ : P comme **procédé**, le « système » du chapitre 1, et pas le P de la commande P. Il sort tout droit de l'équation du drone, de la même façon que la recette plus haut."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Facile. La demande passe par le correcteur, puis par le drone. On multiplie le long de la ligne !"
+        },
+        {
+          "t": "math",
+          "tex": "\\Delta\\out{H} \\overset{?}{=} C\\,P\\,\\Delta\\sp{R} = \\frac{\\eff{K_p}}{ms^2 + cs}\\,\\Delta\\sp{R}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Des pôles en 0 et en −2 ? Aucune oscillation, et un pôle en 0 qui ne se stabilise jamais. C'est la boucle ouverte du chapitre 1 : dire au drone quoi faire sans jamais regarder. Le correcteur ne voit pas la demande, June. Il voit l'**erreur**."
+        },
+        {
+          "t": "p",
+          "text": "La flèche qui revient du drone, c'est tout l'intérêt de la rétroaction. Le correcteur agit sur $\\Delta\\sp{R} - \\Delta\\out{H}$, donc la sortie apparaît des deux côtés. Regroupe-la, puis divise :"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\Delta\\out{H} &= C\\,P\\,\\big(\\Delta\\sp{R} - \\Delta\\out{H}\\big) \\\\ \\Delta\\out{H}\\,\\big(1 + C\\,P\\big) &= C\\,P\\,\\Delta\\sp{R} \\\\ \\Delta\\out{H} &= \\frac{C\\,P}{1 + C\\,P}\\,\\Delta\\sp{R} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Pose $C = \\eff{K_p}$ et $P = 1/(ms^2+cs)$, puis multiplie le haut et le bas par $ms^2 + cs$ :"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{C\\,P}{1 + C\\,P} = \\frac{\\eff{K_p}/(ms^2+cs)}{1 + \\eff{K_p}/(ms^2+cs)} = \\frac{\\eff{K_p}}{ms^2 + cs + \\eff{K_p}}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "C'est la recette du début du chapitre ! On l'a obtenue deux fois : une fois à partir de l'équation du drone, une fois à partir des boîtes."
+        },
+        {
+          "t": "p",
+          "text": "Donc les pôles de la boucle sont là où le dénominateur, $1 + C(s)\\,P(s)$, s'annule. C'est la même chose que $C\\,P = -1$. Lis $C\\,P$ comme **un tour** de boucle : ce que le correcteur, puis le drone, font subir à un signal. En un pôle, un tour ramène le signal à la même taille mais retourné, et le signe moins de l'erreur le retourne à nouveau. Donc il s'entretient tout seul, sans aucune demande."
+        },
+        {
+          "t": "math",
+          "tex": "1 + C(s)\\,P(s) = 0 \\quad\\Longleftrightarrow\\quad C(s)\\,P(s) = -1"
+        },
+        {
+          "t": "p",
+          "text": "Essaie sur une oscillation régulière, $s = i\\omega$. Un tour transforme la flèche de l'oscillation en $C(i\\omega)\\,P(i\\omega)$ : plus courte ou plus longue, et tournée en arrière. Le widget dessine cette flèche pour chaque vitesse d'oscillation, ainsi que le point −1 qu'elle devrait atteindre."
+        },
+        {
+          "t": "widget",
+          "id": "loop"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "J'ai beau pousser $\\eff{K_p}$ très loin, la courbe se penche vers −1 sans jamais le toucher. Elle s'en approche le plus vers la vitesse d'oscillation propre du drone."
+        },
+        {
+          "t": "p",
+          "text": "Voilà pourquoi. Le frottement fait reculer un tour de 90° au maximum, et la masse d'encore 90° au maximum, mais ensemble ils n'atteignent 180° que pour des oscillations infiniment rapides. Donc la commande P seule ne peut jamais faire basculer ce drone. Un $\\eff{K_p}$ plus grand fait seulement passer le tour **plus près** de −1, et plus près veut dire moins d'amortissement : le « plus de $K_p$, plus d'oscillations » du chapitre 2, maintenant en image."
+        },
+        {
+          "t": "play",
+          "id": "lap",
+          "text": "Avec $\\eff{K_p}$ = {scrub|kp|eff} N/m, le tour passe à {calc|d} de −1, vers {calc|w} rad/s. L'amortissement de la boucle vaut ζ = {calc|z}."
+        },
+        {
+          "t": "note",
+          "text": "Garde cette image en tête. Au chapitre 9, le bouton I ajoute un tas, soit encore 90° de retard, et la courbe peut enfin atteindre −1. Au chapitre 10, le tuyau de la douche fait la même chose, et le tour $C\\,P$ reçoit son propre nom."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Boucle fermée",
+              "def": "Un correcteur qui agit sur l'erreur, si bien que la sortie revient dans sa propre entrée : $\\Delta H = \\frac{C\\,P}{1 + C\\,P}\\,\\Delta R$."
+            },
+            {
+              "term": "Gain de boucle $C(s)\\,P(s)$",
+              "def": "Ce qu'un tour de boucle fait subir à un signal. Les pôles de la boucle fermée sont là où il vaut −1."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "wrap",
       "title": "Ce qu'on sait maintenant",
       "blocks": [
@@ -481,6 +583,7 @@
             "Moitié gauche = stable, moitié droite = ça explose. Plus à gauche = plus rapide (temps de réponse d'environ $4/|\\sigma|$ s, une règle empirique), plus haut = plus oscillant (une oscillation = $2\\pi/\\omega$ s), angle = amortissement $\\zeta$ = dépassement $e^{-\\pi|\\sigma|/\\omega}$. Le pôle le plus proche de l'axe commande.",
             "Les pôles complexes viennent toujours par paires miroirs.",
             "Les **zéros** (○) changent la quantité de chaque mode qu'on obtient. Près de l'origine, ils ajoutent un coup de fouet : $1/|z|$ fois la pente.",
+            "Ferme la boucle sur le papier et la recette devient $\\frac{C\\,P}{1 + C\\,P}$. Les pôles sont là où un tour de boucle, $C\\,P$, vaut −1.",
             "La première poussée vaut $mg + m|p|^2$ pour un échelon de 1 m, donc des pôles lointains réclament une poussée que les moteurs n'ont pas."
           ]
         },
@@ -682,6 +785,22 @@
       "capped": "Les maths veulent {p} N ; les moteurs s'arrêtent à 20 N. Temps de réponse réel {s} s, et aller « plus à gauche » ne le fera jamais descendre sous environ {b} s.",
       "fantasy": "Des moteurs imaginaires livrent joyeusement {p} N. Réactive les limites.",
       "fine": "Dans la plage des moteurs : maths et réalité sont d'accord."
+    },
+    "loop": {
+      "title": "Un tour de boucle",
+      "aria": "Un plan où le point moins 1 est marqué, la courbe d'un tour de boucle pour chaque vitesse d'oscillation, et une flèche vers le tour à la vitesse choisie.",
+      "re": "partie réelle",
+      "im": "partie imaginaire",
+      "kp": "Correcteur $K_p$",
+      "w": "Vitesse d'oscillation ω",
+      "lap": "C·P",
+      "cliff": "−1",
+      "size": "taille du tour |C·P|",
+      "angle": "angle du tour",
+      "distance": "distance à −1",
+      "zeta": "amortissement ζ",
+      "status": "Au plus près de −1 : {d}, vers {w} rad/s. L'angle reste au-dessus de −180°, donc le tour n'y arrive jamais. Amortissement ζ = {z}.",
+      "help": "Fais glisser ω pour déplacer la flèche le long de la courbe ; fais glisser Kp pour étirer toute la courbe. Le trait en tirets, c'est la distance à −1."
     }
   },
   "plays": {
@@ -715,6 +834,9 @@
     "zeroKick": {
       "z": "distance du zéro à 0",
       "pct": "{v} %"
+    },
+    "lap": {
+      "kp": "gain proportionnel Kp, en newtons par mètre"
     }
   }
 }

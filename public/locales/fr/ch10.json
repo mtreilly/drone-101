@@ -92,7 +92,37 @@
         },
         {
           "t": "note",
-          "text": "C'est la flèche tournante du chapitre 5. Retarder le tourniquet de $L$ donne $e^{i\\omega(t-L)} = e^{-i\\omega L}\\,e^{i\\omega t}$ : la même flèche, tournée en arrière de l'angle $\\omega L$. Avec $s = i\\omega$, ce facteur vaut $e^{-Ls}$ : voilà pourquoi la fonction de transfert d'un retard pur est $e^{-Ls}$."
+          "text": "C'est la flèche tournante du chapitre 5. Retarder le tourniquet de $L$ donne $e^{i\\omega(t-L)} = e^{-i\\omega L}\\,e^{i\\omega t}$ : la même flèche, tournée en arrière de l'angle $\\omega L$."
+        },
+        {
+          "t": "callout",
+          "title": "La sonde voit le retard",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "La sonde du chapitre 7 donne le même facteur pour **n'importe quel** signal, pas seulement pour un tourniquet. Un signal qui arrive $L$ secondes en retard commence à accumuler de l'aire $L$ secondes en retard, et d'ici là, la sonde a déjà rétréci de $e^{-sL}$. Avant son arrivée, le signal en retard vaut zéro, donc on pose $u = t - L$ :"
+            },
+            {
+              "t": "math",
+              "tex": "\\int_0^\\infty f(t-L)\\,e^{-st}\\,dt = \\int_0^\\infty f(u)\\,e^{-s(u+L)}\\,du = e^{-sL}\\,F(s)"
+            },
+            {
+              "t": "p",
+              "text": "Donc un retard pur multiplie chaque transformée par $e^{-sL}$. C'est sa fonction de transfert, et sur la droite $s = i\\omega$, c'est exactement la rotation en arrière de $\\omega L$ vue plus haut."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Mais $e^{-sL}$ n'est pas une fraction de polynômes. Où sont ses pôles ?"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "think",
+              "text": "Nulle part où on pourrait les énumérer. Mets-le dans une boucle et $1 + C\\,P = 0$ a une infinité de solutions. Voilà pourquoi ce chapitre arrête de dessiner des cartes de pôles et mesure plutôt des oscillations."
+            }
+          ]
         }
       ]
     },
@@ -137,7 +167,7 @@
         },
         {
           "t": "p",
-          "text": "Le lisseur rétrécit les oscillations rapides, pendant que le tuyau continue d'ajouter du déphasage. Ces courbes de gain et de phase en fonction de la vitesse d'oscillation forment un **diagramme de Bode**. Ensemble, elles sont la **réponse en fréquence** de la douche : la façon dont elle traite chaque vitesse d'oscillation. Ici, l'entrée est la **température de l'eau mélangée**, donc les oscillations lentes ont un gain de 1. Si on prenait la fraction de robinet comme entrée, le gain serait 45 fois plus grand. Pour obtenir la réponse en fréquence à partir de la formule, on pose $s = i\\omega$ : la même astuce qui a trouvé le bord au chapitre 9."
+          "text": "Le lisseur rétrécit les oscillations rapides, pendant que le tuyau continue d'ajouter du déphasage. Ces courbes de gain et de phase en fonction de la vitesse d'oscillation forment un **diagramme de Bode**. Ensemble, elles sont la **réponse en fréquence** de la douche : la façon dont elle traite chaque vitesse d'oscillation. Ici, l'entrée est la **température de l'eau mélangée**, donc les oscillations lentes ont un gain de 1. Si on prenait la fraction de robinet comme entrée, le gain serait 45 fois plus grand. Pour obtenir la réponse en fréquence à partir de la formule, on pose $s = i\\omega$ : la même astuce qui a trouvé le bord au chapitre 9. (Ça marche parce que la douche toute seule est stable, donc ses oscillations se calent sur un rythme régulier qu'on peut mesurer.)"
         },
         {
           "t": "callout",
@@ -219,7 +249,7 @@
         },
         {
           "t": "p",
-          "text": "La rétroaction soustrait (erreur = cible − température). C'est un ×(−1), le demi-tour du chapitre 5 : la vague est retournée une fois. Si le tour de la boucle la retarde *aussi* d'exactement 180°, les deux retournements s'annulent, et chaque correction arrive **parfaitement en rythme** avec l'oscillation, comme quand on pousse une balançoire pile au bon moment. Si la boucle rend la vague à sa taille d'origine (gain 1), l'oscillation s'entretient toute seule ; au-delà de 1, elle grandit."
+          "text": "La rétroaction soustrait (erreur = cible − température). C'est un ×(−1), le demi-tour du chapitre 5 : la vague est retournée une fois. Si le tour de la boucle la retarde *aussi* d'exactement 180°, les deux retournements s'annulent, et chaque correction arrive **parfaitement en rythme** avec l'oscillation, comme quand on pousse une balançoire pile au bon moment. Si la boucle rend la vague à sa taille d'origine (gain 1), l'oscillation s'entretient toute seule ; au-delà de 1, elle grandit. C'est encore le $1 + C\\,P = 0$ du chapitre 8, sur la droite $s = i\\omega$ : un tour qui revient retourné et à pleine taille, c'est $G_{\\circ}(i\\omega) = -1$."
         },
         {
           "t": "say",
@@ -261,7 +291,7 @@
             },
             {
               "t": "p",
-              "text": "Pour les boucles simples du chapitre 6, la marge de phase et le taux d'amortissement bougent ensemble. Environ 43° va avec ζ = 0,4 (25 % de dépassement), 52° avec ζ = 0,5 (16 %), et 59° avec ζ = 0,6 (moins de 10 %). Une marge de 45° à 60°, c'est le juste milieu ζ ≈ 0,4 à 0,6 du chapitre 6, mesuré en degrés. Avec un tuyau dans la boucle, c'est un bon repère, pas une loi exacte."
+              "text": "Pour les boucles simples du chapitre 6, la marge de phase et le taux d'amortissement bougent ensemble. Environ 43° va avec ζ = 0,4 (25 % de dépassement), 52° avec ζ = 0,5 (16 %), et 59° avec ζ = 0,6 (moins de 10 %). Ces paires sont exactes pour la boucle la plus simple du chapitre 6, $\\omega_n^2/\\big(s(s+2\\zeta\\omega_n)\\big)$. Donc une marge de 45° à 60° veut dire ζ ≈ 0,4 à 0,6 : plus rebondissant que le 0,7 à 1 du chapitre 6. C'est pourtant une cible courante, parce qu'une marge est aussi une distance de sécurité avant la falaise (de combien le modèle peut se tromper), pas seulement une promesse sur le dépassement. Avec un tuyau dans la boucle, c'est un bon repère, pas une loi exacte."
             }
           ]
         },

@@ -181,7 +181,7 @@
             "**Left half = calms down, right half = blows up.** The real part $\\sigma$ is the shrink or grow rate of $e^{\\sigma t}$.",
             "**Further left = faster.** Settling takes about $4/|\\sigma|$ seconds (the dashed vertical lines): Chapter 6's four time constants, since $e^{-|\\sigma| t}$ is below 2 % after $\\ln 50/|\\sigma| \\approx 3.9/|\\sigma|$ seconds.",
             "**Further up = more wiggly.** The height $\\omega$ is Chapter 6's damped frequency, so one wiggle takes $2\\pi/\\omega$ seconds.",
-            "**The angle sets the overshoot.** The angle $\\theta$ from the negative real axis gives $\\zeta = \\cos\\theta$ (Chapter 6's circle), and the overshoot is $e^{-\\pi|\\sigma|/\\omega}$ (the dashed rays). Near the real axis it barely overshoots, near the vertical axis a lot."
+            "**The angle sets the overshoot.** The angle $\\theta$ from the negative real axis gives $\\zeta = \\cos\\theta$ (Chapter 6's circle), and the overshoot is $e^{-\\pi|\\sigma|/\\omega}$ (the dashed rays). Near the real axis it barely overshoots, near the vertical axis a lot. (Exact for two poles and no zero, starting from rest. A zero changes it: in the next section one turns 12 % into 15 %.)"
           ]
         },
         {
@@ -282,7 +282,7 @@
             },
             {
               "term": "Dominant pole",
-              "def": "The pole nearest the vertical axis. Its slow motion outlasts the others, so it decides the settling time."
+              "def": "The pole nearest the vertical axis. Its slow motion outlasts the others, so it usually decides the settling time, unless a zero sits almost on top of it (Chapter 9 has one)."
             }
           ]
         },
@@ -314,7 +314,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "The numerator can be zero too. Those points are **zeros**, drawn as ○. Usually they change **how much** of each pole's motion appears in the output. If a zero sits exactly on a pole, the shared factor cancels and that pole disappears from this input-to-output recipe."
+          "text": "The numerator can be zero too. Those points are **zeros**, drawn as ○. Usually they change **how much** of each pole's motion appears in the output. If a zero sits exactly on a pole, the shared factor cancels and that pole disappears from this input-to-output recipe. It's still inside the system, though: nudge the drone some other way, with a gust, and that motion comes back. That matters a lot if the hidden pole is on the right."
         },
         {
           "t": "p",
@@ -470,6 +470,108 @@
       ]
     },
     {
+      "id": "loop",
+      "title": "Closing the loop on paper",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "In Chapter 1 we drew the loop as boxes and arrows. In s-land every box just **multiplies**. Can the boxes do the algebra for us?"
+        },
+        {
+          "t": "p",
+          "text": "Give each box its recipe. The controller is $C(s)$, for now simply $\\eff{K_p}$. The drone on its own, thrust change in and height change out, is $P(s) = \\frac{1}{ms^2 + cs}$: P for **plant**, Chapter 1's word, not the P of P control. It comes straight from the drone's equation, the same way as the recipe above."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Easy. The request goes through the controller, then the drone. Multiply along the line!"
+        },
+        {
+          "t": "math",
+          "tex": "\\Delta\\out{H} \\overset{?}{=} C\\,P\\,\\Delta\\sp{R} = \\frac{\\eff{K_p}}{ms^2 + cs}\\,\\Delta\\sp{R}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Poles at 0 and −2? No wiggle at all, and a pole at 0 that never settles. That's Chapter 1's open loop: tell the drone what to do and never look. The controller doesn't see the request, June. It sees the **error**."
+        },
+        {
+          "t": "p",
+          "text": "The arrow back from the drone is the whole point of feedback. The controller acts on $\\Delta\\sp{R} - \\Delta\\out{H}$, so the output turns up on both sides. Collect it, and divide:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\Delta\\out{H} &= C\\,P\\,\\big(\\Delta\\sp{R} - \\Delta\\out{H}\\big) \\\\ \\Delta\\out{H}\\,\\big(1 + C\\,P\\big) &= C\\,P\\,\\Delta\\sp{R} \\\\ \\Delta\\out{H} &= \\frac{C\\,P}{1 + C\\,P}\\,\\Delta\\sp{R} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Put in $C = \\eff{K_p}$ and $P = 1/(ms^2+cs)$, then multiply the top and the bottom by $ms^2 + cs$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{C\\,P}{1 + C\\,P} = \\frac{\\eff{K_p}/(ms^2+cs)}{1 + \\eff{K_p}/(ms^2+cs)} = \\frac{\\eff{K_p}}{ms^2 + cs + \\eff{K_p}}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "That's the recipe from the start of this chapter! We got it twice: once from the drone's equation, once from the boxes."
+        },
+        {
+          "t": "p",
+          "text": "So the loop's poles are where the bottom, $1 + C(s)\\,P(s)$, is zero. That is the same as $C\\,P = -1$. Read $C\\,P$ as **one lap** round the loop: what the controller and then the drone do to a signal. At a pole, a lap brings the signal back at the same size and flipped, and the minus sign in the error flips it back again. So it keeps itself going with no request at all."
+        },
+        {
+          "t": "math",
+          "tex": "1 + C(s)\\,P(s) = 0 \\quad\\Longleftrightarrow\\quad C(s)\\,P(s) = -1"
+        },
+        {
+          "t": "p",
+          "text": "Try it on a steady wiggle, $s = i\\omega$. One lap turns the wiggle's arrow into $C(i\\omega)\\,P(i\\omega)$: shorter or longer, and turned back. The widget draws that arrow for every wiggle speed, and the point −1 it would have to reach."
+        },
+        {
+          "t": "widget",
+          "id": "loop"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "However far I push $\\eff{K_p}$, the curve bends towards −1 but never touches it. It gets closest at about the drone's own swing speed."
+        },
+        {
+          "t": "p",
+          "text": "Here's why. The drag turns a lap back by up to 90°, and the mass by up to another 90°, but together they only reach 180° for infinitely fast wiggles. So P control alone can never tip this drone over. A bigger $\\eff{K_p}$ just makes the lap pass **closer** to −1, and closer means less damping: Chapter 2's \"more $K_p$, more wiggle\", now as a picture."
+        },
+        {
+          "t": "play",
+          "id": "lap",
+          "text": "With $\\eff{K_p}$ = {scrub|kp|eff} N/m, the lap comes within {calc|d} of −1, at about {calc|w} rad/s. The loop's damping is ζ = {calc|z}."
+        },
+        {
+          "t": "note",
+          "text": "Keep this picture. In Chapter 9 the I knob adds a pile, another 90° of lag, and the curve can reach −1 at last. In Chapter 10 the shower's pipe does the same, and the lap $C\\,P$ gets its own name."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Closed loop",
+              "def": "A controller that acts on the error, so the output feeds back into its own input: $\\Delta H = \\frac{C\\,P}{1 + C\\,P}\\,\\Delta R$."
+            },
+            {
+              "term": "Loop gain $C(s)\\,P(s)$",
+              "def": "What one lap round the loop does to a signal. The closed loop's poles are where it equals −1."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "wrap",
       "title": "What we know now",
       "blocks": [
@@ -481,6 +583,7 @@
             "Left half = stable, right half = explodes. Further left = faster (settles in about $4/|\\sigma|$ s, a rule of thumb), higher = wigglier (one wiggle = $2\\pi/\\omega$ s), angle = damping $\\zeta$ = overshoot $e^{-\\pi|\\sigma|/\\omega}$. The pole nearest the axis is the boss.",
             "Complex poles always come in mirror pairs.",
             "**Zeros** (○) change how much of each mode you get. Near the origin they add a kick: $1/|z|$ times the slope.",
+            "Close the loop on paper and the recipe is $\\frac{C\\,P}{1 + C\\,P}$. The poles are where one lap round the loop, $C\\,P$, equals −1.",
             "The first push is $mg + m|p|^2$ for a 1 m step, so far-away poles need thrust the motors don't have."
           ]
         },
@@ -682,6 +785,22 @@
       "capped": "The maths wants {p} N; the motors stop at 20 N. Real settling {s} s, and no amount of “further left” gets it under about {b} s.",
       "fantasy": "Imaginary motors happily deliver {p} N. Switch the limits back on.",
       "fine": "Within the motors' range: maths and reality agree."
+    },
+    "loop": {
+      "title": "Once around the loop",
+      "aria": "A plane with the point minus 1 marked, the curve of one lap round the loop for every wiggle speed, and an arrow to the lap at the chosen speed.",
+      "re": "real part",
+      "im": "imaginary part",
+      "kp": "Controller $K_p$",
+      "w": "Wiggle speed ω",
+      "lap": "C·P",
+      "cliff": "−1",
+      "size": "lap size |C·P|",
+      "angle": "lap angle",
+      "distance": "distance to −1",
+      "zeta": "damping ζ",
+      "status": "Closest to −1: {d}, at about {w} rad/s. The angle stays above −180°, so the lap never gets there. Damping ζ = {z}.",
+      "help": "Slide ω to move the arrow along the curve; slide Kp to stretch the whole curve. The dashed line is the distance to −1."
     }
   },
   "plays": {
@@ -715,6 +834,9 @@
     "zeroKick": {
       "z": "distance of the zero from 0",
       "pct": "{v}%"
+    },
+    "lap": {
+      "kp": "proportional gain Kp, newtons per metre"
     }
   }
 }

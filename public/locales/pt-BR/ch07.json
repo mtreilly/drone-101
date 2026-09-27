@@ -186,7 +186,7 @@
           "t": "say",
           "who": "june",
           "mood": "excited",
-          "text": "Quando a sonda gira exatamente a 2, o sinal para de girar, todas as peças apontam na mesma direção e o total dispara. Quando elas não coincidem, as setas se enrolam e se cancelam."
+          "text": "Quando a sonda gira exatamente a 2, o sinal para de girar, todas as peças apontam na mesma direção e o total fica o maior possível: $1/\\sigma$, que dispara para o infinito quando σ encolhe até 0. Quando elas não coincidem, as setas se enrolam e se cancelam."
         },
         {
           "t": "p",
@@ -381,6 +381,10 @@
           "text": "E a última linha não precisou de trabalho novo nenhum: multiplicar por $e^{-\\sigma t}$ simplesmente **desloca** $s$ para $s+\\sigma$. Quatro linhas, todas deduzidas, todas conferidas."
         },
         {
+          "t": "note",
+          "text": "Um aviso honesto. A área só existe à direita da taxa mais lenta do sinal: para $e^{-t} + e^{-5t}$ ela desiste em $s = -1$, bem antes de $-5$. A fração $\\frac{1}{s+1} + \\frac{1}{s+5}$ segue em frente, feliz da vida, e ainda explode nos dois. De agora em diante, confiamos na fração em todo lugar, mesmo onde a máquina de área desistiu. Os matemáticos já conferiram que isso é seguro."
+        },
+        {
           "t": "p",
           "text": "Mais uma regra que viemos usando em silêncio. A máquina de área é justa: deixe um sinal 3 vezes mais alto e cada fatia da área fica 3 vezes mais alta, então a área inteira também. Some dois sinais e as áreas se somam. Os matemáticos chamam isso de **linearidade**."
         },
@@ -465,13 +469,19 @@
             },
             {
               "t": "p",
-              "text": "E $s\\,\\out{H}$ perto de $s = 0$ é onde o drone vai parar a longo prazo. A altura final sai direto da álgebra, sem precisar de simulação."
+              "text": "E $s\\,\\out{H}$ perto de $s = 0$ é onde o drone vai parar a longo prazo, se é que ele se acomoda. A altura final sai direto da álgebra, sem precisar de simulação."
             },
             {
               "t": "say",
               "who": "mika",
               "mood": "surprised",
               "text": "Peraí. A gente consegue ler onde ele *se estabiliza* sem resolver nada? Isso parece trapaça."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "É trapaça, a não ser que todo o resto desapareça. Aqui os outros pedaços são a oscilação própria do drone, e eles morrem, então $A$ é o que sobra. Se o denominador tivesse uma raiz na metade direita, $A/s$ continuaria na fração, mas um pedaço crescente o engoliria e o drone nunca se acomodaria em lugar nenhum. O Capítulo 8 mostra como conferir."
             }
           ]
         },

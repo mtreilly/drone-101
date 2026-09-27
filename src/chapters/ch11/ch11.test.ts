@@ -1,4 +1,4 @@
-import { DRONE, DroneSim, type PID } from '../../sim/drone-model';
+import { DRONE, DroneSim, type PID, defaultDroneConfig } from '../../sim/drone-model';
 import { pid, runDrone } from '../ch09/pid-tools';
 import { LIMITS, MISSION, WINDOWS, dSpike, evaluate, hintFor, missionConfig, missionMargins, missionPoles, neverBack, neverSettled, noiseLifted, runMission, starsOnSeeds } from './mission';
 import { flyMission } from './page-hit';
@@ -347,5 +347,25 @@ describe('playable sentences show the verified values at their starting numbers'
 
   it('quiz q5: about 10 rad/s is a swing every 0.6 s', () => {
     expect((2 * Math.PI) / missionMargins(REF).wc).toBeCloseTo(0.64, 2);
+  });
+});
+
+describe('the six-star tune: 33° of margin, yet under 10 % overshoot', () => {
+  it('its wiggly pair is bouncy (ζ ≈ 0.33, about 33 % alone); the slow poles sit near −1.1 and −2.7', () => {
+    const ps = missionPoles(SIX_STAR);
+    const pair = ps.find((p) => p.im > 0.1)!;
+    const zeta = -pair.re / Math.hypot(pair.re, pair.im);
+    expect(zeta).toBeCloseTo(0.33, 2);
+    expect(100 * Math.exp((-Math.PI * zeta) / Math.sqrt(1 - zeta * zeta))).toBeCloseTo(33, 0);
+    const slow = ps.filter((p) => Math.abs(p.im) < 1e-6 && p.re > -5).map((p) => p.re).sort((a, b) => b - a);
+    expect(slow[0]).toBeCloseTo(-1.08, 2);
+    expect(slow[1]).toBeCloseTo(-2.74, 2);
+    expect(missionMargins(SIX_STAR).pm).toBeCloseTo(33.4, 1);
+  });
+
+  it('with unlimited motors its take-off overshoots only about 7 %', () => {
+    const tr = runDrone(defaultDroneConfig({ params: { ...DRONE, saturate: false, motorTau: MISSION.motorTau }, pid: SIX_STAR, setpoint: () => 2 }), 6, 10);
+    const peak = Math.max(...tr.h);
+    expect(((peak - 2) / 2) * 100).toBeCloseTo(6.9, 1);
   });
 });

@@ -2,6 +2,7 @@ import { fmt, type T } from '../../core/i18n';
 import { stepMetrics } from '../../math/metrics';
 import { HOVER_THRUST } from '../../sim/drone-model';
 import type { PlayModel } from '../../story/play';
+import { closest, loopZeta } from './loop';
 import { budgetRadius, gainsFromPoles, zeroResponse } from './poles';
 
 /** A pole pair −σ ± ωi, as in the playground: σ shown as a positive number after the printed "−". */
@@ -74,6 +75,15 @@ export const plays: Record<string, PlayModel> = {
     outputs: {
       gain: (v) => fmt(1 / v.z, 2),
       os: (v, t) => t('pct', { v: fmt(zeroOvershoot(v.z), 0) }),
+    },
+  },
+  // "With Kp = {kp} N/m, the lap comes within {d} of −1, at about {w} rad/s. The loop's damping is ζ = {z}."
+  lap: {
+    inputs: { kp: { min: 1, max: 80, step: 1, value: 20, unit: 'N/m' } },
+    outputs: {
+      d: ({ kp }) => fmt(closest(kp).d, 2),
+      w: ({ kp }) => fmt(closest(kp).w, 1),
+      z: ({ kp }) => fmt(loopZeta(kp), 2),
     },
   },
 };

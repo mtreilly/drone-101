@@ -181,7 +181,7 @@
             "**Mitad izquierda = se calma, mitad derecha = se dispara.** La parte real $\\sigma$ es el ritmo al que se encoge o crece $e^{\\sigma t}$.",
             "**Más a la izquierda = más rápido.** Estabilizarse lleva unos $4/|\\sigma|$ segundos (las líneas verticales discontinuas): las cuatro constantes de tiempo del capítulo 6, ya que $e^{-|\\sigma| t}$ baja del 2 % tras $\\ln 50/|\\sigma| \\approx 3.9/|\\sigma|$ segundos.",
             "**Más arriba = más oscilante.** La altura $\\omega$ es la frecuencia amortiguada del capítulo 6, así que una oscilación dura $2\\pi/\\omega$ segundos.",
-            "**El ángulo fija el sobreimpulso.** El ángulo $\\theta$ medido desde el eje real negativo da $\\zeta = \\cos\\theta$ (el círculo del capítulo 6), y el sobreimpulso es $e^{-\\pi|\\sigma|/\\omega}$ (los rayos discontinuos). Cerca del eje real apenas se pasa; cerca del eje vertical, muchísimo."
+            "**El ángulo fija el sobreimpulso.** El ángulo $\\theta$ medido desde el eje real negativo da $\\zeta = \\cos\\theta$ (el círculo del capítulo 6), y el sobreimpulso es $e^{-\\pi|\\sigma|/\\omega}$ (los rayos discontinuos). Cerca del eje real apenas se pasa; cerca del eje vertical, muchísimo. (Es exacto para dos polos y ningún cero, partiendo del reposo. Un cero lo cambia: en la sección siguiente, uno convierte un 12 % en un 15 %.)"
           ]
         },
         {
@@ -282,7 +282,7 @@
             },
             {
               "term": "Polo dominante",
-              "def": "El polo más cercano al eje vertical. Su movimiento lento dura más que los demás, así que decide el tiempo de establecimiento."
+              "def": "El polo más cercano al eje vertical. Su movimiento lento dura más que los demás, así que normalmente decide el tiempo de establecimiento, salvo que un cero esté casi encima de él (el capítulo 9 tiene uno)."
             }
           ]
         },
@@ -314,7 +314,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "El numerador también puede valer cero. Esos puntos son los **ceros**, dibujados como ○. Normalmente cambian **cuánto** del movimiento de cada polo aparece en la salida. Si un cero cae justo sobre un polo, el factor común se cancela y ese polo desaparece de esta receta de entrada a salida."
+          "text": "El numerador también puede valer cero. Esos puntos son los **ceros**, dibujados como ○. Normalmente cambian **cuánto** del movimiento de cada polo aparece en la salida. Si un cero cae justo sobre un polo, el factor común se cancela y ese polo desaparece de esta receta de entrada a salida. Aun así, sigue dentro del sistema: empuja el dron de otra manera, con una ráfaga, y ese movimiento vuelve. Eso importa mucho si el polo escondido está a la derecha."
         },
         {
           "t": "p",
@@ -470,6 +470,108 @@
       ]
     },
     {
+      "id": "loop",
+      "title": "Cerrar el lazo sobre el papel",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "En el capítulo 1 dibujamos el lazo con cajas y flechas. En el mundo de s, cada caja solo **multiplica**. ¿Pueden las cajas hacernos el álgebra?"
+        },
+        {
+          "t": "p",
+          "text": "Dale a cada caja su receta. El controlador es $C(s)$, por ahora simplemente $\\eff{K_p}$. El dron solo, con el cambio de empuje como entrada y el cambio de altura como salida, es $P(s) = \\frac{1}{ms^2 + cs}$: P de **planta**, la palabra del capítulo 1, no la P del control P. Sale directamente de la ecuación del dron, igual que la receta de arriba."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Fácil. La petición pasa por el controlador y luego por el dron. ¡Multiplica a lo largo de la línea!"
+        },
+        {
+          "t": "math",
+          "tex": "\\Delta\\out{H} \\overset{?}{=} C\\,P\\,\\Delta\\sp{R} = \\frac{\\eff{K_p}}{ms^2 + cs}\\,\\Delta\\sp{R}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "¿Polos en 0 y −2? Nada de oscilación, y un polo en 0 que nunca se estabiliza. Eso es el lazo abierto del capítulo 1: decirle al dron qué hacer y no mirar nunca. El controlador no ve la petición, June. Ve el **error**."
+        },
+        {
+          "t": "p",
+          "text": "La flecha que vuelve desde el dron es toda la gracia de la realimentación. El controlador actúa sobre $\\Delta\\sp{R} - \\Delta\\out{H}$, así que la salida aparece a los dos lados. Júntala y divide:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\Delta\\out{H} &= C\\,P\\,\\big(\\Delta\\sp{R} - \\Delta\\out{H}\\big) \\\\ \\Delta\\out{H}\\,\\big(1 + C\\,P\\big) &= C\\,P\\,\\Delta\\sp{R} \\\\ \\Delta\\out{H} &= \\frac{C\\,P}{1 + C\\,P}\\,\\Delta\\sp{R} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Sustituye $C = \\eff{K_p}$ y $P = 1/(ms^2+cs)$, y luego multiplica arriba y abajo por $ms^2 + cs$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{C\\,P}{1 + C\\,P} = \\frac{\\eff{K_p}/(ms^2+cs)}{1 + \\eff{K_p}/(ms^2+cs)} = \\frac{\\eff{K_p}}{ms^2 + cs + \\eff{K_p}}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "¡Es la receta del principio de este capítulo! La hemos sacado dos veces: una de la ecuación del dron y otra de las cajas."
+        },
+        {
+          "t": "p",
+          "text": "Así que los polos del lazo están donde el denominador, $1 + C(s)\\,P(s)$, vale cero. Es lo mismo que $C\\,P = -1$. Lee $C\\,P$ como **una vuelta** al lazo: lo que el controlador y luego el dron le hacen a una señal. En un polo, una vuelta devuelve la señal del mismo tamaño e invertida, y el signo menos del error la invierte otra vez. Así que se mantiene sola, sin ninguna petición."
+        },
+        {
+          "t": "math",
+          "tex": "1 + C(s)\\,P(s) = 0 \\quad\\Longleftrightarrow\\quad C(s)\\,P(s) = -1"
+        },
+        {
+          "t": "p",
+          "text": "Pruébalo con una oscilación constante, $s = i\\omega$. Una vuelta convierte la flecha de la oscilación en $C(i\\omega)\\,P(i\\omega)$: más corta o más larga, y girada hacia atrás. El dibujo de abajo traza esa flecha para cada velocidad de oscilación, y el punto −1 al que tendría que llegar."
+        },
+        {
+          "t": "widget",
+          "id": "loop"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Por mucho que suba $\\eff{K_p}$, la curva se dobla hacia −1 pero nunca lo toca. Donde más se acerca es más o menos a la velocidad de oscilación propia del dron."
+        },
+        {
+          "t": "p",
+          "text": "Esta es la razón. El rozamiento retrasa la señal de cada vuelta hasta 90°, y la masa hasta otros 90°, pero juntos solo llegan a 180° con oscilaciones infinitamente rápidas. Así que el control P por sí solo nunca puede desbocar este dron. Un $\\eff{K_p}$ mayor solo hace que la vuelta pase **más cerca** de −1, y más cerca significa menos amortiguamiento: el «más $K_p$, más oscilación» del capítulo 2, ahora en forma de dibujo."
+        },
+        {
+          "t": "play",
+          "id": "lap",
+          "text": "Con $\\eff{K_p}$ = {scrub|kp|eff} N/m, la vuelta pasa a {calc|d} de −1, a unos {calc|w} rad/s. El amortiguamiento del lazo es ζ = {calc|z}."
+        },
+        {
+          "t": "note",
+          "text": "Guarda esta imagen. En el capítulo 9, el mando I añade un montón, otros 90° de retraso, y la curva por fin puede llegar a −1. En el capítulo 10 la tubería de la ducha hace lo mismo, y la vuelta $C\\,P$ recibe su propio nombre."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Lazo cerrado",
+              "def": "Un controlador que actúa sobre el error, de modo que la salida vuelve a entrar en su propia entrada: $\\Delta H = \\frac{C\\,P}{1 + C\\,P}\\,\\Delta R$."
+            },
+            {
+              "term": "Ganancia del lazo $C(s)\\,P(s)$",
+              "def": "Lo que una vuelta al lazo le hace a una señal. Los polos del lazo cerrado están donde vale −1."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "wrap",
       "title": "Lo que sabemos ahora",
       "blocks": [
@@ -481,6 +583,7 @@
             "Mitad izquierda = estable, mitad derecha = explota. Más a la izquierda = más rápido (se estabiliza en unos $4/|\\sigma|$ s, una regla práctica), más arriba = más oscilante (una oscilación = $2\\pi/\\omega$ s), ángulo = amortiguamiento $\\zeta$ = sobreimpulso $e^{-\\pi|\\sigma|/\\omega}$. El polo más cercano al eje es el que manda.",
             "Los polos complejos siempre vienen en parejas reflejadas.",
             "Los **ceros** (○) cambian cuánto obtienes de cada modo. Cerca del origen añaden un empujón: $1/|z|$ veces la pendiente.",
+            "Cierra el lazo sobre el papel y la receta es $\\frac{C\\,P}{1 + C\\,P}$. Los polos están donde una vuelta al lazo, $C\\,P$, vale −1.",
             "El primer empujón es $mg + m|p|^2$ para un escalón de 1 m, así que los polos lejanos necesitan un empuje que los motores no tienen."
           ]
         },
@@ -682,6 +785,22 @@
       "capped": "Las matemáticas piden {p} N; los motores se quedan en 20 N. Tiempo de establecimiento real: {s} s, y por mucho que vayas «más a la izquierda» no baja de unos {b} s.",
       "fantasy": "Los motores imaginarios dan {p} N tan tranquilos. Vuelve a activar los límites.",
       "fine": "Dentro del rango de los motores: matemáticas y realidad coinciden."
+    },
+    "loop": {
+      "title": "Una vuelta al lazo",
+      "aria": "Un plano con el punto menos 1 marcado, la curva de una vuelta al lazo para cada velocidad de oscilación y una flecha hasta la vuelta a la velocidad elegida.",
+      "re": "parte real",
+      "im": "parte imaginaria",
+      "kp": "$K_p$ del controlador",
+      "w": "Velocidad de oscilación ω",
+      "lap": "C·P",
+      "cliff": "−1",
+      "size": "tamaño de la vuelta |C·P|",
+      "angle": "ángulo de la vuelta",
+      "distance": "distancia a −1",
+      "zeta": "amortiguamiento ζ",
+      "status": "Lo más cerca de −1: {d}, a unos {w} rad/s. El ángulo se queda por encima de −180°, así que la vuelta nunca llega. Amortiguamiento ζ = {z}.",
+      "help": "Desliza ω para mover la flecha por la curva; desliza Kp para estirar toda la curva. La línea discontinua es la distancia a −1."
     }
   },
   "plays": {
@@ -715,6 +834,9 @@
     "zeroKick": {
       "z": "distancia del cero a 0",
       "pct": "{v}%"
+    },
+    "lap": {
+      "kp": "ganancia proporcional Kp, en newtons por metro"
     }
   }
 }

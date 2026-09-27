@@ -186,7 +186,7 @@
           "t": "say",
           "who": "june",
           "mood": "excited",
-          "text": "Wenn sich die Sonde genau mit 2 dreht, hört das Signal auf zu drehen, alle Stücke zeigen in dieselbe Richtung, und die Summe schießt davon. Wenn sie nicht zusammenpassen, rollen sich die Pfeile ein und heben sich auf."
+          "text": "Wenn sich die Sonde genau mit 2 dreht, hört das Signal auf zu drehen, alle Stücke zeigen in dieselbe Richtung, und die Summe wird so groß, wie es nur geht: $1/\\sigma$, und das läuft gegen unendlich, wenn σ auf 0 schrumpft. Wenn sie nicht zusammenpassen, rollen sich die Pfeile ein und heben sich auf."
         },
         {
           "t": "p",
@@ -381,6 +381,10 @@
           "text": "Und die letzte Zeile brauchte überhaupt keine neue Arbeit: Multiplizieren mit $e^{-\\sigma t}$ **verschiebt** einfach $s$ zu $s+\\sigma$. Vier Zeilen, alle hergeleitet, alle geprüft."
         },
         {
+          "t": "note",
+          "text": "Eine ehrliche Warnung. Die Fläche gibt es nur rechts von der langsamsten Rate des Signals: Bei $e^{-t} + e^{-5t}$ gibt sie bei $s = -1$ auf, lange vor $-5$. Der Bruch $\\frac{1}{s+1} + \\frac{1}{s+5}$ macht fröhlich weiter und explodiert trotzdem an beiden Stellen. Ab jetzt vertrauen wir dem Bruch überall, auch dort, wo die Flächenmaschine aufgegeben hat. Mathematiker haben geprüft, dass das sicher ist."
+        },
+        {
           "t": "p",
           "text": "Noch eine Regel, die wir still und leise benutzt haben. Die Flächenmaschine ist fair: Mach ein Signal 3-mal so hoch, und jede Scheibe seiner Fläche ist 3-mal so hoch, also auch die ganze Fläche. Addier zwei Signale, und ihre Flächen addieren sich. Mathematiker nennen das **Linearität**."
         },
@@ -465,13 +469,19 @@
             },
             {
               "t": "p",
-              "text": "Und $s\\,\\out{H}$ nahe $s = 0$ ist genau da, wo die Drohne auf lange Sicht landet. Die Endhöhe fällt direkt aus der Algebra heraus, ganz ohne Simulation."
+              "text": "Und $s\\,\\out{H}$ nahe $s = 0$ ist genau da, wo die Drohne auf lange Sicht landet, falls sie überhaupt zur Ruhe kommt. Die Endhöhe fällt direkt aus der Algebra heraus, ganz ohne Simulation."
             },
             {
               "t": "say",
               "who": "mika",
               "mood": "surprised",
               "text": "Moment mal. Wir können ablesen, wo sie sich *einpendelt*, ohne irgendwas zu lösen? Das fühlt sich an wie Schummeln."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Es ist Schummeln, außer alles andere klingt ab. Hier sind die anderen Stücke das eigene Wackeln der Drohne, und das stirbt aus, also bleibt $A$ übrig. Hätte der Nenner eine Nullstelle in der rechten Hälfte, stünde $A/s$ zwar immer noch im Bruch, aber ein wachsendes Stück würde es überrollen, und die Drohne käme nirgends zur Ruhe. Wie man das prüft, zeigt Kapitel 8."
             }
           ]
         },

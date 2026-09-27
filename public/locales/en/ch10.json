@@ -92,7 +92,37 @@
         },
         {
           "t": "note",
-          "text": "This is the spinning arrow from Chapter 5. Delaying the spinner by $L$ gives $e^{i\\omega(t-L)} = e^{-i\\omega L}\\,e^{i\\omega t}$: the same arrow, turned back by the angle $\\omega L$. With $s = i\\omega$ that factor is $e^{-Ls}$, which is why the transfer function of a pure delay is $e^{-Ls}$."
+          "text": "This is the spinning arrow from Chapter 5. Delaying the spinner by $L$ gives $e^{i\\omega(t-L)} = e^{-i\\omega L}\\,e^{i\\omega t}$: the same arrow, turned back by the angle $\\omega L$."
+        },
+        {
+          "t": "callout",
+          "title": "The probe sees the delay",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Chapter 7's probe gives the same factor for **any** signal, not just a spinner. A signal that arrives $L$ seconds late starts piling up area $L$ seconds late, and by then the probe has already shrunk by $e^{-sL}$. Before it arrives the late signal is zero, so put $u = t - L$:"
+            },
+            {
+              "t": "math",
+              "tex": "\\int_0^\\infty f(t-L)\\,e^{-st}\\,dt = \\int_0^\\infty f(u)\\,e^{-s(u+L)}\\,du = e^{-sL}\\,F(s)"
+            },
+            {
+              "t": "p",
+              "text": "So a pure delay multiplies every transform by $e^{-sL}$. That is its transfer function, and on the line $s = i\\omega$ it is exactly the turn-back by $\\omega L$ above."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "But $e^{-sL}$ isn't a fraction of polynomials. Where are its poles?"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "think",
+              "text": "Nowhere you could list. Put it in a loop and $1 + C\\,P = 0$ has infinitely many solutions. That's why this chapter stops drawing pole maps and measures wiggles instead."
+            }
+          ]
         }
       ]
     },
@@ -137,7 +167,7 @@
         },
         {
           "t": "p",
-          "text": "The smoother shrinks fast wiggles, while the pipe keeps adding phase lag. These gain and phase curves against wiggle speed form a **Bode plot**. Together they are the shower's **frequency response**: how it treats each wiggle speed. Here the input is the **temperature of the mixed water**, so slow wiggles have gain 1. If we used knob fraction as input, the gain would be 45 times larger. To get the frequency response from the formula, set $s = i\\omega$: the same trick that found Chapter 9's edge."
+          "text": "The smoother shrinks fast wiggles, while the pipe keeps adding phase lag. These gain and phase curves against wiggle speed form a **Bode plot**. Together they are the shower's **frequency response**: how it treats each wiggle speed. Here the input is the **temperature of the mixed water**, so slow wiggles have gain 1. If we used knob fraction as input, the gain would be 45 times larger. To get the frequency response from the formula, set $s = i\\omega$: the same trick that found Chapter 9's edge. (It works because the shower on its own is stable, so its wiggles settle into a steady rhythm we can measure.)"
         },
         {
           "t": "callout",
@@ -219,7 +249,7 @@
         },
         {
           "t": "p",
-          "text": "Feedback subtracts (error = target − temperature). That's a ×(−1), Chapter 5's half-turn, so the wave flips once. If the trip around the loop *also* delays it by exactly 180°, the two flips cancel, and every correction arrives **perfectly in step** with the swing, like pushing a playground swing at just the right moment. If the loop returns the wave at full size (gain 1), the swing keeps itself going; bigger than 1, it grows."
+          "text": "Feedback subtracts (error = target − temperature). That's a ×(−1), Chapter 5's half-turn, so the wave flips once. If the trip around the loop *also* delays it by exactly 180°, the two flips cancel, and every correction arrives **perfectly in step** with the swing, like pushing a playground swing at just the right moment. If the loop returns the wave at full size (gain 1), the swing keeps itself going; bigger than 1, it grows. That's Chapter 8's $1 + C\\,P = 0$ again, on the line $s = i\\omega$: a lap that comes back flipped and full size is $G_{\\circ}(i\\omega) = -1$."
         },
         {
           "t": "say",
@@ -261,7 +291,7 @@
             },
             {
               "t": "p",
-              "text": "For the simple loops of Chapter 6, phase margin and damping ratio move together. About 43° goes with ζ = 0.4 (25 % overshoot), 52° with ζ = 0.5 (16 %), and 59° with ζ = 0.6 (under 10 %). A margin of 45°–60° is the ζ ≈ 0.4–0.6 sweet spot from Chapter 6, measured in degrees. With a pipe in the loop it is a good guide, not an exact law."
+              "text": "For the simple loops of Chapter 6, phase margin and damping ratio move together. About 43° goes with ζ = 0.4 (25 % overshoot), 52° with ζ = 0.5 (16 %), and 59° with ζ = 0.6 (under 10 %). These pairs are exact for Chapter 6's simplest loop, $\\omega_n^2/\\big(s(s+2\\zeta\\omega_n)\\big)$. So a margin of 45°–60° means ζ ≈ 0.4–0.6: bouncier than Chapter 6's 0.7–1. It is a common target anyway, because a margin is also a safety distance from the cliff (how wrong the model may be), not only a promise about overshoot. With a pipe in the loop it is a good guide, not an exact law."
             }
           ]
         },

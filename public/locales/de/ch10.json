@@ -92,7 +92,37 @@
         },
         {
           "t": "note",
-          "text": "Das ist der drehende Pfeil aus Kapitel 5. Verzögert man den Drehpfeil um $L$, ergibt das $e^{i\\omega(t-L)} = e^{-i\\omega L}\\,e^{i\\omega t}$: derselbe Pfeil, um den Winkel $\\omega L$ zurückgedreht. Mit $s = i\\omega$ ist dieser Faktor $e^{-Ls}$. Deshalb ist die Übertragungsfunktion einer reinen Totzeit $e^{-Ls}$."
+          "text": "Das ist der drehende Pfeil aus Kapitel 5. Verzögert man den Drehpfeil um $L$, ergibt das $e^{i\\omega(t-L)} = e^{-i\\omega L}\\,e^{i\\omega t}$: derselbe Pfeil, um den Winkel $\\omega L$ zurückgedreht."
+        },
+        {
+          "t": "callout",
+          "title": "Die Sonde sieht die Totzeit",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Die Sonde aus Kapitel 7 liefert denselben Faktor für **jedes** Signal, nicht nur für einen Drehpfeil. Ein Signal, das $L$ Sekunden zu spät ankommt, fängt auch $L$ Sekunden zu spät an, Fläche anzuhäufen, und bis dahin ist die Sonde schon um $e^{-sL}$ geschrumpft. Bevor es ankommt, ist das späte Signal null, also setz $u = t - L$:"
+            },
+            {
+              "t": "math",
+              "tex": "\\int_0^\\infty f(t-L)\\,e^{-st}\\,dt = \\int_0^\\infty f(u)\\,e^{-s(u+L)}\\,du = e^{-sL}\\,F(s)"
+            },
+            {
+              "t": "p",
+              "text": "Eine reine Totzeit multipliziert also jede Transformierte mit $e^{-sL}$. Das ist ihre Übertragungsfunktion, und auf der Linie $s = i\\omega$ ist das genau das Zurückdrehen um $\\omega L$ von oben."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Aber $e^{-sL}$ ist kein Bruch aus Polynomen. Wo sind seine Pole?"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "think",
+              "text": "Nirgends, wo man sie auflisten könnte. Steck es in einen Kreis, und $1 + C\\,P = 0$ hat unendlich viele Lösungen. Deshalb zeichnet dieses Kapitel keine Polkarten mehr, sondern misst Wackler."
+            }
+          ]
         }
       ]
     },
@@ -137,7 +167,7 @@
         },
         {
           "t": "p",
-          "text": "Der Glätter staucht schnelle Wackler, während das Rohr immer mehr Phasenverzug hinzufügt. Die Verstärkungs- und Phasenkurven über dem Wackeltempo bilden ein **Bode-Diagramm**. Zusammen sind sie der **Frequenzgang** der Dusche: wie sie jedes Wackeltempo behandelt. Hier ist der Eingang die **Temperatur des gemischten Wassers**, deshalb haben langsame Wackler die Verstärkung 1. Bei der Knopfstellung als Eingang wäre sie 45-mal größer. Um den Frequenzgang aus der Formel zu bekommen, setz $s = i\\omega$: derselbe Trick, mit dem wir die Kante in Kapitel 9 gefunden haben."
+          "text": "Der Glätter staucht schnelle Wackler, während das Rohr immer mehr Phasenverzug hinzufügt. Die Verstärkungs- und Phasenkurven über dem Wackeltempo bilden ein **Bode-Diagramm**. Zusammen sind sie der **Frequenzgang** der Dusche: wie sie jedes Wackeltempo behandelt. Hier ist der Eingang die **Temperatur des gemischten Wassers**, deshalb haben langsame Wackler die Verstärkung 1. Bei der Knopfstellung als Eingang wäre sie 45-mal größer. Um den Frequenzgang aus der Formel zu bekommen, setz $s = i\\omega$: derselbe Trick, mit dem wir die Kante in Kapitel 9 gefunden haben. (Das klappt, weil die Dusche für sich allein stabil ist. Ihre Wackler pendeln sich also auf einen gleichmäßigen Rhythmus ein, den wir messen können.)"
         },
         {
           "t": "callout",
@@ -219,7 +249,7 @@
         },
         {
           "t": "p",
-          "text": "Die Rückkopplung zieht ab (Fehler = Ziel − Temperatur). Das ist ein ×(−1), die halbe Drehung aus Kapitel 5, also dreht sich die Welle einmal um. Wenn die Runde durch den Kreis sie *zusätzlich* um genau 180° verzögert, heben sich die zwei Umdrehungen auf. Dann kommt jede Korrektur **perfekt im Takt** mit dem Schwung an, wie beim Anschubsen einer Schaukel im genau richtigen Moment. Bringt der Kreis die Welle in voller Größe zurück (Verstärkung 1), hält sich der Schwung von selbst am Laufen; bei mehr als 1 wächst er."
+          "text": "Die Rückkopplung zieht ab (Fehler = Ziel − Temperatur). Das ist ein ×(−1), die halbe Drehung aus Kapitel 5, also dreht sich die Welle einmal um. Wenn die Runde durch den Kreis sie *zusätzlich* um genau 180° verzögert, heben sich die zwei Umdrehungen auf. Dann kommt jede Korrektur **perfekt im Takt** mit dem Schwung an, wie beim Anschubsen einer Schaukel im genau richtigen Moment. Bringt der Kreis die Welle in voller Größe zurück (Verstärkung 1), hält sich der Schwung von selbst am Laufen; bei mehr als 1 wächst er. Das ist wieder $1 + C\\,P = 0$ aus Kapitel 8, auf der Linie $s = i\\omega$: Eine Runde, die umgedreht und in voller Größe zurückkommt, ist $G_{\\circ}(i\\omega) = -1$."
         },
         {
           "t": "say",
@@ -261,7 +291,7 @@
             },
             {
               "t": "p",
-              "text": "Bei den einfachen Kreisen aus Kapitel 6 gehen Phasenreserve und Dämpfungsgrad Hand in Hand. Etwa 43° gehören zu ζ = 0,4 (25 % Überschwingen), 52° zu ζ = 0,5 (16 %) und 59° zu ζ = 0,6 (unter 10 %). Eine Reserve von 45°–60° ist der Wohlfühlbereich ζ ≈ 0,4–0,6 aus Kapitel 6, gemessen in Grad. Mit einem Rohr im Kreis ist das eine gute Richtschnur, kein exaktes Gesetz."
+              "text": "Bei den einfachen Kreisen aus Kapitel 6 gehen Phasenreserve und Dämpfungsgrad Hand in Hand. Etwa 43° gehören zu ζ = 0,4 (25 % Überschwingen), 52° zu ζ = 0,5 (16 %) und 59° zu ζ = 0,6 (unter 10 %). Diese Paare sind exakt für den einfachsten Kreis aus Kapitel 6, $\\omega_n^2/\\big(s(s+2\\zeta\\omega_n)\\big)$. Eine Reserve von 45°–60° heißt also ζ ≈ 0,4–0,6: hüpfiger als der Bereich 0,7–1 aus Kapitel 6. Trotzdem ist sie ein übliches Ziel, denn eine Reserve ist auch ein Sicherheitsabstand zur Klippe (wie falsch das Modell sein darf), nicht nur ein Versprechen über das Überschwingen. Mit einem Rohr im Kreis ist das eine gute Richtschnur, kein exaktes Gesetz."
             }
           ]
         },

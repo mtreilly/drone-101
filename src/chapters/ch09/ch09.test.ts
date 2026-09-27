@@ -357,3 +357,14 @@ describe('Chapter 9: a crashed drone stays down (playground)', () => {
     for (const [kp, ki, kd] of [[20, 10, 4], [20, 0, 0], [20, 20, 4]]) expect(runUnderCeiling(takeoff(pid(kp, ki, kd)), 15, null).crashAt).toBeNull();
   });
 });
+
+describe("Mika's Ki = 50 yo-yo is held by the motor floor", () => {
+  it('swings about half a metre and the thrust bottoms out at 0 N on the swings', () => {
+    const tr = integralRun(50);
+    const late = tr.t.map((_, i) => i).filter((i) => tr.t[i] > 8);
+    const hs = late.map((i) => tr.h[i]);
+    expect(Math.max(...hs) - Math.min(...hs)).toBeGreaterThan(0.4);
+    expect(Math.max(...hs) - Math.min(...hs)).toBeLessThan(0.6);
+    expect(Math.min(...late.map((i) => tr.thrust[i]))).toBe(0);
+  });
+});

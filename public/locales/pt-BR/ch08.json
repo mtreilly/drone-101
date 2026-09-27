@@ -181,7 +181,7 @@
             "**Metade esquerda = acalma, metade direita = explode.** A parte real $\\sigma$ é a taxa com que $e^{\\sigma t}$ encolhe ou cresce.",
             "**Mais à esquerda = mais rápido.** O tempo de acomodação é de cerca de $4/|\\sigma|$ segundos (as linhas verticais tracejadas): as quatro constantes de tempo do Capítulo 6, já que $e^{-|\\sigma| t}$ fica abaixo de 2 % depois de $\\ln 50/|\\sigma| \\approx 3{,}9/|\\sigma|$ segundos.",
             "**Mais para cima = mais oscilação.** A altura $\\omega$ é a frequência amortecida do Capítulo 6, então uma oscilação leva $2\\pi/\\omega$ segundos.",
-            "**O ângulo define o sobressinal.** O ângulo $\\theta$ medido a partir do eixo real negativo dá $\\zeta = \\cos\\theta$ (o círculo do Capítulo 6), e o sobressinal é $e^{-\\pi|\\sigma|/\\omega}$ (os raios tracejados). Perto do eixo real quase não há sobressinal; perto do eixo vertical, muito."
+            "**O ângulo define o sobressinal.** O ângulo $\\theta$ medido a partir do eixo real negativo dá $\\zeta = \\cos\\theta$ (o círculo do Capítulo 6), e o sobressinal é $e^{-\\pi|\\sigma|/\\omega}$ (os raios tracejados). Perto do eixo real quase não há sobressinal; perto do eixo vertical, muito. (Exato para dois polos e nenhum zero, partindo do repouso. Um zero muda isso: na próxima seção, um deles transforma 12 % em 15 %.)"
           ]
         },
         {
@@ -282,7 +282,7 @@
             },
             {
               "term": "Polo dominante",
-              "def": "O polo mais perto do eixo vertical. Seu movimento lento dura mais que os outros, então é ele que decide o tempo de acomodação."
+              "def": "O polo mais perto do eixo vertical. Seu movimento lento dura mais que os outros, então em geral é ele que decide o tempo de acomodação, a não ser que um zero esteja quase em cima dele (o Capítulo 9 tem um caso assim)."
             }
           ]
         },
@@ -314,7 +314,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "O numerador também pode ser zero. Esses pontos são os **zeros**, desenhados como ○. Em geral eles mudam **quanto** do movimento de cada polo aparece na saída. Se um zero cai exatamente em cima de um polo, o fator comum se cancela e esse polo some desta receita de entrada para saída."
+          "text": "O numerador também pode ser zero. Esses pontos são os **zeros**, desenhados como ○. Em geral eles mudam **quanto** do movimento de cada polo aparece na saída. Se um zero cai exatamente em cima de um polo, o fator comum se cancela e esse polo some desta receita de entrada para saída. Mas ele continua dentro do sistema: cutuque o drone de outro jeito, com uma rajada, e esse movimento volta. Isso importa muito se o polo escondido estiver à direita."
         },
         {
           "t": "p",
@@ -470,6 +470,108 @@
       ]
     },
     {
+      "id": "loop",
+      "title": "Fechando a malha no papel",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "No Capítulo 1 desenhamos a malha como caixas e setas. No mundo de s, cada caixa só **multiplica**. Será que as caixas fazem a álgebra por nós?"
+        },
+        {
+          "t": "p",
+          "text": "Dê a cada caixa a sua receita. O controlador é $C(s)$, por enquanto simplesmente $\\eff{K_p}$. O drone sozinho, com mudança de empuxo entrando e mudança de altura saindo, é $P(s) = \\frac{1}{ms^2 + cs}$: P de **planta**, a palavra do Capítulo 1, não o P do controle P. Ele sai direto da equação do drone, do mesmo jeito que a receita lá de cima."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Fácil. O pedido passa pelo controlador e depois pelo drone. É só multiplicar ao longo da linha!"
+        },
+        {
+          "t": "math",
+          "tex": "\\Delta\\out{H} \\overset{?}{=} C\\,P\\,\\Delta\\sp{R} = \\frac{\\eff{K_p}}{ms^2 + cs}\\,\\Delta\\sp{R}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Polos em 0 e −2? Nenhuma oscilação, e um polo em 0 que nunca se acomoda. Essa é a malha aberta do Capítulo 1: diga ao drone o que fazer e nunca olhe. O controlador não vê o pedido, June. Ele vê o **erro**."
+        },
+        {
+          "t": "p",
+          "text": "A seta que volta do drone é todo o sentido da realimentação. O controlador age sobre $\\Delta\\sp{R} - \\Delta\\out{H}$, então a saída aparece dos dois lados. Junte e divida:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\Delta\\out{H} &= C\\,P\\,\\big(\\Delta\\sp{R} - \\Delta\\out{H}\\big) \\\\ \\Delta\\out{H}\\,\\big(1 + C\\,P\\big) &= C\\,P\\,\\Delta\\sp{R} \\\\ \\Delta\\out{H} &= \\frac{C\\,P}{1 + C\\,P}\\,\\Delta\\sp{R} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Coloque $C = \\eff{K_p}$ e $P = 1/(ms^2+cs)$ e depois multiplique o numerador e o denominador por $ms^2 + cs$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{C\\,P}{1 + C\\,P} = \\frac{\\eff{K_p}/(ms^2+cs)}{1 + \\eff{K_p}/(ms^2+cs)} = \\frac{\\eff{K_p}}{ms^2 + cs + \\eff{K_p}}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "É a receita do começo deste capítulo! Chegamos nela duas vezes: uma pela equação do drone, outra pelas caixas."
+        },
+        {
+          "t": "p",
+          "text": "Então os polos da malha estão onde o denominador, $1 + C(s)\\,P(s)$, é zero. Isso é o mesmo que $C\\,P = -1$. Leia $C\\,P$ como **uma volta** pela malha: o que o controlador e depois o drone fazem com um sinal. Num polo, uma volta traz o sinal de volta com o mesmo tamanho e invertido, e o sinal de menos no erro o inverte de novo. Então ele se mantém sozinho, sem pedido nenhum."
+        },
+        {
+          "t": "math",
+          "tex": "1 + C(s)\\,P(s) = 0 \\quad\\Longleftrightarrow\\quad C(s)\\,P(s) = -1"
+        },
+        {
+          "t": "p",
+          "text": "Teste com uma oscilação constante, $s = i\\omega$. Uma volta transforma a seta da oscilação em $C(i\\omega)\\,P(i\\omega)$: mais curta ou mais longa, e girada para trás. O widget desenha essa seta para cada velocidade de oscilação, e o ponto −1 que ela teria de alcançar."
+        },
+        {
+          "t": "widget",
+          "id": "loop"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Por mais que eu aumente $\\eff{K_p}$, a curva se dobra em direção a −1, mas nunca encosta nele. Ela chega mais perto mais ou menos na velocidade de balanço do próprio drone."
+        },
+        {
+          "t": "p",
+          "text": "Eis o porquê. O arrasto gira a volta para trás em até 90°, e a massa em até mais 90°, mas juntos eles só chegam a 180° para oscilações infinitamente rápidas. Então o controle P sozinho nunca consegue derrubar este drone. Um $\\eff{K_p}$ maior só faz a volta passar **mais perto** de −1, e mais perto significa menos amortecimento: o \"mais $K_p$, mais oscilação\" do Capítulo 2, agora como figura."
+        },
+        {
+          "t": "play",
+          "id": "lap",
+          "text": "Com $\\eff{K_p}$ = {scrub|kp|eff} N/m, a volta chega a {calc|d} de −1, em cerca de {calc|w} rad/s. O amortecimento da malha é ζ = {calc|z}."
+        },
+        {
+          "t": "note",
+          "text": "Guarde esta figura. No Capítulo 9, o botão I acrescenta uma pilha, mais 90° de atraso, e a curva finalmente consegue alcançar −1. No Capítulo 10, o cano do chuveiro faz o mesmo, e a volta $C\\,P$ ganha um nome próprio."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Malha fechada",
+              "def": "Um controlador que age sobre o erro, de modo que a saída volta para a sua própria entrada: $\\Delta H = \\frac{C\\,P}{1 + C\\,P}\\,\\Delta R$."
+            },
+            {
+              "term": "Ganho de malha $C(s)\\,P(s)$",
+              "def": "O que uma volta pela malha faz com um sinal. Os polos da malha fechada estão onde ele vale −1."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "wrap",
       "title": "O que sabemos agora",
       "blocks": [
@@ -481,6 +583,7 @@
             "Metade esquerda = estável, metade direita = explode. Mais à esquerda = mais rápido (acomoda em cerca de $4/|\\sigma|$ s, uma regra prática), mais alto = mais oscilação (uma oscilação = $2\\pi/\\omega$ s), ângulo = amortecimento $\\zeta$ = sobressinal $e^{-\\pi|\\sigma|/\\omega}$. O polo mais perto do eixo é quem manda.",
             "Polos complexos sempre vêm em pares espelhados.",
             "Os **zeros** (○) mudam quanto de cada modo você recebe. Perto da origem eles dão um tranco: $1/|z|$ vezes a inclinação.",
+            "Feche a malha no papel e a receita é $\\frac{C\\,P}{1 + C\\,P}$. Os polos estão onde uma volta pela malha, $C\\,P$, vale −1.",
             "O empurrão inicial é $mg + m|p|^2$ para um degrau de 1 m, então polos muito distantes precisam de um empuxo que os motores não têm."
           ]
         },
@@ -682,6 +785,22 @@
       "capped": "A matemática quer {p} N; os motores param em 20 N. Acomodação real em {s} s, e nenhum “mais à esquerda” baixa isso de cerca de {b} s.",
       "fantasy": "Motores imaginários entregam {p} N sem problema. Ligue os limites de novo.",
       "fine": "Dentro da faixa dos motores: matemática e realidade concordam."
+    },
+    "loop": {
+      "title": "Uma volta pela malha",
+      "aria": "Um plano com o ponto menos 1 marcado, a curva de uma volta pela malha para cada velocidade de oscilação e uma seta até a volta na velocidade escolhida.",
+      "re": "parte real",
+      "im": "parte imaginária",
+      "kp": "$K_p$ do controlador",
+      "w": "Velocidade da oscilação ω",
+      "lap": "C·P",
+      "cliff": "−1",
+      "size": "tamanho da volta |C·P|",
+      "angle": "ângulo da volta",
+      "distance": "distância até −1",
+      "zeta": "amortecimento ζ",
+      "status": "Mais perto de −1: {d}, em cerca de {w} rad/s. O ângulo fica acima de −180°, então a volta nunca chega lá. Amortecimento ζ = {z}.",
+      "help": "Deslize ω para mover a seta ao longo da curva; deslize Kp para esticar a curva inteira. A linha tracejada é a distância até −1."
     }
   },
   "plays": {
@@ -715,6 +834,9 @@
     "zeroKick": {
       "z": "distância do zero até 0",
       "pct": "{v}%"
+    },
+    "lap": {
+      "kp": "ganho proporcional Kp, newtons por metro"
     }
   }
 }

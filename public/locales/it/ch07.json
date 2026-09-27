@@ -186,7 +186,7 @@
           "t": "say",
           "who": "june",
           "mood": "excited",
-          "text": "Quando la sonda gira esattamente a 2, il segnale smette di girare, tutti i pezzi puntano nella stessa direzione e il totale schizza via. Quando non coincidono, le frecce si arricciano e si annullano."
+          "text": "Quando la sonda gira esattamente a 2, il segnale smette di girare, tutti i pezzi puntano nella stessa direzione e il totale è il più grande possibile: $1/\\sigma$, che schizza all'infinito quando σ si riduce a 0. Quando non coincidono, le frecce si arricciano e si annullano."
         },
         {
           "t": "p",
@@ -381,6 +381,10 @@
           "text": "E l'ultima riga non ha richiesto nessun lavoro nuovo: moltiplicare per $e^{-\\sigma t}$ semplicemente **sposta** $s$ in $s+\\sigma$. Quattro righe, tutte ricavate, tutte controllate."
         },
         {
+          "t": "note",
+          "text": "Un avvertimento onesto. L'area esiste solo a destra del tasso più lento del segnale: per $e^{-t} + e^{-5t}$ si arrende in $s = -1$, molto prima di $-5$. La frazione $\\frac{1}{s+1} + \\frac{1}{s+5}$ va avanti tranquilla ed esplode comunque in entrambi i punti. D'ora in poi ci fidiamo della frazione ovunque, anche dove la macchina delle aree si è arresa. I matematici hanno controllato che si può fare."
+        },
+        {
           "t": "p",
           "text": "C'è un'altra regola che usiamo in silenzio. La macchina delle aree è onesta: rendi un segnale 3 volte più alto e ogni fettina della sua area diventa 3 volte più alta, quindi anche l'area intera. Somma due segnali e le loro aree si sommano. I matematici la chiamano **linearità**."
         },
@@ -465,13 +469,19 @@
             },
             {
               "t": "p",
-              "text": "E $s\\,\\out{H}$ vicino a $s = 0$ è dove finisce il drone a lungo andare. L'altezza finale salta fuori direttamente dall'algebra, senza bisogno di simulazioni."
+              "text": "E $s\\,\\out{H}$ vicino a $s = 0$ è dove finisce il drone a lungo andare, se mai si assesta. L'altezza finale salta fuori direttamente dall'algebra, senza bisogno di simulazioni."
             },
             {
               "t": "say",
               "who": "mika",
               "mood": "surprised",
               "text": "Aspetta. Possiamo leggere dove si *assesta* senza risolvere niente? Sembra di barare."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "È barare, a meno che tutto il resto non si spenga. Qui gli altri pezzi sono l'oscillazione propria del drone, e si spengono, quindi resta $A$. Se il denominatore avesse una radice nella metà destra, $A/s$ starebbe ancora nella frazione, ma un pezzo che cresce lo sommergerebbe e il drone non si assesterebbe mai da nessuna parte. Il Capitolo 8 mostra come controllare."
             }
           ]
         },

@@ -186,7 +186,7 @@
           "t": "say",
           "who": "june",
           "mood": "excited",
-          "text": "Kiedy sonda wiruje dokładnie z prędkością 2, sygnał przestaje wirować, wszystkie kawałki wskazują w tę samą stronę i suma wystrzeliwuje. Kiedy się nie zgadzają, strzałki zawijają się w kółko i znoszą."
+          "text": "Kiedy sonda wiruje dokładnie z prędkością 2, sygnał przestaje wirować, wszystkie kawałki wskazują w tę samą stronę i suma jest największa z możliwych: $1/\\sigma$, która ucieka do nieskończoności, gdy σ maleje do 0. Kiedy się nie zgadzają, strzałki zawijają się w kółko i znoszą."
         },
         {
           "t": "p",
@@ -381,6 +381,10 @@
           "text": "A ostatni wiersz nie wymagał żadnej nowej pracy: mnożenie przez $e^{-\\sigma t}$ po prostu **przesuwa** $s$ do $s+\\sigma$. Cztery wiersze, wszystkie wyprowadzone, wszystkie sprawdzone."
         },
         {
+          "t": "note",
+          "text": "Jedno uczciwe ostrzeżenie. Pole istnieje tylko na prawo od najwolniejszego tempa sygnału: dla $e^{-t} + e^{-5t}$ poddaje się przy $s = -1$, długo przed $-5$. Ułamek $\\frac{1}{s+1} + \\frac{1}{s+5}$ spokojnie działa dalej i nadal wybucha w obu punktach. Od teraz ufamy ułamkowi wszędzie, nawet tam, gdzie maszyna do pól się poddała. Matematycy sprawdzili, że to bezpieczne."
+        },
+        {
           "t": "p",
           "text": "Jest jeszcze jedna reguła, z której po cichu korzystamy. Maszyna do pól jest uczciwa: zrób sygnał 3 razy wyższy, a każdy plasterek jego pola będzie 3 razy wyższy, więc całe pole też. Dodaj dwa sygnały, a ich pola się dodadzą. Matematycy nazywają to **liniowością**."
         },
@@ -465,13 +469,19 @@
             },
             {
               "t": "p",
-              "text": "A $s\\,\\out{H}$ blisko $s = 0$ mówi, gdzie dron znajdzie się na dłuższą metę. Końcowa wysokość wypada prosto z algebry, bez żadnej symulacji."
+              "text": "A $s\\,\\out{H}$ blisko $s = 0$ mówi, gdzie dron znajdzie się na dłuższą metę, o ile w ogóle się ustali. Końcowa wysokość wypada prosto z algebry, bez żadnej symulacji."
             },
             {
               "t": "say",
               "who": "mika",
               "mood": "surprised",
               "text": "Chwila. Możemy odczytać, gdzie się *ustali*, niczego nie rozwiązując? To wygląda na oszustwo."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "To jest oszustwo, chyba że cała reszta wygasa. Tutaj pozostałe kawałki to własne kołysanie drona, a ono zanika, więc zostaje $A$. Gdyby mianownik miał pierwiastek w prawej połowie, $A/s$ nadal siedziałoby w ułamku, ale rosnący kawałek by je zagłuszył i dron nigdy by się nigdzie nie ustalił. Rozdział 8 pokazuje, jak to sprawdzić."
             }
           ]
         },

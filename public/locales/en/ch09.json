@@ -145,7 +145,7 @@
         },
         {
           "t": "p",
-          "text": "That's Mika's mistake, and it's a very common one: the integral fixes the droop, but it adds **lag**, and lag makes things swing (the shower taught us that). We need something that pushes back against *speed*."
+          "text": "That's Mika's mistake, and it's a very common one: the integral fixes the droop, but it adds **lag**, and lag makes things swing (the shower taught us that). We need something that pushes back against *speed*. (By the maths her swings should grow for ever. They stop at about half a metre only because the thrust hits 0 N on every swing: propellers can't pull down, Chapter 8's limit.)"
         }
       ]
     },
@@ -256,7 +256,7 @@
           "t": "say",
           "who": "theo",
           "mood": "surprised",
-          "text": "Gravity *disappeared* from the equation. That's the droop-killer in algebra form: the final height doesn't care about $mg$ at all."
+          "text": "Gravity *disappeared* from the equation. That's the droop-killer in algebra form: the final height doesn't care about $mg$ at all. As long as it settles at all, that is. Mika's $K_i = 50$ drone never did."
         },
         {
           "t": "p",
@@ -272,7 +272,7 @@
           "blocks": [
             {
               "t": "p",
-              "text": "In Chapter 7 a slope became \"× s\". An area is the opposite, so it becomes \"÷ s\". Write the controller that way, use the drone's own recipe $P(s) = 1/(ms^2+cs)$ (thrust in, height out), and find the poles as in Chapter 8. Clear the fractions and out comes the same cubic, without taking a single slope:"
+              "text": "In Chapter 7 a slope became \"× s\". An area is the opposite, so it becomes \"÷ s\". Write the controller that way, use the drone's own recipe $P(s) = 1/(ms^2+cs)$ (thrust in, height out), and find the poles with Chapter 8's loop rule, $1 + C\\,P = 0$. Clear the fractions and out comes the same cubic, without taking a single slope:"
             },
             {
               "t": "math",

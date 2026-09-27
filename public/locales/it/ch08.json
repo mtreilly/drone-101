@@ -181,7 +181,7 @@
             "**Metà sinistra = si calma, metà destra = esplode.** La parte reale $\\sigma$ è il tasso con cui $e^{\\sigma t}$ si restringe o cresce.",
             "**Più a sinistra = più rapido.** Assestarsi richiede circa $4/|\\sigma|$ secondi (le linee verticali tratteggiate): le quattro costanti di tempo del Capitolo 6, perché $e^{-|\\sigma| t}$ scende sotto il 2% dopo $\\ln 50/|\\sigma| \\approx 3{,}9/|\\sigma|$ secondi.",
             "**Più in alto = più oscillante.** L'altezza $\\omega$ è la pulsazione smorzata del Capitolo 6, quindi un'oscillazione dura $2\\pi/\\omega$ secondi.",
-            "**L'angolo fissa la sovraelongazione.** L'angolo $\\theta$ dal semiasse reale negativo dà $\\zeta = \\cos\\theta$ (il cerchio del Capitolo 6), e la sovraelongazione è $e^{-\\pi|\\sigma|/\\omega}$ (i raggi tratteggiati). Vicino all'asse reale va oltre pochissimo, vicino all'asse verticale moltissimo."
+            "**L'angolo fissa la sovraelongazione.** L'angolo $\\theta$ dal semiasse reale negativo dà $\\zeta = \\cos\\theta$ (il cerchio del Capitolo 6), e la sovraelongazione è $e^{-\\pi|\\sigma|/\\omega}$ (i raggi tratteggiati). Vicino all'asse reale va oltre pochissimo, vicino all'asse verticale moltissimo. (Esatto per due poli e nessuno zero, partendo da fermo. Uno zero lo cambia: nella prossima sezione uno trasforma il 12% in 15%.)"
           ]
         },
         {
@@ -282,7 +282,7 @@
             },
             {
               "term": "Polo dominante",
-              "def": "Il polo più vicino all'asse verticale. Il suo moto lento dura più degli altri, quindi decide il tempo di assestamento."
+              "def": "Il polo più vicino all'asse verticale. Il suo moto lento dura più degli altri, quindi di solito decide il tempo di assestamento, a meno che uno zero non gli stia quasi sopra (nel Capitolo 9 ce n'è uno)."
             }
           ]
         },
@@ -314,7 +314,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Anche il numeratore può annullarsi. Questi punti sono gli **zeri**, disegnati come ○. Di solito cambiano **quanto** del moto di ogni polo appare in uscita. Se uno zero cade esattamente su un polo, il fattore comune si semplifica e quel polo sparisce da questa ricetta ingresso-uscita."
+          "text": "Anche il numeratore può annullarsi. Questi punti sono gli **zeri**, disegnati come ○. Di solito cambiano **quanto** del moto di ogni polo appare in uscita. Se uno zero cade esattamente su un polo, il fattore comune si semplifica e quel polo sparisce da questa ricetta ingresso-uscita. Però è ancora dentro il sistema: spingi il drone in un altro modo, con una raffica, e quel moto ritorna. Questo conta parecchio se il polo nascosto sta a destra."
         },
         {
           "t": "p",
@@ -470,6 +470,108 @@
       ]
     },
     {
+      "id": "loop",
+      "title": "Chiudere l'anello sulla carta",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Nel Capitolo 1 abbiamo disegnato l'anello come scatole e frecce. Nel mondo di s ogni scatola si limita a **moltiplicare**. Possono le scatole fare l'algebra al posto nostro?"
+        },
+        {
+          "t": "p",
+          "text": "Diamo a ogni scatola la sua ricetta. Il controllore è $C(s)$, per ora semplicemente $\\eff{K_p}$. Il drone da solo, con il cambiamento di spinta in ingresso e il cambiamento di altezza in uscita, è $P(s) = \\frac{1}{ms^2 + cs}$: P come *plant*, l'inglese per **impianto**, la parola del Capitolo 1, non la P del controllo P. Viene dritto dall'equazione del drone, proprio come la ricetta qui sopra."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Facile. La richiesta passa dal controllore, poi dal drone. Moltiplichiamo lungo la linea!"
+        },
+        {
+          "t": "math",
+          "tex": "\\Delta\\out{H} \\overset{?}{=} C\\,P\\,\\Delta\\sp{R} = \\frac{\\eff{K_p}}{ms^2 + cs}\\,\\Delta\\sp{R}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Poli in 0 e −2? Nessuna oscillazione, e un polo in 0 che non si assesta mai. È l'anello aperto del Capitolo 1: dire al drone cosa fare e non guardare mai. Il controllore non vede la richiesta, June. Vede l'**errore**."
+        },
+        {
+          "t": "p",
+          "text": "La freccia che torna indietro dal drone è tutto il senso della retroazione. Il controllore agisce su $\\Delta\\sp{R} - \\Delta\\out{H}$, quindi l'uscita compare da tutti e due i lati. Raccoglila e dividi:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\Delta\\out{H} &= C\\,P\\,\\big(\\Delta\\sp{R} - \\Delta\\out{H}\\big) \\\\ \\Delta\\out{H}\\,\\big(1 + C\\,P\\big) &= C\\,P\\,\\Delta\\sp{R} \\\\ \\Delta\\out{H} &= \\frac{C\\,P}{1 + C\\,P}\\,\\Delta\\sp{R} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Metti $C = \\eff{K_p}$ e $P = 1/(ms^2+cs)$, poi moltiplica sopra e sotto per $ms^2 + cs$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{C\\,P}{1 + C\\,P} = \\frac{\\eff{K_p}/(ms^2+cs)}{1 + \\eff{K_p}/(ms^2+cs)} = \\frac{\\eff{K_p}}{ms^2 + cs + \\eff{K_p}}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "È la ricetta dell'inizio del capitolo! L'abbiamo trovata due volte: una dall'equazione del drone, una dalle scatole."
+        },
+        {
+          "t": "p",
+          "text": "Quindi i poli dell'anello stanno dove il denominatore, $1 + C(s)\\,P(s)$, vale zero. È lo stesso che $C\\,P = -1$. Leggi $C\\,P$ come **un giro** dell'anello: quello che il controllore e poi il drone fanno a un segnale. In un polo, un giro riporta il segnale della stessa grandezza e capovolto, e il segno meno nell'errore lo capovolge di nuovo. Così si mantiene da solo, senza nessuna richiesta."
+        },
+        {
+          "t": "math",
+          "tex": "1 + C(s)\\,P(s) = 0 \\quad\\Longleftrightarrow\\quad C(s)\\,P(s) = -1"
+        },
+        {
+          "t": "p",
+          "text": "Provalo su un'oscillazione costante, $s = i\\omega$. Un giro trasforma la freccia dell'oscillazione in $C(i\\omega)\\,P(i\\omega)$: più corta o più lunga, e girata all'indietro. Il widget disegna quella freccia per ogni velocità di oscillazione, e il punto −1 che dovrebbe raggiungere."
+        },
+        {
+          "t": "widget",
+          "id": "loop"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Per quanto spinga $\\eff{K_p}$, la curva si piega verso −1 ma non lo tocca mai. Ci va più vicino più o meno alla velocità di oscillazione propria del drone."
+        },
+        {
+          "t": "p",
+          "text": "Ecco perché. L'attrito gira un giro all'indietro fino a 90°, e la massa fino ad altri 90°, ma insieme arrivano a 180° solo per oscillazioni infinitamente rapide. Quindi il controllo P da solo non può mai rendere instabile questo drone. Un $\\eff{K_p}$ più grande fa solo passare il giro **più vicino** a −1, e più vicino vuol dire meno smorzamento: il \"più $K_p$, più oscillazione\" del Capitolo 2, ora in un disegno."
+        },
+        {
+          "t": "play",
+          "id": "lap",
+          "text": "Con $\\eff{K_p}$ = {scrub|kp|eff} N/m, il giro arriva a {calc|d} da −1, a circa {calc|w} rad/s. Lo smorzamento dell'anello è ζ = {calc|z}."
+        },
+        {
+          "t": "note",
+          "text": "Tieni a mente questo disegno. Nel Capitolo 9 la manopola I aggiunge una pila, altri 90° di ritardo, e la curva può finalmente arrivare a −1. Nel Capitolo 10 il tubo della doccia fa lo stesso, e il giro $C\\,P$ riceve un nome tutto suo."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Anello chiuso",
+              "def": "Un controllore che agisce sull'errore, così l'uscita torna indietro nel suo stesso ingresso: $\\Delta H = \\frac{C\\,P}{1 + C\\,P}\\,\\Delta R$."
+            },
+            {
+              "term": "Guadagno d'anello $C(s)\\,P(s)$",
+              "def": "Quello che un giro dell'anello fa a un segnale. I poli dell'anello chiuso stanno dove vale −1."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "wrap",
       "title": "Cosa sappiamo adesso",
       "blocks": [
@@ -481,6 +583,7 @@
             "Metà sinistra = stabile, metà destra = esplode. Più a sinistra = più rapido (si assesta in circa $4/|\\sigma|$ s, una regola pratica), più in alto = più oscillante (un'oscillazione = $2\\pi/\\omega$ s), angolo = smorzamento $\\zeta$ = sovraelongazione $e^{-\\pi|\\sigma|/\\omega}$. Il polo più vicino all'asse è il capo.",
             "I poli complessi arrivano sempre in coppie allo specchio.",
             "Gli **zeri** (○) cambiano quanto ottieni di ciascun modo. Vicini all'origine aggiungono uno scatto: $1/|z|$ volte la pendenza.",
+            "Chiudi l'anello sulla carta e la ricetta è $\\frac{C\\,P}{1 + C\\,P}$. I poli stanno dove un giro dell'anello, $C\\,P$, vale −1.",
             "La prima spinta è $mg + m|p|^2$ per un gradino di 1 m, quindi i poli lontani richiedono una spinta che i motori non hanno."
           ]
         },
@@ -682,6 +785,22 @@
       "capped": "La matematica vuole {p} N; i motori si fermano a 20 N. Assestamento reale {s} s, e nessun \"più a sinistra\" lo porta sotto circa {b} s.",
       "fantasy": "I motori immaginari forniscono tranquillamente {p} N. Riaccendi i limiti.",
       "fine": "Dentro il range dei motori: matematica e realtà concordano."
+    },
+    "loop": {
+      "title": "Un giro dell'anello",
+      "aria": "Un piano con il punto meno 1 segnato, la curva di un giro dell'anello per ogni velocità di oscillazione e una freccia verso il giro alla velocità scelta.",
+      "re": "parte reale",
+      "im": "parte immaginaria",
+      "kp": "Controllore $K_p$",
+      "w": "Velocità di oscillazione ω",
+      "lap": "C·P",
+      "cliff": "−1",
+      "size": "grandezza del giro |C·P|",
+      "angle": "angolo del giro",
+      "distance": "distanza da −1",
+      "zeta": "smorzamento ζ",
+      "status": "Il più vicino a −1: {d}, a circa {w} rad/s. L'angolo resta sopra −180°, quindi il giro non ci arriva mai. Smorzamento ζ = {z}.",
+      "help": "Fai scorrere ω per muovere la freccia lungo la curva; fai scorrere Kp per allungare tutta la curva. La linea tratteggiata è la distanza da −1."
     }
   },
   "plays": {
@@ -715,6 +834,9 @@
     "zeroKick": {
       "z": "distanza dello zero da 0",
       "pct": "{v}%"
+    },
+    "lap": {
+      "kp": "guadagno proporzionale Kp, in newton al metro"
     }
   }
 }

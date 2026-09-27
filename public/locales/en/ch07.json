@@ -186,7 +186,7 @@
           "t": "say",
           "who": "june",
           "mood": "excited",
-          "text": "When the probe spins at exactly 2, the signal stops spinning, all the pieces point the same way and the total shoots off. When they don't match, the arrows curl around and cancel out."
+          "text": "When the probe spins at exactly 2, the signal stops spinning, all the pieces point the same way and the total is as big as it gets: $1/\\sigma$, which runs off to infinity as σ shrinks to 0. When they don't match, the arrows curl around and cancel out."
         },
         {
           "t": "p",
@@ -381,6 +381,10 @@
           "text": "And the last row needed no new work at all: multiplying by $e^{-\\sigma t}$ simply **shifts** $s$ to $s+\\sigma$. Four rows, all derived, all checked."
         },
         {
+          "t": "note",
+          "text": "One honest warning. The area only exists to the right of the signal's slowest rate: for $e^{-t} + e^{-5t}$ it gives up at $s = -1$, long before $-5$. The fraction $\\frac{1}{s+1} + \\frac{1}{s+5}$ carries on happily and still blows up at both. From here on we trust the fraction everywhere, even where the area machine gave up. Mathematicians have checked that this is safe."
+        },
+        {
           "t": "p",
           "text": "One more rule we've been using quietly. The area machine is fair: make a signal 3 times taller and every slice of its area is 3 times taller, so the whole area is too. Add two signals and their areas add. Mathematicians call this **linearity**."
         },
@@ -465,13 +469,19 @@
             },
             {
               "t": "p",
-              "text": "And $s\\,\\out{H}$ near $s = 0$ is where the drone ends up in the long run. The final height falls straight out of the algebra, no simulation needed."
+              "text": "And $s\\,\\out{H}$ near $s = 0$ is where the drone ends up in the long run, if it settles at all. The final height falls straight out of the algebra, no simulation needed."
             },
             {
               "t": "say",
               "who": "mika",
               "mood": "surprised",
               "text": "Hang on. We can read where it *settles* without solving anything? That feels like cheating."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "It is cheating, unless everything else fades away. Here the other pieces are the drone's own wiggle, and they die out, so $A$ is what's left. If the bottom had a root in the right half, $A/s$ would still sit in the fraction, but a growing piece would swamp it and the drone would never settle anywhere. Chapter 8 shows how to check."
             }
           ]
         },

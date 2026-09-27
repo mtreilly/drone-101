@@ -186,7 +186,7 @@
           "t": "say",
           "who": "june",
           "mood": "excited",
-          "text": "Quand la sonde tourne exactement à 2, le signal arrête de tourner, tous les morceaux pointent dans la même direction et le total s'envole. Quand ça ne correspond pas, les flèches s'enroulent et s'annulent."
+          "text": "Quand la sonde tourne exactement à 2, le signal arrête de tourner, tous les morceaux pointent dans la même direction et le total est aussi grand que possible : $1/\\sigma$, qui file vers l'infini quand σ rétrécit vers 0. Quand ça ne correspond pas, les flèches s'enroulent et s'annulent."
         },
         {
           "t": "p",
@@ -381,6 +381,10 @@
           "text": "Et la dernière ligne n'a demandé aucun travail nouveau : multiplier par $e^{-\\sigma t}$ **décale** simplement $s$ en $s+\\sigma$. Quatre lignes, toutes démontrées, toutes vérifiées."
         },
         {
+          "t": "note",
+          "text": "Un avertissement honnête. L'aire n'existe qu'à droite du taux le plus lent du signal : pour $e^{-t} + e^{-5t}$, elle abandonne en $s = -1$, bien avant $-5$. La fraction $\\frac{1}{s+1} + \\frac{1}{s+5}$, elle, continue tranquillement et explose quand même aux deux. À partir de maintenant, on fait confiance à la fraction partout, même là où la machine à aires a abandonné. Les mathématiciens ont vérifié que c'est sans danger."
+        },
+        {
           "t": "p",
           "text": "Encore une règle qu'on utilise en douce. La machine à aires est juste : rends un signal 3 fois plus haut et chaque tranche de son aire est 3 fois plus haute, donc l'aire entière aussi. Additionne deux signaux et leurs aires s'additionnent. Les mathématiciens appellent ça la **linéarité**."
         },
@@ -465,13 +469,19 @@
             },
             {
               "t": "p",
-              "text": "Et $s\\,\\out{H}$ près de $s = 0$, c'est l'endroit où le drone finit par arriver. La hauteur finale tombe tout droit de l'algèbre, sans simulation."
+              "text": "Et $s\\,\\out{H}$ près de $s = 0$, c'est l'endroit où le drone finit par arriver, s'il se stabilise un jour. La hauteur finale tombe tout droit de l'algèbre, sans simulation."
             },
             {
               "t": "say",
               "who": "mika",
               "mood": "surprised",
               "text": "Attends. On peut lire où il se *stabilise* sans rien résoudre ? J'ai l'impression de tricher."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "C'est de la triche, sauf si tout le reste s'éteint. Ici, les autres morceaux sont l'oscillation propre du drone, et ils s'éteignent, donc il reste $A$. Si le dénominateur avait une racine dans la moitié droite, $A/s$ serait toujours dans la fraction, mais un morceau qui grandit l'écraserait et le drone ne se stabiliserait nulle part. Le chapitre 8 montre comment vérifier."
             }
           ]
         },

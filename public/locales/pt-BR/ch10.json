@@ -92,7 +92,37 @@
         },
         {
           "t": "note",
-          "text": "Esta é a seta giratória do Capítulo 5. Atrasar o girador em $L$ dá $e^{i\\omega(t-L)} = e^{-i\\omega L}\\,e^{i\\omega t}$: a mesma seta, girada para trás pelo ângulo $\\omega L$. Com $s = i\\omega$ esse fator é $e^{-Ls}$, e é por isso que a função de transferência de um atraso puro é $e^{-Ls}$."
+          "text": "Esta é a seta giratória do Capítulo 5. Atrasar o girador em $L$ dá $e^{i\\omega(t-L)} = e^{-i\\omega L}\\,e^{i\\omega t}$: a mesma seta, girada para trás pelo ângulo $\\omega L$."
+        },
+        {
+          "t": "callout",
+          "title": "A sonda vê o atraso",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "A sonda do Capítulo 7 dá o mesmo fator para **qualquer** sinal, não só para um girador. Um sinal que chega $L$ segundos atrasado começa a acumular área $L$ segundos depois, e a essa altura a sonda já encolheu por $e^{-sL}$. Antes de chegar, o sinal atrasado é zero, então faça $u = t - L$:"
+            },
+            {
+              "t": "math",
+              "tex": "\\int_0^\\infty f(t-L)\\,e^{-st}\\,dt = \\int_0^\\infty f(u)\\,e^{-s(u+L)}\\,du = e^{-sL}\\,F(s)"
+            },
+            {
+              "t": "p",
+              "text": "Então um atraso puro multiplica toda transformada por $e^{-sL}$. Essa é a sua função de transferência, e sobre a linha $s = i\\omega$ ela é exatamente o giro para trás de $\\omega L$ lá de cima."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Mas $e^{-sL}$ não é uma fração de polinômios. Onde estão os polos dela?"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "think",
+              "text": "Em nenhum lugar que dê para listar. Coloque-o numa malha e $1 + C\\,P = 0$ tem infinitas soluções. É por isso que este capítulo para de desenhar mapas de polos e passa a medir oscilações."
+            }
+          ]
         }
       ]
     },
@@ -137,7 +167,7 @@
         },
         {
           "t": "p",
-          "text": "O suavizador encolhe as oscilações rápidas, enquanto o cano continua acrescentando atraso de fase. Essas curvas de ganho e fase em função da velocidade de oscilação formam um **diagrama de Bode**. Juntas, elas são a **resposta em frequência** do chuveiro: como ele trata cada velocidade de oscilação. Aqui a entrada é a **temperatura da água misturada**, então as oscilações lentas têm ganho 1. Se usássemos a fração da manopla como entrada, o ganho seria 45 vezes maior. Para obter a resposta em frequência a partir da fórmula, faça $s = i\\omega$: o mesmo truque que encontrou a borda do Capítulo 9."
+          "text": "O suavizador encolhe as oscilações rápidas, enquanto o cano continua acrescentando atraso de fase. Essas curvas de ganho e fase em função da velocidade de oscilação formam um **diagrama de Bode**. Juntas, elas são a **resposta em frequência** do chuveiro: como ele trata cada velocidade de oscilação. Aqui a entrada é a **temperatura da água misturada**, então as oscilações lentas têm ganho 1. Se usássemos a fração da manopla como entrada, o ganho seria 45 vezes maior. Para obter a resposta em frequência a partir da fórmula, faça $s = i\\omega$: o mesmo truque que encontrou a borda do Capítulo 9. (Funciona porque o chuveiro sozinho é estável, então suas oscilações se assentam num ritmo constante que podemos medir.)"
         },
         {
           "t": "callout",
@@ -219,7 +249,7 @@
         },
         {
           "t": "p",
-          "text": "A realimentação subtrai (erro = alvo − temperatura). Isso é um ×(−1), a meia-volta do Capítulo 5, então a onda se inverte uma vez. Se a volta pela malha *também* a atrasa em exatamente 180°, as duas inversões se cancelam, e cada correção chega **perfeitamente no ritmo** do balanço, como empurrar um balanço de parquinho no momento certo. Se a malha devolve a onda do mesmo tamanho (ganho 1), o balanço se mantém sozinho; maior que 1, ele cresce."
+          "text": "A realimentação subtrai (erro = alvo − temperatura). Isso é um ×(−1), a meia-volta do Capítulo 5, então a onda se inverte uma vez. Se a volta pela malha *também* a atrasa em exatamente 180°, as duas inversões se cancelam, e cada correção chega **perfeitamente no ritmo** do balanço, como empurrar um balanço de parquinho no momento certo. Se a malha devolve a onda do mesmo tamanho (ganho 1), o balanço se mantém sozinho; maior que 1, ele cresce. É de novo o $1 + C\\,P = 0$ do Capítulo 8, sobre a linha $s = i\\omega$: uma volta que retorna invertida e do mesmo tamanho é $G_{\\circ}(i\\omega) = -1$."
         },
         {
           "t": "say",
@@ -261,7 +291,7 @@
             },
             {
               "t": "p",
-              "text": "Para as malhas simples do Capítulo 6, margem de fase e razão de amortecimento andam juntas. Uns 43° combinam com ζ = 0,4 (25% de sobressinal), 52° com ζ = 0,5 (16%) e 59° com ζ = 0,6 (menos de 10%). Uma margem de 45°–60° é o ponto ideal ζ ≈ 0,4–0,6 do Capítulo 6, medido em graus. Com um cano na malha, é um bom guia, não uma lei exata."
+              "text": "Para as malhas simples do Capítulo 6, margem de fase e razão de amortecimento andam juntas. Uns 43° combinam com ζ = 0,4 (25% de sobressinal), 52° com ζ = 0,5 (16%) e 59° com ζ = 0,6 (menos de 10%). Esses pares são exatos para a malha mais simples do Capítulo 6, $\\omega_n^2/\\big(s(s+2\\zeta\\omega_n)\\big)$. Então uma margem de 45°–60° significa ζ ≈ 0,4–0,6: mais saltitante que o 0,7–1 do Capítulo 6. Mesmo assim é uma meta comum, porque uma margem também é uma distância de segurança até o precipício (o quanto o modelo pode estar errado), não só uma promessa sobre o sobressinal. Com um cano na malha, é um bom guia, não uma lei exata."
             }
           ]
         },

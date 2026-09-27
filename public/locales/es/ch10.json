@@ -92,7 +92,37 @@
         },
         {
           "t": "note",
-          "text": "Es la flecha giratoria del capítulo 5. Retrasarla en $L$ da $e^{i\\omega(t-L)} = e^{-i\\omega L}\\,e^{i\\omega t}$: la misma flecha, girada hacia atrás un ángulo $\\omega L$. Con $s = i\\omega$ ese factor es $e^{-Ls}$, y por eso la función de transferencia de un retardo puro es $e^{-Ls}$."
+          "text": "Es la flecha giratoria del capítulo 5. Retrasarla en $L$ da $e^{i\\omega(t-L)} = e^{-i\\omega L}\\,e^{i\\omega t}$: la misma flecha, girada hacia atrás un ángulo $\\omega L$."
+        },
+        {
+          "t": "callout",
+          "title": "La sonda ve el retardo",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "La sonda del capítulo 7 da el mismo factor para **cualquier** señal, no solo para un girador. Una señal que llega $L$ segundos tarde empieza a acumular área $L$ segundos tarde, y para entonces la sonda ya se ha encogido por un factor $e^{-sL}$. Antes de llegar, la señal que llega tarde vale cero, así que pon $u = t - L$:"
+            },
+            {
+              "t": "math",
+              "tex": "\\int_0^\\infty f(t-L)\\,e^{-st}\\,dt = \\int_0^\\infty f(u)\\,e^{-s(u+L)}\\,du = e^{-sL}\\,F(s)"
+            },
+            {
+              "t": "p",
+              "text": "Así que un retardo puro multiplica cada transformada por $e^{-sL}$. Esa es su función de transferencia, y sobre la recta $s = i\\omega$ es exactamente el giro hacia atrás de $\\omega L$ de arriba."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Pero $e^{-sL}$ no es un cociente de polinomios. ¿Dónde están sus polos?"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "think",
+              "text": "En ningún sitio que se pueda apuntar en una lista. Mételo en un lazo y $1 + C\\,P = 0$ tiene infinitas soluciones. Por eso este capítulo deja de dibujar mapas de polos y mide oscilaciones."
+            }
+          ]
         }
       ]
     },
@@ -137,7 +167,7 @@
         },
         {
           "t": "p",
-          "text": "El suavizador encoge las oscilaciones rápidas, mientras la tubería sigue añadiendo desfase. Estas curvas de ganancia y fase frente a la velocidad de oscilación forman un **diagrama de Bode**. Juntas son la **respuesta en frecuencia** de la ducha: cómo trata cada velocidad de oscilación. Aquí la entrada es la **temperatura del agua mezclada**, así que las oscilaciones lentas tienen ganancia 1. Si usáramos como entrada la fracción de mando, la ganancia sería 45 veces mayor. Para sacar la respuesta en frecuencia de la fórmula, pon $s = i\\omega$: el mismo truco que encontró el borde del capítulo 9."
+          "text": "El suavizador encoge las oscilaciones rápidas, mientras la tubería sigue añadiendo desfase. Estas curvas de ganancia y fase frente a la velocidad de oscilación forman un **diagrama de Bode**. Juntas son la **respuesta en frecuencia** de la ducha: cómo trata cada velocidad de oscilación. Aquí la entrada es la **temperatura del agua mezclada**, así que las oscilaciones lentas tienen ganancia 1. Si usáramos como entrada la fracción de mando, la ganancia sería 45 veces mayor. Para sacar la respuesta en frecuencia de la fórmula, pon $s = i\\omega$: el mismo truco que encontró el borde del capítulo 9. (Funciona porque la ducha, por sí sola, es estable, así que sus oscilaciones se asientan en un ritmo constante que podemos medir.)"
         },
         {
           "t": "callout",
@@ -219,7 +249,7 @@
         },
         {
           "t": "p",
-          "text": "La realimentación resta (error = objetivo − temperatura). Eso es un ×(−1), la media vuelta del capítulo 5, así que la onda se invierte una vez. Si el viaje alrededor del lazo *además* la retrasa exactamente 180°, las dos inversiones se anulan y cada corrección llega **perfectamente a compás** con la oscilación, como cuando empujas un columpio justo en el momento adecuado. Si el lazo devuelve la onda a tamaño completo (ganancia 1), la oscilación se mantiene sola\\; con más de 1, crece."
+          "text": "La realimentación resta (error = objetivo − temperatura). Eso es un ×(−1), la media vuelta del capítulo 5, así que la onda se invierte una vez. Si el viaje alrededor del lazo *además* la retrasa exactamente 180°, las dos inversiones se anulan y cada corrección llega **perfectamente a compás** con la oscilación, como cuando empujas un columpio justo en el momento adecuado. Si el lazo devuelve la onda a tamaño completo (ganancia 1), la oscilación se mantiene sola; con más de 1, crece. Es otra vez el $1 + C\\,P = 0$ del capítulo 8, sobre la recta $s = i\\omega$: un viaje que regresa invertido y a tamaño completo es $G_{\\circ}(i\\omega) = -1$."
         },
         {
           "t": "say",
@@ -261,7 +291,7 @@
             },
             {
               "t": "p",
-              "text": "En los lazos sencillos del capítulo 6, el margen de fase y el coeficiente de amortiguamiento van de la mano. Unos 43° corresponden a ζ = 0,4 (25 % de sobreimpulso), 52° a ζ = 0,5 (16 %) y 59° a ζ = 0,6 (menos del 10 %). Un margen de 45°–60° es el punto óptimo ζ ≈ 0,4–0,6 del capítulo 6, medido en grados. Con una tubería en el lazo es una buena guía, no una ley exacta."
+              "text": "En los lazos sencillos del capítulo 6, el margen de fase y el coeficiente de amortiguamiento van de la mano. Unos 43° corresponden a ζ = 0,4 (25 % de sobreimpulso), 52° a ζ = 0,5 (16 %) y 59° a ζ = 0,6 (menos del 10 %). Estas parejas son exactas para el lazo más sencillo del capítulo 6, $\\omega_n^2/\\big(s(s+2\\zeta\\omega_n)\\big)$. Así que un margen de 45°–60° significa ζ ≈ 0,4–0,6: más saltarín que el 0,7–1 del capítulo 6. Aun así es un objetivo habitual, porque un margen también es una distancia de seguridad al abismo (cuánto puede equivocarse el modelo), no solo una promesa sobre el sobreimpulso. Con una tubería en el lazo es una buena guía, no una ley exacta."
             }
           ]
         },

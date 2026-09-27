@@ -181,7 +181,7 @@
             "**Lewa połowa = uspokaja się, prawa połowa = wybucha.** Część rzeczywista $\\sigma$ to tempo malenia lub wzrostu $e^{\\sigma t}$.",
             "**Bardziej w lewo = szybciej.** Ustalanie trwa około $4/|\\sigma|$ sekund (przerywane pionowe linie): cztery stałe czasowe z rozdziału 6, bo $e^{-|\\sigma| t}$ spada poniżej 2 % po $\\ln 50/|\\sigma| \\approx 3{,}9/|\\sigma|$ sekundach.",
             "**Wyżej = bardziej rozkołysany.** Wysokość $\\omega$ to pulsacja tłumiona z rozdziału 6, więc jedno wahnięcie trwa $2\\pi/\\omega$ sekund.",
-            "**Kąt ustala przeregulowanie.** Kąt $\\theta$ od ujemnej półosi rzeczywistej daje $\\zeta = \\cos\\theta$ (okrąg z rozdziału 6), a przeregulowanie to $e^{-\\pi|\\sigma|/\\omega}$ (przerywane promienie). Blisko osi rzeczywistej prawie nie ma przeregulowania, blisko osi pionowej jest duże."
+            "**Kąt ustala przeregulowanie.** Kąt $\\theta$ od ujemnej półosi rzeczywistej daje $\\zeta = \\cos\\theta$ (okrąg z rozdziału 6), a przeregulowanie to $e^{-\\pi|\\sigma|/\\omega}$ (przerywane promienie). Blisko osi rzeczywistej prawie nie ma przeregulowania, blisko osi pionowej jest duże. (Dokładnie dla dwóch biegunów bez zera, przy starcie ze spoczynku. Zero to zmienia: w następnej sekcji jedno zero zamienia 12 % w 15 %.)"
           ]
         },
         {
@@ -282,7 +282,7 @@
             },
             {
               "term": "Biegun dominujący",
-              "def": "Biegun najbliżej osi pionowej. Jego wolny ruch trwa dłużej niż pozostałe, więc to on wyznacza czas ustalania."
+              "def": "Biegun najbliżej osi pionowej. Jego wolny ruch trwa dłużej niż pozostałe, więc zwykle to on wyznacza czas ustalania, chyba że prawie na nim siedzi zero (w rozdziale 9 jest taki przypadek)."
             }
           ]
         },
@@ -314,7 +314,7 @@
       "blocks": [
         {
           "t": "p",
-          "text": "Licznik też może być zerem. Takie punkty to **zera**, oznaczane ○. Zwykle zmieniają **udział** ruchu każdego bieguna widoczny na wyjściu. Jeśli zero leży dokładnie na biegunie, wspólny czynnik się skraca i ten biegun znika z tego przepisu od wejścia do wyjścia."
+          "text": "Licznik też może być zerem. Takie punkty to **zera**, oznaczane ○. Zwykle zmieniają **udział** ruchu każdego bieguna widoczny na wyjściu. Jeśli zero leży dokładnie na biegunie, wspólny czynnik się skraca i ten biegun znika z tego przepisu od wejścia do wyjścia. Ale nadal siedzi w układzie: szturchnij drona w inny sposób, podmuchem, a ten ruch wraca. To bardzo ważne, jeśli ukryty biegun leży po prawej stronie."
         },
         {
           "t": "p",
@@ -470,6 +470,108 @@
       ]
     },
     {
+      "id": "loop",
+      "title": "Zamykamy pętlę na papierze",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "W rozdziale 1 narysowaliśmy pętlę jako bloki i strzałki. W świecie s każdy blok po prostu **mnoży**. Czy bloki mogą zrobić za nas algebrę?"
+        },
+        {
+          "t": "p",
+          "text": "Daj każdemu blokowi jego przepis. Regulator to $C(s)$, na razie po prostu $\\eff{K_p}$. Sam dron, ze zmianą ciągu na wejściu i zmianą wysokości na wyjściu, to $P(s) = \\frac{1}{ms^2 + cs}$: P od angielskiego *plant*, czyli **obiekt**, słowo z rozdziału 1, a nie P z regulacji P. Wynika prosto z równania drona, tak samo jak przepis powyżej."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Proste. Polecenie idzie przez regulator, a potem przez drona. Mnożymy wzdłuż linii!"
+        },
+        {
+          "t": "math",
+          "tex": "\\Delta\\out{H} \\overset{?}{=} C\\,P\\,\\Delta\\sp{R} = \\frac{\\eff{K_p}}{ms^2 + cs}\\,\\Delta\\sp{R}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Bieguny w 0 i −2? Żadnego kołysania i biegun w 0, który nigdy się nie ustala. To układ otwarty z rozdziału 1: powiedz dronowi, co ma robić, i nigdy nie patrz. Regulator nie widzi polecenia, June. Widzi **uchyb**."
+        },
+        {
+          "t": "p",
+          "text": "Strzałka wracająca od drona to cały sens sprzężenia zwrotnego. Regulator działa na $\\Delta\\sp{R} - \\Delta\\out{H}$, więc wyjście pojawia się po obu stronach. Zbierz je i podziel:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\Delta\\out{H} &= C\\,P\\,\\big(\\Delta\\sp{R} - \\Delta\\out{H}\\big) \\\\ \\Delta\\out{H}\\,\\big(1 + C\\,P\\big) &= C\\,P\\,\\Delta\\sp{R} \\\\ \\Delta\\out{H} &= \\frac{C\\,P}{1 + C\\,P}\\,\\Delta\\sp{R} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Wstaw $C = \\eff{K_p}$ i $P = 1/(ms^2+cs)$, a potem pomnóż licznik i mianownik przez $ms^2 + cs$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{C\\,P}{1 + C\\,P} = \\frac{\\eff{K_p}/(ms^2+cs)}{1 + \\eff{K_p}/(ms^2+cs)} = \\frac{\\eff{K_p}}{ms^2 + cs + \\eff{K_p}}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "To przepis z początku tego rozdziału! Dostaliśmy go dwa razy: raz z równania drona, raz z bloków."
+        },
+        {
+          "t": "p",
+          "text": "Czyli bieguny pętli leżą tam, gdzie mianownik, $1 + C(s)\\,P(s)$, jest zerem. To to samo co $C\\,P = -1$. Czytaj $C\\,P$ jako **jedno okrążenie** pętli: to, co regulator, a potem dron robią z sygnałem. W biegunie okrążenie oddaje sygnał w tej samej wielkości, ale odwrócony, a minus w uchybie odwraca go z powrotem. Sygnał podtrzymuje się więc sam, bez żadnego polecenia."
+        },
+        {
+          "t": "math",
+          "tex": "1 + C(s)\\,P(s) = 0 \\quad\\Longleftrightarrow\\quad C(s)\\,P(s) = -1"
+        },
+        {
+          "t": "p",
+          "text": "Wypróbuj to na równomiernym wahaniu, $s = i\\omega$. Jedno okrążenie zamienia strzałkę wahania w $C(i\\omega)\\,P(i\\omega)$: krótszą lub dłuższą i obróconą wstecz. Widżet rysuje tę strzałkę dla każdej prędkości wahań oraz punkt −1, do którego musiałaby dotrzeć."
+        },
+        {
+          "t": "widget",
+          "id": "loop"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Choćbym nie wiem jak podkręcał $\\eff{K_p}$, krzywa wygina się w stronę −1, ale nigdy jej nie dotyka. Najbliżej jest mniej więcej przy własnej prędkości wahań drona."
+        },
+        {
+          "t": "p",
+          "text": "Oto dlaczego. Opór obraca okrążenie wstecz najwyżej o 90°, a masa najwyżej o kolejne 90°, ale razem dochodzą do 180° dopiero przy nieskończenie szybkich wahaniach. Dlatego sama regulacja P nigdy nie zepchnie tego drona za krawędź. Większe $\\eff{K_p}$ sprawia tylko, że okrążenie przechodzi **bliżej** −1, a bliżej znaczy mniej tłumienia: „więcej $K_p$, więcej kołysania” z rozdziału 2, teraz jako obrazek."
+        },
+        {
+          "t": "play",
+          "id": "lap",
+          "text": "Przy $\\eff{K_p}$ = {scrub|kp|eff} N/m okrążenie zbliża się do −1 na odległość {calc|d}, przy około {calc|w} rad/s. Tłumienie pętli wynosi ζ = {calc|z}."
+        },
+        {
+          "t": "note",
+          "text": "Zapamiętaj ten obrazek. W rozdziale 9 pokrętło I dodaje stos, czyli kolejne 90° opóźnienia, i krzywa w końcu może dotrzeć do −1. W rozdziale 10 to samo robi rura prysznica, a okrążenie $C\\,P$ dostaje własną nazwę."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Układ zamknięty",
+              "def": "Regulator działa na uchyb, więc wyjście wraca na wejście pętli: $\\Delta H = \\frac{C\\,P}{1 + C\\,P}\\,\\Delta R$."
+            },
+            {
+              "term": "Wzmocnienie pętli $C(s)\\,P(s)$",
+              "def": "To, co jedno okrążenie pętli robi z sygnałem. Bieguny układu zamkniętego leżą tam, gdzie jest ono równe −1."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "wrap",
       "title": "Co teraz wiemy",
       "blocks": [
@@ -481,6 +583,7 @@
             "Lewa połowa = stabilny, prawa połowa = wybucha. Bardziej w lewo = szybciej (ustala się po około $4/|\\sigma|$ s, reguła kciuka), wyżej = bardziej rozkołysany (jedno wahnięcie = $2\\pi/\\omega$ s), kąt = tłumienie $\\zeta$ = przeregulowanie $e^{-\\pi|\\sigma|/\\omega}$. Biegun najbliżej osi tu rządzi.",
             "Bieguny zespolone zawsze występują w lustrzanych parach.",
             "**Zera** (○) zmieniają to, ile każdego modu dostajesz. Blisko początku układu dodają szarpnięcie: $1/|z|$ razy nachylenie.",
+            "Zamknij pętlę na papierze, a przepis to $\\frac{C\\,P}{1 + C\\,P}$. Bieguny leżą tam, gdzie jedno okrążenie pętli, $C\\,P$, jest równe −1.",
             "Pierwsze pchnięcie przy skoku o 1 m to $mg + m|p|^2$, więc dalekie bieguny wymagają ciągu, którego silniki nie mają."
           ]
         },
@@ -682,6 +785,22 @@
       "capped": "Matematyka chce {p} N; silniki kończą się na 20 N. Prawdziwy czas ustalania {s} s i żadne „bardziej w lewo” nie zejdzie poniżej około {b} s.",
       "fantasy": "Wyimaginowane silniki chętnie dają {p} N. Włącz ograniczenia z powrotem.",
       "fine": "W zakresie silników: matematyka i rzeczywistość się zgadzają."
+    },
+    "loop": {
+      "title": "Raz dookoła pętli",
+      "aria": "Płaszczyzna z zaznaczonym punktem minus 1, krzywa jednego okrążenia pętli dla każdej prędkości wahań i strzałka do okrążenia przy wybranej prędkości.",
+      "re": "część rzeczywista",
+      "im": "część urojona",
+      "kp": "Regulator $K_p$",
+      "w": "Prędkość wahań ω",
+      "lap": "C·P",
+      "cliff": "−1",
+      "size": "wielkość okrążenia |C·P|",
+      "angle": "kąt okrążenia",
+      "distance": "odległość do −1",
+      "zeta": "tłumienie ζ",
+      "status": "Najbliżej −1: {d}, przy około {w} rad/s. Kąt pozostaje powyżej −180°, więc okrążenie nigdy tam nie dociera. Tłumienie ζ = {z}.",
+      "help": "Przesuwaj ω, aby przesunąć strzałkę wzdłuż krzywej; przesuwaj Kp, aby rozciągnąć całą krzywą. Przerywana linia to odległość do −1."
     }
   },
   "plays": {
@@ -715,6 +834,9 @@
     "zeroKick": {
       "z": "odległość zera od 0",
       "pct": "{v} %"
+    },
+    "lap": {
+      "kp": "wzmocnienie proporcjonalne Kp, niutony na metr"
     }
   }
 }

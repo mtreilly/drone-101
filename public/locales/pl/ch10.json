@@ -92,7 +92,37 @@
         },
         {
           "t": "note",
-          "text": "To wirująca strzałka z rozdziału 5. Opóźnienie strzałki o $L$ daje $e^{i\\omega(t-L)} = e^{-i\\omega L}\\,e^{i\\omega t}$: ta sama strzałka, obrócona wstecz o kąt $\\omega L$. Przy $s = i\\omega$ ten czynnik to $e^{-Ls}$, i dlatego transmitancja czystego opóźnienia to $e^{-Ls}$."
+          "text": "To wirująca strzałka z rozdziału 5. Opóźnienie strzałki o $L$ daje $e^{i\\omega(t-L)} = e^{-i\\omega L}\\,e^{i\\omega t}$: ta sama strzałka, obrócona wstecz o kąt $\\omega L$."
+        },
+        {
+          "t": "callout",
+          "title": "Sonda widzi opóźnienie",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Sonda z rozdziału 7 daje ten sam czynnik dla **dowolnego** sygnału, nie tylko dla wirującej strzałki. Sygnał, który przychodzi $L$ sekund później, zaczyna zbierać pole $L$ sekund później, a do tego czasu sonda zmalała już o czynnik $e^{-sL}$. Zanim sygnał przyjdzie, jest zerem, więc podstaw $u = t - L$:"
+            },
+            {
+              "t": "math",
+              "tex": "\\int_0^\\infty f(t-L)\\,e^{-st}\\,dt = \\int_0^\\infty f(u)\\,e^{-s(u+L)}\\,du = e^{-sL}\\,F(s)"
+            },
+            {
+              "t": "p",
+              "text": "Czyste opóźnienie mnoży więc każdą transformatę przez $e^{-sL}$. To jego transmitancja, a na prostej $s = i\\omega$ to dokładnie obrót wstecz o $\\omega L$ opisany wyżej."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Ale $e^{-sL}$ nie jest ilorazem wielomianów. Gdzie są jego bieguny?"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "think",
+              "text": "Nigdzie, gdzie dałoby się je wypisać. Włóż je do pętli, a $1 + C\\,P = 0$ ma nieskończenie wiele rozwiązań. Dlatego ten rozdział przestaje rysować mapy biegunów i zamiast tego mierzy wahania."
+            }
+          ]
         }
       ]
     },
@@ -137,7 +167,7 @@
         },
         {
           "t": "p",
-          "text": "Wygładzacz zmniejsza szybkie wahania, a rura nadal dodaje opóźnienie fazowe. Wykresy wzmocnienia i fazy w zależności od szybkości wahań tworzą **charakterystyki Bodego**. Razem opisują **charakterystykę częstotliwościową** prysznica: jak traktuje każdą prędkość wahań. Tutaj wejściem jest **temperatura zmieszanej wody**, więc powolne wahania mają wzmocnienie 1. Gdyby wejściem było ustawienie kurka, wzmocnienie byłoby 45 razy większe. Żeby dostać charakterystykę częstotliwościową ze wzoru, wstaw $s = i\\omega$: ten sam trik, który znalazł krawędź w rozdziale 9."
+          "text": "Wygładzacz zmniejsza szybkie wahania, a rura nadal dodaje opóźnienie fazowe. Wykresy wzmocnienia i fazy w zależności od szybkości wahań tworzą **charakterystyki Bodego**. Razem opisują **charakterystykę częstotliwościową** prysznica: jak traktuje każdą prędkość wahań. Tutaj wejściem jest **temperatura zmieszanej wody**, więc powolne wahania mają wzmocnienie 1. Gdyby wejściem było ustawienie kurka, wzmocnienie byłoby 45 razy większe. Żeby dostać charakterystykę częstotliwościową ze wzoru, wstaw $s = i\\omega$: ten sam trik, który znalazł krawędź w rozdziale 9. (Działa to, bo sam prysznic jest stabilny, więc jego wahania ustalają się w równym rytmie, który możemy zmierzyć.)"
         },
         {
           "t": "callout",
@@ -219,7 +249,7 @@
         },
         {
           "t": "p",
-          "text": "Sprzężenie zwrotne odejmuje (uchyb = cel − temperatura). To ×(−1), pół obrotu z rozdziału 5, więc fala odwraca się raz. Jeśli podróż dookoła pętli *dodatkowo* opóźnia ją dokładnie o 180°, oba odwrócenia się znoszą i każda korekta przychodzi **idealnie w rytm** z wahaniem, jak pchanie huśtawki na placu zabaw w samą porę. Jeśli pętla oddaje falę w pełnej wielkości (wzmocnienie 1), huśtanie samo się podtrzymuje; przy wzmocnieniu większym niż 1 rośnie."
+          "text": "Sprzężenie zwrotne odejmuje (uchyb = cel − temperatura). To ×(−1), pół obrotu z rozdziału 5, więc fala odwraca się raz. Jeśli podróż dookoła pętli *dodatkowo* opóźnia ją dokładnie o 180°, oba odwrócenia się znoszą i każda korekta przychodzi **idealnie w rytm** z wahaniem, jak pchanie huśtawki na placu zabaw w samą porę. Jeśli pętla oddaje falę w pełnej wielkości (wzmocnienie 1), huśtanie samo się podtrzymuje; przy wzmocnieniu większym niż 1 rośnie. To znowu $1 + C\\,P = 0$ z rozdziału 8, na prostej $s = i\\omega$: okrążenie, które wraca odwrócone i w pełnej wielkości, to $G_{\\circ}(i\\omega) = -1$."
         },
         {
           "t": "say",
@@ -261,7 +291,7 @@
             },
             {
               "t": "p",
-              "text": "W prostych pętlach z rozdziału 6 zapas fazy i współczynnik tłumienia idą w parze. Mniej więcej 43° odpowiada ζ = 0,4 (25 % przeregulowania), 52° odpowiada ζ = 0,5 (16 %), a 59° odpowiada ζ = 0,6 (poniżej 10 %). Zapas 45°–60° to złoty środek ζ ≈ 0,4–0,6 z rozdziału 6, zmierzony w stopniach. Gdy w pętli jest rura, to dobra wskazówka, a nie ścisłe prawo."
+              "text": "W prostych pętlach z rozdziału 6 zapas fazy i współczynnik tłumienia idą w parze. Mniej więcej 43° odpowiada ζ = 0,4 (25 % przeregulowania), 52° odpowiada ζ = 0,5 (16 %), a 59° odpowiada ζ = 0,6 (poniżej 10 %). Te pary są dokładne dla najprostszej pętli z rozdziału 6, $\\omega_n^2/\\big(s(s+2\\zeta\\omega_n)\\big)$. Zapas 45°–60° oznacza więc ζ ≈ 0,4–0,6: więcej podskakiwania niż przy 0,7–1 z rozdziału 6. Mimo to jest to częsty cel, bo zapas to także bezpieczna odległość od urwiska (na ile model może się mylić), a nie tylko obietnica co do przeregulowania. Gdy w pętli jest rura, to dobra wskazówka, a nie ścisłe prawo."
             }
           ]
         },

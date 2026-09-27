@@ -92,7 +92,37 @@
         },
         {
           "t": "note",
-          "text": "È la freccia che gira del Capitolo 5. Ritardare la trottola di $L$ dà $e^{i\\omega(t-L)} = e^{-i\\omega L}\\,e^{i\\omega t}$: la stessa freccia, girata all'indietro dell'angolo $\\omega L$. Con $s = i\\omega$ quel fattore è $e^{-Ls}$, ed ecco perché la funzione di trasferimento di un ritardo puro è $e^{-Ls}$."
+          "text": "È la freccia che gira del Capitolo 5. Ritardare la trottola di $L$ dà $e^{i\\omega(t-L)} = e^{-i\\omega L}\\,e^{i\\omega t}$: la stessa freccia, girata all'indietro dell'angolo $\\omega L$."
+        },
+        {
+          "t": "callout",
+          "title": "La sonda vede il ritardo",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "La sonda del Capitolo 7 dà lo stesso fattore per **qualsiasi** segnale, non solo per una trottola. Un segnale che arriva con $L$ secondi di ritardo comincia ad accumulare area $L$ secondi dopo, e a quel punto la sonda si è già ristretta di $e^{-sL}$. Prima di arrivare il segnale in ritardo vale zero, quindi poni $u = t - L$:"
+            },
+            {
+              "t": "math",
+              "tex": "\\int_0^\\infty f(t-L)\\,e^{-st}\\,dt = \\int_0^\\infty f(u)\\,e^{-s(u+L)}\\,du = e^{-sL}\\,F(s)"
+            },
+            {
+              "t": "p",
+              "text": "Quindi un ritardo puro moltiplica ogni trasformata per $e^{-sL}$. È la sua funzione di trasferimento, e sulla retta $s = i\\omega$ è esattamente la rotazione all'indietro di $\\omega L$ vista sopra."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Ma $e^{-sL}$ non è una frazione di polinomi. Dove sono i suoi poli?"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "think",
+              "text": "Da nessuna parte che si possa elencare. Mettilo in un anello e $1 + C\\,P = 0$ ha infinite soluzioni. Ecco perché questo capitolo smette di disegnare mappe dei poli e misura invece le oscillazioni."
+            }
+          ]
         }
       ]
     },
@@ -137,7 +167,7 @@
         },
         {
           "t": "p",
-          "text": "Lo smussatore rimpicciolisce le oscillazioni rapide, mentre il tubo continua ad aggiungere sfasamento. Queste curve di guadagno e fase in funzione della velocità di oscillazione formano un **diagramma di Bode**. Insieme sono la **risposta in frequenza** della doccia: come tratta ogni velocità di oscillazione. Qui l'ingresso è la **temperatura dell'acqua miscelata**, quindi le oscillazioni lente hanno guadagno 1. Se l'ingresso fosse la posizione della manopola, il guadagno sarebbe 45 volte maggiore. Per ottenere la risposta in frequenza dalla formula, poni $s = i\\omega$: lo stesso trucco che ha trovato il bordo nel Capitolo 9."
+          "text": "Lo smussatore rimpicciolisce le oscillazioni rapide, mentre il tubo continua ad aggiungere sfasamento. Queste curve di guadagno e fase in funzione della velocità di oscillazione formano un **diagramma di Bode**. Insieme sono la **risposta in frequenza** della doccia: come tratta ogni velocità di oscillazione. Qui l'ingresso è la **temperatura dell'acqua miscelata**, quindi le oscillazioni lente hanno guadagno 1. Se l'ingresso fosse la posizione della manopola, il guadagno sarebbe 45 volte maggiore. Per ottenere la risposta in frequenza dalla formula, poni $s = i\\omega$: lo stesso trucco che ha trovato il bordo nel Capitolo 9. (Funziona perché la doccia da sola è stabile, quindi le sue oscillazioni si assestano in un ritmo costante che possiamo misurare.)"
         },
         {
           "t": "callout",
@@ -219,7 +249,7 @@
         },
         {
           "t": "p",
-          "text": "La retroazione sottrae (errore = obiettivo − temperatura). È un ×(−1), il mezzo giro del Capitolo 5, quindi l'onda si capovolge una volta. Se il giro dell'anello la ritarda *anche* di esattamente 180°, i due capovolgimenti si annullano, e ogni correzione arriva **perfettamente a tempo** con l'oscillazione, come spingere un'altalena proprio al momento giusto. Se l'anello restituisce l'onda a grandezza piena (guadagno 1), l'oscillazione si mantiene da sola; se più di 1, cresce."
+          "text": "La retroazione sottrae (errore = obiettivo − temperatura). È un ×(−1), il mezzo giro del Capitolo 5, quindi l'onda si capovolge una volta. Se il giro dell'anello la ritarda *anche* di esattamente 180°, i due capovolgimenti si annullano, e ogni correzione arriva **perfettamente a tempo** con l'oscillazione, come spingere un'altalena proprio al momento giusto. Se l'anello restituisce l'onda a grandezza piena (guadagno 1), l'oscillazione si mantiene da sola; se più di 1, cresce. È di nuovo l'$1 + C\\,P = 0$ del Capitolo 8, sulla retta $s = i\\omega$: un giro che torna capovolto e a grandezza piena è $G_{\\circ}(i\\omega) = -1$."
         },
         {
           "t": "say",
@@ -261,7 +291,7 @@
             },
             {
               "t": "p",
-              "text": "Per gli anelli semplici del Capitolo 6, margine di fase e coefficiente di smorzamento vanno insieme. Circa 43° va con ζ = 0,4 (25 % di sovraelongazione), 52° con ζ = 0,5 (16 %) e 59° con ζ = 0,6 (meno del 10 %). Un margine di 45°–60° è il punto giusto ζ ≈ 0,4–0,6 del Capitolo 6, misurato in gradi. Con un tubo nell'anello è una buona guida, non una legge esatta."
+              "text": "Per gli anelli semplici del Capitolo 6, margine di fase e coefficiente di smorzamento vanno insieme. Circa 43° va con ζ = 0,4 (25 % di sovraelongazione), 52° con ζ = 0,5 (16 %) e 59° con ζ = 0,6 (meno del 10 %). Queste coppie sono esatte per l'anello più semplice del Capitolo 6, $\\omega_n^2/\\big(s(s+2\\zeta\\omega_n)\\big)$. Quindi un margine di 45°–60° vuol dire ζ ≈ 0,4–0,6: più rimbalzante dello 0,7–1 del Capitolo 6. È comunque un obiettivo comune, perché un margine è anche una distanza di sicurezza dal precipizio (quanto può essere sbagliato il modello), non solo una promessa sulla sovraelongazione. Con un tubo nell'anello è una buona guida, non una legge esatta."
             }
           ]
         },

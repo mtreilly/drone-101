@@ -1,5 +1,5 @@
 import { h, s as svg } from '../../core/dom';
-import { fmt, tc } from '../../core/i18n';
+import { fmt, tc, unitLabel } from '../../core/i18n';
 import { setRich, tex } from '../../core/rich-text';
 import { regionPath } from '../../math/region';
 import { stepMetrics } from '../../math/metrics';
@@ -10,11 +10,13 @@ import { readout, segmented, slider, toggle } from '../../ui/controls';
 import { DroneView } from '../../ui/drone-view';
 import { Loop } from '../../ui/loop';
 import { Plot } from '../../ui/plot';
+import { PlaneCanvas } from '../../ui/plane-canvas';
 import { SPlane, formatS } from '../../ui/s-plane';
 import { caption, mark, sample } from '../ch06/helpers';
 import './ch08.css';
 import { fallSim, fallTrace } from './fall';
 import { LIMIT_T, bestRealSettling, limitRun, pd } from './limit';
+import { LOOP_W, closest, lap, lapAngle, lapCurve, loopZeta, toCliff } from './loop';
 import {
   CHALLENGE,
   PLAY_T,
@@ -584,4 +586,64 @@ const limit: WidgetFactory = (host, ctx) => {
   update();
 };
 
-export const widgets: Record<string, WidgetFactory> = { recipe, playground, zero, limit };
+/** 8e: one lap round the loop, C(iω)·P(iω), and the point −1 where a lap would feed itself. */
+const loop: WidgetFactory = (host, ctx) => {
+  const { t } = ctx;
+  mark(host);
+  // frame the corner the lap lives in: left of 0 and below the real axis, with −1 in view
+  const EXTENT = 1.6;
+  const CENTER: [number, number] = [-0.75, -0.65];
+  let kp = 20;
+  let u = Math.log10(6.5);
+  host.append(h('p', { class: 'w-title' }, t('title')));
+  const grid = h('div', { class: 'w-grid two' });
+  const left = h('div');
+  const right = h('div');
+  grid.append(left, right);
+  host.append(grid);
+  const plane = new PlaneCanvas(left, { extent: EXTENT, center: CENTER, label: t('aria'), reLabel: t('re'), imLabel: t('im') });
+  ctx.onCleanup(() => plane.destroy());
+  const rG = readout(t('size'), 'out');
+  const rA = readout(t('angle'), 'out');
+  const rD = readout(t('distance'));
+  const rZ = readout(t('zeta'));
+  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  right.append(h('div', { class: 'readouts' }, rG.el, rA.el, rD.el, rZ.el), status);
+  const say = () => {
+    const near = closest(kp);
+    const text = t('status', { d: fmt(near.d, 2), w: fmt(near.w, 1), z: fmt(loopZeta(kp), 2) });
+    if (status.textContent !== text) status.textContent = text;
+  };
+  const draw = () => {
+    const w = 10 ** u;
+    const z = lap(kp, w);
+    const near = closest(kp);
+    const nz = lap(kp, near.w);
+    plane.draw([
+      { kind: 'path', pts: lapCurve(kp, EXTENT, CENTER), color: 'ink2', width: 2 },
+      { kind: 'dot', at: [nz.re, nz.im], color: 'ink3', r: 3.5 },
+      { kind: 'line', from: [-1, 0], to: [z.re, z.im], color: 'ink2', dash: [4, 4], width: 1.5 },
+      { kind: 'dot', at: [-1, 0], color: 'bad', r: 7, ring: true, label: t('cliff'), labelAt: 'above' },
+      { kind: 'arrow', to: [z.re, z.im], color: 'out', width: 3, label: t('lap') },
+    ]);
+    rG.set(fmt(Math.hypot(z.re, z.im), 2));
+    rA.set(`${fmt(lapAngle(kp, w), 0)}°`);
+    rD.set(fmt(toCliff(kp, w), 2), toCliff(kp, w) < 0.35 ? 'bad' : '');
+    rZ.set(fmt(loopZeta(kp), 2));
+  };
+  const sK = slider({ label: t('kp'), min: 1, max: 80, step: 1, value: kp, unit: 'N/m', color: 'eff', onInput: (v) => ((kp = v), draw()), onSettle: say });
+  const sW = slider({
+    label: t('w'),
+    min: Math.log10(LOOP_W.min),
+    max: Math.log10(LOOP_W.max),
+    step: 0.01,
+    value: u,
+    format: (v) => `${fmt(10 ** v, 10 ** v < 10 ? 1 : 0)} ${unitLabel('rad/s')}`,
+    onInput: (v) => ((u = v), draw()),
+  });
+  host.append(h('div', { class: 'w-controls' }, sK.el, sW.el), h('p', { class: 'w-help' }, t('help')));
+  draw();
+  say();
+};
+
+export const widgets: Record<string, WidgetFactory> = { recipe, playground, zero, limit, loop };

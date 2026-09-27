@@ -145,7 +145,7 @@
         },
         {
           "t": "p",
-          "text": "Esse é o erro da Mika, e é muito comum: o integral corrige o desvio residual, mas adiciona **atraso**, e atraso faz as coisas oscilarem (a manopla do chuveiro nos ensinou isso). Precisamos de algo que reaja contra a *velocidade*."
+          "text": "Esse é o erro da Mika, e é muito comum: o integral corrige o desvio residual, mas adiciona **atraso**, e atraso faz as coisas oscilarem (a manopla do chuveiro nos ensinou isso). Precisamos de algo que reaja contra a *velocidade*. (Pela matemática, os balanços dela deveriam crescer para sempre. Eles param em cerca de meio metro só porque o empuxo bate em 0 N a cada balanço: hélices não conseguem puxar para baixo, o limite do Capítulo 8.)"
         }
       ]
     },
@@ -256,7 +256,7 @@
           "t": "say",
           "who": "theo",
           "mood": "surprised",
-          "text": "A gravidade *desapareceu* da equação. Esse é o matador do desvio residual na forma algébrica: a altura final não se importa com $mg$ de forma alguma."
+          "text": "A gravidade *desapareceu* da equação. Esse é o matador do desvio residual na forma algébrica: a altura final não se importa com $mg$ de forma alguma. Isto é, desde que ele se acomode. O drone de $K_i = 50$ da Mika nunca se acomodou."
         },
         {
           "t": "p",
@@ -272,7 +272,7 @@
           "blocks": [
             {
               "t": "p",
-              "text": "No Capítulo 7, uma inclinação virou \"× s\". Uma área é o contrário, então vira \"÷ s\". Escreva o controlador assim, use a receita do próprio drone $P(s) = 1/(ms^2+cs)$ (entra empuxo, sai altura) e encontre os polos como no Capítulo 8. Tire as frações e sai a mesma cúbica, sem tirar uma única inclinação:"
+              "text": "No Capítulo 7, uma inclinação virou \"× s\". Uma área é o contrário, então vira \"÷ s\". Escreva o controlador assim, use a receita do próprio drone $P(s) = 1/(ms^2+cs)$ (entra empuxo, sai altura) e encontre os polos com a regra da malha do Capítulo 8, $1 + C\\,P = 0$. Tire as frações e sai a mesma cúbica, sem tirar uma única inclinação:"
             },
             {
               "t": "math",

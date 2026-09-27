@@ -74,3 +74,26 @@ describe('Chapter 10 numbers', () => {
     expect(sweep([1], [SHOWER.tau, 1], SHOWER.delay, [f.w])[0].phase).toBeCloseTo(-180, 6);
   });
 });
+
+describe('chapter 10: the delay seen by the probe, and margins as damping', () => {
+  it('delaying e^{−t} by L multiplies its transform by e^{−sL}', () => {
+    const L = 2.5;
+    const s = 0.7;
+    let area = 0;
+    const dt = 1e-4;
+    for (let t = L; t < 60; t += dt) area += Math.exp(-(t + dt / 2 - L)) * Math.exp(-s * (t + dt / 2)) * dt;
+    expect(area).toBeCloseTo((Math.exp(-s * L) * 1) / (s + 1), 6);
+  });
+
+  it('phase margin ↔ ζ pairs are exact for ωn²/(s(s + 2ζωn)): 43°, 52°, 59°', () => {
+    const pm = (z: number) => loopMargins({ num: [1], den: [1, 2 * z, 0] }).pm;
+    expect(pm(0.4)).toBeCloseTo(43.1, 1);
+    expect(pm(0.5)).toBeCloseTo(51.8, 1);
+    expect(pm(0.6)).toBeCloseTo(59.2, 1);
+    // and the overshoots quoted with them
+    const os = (z: number) => 100 * Math.exp((-Math.PI * z) / Math.sqrt(1 - z * z));
+    expect(os(0.4)).toBeCloseTo(25.4, 1);
+    expect(os(0.5)).toBeCloseTo(16.3, 1);
+    expect(os(0.6)).toBeLessThan(10);
+  });
+});
