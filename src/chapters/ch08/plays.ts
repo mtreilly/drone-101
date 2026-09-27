@@ -1,89 +1,37 @@
-import { fmt, type T } from '../../core/i18n';
-import { stepMetrics } from '../../math/metrics';
-import { HOVER_THRUST } from '../../sim/drone-model';
+import { fmt } from '../../core/i18n';
 import type { PlayModel } from '../../story/play';
-import { closest, loopZeta } from './loop';
-import { budgetRadius, gainsFromPoles, zeroResponse } from './poles';
 
-/** A pole pair −σ ± ωi, as in the playground: σ shown as a positive number after the printed "−". */
-const sig = { min: 0.2, max: 8, step: 0.1, value: 2, digits: 1 };
-const w = { min: 0, max: 8, step: 0.1, value: 4, digits: 1 };
-
-/** Overshoot (%) of a zero at −z with the zero widget's poles −2 ± 3i, measured on a fine grid. */
-export function zeroOvershoot(z: number): number {
-  const t = Array.from({ length: 6001 }, (_, i) => i * 0.001);
-  const f = zeroResponse(-z);
-  return stepMetrics(t, t.map(f), 0, 1).overshoot;
-}
-
-/** Share left of a decaying mode e^{−a t}, as the dominant-pole sentence prints it. */
-const left = (v: number, t: T) =>
-  v < 0.01 ? t('almostNothing') : t('pct', { v: fmt(v, v < 1 ? 2 : 0) });
+/** Enough decimals that a small leftover never reads as a flat 0.000. */
+const small = (v: number) => fmt(v, Math.abs(v) >= 0.01 ? 3 : 5);
 
 /** Models behind Chapter 8's playable sentences (`{ t: 'play', id }` blocks); pure maths, tested in Node. */
 export const plays: Record<string, PlayModel> = {
-  // "Poles at −{sig} ± {w}i: … settles in about {ts} s. One wiggle takes {period} s. The first peak … at {tp} s … overshoot of {os}."
-  poleRead: {
-    inputs: { sig, w },
+  // "Probe the step at s = {s}: the area is 1 ÷ {s} = {F}. Double s and the area halves."
+  stepArea: {
+    inputs: { s: { min: 0.25, max: 4, step: 0.25, value: 2 } },
     outputs: {
-      ts: (v) => fmt(4 / v.sig, 1),
-      period: (v, t) => (v.w === 0 ? t('noWiggle') : fmt((2 * Math.PI) / v.w, 2)),
-      tp: (v, t) => (v.w === 0 ? t('never') : fmt(Math.PI / v.w, 2)),
-      os: (v, t) => (v.w === 0 ? t('noOvershoot') : t('pct', { v: fmt(100 * Math.exp((-Math.PI * v.sig) / v.w), 0) })),
+      s: ({ s }) => fmt(s, 2),
+      F: ({ s }) => fmt(1 / s, 3),
     },
   },
-  // "To put the poles at −{sig} ± {w}i, the controller needs Kp = m(σ²+ω²) = {kp} N/m and c + Kd = 2mσ = {damp} N·s/m, so Kd = {kd} N·s/m. {note}"
-  gains: {
-    inputs: { sig, w },
+  // "Stop adding the area of e^{−t} at t = {T} s and you already have {A}. Everything after that adds only {left}."
+  longArea: {
+    inputs: { T: { min: 0.5, max: 10, step: 0.5, value: 3, unit: 's' } },
     outputs: {
-      kp: (v) => fmt(gainsFromPoles(-v.sig, v.w).kp, 1),
-      damp: (v) => fmt(gainsFromPoles(-v.sig, v.w).damping, 2),
-      kd: (v) => fmt(gainsFromPoles(-v.sig, v.w).kd, 2),
-      note: (v, t) => (gainsFromPoles(-v.sig, v.w).kd < -1e-9 ? t('negKd') : ''),
+      A: ({ T }) => fmt(1 - Math.exp(-T), 3),
+      left: ({ T }) => small(Math.exp(-T)),
     },
   },
-  // "Real poles at −0.2 and −5. After {t} s, the fast motion e^{−5t} has {fast} of its start left, and the slow one e^{−0.2t} still has {slow}."
-  dominant: {
-    inputs: { time: { min: 0, max: 10, step: 1, value: 1, values: [0, 0.25, 0.5, 1, 2, 5, 10], unit: 's', format: (v) => fmt(v, v % 1 ? 2 : 0) } },
-    outputs: {
-      fast: (v, t) => left(100 * Math.exp(-5 * v.time), t),
-      slow: (v, t) => left(100 * Math.exp(-0.2 * v.time), t),
+  // "Signal e^{at} with a = {a}, probe s = {s}: the product fades at s − a = {gap} per second, so its area is {F}{verdict}"
+  scream: {
+    inputs: {
+      a: { min: -2, max: 1, step: 0.1, value: 0.5, unit: '1/s' },
+      s: { min: -1, max: 3, step: 0.05, value: 1, unit: '1/s' },
     },
-  },
-  // "With the poles at {sig} that's {sum} N: {verdict}." — the little sum stays one text run (4.9 + Kp = peak)
-  push: {
-    inputs: { sig: { min: 1, max: 8, step: 0.5, value: 4, format: (v) => `−${fmt(v, 1)} ± ${fmt(v, 1)}i` } },
     outputs: {
-      sum: (v) => {
-        const kp = gainsFromPoles(-v.sig, v.sig).kp;
-        return `${fmt(HOVER_THRUST, 1)} + ${fmt(kp, 1)} = ${fmt(HOVER_THRUST + kp, 1)}`;
-      },
-      verdict: (v, t) => {
-        const p = HOVER_THRUST + gainsFromPoles(-v.sig, v.sig).kp;
-        return t(p <= 20 ? 'canDo' : p <= 25 ? 'justOver' : 'farBeyond');
-      },
-    },
-  },
-  // "For a {dr} m step, the first push stays under 20 N only if the poles sit within {r} of 0, in any direction."
-  budget: {
-    inputs: { dr: { min: 0.25, max: 2, step: 0.25, value: 1, values: [0.25, 0.5, 1, 2], unit: 'm', format: (v) => fmt(v, v % 1 ? 2 : 0) } },
-    outputs: { r: (v) => fmt(budgetRadius(v.dr), 2) },
-  },
-  // "With the zero at −{z}, the output is the no-zero curve plus {gain} × its slope, and it overshoots by {os} (12% without the zero)."
-  zeroKick: {
-    inputs: { z: { min: 0.3, max: 12, step: 0.1, value: 3, values: [0.3, 0.5, 1, 2, 3, 5, 8, 12], format: (v) => fmt(v, v % 1 ? 1 : 0) } },
-    outputs: {
-      gain: (v) => fmt(1 / v.z, 2),
-      os: (v, t) => t('pct', { v: fmt(zeroOvershoot(v.z), 0) }),
-    },
-  },
-  // "With Kp = {kp} N/m, the lap comes within {d} of −1, at about {w} rad/s. The loop's damping is ζ = {z}."
-  lap: {
-    inputs: { kp: { min: 1, max: 80, step: 1, value: 20, unit: 'N/m' } },
-    outputs: {
-      d: ({ kp }) => fmt(closest(kp).d, 2),
-      w: ({ kp }) => fmt(closest(kp).w, 1),
-      z: ({ kp }) => fmt(loopZeta(kp), 2),
+      gap: ({ a, s }) => fmt(s - a, 2),
+      F: ({ a, s }) => (s - a > 1e-9 ? fmt(1 / (s - a), 2) : '∞'),
+      verdict: ({ a, s }, t) => t(s - a <= 1e-9 ? 'none' : s - a < 0.3 - 1e-9 ? 'loud' : 'calm'),
     },
   },
 };

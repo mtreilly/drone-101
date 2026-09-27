@@ -35,7 +35,7 @@ export function runningArea(f: (t: number) => number, s: number, T: number, n: n
   return out;
 }
 
-/** The table the group derives in Chapter 7 (valid to the right of the rightmost pole). */
+/** The table the group derives in Chapter 9 (valid to the right of the rightmost pole). */
 export const table = {
   step: (s: C): C => div1(c(1), s),
   exp: (a: number) => (s: C): C => div1(c(1), c(s.re - a, s.im)),

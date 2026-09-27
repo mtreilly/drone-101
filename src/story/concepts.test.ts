@@ -117,7 +117,7 @@ describe('the prerequisite graph', () => {
   });
 
   it("a widget's own words are read where the widget sits", () => {
-    const bode = CHAPTERS[10].pieces[CHAPTERS[10].sections.indexOf('bode')];
+    const bode = CHAPTERS[12].pieces[CHAPTERS[12].sections.indexOf('bode')];
     expect(bode.text).toContain('Measured gain against wiggle speed, logarithmic axes.');
   });
 

@@ -1,475 +1,571 @@
 {
   "kicker": "Capitolo 10",
-  "title": "Ritorno alla doccia",
-  "question": "Perché oscillavamo, e quanto siamo vicini al limite?",
+  "title": "Funzioni di trasferimento, poli e zeri",
+  "question": "Possiamo leggere l'intera personalità di un sistema da una sola frazione?",
   "sections": [
     {
-      "id": "again",
-      "title": "La doccia, con occhi nuovi",
+      "id": "recipe",
+      "title": "La ricetta del sistema",
       "blocks": [
         {
           "t": "say",
           "who": "june",
-          "mood": "worried",
-          "text": "Ho messo il PID del nostro drone sulla doccia (stessa grinta, scalato in unità di manopola). È andata caldo, freddo, caldo… proprio come Mika nel Capitolo 0. Il drone non l'ha mai fatto!"
+          "mood": "think",
+          "text": "Partiamo con il drone in volo stazionario a 1 m, con 4,9 N di spinta di base che bilanciano la gravità. Misuriamo sia il cambiamento richiesto sia quello reale di quota rispetto a quel riferimento. Appena prima di una nuova richiesta entrambi sono zero. Nell’esempio del gradino il riferimento salta a 2 m a $t=0$: il cambiamento richiesto diventa 1 m, mentre il drone è ancora a 1 m."
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "think",
-          "text": "Il drone non ha grandi ritardi. La doccia ha 2,5 secondi di tubo. Cerchiamo finalmente di capire cosa *fa* un ritardo."
-        },
-        {
-          "t": "p",
-          "text": "La doccia ha due parti lente: il **tubo**, un ritardo puro di 2,5 s, e lo **smussatore** (nei libri, un sistema del primo ordine), cioè il soffione e le pareti del tubo che si scaldano con la costante di tempo del Capitolo 3, $\\tau = 1$ s (dopo 1 s ha colmato il 63% della distanza da una nuova temperatura)."
-        },
-        {
-          "t": "p",
-          "text": "Prima, una confessione sulla \"mano normale\" del Capitolo 0. Girava la manopola a una **velocità** proporzionale a quanto le sembrava sbagliata l'acqua: velocità della manopola $= k\\cdot\\err{e}$, con $k = 0{,}8\\,\\%$ della manopola al secondo per °C. Una velocità proporzionale all'errore vuol dire che la *posizione* della manopola è la pila dell'errore passato. È un **controllore I**, con $K_i = k$."
-        },
-        {
-          "t": "note",
-          "text": "Nei calcoli, la manopola va da 0 a 1: lo 0,8% della sua corsa vale quindi 0,008 unità di manopola. La formula dell’anello sotto usa 0,008; i cursori mostrano 0,8%. Tieni sempre le unità accanto al numero."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "surprised",
-          "text": "Aspetta, quindi nel Capitolo 0 ero un controllore PID? Vabbè, un controllore I. Uno troppo zelante."
-        }
-      ]
-    },
-    {
-      "id": "lag",
-      "title": "Il ritardo è uno sfasamento nell'oscillazione",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "neutral",
-          "text": "Continuo a pensare che un ritardo renda solo tutto *più lento*. Non dovrebbe poter rendere instabile niente."
-        },
-        {
-          "t": "p",
-          "text": "Isoliamo prima il **ritardo puro** del tubo. Immagina un'onda sinusoidale all'ingresso del tubo che raggiunge il soffione senza essere smorzata: l'uscita ha la stessa forma, ma arriva 2,5 s dopo. Quanto vale questo ritardo *rispetto a un'oscillazione*?"
-        },
-        {
-          "t": "widget",
-          "id": "phase"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "surprised",
-          "text": "Aspetta. Con un'oscillazione di 5 secondi l'acqua calda arriva proprio quando la manopola chiede freddo. Non è *più lento*. È *al contrario*."
-        },
-        {
-          "t": "p",
-          "text": "Il ritardo del tubo resta di 2,5 s, ma il suo **sfasamento** dipende da quanto velocemente oscilla l'onda. Chiamiamo lo sfasamento $\\phi$ e il ritardo $L$. Se un'oscillazione dura $T$ secondi (qui $T$ è un tempo, non una temperatura), la sua velocità angolare è $\\omega=2\\pi/T$ radianti al secondo. Uno sfasamento positivo significa che l'uscita segue l'ingresso in ritardo. Gli ingegneri scrivono il ritardo come un angolo negativo, per questo i grafici qui sotto scendono."
-        },
-        {
-          "t": "p",
-          "text": "Un'oscillazione intera è un giro completo della trottola del Capitolo 5: 360°, cioè 2π radianti. Quindi conta **quale frazione di oscillazione** copre il ritardo: $L/T$."
+          "text": "Bene, perché nel capitolo scorso abbiamo buttato via i pezzi $-h(0)$ e la formula ha mentito. Misurati dal volo stazionario, quei valori di partenza **sono** davvero zero, quindi stavolta spariscono onestamente."
         },
         {
           "t": "math",
-          "tex": "\\phi = \\underbrace{\\frac{L}{T}}_{\\text{frazione di oscillazione}}\\cdot 360^\\circ = \\omega L \\text{ radianti},\\qquad \\omega = \\frac{2\\pi}{T}"
-        },
-        {
-          "t": "play",
-          "id": "delaylag",
-          "text": "Un ritardo di {scrub|L|dis} s su un'oscillazione che si ripete ogni {scrub|T} s copre {calc|frac} di oscillazione, quindi l'uscita è in ritardo di {calc|deg}°, cioè {calc|rad} radianti."
-        },
-        {
-          "t": "p",
-          "text": "Per un'oscillazione di 5 secondi, 2,5 s sono mezza oscillazione: 180°. In questo modello di ritardo puro, ogni picco dell'uscita coincide con un minimo dell'ingresso. Lo smussatore della doccia rimpicciolisce anche le oscillazioni rapide; lo aggiungiamo tra poco."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "surprised",
-          "text": "Quindi gli stessi 2,5 s sono una spintarella per un'oscillazione pigra e un capovolgimento completo per una rapida. Il tubo non cambia mai. È l'oscillazione che cambia!"
-        },
-        {
-          "t": "note",
-          "text": "È la freccia che gira del Capitolo 5. Ritardare la trottola di $L$ dà $e^{i\\omega(t-L)} = e^{-i\\omega L}\\,e^{i\\omega t}$: la stessa freccia, girata all'indietro dell'angolo $\\omega L$."
+          "tex": "\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\Delta\\sp{R}(s)"
         },
         {
           "t": "callout",
-          "title": "La sonda vede il ritardo",
+          "title": "Da dove viene la ricetta",
           "blocks": [
             {
               "t": "p",
-              "text": "La sonda del Capitolo 7 dà lo stesso fattore per **qualsiasi** segnale, non solo per una trottola. Un segnale che arriva con $L$ secondi di ritardo comincia ad accumulare area $L$ secondi dopo, e a quel punto la sonda si è già ristretta di $e^{-sL}$. Prima di arrivare il segnale in ritardo vale zero, quindi poni $u = t - L$:"
+              "text": "La spinta di hovering annulla la gravità, quindi nell'equazione del drone restano solo i *cambiamenti*. Ora usa la regola del Capitolo 9: ogni pendenza diventa × $s$, meno il suo valore di partenza. Dal volo stazionario ogni valore di partenza è zero, quindi non si sottrae niente:"
             },
             {
               "t": "math",
-              "tex": "\\int_0^\\infty f(t-L)\\,e^{-st}\\,dt = \\int_0^\\infty f(u)\\,e^{-s(u+L)}\\,du = e^{-sL}\\,F(s)"
+              "tex": "\\begin{gathered} m\\,\\Delta\\out{h}'' + c\\,\\Delta\\out{h}' = \\eff{K_p}\\,(\\Delta\\sp{r} - \\Delta\\out{h}) \\\\[2pt] \\Big\\downarrow\\ {\\scriptstyle \\Delta h(0)\\,=\\,\\Delta h'(0)\\,=\\,0} \\\\[2pt] (m s^2 + c s + \\eff{K_p})\\,\\Delta\\out{H}(s) = \\eff{K_p}\\,\\Delta\\sp{R}(s) \\end{gathered}"
             },
             {
               "t": "p",
-              "text": "Quindi un ritardo puro moltiplica ogni trasformata per $e^{-sL}$. È la sua funzione di trasferimento, e sulla retta $s = i\\omega$ è esattamente lo sfasamento di $\\omega L$ visto sopra, la freccia girata all'indietro."
+              "text": "Dividi per $m s^2 + c s + \\eff{K_p}$ ed ecco $G(s)$. Il suo denominatore è proprio l'equazione che nei Capitoli dal 4 al 7 avevamo ottenuto tirando a indovinare $e^{st}$."
             },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "think",
-              "text": "Ma $e^{-sL}$ non è una frazione di polinomi. Dove sono i suoi poli?"
-            },
-            {
-              "t": "say",
-              "who": "june",
-              "mood": "think",
-              "text": "Da nessuna parte che si possa elencare. Mettilo in un anello e $1 + C\\,P = 0$ ha infinite soluzioni. Ecco perché questo capitolo smette di disegnare mappe dei poli e misura invece le oscillazioni."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "bode",
-      "title": "Misurare la doccia un'oscillazione alla volta",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Ora aggiungiamo lo smussatore al ritardo del tubo. Il soffione e le pareti del tubo impiegano tempo a scaldarsi: la doccia completa quindi ritarda e smussa i cambiamenti della manopola. Ecco il piano: fai oscillare la manopola a una velocità, aspetta un ritmo stabile e misura due valori:"
-        },
-        {
-          "t": "list",
-          "items": [
-            "**Guadagno** (la stessa parola del guadagno del controllore: ampiezza in uscita ÷ ampiezza in ingresso): quanto è grande l'oscillazione della temperatura, rispetto all'oscillazione della miscela che abbiamo chiesto.",
-            "**Fase:** quanto è in ritardo, come angolo: la sua frazione di un'oscillazione intera, per 360°."
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Ogni misura aggiunge un punto su due grafici. Misura almeno cinque velocità, lente e veloci."
-        },
-        {
-          "t": "widget",
-          "id": "bode"
-        },
-        {
-          "t": "callout",
-          "title": "Il righello schiacciato",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "In questi grafici, ogni ×10 è un passo uguale lungo l'asse: da 0,1 a 1 occupa lo stesso spazio che da 1 a 10. A metà strada tra 0,1 e 1 c'è circa 0,3, non 0,55. Il righello è schiacciato perché un'oscillazione di 100 secondi e una di 3 secondi stiano nello stesso grafico. Guarda il guadagno dello smussatore su questo righello: piatto per le oscillazioni lente, poi giù lungo una linea quasi dritta per quelle rapide, con una curva vicino a $\\omega = 1/\\tau$."
-            },
-            {
-              "t": "say",
-              "who": "june",
-              "mood": "excited",
-              "text": "Ogni passo uguale è un *per* uguale, non un *più* uguale. Come le ottave di un pianoforte!"
-            },
-            {
-              "t": "p",
-              "text": "Il righello schiacciato ha un secondo regalo: lì sopra **moltiplicare diventa sommare**. ×10 è sempre un passo in su, da qualunque punto parti, e ×0,1 un passo in giù. Ecco perché anche l'asse del *guadagno* è schiacciato. Lungo un anello i guadagni si moltiplicano (mano × smussatore × tubo), quindi su questo righello le loro altezze si sommano e basta, proprio come i loro sfasamenti. È il logaritmo del Capitolo 4 al lavoro: $\\ln(a\\,b) = \\ln a + \\ln b$."
-            },
-            {
-              "t": "note",
-              "text": "Gli ingegneri scrivono spesso i guadagni in **decibel** (dB): 20 × il logaritmo in base 10 del guadagno, quindi ×10 è +20 dB, ×1 è 0 dB e ×0,1 è −20 dB. Stesso righello schiacciato, etichette diverse. Noi restiamo con il semplice ×."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Lo smussatore rimpicciolisce le oscillazioni rapide, mentre il tubo continua ad aggiungere sfasamento. Queste curve di guadagno e fase in funzione della velocità di oscillazione formano un **diagramma di Bode**. Insieme sono la **risposta in frequenza** della doccia: come tratta ogni velocità di oscillazione. Qui l'ingresso è la **temperatura dell'acqua miscelata**, quindi le oscillazioni lente hanno guadagno 1. Se l'ingresso fosse la posizione della manopola, il guadagno sarebbe 45 volte maggiore. Per ottenere la risposta in frequenza dalla formula, poni $s = i\\omega$: lo stesso trucco che ha trovato il bordo nel Capitolo 9. (Funziona perché la doccia da sola è stabile, quindi le sue oscillazioni si assestano in un ritmo costante che possiamo misurare.)"
-        },
-        {
-          "t": "callout",
-          "title": "Cosa fa lo smussatore a una trottola",
-          "blocks": [
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "think",
-              "text": "Di nuovo il trucco del Capitolo 4: indoviniamo che la risposta sia la stessa trottola, solo con un'altra grandezza e un altro angolo."
-            },
-            {
-              "t": "math",
-              "tex": "\\tau\\,\\dot y + y = u,\\quad u = e^{i\\omega t},\\ y = Y\\,e^{i\\omega t} \\;\\Rightarrow\\; (1 + i\\omega\\tau)\\,Y = 1 \\;\\Rightarrow\\; Y = \\frac{1}{1+i\\omega\\tau}"
-            },
-            {
-              "t": "p",
-              "text": "Metti la trottola $e^{i\\omega t}$ nella regola dello smussatore e la freccia $Y$ deve soddisfare $(1 + i\\omega\\tau)\\,Y = 1$. Le frecce del Capitolo 6: $1 + i\\omega\\tau$ è lunga $\\sqrt{1+\\omega^2\\tau^2}$ e punta in su con l'angolo $\\arctan(\\omega\\tau)$. Dividere per lei rimpicciolisce di quella lunghezza e gira all'indietro di quell'angolo. Le oscillazioni lente quasi non se ne accorgono. Quelle rapide vengono schiacciate e restano indietro fin quasi a un quarto di giro, ma mai oltre."
-            },
-            {
-              "t": "play",
-              "id": "smoother",
-              "text": "A ω = {scrub|w} rad/s, lo smussatore (τ = 1 s) conserva {calc|g} dell'oscillazione e la ritarda di {calc|lag}°."
-            }
-          ]
-        },
-        {
-          "t": "math",
-          "tex": "G(i\\omega) = \\frac{e^{-i\\omega L}}{1 + i\\omega\\tau}, \\qquad |G| = \\frac{1}{\\sqrt{1+\\omega^2\\tau^2}}, \\qquad \\angle G = -\\arctan(\\omega\\tau) - \\omega L"
-        },
-        {
-          "t": "play",
-          "id": "total",
-          "text": "A ω = {scrub|w} rad/s il tubo sfasa di {calc|pipe}° e lo smussatore di {calc|lag}°: {calc|total}° in tutto. {calc|verdict}"
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Trovata! Vicino a 0,95 rad/s la doccia da sola capovolge un'oscillazione. Ricordatevi questa velocità."
-        },
-        {
-          "t": "note",
-          "text": "Un aiutino onesto: una singola misura non distingue uno sfasamento di 90° da uno di 450° (le onde sembrano uguali). Contiamo i cicli interi in più seguendo la curva dal lento al veloce, come seguire una cresta lungo il tubo."
-        }
-      ]
-    },
-    {
-      "id": "margins",
-      "title": "Quanto siamo vicini al precipizio?",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Ora chiudiamo l'anello: mano → manopola → tubo → pelle → mano. Segui un'oscillazione per tutto il giro. Per la mano del Capitolo 0, il giro dell'anello è $G_{\\circ}$ (un cerchietto per *anello*, perché $L$ è già il ritardo):"
-        },
-        {
-          "t": "math",
-          "tex": "G_{\\circ}(s) = \\underbrace{\\frac{k}{s}}_{\\text{mano}}\\cdot\\underbrace{\\frac{45\\,e^{-2{,}5s}}{s+1}}_{\\text{doccia}}"
-        },
-        {
-          "t": "callout",
-          "title": "La pila di un'oscillazione",
-          "blocks": [
             {
               "t": "say",
               "who": "mika",
-              "mood": "think",
-              "text": "La mia mano accumula errore in una pila. Cosa fa una pila a un'oscillazione?"
-            },
-            {
-              "t": "math",
-              "tex": "\\int \\cos(\\omega t)\\,dt = \\frac{\\sin(\\omega t)}{\\omega} \\qquad\\Longleftrightarrow\\qquad \\frac{1}{i\\omega}:\\ \\text{un quarto di giro indietro, } \\tfrac{1}{\\omega}\\text{ volte più grande}"
-            },
-            {
-              "t": "p",
-              "text": "L'area sotto un coseno è un seno, un quarto di oscillazione indietro: 90° di ritardo, a *ogni* velocità. E la pila è più grande per le oscillazioni lente, perché ogni gobba dura di più prima di annullarsi: la grandezza va come $1/\\omega$. Il Capitolo 5 diceva che la velocità è $i\\omega$ volte la posizione. Accumulare è il contrario: dividere per $i\\omega$. Ecco il $k/s$ nell'anello."
+              "mood": "happy",
+              "text": "Quindi non è magia. È l'equazione stessa del drone, con ogni pendenza trasformata in una $s$."
             }
           ]
         },
         {
           "t": "p",
-          "text": "La retroazione sottrae (errore = obiettivo − temperatura). È un ×(−1), il mezzo giro del Capitolo 5, quindi l'onda si capovolge una volta. Se il giro dell'anello la ritarda *anche* di esattamente 180°, i due capovolgimenti si annullano, e ogni correzione arriva **perfettamente a tempo** con l'oscillazione, come spingere un'altalena proprio al momento giusto. Se l'anello restituisce l'onda a grandezza piena (guadagno 1), l'oscillazione si mantiene da sola; se più di 1, cresce. È di nuovo l'$1 + C\\,P = 0$ del Capitolo 8, sulla retta $s = i\\omega$: un giro che torna capovolto e a grandezza piena è $G_{\\circ}(i\\omega) = -1$."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "In questo semplice anello della doccia, la fase attraversa −180° a una velocità di oscillazione importante. Trovala nel grafico di fase, poi leggi il guadagno d’anello alla stessa velocità nel grafico del guadagno. È sotto o sopra 1?"
-        },
-        {
-          "t": "play",
-          "id": "handloop",
-          "text": "A ω = {scrub|w} rad/s la pila della mano sfasa di 90°, lo smussatore di {calc|lag}°, il tubo di {calc|pipe}°: {calc|total}° in tutto. Lì l'anello della mano normale restituisce un'oscillazione {calc|g} volte più grande."
+          "text": "$\\Delta\\sp{R}(s)$ è la trasformata dello **spostamento richiesto** da 1 m; $\\Delta\\out{H}(s)$ è quella dello **spostamento reale** da 1 m. $G(s)$ dipende dal drone e dal controllore. È la **funzione di trasferimento**: spostamento in uscita diviso per quello in ingresso, entrambi inizialmente zero."
         },
         {
           "t": "p",
-          "text": "Fai scorrere finché il totale supera i 180°, tra 0,45 e 0,46 rad/s. Proprio all'attraversamento, a circa 0,457 rad/s, l'oscillazione torna grande 0,72 volte, quindi la mano potrebbe essere circa 1 ÷ 0,72 ≈ 1,4 volte più energica prima di arrivare al bordo."
+          "text": "Il grafico mostra sempre le altezze da terra. Aggiungi il metro iniziale allo spostamento previsto dalla formula per ottenere l’altezza blu nel grafico."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "June aveva ragione: la frazione **è** il drone. È come la sua **ricetta**. Ci metti dentro qualsiasi ingrediente e ti dice cosa esce!"
+        },
+        {
+          "t": "p",
+          "text": "Prova tre ingressi diversi sullo stesso drone. La ricetta non cambia mai, cambia solo $\\Delta\\sp{R}(s)$."
+        },
+        {
+          "t": "widget",
+          "id": "recipe"
         },
         {
           "t": "vocab",
           "items": [
             {
-              "term": "Margine di guadagno",
-              "def": "Per quante volte potresti moltiplicare il guadagno del controllore prima che il guadagno d'anello arrivi a 1 alla velocità dei −180°. Sotto 1 = oltre il precipizio."
+              "term": "Funzione di trasferimento $G(s)$",
+              "def": "Spostamento in uscita trasformato ÷ spostamento in ingresso trasformato, partendo dallo stesso stato di quiete. Per questo drone lineare è un rapporto di polinomi in $s$."
             },
             {
-              "term": "Margine di fase",
-              "def": "Alla velocità in cui il guadagno d'anello vale esattamente 1, quanto ritardo *in più* servirebbe per arrivare a −180°. Più è, più sei al sicuro; 45°–60° è un obiettivo comune (la deviazione qui sotto spiega perché)."
+              "term": "Partire da fermo (condizioni iniziali nulle)",
+              "def": "Ogni cambiamento e la sua velocità valgono zero a $t = 0$, come quando misuriamo dal volo stazionario. Allora anche i termini dei valori di partenza del Capitolo 9, come $-h(0)$, sono zero, e $G(s)$ racconta tutta la storia."
             }
           ]
-        },
-        {
-          "t": "callout",
-          "title": "Il margine di fase è lo smorzamento travestito",
-          "blocks": [
-            {
-              "t": "say",
-              "who": "june",
-              "mood": "think",
-              "text": "Perché da 45° a 60°? Chi l'ha deciso?"
-            },
-            {
-              "t": "p",
-              "text": "Per gli anelli semplici del Capitolo 6, margine di fase e coefficiente di smorzamento vanno insieme. Circa 43° va con ζ = 0,4 (25% di sovraelongazione), 52° con ζ = 0,5 (16%) e 59° con ζ = 0,6 (meno del 10%). Queste coppie sono esatte per l'anello più semplice del Capitolo 6, $\\omega_n^2/\\big(s(s+2\\zeta\\omega_n)\\big)$. Quindi un margine di 45°–60° vuol dire ζ ≈ 0,4–0,6: più rimbalzante dello 0,7–1 del Capitolo 6. È comunque un obiettivo comune, perché un margine è anche una distanza di sicurezza dal precipizio (quanto può essere sbagliato il modello), non solo una promessa sulla sovraelongazione. Con un tubo nell'anello è una buona guida, non una legge esatta."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Per la nostra doccia, la fase di $G_{\\circ}$ arriva a −180° a $\\omega \\approx 0{,}457$ rad/s, un periodo di oscillazione di circa **13,8 s**. La mano normale ($k = 0{,}008$) ha un margine di guadagno di appena **1,4** circa, e un margine di fase di circa 22° (dove il suo guadagno d'anello vale 1, a 0,34 rad/s, la fase è −158°). Vicino al bordo! La mano energica raddoppia il guadagno: 1,4 ÷ 2 = 0,7, **oltre il precipizio**. Ecco esattamente perché non si assestava mai."
-        },
-        {
-          "t": "predict",
-          "id": "ch10-delay",
-          "gate": true,
-          "q": "Supponiamo che il tubo fosse lungo il doppio (un ritardo di 5 s). Cosa succede al guadagno della mano più grande che resta stabile?",
-          "options": [
-            {
-              "text": "**Sale**: puoi reagire più forte, perché hai più tempo",
-              "why": "Più tempo per reagire suona bene, ma stai reagendo a notizie *più vecchie*. Lo sfasamento cresce a ogni velocità."
-            },
-            {
-              "text": "**Scende**: devi reagire con più delicatezza",
-              "correct": true,
-              "why": "La fase arriva a −180° a un'oscillazione più lenta, e a basse velocità la pila della mano ($k/s$) è grande. Lì il guadagno d'anello è più grande, quindi $k$ deve ridursi: da circa 1,12 a 0,60 %/(°C·s)."
-            },
-            {
-              "text": "Resta uguale: il ritardo cambia i tempi, non il guadagno",
-              "why": "È vero che un ritardo non cambia l'ampiezza di un'onda, ma cambia *quale* velocità arriva a −180°, e lì il guadagno è diverso."
-            }
-          ]
-        },
-        {
-          "t": "widget",
-          "id": "margins"
-        },
-        {
-          "t": "play",
-          "id": "double",
-          "text": "Con un tubo di {scrub|L|dis} s, il bordo della mano a velocità è k = {calc|k} %/(°C·s), e al bordo oscilla ogni {calc|T} s."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "Tubo doppio, mano dimezzata o quasi. E al bordo anche le oscillazioni rallentano: quasi 24 secondi!"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "surprised",
-          "text": "Va bene, ritiro tutto. Un ritardo non rende solo le cose più lente: si mangia il margine di fase, e il margine di fase è l'unica cosa tra te e un'oscillazione."
         }
       ]
     },
     {
-      "id": "replay",
-      "title": "La tua doccia del Capitolo 0, spiegata",
+      "id": "poles",
+      "title": "I poli: dove il sistema vuole vivere",
       "blocks": [
         {
           "t": "p",
-          "text": "Ecco la tua prova del Capitolo 0. Se le tue oscillazioni erano vicine al bordo, il loro periodo dovrebbe essere vicino a quello che prevede l'anello. C'è un colpo di scena: le persone non sono tutte lo stesso tipo di controllore."
-        },
-        {
-          "t": "widget",
-          "id": "replay"
+          "text": "Dove **esplode** $G(s)$? Dove il denominatore si annulla. Questi punti sono i **poli**, disegnati come ×. Questo drone ne ha due, uno per ciascuno dei due moti naturali $e^{st}$ del Capitolo 7."
         },
         {
           "t": "p",
-          "text": "Una **mano a velocità** (gira la manopola finché l'acqua sembra sbagliata) è un controllore I: il suo bordo è a oscillazioni di 13,8 s. Una **mano a posizione** (\"è troppo calda, metti la manopola *qui*\") si comporta come un controllore P: $G_{\\circ}(s) = 45K\\,e^{-2{,}5s}/(s+1)$. Una mano a posizione non ha pila, quindi niente 90° suoi: tubo e smussatore da soli devono arrivare a 180°, e ci arrivano a un'oscillazione più rapida, $\\omega \\approx 0{,}95$ rad/s (la velocità capovolta di June). Vuol dire oscillazioni di **6,6 s**, per qualsiasi $K$ sopra circa 0,031 di manopola per °C. La maggior parte delle persone è un misto. (La mano robot normale oscilla un po' più lenta di 13,8 s, circa 15,5 s, perché sta appena dentro il bordo; le oscillazioni della mano energica, circa 11,6 s, sono schiacciate dalla manopola che arriva a fine corsa.)"
+          "text": "Nel Capitolo 8, la trasformata di $e^{at}$ urlava in $s = a$. Leggilo al contrario: dovunque $G$ urla, si nasconde un moto $e^{pt}$."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Quindi i poli sono i **modi** del Capitolo 7, seduti sulla mappa!"
+        },
+        {
+          "t": "callout",
+          "title": "Perché i poli sono i moti",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Una risposta al gradino è $G(s)$ per l'$\\frac{1}{s}$ del gradino. Spezzala in pezzi semplici, i fratti semplici del Capitolo 9 (una coppia allo specchio di poli riceve numeratori gemelli allo specchio): il polo del gradino in 0 dà il cambiamento finale $A$, e ogni polo di $G$ dà un pezzo $\\frac{B}{s-p}$."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} \\Delta\\out{H}(s) = G(s)\\cdot\\frac{1}{s} &= \\frac{A}{s} + \\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\\\[4pt] \\Longrightarrow\\quad \\Delta\\out{h}(t) &= A + B e^{pt} + \\bar B e^{\\bar p t} \\end{aligned}"
+            },
+            {
+              "t": "p",
+              "text": "La tabella del Capitolo 9 riporta ogni pezzo a un moto. Non può comparire nient'altro: i poli sono tutto il cast."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "E un polo con $\\sigma > 0$ è un pezzo che cresce. Per forza la metà destra esplode."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Ora rovesciamo la cosa. Invece di scegliere i guadagni e trovare i poli, **trasciniamo i poli** e vediamo che drone otteniamo. Serve una seconda manopola, $\\eff{K_d}$: una spinta contro la velocità, che conosceremo per bene nel Capitolo 11. Si somma all'attrito $c$, e le due radici sono $p$ e la sua gemella allo specchio $\\bar p$ (la barra cambia segno alla parte immaginaria, come le gemelle del Capitolo 6):"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} & m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p} = 0 \\\\ \\Longrightarrow\\quad & s = p,\\ \\bar p \\qquad \\text{(i poli)} \\end{aligned}"
         },
         {
           "t": "play",
-          "id": "pgain",
-          "text": "Una mano a posizione con K = {scrub|K|eff} di manopola per °C: alla velocità dei −180° (0,95 rad/s) il suo anello restituisce un'oscillazione {calc|g} volte più grande. {calc|verdict}"
+          "id": "gains",
+          "text": "Per mettere i poli in −{scrub|sig} ± {scrub|w}i, il controllore ha bisogno di $\\eff{K_p} = m(\\sigma^2+\\omega^2)$ = {calc|kp|eff} N/m e di $c + \\eff{K_d} = 2m|\\sigma|$ = {calc|damp} N·s/m, quindi $\\eff{K_d}$ = {calc|kd|eff} N·s/m. Il parco giochi qui sotto segue questi numeri. {calc|note}"
+        },
+        {
+          "t": "predict",
+          "id": "ch8-rhp",
+          "gate": true,
+          "q": "Cosa fa il drone se trasciniamo i poli nella **metà destra** del piano s?",
+          "options": [
+            {
+              "text": "Atterra dolcemente",
+              "sketch": "sluggish",
+              "why": "Per atterrare serve che tutto si calmi, e i poli nella metà destra fanno l'opposto."
+            },
+            {
+              "text": "Resta sospeso, ballando un po'",
+              "sketch": "steady-wiggle",
+              "why": "Ballare in modo costante è quello che ottieni esattamente **sull'**asse verticale. Appena oltre, le cose crescono."
+            },
+            {
+              "text": "Oscilla sempre più forte finché non si schianta o vola via",
+              "sketch": "growing-wiggle",
+              "correct": true,
+              "why": "Nella metà destra, $e^{st}$ ha $\\sigma > 0$: una spirale che si allarga. Le oscillazioni crescono a ogni ciclo."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "playground"
+        },
+        {
+          "t": "h3",
+          "text": "Leggere la mappa"
+        },
+        {
+          "t": "p",
+          "text": "Giocaci. Saltano fuori alcune regole, e ognuna è una vecchia amica travestita:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Metà sinistra = si calma, metà destra = esplode.** La parte reale $\\sigma$ è il tasso con cui $e^{\\sigma t}$ si restringe o cresce.",
+            "**Più a sinistra = più rapido.** Assestarsi richiede circa $4/|\\sigma|$ secondi (le linee verticali tratteggiate): le quattro costanti di tempo del Capitolo 7, perché $e^{-|\\sigma| t}$ scende sotto il 2% dopo $\\ln 50/|\\sigma| \\approx 3{,}9/|\\sigma|$ secondi.",
+            "**Più in alto = più oscillante.** L'altezza $\\omega$ è la pulsazione smorzata del Capitolo 7, quindi un'oscillazione dura $2\\pi/\\omega$ secondi.",
+            "**L'angolo fissa la sovraelongazione.** L'angolo $\\theta$ dal semiasse reale negativo dà $\\zeta = \\cos\\theta$ (il cerchio del Capitolo 7), e la sovraelongazione è $e^{-\\pi|\\sigma|/\\omega}$ (i raggi tratteggiati). Vicino all'asse reale va oltre pochissimo, vicino all'asse verticale moltissimo. (Esatto per due poli e nessuno zero, partendo da fermo. Uno zero lo cambia: nella prossima sezione uno trasforma il 12% in 15%.)"
+          ]
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Volevo **un solo** polo in alto e uno in basso. Non me lo lascia fare! Quello di sotto continua a copiare quello di sopra."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Ti ricordi le trottole gemelle del Capitolo 6? Un drone reale ha un moto reale, quindi ogni $e^{st}$ che gira ha bisogno della sua gemella allo specchio per annullare le parti immaginarie. I poli complessi arrivano **sempre** in coppie allo specchio."
+        },
+        {
+          "t": "callout",
+          "title": "Perché l'angolo fissa la sovraelongazione",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Il drone supera l'obiettivo e torna indietro dopo mezza oscillazione, a $t = \\pi/\\omega$. A quel punto l'$e^{-|\\sigma| t}$ che si restringe ha lavorato per tutto quel tempo, e quello che resta dell'escursione è la sovraelongazione. Conta solo il rapporto $|\\sigma|/\\omega$, e quel rapporto è l'*angolo* del polo. Sul cerchio del Capitolo 7, il coseno di quell'angolo è $\\zeta$."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} t_{\\text{picco}} &= \\frac{\\pi}{\\omega} \\\\[4pt] \\text{sovraelongazione} &= e^{-|\\sigma|\\,t_{\\text{picco}}} = e^{-\\pi|\\sigma|/\\omega} \\\\[4pt] &= e^{-\\pi\\zeta/\\sqrt{1-\\zeta^2}}, \\qquad \\zeta = \\cos\\theta \\end{aligned}"
+            },
+            {
+              "t": "play",
+              "id": "poleRead",
+              "text": "Poli in −{scrub|sig} ± {scrub|w}i: le oscillazioni si riducono come $e^{-|\\sigma| t}$, quindi si assesta in circa {calc|ts} s. Un'oscillazione dura {calc|period} s. Il primo picco arriva dopo metà oscillazione, a {calc|tp} s, e a quel punto il restringimento ha lasciato questa sovraelongazione: {calc|os}."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "happy",
+              "text": "Quindi ogni raggio che parte da 0 è un solo $\\zeta$, e una sola sovraelongazione."
+            }
+          ]
+        },
+        {
+          "t": "predict",
+          "id": "ch8-up",
+          "gate": true,
+          "q": "Tieni $\\sigma = -2$ e fai scorrere i poli **dritti in su**, da $\\pm 4i$ a $\\pm 8i$. Cosa cambia?",
+          "options": [
+            {
+              "text": "Si assesta due volte più in fretta",
+              "why": "L'assestamento segue il tasso di restringimento $\\sigma$, che non si è mosso. Misurato: 1,87 s diventano 1,72 s, quasi uguale."
+            },
+            {
+              "text": "Oscillazioni più rapide e più sovraelongazione; l'assestamento resta più o meno uguale",
+              "correct": true,
+              "why": "Un'oscillazione passa da 1,57 s a 0,79 s e la sovraelongazione sale dal 21% al 46%, ma l'inviluppo $e^{-2t}$ non cambia, quindi l'assestamento resta vicino a $4/2 = 2$ s."
+            },
+            {
+              "text": "Diventa instabile",
+              "why": "Lo decide solo la posizione sinistra-destra. Su e giù non si passa mai nella metà destra."
+            }
+          ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Il parco giochi è saltato quando abbiamo risposto: la coppia fantasma sta in $\\pm 4i$, quella nuova in $\\pm 8i$. Stesso inviluppo, il doppio delle oscillazioni, e una prima escursione molto più grande."
+        },
+        {
+          "t": "note",
+          "text": "Il nostro drone partiva da $-1 \\pm 6{,}24i$: è il drone con $K_p = 20$ del Capitolo 2. Molto in alto (molto oscillante) e vicino all'asse (lento ad assestarsi). Ora puoi *vedere* perché rimbalzava."
         },
         {
           "t": "say",
           "who": "mika",
           "mood": "think",
-          "text": "Quindi quando giravo la manopola di scatto su un punto, ero una mano a posizione. Le mie oscillazioni di sei secondi erano il tubo e lo smussatore, non le mie dita imbranate."
-        }
-      ]
-    },
-    {
-      "id": "design",
-      "title": "Progetta una doccia robot",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Ora battiamo le nostre mani. Il robot usa PI: **P reagisce all’errore di temperatura attuale** e **I ricorda l’errore accumulato**. Insieme fanno reagire subito la manopola mentre I trova l’impostazione duratura."
-        },
-        {
-          "t": "note",
-          "text": "L'obiettivo: un **margine di fase sopra i 45°** e **10 secondi nella fascia comoda, iniziando entro 12 s**. I numeri sui cursori sono percentuali della corsa completa della manopola: $K_p$ in % per °C di errore attuale, $K_i$ in % per °C-secondo di errore accumulato. Le equazioni dell'anello usano frazioni della corsa: dividi per 100 i numeri mostrati."
+          "text": "E se entrambi i poli stessero sull'asse reale, uno in $-0{,}2$ e uno in $-5$?"
         },
         {
           "t": "say",
           "who": "june",
-          "mood": "excited",
-          "text": "Facile. Uso guadagni grandi, come sul drone: veloce e scattante. Sono già impostati. Guardate qua!"
+          "mood": "happy",
+          "text": "Quello veloce sparisce in un secondo. Quello lento è il capo."
+        },
+        {
+          "t": "play",
+          "id": "dominant",
+          "text": "Poli reali in −0,2 e −5. Dopo {scrub|time} s, al moto veloce $e^{-5t}$ resta {calc|fast} del suo inizio, e a quello lento $e^{-0{,}2t}$ resta ancora {calc|slow}. Quindi decide il polo lento: l'assestamento richiede circa $4/0{,}2 = 20$ s."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Polo",
+              "def": "Un valore di $s$ in cui la funzione di trasferimento esplode. Ogni polo $p$ è un moto $e^{pt}$ del sistema."
+            },
+            {
+              "term": "Coppia allo specchio $p,\\ \\bar p$",
+              "def": "Due poli con la stessa parte reale e parti immaginarie opposte. I poli complessi di un sistema reale arrivano sempre così."
+            },
+            {
+              "term": "Polo dominante",
+              "def": "Il polo più vicino all'asse verticale. Il suo moto lento dura più degli altri, quindi di solito decide il tempo di assestamento, a meno che uno zero non gli stia quasi sopra (nel Capitolo 11 ce n'è uno)."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "Quanto è buono 4/|σ|?",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Quattro è il $\\ln 50 \\approx 3{,}9$ del Capitolo 7, arrotondato: il tempo in cui l'*inviluppo* scende al 2%. La curva vera sta dentro il suo inviluppo, quindi spesso si assesta un po' prima. Si assesta più tardi quando i poli stanno sull'asse reale o vicino, perché un polo doppio ha una parte $t\\,e^{-|\\sigma| t}$ che indugia."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{array}{c|ccccc} \\zeta & 0{,}3 & 0{,}5 & 0{,}8 & 0{,}95 & 1 \\\\ \\hline |\\sigma|\\,T_s & 3{,}37 & 4{,}04 & 3{,}01 & 5{,}00 & 5{,}83 \\end{array}"
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "think",
+              "text": "Ho provato $\\sigma = -1$: la regola diceva 4 s, e i tempi veri andavano da 3,0 s a 5,8 s a seconda di $\\zeta$. Abbastanza per prendere la mira, non abbastanza per fare promesse."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zeros",
+      "title": "Gli zeri: un'occhiata veloce",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Anche il numeratore può annullarsi. Questi punti sono gli **zeri**, disegnati come ○. Di solito cambiano **quanto** del moto di ogni polo appare in uscita. Se uno zero cade esattamente su un polo, il fattore comune si semplifica e quel polo sparisce da questa ricetta ingresso-uscita. Però è ancora dentro il sistema: spingi il drone in un altro modo, con una raffica, e quel moto ritorna. Questo conta parecchio se il polo nascosto sta a destra."
+        },
+        {
+          "t": "p",
+          "text": "Ecco un sistema con poli fissi in $-2 \\pm 3i$ e uno zero che puoi far scorrere. (Il $\\eff{K_d}$ del nostro parco giochi spinge contro la *velocità* del drone, quindi la sua ricetta non ha zeri. Spingi invece contro la velocità dell'*errore*, come farà il Capitolo 11, e compare uno zero in $-\\eff{K_p}/\\eff{K_d}$: per questi poli è $-6{,}5$, con il 15% di sovraelongazione invece del 12%.)"
         },
         {
           "t": "widget",
-          "id": "designer"
+          "id": "zero"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Stessi poli, ma quando lo zero si avvicina all'origine la risposta schizza su molto più in fretta e va più oltre!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Stessi poli vuol dire stessi moti. Quindi lo zero non può aggiungerne uno nuovo. Deve aggiungere un po' di qualcosa che abbiamo già."
+        },
+        {
+          "t": "play",
+          "id": "zeroKick",
+          "text": "Con lo zero in −{scrub|z}, l'uscita è la curva senza zero **più {calc|gain} × la sua pendenza**, e la sua sovraelongazione è del {calc|os} (12% senza lo zero)."
+        },
+        {
+          "t": "p",
+          "text": "Moltiplicare per $s$ prende la pendenza (Capitolo 9), quindi il fattore $(1 + s/|z|)$ aggiunge $1/|z|$ volte la pendenza. Ecco perché uno zero vicino all'origine fa reagire il sistema con tanta forza ai **cambiamenti**: la sovraelongazione cresce, anche se i poli non si sono mossi. Da lontano, lo zero conta pochissimo. Per ora sugli zeri non ci serve altro."
+        },
+        {
+          "t": "callout",
+          "title": "Cosa blocca uno zero",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Un polo è un moto che il sistema *produce*; uno zero è un moto che *si rifiuta di far passare*. Dai a questo sistema (zero in $-3$) esattamente $e^{-3t}$ e non ne esce niente: solo l'oscillazione propria del sistema, che si spegne. Senza lo zero, $1{,}3\\,e^{-3t}$ passerebbe dritto."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} G(s) &= \\tfrac{13}{3}\\,\\frac{s+3}{s^2+4s+13}, \\qquad u = e^{-3t} \\\\[4pt] Y(s) &= \\tfrac{13}{3}\\,\\frac{\\cancel{s+3}}{(s^2+4s+13)\\,\\cancel{(s+3)}} \\\\[4pt] \\Longrightarrow\\quad y(t) &= \\tfrac{13}{9}\\,e^{-2t}\\sin 3t \\end{aligned}"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "excited",
+              "text": "Come delle cuffie con cancellazione del rumore per un solo ronzio."
+            }
+          ]
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Zero",
+              "def": "Un valore di $s$ in cui la funzione di trasferimento vale zero: un moto $e^{zt}$ che il sistema non fa passare."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "limits",
+      "title": "Più a sinistra è sempre meglio?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Facile: trasciniamo i poli *molto* a sinistra. Si assesta in un lampo. Il drone migliore di sempre!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Però, che spinta serve? Finora abbiamo fatto finta che i motori potessero spingere forte quanto vuole la matematica."
+        },
+        {
+          "t": "p",
+          "text": "È ora di essere onesti. I nostri motori possono spingere tra **0 N** e **20 N** (circa quattro volte il peso del drone). Qui sotto, i poli si spostano a sinistra lungo una linea a 45° (cioè $\\zeta \\approx 0{,}71$, il punto ideale del Capitolo 7). Le curve tratteggiate sono la matematica con motori immaginari e illimitati; quelle continue sono i motori veri."
+        },
+        {
+          "t": "widget",
+          "id": "limit"
+        },
+        {
+          "t": "play",
+          "id": "push",
+          "text": "Nel primo istante di un gradino di 1 m l'errore è il metro intero e il drone non si muove ancora, quindi la matematica chiede la spinta di hovering più $\\eff{K_p}$ × 1 m. Con i poli in {scrub|sig} fanno {calc|sum|eff} N: {calc|verdict}."
+        },
+        {
+          "t": "p",
+          "text": "Oltre circa $-3{,}9 \\pm 3{,}9i$ la matematica chiede più di 20 N. La {eff|spinta arancione} si appiattisce contro il limite, e oltre circa $-6 \\pm 6i$ la matematica vorrebbe persino tirare il drone *in giù*, cosa che le eliche non sanno fare. Il drone vero smette di seguire la bella previsione lineare. Il suo assestamento smette di migliorare a circa 0,7 s, vicino a $-6{,}5 \\pm 6{,}5i$, e più a sinistra *peggiora*, con sovraelongazione in più."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "L'ho fatto scorrere fino a $-8 \\pm 8i$. La matematica dice 0,53 s. Il drone vero ci mette 0,77 s: più lento che a $-6{,}5$!"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "E la sua sovraelongazione è passata dal 4% al 16%. Tutta quella spinta in più non è mai stata disponibile."
         },
         {
           "t": "say",
           "who": "june",
           "mood": "worried",
-          "text": "…pendola: un'oscillazione permanente, caldo–freddo–caldo, ogni 6 secondi, come una mano a posizione nel Capitolo 0. I guadagni grandi hanno spinto la velocità di guadagno 1 oltre la velocità dei −180°. Nessun margine di fase."
+          "text": "Quindi \"più a sinistra\" è meglio solo finché non finisci il motore. Piazzare i poli è un compromesso, non una gara."
         },
         {
           "t": "callout",
-          "title": "10 s sulla carta, 6 s nella doccia",
+          "title": "Un budget di spinta è un cerchio",
           "blocks": [
             {
               "t": "p",
-              "text": "I guadagni di June hanno $K_i/K_p = 1$ al secondo, cioè esattamente $1/\\tau$. Lo zero del PI cade sul polo dello smussatore e lo cancella, lasciando $2{,}25\\,e^{-2{,}5s}/s$. Sulla carta quell'anello arriva a −180° a $\\omega = \\pi/5$, un'oscillazione di 10 s. Ma il suo anello è ben oltre il bordo, quindi la manopola sbatte da un fine corsa all'altro, e quelle oscillazioni sbattute arrivano circa ogni 6,3 s: vicino ai 6,6 s della mano a posizione."
+              "text": "Nel primissimo istante il drone non si è mosso, quindi spinge solo $\\eff{K_p}$, e $\\eff{K_p} = m|p|^2$: il quadrato della distanza dei poli da 0. Raddoppia la distanza e ti serve una spinta quattro volte più grande, in qualunque direzione tu sia andato. Per un gradino di 1 m i nostri motori permettono poli fino a circa 5,5 da 0 (il cerchio arancione tenue nel parco giochi). Chiedi un gradino di 2 m e il cerchio si restringe a 3,9."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} T(0^+) &= mg + \\eff{K_p}\\,\\Delta\\sp{r} \\\\[4pt] &= mg + m\\,|p|^2\\,\\Delta\\sp{r} \\le 20\\ \\text{N} \\\\[4pt] \\Longrightarrow\\quad |p| &\\le \\sqrt{\\frac{20\\ \\text{N} - mg}{m\\,\\Delta\\sp{r}}} \\end{aligned}"
+            },
+            {
+              "t": "play",
+              "id": "budget",
+              "text": "Per un gradino di {scrub|dr} m, la prima spinta resta sotto i 20 N solo se i poli stanno entro {calc|r} da 0, in qualsiasi direzione."
             }
           ]
         },
         {
+          "t": "note",
+          "text": "D'ora in poi il limite di 20 N resta acceso."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Prima spinta",
+              "def": "La spinta richiesta nel primo istante di un gradino: $mg + \\eff{K_p}\\,\\Delta r$, prima che il drone si sia mosso."
+            },
+            {
+              "term": "Budget di spinta",
+              "def": "Le posizioni dei poli che i motori si possono permettere per un dato gradino: un cerchio attorno a 0."
+            },
+            {
+              "term": "Limite dei motori (saturazione)",
+              "def": "La spinta vera viene tagliata a 0–20 N, qualunque cosa chieda la matematica."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "loop",
+      "title": "Chiudere l'anello sulla carta",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "Nel Capitolo 1 abbiamo disegnato l'anello come scatole e frecce. Nel mondo di s ogni scatola si limita a **moltiplicare**. Possono le scatole fare l'algebra al posto nostro?"
+        },
+        {
+          "t": "p",
+          "text": "Diamo a ogni scatola la sua ricetta. Il controllore è $C(s)$, per ora semplicemente $\\eff{K_p}$. Il drone da solo, con il cambiamento di spinta in ingresso e il cambiamento di altezza in uscita, è $P(s) = \\frac{1}{ms^2 + cs}$: P come *plant*, l'inglese per **impianto**, la parola del Capitolo 1, non la P del controllo P. Viene dritto dall'equazione del drone, proprio come la ricetta qui sopra."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Facile. La richiesta passa dal controllore, poi dal drone. Moltiplichiamo lungo la linea!"
+        },
+        {
+          "t": "math",
+          "tex": "\\Delta\\out{H} \\overset{?}{=} C\\,P\\,\\Delta\\sp{R} = \\frac{\\eff{K_p}}{ms^2 + cs}\\,\\Delta\\sp{R}"
+        },
+        {
           "t": "say",
           "who": "theo",
-          "mood": "happy",
-          "text": "Il drone reggeva guadagni grandi perché non aveva quasi nessun ritardo. Qui, **robusto** vuol dire delicato: lascia margine per il ritardo. Prova i miei guadagni delicati, circa $K_p \\approx 1$ e $K_i \\approx 0{,}6$."
+          "mood": "think",
+          "text": "Poli in 0 e −2? Nessuna oscillazione, e un polo in 0 che non si assesta mai. È l'anello aperto del Capitolo 1: dire al drone cosa fare e non guardare mai. Il controllore non vede la richiesta, June. Vede l'**errore**."
         },
         {
           "t": "p",
-          "text": "P reagisce all'*adesso*, I alla pila. Aggiungere un po' di *adesso* muove la manopola un po' prima, e questo restituisce fase: è l'**anticipo di fase**, circa 37° alla vecchia velocità dei −180° con i guadagni di Theo."
+          "text": "La freccia che torna indietro dal drone è tutto il senso della retroazione. Il controllore agisce su $\\Delta\\sp{R} - \\Delta\\out{H}$, quindi l'uscita compare da tutti e due i lati. Raccoglila e dividi:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\Delta\\out{H} &= C\\,P\\,\\big(\\Delta\\sp{R} - \\Delta\\out{H}\\big) \\\\ \\Delta\\out{H}\\,\\big(1 + C\\,P\\big) &= C\\,P\\,\\Delta\\sp{R} \\\\ \\Delta\\out{H} &= \\frac{C\\,P}{1 + C\\,P}\\,\\Delta\\sp{R} \\end{aligned}"
         },
         {
           "t": "p",
-          "text": "Un PI con buoni margini diventa comodo in circa 9,4 secondi, senza grandi oscillazioni ripetute. Batte la mano normale (che ha passato quasi un minuto a oscillare prima di calmarsi) e la maggior parte degli umani. Però non può battere la fisica: niente può reagire ad acqua che non è ancora arrivata. Gli ingegneri hanno un trucco per i ritardi lunghi, il **predittore di Smith**, che fa girare una piccola simulazione del tubo dentro il controllore. Ma questa è una storia per un altro quaderno."
+          "text": "Metti $C = \\eff{K_p}$ e $P = 1/(ms^2+cs)$, poi moltiplica sopra e sotto per $ms^2 + cs$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{C\\,P}{1 + C\\,P} = \\frac{\\eff{K_p}/(ms^2+cs)}{1 + \\eff{K_p}/(ms^2+cs)} = \\frac{\\eff{K_p}}{ms^2 + cs + \\eff{K_p}}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "È la ricetta dell'inizio del capitolo! L'abbiamo trovata due volte: una dall'equazione del drone, una dalle scatole."
         },
         {
           "t": "p",
-          "text": "La vera lezione è la robustezza. Il tuo modello della doccia non è mai perfetto: il tubo potrebbe essere più lungo, lo scaldabagno più debole. Un margine dice quanto può sbagliare il modello, con un numero che si sente. Il margine di fase (in radianti) diviso per la velocità di guadagno 1 è un **margine di ritardo**: quanti secondi di tubo in più l'anello può sopportare."
+          "text": "Quindi i poli dell'anello stanno dove il denominatore, $1 + C(s)\\,P(s)$, vale zero. È lo stesso che $C\\,P = -1$. Leggi $C\\,P$ come **un giro** dell'anello: quello che il controllore e poi il drone fanno a un segnale. In un polo, un giro riporta il segnale della stessa grandezza e capovolto, e il segno meno nell'errore lo capovolge di nuovo. Così si mantiene da solo, senza nessuna richiesta."
+        },
+        {
+          "t": "math",
+          "tex": "1 + C(s)\\,P(s) = 0 \\quad\\Longleftrightarrow\\quad C(s)\\,P(s) = -1"
+        },
+        {
+          "t": "p",
+          "text": "Provalo su un'oscillazione costante, $s = i\\omega$. Un giro trasforma la freccia dell'oscillazione in $C(i\\omega)\\,P(i\\omega)$: più corta o più lunga, e girata all'indietro. Il widget disegna quella freccia per ogni velocità di oscillazione, e il punto −1 che dovrebbe raggiungere."
+        },
+        {
+          "t": "widget",
+          "id": "loop"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Per quanto spinga $\\eff{K_p}$, la curva si piega verso −1 ma non lo tocca mai. Ci va più vicino più o meno alla velocità di oscillazione propria del drone."
+        },
+        {
+          "t": "p",
+          "text": "Ecco perché. L'attrito ruota il giro all'indietro fino a 90°, e la massa di altri 90° al massimo, ma insieme arrivano a 180° solo per oscillazioni infinitamente rapide. Quindi il controllo P da solo non può mai rendere instabile questo drone. Un $\\eff{K_p}$ più grande fa solo passare il giro **più vicino** a −1, e più vicino vuol dire meno smorzamento: il \"più $K_p$, più oscillazione\" del Capitolo 2, ora in un disegno."
         },
         {
           "t": "play",
-          "id": "delaymargin",
-          "text": "Con $K_p$ = {scrub|kp|eff} %/°C e $K_i$ = {scrub|ki|eff} %/(°C·s), {calc|verdict}"
+          "id": "lap",
+          "text": "Con $\\eff{K_p}$ = {scrub|kp|eff} N/m, il giro arriva a {calc|d} da −1, a circa {calc|w} rad/s. Lo smorzamento dell'anello è ζ = {calc|z}."
         },
         {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "La mano normale sopporta solo circa 1,1 s di tubo in più. Il mio robot delicato ne sopporta 3,5. Ecco cosa vuol dire robusto."
+          "t": "note",
+          "text": "Tieni a mente questo disegno. Nel Capitolo 11 la manopola I aggiunge una pila, altri 90° di ritardo, e la curva può finalmente arrivare a −1. Nel Capitolo 12 il tubo della doccia fa lo stesso, e il giro $C\\,P$ riceve un nome tutto suo."
         },
         {
-          "t": "callout",
-          "title": "Tubo più corto o scaldabagno più rapido?",
-          "blocks": [
+          "t": "vocab",
+          "items": [
             {
-              "t": "say",
-              "who": "mika",
-              "mood": "excited",
-              "text": "Non possiamo semplicemente comprare uno scaldabagno più rapido?"
+              "term": "Anello chiuso",
+              "def": "Un controllore che agisce sull'errore, così l'uscita torna indietro nel suo stesso ingresso: $\\Delta H = \\frac{C\\,P}{1 + C\\,P}\\,\\Delta R$."
             },
             {
-              "t": "p",
-              "text": "Dimezzare il tempo di smussamento (τ = 0,5 s) alza il bordo della mano a velocità solo da 1,12 a 1,21 %/(°C·s). Dimezzare il tubo (1,25 s) lo alza a 2,06. Per una mano a posizione, lo scaldabagno più rapido è perfino *peggio*: il suo bordo scende da 0,031 a 0,025 di manopola per °C, perché lo smussatore rimpiccioliva in silenzio le oscillazioni rapide. Il nemico è il ritardo, non la lentezza."
-            }
-          ]
-        },
-        {
-          "t": "callout",
-          "title": "Come gira davvero la manopola il robot",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Il codice del robot scrive PI come **velocità** della manopola: I continua a muoverla finché resta un errore e P risponde a una *variazione* dell’errore. All’avvio, P dà anche un primo movimento in base all’errore attuale. Questo coincide con la regola in posizione, tranne quando la manopola raggiunge un fine corsa."
+              "term": "Guadagno d'anello $C(s)\\,P(s)$",
+              "def": "Quello che un giro dell'anello fa a un segnale (nei libri: la *funzione d'anello*). I poli dell'anello chiuso stanno dove vale −1."
             }
           ]
         }
@@ -477,95 +573,96 @@
     },
     {
       "id": "wrap",
-      "title": "Cosa abbiamo capito adesso",
+      "title": "Cosa sappiamo adesso",
       "blocks": [
         {
           "t": "recap",
           "items": [
-            "Un ritardo $L$ sfasa un'oscillazione di $\\omega L$: niente per le oscillazioni lente, tanto per quelle veloci.",
-            "Una pila (I) sfasa ogni oscillazione di 90°; uno smussatore fino a 90°; un tubo di $\\omega L$, senza limite.",
-            "Mandare dentro onde sinusoidali e misurare guadagno e fase dà la **risposta in frequenza**; disegnata, è un **diagramma di Bode**, ed è semplicemente $G(i\\omega)$.",
-            "In questo semplice anello della doccia, un’oscillazione persistente inizia quando la fase d’anello arriva a −180° con guadagno 1; con più guadagno, le oscillazioni crescono finché intervengono i limiti.",
-            "Il **margine di guadagno e di fase** misurano la distanza da quel precipizio. Un ritardo più lungo vuol dire meno margine, quindi serve un controllo più delicato.",
-            "Le nostre oscillazioni del Capitolo 0 erano un controllore (noi) con troppo poco margine."
+            "Sì, basta una frazione. La **funzione di trasferimento** $G(s)$ = cambiamento dell'uscita ÷ cambiamento dell'ingresso nel mondo di s, partendo da fermo. È la ricetta del sistema, $\\Delta\\out{H} = G\\cdot\\Delta\\sp{R}$, e viene dritta dall'equazione del drone.",
+            "I **poli** (×) sono dove $G(s)$ esplode: i modi $e^{pt}$ di cui è fatto il sistema.",
+            "Metà sinistra = stabile, metà destra = esplode. Più a sinistra = più rapido (si assesta in circa $4/|\\sigma|$ s, una regola pratica), più in alto = più oscillante (un'oscillazione = $2\\pi/\\omega$ s), angolo = smorzamento $\\zeta$ = sovraelongazione $e^{-\\pi|\\sigma|/\\omega}$. Il polo più vicino all'asse è il capo.",
+            "I poli complessi arrivano sempre in coppie allo specchio.",
+            "Gli **zeri** (○) cambiano quanto ottieni di ciascun modo. Vicini all'origine aggiungono uno scatto: $1/|z|$ volte la pendenza.",
+            "Chiudi l'anello sulla carta e la ricetta è $\\frac{C\\,P}{1 + C\\,P}$. I poli stanno dove un giro dell'anello, $C\\,P$, vale −1.",
+            "La prima spinta è $mg + m|p|^2$ per un gradino di 1 m, quindi i poli lontani richiedono una spinta che i motori non hanno."
           ]
         },
         {
           "t": "quiz",
           "items": [
             {
-              "id": "ch10-q1",
-              "q": "Un ritardo di 2 s, e un'oscillazione con un periodo di 8 s. Quanto ritardo di fase aggiunge il ritardo?",
+              "id": "ch8-q1",
+              "q": "Quale coppia di poli si assesta **più in fretta**?",
               "options": [
                 {
-                  "text": "90°",
+                  "text": "$-1 \\pm 2i$",
+                  "why": "Assestamento ≈ $4/1 = 4$ s. L'altezza (2) influisce solo sull'oscillazione, non sull'assestamento."
+                },
+                {
+                  "text": "$-4 \\pm 2i$",
                   "correct": true,
-                  "why": "2 s sono un quarto di 8 s, e un quarto di 360° è 90°."
+                  "why": "La più a sinistra: assestamento ≈ $4/4 = 1$ s."
                 },
                 {
-                  "text": "45°",
-                  "why": "Quello sarebbe un ritardo di 1 s. 2 s sono un quarto del periodo, non un ottavo."
-                },
-                {
-                  "text": "180°",
-                  "why": "Servirebbe un ritardo di metà periodo, 4 s."
+                  "text": "$-0{,}5 \\pm 5i$",
+                  "why": "Molto in alto vuol dire tante oscillazioni rapide, ma è vicina all'asse, quindi si spengono lentamente (≈ 8 s)."
                 }
               ]
             },
             {
-              "id": "ch10-q2b",
-              "q": "Nel diagramma di Bode di un anello, la fase arriva a −180° a 0,5 rad/s, dove il guadagno d'anello vale 0,25. Alla velocità in cui il guadagno d'anello vale 1, la fase è −130°. Quanto valgono il margine di guadagno e il margine di fase?",
+              "id": "ch8-q2",
+              "q": "$G(s) = \\dfrac{3}{s^2 + 2s + 10}$. Dove sono i poli, e com'è la risposta?",
               "options": [
                 {
-                  "text": "× 4 e 50°",
+                  "text": "$-1 \\pm 3i$: stabile, e oscilla",
                   "correct": true,
-                  "why": "Il guadagno potrebbe crescere 1 ÷ 0,25 = 4 volte prima di arrivare a 1 a −180°, e a −130° mancano 50° per arrivare a −180°."
+                  "why": "$s = \\frac{-2 \\pm \\sqrt{4 - 40}}{2} = -1 \\pm 3i$. Metà sinistra vuol dire stabile, parte immaginaria vuol dire oscillazioni."
                 },
                 {
-                  "text": "× 0,25 e 130°",
-                  "why": "Quelle sono le letture grezze. I margini sono le *distanze* dal precipizio: 1 ÷ 0,25 e 180° − 130°."
+                  "text": "$+1 \\pm 3i$: instabile",
+                  "why": "Errore di segno. Per $s^2 + bs + q$ la parte reale è $-b/2 = -1$, che sta nella metà sinistra."
                 },
                 {
-                  "text": "× 4 e 130°",
-                  "why": "Il margine di guadagno è giusto, ma il margine di fase è il ritardo in più che potresti aggiungere prima di arrivare a −180°: 180° − 130° = 50°."
+                  "text": "$-2$ e $-10$: niente oscillazioni",
+                  "why": "Quelli sono solo coefficienti del polinomio. I poli sono le sue radici: $-1 \\pm 3i$."
                 }
               ]
             },
             {
-              "id": "ch10-q3",
-              "q": "Perché un tubo più lungo costringe a un controllore più delicato?",
+              "id": "ch8-q3",
+              "q": "Vuoi **meno sovraelongazione** ma lo **stesso tempo di assestamento**. Come sposti i poli?",
               "options": [
                 {
-                  "text": "Il ritardo in più arriva a −180° a un'oscillazione più lenta, dove il guadagno d'anello è più grande, quindi il guadagno deve scendere",
+                  "text": "Dritti verso l'asse reale (tieni σ, riduci ω)",
                   "correct": true,
-                  "why": "Esatto. Per una mano che integra, le oscillazioni lente ricevono la spinta più grande, quindi il precipizio si avvicina."
+                  "why": "La stessa distanza dall'asse mantiene uguale l'*inviluppo*, quindi l'assestamento resta più o meno uguale (la regola $4/|\\sigma|$; vicino all'asse reale è approssimativa). Un angolo più piccolo rispetto all'asse reale vuol dire più smorzamento, quindi meno sovraelongazione."
                 },
                 {
-                  "text": "In un tubo più lungo l'acqua si raffredda",
-                  "why": "Abbiamo supposto che non ci siano perdite di calore. L'effetto riguarda solo i tempi."
+                  "text": "Dritti in su (ω più grande)",
+                  "why": "Così l'angolo si sposta verso l'asse verticale: *più* sovraelongazione e oscillazioni più rapide."
                 },
                 {
-                  "text": "Non è vero: puoi reagire più forte perché hai più tempo",
-                  "why": "Non hai più tempo. Hai informazioni più vecchie. È la trappola del Capitolo 0."
+                  "text": "Verso destra",
+                  "why": "Così si assesta più lentamente, e oltre l'asse diventa instabile."
                 }
               ]
             },
             {
-              "id": "ch10-q4",
-              "q": "La mano normale ha un margine di guadagno di circa 1,4. Cosa succede se reagisci 1,5 volte più forte?",
+              "id": "ch8-q4",
+              "q": "Un sistema ha poli reali in $-0{,}2$ e $-5$. Dopo due secondi, quale dei due dà ancora forma alla risposta?",
               "options": [
                 {
-                  "text": "Le oscillazioni crescono invece di spegnersi",
+                  "text": "Quello in $-0{,}2$, vicino all'asse",
                   "correct": true,
-                  "why": "1,5 è più del margine di 1,4, quindi il guadagno d'anello a −180° supera 1: oltre il precipizio."
+                  "why": "$e^{-0{,}2t}$ è ancora al 67% dopo 2 s; $e^{-5t}$ è sceso allo 0,005%. Comanda il polo lento, quindi l'assestamento richiede circa $4/0{,}2 = 20$ s."
                 },
                 {
-                  "text": "Si assesta più in fretta",
-                  "why": "Più guadagno aiuterebbe solo se ci fosse margine in abbondanza. Con 1,4, non c'è."
+                  "text": "Quello in $-5$, più a sinistra",
+                  "why": "Più a sinistra vuol dire che si spegne *più in fretta*. Dopo appena 1 s è sotto l'1% del suo inizio (0,67%)."
                 },
                 {
-                  "text": "Non cambia niente",
-                  "why": "Il guadagno è proprio quello che misura il margine di guadagno, quindi conta eccome."
+                  "text": "Tutti e due allo stesso modo",
+                  "why": "Uno si restringe 25 volte più in fretta dell'altro ($5 \\div 0{,}2$). Dopo mezzo secondo quello veloce è all'8%, quello lento ancora al 90%."
                 }
               ]
             }
@@ -576,175 +673,170 @@
         },
         {
           "t": "cliff",
-          "text": "Ora abbiamo tutti gli attrezzi: retroazione, PID, poli, margini. È ora della prova vera: vento, un pacco che si sgancia e un sensore rumoroso. **Riesci a tenere il drone a 2 m?**"
+          "text": "Theo: \"I poli sono bellissimi. Ma un momento: per tutto il capitolo abbiamo barato regalando al drone la sua spinta di hovering. Senza, la gravità lo fa ancora **abbassare**. La nostra mappa va bene. È il nostro *controllore* che va sistemato.\""
         }
       ]
     }
   ],
   "widgets": {
-    "phase": {
-      "title": "Lo stesso ritardo di 2,5 s, oscillazioni diverse",
-      "y": "oscillazione",
-      "in": "cosa chiede la manopola",
-      "out": "cosa arriva, 2,5 s dopo",
-      "aria": "Due onde sinusoidali: l'ingresso e la stessa onda in ritardo di 2,5 secondi.",
-      "slider": "Periodo dell'oscillazione",
-      "lag": "ritardo di fase",
-      "status": {
-        "small": "Uno sfasamento minimo: per le oscillazioni lente il ritardo conta pochissimo.",
-        "middle": "Uno sfasamento di {d}°: l'acqua è indietro di {f} di oscillazione.",
-        "flipped": "Capovolta! Il caldo arriva proprio quando la manopola dice freddo.",
-        "full": "Più di un'oscillazione intera indietro: sembra di nuovo a tempo, ma è in ritardo di un ciclo intero.",
-        "over": "Uno sfasamento di {d}°: più di un'oscillazione intera in ritardo."
+    "recipe": {
+      "title": "Una ricetta, tre ingressi",
+      "choose": "Cosa chiediamo?",
+      "in": {
+        "step": "un gradino in su",
+        "pulse": "un gradino dolce",
+        "wave": "un'onda"
       },
-      "describe": "Periodo dell'oscillazione {p} secondi; il ritardo di 2,5 secondi la sfasa di {d} gradi.",
-      "w": "velocità di oscillazione ω",
-      "share": "frazione di oscillazione"
-    },
-    "bode": {
-      "title": "Costruisci un diagramma di Bode, un'oscillazione alla volta",
-      "mix": "miscela che abbiamo chiesto",
-      "head": "temperatura al soffione",
-      "timeAria": "L'ultima misura: la temperatura della miscela che oscilla e la temperatura al soffione.",
-      "w": "velocità di oscillazione ω (rad/s)",
-      "gain": "guadagno",
-      "phase": "fase (°)",
-      "formula": "formula",
-      "measured": "le tue misure",
-      "gainAria": "Guadagno misurato in funzione della velocità di oscillazione, assi logaritmici.",
-      "phaseAria": "Ritardo di fase misurato in funzione della velocità di oscillazione.",
-      "flip": "−180°: capovolta",
-      "slider": "Velocità di oscillazione",
-      "period": "periodo",
-      "measure": "Misura",
-      "sweep": "Misura 8 velocità",
-      "clear": "Cancella",
-      "showFormula": "Mostra la curva della formula (servono 5 punti)",
-      "status": {
-        "start": "Scegli una velocità di oscillazione e premi Misura.",
-        "measured": "A ω = {w} rad/s (un'oscillazione di {p} s): guadagno {g}, fase {ph}°.",
-        "formula": "La formula passa proprio sui tuoi punti. Attraversa −180° a {w} rad/s: un'oscillazione di {p} s torna capovolta."
+      "input": "riferimento (ingresso)",
+      "output": "altezza (uscita)",
+      "plotAria": "Riferimento e altezza del drone nel tempo per l'ingresso scelto.",
+      "same": "resta uguale",
+      "changes": "cambia",
+      "describe": {
+        "step": "Il riferimento salta da 1 a 2 metri e il drone lo segue con una sovraelongazione saltellante.",
+        "pulse": "Il riferimento scivola da 1 a 2 metri; il drone lo segue con un rimbalzo più piccolo.",
+        "wave": "Il riferimento ondeggia su e giù; il drone segue l'onda."
       },
-      "describe": "{n} misure sul grafico.",
-      "cross": "capovolta a {w} rad/s",
-      "help": "Lascia il cursore, o fermati sui tasti freccia, e misura quella velocità. Misurare di nuovo una velocità sostituisce il suo punto."
-    },
-    "margins": {
-      "title": "La mano e il bordo del precipizio",
-      "w": "velocità di oscillazione ω (rad/s)",
-      "gain": "guadagno d'anello",
-      "phase": "fase d'anello (°)",
-      "loop": "anello mano + doccia",
-      "gainAria": "Diagramma di Bode del guadagno dell'anello mano più doccia, con la linea del guadagno unitario.",
-      "phaseAria": "Diagramma di Bode della fase dell'anello, con la linea dei −180 gradi.",
-      "timeAria": "Temperatura in 60 secondi con questa mano.",
-      "temp": "temperatura al soffione",
-      "one": "guadagno = 1",
-      "cliff": "−180°: il precipizio",
-      "atCross": "margine di fase",
-      "gm": "margine di guadagno",
-      "pm": "margine di fase",
-      "crit": "bordo (k massimo)",
-      "k": "Velocità della mano k",
-      "delay": "Ritardo del tubo",
+      "droneCap": "il drone che lo segue",
       "status": {
-        "safe": "Ampiamente al sicuro: tanto margine.",
-        "edge": "Vicino al bordo: margine di fase {p}°, margine di guadagno × {g}. Aspettati oscillazioni lunghe e pigre circa ogni {T} s.",
-        "over": "Oltre il precipizio (margine di guadagno × {g}): le oscillazioni crescono finché la manopola arriva a fine corsa."
-      },
-      "describe": "Margine di guadagno {gm}, margine di fase {pm} gradi.",
-      "w180": "velocità dei −180°",
-      "period": "periodo del pendolamento"
-    },
-    "replay": {
-      "title": "Le tue oscillazioni del Capitolo 0",
-      "yours": "Questa è la tua prova del Capitolo 0.",
-      "robot": "Non hai ancora giocato al gioco del Capitolo 0, quindi questa è la mano robot normale. (Giocaci e torna qui!)",
-      "aria": "Temperatura della prova della doccia del Capitolo 0, con la miscela richiesta dalla manopola.",
-      "temp": "temperatura al soffione",
-      "mix": "cosa chiedeva la manopola",
-      "periodYours": "il periodo delle tue oscillazioni",
-      "periodRobot": "periodo delle oscillazioni del robot",
-      "predSpeed": "bordo: mano a velocità",
-      "predPos": "bordo: mano a posizione",
-      "verdict": {
-        "calm": "Non abbastanza oscillazioni da misurare: sei stato paziente (o fortunato)!",
-        "speed": "Oscillazioni ogni {p} s: ti sei comportato come una mano a velocità, un controllore I vicino al suo bordo.",
-        "position": "Oscillazioni ogni {p} s: ti sei comportato come una mano a posizione, un controllore P vicino al suo bordo.",
-        "robot": "La mano robot oscilla ogni {p} s. È un po' più lenta del bordo a {e} s, perché sta appena dentro: una mano a velocità (un controllore I)."
+        "step": "Va oltre fino a {p} m prima di assestarsi a 2 m.",
+        "pulse": "Una partenza più dolce: il picco arriva solo a {p} m.",
+        "wave": "La ricetta trasforma un'onda di {a} m in un'onda di {b} m."
       }
     },
-    "designer": {
-      "title": "Doccia robot: controllore PI",
-      "aria": "Temperatura in 40 secondi con il controllore PI del robot, con il progetto precedente come fantasma.",
-      "temp": "temperatura al soffione",
-      "mix": "cosa chiede la manopola",
-      "view": {
-        "aria": "Doccia controllata dal robot. La manopola gira da sola.",
-        "knob": "Manopola della doccia (controllata dal robot)",
-        "pipe": "tubo (2,5 s di viaggio)",
-        "head": "soffione",
-        "thermo": "termometro"
-      },
-      "kp": "Guadagno P $K_p$",
-      "ki": "Guadagno I $K_i$",
-      "presetHand": "La mano normale",
-      "presetJune": "I guadagni da drone di June",
-      "goal": "Obiettivo: margine di fase sopra i 45° e comodo (nella fascia per 10 s di fila) entro 12 s. Parte con i guadagni di June.",
-      "pm": "margine di fase",
-      "gm": "margine di guadagno",
-      "comfort": "comodo dopo",
-      "yours": "tu (Capitolo 0)",
+    "playground": {
+      "title": "Il parco giochi dei poli",
+      "planeAria": "Il piano s con una coppia di poli trascinabili. La metà sinistra si calma, la metà destra esplode. Usa le frecce per spostare il polo selezionato.",
+      "pole": "p",
+      "poles": "poli",
+      "zeta": "smorzamento ζ",
+      "wn": "ωn = |p|",
+      "settle": "si assesta, regola 4/σ",
+      "settleReal": "si assesta (misurato)",
+      "overshoot": "sovraelongazione",
+      "push": "prima spinta (gradino di 1 m)",
+      "pct": "{v}%",
+      "response": "altezza dopo un gradino di 1 m",
+      "target": "obiettivo",
+      "plotAria": "Risposta al gradino del drone per i poli scelti, con la risposta precedente mostrata come fantasma.",
+      "over": "sovraelongazione",
       "never": "mai",
-      "notPlayed": "non giocato",
-      "status": {
-        "unstable": "Oltre il precipizio (margine di guadagno × {g}): oscillazioni infinite, circa ogni {p} s.",
-        "edge": "Stabile, ma solo {pm}° di margine di fase: più margine, per favore.",
-        "slow": "Sicuro, ma lento. Riesci a stare comodo prima?",
-        "win": "Robusto e rapido! Questo robot batte le tue mani del Capitolo 0.",
-        "winButYou": "Robusto e rapido! (Nel Capitolo 0 sei stato più veloce tu. Notevole! Ma il robot non si stanca mai.)",
-        "unstableSlow": "Oltre il precipizio (margine di guadagno × {g}): nessun margine, oscillazioni infinite."
+      "notIn": "non entro {T} s",
+      "wiggle": "un'oscillazione ≈ {T} s",
+      "wnCircle": "ωn = {w}",
+      "budget": "budget di 20 N",
+      "verdict": {
+        "stable": "Metà sinistra: si calma.",
+        "unstable": "Metà destra: esplode!",
+        "marginal": "Proprio sull'asse: oscilla per sempre.",
+        "hitPage": "È volato fuori dal disegno, ha sbattuto contro la pagina ed è caduto. Sposta un polo per riprovare.",
+        "hitGround": "Si è schiantato al suolo. Sposta un polo per riprovare.",
+        "hitPageMarginal": "Ogni escursione arrivava a 3 m, appena abbastanza per toccare la pagina; i motori si sono bloccati ed è caduto."
       },
-      "presetTheo": "I guadagni delicati di Theo",
-      "w": "velocità di oscillazione ω (rad/s)",
-      "phase": "fase d'anello (°)",
-      "loop": "anello robot + doccia",
-      "phaseAria": "Diagramma di Bode della fase dell'anello robot più doccia, con la linea dei −180 gradi e il margine di fase.",
-      "cliff": "−180°: il precipizio",
-      "atCross": "margine di fase"
+      "negKd": "Qui Kd è negativo: l'attrito smorza già più di quanto questi poli consentano, quindi il controllore deve spingere nel verso del moto.",
+      "pushWarn": "La prima spinta supera i 20 N, più di quanto abbiano i motori veri. Tra poco vedremo quanto costa.",
+      "challenge": "Mini-sfida: sovraelongazione sotto il 10% e assestato entro 2 s",
+      "chalOk": "Sfida superata! Sovraelongazione {o}%, assestato in {s} s.",
+      "chalNo": "Non ancora: sovraelongazione {o}%, si assesta in {s} s. Punta alla zona evidenziata.",
+      "help": "Trascina una delle due × (o raggiungila con Tab e usa le frecce, Maiusc per passi grandi). Il drone ripete ogni volta la sua risposta al gradino.",
+      "describe": "Poli in {p}. Coefficiente di smorzamento {z}. Si assesta in circa {s} secondi, sovraelongazione circa {o} per cento.",
+      "re": "σ",
+      "im": "ω"
+    },
+    "zero": {
+      "title": "Fai scorrere lo zero",
+      "planeAria": "Il piano s con due poli fissi in meno 2 più o meno 3 i e uno zero trascinabile sull'asse reale.",
+      "zero": "zero",
+      "y": "uscita",
+      "noZero": "senza zero (stessi poli)",
+      "withZero": "con lo zero",
+      "slope": "+ {g} × la sua pendenza",
+      "plotAria": "Risposte al gradino con e senza lo zero.",
+      "osNo": "sovraelongazione senza zero",
+      "osYes": "sovraelongazione con zero",
+      "pct": "{v}%",
+      "note": "Zero in {z}; scalata in modo che finisca ancora a 1.",
+      "near": "Vicino all'origine: la parte di pendenza è {g} × la vecchia pendenza, quindi la partenza dà uno scatto forte.",
+      "mid": "Uno scatto moderato: {g} × la pendenza.",
+      "far": "Lontano: solo {g} × la pendenza. Quasi non si vede.",
+      "describe": "Zero in {z}, sovraelongazione {o} per cento.",
+      "re": "σ",
+      "im": "ω",
+      "help": "Trascina il ○ lungo l'asse (o raggiungilo con Tab e usa ← →). I poli × restano fermi."
+    },
+    "limit": {
+      "title": "I motori veri hanno dei limiti",
+      "ideal": "motori illimitati (matematica)",
+      "real": "drone vero",
+      "idealT": "spinta che vuole la matematica",
+      "realT": "spinta che otteniamo",
+      "hAria": "Altezza dopo un gradino con motori illimitati e con motori veri.",
+      "tAria": "Spinta nel tempo, con i limiti dei motori a 0 e 20 newton.",
+      "max": "massimo dei motori 20 N",
+      "min": "i motori non possono tirare giù",
+      "peak": "spinta massima che vuole la matematica",
+      "tsIdeal": "si assesta (matematica)",
+      "tsReal": "si assesta (reale)",
+      "osReal": "sovraelongazione (reale)",
+      "pct": "{v}%",
+      "notYet": "non entro 3 s",
+      "sigma": "Posizione dei poli (verso sinistra lungo i 45°)",
+      "toggle": "Motori veri: 0–20 N",
+      "capped": "La matematica vuole {p} N; i motori si fermano a 20 N. Assestamento reale {s} s, e nessun \"più a sinistra\" lo porta sotto circa {b} s.",
+      "fantasy": "I motori immaginari forniscono tranquillamente {p} N. Riaccendi i limiti.",
+      "fine": "Dentro il range dei motori: matematica e realtà concordano."
+    },
+    "loop": {
+      "title": "Un giro dell'anello",
+      "aria": "Un piano con il punto meno 1 segnato, la curva di un giro dell'anello per ogni velocità di oscillazione e una freccia verso il giro alla velocità scelta.",
+      "re": "parte reale",
+      "im": "parte immaginaria",
+      "kp": "Controllore $K_p$",
+      "w": "Velocità di oscillazione ω",
+      "lap": "C·P",
+      "cliff": "−1",
+      "size": "grandezza del giro |C·P|",
+      "angle": "angolo del giro",
+      "distance": "distanza da −1",
+      "zeta": "smorzamento ζ",
+      "status": "Il più vicino a −1: {d}, a circa {w} rad/s. L'angolo resta sopra −180°, quindi il giro non ci arriva mai. Smorzamento ζ = {z}.",
+      "help": "Fai scorrere ω per muovere la freccia lungo la curva; fai scorrere Kp per allungare tutta la curva. La linea tratteggiata è la distanza da −1."
     }
   },
   "plays": {
-    "delaylag": {
-      "L": "ritardo del tubo",
-      "T": "periodo dell'oscillazione"
+    "poleRead": {
+      "sig": "distanza dei poli a sinistra dell'asse",
+      "w": "altezza dei poli, omega",
+      "noWiggle": "niente (nessuna oscillazione)",
+      "never": "mai",
+      "noOvershoot": "niente (nessuna sovraelongazione)",
+      "pct": "{v}%"
     },
-    "smoother": {
-      "w": "velocità di oscillazione ω"
+    "gains": {
+      "sig": "distanza dei poli a sinistra dell'asse",
+      "w": "altezza dei poli, omega",
+      "negKd": "È un Kd *negativo*: l'attrito da solo smorza già più di quanto vogliano questi poli, quindi il controllore deve spingere *nel verso* del moto."
     },
-    "total": {
-      "w": "velocità di oscillazione ω",
-      "before": "Non ancora capovolta.",
-      "flip": "Capovolta: un picco esce come un minimo.",
-      "past": "Oltre il capovolgimento."
+    "dominant": {
+      "time": "tempo, in secondi",
+      "almostNothing": "quasi niente",
+      "pct": "il {v}%"
     },
-    "handloop": {
-      "w": "velocità di oscillazione ω"
+    "push": {
+      "sig": "coppia di poli sulla linea a 45°",
+      "canDo": "i motori ce la fanno",
+      "justOver": "appena sopra i 20 N che hanno i motori",
+      "farBeyond": "molto oltre le capacità dei motori"
     },
-    "pgain": {
-      "K": "forza della mano a posizione K",
-      "dies": "Le oscillazioni si spengono.",
-      "edge": "Proprio sul bordo: oscillazioni che non crescono né calano.",
-      "grows": "Le oscillazioni crescono."
+    "budget": {
+      "dr": "ampiezza del gradino, in metri"
     },
-    "double": {
-      "L": "ritardo del tubo"
+    "zeroKick": {
+      "z": "distanza dello zero da 0",
+      "pct": "{v}%"
     },
-    "delaymargin": {
-      "kp": "guadagno P Kp",
-      "ki": "guadagno I Ki",
-      "margin": "il margine di fase è {pm}° a {wc} rad/s, quindi il tubo potrebbe allungarsi di {dm} s prima che questo robot cominci a pendolare.",
-      "none": "non c'è alcun margine di fase: questo robot pendola già."
+    "lap": {
+      "kp": "guadagno proporzionale Kp, in newton al metro"
     }
   }
 }

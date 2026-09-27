@@ -1,475 +1,571 @@
 {
   "kicker": "Capítulo 10",
-  "title": "De volta ao chuveiro",
-  "question": "Por que oscilamos, e quão perto da borda estamos?",
+  "title": "Funções de Transferência, Polos e Zeros",
+  "question": "Podemos ler toda a personalidade de um sistema a partir de uma única fração?",
   "sections": [
     {
-      "id": "again",
-      "title": "O chuveiro, com novos olhos",
+      "id": "recipe",
+      "title": "A receita do sistema",
       "blocks": [
         {
           "t": "say",
           "who": "june",
-          "mood": "worried",
-          "text": "Coloquei o PID do nosso drone no chuveiro (a mesma sensação ágil, ajustada para unidades de manopla). Oscilou quente, frio, quente… igualzinho à Mika no Capítulo 0. O drone nunca fez isso!"
+          "mood": "think",
+          "text": "Comece o drone pairando a 1 m, com 4,9 N de empuxo base equilibrando a gravidade. Meça tanto a mudança solicitada quanto a mudança real de altura em relação a essa linha de base. Imediatamente antes de uma nova solicitação, ambas as mudanças são zero. No exemplo de degrau, a solicitação salta para 2 m em $t=0$, então sua mudança se torna 1 m enquanto o drone ainda está a 1 m."
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "think",
-          "text": "O drone não tem grande atraso. O chuveiro tem 2,5 segundos de tubulação. Vamos finalmente descobrir o que um atraso *faz*."
-        },
-        {
-          "t": "p",
-          "text": "O chuveiro tem duas partes lentas: o **cano**, um atraso puro de 2,5 s, e o **suavizador**, a cabeça e as paredes do cano esquentando com a constante de tempo do Capítulo 3, $\\tau = 1$ s (depois de 1 s ele já fechou 63% da distância até uma nova temperatura)."
-        },
-        {
-          "t": "p",
-          "text": "Primeiro, uma confissão sobre a \"mão normal\" do Capítulo 0. Ela girava a manopla a uma **velocidade** proporcional ao quão errada a água parecia: velocidade da manopla $= k\\cdot\\err{e}$, com $k = 0{,}8\\,\\%$ de manopla por segundo por °C. Uma velocidade proporcional ao erro significa que a *posição* da manopla é o acúmulo de erros passados. Isso é um **controlador I**, com $K_i = k$."
-        },
-        {
-          "t": "note",
-          "text": "Para os cálculos, a manopla vai de 0 a 1, então 0,8% da sua faixa é 0,008 unidades de manopla. A fórmula da malha abaixo usa 0,008; os controles deslizantes mostram 0,8%. Mantenha as unidades com o número."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "surprised",
-          "text": "Espera, então no Capítulo 0 eu era um controlador PID? Bem, um controlador I. Um muito ansioso."
-        }
-      ]
-    },
-    {
-      "id": "lag",
-      "title": "Atraso é uma defasagem na oscilação",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "neutral",
-          "text": "Eu ainda acho que um atraso só deixa tudo *mais lento*. Ele não deveria ser capaz de tornar nada instável."
-        },
-        {
-          "t": "p",
-          "text": "Vamos isolar primeiro o **atraso puro** do cano. Imagine uma onda senoidal na entrada do cano viajando até o chuveiro sem ser suavizada: a saída tem a mesma forma, mas chega 2,5 s depois. Esse atraso equivale a quanto, *em relação a uma oscilação*?"
-        },
-        {
-          "t": "widget",
-          "id": "phase"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "surprised",
-          "text": "Espera. Numa oscilação de 5 segundos, a água quente chega exatamente quando a manopla pede frio. Isso não é *mais lento*. Isso é *ao contrário*."
-        },
-        {
-          "t": "p",
-          "text": "O atraso do cano continua sendo 2,5 s, mas o seu **atraso de fase** depende de quão rápido a onda oscila. Chame o atraso de fase de $\\phi$ e o atraso de $L$. Se uma oscilação leva $T$ segundos (aqui $T$ é um tempo, não uma temperatura), sua velocidade angular é $\\omega=2\\pi/T$ radianos por segundo. Um atraso de fase positivo significa que a saída vem atrás da entrada. Engenheiros escrevem um atraso de fase como um ângulo negativo, por isso os gráficos abaixo descem."
-        },
-        {
-          "t": "p",
-          "text": "Uma oscilação inteira é uma volta completa do girador do Capítulo 5: 360°, ou 2π radianos. Então o que importa é **que fração da oscilação** o atraso cobre: $L/T$."
+          "text": "Ótimo, porque no capítulo passado jogamos fora os pedaços $-h(0)$ e a fórmula mentiu. Medidos a partir do pairar, esses valores iniciais **são** mesmo zero, então desta vez eles somem honestamente."
         },
         {
           "t": "math",
-          "tex": "\\phi = \\underbrace{\\frac{L}{T}}_{\\text{fração da oscilação}}\\cdot 360^\\circ = \\omega L \\text{ radianos},\\qquad \\omega = \\frac{2\\pi}{T}"
-        },
-        {
-          "t": "play",
-          "id": "delaylag",
-          "text": "Um atraso de {scrub|L|dis} s numa oscilação que se repete a cada {scrub|T} s cobre {calc|frac} da oscilação, então a saída fica {calc|deg}° para trás, ou {calc|rad} radianos."
-        },
-        {
-          "t": "p",
-          "text": "Numa oscilação de 5 segundos, 2,5 s é meia oscilação: 180°. Neste modelo de atraso puro, cada crista da saída cai em cima de um vale da entrada. O suavizador do chuveiro também encolhe as oscilações rápidas; vamos acrescentá-lo a seguir."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "surprised",
-          "text": "Então os mesmos 2,5 s são um empurrãozinho para uma oscilação preguiçosa e uma virada completa para uma rápida. O cano nunca muda. A oscilação, sim!"
-        },
-        {
-          "t": "note",
-          "text": "Esta é a seta giratória do Capítulo 5. Atrasar o girador em $L$ dá $e^{i\\omega(t-L)} = e^{-i\\omega L}\\,e^{i\\omega t}$: a mesma seta, girada para trás pelo ângulo $\\omega L$."
+          "tex": "\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\Delta\\sp{R}(s)"
         },
         {
           "t": "callout",
-          "title": "A sonda vê o atraso",
+          "title": "De onde vem a receita",
           "blocks": [
             {
               "t": "p",
-              "text": "A sonda do Capítulo 7 dá o mesmo fator para **qualquer** sinal, não só para um girador. Um sinal que chega $L$ segundos atrasado começa a acumular área $L$ segundos depois, e a essa altura a sonda já encolheu por $e^{-sL}$. Antes de chegar, o sinal atrasado é zero, então faça $u = t - L$:"
+              "text": "O empuxo de pairar cancela a gravidade, então só as *mudanças* sobram na equação do drone. Agora use a regra do Capítulo 9: cada inclinação vira × $s$, menos o seu valor inicial. A partir do pairar, todo valor inicial é zero, então nada é subtraído:"
             },
             {
               "t": "math",
-              "tex": "\\int_0^\\infty f(t-L)\\,e^{-st}\\,dt = \\int_0^\\infty f(u)\\,e^{-s(u+L)}\\,du = e^{-sL}\\,F(s)"
+              "tex": "\\begin{gathered} m\\,\\Delta\\out{h}'' + c\\,\\Delta\\out{h}' = \\eff{K_p}\\,(\\Delta\\sp{r} - \\Delta\\out{h}) \\\\[2pt] \\Big\\downarrow\\ {\\scriptstyle \\Delta h(0)\\,=\\,\\Delta h'(0)\\,=\\,0} \\\\[2pt] (m s^2 + c s + \\eff{K_p})\\,\\Delta\\out{H}(s) = \\eff{K_p}\\,\\Delta\\sp{R}(s) \\end{gathered}"
             },
             {
               "t": "p",
-              "text": "Então um atraso puro multiplica toda transformada por $e^{-sL}$. Essa é a sua função de transferência, e sobre a linha $s = i\\omega$ ela é exatamente o giro para trás de $\\omega L$ lá de cima."
+              "text": "Divida por $m s^2 + c s + \\eff{K_p}$ e aí está $G(s)$. O denominador é exatamente a equação que achamos nos Capítulos 4 a 7 chutando $e^{st}$."
             },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "think",
-              "text": "Mas $e^{-sL}$ não é uma fração de polinômios. Onde estão os polos dela?"
-            },
-            {
-              "t": "say",
-              "who": "june",
-              "mood": "think",
-              "text": "Em nenhum lugar que dê para listar. Coloque-o numa malha e $1 + C\\,P = 0$ tem infinitas soluções. É por isso que este capítulo para de desenhar mapas de polos e passa a medir oscilações."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "bode",
-      "title": "Medindo o chuveiro uma oscilação de cada vez",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Agora acrescente o suavizador ao atraso do cano. A cabeça e as paredes do cano demoram para esquentar, então o chuveiro completo atrasa *e* suaviza as mudanças da manopla. O plano: oscile a manopla numa velocidade, espere um ritmo estável e meça dois números:"
-        },
-        {
-          "t": "list",
-          "items": [
-            "**Ganho** (a mesma palavra do ganho do controlador: tamanho que sai ÷ tamanho que entra): quão grande é a oscilação de temperatura, comparada com a oscilação na mistura de água que pedimos.",
-            "**Fase:** quanto ela está atrasada, como um ângulo: a fração de uma oscilação inteira, vezes 360°."
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Cada medição coloca um ponto em dois gráficos. Meça pelo menos cinco velocidades, lentas e rápidas."
-        },
-        {
-          "t": "widget",
-          "id": "bode"
-        },
-        {
-          "t": "callout",
-          "title": "A régua espremida",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Nestes gráficos, cada ×10 é um passo igual ao longo do eixo: de 0,1 a 1 ocupa o mesmo espaço que de 1 a 10. O ponto do meio entre 0,1 e 1 é cerca de 0,3, não 0,55. A régua é espremida para que uma oscilação de 100 segundos e uma de 3 segundos caibam no mesmo gráfico. Olhe o ganho do suavizador nesta régua: plano para oscilações lentas, depois descendo por uma linha quase reta para as rápidas, com uma curva perto de $\\omega = 1/\\tau$."
-            },
-            {
-              "t": "say",
-              "who": "june",
-              "mood": "excited",
-              "text": "Passos iguais são *vezes* iguais, não *mais* iguais. Como as oitavas de um piano!"
-            },
-            {
-              "t": "p",
-              "text": "A régua espremida tem um segundo presente: nela, **multiplicar vira somar**. ×10 é sempre um passo acima, seja de onde for que você comece, e ×0,1 um passo abaixo. É por isso que o eixo do *ganho* também é espremido. Ao longo de uma malha os ganhos se multiplicam (mão × suavizador × cano), então nesta régua as alturas deles simplesmente se somam, igualzinho aos atrasos de fase. É o logaritmo do Capítulo 4 em ação: $\\ln(a\\,b) = \\ln a + \\ln b$."
-            },
-            {
-              "t": "note",
-              "text": "Engenheiros costumam escrever ganhos em **decibéis** (dB): 20 × o logaritmo na base 10 do ganho, então ×10 é +20 dB, ×1 é 0 dB e ×0,1 é −20 dB. A mesma régua espremida, com outros rótulos. Nós ficamos com o × simples."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "O suavizador encolhe as oscilações rápidas, enquanto o cano continua acrescentando atraso de fase. Essas curvas de ganho e fase em função da velocidade de oscilação formam um **diagrama de Bode**. Juntas, elas são a **resposta em frequência** do chuveiro: como ele trata cada velocidade de oscilação. Aqui a entrada é a **temperatura da água misturada**, então as oscilações lentas têm ganho 1. Se usássemos a fração da manopla como entrada, o ganho seria 45 vezes maior. Para obter a resposta em frequência a partir da fórmula, faça $s = i\\omega$: o mesmo truque que encontrou a borda do Capítulo 9. (Funciona porque o chuveiro sozinho é estável, então suas oscilações entram num ritmo constante que podemos medir.)"
-        },
-        {
-          "t": "callout",
-          "title": "O que o suavizador faz com um girador",
-          "blocks": [
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "think",
-              "text": "O truque do Capítulo 4 de novo: chutar que a resposta é o mesmo girador, só com outro tamanho e outro ângulo."
-            },
-            {
-              "t": "math",
-              "tex": "\\tau\\,\\dot y + y = u,\\quad u = e^{i\\omega t},\\ y = Y\\,e^{i\\omega t} \\;\\Rightarrow\\; (1 + i\\omega\\tau)\\,Y = 1 \\;\\Rightarrow\\; Y = \\frac{1}{1+i\\omega\\tau}"
-            },
-            {
-              "t": "p",
-              "text": "Coloque o girador $e^{i\\omega t}$ na regra do suavizador e a seta $Y$ precisa satisfazer $(1 + i\\omega\\tau)\\,Y = 1$. Setas do Capítulo 6: $1 + i\\omega\\tau$ tem comprimento $\\sqrt{1+\\omega^2\\tau^2}$ e aponta para cima no ângulo $\\arctan(\\omega\\tau)$. Dividir por ela encolhe por esse comprimento e gira para trás por esse ângulo. As oscilações lentas quase não percebem. As rápidas são espremidas e se atrasam rumo a um quarto de volta, mas nunca passam dele."
-            },
-            {
-              "t": "play",
-              "id": "smoother",
-              "text": "Em ω = {scrub|w} rad/s, o suavizador (τ = 1 s) mantém {calc|g} da oscilação e a atrasa em {calc|lag}°."
-            }
-          ]
-        },
-        {
-          "t": "math",
-          "tex": "G(i\\omega) = \\frac{e^{-i\\omega L}}{1 + i\\omega\\tau}, \\qquad |G| = \\frac{1}{\\sqrt{1+\\omega^2\\tau^2}}, \\qquad \\angle G = -\\arctan(\\omega\\tau) - \\omega L"
-        },
-        {
-          "t": "play",
-          "id": "total",
-          "text": "Em ω = {scrub|w} rad/s o cano atrasa {calc|pipe}° e o suavizador {calc|lag}°: {calc|total}° no total. {calc|verdict}"
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Achei! Perto de 0,95 rad/s o chuveiro sozinho vira uma oscilação de cabeça para baixo. Guardem essa velocidade."
-        },
-        {
-          "t": "note",
-          "text": "Uma ajuda honesta: uma única medição não consegue distinguir uma defasagem de 90° de 450° (as ondas parecem iguais). Contamos ciclos extras inteiros seguindo a curva do lento ao rápido, como rastrear uma crista pelo cano."
-        }
-      ]
-    },
-    {
-      "id": "margins",
-      "title": "Quão perto do precipício?",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Agora feche a malha: mão → manopla → cano → pele → mão. Siga uma oscilação por todo o caminho. Para a mão do Capítulo 0, a volta pela malha é $G_{\\circ}$ (um circulozinho de *malha*, porque $L$ já é o atraso):"
-        },
-        {
-          "t": "math",
-          "tex": "G_{\\circ}(s) = \\underbrace{\\frac{k}{s}}_{\\text{mão}}\\cdot\\underbrace{\\frac{45\\,e^{-2{,}5s}}{s+1}}_{\\text{chuveiro}}"
-        },
-        {
-          "t": "callout",
-          "title": "A pilha de uma oscilação",
-          "blocks": [
             {
               "t": "say",
               "who": "mika",
-              "mood": "think",
-              "text": "Minha mão empilha erro. O que uma pilha faz com uma oscilação?"
-            },
-            {
-              "t": "math",
-              "tex": "\\int \\cos(\\omega t)\\,dt = \\frac{\\sin(\\omega t)}{\\omega} \\qquad\\Longleftrightarrow\\qquad \\frac{1}{i\\omega}:\\ \\text{um quarto de volta para trás, } \\tfrac{1}{\\omega}\\text{ do tamanho}"
-            },
-            {
-              "t": "p",
-              "text": "A área sob um cosseno é um seno, um quarto de oscilação atrás: 90° de atraso de fase, em *qualquer* velocidade. E a pilha é maior para oscilações lentas, porque cada lombada dura mais antes de se cancelar: o tamanho vai como $1/\\omega$. O Capítulo 5 disse que a velocidade é $i\\omega$ vezes a posição. Empilhar é o contrário: dividir por $i\\omega$. Esse é o $k/s$ na malha."
+              "mood": "happy",
+              "text": "Então não é mágica. É a própria equação do drone, com cada inclinação transformada em um $s$."
             }
           ]
         },
         {
           "t": "p",
-          "text": "A realimentação subtrai (erro = alvo − temperatura). Isso é um ×(−1), a meia-volta do Capítulo 5, então a onda se inverte uma vez. Se a volta pela malha *também* a atrasa em exatamente 180°, as duas inversões se cancelam, e cada correção chega **perfeitamente no ritmo** do balanço, como empurrar um balanço de parquinho no momento certo. Se a malha devolve a onda do mesmo tamanho (ganho 1), o balanço se mantém sozinho; maior que 1, ele cresce. É de novo o $1 + C\\,P = 0$ do Capítulo 8, sobre a linha $s = i\\omega$: uma volta que retorna invertida e do mesmo tamanho é $G_{\\circ}(i\\omega) = -1$."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Para esta malha simples do chuveiro, a fase passa por −180° em uma velocidade de oscilação relevante. Encontre essa velocidade no diagrama de fase e depois leia o ganho de malha na mesma velocidade no diagrama de ganho. Ele está abaixo ou acima de 1?"
-        },
-        {
-          "t": "play",
-          "id": "handloop",
-          "text": "Em ω = {scrub|w} rad/s a pilha da mão atrasa 90°, o suavizador {calc|lag}°, o cano {calc|pipe}°: {calc|total}° no total. Ali, a malha da mão normal devolve um balanço {calc|g} vezes o tamanho."
+          "text": "$\\Delta\\sp{R}(s)$ é a transformada da **mudança solicitada** a partir de 1 m; $\\Delta\\out{H}(s)$ é a transformada da **mudança real** a partir de 1 m. $G(s)$ é fixada pelo drone e pelo controlador. É a **função de transferência**: mudança na saída dividida pela mudança na entrada, com ambas as mudanças começando em zero."
         },
         {
           "t": "p",
-          "text": "Deslize até o total passar de 180°, entre 0,45 e 0,46 rad/s. No cruzamento exato, cerca de 0,457 rad/s, o balanço volta com 0,72 vez o tamanho, então a mão poderia ser cerca de 1 ÷ 0,72 ≈ 1,4 vez mais forte antes de chegar à borda."
+          "text": "O gráfico ainda mostra alturas acima do solo. Adicione a altura inicial de 1 m a uma mudança prevista pela fórmula para obter a altura azul no gráfico."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "June tinha razão: a fração **é** o drone. É como a sua **receita**. Coloque qualquer ingrediente e ela diz o que sai!"
+        },
+        {
+          "t": "p",
+          "text": "Experimente três entradas diferentes no mesmo drone. A receita nunca muda, apenas $\\Delta\\sp{R}(s)$ muda."
+        },
+        {
+          "t": "widget",
+          "id": "recipe"
         },
         {
           "t": "vocab",
           "items": [
             {
-              "term": "Margem de ganho",
-              "def": "Quantas vezes você poderia multiplicar o ganho do controlador antes que o ganho de malha chegue a 1 na velocidade de −180°. Abaixo de 1 = passou do limite."
+              "term": "Função de transferência $G(s)$",
+              "def": "Transformada da mudança na saída ÷ transformada da mudança na entrada, partindo do mesmo estado de repouso. Para este drone linear, é uma fração de polinômios em $s$."
             },
             {
-              "term": "Margem de fase",
-              "def": "Na velocidade em que o ganho de malha é exatamente 1, quanto atraso de fase *extra* seria preciso para chegar a −180°. Mais é mais seguro; 45°–60° é um alvo comum (o parêntese abaixo explica por quê)."
+              "term": "Partindo do repouso (condições iniciais nulas)",
+              "def": "Toda mudança e a sua velocidade são zero em $t = 0$, como quando medimos a partir do pairar. Aí os termos de valor inicial do Capítulo 9, como $-h(0)$, também são zero, e $G(s)$ conta a história inteira."
             }
           ]
-        },
-        {
-          "t": "callout",
-          "title": "Margem de fase é amortecimento disfarçado",
-          "blocks": [
-            {
-              "t": "say",
-              "who": "june",
-              "mood": "think",
-              "text": "Por que 45° a 60°? Quem escolheu isso?"
-            },
-            {
-              "t": "p",
-              "text": "Para as malhas simples do Capítulo 6, margem de fase e razão de amortecimento andam juntas. Uns 43° combinam com ζ = 0,4 (25% de sobressinal), 52° com ζ = 0,5 (16%) e 59° com ζ = 0,6 (menos de 10%). Esses pares são exatos para a malha mais simples do Capítulo 6, $\\omega_n^2/\\big(s(s+2\\zeta\\omega_n)\\big)$. Então uma margem de 45°–60° significa ζ ≈ 0,4–0,6: mais saltitante que o 0,7–1 do Capítulo 6. Mesmo assim é uma meta comum, porque uma margem também é uma distância de segurança até o precipício (o quanto o modelo pode estar errado), não só uma promessa sobre o sobressinal. Com um cano na malha, é um bom guia, não uma lei exata."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "No nosso chuveiro, a fase de $G_{\\circ}$ chega a −180° em $\\omega \\approx 0{,}457$ rad/s, um período de oscilação de cerca de **13,8 s**. A mão normal ($k = 0{,}008$) tem uma margem de ganho de só cerca de **1,4**, e uma margem de fase de cerca de 22° (onde o ganho de malha é 1, em 0,34 rad/s, a fase é −158°). Pertinho da borda! A mão mais forte dobra o ganho: 1,4 ÷ 2 = 0,7, **precipício abaixo**. É exatamente por isso que ela nunca se acomodou."
-        },
-        {
-          "t": "predict",
-          "id": "ch10-delay",
-          "gate": true,
-          "q": "Suponha que o cano tivesse o dobro do comprimento (um atraso de 5 s). O que acontece com o maior ganho de mão que ainda é estável?",
-          "options": [
-            {
-              "text": "Ele **aumenta**: você pode reagir com mais força, porque tem mais tempo",
-              "why": "Mais tempo para reagir parece bom, mas você está reagindo a uma notícia *mais velha*. O atraso cresce em todas as velocidades."
-            },
-            {
-              "text": "Ele **diminui**: você precisa reagir com mais suavidade",
-              "correct": true,
-              "why": "A fase atinge −180° com uma oscilação mais lenta, e em velocidades lentas a pilha da mão ($k/s$) é grande. O ganho de malha ali é maior, então $k$ precisa encolher: de cerca de 1,12 para 0,60 %/(°C·s)."
-            },
-            {
-              "text": "Fica igual: o atraso muda o tempo, não o ganho",
-              "why": "Um atraso não muda o tamanho de uma onda, é verdade, mas muda *qual* velocidade atinge −180°, e o ganho é diferente ali."
-            }
-          ]
-        },
-        {
-          "t": "widget",
-          "id": "margins"
-        },
-        {
-          "t": "play",
-          "id": "double",
-          "text": "Com um cano de {scrub|L|dis} s, a borda da mão de velocidade fica em k = {calc|k} %/(°C·s), e na borda ela balança a cada {calc|T} s."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "O dobro de cano, mais ou menos metade de mão. E os balanços na borda também ficam mais lentos: quase 24 segundos!"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "surprised",
-          "text": "Tá, retiro o que disse. Um atraso não só deixa as coisas mais lentas: ele come margem de fase, e a margem de fase é a única coisa entre você e uma oscilação."
         }
       ]
     },
     {
-      "id": "replay",
-      "title": "O seu chuveiro do Capítulo 0, explicado",
+      "id": "poles",
+      "title": "Polos: onde o sistema quer viver",
       "blocks": [
         {
           "t": "p",
-          "text": "Aqui está a sua própria experiência do Capítulo 0. Se as suas oscilações estavam perto do limite, o período delas deve ser próximo do que a malha prevê. Tem uma reviravolta: as pessoas não são todas o mesmo tipo de controlador."
-        },
-        {
-          "t": "widget",
-          "id": "replay"
+          "text": "Onde $G(s)$ **explode**? Onde o denominador é zero. Esses pontos são os **polos**, desenhados como ×. Neste drone há dois, um para cada um dos dois movimentos naturais $e^{st}$ do Capítulo 7."
         },
         {
           "t": "p",
-          "text": "Uma **mão de velocidade** (girar a manopla enquanto parece errado) é um controlador I: sua borda fica em balanços de 13,8 s. Uma **mão de posição** (\"tá quente demais, coloca a manopla *aqui*\") age como um controlador P: $G_{\\circ}(s) = 45K\\,e^{-2{,}5s}/(s+1)$. Uma mão de posição não tem pilha, então não tem 90° próprios: o cano e o suavizador sozinhos precisam chegar a 180°, o que acontece numa oscilação mais rápida, $\\omega \\approx 0{,}95$ rad/s (a velocidade de cabeça para baixo da June). Isso significa balanços de **6,6 s**, para qualquer $K$ acima de cerca de 0,031 de manopla por °C. A maioria das pessoas é uma mistura. (A mão normal do robô balança um pouco mais devagar que 13,8 s, cerca de 15,5 s, porque fica logo antes da borda; os balanços da mão mais forte, cerca de 11,6 s, são achatados pela manopla batendo nos extremos.)"
+          "text": "No Capítulo 8, a transformada de $e^{at}$ gritava em $s = a$. Leia ao contrário: onde quer que $G$ grite, há um movimento $e^{pt}$ escondido."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Então os polos são os **modos** do Capítulo 7, sentados no mapa!"
+        },
+        {
+          "t": "callout",
+          "title": "Por que os polos são os movimentos",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Uma resposta ao degrau é $G(s)$ vezes o $\\frac{1}{s}$ do degrau. Quebre em pedaços simples, as frações parciais do Capítulo 9 (um par espelhado de polos ganha numeradores gêmeos espelhados): o polo do próprio degrau, em 0, dá a mudança final $A$, e cada polo de $G$ dá um pedaço $\\frac{B}{s-p}$."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} \\Delta\\out{H}(s) = G(s)\\cdot\\frac{1}{s} &= \\frac{A}{s} + \\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\\\[4pt] \\Longrightarrow\\quad \\Delta\\out{h}(t) &= A + B e^{pt} + \\bar B e^{\\bar p t} \\end{aligned}"
+            },
+            {
+              "t": "p",
+              "text": "A tabela do Capítulo 9 transforma cada pedaço de volta em um movimento. Nada mais pode aparecer: os polos são o elenco inteiro."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "E um polo com $\\sigma > 0$ é um pedaço que cresce. Não é à toa que a metade direita explode."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Agora vamos inverter. Em vez de escolher ganhos e achar os polos, vamos **arrastar os polos** e ver que drone sai. Para isso precisamos de um segundo botão, $\\eff{K_d}$: um empurrão contra a velocidade, que vamos conhecer direito no Capítulo 11. Ele se soma ao arrasto $c$, e as duas raízes são $p$ e o seu gêmeo espelhado $\\bar p$ (a barra troca o sinal da parte imaginária, como os gêmeos do Capítulo 6):"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} & m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p} = 0 \\\\ \\Longrightarrow\\quad & s = p,\\ \\bar p \\qquad \\text{(os polos)} \\end{aligned}"
         },
         {
           "t": "play",
-          "id": "pgain",
-          "text": "Uma mão de posição com K = {scrub|K|eff} de manopla por °C: na velocidade de −180° (0,95 rad/s) sua malha devolve um balanço {calc|g} vezes o tamanho. {calc|verdict}"
+          "id": "gains",
+          "text": "Para pôr os polos em −{scrub|sig} ± {scrub|w}i, o controlador precisa de $\\eff{K_p} = m(\\sigma^2+\\omega^2)$ = {calc|kp|eff} N/m e $c + \\eff{K_d} = 2m|\\sigma|$ = {calc|damp} N·s/m, então $\\eff{K_d}$ = {calc|kd|eff} N·s/m. O playground abaixo segue esses números. {calc|note}"
+        },
+        {
+          "t": "predict",
+          "id": "ch8-rhp",
+          "gate": true,
+          "q": "O que o drone faz se arrastarmos os polos para a **metade direita** do plano s?",
+          "options": [
+            {
+              "text": "Ele pousa suavemente",
+              "sketch": "sluggish",
+              "why": "Para se estabilizar, as oscilações precisam diminuir; polos na metade direita fazem o oposto."
+            },
+            {
+              "text": "Ele paira, um pouco instável",
+              "sketch": "steady-wiggle",
+              "why": "Oscilação constante é o que você obtém exatamente **sobre** o eixo vertical. Logo depois dele, as coisas crescem."
+            },
+            {
+              "text": "Ele balança cada vez mais até cair ou voar para longe",
+              "sketch": "growing-wiggle",
+              "correct": true,
+              "why": "Na metade direita, $e^{st}$ tem $\\sigma > 0$: uma espiral crescente. Os balanços ficam maiores a cada ciclo."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "playground"
+        },
+        {
+          "t": "h3",
+          "text": "Lendo o mapa"
+        },
+        {
+          "t": "p",
+          "text": "Brinque com ele. Algumas regras saltam aos olhos, e cada uma é uma velha amiga disfarçada:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Metade esquerda = acalma, metade direita = explode.** A parte real $\\sigma$ é a taxa com que $e^{\\sigma t}$ encolhe ou cresce.",
+            "**Mais à esquerda = mais rápido.** O tempo de acomodação é de cerca de $4/|\\sigma|$ segundos (as linhas verticais tracejadas): as quatro constantes de tempo do Capítulo 7, já que $e^{-|\\sigma| t}$ fica abaixo de 2 % depois de $\\ln 50/|\\sigma| \\approx 3{,}9/|\\sigma|$ segundos.",
+            "**Mais para cima = mais oscilação.** A altura $\\omega$ é a frequência amortecida do Capítulo 7, então uma oscilação leva $2\\pi/\\omega$ segundos.",
+            "**O ângulo define o sobressinal.** O ângulo $\\theta$ medido a partir do eixo real negativo dá $\\zeta = \\cos\\theta$ (o círculo do Capítulo 7), e o sobressinal é $e^{-\\pi|\\sigma|/\\omega}$ (os raios tracejados). Perto do eixo real quase não há sobressinal; perto do eixo vertical, muito. (Exato para dois polos e nenhum zero, partindo do repouso. Um zero muda isso: na próxima seção, um deles transforma 12 % em 15 %.)"
+          ]
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Eu queria apenas **um** polo lá em cima e outro lá embaixo. Não me deixa! O de baixo fica copiando o de cima."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Lembra dos giradores gêmeos do Capítulo 6? Um drone real tem movimento real, então cada $e^{st}$ girante precisa do seu gêmeo espelhado para cancelar as partes imaginárias. Polos complexos **sempre** vêm em pares espelhados."
+        },
+        {
+          "t": "callout",
+          "title": "Por que o ângulo define o sobressinal",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "O drone passa do alvo e dá meia-volta depois de meia oscilação, em $t = \\pi/\\omega$. Até lá, o $e^{-|\\sigma| t}$ que encolhe já trabalhou esse tempo todo, e o que sobra do balanço é o sobressinal. Só a razão $|\\sigma|/\\omega$ importa, e essa razão é o *ângulo* do polo. No círculo do Capítulo 7, o cosseno desse ângulo é $\\zeta$."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} t_{\\text{pico}} &= \\frac{\\pi}{\\omega} \\\\[4pt] \\text{sobressinal} &= e^{-|\\sigma|\\,t_{\\text{pico}}} = e^{-\\pi|\\sigma|/\\omega} \\\\[4pt] &= e^{-\\pi\\zeta/\\sqrt{1-\\zeta^2}}, \\qquad \\zeta = \\cos\\theta \\end{aligned}"
+            },
+            {
+              "t": "play",
+              "id": "poleRead",
+              "text": "Polos em −{scrub|sig} ± {scrub|w}i: as oscilações encolhem como $e^{-|\\sigma| t}$, então ele se acomoda em cerca de {calc|ts} s. Uma oscilação leva {calc|period} s. O primeiro pico vem depois de meia oscilação, em {calc|tp} s, e até lá o encolhimento deixou um sobressinal de {calc|os}."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "happy",
+              "text": "Então cada raio saindo de 0 é um $\\zeta$, e um sobressinal."
+            }
+          ]
+        },
+        {
+          "t": "predict",
+          "id": "ch8-up",
+          "gate": true,
+          "q": "Mantenha $\\sigma = -2$ e deslize os polos **direto para cima**, de $\\pm 4i$ para $\\pm 8i$. O que muda?",
+          "options": [
+            {
+              "text": "Ele se acomoda duas vezes mais rápido",
+              "why": "A acomodação segue a taxa de encolhimento $\\sigma$, que não mudou. Medido: 1,87 s vira 1,72 s, quase a mesma coisa."
+            },
+            {
+              "text": "Oscilações mais rápidas e mais sobressinal; o tempo de acomodação fica mais ou menos igual",
+              "correct": true,
+              "why": "Uma oscilação cai de 1,57 s para 0,79 s e o sobressinal sobe de 21 % para 46 %, mas a envoltória $e^{-2t}$ não muda, então a acomodação fica perto de $4/2 = 2$ s."
+            },
+            {
+              "text": "Ele fica instável",
+              "why": "Só a posição esquerda-direita decide isso. Para cima e para baixo nunca entra na metade direita."
+            }
+          ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "O playground pulou quando respondemos: o par fantasma está em $\\pm 4i$, o novo em $\\pm 8i$. Mesma envoltória, o dobro de oscilações e um primeiro balanço bem maior."
+        },
+        {
+          "t": "note",
+          "text": "Nosso drone começou em $-1 \\pm 6{,}24i$: esse é o drone $K_p = 20$ do Capítulo 2. Lá em cima (muito oscilatório) e perto do eixo (lento para se acomodar). Agora você pode *ver* por que ele quicou."
         },
         {
           "t": "say",
           "who": "mika",
           "mood": "think",
-          "text": "Então, quando eu girava a manopla de uma vez direto para um ponto, eu era uma mão de posição. Meus balanços de seis segundos eram o cano e o suavizador, não dedos desajeitados."
-        }
-      ]
-    },
-    {
-      "id": "design",
-      "title": "Projete um chuveiro robô",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Agora vamos vencer nossas próprias mãos. O robô usa PI: **o P reage ao erro de temperatura atual**, e **o I lembra o erro acumulado**. Juntos, eles deixam a manopla responder logo, enquanto o I encontra a posição certa para durar."
-        },
-        {
-          "t": "note",
-          "text": "O objetivo: uma **margem de fase acima de 45°** e **10 segundos na faixa de conforto, começando em até 12 s**. Os números dos controles deslizantes são porcentagens da faixa total da manopla: $K_p$ em % por °C de erro atual, $K_i$ em % por °C·segundo de erro acumulado. As equações da malha usam frações da manopla, então divida os números mostrados por 100."
+          "text": "E se os dois polos ficarem no eixo real, um em $-0{,}2$ e outro em $-5$?"
         },
         {
           "t": "say",
           "who": "june",
-          "mood": "excited",
-          "text": "Fácil. Vou usar ganhos grandes, como no drone: rápido e ágil. Já estão configurados. Olha só!"
+          "mood": "happy",
+          "text": "O rápido some em um segundo. O lento é quem manda."
+        },
+        {
+          "t": "play",
+          "id": "dominant",
+          "text": "Polos reais em −0,2 e −5. Depois de {scrub|time} s, o movimento rápido $e^{-5t}$ tem {calc|fast} do seu começo, e o lento $e^{-0{,}2t}$ ainda tem {calc|slow}. Então o polo lento decide: a acomodação leva cerca de $4/0{,}2 = 20$ s."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Polo",
+              "def": "Um valor de $s$ onde a função de transferência explode. Cada polo $p$ é um movimento $e^{pt}$ do sistema."
+            },
+            {
+              "term": "Par espelhado $p,\\ \\bar p$",
+              "def": "Dois polos com a mesma parte real e partes imaginárias opostas. Os polos complexos de um sistema real sempre vêm assim."
+            },
+            {
+              "term": "Polo dominante",
+              "def": "O polo mais perto do eixo vertical. Seu movimento lento dura mais que os outros, então em geral é ele que decide o tempo de acomodação, a não ser que um zero esteja quase em cima dele (o Capítulo 11 tem um caso assim)."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "Quão boa é a regra 4/|σ|?",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "O quatro é o $\\ln 50 \\approx 3{,}9$ do Capítulo 7, arredondado: o tempo para a *envoltória* encolher até 2 %. A curva real fica dentro da envoltória, então muitas vezes se acomoda um pouco antes. Ela se acomoda mais tarde quando os polos estão sobre o eixo real ou perto dele, porque um polo duplo tem uma parte $t\\,e^{-|\\sigma| t}$ que demora a sumir."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{array}{c|ccccc} \\zeta & 0{,}3 & 0{,}5 & 0{,}8 & 0{,}95 & 1 \\\\ \\hline |\\sigma|\\,T_s & 3{,}37 & 4{,}04 & 3{,}01 & 5{,}00 & 5{,}83 \\end{array}"
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "think",
+              "text": "Testei $\\sigma = -1$: a regra dizia 4 s, e os tempos reais foram de 3,0 s a 5,8 s, dependendo de $\\zeta$. Bom o bastante para mirar, não para prometer."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zeros",
+      "title": "Zeros: uma olhada rápida",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "O numerador também pode ser zero. Esses pontos são os **zeros**, desenhados como ○. Em geral eles mudam **quanto** do movimento de cada polo aparece na saída. Se um zero cai exatamente em cima de um polo, o fator comum se cancela e esse polo some desta receita de entrada para saída. Mas ele continua dentro do sistema: cutuque o drone de outro jeito, com uma rajada, e esse movimento volta. Isso importa muito se o polo escondido estiver à direita."
+        },
+        {
+          "t": "p",
+          "text": "Aqui está um sistema com polos fixos em $-2 \\pm 3i$ e um zero que você pode deslizar. (O $\\eff{K_d}$ do nosso playground empurra contra a *velocidade* do drone, então a sua receita não tem zero. Empurre contra a velocidade do *erro*, como o Capítulo 11 vai fazer, e aparece um zero em $-\\eff{K_p}/\\eff{K_d}$: para estes polos isso dá $-6{,}5$, com 15 % de sobressinal em vez de 12 %.)"
         },
         {
           "t": "widget",
-          "id": "designer"
+          "id": "zero"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Mesmos polos, mas quando o zero se aproxima da origem a resposta sobe muito mais rápido e tem mais sobressinal!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Mesmos polos significam os mesmos movimentos. Então o zero não pode acrescentar um movimento novo. Ele deve estar acrescentando um pouco de algo que já temos."
+        },
+        {
+          "t": "play",
+          "id": "zeroKick",
+          "text": "Com o zero em −{scrub|z}, a saída é a curva sem zero **mais {calc|gain} × a sua inclinação**, e o sobressinal é de {calc|os} (12% sem o zero)."
+        },
+        {
+          "t": "p",
+          "text": "Multiplicar por $s$ tira a inclinação (Capítulo 9), então o fator $(1 + s/|z|)$ acrescenta $1/|z|$ vezes a inclinação. Por isso um zero perto da origem faz o sistema reagir tão forte a **mudanças**: o sobressinal cresce, mesmo que os polos não tenham se mexido. Longe, o zero quase não importa. Por enquanto, é tudo o que precisamos saber sobre zeros."
+        },
+        {
+          "t": "callout",
+          "title": "O que um zero bloqueia",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Um polo é um movimento que o sistema *faz*; um zero é um movimento que ele *se recusa a repassar*. Alimente este sistema (zero em $-3$) com exatamente $e^{-3t}$ e nada disso sai: só a oscilação própria do sistema, que vai morrendo. Sem o zero, $1{,}3\\,e^{-3t}$ passaria direto."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} G(s) &= \\tfrac{13}{3}\\,\\frac{s+3}{s^2+4s+13}, \\qquad u = e^{-3t} \\\\[4pt] Y(s) &= \\tfrac{13}{3}\\,\\frac{\\cancel{s+3}}{(s^2+4s+13)\\,\\cancel{(s+3)}} \\\\[4pt] \\Longrightarrow\\quad y(t) &= \\tfrac{13}{9}\\,e^{-2t}\\sin 3t \\end{aligned}"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "excited",
+              "text": "Como fones com cancelamento de ruído para um zumbido específico."
+            }
+          ]
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Zero",
+              "def": "Um valor de $s$ onde a função de transferência é zero: um movimento $e^{zt}$ que o sistema não repassa."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "limits",
+      "title": "Mais para a esquerda é sempre melhor?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Fácil: arraste os polos *bem* para a esquerda. Acomoda num piscar. Melhor drone de todos!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Mas de quanto empuxo isso precisa? Até agora fingimos que os motores podiam empurrar com toda a força que a matemática quisesse."
+        },
+        {
+          "t": "p",
+          "text": "Hora de ser honesto. Nossos motores conseguem empurrar entre **0 N** e **20 N** (cerca de quatro vezes o peso do drone). Abaixo, os polos andam para a esquerda ao longo de uma linha de 45° (isso é $\\zeta \\approx 0{,}71$, o ponto ideal do Capítulo 7). As curvas tracejadas são a matemática com motores imaginários, sem limite; as contínuas são motores reais."
+        },
+        {
+          "t": "widget",
+          "id": "limit"
+        },
+        {
+          "t": "play",
+          "id": "push",
+          "text": "No primeiro instante de um degrau de 1 m, o erro é o metro inteiro e o drone ainda não está se movendo, então a matemática pede o pairar mais $\\eff{K_p}$ × 1 m. Com os polos em {scrub|sig}, isso dá {calc|sum|eff} N: {calc|verdict}."
+        },
+        {
+          "t": "p",
+          "text": "Depois de cerca de $-3{,}9 \\pm 3{,}9i$, a matemática pede mais de 20 N. O {eff|empuxo laranja} achata contra o limite, e depois de cerca de $-6 \\pm 6i$ a matemática quer até puxar o drone *para baixo*, o que hélices não conseguem. O drone real para de seguir a bela previsão linear. O tempo de acomodação para de melhorar em cerca de 0,7 s, perto de $-6{,}5 \\pm 6{,}5i$, e mais à esquerda ele *piora*, com sobressinal extra."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Deslizei até $-8 \\pm 8i$. A matemática diz 0,53 s. O drone real leva 0,77 s: mais lento do que em $-6{,}5$!"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "E o sobressinal foi de 4 % para 16 %. Todo aquele empuxo extra nunca esteve disponível."
         },
         {
           "t": "say",
           "who": "june",
           "mood": "worried",
-          "text": "…ele fica oscilando sem parar, quente–frio–quente, a cada 6 segundos, como uma mão de posição no Capítulo 0. Os ganhos grandes empurraram a velocidade de ganho 1 para além da velocidade de −180°. Margem de fase nenhuma."
+          "text": "Então \"mais para a esquerda\" só é melhor até você ficar sem motor. Posicionar polos é um compromisso, não uma corrida."
         },
         {
           "t": "callout",
-          "title": "10 s no papel, 6 s no chuveiro",
+          "title": "Um orçamento de empuxo é um círculo",
           "blocks": [
             {
               "t": "p",
-              "text": "Os ganhos da June têm $K_i/K_p = 1$ por segundo, que é exatamente $1/\\tau$. O zero do PI cai em cima do polo do suavizador e o cancela, deixando $2{,}25\\,e^{-2{,}5s}/s$. No papel, essa malha chega a −180° em $\\omega = \\pi/5$, um balanço de 10 s. Mas a malha da June está muito além da borda, então a manopla bate de um extremo ao outro, e esses balanços batidos vêm a cada 6,3 s mais ou menos: perto dos 6,6 s da mão de posição."
+              "text": "No primeiro instante o drone ainda não se moveu, então só $\\eff{K_p}$ empurra, e $\\eff{K_p} = m|p|^2$: o quadrado da distância dos polos até 0. Dobre a distância e você precisa de quatro vezes o empurrão, seja qual for a direção. Para um degrau de 1 m, nossos motores permitem polos até cerca de 5,5 de distância de 0 (o círculo laranja claro no playground). Peça um degrau de 2 m e o círculo encolhe para 3,9."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} T(0^+) &= mg + \\eff{K_p}\\,\\Delta\\sp{r} \\\\[4pt] &= mg + m\\,|p|^2\\,\\Delta\\sp{r} \\le 20\\ \\text{N} \\\\[4pt] \\Longrightarrow\\quad |p| &\\le \\sqrt{\\frac{20\\ \\text{N} - mg}{m\\,\\Delta\\sp{r}}} \\end{aligned}"
+            },
+            {
+              "t": "play",
+              "id": "budget",
+              "text": "Para um degrau de {scrub|dr} m, o empurrão inicial só fica abaixo de 20 N se os polos estiverem a até {calc|r} de 0, em qualquer direção."
             }
           ]
         },
         {
+          "t": "note",
+          "text": "De agora em diante, o limite de 20 N fica ligado."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Empurrão inicial",
+              "def": "O empuxo pedido no primeiro instante de um degrau: $mg + \\eff{K_p}\\,\\Delta r$, antes de o drone se mover."
+            },
+            {
+              "term": "Orçamento de empuxo",
+              "def": "As posições de polo que os motores conseguem bancar para um dado degrau: um círculo em torno de 0."
+            },
+            {
+              "term": "Limite do motor (saturação)",
+              "def": "O empuxo real é cortado em 0–20 N, não importa o que a matemática peça."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "loop",
+      "title": "Fechando a malha no papel",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "No Capítulo 1 desenhamos a malha como caixas e setas. No mundo de s, cada caixa só **multiplica**. Será que as caixas fazem a álgebra por nós?"
+        },
+        {
+          "t": "p",
+          "text": "Dê a cada caixa a sua receita. O controlador é $C(s)$, por enquanto simplesmente $\\eff{K_p}$. O drone sozinho, com mudança de empuxo entrando e mudança de altura saindo, é $P(s) = \\frac{1}{ms^2 + cs}$: P de **planta**, a palavra do Capítulo 1, não o P do controle P. Ele sai direto da equação do drone, do mesmo jeito que a receita lá de cima."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Fácil. O pedido passa pelo controlador e depois pelo drone. É só multiplicar ao longo da linha!"
+        },
+        {
+          "t": "math",
+          "tex": "\\Delta\\out{H} \\overset{?}{=} C\\,P\\,\\Delta\\sp{R} = \\frac{\\eff{K_p}}{ms^2 + cs}\\,\\Delta\\sp{R}"
+        },
+        {
           "t": "say",
           "who": "theo",
-          "mood": "happy",
-          "text": "O drone aguentava ganhos grandes porque quase não tinha atraso. Aqui, **robusto** quer dizer suave: deixe margem para o atraso. Experimente meus ganhos suaves, algo como $K_p \\approx 1$ e $K_i \\approx 0{,}6$."
+          "mood": "think",
+          "text": "Polos em 0 e −2? Nenhuma oscilação, e um polo em 0 que nunca se acomoda. Essa é a malha aberta do Capítulo 1: diga ao drone o que fazer e nunca olhe. O controlador não vê o pedido, June. Ele vê o **erro**."
         },
         {
           "t": "p",
-          "text": "O P reage ao *agora*, o I à pilha. Acrescentar um pouco de *agora* move a manopla um pouco antes, o que devolve fase: **avanço de fase**, cerca de 37° na antiga velocidade de −180° com os ganhos do Theo."
+          "text": "A seta que volta do drone é todo o sentido da realimentação. O controlador age sobre $\\Delta\\sp{R} - \\Delta\\out{H}$, então a saída aparece dos dois lados. Junte e divida:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\Delta\\out{H} &= C\\,P\\,\\big(\\Delta\\sp{R} - \\Delta\\out{H}\\big) \\\\ \\Delta\\out{H}\\,\\big(1 + C\\,P\\big) &= C\\,P\\,\\Delta\\sp{R} \\\\ \\Delta\\out{H} &= \\frac{C\\,P}{1 + C\\,P}\\,\\Delta\\sp{R} \\end{aligned}"
         },
         {
           "t": "p",
-          "text": "Um PI com boa margem se acomoda em cerca de 9,4 segundos, sem grandes oscilações repetidas. Isso supera a mão normal (que passou quase um minuto oscilando antes de se acalmar) e a maioria dos humanos. Mas não pode vencer a física: nada pode reagir à água que ainda não chegou. Os engenheiros têm um truque para atrasos longos, o **preditor de Smith**, que executa uma pequena simulação do cano dentro do controlador. Isso é história para outro caderno."
+          "text": "Coloque $C = \\eff{K_p}$ e $P = 1/(ms^2+cs)$ e depois multiplique o numerador e o denominador por $ms^2 + cs$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{C\\,P}{1 + C\\,P} = \\frac{\\eff{K_p}/(ms^2+cs)}{1 + \\eff{K_p}/(ms^2+cs)} = \\frac{\\eff{K_p}}{ms^2 + cs + \\eff{K_p}}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "É a receita do começo deste capítulo! Chegamos nela duas vezes: uma pela equação do drone, outra pelas caixas."
         },
         {
           "t": "p",
-          "text": "Robustez é a verdadeira lição. Seu modelo do chuveiro nunca é perfeito: o cano pode ser mais longo, o aquecedor mais fraco. Uma margem diz o quanto o modelo pode estar errado, como um número que dá para sentir. A margem de fase (em radianos) dividida pela velocidade de ganho 1 é uma **margem de atraso**: quantos segundos de cano extra a malha aguenta."
+          "text": "Então os polos da malha estão onde o denominador, $1 + C(s)\\,P(s)$, é zero. Isso é o mesmo que $C\\,P = -1$. Leia $C\\,P$ como **uma volta** pela malha: o que o controlador e depois o drone fazem com um sinal. Num polo, uma volta traz o sinal de volta com o mesmo tamanho e invertido, e o sinal de menos no erro o inverte de novo. Então ele se mantém sozinho, sem pedido nenhum."
+        },
+        {
+          "t": "math",
+          "tex": "1 + C(s)\\,P(s) = 0 \\quad\\Longleftrightarrow\\quad C(s)\\,P(s) = -1"
+        },
+        {
+          "t": "p",
+          "text": "Teste com uma oscilação constante, $s = i\\omega$. Uma volta transforma a seta da oscilação em $C(i\\omega)\\,P(i\\omega)$: mais curta ou mais longa, e girada para trás. O widget desenha essa seta para cada velocidade de oscilação, e o ponto −1 que ela teria de alcançar."
+        },
+        {
+          "t": "widget",
+          "id": "loop"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Por mais que eu aumente $\\eff{K_p}$, a curva se dobra em direção a −1, mas nunca encosta nele. Ela chega mais perto mais ou menos na velocidade de balanço do próprio drone."
+        },
+        {
+          "t": "p",
+          "text": "Eis o porquê. O arrasto atrasa a volta em até 90°, e a massa em até mais 90°, mas juntos eles só chegam a 180° para oscilações infinitamente rápidas. Então o controle P sozinho nunca consegue derrubar este drone. Um $\\eff{K_p}$ maior só faz a volta passar **mais perto** de −1, e mais perto significa menos amortecimento: o \"mais $K_p$, mais oscilação\" do Capítulo 2, agora como figura."
         },
         {
           "t": "play",
-          "id": "delaymargin",
-          "text": "Com $K_p$ = {scrub|kp|eff} %/°C e $K_i$ = {scrub|ki|eff} %/(°C·s), {calc|verdict}"
+          "id": "lap",
+          "text": "Com $\\eff{K_p}$ = {scrub|kp|eff} N/m, a volta chega a {calc|d} de −1, em cerca de {calc|w} rad/s. O amortecimento da malha é ζ = {calc|z}."
         },
         {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "A mão normal só aguenta cerca de 1,1 s de cano extra. Meu robô suave aguenta 3,5 s. É isso que robusto quer dizer."
+          "t": "note",
+          "text": "Guarde esta figura. No Capítulo 11, o botão I acrescenta uma pilha, mais 90° de atraso, e a curva finalmente consegue alcançar −1. No Capítulo 12, o cano do chuveiro faz o mesmo, e a volta $C\\,P$ ganha um nome próprio."
         },
         {
-          "t": "callout",
-          "title": "Cano mais curto ou aquecedor mais rápido?",
-          "blocks": [
+          "t": "vocab",
+          "items": [
             {
-              "t": "say",
-              "who": "mika",
-              "mood": "excited",
-              "text": "A gente não pode simplesmente comprar um aquecedor mais rápido?"
+              "term": "Malha fechada",
+              "def": "Um controlador que age sobre o erro, de modo que a saída volta para a sua própria entrada: $\\Delta H = \\frac{C\\,P}{1 + C\\,P}\\,\\Delta R$."
             },
             {
-              "t": "p",
-              "text": "Reduzir pela metade o tempo de suavização (τ = 0,5 s) só eleva a borda da mão de velocidade de 1,12 para 1,21 %/(°C·s). Reduzir o cano pela metade (1,25 s) a eleva para 2,06. Para uma mão de posição, o aquecedor mais rápido é ainda *pior*: sua borda cai de 0,031 para 0,025 de manopla por °C, porque o suavizador estava encolhendo em silêncio as oscilações rápidas. O inimigo é o atraso, não a lentidão."
-            }
-          ]
-        },
-        {
-          "t": "callout",
-          "title": "Como o robô realmente gira a manopla",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "O código do robô escreve o PI como uma **velocidade** da manopla: o I continua movendo a manopla enquanto houver erro, e o P reage a uma *mudança* no erro. Na partida, o P também dá à manopla um movimento imediato baseado no erro atual. Isso corresponde à regra de posição, exceto quando a manopla chega a um batente."
+              "term": "Ganho de malha $C(s)\\,P(s)$",
+              "def": "O que uma volta pela malha faz com um sinal. Os polos da malha fechada estão onde ele vale −1."
             }
           ]
         }
@@ -477,95 +573,96 @@
     },
     {
       "id": "wrap",
-      "title": "O que entendemos agora",
+      "title": "O que sabemos agora",
       "blocks": [
         {
           "t": "recap",
           "items": [
-            "Um atraso $L$ defasa uma oscilação em $\\omega L$: nada para oscilações lentas, muito para as rápidas.",
-            "Uma pilha (I) atrasa toda oscilação em 90°; um suavizador, em até 90°; um cano, em $\\omega L$, sem limite.",
-            "Alimentar com ondas senoidais e medir ganho e fase dá a **resposta em frequência**; plotada, é um **diagrama de Bode**, e é só $G(i\\omega)$.",
-            "Para esta malha simples do chuveiro, a oscilação autossustentada começa quando a malha atinge −180° de fase com ganho 1; ganho maior faz os balanços crescerem até que os limites intervenham.",
-            "**Margem de ganho e margem de fase** medem a distância até esse precipício. Atraso maior significa menos margem, então você precisa de um controle mais suave.",
-            "Nossos balanços do Capítulo 0 eram um controlador (nós) com margem pequena demais."
+            "Sim, uma fração dá conta. A **função de transferência** $G(s)$ = mudança na saída ÷ mudança na entrada no mundo de s, partindo do repouso. É a receita do sistema, $\\Delta\\out{H} = G\\cdot\\Delta\\sp{R}$, e ela sai direto da equação do drone.",
+            "Os **polos** (×) são onde $G(s)$ explode: os modos $e^{pt}$ de que o sistema é feito.",
+            "Metade esquerda = estável, metade direita = explode. Mais à esquerda = mais rápido (acomoda em cerca de $4/|\\sigma|$ s, uma regra prática), mais alto = mais oscilação (uma oscilação = $2\\pi/\\omega$ s), ângulo = amortecimento $\\zeta$ = sobressinal $e^{-\\pi|\\sigma|/\\omega}$. O polo mais perto do eixo é quem manda.",
+            "Polos complexos sempre vêm em pares espelhados.",
+            "Os **zeros** (○) mudam quanto de cada modo você recebe. Perto da origem eles dão um tranco: $1/|z|$ vezes a inclinação.",
+            "Feche a malha no papel e a receita é $\\frac{C\\,P}{1 + C\\,P}$. Os polos estão onde uma volta pela malha, $C\\,P$, vale −1.",
+            "O empurrão inicial é $mg + m|p|^2$ para um degrau de 1 m, então polos muito distantes precisam de um empuxo que os motores não têm."
           ]
         },
         {
           "t": "quiz",
           "items": [
             {
-              "id": "ch10-q1",
-              "q": "Um atraso de 2 s, e uma oscilação com período de 8 s. Quanta defasagem o atraso adiciona?",
+              "id": "ch8-q1",
+              "q": "Qual par de polos acomoda **mais rápido**?",
               "options": [
                 {
-                  "text": "90°",
+                  "text": "$-1 \\pm 2i$",
+                  "why": "Acomodação ≈ $4/1 = 4$ s. A altura (2) só afeta a oscilação, não a acomodação."
+                },
+                {
+                  "text": "$-4 \\pm 2i$",
                   "correct": true,
-                  "why": "2 s é um quarto de 8 s, e um quarto de 360° é 90°."
+                  "why": "Mais à esquerda: acomodação ≈ $4/4 = 1$ s."
                 },
                 {
-                  "text": "45°",
-                  "why": "Isso seria um atraso de 1 s. 2 s é um quarto do período, não um oitavo."
-                },
-                {
-                  "text": "180°",
-                  "why": "Isso precisaria de um atraso de metade do período, 4 s."
+                  "text": "$-0{,}5 \\pm 5i$",
+                  "why": "Bem no alto significa muitas oscilações rápidas, mas está perto do eixo, então elas morrem devagar (≈ 8 s)."
                 }
               ]
             },
             {
-              "id": "ch10-q2b",
-              "q": "No diagrama de Bode de uma malha, a fase chega a −180° em 0,5 rad/s, onde o ganho de malha é 0,25. Na velocidade em que o ganho de malha é 1, a fase é −130°. Quais são as margens de ganho e de fase?",
+              "id": "ch8-q2",
+              "q": "$G(s) = \\dfrac{3}{s^2 + 2s + 10}$. Onde estão os polos, e como é a resposta?",
               "options": [
                 {
-                  "text": "× 4 e 50°",
+                  "text": "$-1 \\pm 3i$: estável, e oscila",
                   "correct": true,
-                  "why": "O ganho poderia crescer 1 ÷ 0,25 = 4 vezes antes de chegar a 1 em −180°, e −130° está 50° antes de −180°."
+                  "why": "$s = \\frac{-2 \\pm \\sqrt{4 - 40}}{2} = -1 \\pm 3i$. Metade esquerda significa estável, parte imaginária significa oscilações."
                 },
                 {
-                  "text": "× 0,25 e 130°",
-                  "why": "Essas são as leituras cruas. As margens são as *distâncias* até o precipício: 1 ÷ 0,25 e 180° − 130°."
+                  "text": "$+1 \\pm 3i$: instável",
+                  "why": "Erro de sinal. Para $s^2 + bs + q$, a parte real é $-b/2 = -1$, que fica na metade esquerda."
                 },
                 {
-                  "text": "× 4 e 130°",
-                  "why": "A margem de ganho está certa, mas a margem de fase é o atraso de fase extra que você poderia acrescentar antes de chegar a −180°: 180° − 130° = 50°."
+                  "text": "$-2$ e $-10$: sem oscilações",
+                  "why": "Esses são apenas os coeficientes do polinômio. Os polos são suas raízes: $-1 \\pm 3i$."
                 }
               ]
             },
             {
-              "id": "ch10-q3",
-              "q": "Por que um cano mais longo força um controlador mais suave?",
+              "id": "ch8-q3",
+              "q": "Você quer **menos sobressinal** mas o **mesmo tempo de acomodação**. Como você move os polos?",
               "options": [
                 {
-                  "text": "A defasagem extra chega a −180° numa oscilação mais lenta, onde o ganho de malha é maior, então o ganho precisa diminuir",
+                  "text": "Diretamente em direção ao eixo real (mantenha σ, diminua ω)",
                   "correct": true,
-                  "why": "Isso. Para uma mão de velocidade, oscilações lentas recebem o maior reforço, então o precipício se aproxima."
+                  "why": "A mesma distância até o eixo mantém a *envoltória* igual, então o tempo de acomodação fica mais ou menos o mesmo (a regra $4/|\\sigma|$; ela é grosseira perto do eixo real). Um ângulo menor em relação ao eixo real significa mais amortecimento, então menos sobressinal."
                 },
                 {
-                  "text": "A água fica mais fria num cano mais longo",
-                  "why": "Assumimos que não há perda de calor. O efeito é puramente sobre o tempo."
+                  "text": "Diretamente para cima (ω maior)",
+                  "why": "Isso desloca o ângulo em direção ao eixo vertical: *mais* sobressinal e oscilações mais rápidas."
                 },
                 {
-                  "text": "Não força: você pode reagir com mais força já que tem mais tempo",
-                  "why": "Você não tem mais tempo. Você tem informação mais velha. Essa é a armadilha do Capítulo 0."
+                  "text": "Para a direita",
+                  "why": "Isso faz com que o sistema se acomode mais lentamente e, ultrapassando o eixo, torna-se instável."
                 }
               ]
             },
             {
-              "id": "ch10-q4",
-              "q": "A mão normal tem uma margem de ganho de cerca de 1,4. O que acontece se você reagir 1,5 vez com mais força?",
+              "id": "ch8-q4",
+              "q": "Um sistema tem polos reais em $-0{,}2$ e $-5$. Depois de dois segundos, qual deles ainda está moldando a resposta?",
               "options": [
                 {
-                  "text": "As oscilações crescem em vez de morrer",
+                  "text": "O de $-0{,}2$, perto do eixo",
                   "correct": true,
-                  "why": "1,5 é mais que a margem de 1,4, então o ganho de malha em −180° passa de 1: precipício abaixo."
+                  "why": "$e^{-0{,}2t}$ ainda está em 67 % depois de 2 s; $e^{-5t}$ caiu para 0,005 %. O polo lento está no comando, então a acomodação leva cerca de $4/0{,}2 = 20$ s."
                 },
                 {
-                  "text": "Ela estabiliza mais rápido",
-                  "why": "Mais ganho só ajudaria se houvesse bastante margem. Com 1,4, não há."
+                  "text": "O de $-5$, mais à esquerda",
+                  "why": "Mais à esquerda significa que ele morre *mais rápido*. Depois de só 1 s ele está abaixo de 1 % do começo (0,67 %)."
                 },
                 {
-                  "text": "Nada muda",
-                  "why": "O ganho é exatamente o que a margem de ganho mede, então com certeza importa."
+                  "text": "Os dois igualmente",
+                  "why": "Um encolhe 25 vezes mais rápido que o outro ($5 \\div 0{,}2$). Depois de meio segundo o rápido está em 8 %, e o lento ainda em 90 %."
                 }
               ]
             }
@@ -576,175 +673,170 @@
         },
         {
           "t": "cliff",
-          "text": "Agora temos todas as ferramentas: realimentação, PID, polos, margens. Hora do teste de verdade: vento, uma entrega de pacote e um sensor ruidoso. **Você consegue manter o drone a 2 m?**"
+          "text": "Theo: \"Os polos são lindos. Mas espera: trapaceamos o capítulo inteiro entregando ao drone o empuxo de pairar. Sem isso, a gravidade ainda faz ele **cair**. Nosso mapa está certo. É o nosso *controlador* que precisa de conserto.\""
         }
       ]
     }
   ],
   "widgets": {
-    "phase": {
-      "title": "O mesmo atraso de 2,5 s, oscilações diferentes",
-      "y": "oscilação",
-      "in": "o que a manopla pede",
-      "out": "o que chega, 2,5 s depois",
-      "aria": "Duas ondas senoidais: a entrada e a mesma onda atrasada em 2,5 segundos.",
-      "slider": "Período da oscilação",
-      "lag": "atraso de fase",
-      "status": {
-        "small": "Um atraso pequeno: o atraso quase não importa para oscilações lentas.",
-        "middle": "Um atraso de fase de {d}°: a água vem {f} de oscilação atrás.",
-        "flipped": "De cabeça para baixo! O quente chega exatamente quando a manopla diz frio.",
-        "full": "Mais de uma oscilação inteira de atraso: parece em fase de novo, mas está um ciclo completo atrasado.",
-        "over": "Um atraso de fase de {d}°: mais de uma oscilação inteira atrasada."
+    "recipe": {
+      "title": "Uma receita, três entradas",
+      "choose": "O que pedimos?",
+      "in": {
+        "step": "um degrau para cima",
+        "pulse": "um degrau suave",
+        "wave": "uma onda"
       },
-      "describe": "Período da oscilação {p} segundos; o atraso de 2,5 segundos defasa em {d} graus.",
-      "w": "velocidade de oscilação ω",
-      "share": "fração da oscilação"
-    },
-    "bode": {
-      "title": "Construa um diagrama de Bode, uma oscilação de cada vez",
-      "mix": "mistura que pedimos",
-      "head": "temperatura na cabeça",
-      "timeAria": "A última medição: a temperatura da mistura oscilante e a temperatura da cabeça.",
-      "w": "velocidade da oscilação ω (rad/s)",
-      "gain": "ganho",
-      "phase": "fase (°)",
-      "formula": "fórmula",
-      "measured": "suas medições",
-      "gainAria": "Ganho medido em função da velocidade de oscilação, eixos logarítmicos.",
-      "phaseAria": "Atraso de fase medido em função da velocidade de oscilação.",
-      "flip": "−180°: de cabeça para baixo",
-      "slider": "Velocidade de oscilação",
-      "period": "período",
-      "measure": "Medir",
-      "sweep": "Medir 8 velocidades",
-      "clear": "Limpar",
-      "showFormula": "Mostrar a curva da fórmula (precisa de 5 pontos)",
-      "status": {
-        "start": "Escolha uma velocidade de oscilação e pressione Medir.",
-        "measured": "Em ω = {w} rad/s (uma oscilação de {p} s): ganho {g}, fase {ph}°.",
-        "formula": "A fórmula passa bem pelos seus pontos. Ela cruza −180° em {w} rad/s: uma oscilação de {p} s volta de cabeça para baixo."
+      "input": "valor de referência (entrada)",
+      "output": "altura (saída)",
+      "plotAria": "Valor de referência e altura do drone ao longo do tempo para a entrada escolhida.",
+      "same": "permanece o mesmo",
+      "changes": "muda",
+      "describe": {
+        "step": "O valor de referência dá um degrau de 1 para 2 metros e o drone acompanha com um sobressinal oscilante.",
+        "pulse": "O valor de referência desliza de 1 para 2 metros; o drone acompanha com uma oscilação menor.",
+        "wave": "O valor de referência oscila para cima e para baixo; o drone acompanha a onda."
       },
-      "describe": "{n} medições plotadas.",
-      "cross": "de cabeça para baixo em {w} rad/s",
-      "help": "Solte o controle deslizante, ou pare nas setas do teclado, e ele mede essa velocidade. Medir uma velocidade de novo substitui o ponto dela."
-    },
-    "margins": {
-      "title": "A mão e a beira do precipício",
-      "w": "velocidade de oscilação ω (rad/s)",
-      "gain": "ganho de malha",
-      "phase": "fase da malha (°)",
-      "loop": "malha mão + chuveiro",
-      "gainAria": "Diagrama de Bode do ganho de malha mão-mais-chuveiro com a linha de ganho igual a um.",
-      "phaseAria": "Diagrama de Bode da fase da malha com a linha de −180 graus.",
-      "timeAria": "Temperatura ao longo de 60 segundos com esta mão.",
-      "temp": "temperatura na cabeça",
-      "one": "ganho = 1",
-      "cliff": "−180°: o precipício",
-      "atCross": "margem de fase",
-      "gm": "margem de ganho",
-      "pm": "margem de fase",
-      "crit": "limite (maior k)",
-      "k": "Velocidade da mão k",
-      "delay": "Atraso do cano",
+      "droneCap": "o drone acompanhando-o",
       "status": {
-        "safe": "Confortavelmente seguro: bastante margem.",
-        "edge": "Perto da borda: margem de fase {p}°, margem de ganho × {g}. Espere balanços longos e preguiçosos a cada {T} s mais ou menos.",
-        "over": "Precipício abaixo (margem de ganho × {g}): os balanços crescem até a manopla bater nos extremos."
-      },
-      "describe": "Margem de ganho {gm}, margem de fase {pm} graus.",
-      "w180": "velocidade de −180°",
-      "period": "período da oscilação"
-    },
-    "replay": {
-      "title": "Suas oscilações do Capítulo 0",
-      "yours": "Esta é a sua própria execução do Capítulo 0.",
-      "robot": "Você ainda não jogou o jogo do Capítulo 0, então esta é a mão normal do robô. (Jogue e volte!)",
-      "aria": "Temperatura da execução do chuveiro do Capítulo 0, com a mistura pedida pela manopla.",
-      "temp": "temperatura na saída do chuveiro",
-      "mix": "o que a manopla pediu",
-      "periodYours": "seu período de oscilação",
-      "periodRobot": "período de oscilação do robô",
-      "predSpeed": "limite: mão de velocidade",
-      "predPos": "limite: mão de posição",
-      "verdict": {
-        "calm": "Oscilações insuficientes para medir: você foi paciente (ou sortudo)!",
-        "speed": "Oscilações a cada {p} s: você se comportou como uma mão de velocidade, um controlador I perto do seu limite.",
-        "position": "Oscilações a cada {p} s: você se comportou como uma mão de posição, um controlador P perto do seu limite.",
-        "robot": "A mão do robô balança a cada {p} s. Um pouco mais devagar que a borda de {e} s, porque fica logo antes dela: uma mão de velocidade (um controlador I)."
+        "step": "Ele tem sobressinal até {p} m antes de se acomodar em 2 m.",
+        "pulse": "Um começo mais suave: o pico fica só em {p} m.",
+        "wave": "A receita transforma uma onda de {a} m em uma onda de {b} m."
       }
     },
-    "designer": {
-      "title": "Chuveiro do robô: controlador PI",
-      "aria": "Temperatura ao longo de 40 segundos com o controlador PI do robô, o projeto anterior como fantasma.",
-      "temp": "temperatura na cabeça",
-      "mix": "o que a manopla pede",
-      "view": {
-        "aria": "Chuveiro controlado pelo robô. A manopla gira sozinha.",
-        "knob": "Manopla do chuveiro (controlada pelo robô)",
-        "pipe": "cano (2,5 s de percurso)",
-        "head": "cabeça do chuveiro",
-        "thermo": "termômetro"
-      },
-      "kp": "Ganho P $K_p$",
-      "ki": "Ganho I $K_i$",
-      "presetHand": "A mão normal",
-      "presetJune": "Os ganhos estilo drone da June",
-      "goal": "Objetivo: margem de fase acima de 45° e conforto (na faixa por 10 s seguidos) em até 12 s. Começa com os ganhos da June.",
-      "pm": "margem de fase",
-      "gm": "margem de ganho",
-      "comfort": "confortável depois de",
-      "yours": "você (Capítulo 0)",
+    "playground": {
+      "title": "Experimente os polos",
+      "planeAria": "O plano s com um par de polos arrastável. A metade esquerda acalma, a metade direita explode. Use as setas do teclado para mover o polo selecionado.",
+      "pole": "p",
+      "poles": "polos",
+      "zeta": "amortecimento ζ",
+      "wn": "ωn = |p|",
+      "settle": "acomoda, regra 4/σ",
+      "settleReal": "acomoda (medido)",
+      "overshoot": "sobressinal",
+      "push": "empurrão inicial (degrau de 1 m)",
+      "pct": "{v}%",
+      "response": "altura após um degrau de 1 m",
+      "target": "alvo",
+      "plotAria": "Resposta ao degrau do drone para os polos escolhidos, com a resposta anterior mostrada como fantasma.",
+      "over": "sobressinal",
       "never": "nunca",
-      "notPlayed": "não jogado",
-      "status": {
-        "unstable": "Precipício abaixo (margem de ganho × {g}): balanços sem fim, a cada {p} s mais ou menos.",
-        "edge": "Estável, mas só {pm}° de margem de fase: mais margem, por favor.",
-        "slow": "Seguro, mas lento. Você consegue ficar confortável mais cedo?",
-        "win": "Robusto e rápido! Este robô vence suas mãos do Capítulo 0.",
-        "winButYou": "Robusto e rápido! (Você foi mais rápido no Capítulo 0. Impressionante! Mas o robô nunca se cansa.)",
-        "unstableSlow": "Precipício abaixo (margem de ganho × {g}): nenhuma margem, balanços sem fim."
+      "notIn": "não em até {T} s",
+      "wiggle": "uma oscilação ≈ {T} s",
+      "wnCircle": "ωn = {w}",
+      "budget": "orçamento de 20 N",
+      "verdict": {
+        "stable": "Metade esquerda: ele se acalma.",
+        "unstable": "Metade direita: ele explode!",
+        "marginal": "Bem sobre o eixo: ele oscila para sempre.",
+        "hitPage": "O drone saiu da ilustração, bateu na página e caiu. Mova um polo para tentar de novo.",
+        "hitGround": "Ele bateu no chão. Mova um polo para tentar de novo.",
+        "hitPageMarginal": "Cada balanço chegava a 3 m, bem o suficiente para encostar na página; os motores pararam e ele caiu."
       },
-      "presetTheo": "Os ganhos suaves do Theo",
-      "w": "velocidade da oscilação ω (rad/s)",
-      "phase": "fase da malha (°)",
-      "loop": "malha robô + chuveiro",
-      "phaseAria": "Diagrama de Bode da fase da malha robô-mais-chuveiro, com a linha de −180 graus e a margem de fase.",
-      "cliff": "−180°: o precipício",
-      "atCross": "margem de fase"
+      "negKd": "Aqui o Kd é negativo: o arrasto já amortece mais do que estes polos permitem, então o controlador tem que empurrar junto com o movimento.",
+      "pushWarn": "O empurrão inicial passa de 20 N, mais do que motores reais têm. Já, já vamos ver quanto isso custa.",
+      "challenge": "Mini-desafio: sobressinal abaixo de 10% e acomodação em até 2 s",
+      "chalOk": "Desafio cumprido! Sobressinal de {o}%, acomodação em {s} s.",
+      "chalNo": "Ainda não: sobressinal de {o}%, acomoda em {s} s. Mire na zona destacada.",
+      "help": "Arraste qualquer um dos × (ou use Tab para chegar até ele e as setas do teclado, Shift para passos grandes). O drone repete sua resposta ao degrau a cada ajuste.",
+      "describe": "Polos em {p}. Razão de amortecimento {z}. Acomoda em cerca de {s} segundos, com sobressinal de cerca de {o} por cento.",
+      "re": "σ",
+      "im": "ω"
+    },
+    "zero": {
+      "title": "Deslize o zero",
+      "planeAria": "O plano s com dois polos fixos em menos 2 mais ou menos 3 i e um zero arrastável no eixo real.",
+      "zero": "zero",
+      "y": "saída",
+      "noZero": "sem zero (mesmos polos)",
+      "withZero": "com o zero",
+      "slope": "+ {g} × a sua inclinação",
+      "plotAria": "Respostas ao degrau com e sem o zero.",
+      "osNo": "sobressinal sem zero",
+      "osYes": "sobressinal com zero",
+      "pct": "{v}%",
+      "note": "Zero em {z}; em escala para ainda terminar em 1.",
+      "near": "Perto da origem: a parte da inclinação é {g} × a inclinação antiga, então o começo dá um tranco forte.",
+      "mid": "Um tranco moderado: {g} × a inclinação.",
+      "far": "Longe: só {g} × a inclinação. Quase não aparece.",
+      "describe": "Zero em {z}, sobressinal de {o} por cento.",
+      "re": "σ",
+      "im": "ω",
+      "help": "Arraste o ○ ao longo do eixo (ou pressione Tab até ele e use ← →). Os × dos polos ficam parados."
+    },
+    "limit": {
+      "title": "Motores reais têm limites",
+      "ideal": "motores sem limite (matemática)",
+      "real": "drone real",
+      "idealT": "empuxo que a matemática quer",
+      "realT": "empuxo que obtemos",
+      "hAria": "Altura após um degrau para motores sem limite e reais.",
+      "tAria": "Empuxo ao longo do tempo, com os limites de motor de 0 e 20 newtons.",
+      "max": "motor máx 20 N",
+      "min": "motores não podem puxar para baixo",
+      "peak": "pico de empuxo que a matemática quer",
+      "tsIdeal": "acomoda (matemática)",
+      "tsReal": "acomoda (real)",
+      "osReal": "sobressinal (real)",
+      "pct": "{v}%",
+      "notYet": "não dentro de 3 s",
+      "sigma": "Posição do polo (movendo para a esquerda ao longo de 45°)",
+      "toggle": "Motores reais: 0–20 N",
+      "capped": "A matemática quer {p} N; os motores param em 20 N. Acomodação real em {s} s, e nenhum “mais à esquerda” baixa isso de cerca de {b} s.",
+      "fantasy": "Motores imaginários entregam {p} N sem problema. Ligue os limites de novo.",
+      "fine": "Dentro da faixa dos motores: matemática e realidade concordam."
+    },
+    "loop": {
+      "title": "Uma volta pela malha",
+      "aria": "Um plano com o ponto menos 1 marcado, a curva de uma volta pela malha para cada velocidade de oscilação e uma seta até a volta na velocidade escolhida.",
+      "re": "parte real",
+      "im": "parte imaginária",
+      "kp": "$K_p$ do controlador",
+      "w": "Velocidade da oscilação ω",
+      "lap": "C·P",
+      "cliff": "−1",
+      "size": "tamanho da volta |C·P|",
+      "angle": "ângulo da volta",
+      "distance": "distância até −1",
+      "zeta": "amortecimento ζ",
+      "status": "Mais perto de −1: {d}, em cerca de {w} rad/s. O ângulo fica acima de −180°, então a volta nunca chega lá. Amortecimento ζ = {z}.",
+      "help": "Deslize ω para mover a seta ao longo da curva; deslize Kp para esticar a curva inteira. A linha tracejada é a distância até −1."
     }
   },
   "plays": {
-    "delaylag": {
-      "L": "atraso do cano",
-      "T": "período da oscilação"
+    "poleRead": {
+      "sig": "distância dos polos à esquerda do eixo",
+      "w": "altura dos polos, ômega",
+      "noWiggle": "nada (nenhuma oscilação)",
+      "never": "nunca",
+      "noOvershoot": "nada (sem sobressinal)",
+      "pct": "{v}%"
     },
-    "smoother": {
-      "w": "velocidade de oscilação ω"
+    "gains": {
+      "sig": "distância dos polos à esquerda do eixo",
+      "w": "altura dos polos, ômega",
+      "negKd": "Isso é um Kd *negativo*: só o arrasto já amortece mais do que estes polos querem, então o controlador tem que empurrar *junto com* o movimento."
     },
-    "total": {
-      "w": "velocidade de oscilação ω",
-      "before": "Ainda não está de cabeça para baixo.",
-      "flip": "De cabeça para baixo: uma crista sai como um vale.",
-      "past": "Já passou de cabeça para baixo."
+    "dominant": {
+      "time": "tempo, em segundos",
+      "almostNothing": "quase nada",
+      "pct": "{v}%"
     },
-    "handloop": {
-      "w": "velocidade de oscilação ω"
+    "push": {
+      "sig": "par de polos na linha de 45°",
+      "canDo": "os motores dão conta",
+      "justOver": "um pouco acima dos 20 N que os motores têm",
+      "farBeyond": "muito além dos motores"
     },
-    "pgain": {
-      "K": "força da mão de posição K",
-      "dies": "Os balanços morrem.",
-      "edge": "Bem na borda: balanços que nem crescem nem encolhem.",
-      "grows": "Os balanços crescem."
+    "budget": {
+      "dr": "tamanho do degrau, metros"
     },
-    "double": {
-      "L": "atraso do cano"
+    "zeroKick": {
+      "z": "distância do zero até 0",
+      "pct": "{v}%"
     },
-    "delaymargin": {
-      "kp": "ganho P Kp",
-      "ki": "ganho I Ki",
-      "margin": "a margem de fase é {pm}° em {wc} rad/s, então o cano poderia ficar {dm} s mais longo antes que este robô comece a oscilar sem parar.",
-      "none": "não há margem de fase nenhuma: este robô já está oscilando sem parar."
+    "lap": {
+      "kp": "ganho proporcional Kp, newtons por metro"
     }
   }
 }

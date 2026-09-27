@@ -4,7 +4,7 @@ import { gaussian, mulberry32 } from './random';
 /**
  * One-dimensional (vertical) drone. Honest simplifications, stated in the course:
  * linear drag, no attitude dynamics, instantaneous motors unless `motorTau > 0`,
- * and (until Chapter 8) motors with no thrust limits.
+ * and (until Chapter 10) motors with no thrust limits.
  */
 export interface DroneParams {
   /** mass without package, kg */

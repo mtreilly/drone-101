@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { SHOWER, ShowerSim, knobFor, type ShowerPolicy } from '../../sim/shower-model';
-import { comfortTime, runShower } from '../ch10/shower-tools';
+import { comfortTime, runShower } from '../ch12/shower-tools';
 import { policies } from './hands';
 
 const peakAbove = (policy: ShowerPolicy, T = 60): number => Math.max(...runShower(policy, T).T) - SHOWER.target;

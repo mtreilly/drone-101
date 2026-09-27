@@ -51,7 +51,7 @@ describe('label placement (1b)', () => {
     expect(spots[i].align).toBe('right');
   });
 
-  it('steps off a series that runs through it (Ch 8 "motors can\'t pull down" on the thrust curve)', () => {
+  it('steps off a series that runs through it (Ch 10 "motors can\'t pull down" on the thrust curve)', () => {
     // the orange thrust curve hugs the 0 line just above it across the whole plot
     const thrust: Pt[] = Array.from({ length: 50 }, (_, k) => ({ x: 54 + k * 8, y: 100 - 6 }));
     const spots = hLineSpots(100, 54, 454, 200, 15, 'start', 'below');
@@ -66,13 +66,13 @@ describe('label placement (1b)', () => {
     expect(hLineSpots(100, 54, 454, 50, 15)[0].rect.x).toBe(454 - 4 - 50);
   });
 
-  it('a v-line label keeps a 6 px gap so its first letter is never struck (Ch 7 explode)', () => {
+  it('a v-line label keeps a 6 px gap so its first letter is never struck (Ch 8 explode)', () => {
     const s = vLineSpots(200, 14, 214, 120, 15)[0];
     expect(s.rect.x).toBe(206);
     expect(segmentHitsRect({ x: 200, y: 14 }, { x: 200, y: 214 }, s.rect)).toBe(false);
   });
 
-  it('marker labels step around line labels (Ch 10 margins: "gain at −180°" vs "gain = 1")', () => {
+  it('marker labels step around line labels (Ch 12 margins: "gain at −180°" vs "gain = 1")', () => {
     const lineLabel = hLineSpots(100, 54, 454, 60, 15)[0].rect; // right end, above the line
     // the marker sits just left of that label, on the line
     const spots = pointSpots(360, 100, 90, 15);
@@ -81,14 +81,14 @@ describe('label placement (1b)', () => {
     expect(overlapArea(spots[i].rect, lineLabel)).toBe(0);
   });
 
-  it('a spot inside the frame is free despite floating-point rounding (Ch 11 "gust")', () => {
+  it('a spot inside the frame is free despite floating-point rounding (Ch 13 "gust")', () => {
     const spots = vLineSpots(239.1, 14, 146, 23.609970092773438, 15);
     const o = free({ bounds: { x: 54, y: 8, w: 623, h: 146 } });
     expect(spotScore(spots[0], o)).toBe(0);
     expect(chooseSpot(spots, o)).toBe(0);
   });
 
-  it('a crowded label stays inside the frame rather than dodge a curve by leaving it (Ch 7 unspin)', () => {
+  it('a crowded label stays inside the frame rather than dodge a curve by leaving it (Ch 8 unspin)', () => {
     // a spiral right next to the left edge: every spot around the point crosses it
     const spiral: Pt[] = Array.from({ length: 120 }, (_, k) => ({ x: 70 + 14 * Math.cos(k / 6) * (1 - k / 130), y: 60 + 14 * Math.sin(k / 6) * (1 - k / 130) }));
     const spots = pointSpots(70, 60, 60, 15);
@@ -140,11 +140,11 @@ describe('label fitting (minimum size, then wrap)', () => {
 });
 
 describe('ticks', () => {
-  it('log ticks at 1-2-5 per decade (Ch 10 Bode axes)', () => {
+  it('log ticks at 1-2-5 per decade (Ch 12 Bode axes)', () => {
     expect(logTicks(0.05, 3)).toEqual([0.1, 1]);
     expect(logTicks(0.05, 3, [1, 2, 5])).toEqual([0.05, 0.1, 0.2, 0.5, 1, 2]);
   });
-  it('extra ticks join the automatic ones and push close ones away (Ch 8 limit: 20 N)', () => {
+  it('extra ticks join the automatic ones and push close ones away (Ch 10 limit: 20 N)', () => {
     const toPx = (v: number) => 200 - v * 1.5; // 1.5 px per newton
     expect(mergeTicks([-40, 0, 40, 80], [20], toPx, 20)).toEqual([-40, 0, 20, 40, 80]);
     expect(mergeTicks([0, 25, 50], [20], toPx, 20)).toEqual([0, 20, 50]);
@@ -170,19 +170,19 @@ describe('autoscale (1c)', () => {
     expect(autoRange([0, 3], [0, 6], null, { max: true })).toEqual([0, 3]);
   });
 
-  it('keeps the limit in frame: Ch 7 unspin at σ = 0.05 heads to 20', () => {
+  it('keeps the limit in frame: Ch 8 unspin at σ = 0.05 heads to 20', () => {
     const [lo, hi] = autoRange([-1, 4.5], [-1, 4.5], [-0.5, 20], { max: true });
     expect(lo).toBe(-1);
     expect(hi).toBeGreaterThanOrEqual(20 * 1.05);
     expect(hi).toBeLessThanOrEqual(20 * 1.5);
   });
 
-  it('Ch 8 zero near the origin: a 6.69 peak fits a 0–2.5 plot', () => {
+  it('Ch 10 zero near the origin: a 6.69 peak fits a 0–2.5 plot', () => {
     const [, hi] = autoRange([0, 2.5], [0, 2.5], [0, 6.688], { max: true });
     expect(hi).toBeGreaterThan(6.688);
   });
 
-  it('Ch 9 bump flight: a 3.9 m peak fits a 0–3 m plot', () => {
+  it('Ch 11 bump flight: a 3.9 m peak fits a 0–3 m plot', () => {
     const [, hi] = autoRange([0, 3], [0, 3], [0, 3.9], { max: true });
     expect(hi).toBeGreaterThan(3.9);
     expect(hi).toBeLessThanOrEqual(5);

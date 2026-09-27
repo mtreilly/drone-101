@@ -13,7 +13,7 @@
         { "t": "p", "text": "To najsłynniejszy regulator, jaki istnieje: **regulacja proporcjonalna** (w skrócie „regulator P”):" },
         { "t": "math", "tex": "\\eff{T} = K_p \\, \\err{e} = K_p\\,(\\sp{r} - \\out{h})" },
         { "t": "p", "text": "$K_p$ to **wzmocnienie**: ile niutonów ciągu dodajesz na każdy metr uchybu. Jego jednostka to niutony na metr (N/m). Duże $K_p$ to gorliwy regulator, małe $K_p$ to wyluzowany. To jedyne pokrętło, jakie dostajemy w tym rozdziale." },
-        { "t": "note", "aside": true, "text": "Dalej udajemy, że silniki są nieograniczone. Potrafią nawet trochę ciągnąć w dół, gdy dron jest za wysoko. Uczciwie o ograniczeniach powiemy w rozdziale 8." },
+        { "t": "note", "aside": true, "text": "Dalej udajemy, że silniki są nieograniczone. Potrafią nawet trochę ciągnąć w dół, gdy dron jest za wysoko. Uczciwie o ograniczeniach powiemy w rozdziale 10." },
         {
           "t": "predict",
           "id": "ch2-kp5",
@@ -52,7 +52,7 @@
         },
         { "t": "say", "who": "june", "mood": "think", "text": "Czemu *mocniejsze* pchanie miałoby powodować *kołysanie*?" },
         { "t": "say", "who": "theo", "mood": "think", "text": "Mocne pchnięcie szybko go rozpędza. Kiedy dociera na właściwą wysokość, wciąż leci szybko, a nic w naszej regule nie mówi „zwolnij, już prawie jesteś”. Hamuje go tylko delikatnie opór powietrza. Więc przelatuje dalej, zostaje zepchnięty z powrotem, znowu przelatuje…" },
-        { "t": "note", "text": "Uczciwa uwaga: w naszym prostym dronie regulator P powoduje kołysanie, ale nigdy tak naprawdę nie **wybucha**. Wahania zawsze w końcu wygasają. Prawdziwe drony mają małe opóźnienia (silniki potrzebują czasu, żeby się rozkręcić), przez które za duże wzmocnienie staje się naprawdę niebezpieczne. O tym w rozdziałach 10 i 11." }
+        { "t": "note", "text": "Uczciwa uwaga: w naszym prostym dronie regulator P powoduje kołysanie, ale nigdy tak naprawdę nie **wybucha**. Wahania zawsze w końcu wygasają. Prawdziwe drony mają małe opóźnienia (silniki potrzebują czasu, żeby się rozkręcić), przez które za duże wzmocnienie staje się naprawdę niebezpieczne. O tym w rozdziałach 12 i 13." }
       ]
     },
     {
@@ -97,7 +97,7 @@
               "options": [
                 { "text": "Nisko, z lekkim kołysaniem", "sketch": "droop", "why": "Duży zwis oznacza *małe* wzmocnienie: potrzeba dużo uchybu, żeby wytworzyć wystarczający ciąg." },
                 { "text": "Blisko celu, z dużym kołysaniem", "sketch": "overshoot", "correct": true, "why": "Mały zwis i duże przeregulowanie to znak rozpoznawczy dużego wzmocnienia." },
-                { "text": "Płynnie i dokładnie w cel", "sketch": "sluggish", "why": "Podchwytliwa opcja: czysty regulator P walczący z grawitacją **nigdy** nie skończy dokładnie w celu, niezależnie od $K_p$. Czegoś brakuje (rozdział 9)." }
+                { "text": "Płynnie i dokładnie w cel", "sketch": "sluggish", "why": "Podchwytliwa opcja: czysty regulator P walczący z grawitacją **nigdy** nie skończy dokładnie w celu, niezależnie od $K_p$. Czegoś brakuje (rozdział 11)." }
               ]
             },
             {

@@ -1,571 +1,203 @@
 {
   "kicker": "Kapitel 8",
-  "title": "Übertragungsfunktionen, Pole und Nullstellen",
-  "question": "Können wir den ganzen Charakter eines Systems an einem Bruch ablesen?",
+  "title": "Die Laplace-Sonde",
+  "question": "Kann uns eine einzige gemessene Fläche sagen, wo ein Signal wohnt?",
   "sections": [
     {
-      "id": "recipe",
-      "title": "Das Rezept des Systems",
+      "id": "probe",
+      "title": "Eine Sonde für Signale",
       "blocks": [
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "think",
-          "text": "Wir beginnen mit der Drohne im Schwebeflug auf 1 m; ein Grundschub von 4,9 N gleicht die Schwerkraft aus. Die gewünschte und die tatsächliche Höhenänderung messen wir relativ zu diesem Ausgangswert. Unmittelbar vor einem neuen Befehl sind beide Änderungen null. Beim Sprungbeispiel steigt der Sollwert bei $t=0$ auf 2 m: Die gewünschte Änderung ist nun 1 m, während die Drohne noch auf 1 m steht."
-        },
         {
           "t": "say",
           "who": "theo",
-          "mood": "think",
-          "text": "Gut, denn letztes Kapitel haben wir die $-h(0)$-Teile weggelassen, und die Formel hat gelogen. Vom Schweben aus gemessen **sind** diese Anfangswerte wirklich null, also verschwinden sie diesmal ehrlich."
-        },
-        {
-          "t": "math",
-          "tex": "\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\Delta\\sp{R}(s)"
-        },
-        {
-          "t": "callout",
-          "title": "Woher das Rezept kommt",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Der Schwebeschub hebt die Schwerkraft auf, also bleiben in der Gleichung der Drohne nur die *Änderungen* übrig. Jetzt nimm die Regel aus Kapitel 7: Jede Steigung wird zu × $s$, minus ihrem Anfangswert. Vom Schweben aus ist jeder Anfangswert null, also wird nichts abgezogen:"
-            },
-            {
-              "t": "math",
-              "tex": "\\begin{gathered} m\\,\\Delta\\out{h}'' + c\\,\\Delta\\out{h}' = \\eff{K_p}\\,(\\Delta\\sp{r} - \\Delta\\out{h}) \\\\[2pt] \\Big\\downarrow\\ {\\scriptstyle \\Delta h(0)\\,=\\,\\Delta h'(0)\\,=\\,0} \\\\[2pt] (m s^2 + c s + \\eff{K_p})\\,\\Delta\\out{H}(s) = \\eff{K_p}\\,\\Delta\\sp{R}(s) \\end{gathered}"
-            },
-            {
-              "t": "p",
-              "text": "Teile durch $m s^2 + c s + \\eff{K_p}$, und da ist $G(s)$. Sein Nenner ist genau die Gleichung, die wir in den Kapiteln 4 bis 6 durch Raten von $e^{st}$ bekommen haben."
-            },
-            {
-              "t": "say",
-              "who": "mika",
-              "mood": "happy",
-              "text": "Es ist also keine Zauberei. Es ist die eigene Gleichung der Drohne, in der jede Steigung zu einem $s$ geworden ist."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "$\\Delta\\sp{R}(s)$ ist die Transformation der **gewünschten Änderung** gegenüber 1 m; $\\Delta\\out{H}(s)$ die der **tatsächlichen Änderung**. $G(s)$ hängt von Drohne und Regler ab. Das ist die **Übertragungsfunktion**: Ausgangsänderung geteilt durch Eingangsänderung, wobei beide bei null beginnen."
-        },
-        {
-          "t": "p",
-          "text": "Im Diagramm stehen weiterhin Höhen über dem Boden. Addiere zur von der Formel vorhergesagten Änderung die Anfangshöhe von 1 m, dann erhältst du die blaue Höhe im Diagramm."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "June hatte recht: Der Bruch **ist** die Drohne. Er ist so was wie ihr **Rezept**. Gib irgendeine Zutat rein, und er sagt dir, was rauskommt!"
-        },
-        {
-          "t": "p",
-          "text": "Probier drei verschiedene Eingänge an derselben Drohne aus. Das Rezept ändert sich nie, nur $\\Delta\\sp{R}(s)$."
-        },
-        {
-          "t": "widget",
-          "id": "recipe"
-        },
-        {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Übertragungsfunktion $G(s)$",
-              "def": "Transformierte Ausgangsänderung ÷ transformierte Eingangsänderung, bei Start aus der Ruhe. Für diese lineare Drohne ist sie ein Quotient aus Polynomen in $s$."
-            },
-            {
-              "term": "Start aus der Ruhe (Anfangswerte null)",
-              "def": "Jede Änderung und ihr Tempo ist bei $t = 0$ null, so wie wenn wir vom Schweben aus messen. Dann sind auch die Anfangswert-Terme aus Kapitel 7 wie $-h(0)$ null, und $G(s)$ erzählt die ganze Geschichte."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "poles",
-      "title": "Pole: wo das System wohnen will",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Wo wird $G(s)$ **unendlich groß**? Wo sein Nenner null ist. Diese Punkte heißen **Pole** und werden als × gezeichnet. Diese Drohne hat zwei, einen für jede der zwei natürlichen $e^{st}$-Bewegungen aus Kapitel 6."
-        },
-        {
-          "t": "p",
-          "text": "In Kapitel 7 hat die Transformation von $e^{at}$ bei $s = a$ geschrien. Lies das rückwärts: Wo auch immer $G$ schreit, versteckt sich eine Bewegung $e^{pt}$."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Die Pole sind also die **Modi** aus Kapitel 6, und sie sitzen auf der Karte!"
-        },
-        {
-          "t": "callout",
-          "title": "Warum Pole die Bewegungen sind",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Eine Sprungantwort ist $G(s)$ mal das $\\frac{1}{s}$ des Sprungs. Zerleg sie in einfache Stücke, die Partialbruchzerlegung aus Kapitel 7 (ein Spiegelpaar von Polen bekommt Spiegelzwillinge als Zähler): Der eigene Pol des Sprungs bei 0 liefert die Endänderung $A$, und jeder Pol von $G$ liefert ein Stück $\\frac{B}{s-p}$."
-            },
-            {
-              "t": "math",
-              "tex": "\\begin{aligned} \\Delta\\out{H}(s) = G(s)\\cdot\\frac{1}{s} &= \\frac{A}{s} + \\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\\\[4pt] \\Longrightarrow\\quad \\Delta\\out{h}(t) &= A + B e^{pt} + \\bar B e^{\\bar p t} \\end{aligned}"
-            },
-            {
-              "t": "p",
-              "text": "Die Tabelle aus Kapitel 7 verwandelt jedes Stück zurück in eine Bewegung. Etwas anderes kann nicht auftauchen: Die Pole sind die ganze Besetzung."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "think",
-              "text": "Und ein Pol mit $\\sigma > 0$ ist ein Stück, das wächst. Kein Wunder, dass die rechte Hälfte explodiert."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Jetzt drehen wir den Spieß um. Statt Verstärkungen zu wählen und die Pole zu suchen, **ziehen wir die Pole** und schauen, was für eine Drohne wir bekommen. Dafür braucht es einen zweiten Knopf, $\\eff{K_d}$: ein Gegendrücken gegen das Tempo, das wir in Kapitel 9 richtig kennenlernen. Es kommt zum Luftwiderstand $c$ dazu, und die zwei Lösungen sind $p$ und sein Spiegelzwilling $\\bar p$ (der Strich dreht das Vorzeichen des Imaginärteils um, wie bei den Zwillingen aus Kapitel 5):"
-        },
-        {
-          "t": "math",
-          "tex": "\\begin{aligned} & m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p} = 0 \\\\ \\Longrightarrow\\quad & s = p,\\ \\bar p \\qquad \\text{(die Pole)} \\end{aligned}"
-        },
-        {
-          "t": "play",
-          "id": "gains",
-          "text": "Damit die Pole bei −{scrub|sig} ± {scrub|w}i sitzen, braucht der Regler $\\eff{K_p} = m(\\sigma^2+\\omega^2)$ = {calc|kp|eff} N/m und $c + \\eff{K_d} = 2m|\\sigma|$ = {calc|damp} N·s/m, also $\\eff{K_d}$ = {calc|kd|eff} N·s/m. Der Spielplatz unten folgt diesen Zahlen. {calc|note}"
-        },
-        {
-          "t": "predict",
-          "id": "ch8-rhp",
-          "gate": true,
-          "q": "Was macht die Drohne, wenn wir die Pole in die **rechte Hälfte** der s-Ebene ziehen?",
-          "options": [
-            {
-              "text": "Sie landet sanft",
-              "sketch": "sluggish",
-              "why": "Landen braucht, dass sich alles beruhigt, und Pole in der rechten Hälfte tun das Gegenteil."
-            },
-            {
-              "text": "Sie schwebt, ein bisschen wackelig",
-              "sketch": "steady-wiggle",
-              "why": "Gleichmäßiges Wackeln bekommst du genau **auf** der senkrechten Achse. Knapp dahinter wächst alles."
-            },
-            {
-              "text": "Sie schwingt immer stärker, bis sie abstürzt oder davonfliegt",
-              "sketch": "growing-wiggle",
-              "correct": true,
-              "why": "In der rechten Hälfte hat $e^{st}$ ein $\\sigma > 0$: eine wachsende Spirale. Die Schwünge werden mit jedem Durchgang größer."
-            }
-          ]
-        },
-        {
-          "t": "widget",
-          "id": "playground"
-        },
-        {
-          "t": "h3",
-          "text": "Die Karte lesen"
-        },
-        {
-          "t": "p",
-          "text": "Spiel damit. Ein paar Regeln springen sofort ins Auge, und jede ist ein alter Bekannter in Verkleidung:"
-        },
-        {
-          "t": "list",
-          "items": [
-            "**Linke Hälfte = beruhigt sich, rechte Hälfte = explodiert.** Der Realteil $\\sigma$ ist die Schrumpf- oder Wachstumsrate von $e^{\\sigma t}$.",
-            "**Weiter links = schneller.** Das Einschwingen dauert etwa $4/|\\sigma|$ Sekunden (die gestrichelten senkrechten Linien): die vier Zeitkonstanten aus Kapitel 6, denn $e^{-|\\sigma| t}$ liegt nach $\\ln 50/|\\sigma| \\approx 3{,}9/|\\sigma|$ Sekunden unter 2 %.",
-            "**Weiter oben = wackeliger.** Die Höhe $\\omega$ ist die gedämpfte Eigenkreisfrequenz aus Kapitel 6, also dauert ein Wackler $2\\pi/\\omega$ Sekunden.",
-            "**Der Winkel bestimmt das Überschwingen.** Der Winkel $\\theta$ zur negativen reellen Achse liefert $\\zeta = \\cos\\theta$ (der Kreis aus Kapitel 6), und das Überschwingen ist $e^{-\\pi|\\sigma|/\\omega}$ (die gestrichelten Strahlen). Nahe der reellen Achse schwingt sie kaum über, nahe der senkrechten Achse stark. (Exakt für zwei Pole ohne Nullstelle, Start aus der Ruhe. Eine Nullstelle ändert das: Im nächsten Abschnitt macht eine aus 12 % dann 15 %.)"
-          ]
-        },
-        {
-          "t": "say",
-          "who": "mika",
           "mood": "worried",
-          "text": "Ich wollte nur **einen** Pol weit oben und einen weit unten. Es lässt mich nicht! Der untere macht dem oberen alles nach."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "Erinnerst du dich an die Zwillingsdreher aus Kapitel 5? Eine echte Drohne macht echte Bewegungen, also braucht jedes drehende $e^{st}$ seinen Spiegelzwilling, damit sich die imaginären Teile aufheben. Komplexe Pole kommen **immer** in Spiegelpaaren."
-        },
-        {
-          "t": "callout",
-          "title": "Warum der Winkel das Überschwingen bestimmt",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Die Drohne fliegt am Ziel vorbei und kehrt nach einem halben Wackler um, bei $t = \\pi/\\omega$. Bis dahin hat das schrumpfende $e^{-|\\sigma| t}$ so lange gearbeitet, und was vom Schwung übrig ist, ist das Überschwingen. Nur das Verhältnis $|\\sigma|/\\omega$ zählt, und dieses Verhältnis ist der *Winkel* des Pols. Auf dem Kreis aus Kapitel 6 ist der Kosinus dieses Winkels $\\zeta$."
-            },
-            {
-              "t": "math",
-              "tex": "\\begin{aligned} t_{\\text{Spitze}} &= \\frac{\\pi}{\\omega} \\\\[4pt] \\text{Überschwingen} &= e^{-|\\sigma|\\,t_{\\text{Spitze}}} = e^{-\\pi|\\sigma|/\\omega} \\\\[4pt] &= e^{-\\pi\\zeta/\\sqrt{1-\\zeta^2}}, \\qquad \\zeta = \\cos\\theta \\end{aligned}"
-            },
-            {
-              "t": "play",
-              "id": "poleRead",
-              "text": "Pole bei −{scrub|sig} ± {scrub|w}i: Die Wackler schrumpfen wie $e^{-|\\sigma| t}$, also schwingt sie in etwa {calc|ts} s ein. Ein Wackler dauert {calc|period} s. Die erste Spitze kommt nach einem halben, bei {calc|tp} s, und bis dahin hat das Schrumpfen ein Überschwingen von {calc|os} übrig gelassen."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "happy",
-              "text": "Jeder Strahl von 0 aus ist also ein $\\zeta$ und ein Überschwingen."
-            }
-          ]
-        },
-        {
-          "t": "predict",
-          "id": "ch8-up",
-          "gate": true,
-          "q": "Lass $\\sigma = -2$ und schieb die Pole **senkrecht nach oben**, von $\\pm 4i$ auf $\\pm 8i$. Was ändert sich?",
-          "options": [
-            {
-              "text": "Sie schwingt doppelt so schnell ein",
-              "why": "Das Einschwingen folgt der Schrumpfrate $\\sigma$, und die hat sich nicht bewegt. Gemessen: Aus 1,87 s werden 1,72 s, fast dasselbe."
-            },
-            {
-              "text": "Schnellere Wackler und mehr Überschwingen; das Einschwingen bleibt etwa gleich",
-              "correct": true,
-              "why": "Ein Wackler schrumpft von 1,57 s auf 0,79 s, und das Überschwingen steigt von 21 % auf 46 %, aber die Hüllkurve $e^{-2t}$ bleibt gleich, also bleibt das Einschwingen bei etwa $4/2 = 2$ s."
-            },
-            {
-              "text": "Sie wird instabil",
-              "why": "Das entscheidet nur die Position links oder rechts. Hoch und runter führt nie in die rechte Hälfte."
-            }
-          ]
+          "text": "Jedes Mal, wenn wir etwas gelöst haben, haben wir $e^{st}$ *geraten*, eingesetzt und gebetet. Jetzt noch Schwerkraft, eine Anfangshöhe, ein Regler dazu… mein Notizheft brennt."
         },
         {
           "t": "say",
           "who": "june",
-          "mood": "excited",
-          "text": "Der Spielplatz ist gesprungen, als wir geantwortet haben: Das Geisterpaar sitzt bei $\\pm 4i$, das neue bei $\\pm 8i$. Gleiche Hüllkurve, doppelt so viele Wackler und ein viel größerer erster Schwung."
-        },
-        {
-          "t": "note",
-          "text": "Unsere Drohne startete bei $-1 \\pm 6{,}24i$: Das ist die Drohne mit $K_p = 20$ aus Kapitel 2. Weit oben (sehr wackelig) und nah an der Achse (schwingt langsam ein). Jetzt kannst du *sehen*, warum sie gehüpft ist."
+          "mood": "think",
+          "text": "Wenn ich was baue, ist der Trick immer, aus einer schweren Aufgabe eine leichte zu machen. Schwer: Analysis mit Steigungen von Steigungen. Leicht: schlichte Algebra mit $+$, $-$, $\\times$, $\\div$."
         },
         {
           "t": "say",
           "who": "mika",
-          "mood": "think",
-          "text": "Was, wenn beide Pole auf der reellen Achse sitzen, einer bei $-0{,}2$ und einer bei $-5$?"
+          "mood": "excited",
+          "text": "Wir brauchen also eine Maschine, die eine Kurve frisst und etwas ausspuckt, in dem Steigungen zu Multiplikation werden? Gibt’s so was?"
         },
         {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "Der Schnelle ist in einer Sekunde weg. Der Langsame ist der Boss."
+          "t": "p",
+          "text": "Gibt es, und wir können sie aus Dingen bauen, die wir schon haben. Die Idee: Nimm irgendein **Signal**, also irgendeine Kurve, die sich mit der Zeit ändert, $f(t)$. Multiplizier es mit einer **Sonde**, der Exponentialfunktion $e^{-st}$ aus Kapitel 4 (für positives $s$ schrumpft sie). Dann miss die **Gesamtfläche** unter dem Produkt (die aufsummierte Fläche aus Kapitel 3), ganz bis hinaus zu $t = \\infty$."
         },
         {
-          "t": "play",
-          "id": "dominant",
-          "text": "Reelle Pole bei −0,2 und −5. Nach {scrub|time} s ist von der schnellen Bewegung $e^{-5t}$ noch {calc|fast} ihres Anfangs übrig, von der langsamen $e^{-0{,}2t}$ noch {calc|slow}. Also entscheidet der langsame Pol: Das Einschwingen dauert etwa $4/0{,}2 = 20$ s."
+          "t": "math",
+          "tex": "F(s) = \\int_0^\\infty \\out{f(t)}\\; e^{-st}\\,dt"
         },
         {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Pol",
-              "def": "Ein Wert von $s$, bei dem die Übertragungsfunktion unendlich groß wird. Jeder Pol $p$ ist eine Bewegung $e^{pt}$ des Systems."
-            },
-            {
-              "term": "Spiegelpaar $p,\\ \\bar p$",
-              "def": "Zwei Pole mit gleichem Realteil und entgegengesetztem Imaginärteil. Komplexe Pole eines reellen Systems kommen immer so."
-            },
-            {
-              "term": "Dominanter Pol",
-              "def": "Der Pol, der der senkrechten Achse am nächsten liegt. Seine langsame Bewegung überdauert die anderen, also bestimmt er meist die Einschwingzeit, außer eine Nullstelle sitzt fast direkt auf ihm (Kapitel 9 hat so eine)."
-            }
-          ]
+          "t": "p",
+          "text": "Das ist alles. Eine Zahl $s$ geht rein, eine Fläche kommt raus. Probier verschiedene $s$-Werte aus, und du bekommst eine ganz neue Kurve $F(s)$. Diese Kurve ist die **Laplace-Transformation** von $f$: ein Fingerabdruck des Signals. Zwei verschiedene (vernünftige) Signale haben nie dasselbe $F(s)$. Deshalb können wir Antworten später auch rückwärts nachschlagen."
         },
         {
           "t": "callout",
-          "title": "Wie gut ist 4/|σ|?",
+          "title": "Warum diese Sonde?",
           "blocks": [
-            {
-              "t": "p",
-              "text": "Die Vier ist das $\\ln 50 \\approx 3{,}9$ aus Kapitel 6, gerundet: die Zeit, bis die *Hüllkurve* auf 2 % geschrumpft ist. Die echte Kurve liegt innerhalb ihrer Hüllkurve, also schwingt sie oft etwas früher ein. Später schwingt sie ein, wenn die Pole auf oder nahe der reellen Achse sitzen, denn ein doppelter Pol hat einen Anteil $t\\,e^{-|\\sigma| t}$, der nachhängt."
-            },
-            {
-              "t": "math",
-              "tex": "\\begin{array}{c|ccccc} \\zeta & 0{,}3 & 0{,}5 & 0{,}8 & 0{,}95 & 1 \\\\ \\hline |\\sigma|\\,T_s & 3{,}37 & 4{,}04 & 3{,}01 & 5{,}00 & 5{,}83 \\end{array}"
-            },
             {
               "t": "say",
-              "who": "mika",
+              "who": "theo",
               "mood": "think",
-              "text": "Ich hab $\\sigma = -1$ ausprobiert: Die Regel sagte 4 s, und die echten Zeiten lagen je nach $\\zeta$ zwischen 3,0 s und 5,8 s. Gut genug zum Zielen, nicht gut genug für ein Versprechen."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "zeros",
-      "title": "Nullstellen: ein kurzer Blick",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Auch der Zähler kann null werden. Diese Punkte heißen **Nullstellen**, gezeichnet als ○. Meist ändern sie, **wie stark** die Bewegung jedes Pols am Ausgang erscheint. Liegt eine Nullstelle genau auf einem Pol, kürzt sich der gemeinsame Faktor, und dieser Pol verschwindet aus diesem Rezept von Eingang zu Ausgang. Im System steckt er aber immer noch: Stups die Drohne auf anderem Weg an, mit einer Böe, und diese Bewegung ist wieder da. Das ist sehr wichtig, wenn der versteckte Pol rechts liegt."
-        },
-        {
-          "t": "p",
-          "text": "Hier ist ein System mit festen Polen bei $-2 \\pm 3i$ und einer Nullstelle, die du verschieben kannst. (Das $\\eff{K_d}$ unseres Spielplatzes drückt gegen das *Tempo* der Drohne, also hat sein Rezept keine Nullstelle. Drück stattdessen gegen das Tempo des *Fehlers*, wie in Kapitel 9, und eine Nullstelle taucht bei $-\\eff{K_p}/\\eff{K_d}$ auf: Für diese Pole ist das $-6{,}5$, mit 15 % Überschwingen statt 12 %.)"
-        },
-        {
-          "t": "widget",
-          "id": "zero"
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "surprised",
-          "text": "Gleiche Pole, aber wenn die Nullstelle nah an den Ursprung kommt, springt die Antwort viel schneller hoch und schwingt stärker über!"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Gleiche Pole heißt gleiche Bewegungen. Die Nullstelle kann also keine neue hinzufügen. Sie muss ein bisschen von etwas dazugeben, das wir schon haben."
-        },
-        {
-          "t": "play",
-          "id": "zeroKick",
-          "text": "Mit der Nullstelle bei −{scrub|z} ist der Ausgang die Kurve ohne Nullstelle **plus {calc|gain} × ihre Steigung**, und er schwingt um {calc|os} über (12 % ohne die Nullstelle)."
-        },
-        {
-          "t": "p",
-          "text": "Multiplizieren mit $s$ nimmt die Steigung (Kapitel 7), also gibt der Faktor $(1 + s/|z|)$ das $1/|z|$-Fache der Steigung dazu. Deshalb lässt eine Nullstelle nahe am Ursprung das System so stark auf **Änderungen** reagieren: Das Überschwingen wächst, obwohl sich die Pole nicht bewegt haben. Weit weg spielt die Nullstelle kaum eine Rolle. Mehr brauchen wir über Nullstellen vorerst nicht."
-        },
-        {
-          "t": "callout",
-          "title": "Was eine Nullstelle blockiert",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Ein Pol ist eine Bewegung, die das System *macht*; eine Nullstelle ist eine Bewegung, die es *nicht weitergibt*. Füttere dieses System (Nullstelle bei $-3$) mit genau $e^{-3t}$, und nichts davon kommt heraus: nur das eigene Wackeln des Systems, das abklingt. Ohne die Nullstelle käme $1{,}3\\,e^{-3t}$ direkt durch."
-            },
-            {
-              "t": "math",
-              "tex": "\\begin{aligned} G(s) &= \\tfrac{13}{3}\\,\\frac{s+3}{s^2+4s+13}, \\qquad u = e^{-3t} \\\\[4pt] Y(s) &= \\tfrac{13}{3}\\,\\frac{\\cancel{s+3}}{(s^2+4s+13)\\,\\cancel{(s+3)}} \\\\[4pt] \\Longrightarrow\\quad y(t) &= \\tfrac{13}{9}\\,e^{-2t}\\sin 3t \\end{aligned}"
+              "text": "Warum *diese* Kurve? Warum kein Buckel oder ein Sinus?"
             },
             {
               "t": "say",
               "who": "june",
-              "mood": "excited",
-              "text": "Wie Kopfhörer mit Geräuschunterdrückung für ein ganz bestimmtes Brummen."
-            }
-          ]
-        },
-        {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Nullstelle",
-              "def": "Ein Wert von $s$, bei dem die Übertragungsfunktion null ist: eine Bewegung $e^{zt}$, die das System nicht weitergibt."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "limits",
-      "title": "Ist weiter links immer besser?",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Ganz einfach: die Pole *ganz weit* nach links ziehen. Eingeschwungen im Nu. Beste Drohne aller Zeiten!"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Aber wie viel Schub braucht das? Bisher haben wir so getan, als könnten die Motoren so stark drücken, wie die Mathematik will."
-        },
-        {
-          "t": "p",
-          "text": "Zeit für Ehrlichkeit. Unsere Motoren können zwischen **0 N** und **20 N** drücken (etwa das Vierfache des Drohnengewichts). Unten wandern die Pole auf einer 45°-Linie nach links (das ist $\\zeta \\approx 0{,}71$, der Sweet Spot aus Kapitel 6). Die gestrichelten Kurven sind die Mathematik mit ausgedachten, unbegrenzten Motoren; die durchgezogenen sind echte Motoren."
-        },
-        {
-          "t": "widget",
-          "id": "limit"
-        },
-        {
-          "t": "play",
-          "id": "push",
-          "text": "Im ersten Augenblick eines Sprungs um 1 m ist der Fehler der ganze Meter, und die Drohne bewegt sich noch nicht. Also verlangt die Mathematik Schwebeschub plus $\\eff{K_p}$ × 1 m. Mit den Polen bei {scrub|sig} sind das {calc|sum|eff} N: {calc|verdict}."
-        },
-        {
-          "t": "p",
-          "text": "Ab etwa $-3{,}9 \\pm 3{,}9i$ verlangt die Mathematik mehr als 20 N. Der {eff|orange Schub} klatscht gegen die Grenze, und ab etwa $-6 \\pm 6i$ will die Mathematik die Drohne sogar *nach unten ziehen*, was Propeller nicht können. Die echte Drohne folgt der hübschen linearen Vorhersage nicht mehr. Ihr Einschwingen wird ab etwa 0,7 s nicht mehr besser, nahe $-6{,}5 \\pm 6{,}5i$, und weiter links wird es sogar *schlechter*, mit zusätzlichem Überschwingen."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "surprised",
-          "text": "Ich hab ihn ganz bis $-8 \\pm 8i$ geschoben. Die Mathematik sagt 0,53 s. Die echte Drohne braucht 0,77 s: langsamer als bei $-6{,}5$!"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "Und ihr Überschwingen ist von 4 % auf 16 % gestiegen. Den ganzen zusätzlichen Schub gab es nie."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "worried",
-          "text": "„Weiter links“ ist also nur besser, bis dir der Motor ausgeht. Pole setzen ist ein Abwägen, kein Wettrennen."
-        },
-        {
-          "t": "callout",
-          "title": "Ein Schubbudget ist ein Kreis",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Im allerersten Augenblick hat sich die Drohne nicht bewegt, also drückt nur $\\eff{K_p}$, und $\\eff{K_p} = m|p|^2$: das Quadrat des Abstands der Pole von 0. Doppelter Abstand heißt vierfacher Schub, egal in welche Richtung. Für einen Sprung um 1 m erlauben unsere Motoren Pole bis etwa 5,5 von 0 entfernt (der blasse orange Kreis im Spielplatz). Verlang einen Sprung um 2 m, und der Kreis schrumpft auf 3,9."
+              "mood": "happy",
+              "text": "Zwei Gründe, die kann ich an den Fingern abzählen. Eins: Es ist die besondere Kurve aus Kapitel 4. Ihre Steigung ist einfach $-s$ mal sie selbst. Wenn also Steigungen auftauchen, werden sie zu einer Multiplikation mit $s$. Zwei: Sie ist das genaue Gegenteil des $e^{st}$, das wir ständig geraten haben. Halt sie gegen $e^{at}$, und die beiden heben sich bei $s = a$ auf."
             },
             {
               "t": "math",
-              "tex": "\\begin{aligned} T(0^+) &= mg + \\eff{K_p}\\,\\Delta\\sp{r} \\\\[4pt] &= mg + m\\,|p|^2\\,\\Delta\\sp{r} \\le 20\\ \\text{N} \\\\[4pt] \\Longrightarrow\\quad |p| &\\le \\sqrt{\\frac{20\\ \\text{N} - mg}{m\\,\\Delta\\sp{r}}} \\end{aligned}"
+              "tex": "\\frac{d}{dt}\\,e^{-st} = -s\\,e^{-st} \\qquad e^{at}\\cdot e^{-st} = e^{(a-s)t}"
+            },
+            {
+              "t": "p",
+              "text": "Das Aufheben sehen wir im nächsten Abschnitt, die Steigungen im nächsten Kapitel."
+            }
+          ]
+        },
+        {
+          "t": "predict",
+          "id": "ch7-step",
+          "gate": true,
+          "q": "Nimm das einfachste Signal, einen Sprung: $f(t) = 1$ für immer. Wir machen $s$ **größer**. Was passiert dann mit der Fläche unter $1 \\cdot e^{-st}$?",
+          "options": [
+            {
+              "text": "Sie wächst",
+              "why": "Ein größeres $s$ lässt die Sonde *schneller* abklingen, also bleibt weniger von ihr übrig."
+            },
+            {
+              "text": "Sie schrumpft",
+              "correct": true,
+              "why": "Richtig. Ein größeres $s$ drückt die Sonde schneller zusammen, also gibt es weniger Fläche. Genau genommen ist die Fläche exakt $1/s$ (das beweisen wir, wenn wir unsere Tabelle bauen)."
+            },
+            {
+              "text": "Sie bleibt gleich",
+              "why": "Die Form der Sonde hängt von $s$ ab: Größeres $s$ heißt schnelleres Abfallen, also kleinere Fläche."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "probe"
+        },
+        {
+          "t": "play",
+          "id": "stepArea",
+          "text": "Taste den Sprung bei s = {scrub|s} ab: Die Fläche ist 1 ÷ {calc|s} = {calc|F}. Verdopple s, und die Fläche halbiert sich."
+        },
+        {
+          "t": "p",
+          "text": "Fahr $s$ im Widget durch, und die Punkte zeichnen genau dieses $1/s$ nach. Probier auch die anderen Signale aus. Ein wachsendes Signal $e^{0{,}5t}$ hat nur dann eine endliche Fläche, wenn die Sonde **schneller** schrumpft, als das Signal wächst, also bei $s > 0{,}5$. Darunter läuft die Fläche ins Unendliche. Das Wackeln $\\sin 2t$ scheitert anders: Bei $s = 0$ schwappt seine Fläche nur zwischen 0 und 1 hin und her (die negative Fläche aus Kapitel 3 hebt die positive auf) und kommt nie auf eine einzige Zahl."
+        },
+        {
+          "t": "callout",
+          "title": "Eine endlose Fläche, die aufhört zu wachsen",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "worried",
+              "text": "Moment. Die Sonde geht ewig weiter. Wie kann „ewig“ eine endliche Fläche haben?"
+            },
+            {
+              "t": "p",
+              "text": "Weil das meiste von „ewig“ fast nichts ist. Jede weitere Sekunde bringt weniger als die davor. Nach einer Sekunde hat die Fläche unter $e^{-t}$ schon 63 % der Gesamtfläche (wieder das τ-Lineal aus Kapitel 3). Nach fünf sind es über 99 %."
+            },
+            {
+              "t": "math",
+              "tex": "\\int_0^{T} e^{-t}\\,dt = 1 - e^{-T} \\;\\to\\; 1"
             },
             {
               "t": "play",
-              "id": "budget",
-              "text": "Bei einem Sprung um {scrub|dr} m bleibt der erste Schub nur dann unter 20 N, wenn die Pole innerhalb von {calc|r} um 0 liegen, in jeder Richtung."
+              "id": "longArea",
+              "text": "Hör bei t = {scrub|T} s auf, die Fläche von $e^{-t}$ aufzusummieren, und du hast schon {calc|A}. Alles danach bringt nur noch {calc|left}."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "happy",
+              "text": "„Ewig“ ist also kein Problem, solange der Schwanz schnell genug dünn wird. Genau dafür ist die Sonde da."
             }
           ]
+        },
+        {
+          "t": "p",
+          "text": "Die Gesamtfläche muss sich einem endlichen Wert nähern, damit jedes $s$ eine Zahl bekommt. Klingt die Sonde zu langsam ab, wächst die Fläche immer weiter, und dieses $s$ hat keine Antwort."
         },
         {
           "t": "note",
-          "text": "Ab jetzt bleibt die 20-N-Grenze eingeschaltet."
-        },
-        {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Erster Schub",
-              "def": "Der Schub, der im ersten Augenblick eines Sprungs verlangt wird: $mg + \\eff{K_p}\\,\\Delta r$, bevor sich die Drohne bewegt hat."
-            },
-            {
-              "term": "Schubbudget",
-              "def": "Die Polpositionen, die sich die Motoren für einen bestimmten Sprung leisten können: ein Kreis um 0."
-            },
-            {
-              "term": "Motorgrenze (Sättigung)",
-              "def": "Der echte Schub wird auf 0–20 N begrenzt, egal was die Mathematik verlangt."
-            }
-          ]
+          "text": "Vorerst nehmen wir nur reelle $s$. Komplexe $s$ kommen gleich, und da steckt die Magie.",
+          "aside": true
         }
       ]
     },
     {
-      "id": "loop",
-      "title": "Den Kreis auf dem Papier schließen",
+      "id": "explode",
+      "title": "Die Transformation schreit dort, wo das Signal wohnt",
       "blocks": [
         {
-          "t": "say",
-          "who": "june",
-          "mood": "think",
-          "text": "In Kapitel 1 haben wir den Kreis als Kästchen und Pfeile gezeichnet. Im s-Land **multipliziert** jedes Kästchen einfach. Können die Kästchen die Algebra für uns erledigen?"
-        },
-        {
           "t": "p",
-          "text": "Gib jedem Kästchen sein Rezept. Der Regler ist $C(s)$, vorerst einfach $\\eff{K_p}$. Die Drohne allein, Schubänderung rein und Höhenänderung raus, ist $P(s) = \\frac{1}{ms^2 + cs}$: P für die Regelstrecke (englisch **plant**, das Wort aus Kapitel 1), nicht das P vom P-Regler. Sie kommt direkt aus der Gleichung der Drohne, genau wie das Rezept oben."
+          "text": "Schauen wir uns $f(t) = e^{at}$ genauer an. Tasten wir es mit $e^{-st}$ ab, ist das Produkt $e^{(a-s)t}$, eine schlichte Exponentialfunktion. Solange $s > a$ ist, klingt sie ab, und ihre Fläche ist $\\frac{1}{s-a}$ (das leiten wir richtig her, wenn wir im nächsten Kapitel unsere Tabelle bauen)."
         },
         {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Ganz einfach. Der Wunsch geht durch den Regler, dann durch die Drohne. Entlang der Linie multiplizieren!"
-        },
-        {
-          "t": "math",
-          "tex": "\\Delta\\out{H} \\overset{?}{=} C\\,P\\,\\Delta\\sp{R} = \\frac{\\eff{K_p}}{ms^2 + cs}\\,\\Delta\\sp{R}"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Pole bei 0 und −2? Gar kein Wackeln, und ein Pol bei 0, der nie zur Ruhe kommt. Das ist die Steuerung aus Kapitel 1: der Drohne sagen, was sie tun soll, und nie hinschauen. Der Regler sieht den Wunsch gar nicht, June. Er sieht den **Fehler**."
-        },
-        {
-          "t": "p",
-          "text": "Der Pfeil von der Drohne zurück ist der ganze Sinn der Rückkopplung. Der Regler arbeitet mit $\\Delta\\sp{R} - \\Delta\\out{H}$, also taucht der Ausgang auf beiden Seiten auf. Sammle ihn und teile:"
-        },
-        {
-          "t": "math",
-          "tex": "\\begin{aligned} \\Delta\\out{H} &= C\\,P\\,\\big(\\Delta\\sp{R} - \\Delta\\out{H}\\big) \\\\ \\Delta\\out{H}\\,\\big(1 + C\\,P\\big) &= C\\,P\\,\\Delta\\sp{R} \\\\ \\Delta\\out{H} &= \\frac{C\\,P}{1 + C\\,P}\\,\\Delta\\sp{R} \\end{aligned}"
-        },
-        {
-          "t": "p",
-          "text": "Setz $C = \\eff{K_p}$ und $P = 1/(ms^2+cs)$ ein und multipliziere dann Zähler und Nenner mit $ms^2 + cs$:"
-        },
-        {
-          "t": "math",
-          "tex": "\\frac{C\\,P}{1 + C\\,P} = \\frac{\\eff{K_p}/(ms^2+cs)}{1 + \\eff{K_p}/(ms^2+cs)} = \\frac{\\eff{K_p}}{ms^2 + cs + \\eff{K_p}}"
+          "t": "widget",
+          "id": "explode"
         },
         {
           "t": "say",
           "who": "mika",
           "mood": "surprised",
-          "text": "Das ist das Rezept vom Anfang dieses Kapitels! Wir haben es zweimal bekommen: einmal aus der Gleichung der Drohne, einmal aus den Kästchen."
-        },
-        {
-          "t": "p",
-          "text": "Die Pole des Kreises liegen also dort, wo der Nenner $1 + C(s)\\,P(s)$ null ist. Das ist dasselbe wie $C\\,P = -1$. Lies $C\\,P$ als **eine Runde** durch den Kreis (im Lehrbuch: die Übertragungsfunktion des *offenen Kreises*): was erst der Regler und dann die Drohne mit einem Signal machen. An einem Pol bringt eine Runde das Signal gleich groß und umgedreht zurück, und das Minuszeichen im Fehler dreht es wieder um. So hält es sich ganz ohne Wunsch von selbst am Laufen."
-        },
-        {
-          "t": "math",
-          "tex": "1 + C(s)\\,P(s) = 0 \\quad\\Longleftrightarrow\\quad C(s)\\,P(s) = -1"
-        },
-        {
-          "t": "p",
-          "text": "Probier es an einem gleichmäßigen Wackeln aus, $s = i\\omega$. Eine Runde macht aus dem Pfeil des Wacklers $C(i\\omega)\\,P(i\\omega)$: kürzer oder länger und zurückgedreht. Das Widget zeichnet diesen Pfeil für jedes Wackeltempo, dazu den Punkt −1, den er erreichen müsste."
-        },
-        {
-          "t": "widget",
-          "id": "loop"
+          "text": "Wenn $s$ nah an $a$ kommt, wird die Zahl **riesig**! Bei $s = a$ hebt die Sonde das Wachstum genau auf, das Produkt ist für immer flach, und die Fläche ist unendlich."
         },
         {
           "t": "say",
           "who": "theo",
-          "mood": "surprised",
-          "text": "Egal wie weit ich $\\eff{K_p}$ hochschiebe, die Kurve biegt sich Richtung −1, berührt den Punkt aber nie. Am nächsten kommt sie etwa beim eigenen Schwungtempo der Drohne."
-        },
-        {
-          "t": "p",
-          "text": "Und zwar deshalb: Der Luftwiderstand dreht eine Runde um bis zu 90° zurück, die Masse um bis zu weitere 90°, aber zusammen erreichen sie 180° erst bei unendlich schnellen Wacklern. P-Regelung allein kann diese Drohne also nie zum Kippen bringen. Ein größeres $\\eff{K_p}$ lässt die Runde nur **näher** an −1 vorbeilaufen, und näher heißt weniger Dämpfung: „mehr $K_p$, mehr Wackeln“ aus Kapitel 2, jetzt als Bild."
+          "mood": "excited",
+          "text": "Die Transformation **explodiert also genau bei dem** $s$**, wo das Signal wohnt**. Wenn du mir nur $F(s)$ geben würdest, könnte ich das $a$ des Signals finden, indem ich suche, wo sie explodiert."
         },
         {
           "t": "play",
-          "id": "lap",
-          "text": "Mit $\\eff{K_p}$ = {scrub|kp|eff} N/m kommt die Runde bis auf {calc|d} an −1 heran, bei etwa {calc|w} rad/s. Die Dämpfung des Kreises ist ζ = {calc|z}."
+          "id": "scream",
+          "text": "Signal $e^{at}$ mit a = {scrub|a|out}, Sonde s = {scrub|s}: Das Produkt klingt mit s − a = {calc|gap} pro Sekunde ab, also ist seine Fläche {calc|F}. {calc|verdict}"
         },
         {
-          "t": "note",
-          "text": "Merk dir dieses Bild. In Kapitel 9 fügt der I-Knopf einen Haufen hinzu, weitere 90° Verzögerung, und die Kurve kann −1 endlich erreichen. In Kapitel 10 macht das Rohr der Dusche dasselbe, und die Runde $C\\,P$ bekommt einen eigenen Namen."
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Wie ein Rauchmelder. Geh mit $s$ auf $a$ zu, und er wird lauter und lauter. Tritt auf $a$, und er hört nie mehr auf."
+        },
+        {
+          "t": "p",
+          "text": "Jetzt machen wir $s$ komplex, $s = \\sigma + i\\omega$, genau wie unsere drehenden Zahlen aus Kapitel 5. Nimm als Signal den Dreher der Feder aus Kapitel 6, $e^{2it}$ (eine Hälfte seines Zwillingspaars). Die Sonde $e^{-st}$ schrumpft ihn (das ist der waagerechte Teil, $\\sigma$) **und dreht ihn rückwärts** (das ist der senkrechte Teil, $\\omega$). Unten werden die kleinen Flächenstücke des Produkts als Pfeile Spitze an Ende aneinandergehängt, ein Pfeil pro Viertelsekunde. Schau auf die laufende Summe."
+        },
+        {
+          "t": "widget",
+          "id": "unspin"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Wenn sich die Sonde genau mit 2 dreht, hört das Signal auf zu drehen, alle Stücke zeigen in dieselbe Richtung, und die Summe wird so groß, wie es nur geht: $1/\\sigma$, und das läuft gegen unendlich, wenn σ auf 0 schrumpft. Wenn sie nicht zusammenpassen, rollen sich die Pfeile ein und heben sich auf."
+        },
+        {
+          "t": "p",
+          "text": "Dieselbe Lektion, eine Dimension höher: Die Transformation explodiert bei dem komplexen $s$, wo das Signal wohnt. Deshalb zeichnen wir ab jetzt jedes $s$ auf eine Karte mit $\\sigma$ nach rechts und $\\omega$ nach oben. Unsere „Karte von $s$“ aus Kapitel 6 bekommt endlich ihren erwachsenen Namen: die **s-Ebene**."
         },
         {
           "t": "vocab",
           "items": [
             {
-              "term": "Geschlossener Regelkreis",
-              "def": "Ein Regler, der mit dem Fehler arbeitet, sodass der Ausgang in seinen eigenen Eingang zurückgeführt wird: $\\Delta H = \\frac{C\\,P}{1 + C\\,P}\\,\\Delta R$."
-            },
-            {
-              "term": "Kreisverstärkung $C(s)\\,P(s)$",
-              "def": "Was eine Runde durch den Kreis mit einem Signal macht. Die Pole des geschlossenen Regelkreises liegen dort, wo sie −1 ist."
+              "term": "Die s-Ebene",
+              "def": "Die Karte der komplexen Zahlen $s = \\sigma + i\\omega$. Links heißt schrumpfen, rechts heißt wachsen, hoch und runter heißt drehen. Jedes Signal $e^{st}$ wohnt an einem Punkt darauf, und seine Transformation explodiert genau dort."
             }
           ]
         }
@@ -578,91 +210,71 @@
         {
           "t": "recap",
           "items": [
-            "Ja, ein Bruch reicht. Die **Übertragungsfunktion** $G(s)$ = Änderung am Ausgang ÷ Änderung am Eingang im s-Land, Start aus der Ruhe. Sie ist das Rezept des Systems, $\\Delta\\out{H} = G\\cdot\\Delta\\sp{R}$, und sie kommt direkt aus der Gleichung der Drohne.",
-            "**Pole** (×) sind die Stellen, an denen $G(s)$ explodiert: die $e^{pt}$-Modi, aus denen das System besteht.",
-            "Linke Hälfte = stabil, rechte Hälfte = explodiert. Weiter links = schneller (schwingt in etwa $4/|\\sigma|$ s ein, eine Faustregel), weiter oben = wackeliger (ein Wackler = $2\\pi/\\omega$ s), Winkel = Dämpfung $\\zeta$ = Überschwingen $e^{-\\pi|\\sigma|/\\omega}$. Der Pol, der der Achse am nächsten liegt, ist der Boss.",
-            "Komplexe Pole kommen immer in Spiegelpaaren.",
-            "**Nullstellen** (○) ändern, wie viel du von jedem Modus bekommst. Nahe am Ursprung geben sie einen Tritt dazu: das $1/|z|$-Fache der Steigung.",
-            "Schließ den Kreis auf dem Papier, und das Rezept ist $\\frac{C\\,P}{1 + C\\,P}$. Die Pole liegen dort, wo eine Runde durch den Kreis, $C\\,P$, gleich −1 ist.",
-            "Der erste Schub ist $mg + m|p|^2$ bei einem Sprung um 1 m, also brauchen weit entfernte Pole Schub, den die Motoren nicht haben."
+            "Die Laplace-Transformation ist eine **Sonde**: mit $e^{-st}$ multiplizieren und die Gesamtfläche messen. $F(s) = \\int_0^\\infty f(t)e^{-st}dt$.",
+            "Sie **explodiert genau dort, wo das Signal wohnt**: $e^{at}$ ergibt $1/(s-a)$, und das explodiert bei $s = a$. Bei komplexem $s$ dreht die Sonde drehende Signale zurück. All das zeichnen wir in die **s-Ebene**.",
+            "Auch eine Fläche über *ewig* kann endlich sein, solange der Schwanz schnell genug dünn wird. Klingt die Sonde langsamer ab, als das Signal wächst, hat dieses $s$ überhaupt keine Transformation."
           ]
         },
         {
           "t": "quiz",
           "items": [
             {
-              "id": "ch8-q1",
-              "q": "Welches Polpaar schwingt **am schnellsten** ein?",
+              "id": "ch7-q7",
+              "q": "Die Transformation von $e^{3t}$ ist $\\frac{1}{s-3}$. Theo setzt $s = 1$ ein und bekommt $-\\frac12$. Was ist schiefgelaufen?",
               "options": [
                 {
-                  "text": "$-1 \\pm 2i$",
-                  "why": "Einschwingen ≈ $4/1 = 4$ s. Die Höhe (2) wirkt sich nur aufs Wackeln aus, nicht aufs Einschwingen."
-                },
-                {
-                  "text": "$-4 \\pm 2i$",
+                  "text": "Bei $s = 1$ kommt die Fläche nie zur Ruhe, also gibt es dort keine Transformation",
                   "correct": true,
-                  "why": "Am weitesten links: Einschwingen ≈ $4/4 = 1$ s."
+                  "why": "Das Produkt ist $e^{3t}e^{-t} = e^{2t}$, und das wächst ewig. Die Formel gilt nur dort, wo die Sonde gewinnt, also bei $s > 3$."
                 },
                 {
-                  "text": "$-0{,}5 \\pm 5i$",
-                  "why": "Weit oben heißt viele schnelle Wackler, aber es liegt nah an der Achse, also klingen sie langsam ab (≈ 8 s)."
+                  "text": "Nichts: Die Fläche ist wirklich $-\\frac12$",
+                  "why": "Ein positives Signal mal eine positive Sonde kann keine negative Fläche haben. Die Formel wird dort benutzt, wo sie nicht gilt."
+                },
+                {
+                  "text": "Er hätte $\\frac{1}{s+3}$ nehmen sollen",
+                  "why": "$\\frac{1}{s+3}$ gehört zu $e^{-3t}$. Die Formel stimmt, nur das $s$ nicht."
                 }
               ]
             },
             {
-              "id": "ch8-q2",
-              "q": "$G(s) = \\dfrac{3}{s^2 + 2s + 10}$. Wo liegen die Pole, und wie sieht die Antwort aus?",
+              "id": "ch7-q2",
+              "q": "$F(s) = \\dfrac{5}{s+4}$. Welches Signal ist das?",
               "options": [
                 {
-                  "text": "$-1 \\pm 3i$: stabil, und es wackelt",
+                  "text": "$5e^{-4t}$: startet bei 5 und klingt ab",
+                  "sketch": "decaying-plain",
                   "correct": true,
-                  "why": "$s = \\frac{-2 \\pm \\sqrt{4 - 40}}{2} = -1 \\pm 3i$. Linke Hälfte heißt stabil, Imaginärteil heißt Wackeln."
+                  "why": "Es explodiert bei $s = -4$, also wohnt das Signal bei $e^{-4t}$. Die 5 oben ist seine Größe."
                 },
                 {
-                  "text": "$+1 \\pm 3i$: instabil",
-                  "why": "Vorzeichenfehler. Bei $s^2 + bs + q$ ist der Realteil $-b/2 = -1$, und das liegt in der linken Hälfte."
+                  "text": "$5e^{4t}$: wächst",
+                  "sketch": "growing-plain",
+                  "why": "Ein wachsendes $e^{4t}$ würde bei $s = +4$ explodieren. Dieses explodiert bei $s = -4$."
                 },
                 {
-                  "text": "$-2$ und $-10$: kein Wackeln",
-                  "why": "Das sind nur Koeffizienten des Polynoms. Die Pole sind seine Nullstellen: $-1 \\pm 3i$."
+                  "text": "Ein Wackeln",
+                  "sketch": "decaying-wiggle",
+                  "why": "Wackeln braucht ein Paar komplexer Explosionspunkte, einen Dreher und seinen Spiegelzwilling. Hier gibt es einen einzigen reellen bei $-4$."
                 }
               ]
             },
             {
-              "id": "ch8-q3",
-              "q": "Du willst **weniger Überschwingen**, aber **dieselbe Einschwingzeit**. Wie verschiebst du die Pole?",
+              "id": "ch7-q8",
+              "q": "Wo in der s-Ebene explodiert die Transformation des Drehers $e^{2it}$?",
               "options": [
                 {
-                  "text": "Direkt auf die reelle Achse zu (σ behalten, ω verkleinern)",
+                  "text": "Bei $s = 2i$, auf der senkrechten Linie",
                   "correct": true,
-                  "why": "Gleicher Abstand zur Achse lässt die *Hüllkurve* gleich, also bleibt das Einschwingen etwa gleich (die $4/|\\sigma|$-Regel; nahe der reellen Achse ist sie grob). Ein kleinerer Winkel zur reellen Achse heißt mehr Dämpfung, also weniger Überschwingen."
+                  "why": "Der Dreher ist $e^{st}$ mit $s = 2i$, also wohnt er dort. Dort dreht die Sonde ihn genau zurück."
                 },
                 {
-                  "text": "Direkt nach oben (größeres ω)",
-                  "why": "Damit kippt der Winkel Richtung senkrechte Achse: *mehr* Überschwingen und schnellere Wackler."
+                  "text": "Bei $s = 2$",
+                  "why": "Dort wohnt $e^{2t}$: ein wachsendes Signal ganz ohne Drehen."
                 },
                 {
-                  "text": "Nach rechts",
-                  "why": "Dann schwingt es langsamer ein, und hinter der Achse wird es instabil."
-                }
-              ]
-            },
-            {
-              "id": "ch8-q4",
-              "q": "Ein System hat reelle Pole bei $-0{,}2$ und $-5$. Welcher prägt nach zwei Sekunden noch die Antwort?",
-              "options": [
-                {
-                  "text": "Der bei $-0{,}2$, nahe der Achse",
-                  "correct": true,
-                  "why": "$e^{-0{,}2t}$ steht nach 2 s noch bei 67 %; $e^{-5t}$ ist auf 0,005 % gefallen. Der langsame Pol hat das Sagen, also dauert das Einschwingen etwa $4/0{,}2 = 20$ s."
-                },
-                {
-                  "text": "Der bei $-5$, weiter links",
-                  "why": "Weiter links heißt, er stirbt *schneller*. Schon nach 1 s liegt er unter 1 % seines Anfangs (0,67 %)."
-                },
-                {
-                  "text": "Beide gleich",
-                  "why": "Einer schrumpft 25-mal schneller als der andere ($5 \\div 0{,}2$). Nach einer halben Sekunde steht der schnelle bei 8 %, der langsame noch bei 90 %."
+                  "text": "Bei $s = 0$",
+                  "why": "Da wohnt der Sprung. Der Explosionspunkt des Drehers liegt oben bei $2i$."
                 }
               ]
             }
@@ -673,170 +285,85 @@
         },
         {
           "t": "cliff",
-          "text": "Theo: „Die Pole sind wunderschön. Aber Moment: Wir haben das ganze Kapitel geschummelt und der Drohne ihren Schwebeschub geschenkt. Ohne ihn lässt die Schwerkraft sie immer noch **durchhängen**. Unsere Karte ist in Ordnung. Unser *Regler* muss repariert werden.“"
+          "text": "Theo: „Die Sonde sagt uns also, *wo* ein Signal wohnt. Aber wir wollten, dass aus Steigungen Multiplikation wird. **Was macht die Sonde mit einer Steigung?**“"
         }
       ]
     }
   ],
   "widgets": {
-    "recipe": {
-      "title": "Ein Rezept, drei Eingänge",
-      "choose": "Worum bitten wir?",
-      "in": {
-        "step": "ein Sprung nach oben",
-        "pulse": "ein sanfter Sprung",
-        "wave": "eine Welle"
+    "probe": {
+      "title": "Die Sonde",
+      "signal": "Signal",
+      "sig": {
+        "step": "$\\text{Sprung } 1$",
+        "decay": "$e^{-t}$",
+        "grow": "$e^{0{,}5t}$",
+        "wiggle": "$\\sin 2t$"
       },
-      "input": "Sollwert (Eingang)",
-      "output": "Höhe (Ausgang)",
-      "plotAria": "Sollwert und Höhe der Drohne über die Zeit für den gewählten Eingang.",
-      "same": "bleibt gleich",
-      "changes": "ändert sich",
-      "describe": {
-        "step": "Der Sollwert springt von 1 auf 2 Meter, und die Drohne folgt mit hüpfigem Überschwingen.",
-        "pulse": "Der Sollwert gleitet von 1 auf 2 Meter; die Drohne folgt mit einem kleineren Hüpfer.",
-        "wave": "Der Sollwert wellt sich auf und ab; die Drohne folgt der Welle."
-      },
-      "droneCap": "die Drohne, die folgt",
-      "status": {
-        "step": "Sie schwingt auf {p} m über, bevor sie sich bei 2 m einpendelt.",
-        "pulse": "Ein sanfterer Start: Die Spitze liegt nur bei {p} m.",
-        "wave": "Das Rezept macht aus einer Welle von {a} m eine Welle von {b} m."
-      }
+      "f": "Signal f(t)",
+      "probe": "Sonde e^(−st)",
+      "product": "f(t)·e^(−st)",
+      "plotAria": "Das Signal, die Sonde und ihr Produkt über die Zeit, die Fläche unter dem Produkt schattiert.",
+      "fAria": "Gemessene Werte der Gesamtfläche F über s, ein Punkt für jedes ausprobierte s.",
+      "formula": "Formel",
+      "traced": "deine Messungen",
+      "area": "Fläche bis hierhin",
+      "total": "Gesamtfläche F(s)",
+      "s": "Sondenrate $s$",
+      "sweep": "Fläche nochmal abfahren",
+      "showFormula": "Formelkurve aufdecken",
+      "help": "Beweg s und lass los (oder warte kurz nach den Pfeiltasten): Die Fläche wird gemessen, und im F(s)-Diagramm kommt ein Punkt dazu. Nach 5 Punkten, verteilt auf verschiedene s, kannst du die Formel aufdecken.",
+      "finite": "Bei s = {s} ist die Gesamtfläche {F}.",
+      "infinite": "Hier schrumpft die Sonde nicht schneller als das Signal. Die Fläche kommt nie zur Ruhe: Sie ist unendlich.",
+      "describe": "Sondenrate s = {s}; Gesamtfläche {A}.",
+      "sloshes": "Hier kommt die Fläche nie zur Ruhe. Sie schwappt immer weiter hin und her, also hat dieses s keine eindeutige Antwort.",
+      "window": "Das Bild zeigt die ersten 8 s; der Rest bringt noch {rest}.",
+      "noArea": "keine endliche Fläche"
     },
-    "playground": {
-      "title": "Der Pol-Spielplatz",
-      "planeAria": "Die s-Ebene mit einem verschiebbaren Polpaar. Die linke Hälfte beruhigt sich, die rechte explodiert. Mit den Pfeiltasten bewegst du den gewählten Pol.",
-      "pole": "p",
-      "poles": "Pole",
-      "zeta": "Dämpfung ζ",
-      "wn": "ωn = |p|",
-      "settle": "Einschwingen, Regel 4/σ",
-      "settleReal": "Einschwingen (gemessen)",
-      "overshoot": "Überschwingen",
-      "push": "erster Schub (1-m-Sprung)",
-      "pct": "{v} %",
-      "response": "Höhe nach einem Sprung um 1 m",
-      "target": "Ziel",
-      "plotAria": "Sprungantwort der Drohne für die gewählten Pole, die vorherige Antwort als Geist.",
-      "over": "Überschwingen",
-      "never": "nie",
-      "notIn": "nicht innerhalb von {T} s",
-      "wiggle": "ein Wackler ≈ {T} s",
-      "wnCircle": "ωn = {w}",
-      "budget": "20-N-Budget",
-      "verdict": {
-        "stable": "Linke Hälfte: Sie beruhigt sich.",
-        "unstable": "Rechte Hälfte: Sie explodiert!",
-        "marginal": "Genau auf der Achse: Sie schwingt ewig.",
-        "hitPage": "Die Drohne flog aus dem Bild, prallte gegen das, was darüber steht, und stürzte ab. Verschieb einen Pol, um es nochmal zu versuchen.",
-        "hitGround": "Sie ist auf den Boden gekracht. Verschieb einen Pol, um es nochmal zu versuchen.",
-        "hitPageMarginal": "Jeder Schwung reichte bis 3 m, gerade genug, um die Seite zu berühren; die Motoren setzten aus, und sie fiel."
-      },
-      "negKd": "Kd ist hier negativ: Der Luftwiderstand dämpft schon stärker, als diese Pole erlauben, also muss der Regler mit der Bewegung mitdrücken.",
-      "pushWarn": "Der erste Schub liegt über 20 N, mehr als echte Motoren haben. Was das kostet, sehen wir gleich.",
-      "challenge": "Mini-Challenge: Überschwingen unter 10 % und in 2 s eingeschwungen",
-      "chalOk": "Challenge geschafft! Überschwingen {o} %, eingeschwungen in {s} s.",
-      "chalNo": "Noch nicht: Überschwingen {o} %, eingeschwungen in {s} s. Ziel auf die markierte Zone.",
-      "help": "Zieh eines der × (oder spring mit Tab hin und nimm die Pfeiltasten, mit Umschalt in großen Schritten). Die Drohne spielt jedes Mal ihre Sprungantwort ab.",
-      "describe": "Pole bei {p}. Dämpfungsgrad {z}. Eingeschwungen in etwa {s} Sekunden, Überschwingen etwa {o} Prozent.",
-      "re": "σ",
-      "im": "ω"
+    "explode": {
+      "title": "Wo explodiert es?",
+      "product": "e^(at)·e^(−st)",
+      "prodAria": "Das Produkt aus e hoch a t und der Sonde, mit schattierter Fläche.",
+      "fAria": "Die Transformation 1 durch s minus a, mit einer senkrechten Linie, wo sie explodiert.",
+      "noArea": "keine endliche Fläche",
+      "a": "Rate des Signals $a$ in $e^{at}$",
+      "s": "Sonde $s$",
+      "never": "s ist bei oder unter a: Das Produkt schrumpft nie, also ist die Fläche unendlich.",
+      "close": "Nah an a: Die Fläche ist {F} und steigt weiter!",
+      "calm": "Weit weg von a: eine schöne endliche Fläche.",
+      "window": "Das Bild zeigt nur die ersten 10 s; {pct} % der Fläche kommen erst noch.",
+      "readF": "F(s)",
+      "curve": "1/(s − a)"
     },
-    "zero": {
-      "title": "Verschieb die Nullstelle",
-      "planeAria": "Die s-Ebene mit zwei festen Polen bei minus 2 plus minus 3 i und einer verschiebbaren Nullstelle auf der reellen Achse.",
-      "zero": "Nullstelle",
-      "y": "Ausgang",
-      "noZero": "ohne Nullstelle (gleiche Pole)",
-      "withZero": "mit der Nullstelle",
-      "slope": "+ {g} × ihre Steigung",
-      "plotAria": "Sprungantworten mit und ohne Nullstelle.",
-      "osNo": "Überschwingen ohne Nullstelle",
-      "osYes": "Überschwingen mit Nullstelle",
-      "pct": "{v} %",
-      "note": "Nullstelle bei {z}; so skaliert, dass sie trotzdem bei 1 endet.",
-      "near": "Nahe am Ursprung: Der Steigungsanteil ist {g} × die alte Steigung, also tritt der Start kräftig zu.",
-      "mid": "Ein mäßiger Tritt: {g} × die Steigung.",
-      "far": "Weit weg: nur {g} × die Steigung. Man sieht es kaum.",
-      "describe": "Nullstelle bei {z}, Überschwingen {o} Prozent.",
-      "re": "σ",
-      "im": "ω",
-      "help": "Zieh den ○ entlang der Achse (oder spring mit Tab hin und nimm ← →). Die × Pole bleiben, wo sie sind."
-    },
-    "limit": {
-      "title": "Echte Motoren haben Grenzen",
-      "ideal": "unbegrenzte Motoren (Mathematik)",
-      "real": "echte Drohne",
-      "idealT": "Schub, den die Mathematik will",
-      "realT": "Schub, den wir bekommen",
-      "hAria": "Höhe nach einem Sprung für unbegrenzte und für echte Motoren.",
-      "tAria": "Schub über die Zeit, mit den Motorgrenzen bei 0 und 20 Newton.",
-      "max": "Motor max. 20 N",
-      "min": "Motoren können nicht nach unten ziehen",
-      "peak": "Spitzenschub, den die Mathematik will",
-      "tsIdeal": "eingeschwungen (Mathematik)",
-      "tsReal": "eingeschwungen (echt)",
-      "osReal": "Überschwingen (echt)",
-      "pct": "{v} %",
-      "notYet": "nicht innerhalb von 3 s",
-      "sigma": "Polposition (wandert auf 45° nach links)",
-      "toggle": "Echte Motoren: 0–20 N",
-      "capped": "Die Mathematik will {p} N; bei 20 N ist für die Motoren Schluss. Echtes Einschwingen {s} s, und kein „weiter links“ bringt es unter etwa {b} s.",
-      "fantasy": "Ausgedachte Motoren liefern fröhlich {p} N. Schalte die Grenzen wieder ein.",
-      "fine": "Im Bereich der Motoren: Mathematik und Wirklichkeit stimmen überein."
-    },
-    "loop": {
-      "title": "Einmal durch den Kreis",
-      "aria": "Eine Ebene mit dem markierten Punkt minus 1, der Kurve einer Runde durch den Kreis für jedes Wackeltempo und einem Pfeil zur Runde beim gewählten Tempo.",
+    "unspin": {
+      "title": "Eine Sonde, die zurückdreht",
       "re": "Realteil",
       "im": "Imaginärteil",
-      "kp": "Regler $K_p$",
-      "w": "Wackeltempo ω",
-      "lap": "C·P",
-      "cliff": "−1",
-      "size": "Rundengröße |C·P|",
-      "angle": "Rundenwinkel",
-      "distance": "Abstand zu −1",
-      "zeta": "Dämpfung ζ",
-      "status": "Am nächsten an −1: {d}, bei etwa {w} rad/s. Der Winkel bleibt über −180°, also kommt die Runde nie dort an. Dämpfung ζ = {z}.",
-      "help": "Schieb ω, um den Pfeil entlang der Kurve zu bewegen; schieb Kp, um die ganze Kurve zu strecken. Die gestrichelte Linie ist der Abstand zu −1."
+      "path": "laufende Summe (ein Pfeil pro ¼ s)",
+      "plotAria": "Die laufende Summe der komplexen Fläche als Pfad in der Ebene, auf dem Weg zu ihrem Endwert.",
+      "limit": "Endsumme",
+      "mag": "Größe der Summe |F|",
+      "spin": "übrige Drehung",
+      "sigma": "Sonden-Schrumpfen $\\sigma$",
+      "omega": "Sonden-Drehung $\\omega$ (Signal dreht mit 2)",
+      "again": "Nochmal abspielen",
+      "matched": "Drehungen passen! Jedes Stück zeigt in dieselbe Richtung. Die Summe ist {m} = 1/⁠σ und läuft für σ → 0 ins Unendliche.",
+      "spinning": "Die Stücke rollen sich ein und heben sich größtenteils auf. Die Summe bleibt klein."
     }
   },
   "plays": {
-    "poleRead": {
-      "sig": "Abstand der Pole links von der Achse",
-      "w": "Höhe der Pole, Omega",
-      "noWiggle": "nichts (gar kein Wackeln)",
-      "never": "nie",
-      "noOvershoot": "nichts (kein Überschwingen)",
-      "pct": "{v} %"
+    "stepArea": {
+      "s": "Sondenrate s"
     },
-    "gains": {
-      "sig": "Abstand der Pole links von der Achse",
-      "w": "Höhe der Pole, Omega",
-      "negKd": "Das ist ein *negatives* Kd: Der Luftwiderstand allein dämpft schon stärker, als diese Pole wollen, also muss der Regler *mit* der Bewegung drücken."
+    "longArea": {
+      "T": "Stoppzeit T, Sekunden"
     },
-    "dominant": {
-      "time": "Zeit in Sekunden",
-      "almostNothing": "fast nichts",
-      "pct": "{v} %"
-    },
-    "push": {
-      "sig": "Polpaar auf der 45°-Linie",
-      "canDo": "das schaffen die Motoren",
-      "justOver": "knapp über den 20 N, die die Motoren haben",
-      "farBeyond": "weit jenseits der Motoren"
-    },
-    "budget": {
-      "dr": "Sprunghöhe, Meter"
-    },
-    "zeroKick": {
-      "z": "Abstand der Nullstelle von 0",
-      "pct": "{v} %"
-    },
-    "lap": {
-      "kp": "Proportionalverstärkung Kp, Newton pro Meter"
+    "scream": {
+      "a": "Signalrate a, pro Sekunde",
+      "s": "Sondenrate s, pro Sekunde",
+      "none": "Es klingt nie ab, also gibt es überhaupt keine endliche Fläche.",
+      "loud": "Es schreit!",
+      "calm": "Eine ruhige, endliche Fläche."
     }
   }
 }

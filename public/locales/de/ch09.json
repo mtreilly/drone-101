@@ -1,613 +1,523 @@
 {
   "kicker": "Kapitel 9",
-  "title": "PID: Alles reparieren",
-  "question": "Wie werden wir das Durchhängen los *und* stoppen das Wackeln?",
+  "title": "Aus Analysis wird Algebra",
+  "question": "Können wir Analysis in Algebra verwandeln?",
   "sections": [
     {
-      "id": "stuck",
-      "title": "Das Durchhängen, das nicht sterben will",
+      "id": "rule",
+      "title": "Aus Steigungen wird Multiplikation",
       "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Erinnerst du dich an den Klebezettel aus Kapitel 4? Bei $e^{at}$ war eine Steigung nehmen einfach $\\times\\, a$. Jetzt schau, was die Sonde mit einer Steigung macht."
+        },
+        {
+          "t": "vocab",
+          "title": "Kurzschrift für dieses Kapitel",
+          "items": [
+            {
+              "term": "$f'$ und $f''$",
+              "def": "Kurz für $\\frac{df}{dt}$, die Steigung von $f$, und die Steigung dieser Steigung. Kapitel 7 hat sie mit Punkten geschrieben, $\\dot x$ und $\\ddot x$."
+            },
+            {
+              "term": "$\\mathcal{L}\\{f\\}$",
+              "def": "„Die Transformation von $f$“: dasselbe wie $F(s)$, praktisch, wenn $f$ ein ganzer Ausdruck ist."
+            },
+            {
+              "term": "Großbuchstaben",
+              "def": "Ein Großbuchstabe ist die Transformation seines Kleinbuchstabens: $F$ zu $f$, $H$ zur Höhe $h$, $X$ zu $x$."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Jetzt die Eigenschaft, für die sich das Ganze lohnt. Was passiert mit der Transformation, wenn wir die **Steigung** des Signals nehmen? Probier’s mit $f = e^{at}$. Seine Steigung ist $a e^{at}$ (Kapitel 4), also"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\mathcal{L}\\{f'\\} &= \\frac{a}{s-a} = \\frac{s}{s-a} - 1 \\\\ &= s\\,F(s) - f(0) \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Aus der Steigung wurde **Multiplizieren mit** $s$, minus der Anfangswert $f(0)$. Aus Analysis wurde Algebra!"
+        },
+        {
+          "t": "play",
+          "id": "ruleExp",
+          "text": "Mit a = {scrub|a} und s = {scrub|s}: Die Fläche der Steigung ist {calc|lhs}, und s·F − f(0) = {calc|rhs}. Dieselbe Zahl."
+        },
         {
           "t": "say",
           "who": "theo",
           "mood": "think",
-          "text": "Erinnert ihr euch an Kapitel 2? Unser P-Regler hat die Drohne **unter 2 m hängen** lassen, und kein $K_p$ konnte das reparieren. Zeit herauszufinden, was es kann."
-        },
-        {
-          "t": "p",
-          "text": "Um die Drohne zu halten, müssen die Motoren $mg \\approx 4{,}9$ N drücken, und zwar für immer. Ein P-Regler drückt nur, wenn es einen Fehler gibt: $\\eff{T} = K_p\\,\\err{e}$. Um 4,9 N zu drücken, *braucht* er also einen Fehler von $\\err{e} = mg/K_p$. Mit $K_p$ = 20 N/m sind das $\\err e$ = 4,9/20 ≈ 24,5 cm, für immer. Das Durchhängen heißt nicht, dass wir falsch eingestellt haben. Es ist der Preis, den P fürs Halten verlangt."
+          "text": "Moment. Das ist ein Trick, der bei $e^{at}$ klappt, weil $e^{at}$ besonders ist. Gleich erzählt ihr mir, das ist eine Regel zum Auswendiglernen. Dass das für *jede* Kurve gilt, kauf ich euch nicht ab."
         },
         {
           "t": "say",
           "who": "june",
-          "mood": "excited",
-          "text": "Wir brauchen also einen Teil im Regler, der 4,9 N **bei null Fehler** drücken kann. Etwas mit Gedächtnis."
-        },
-        {
-          "t": "note",
-          "text": "Seit Kapitel 8 sind die Motoren echt: Sie drücken zwischen 0 und 20 N, nicht mehr, und nach unten ziehen können sie nicht. Die orangen Schubkurven werden flach, wenn sie an eine Grenze stoßen."
-        }
-      ]
-    },
-    {
-      "id": "integral",
-      "title": "I: ein Haufen vergangener Fehler",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Die Idee: Führ eine laufende Summe des Fehlers, die **Fläche unter der Fehlerkurve**, genau die „aufsummierte Fläche“ aus [Kapitel 3](#/ch/3). Drück proportional zu diesem Haufen:"
-        },
-        {
-          "t": "math",
-          "tex": "\\eff{T_I} = K_i \\int_0^t \\err{e}\\,dt"
+          "mood": "happy",
+          "text": "Dann testen wir’s an der hässlichsten Kurve, die du zeichnen kannst."
         },
         {
           "t": "p",
-          "text": "Solange die Drohne unter 2 m ist, ist der Fehler positiv, und der Haufen wächst weiter. Also wächst auch der Schub weiter. Der Haufen hört erst auf zu wachsen, wenn der Fehler **genau null** ist. Dann *bleibt* er einfach und hält den Schub, den er aufgebaut hat. Das ist das Gedächtnis, das June wollte."
+          "text": "Zeichne im ersten Diagramm ein beliebiges Signal (oder wähl eine Vorlage). Wir berechnen seine Steigung und dann mit der Flächenmaschine **beide Seiten** der Regel: die Transformation der Steigung und $s\\,F(s) - f(0)$. Das zweite Diagramm zeigt diese zwei Seiten für jedes $s$."
+        },
+        {
+          "t": "widget",
+          "id": "derivRule"
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "surprised",
-          "text": "Oh, das ist raffiniert. Die Drohne kann sich *nirgendwo* anders einpendeln als bei 2 m, weil sich der Haufen überall sonst noch ändern würde."
-        },
-        {
-          "t": "play",
-          "id": "pile",
-          "text": "Hängt die Drohne 24,5 cm zu tief, wächst der Haufen jede Sekunde um 0,245 m·s. Mit $K_i$ = {scrub|ki|eff} N/(m·s) kommen so pro Sekunde {calc|rate|eff} N Schub dazu: In diesem Tempo wären die ganzen 4,9 N nach {calc|tau} s da. Ganz so schnell geht es nie. Während die Drohne steigt, schrumpft der Fehler, und der Haufen wächst langsamer. Nach {calc|tau} s ist er etwa 63 % des Wegs weit, nach etwa {calc|ts} s bei 98 %."
+          "text": "Sie passen, sogar bei meinem wackligen Gekritzel. Also doch keine Nachschlageregel: Das macht die Flächenmaschine mit jeder Steigung."
         },
         {
           "t": "callout",
-          "title": "Warum der Haufen langsamer wächst",
+          "title": "Und was ist mit einem Sprung?",
           "blocks": [
             {
               "t": "say",
               "who": "theo",
-              "mood": "think",
-              "text": "Moment. 63 % nach einer Zeitkonstante? Das ist doch der Kaffee aus Kapitel 3!"
+              "mood": "surprised",
+              "text": "Ich hab auf „Sprung“ gedrückt, und es passt *trotzdem*. Aber ein Sprung ist nicht glatt. An einer Klippe gibt es keine Steigung!"
+            },
+            {
+              "t": "p",
+              "text": "Schau dir die Steigung im ersten Diagramm an: Bei $t = 2$ steht eine hohe, dünne Spitze. Die Steigung des Computers hat den Sprung als einen sehr steilen Anstieg gesehen. Lass diese Spitze weg, und die beiden Seiten unterscheiden sich um $1{,}4\\,e^{-2s}$ (der Sprung ist 1,4 hoch, bei $t = 2$), etwa 0,19 bei $s = 1$."
+            },
+            {
+              "t": "math",
+              "tex": "\\text{Lücke ohne die Spitze} = 1{,}4\\,e^{-2s}"
             },
             {
               "t": "say",
               "who": "june",
-              "mood": "excited",
-              "text": "Weil es der Kaffee *ist*. Sobald das schnelle Wackeln vorbei ist, drückt P genau das, was der Haufen nicht drückt. Der Fehler ist also der fehlende Schub geteilt durch $K_p$, und um diesen Fehler wächst der Haufen."
+              "mood": "think",
+              "text": "Ein plötzlicher Sprung ist also trotzdem eine Änderung, nur in einen Augenblick gequetscht, und die Regel zählt jede Änderung mit. Ich hab so ein Gefühl, dass diese Spitze wiederkommt."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Hier ist die fehlende Rechnung, als Bild. Ein Produkt ändert sich aus zwei Gründen. $f$ ändert sich, während die Sonde stillhält, und die Sonde ändert sich, während $f$ stillhält. Stell dir ein Rechteck mit den Seiten $f$ und $e^{-st}$ vor: Es wächst entlang der einen Seite, dann entlang der anderen. Dieser Schritt hat einen Namen: **partielle Integration**."
+        },
+        {
+          "t": "math",
+          "tex": "\\big(f\\,e^{-st}\\big)' = f'\\,e^{-st} - s\\,f\\,e^{-st}"
+        },
+        {
+          "t": "p",
+          "text": "Summier diese Änderungen von 0 bis ∞ auf (Kapitel 3: Fläche macht Steigung rückgängig), und du bekommst den Wert am Ende minus den Wert am Anfang. Genau das bedeutet die Klammer $\\big[\\,\\cdot\\,\\big]_0^\\infty$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\big[f\\,e^{-st}\\big]_0^\\infty = \\int_0^\\infty f'\\,e^{-st}\\,dt - s\\,F(s)"
+        },
+        {
+          "t": "p",
+          "text": "Am fernen Ende hat die Sonde alles auf null gedrückt (solange $s$ das Wachstum des Signals schlägt), also ist die linke Seite einfach $0 - f(0)$. Bring $s\\,F(s)$ auf die andere Seite, und da ist die Regel."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "$f(0)$ ist also kein Trick. Es ist das Rechteck, mit dem wir angefangen haben."
+        },
+        {
+          "t": "p",
+          "text": "Wende dieselbe Regel noch einmal an, diesmal auf $f'$, dessen Anfangswert $f'(0)$ ist, die **Anfangsgeschwindigkeit**:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\mathcal{L}\\{f''\\} &= s\\,\\mathcal{L}\\{f'\\} - f'(0) \\\\ &= s\\big(s\\,F(s) - f(0)\\big) - f'(0) \\\\ &= s^2 F(s) - s\\,f(0) - f'(0) \\end{aligned}"
+        },
+        {
+          "t": "note",
+          "text": "Die $f(0)$-Terme merken sich, wo das Signal **angefangen** hat. Behalt sie im Auge. Bald wird sie jemand vergessen."
+        }
+      ]
+    },
+    {
+      "id": "table",
+      "title": "Unsere eigene Tabelle",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Lehrbücher drucken eine „Tabelle der Laplace-Transformationen“ ab, als wäre sie vom Himmel gefallen. Wir verdienen uns unsere, Zeile für Zeile. Jede Zeile ist einfach die Sonden-und-Flächen-Maschine, angewendet auf ein Signal, plus eine Prüfung, dass die Formel zur tatsächlichen Fläche passt."
+        },
+        {
+          "t": "widget",
+          "id": "table"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Die Sinuszeile ist meine liebste. Ein Sinus ist einfach zwei Zwillingsdreher, und die Transformation jedes Drehers ist die Exponentialzeile mit $a = \\pm i\\omega$. Kapitel 6 hat die Zwillinge *addiert*, um einen Kosinus zu bekommen. *Subtrahier* sie stattdessen, und die waagerechten Teile heben sich auf, übrig bleibt $2i\\sin\\omega t$. Daher kommt das $2i$! Und die Nenner der Zwillinge zu multiplizieren ist das Spiegelprodukt aus Kapitel 7, $(s - i\\omega)(s + i\\omega) = s^2 + \\omega^2$."
+        },
+        {
+          "t": "p",
+          "text": "(Für ein komplexes $a$ funktioniert die Exponentialzeile auch, solange der waagerechte Teil von $s$ den waagerechten Teil von $a$ schlägt. Für die Zwillinge heißt das einfach $\\sigma > 0$.)"
+        },
+        {
+          "t": "p",
+          "text": "Und die letzte Zeile brauchte überhaupt keine neue Arbeit: Multiplizieren mit $e^{-\\sigma t}$ **verschiebt** einfach $s$ zu $s+\\sigma$. Vier Zeilen, alle hergeleitet, alle geprüft."
+        },
+        {
+          "t": "note",
+          "text": "Eine ehrliche Warnung. Die Fläche gibt es nur rechts von der langsamsten Rate des Signals: Bei $e^{-t} + e^{-5t}$ gibt sie bei $s = -1$ auf, lange vor $-5$. Der Bruch $\\frac{1}{s+1} + \\frac{1}{s+5}$ macht fröhlich weiter und explodiert trotzdem an beiden Stellen. Ab jetzt vertrauen wir dem Bruch überall, auch dort, wo die Flächenmaschine aufgegeben hat. Mathematiker haben geprüft, dass das sicher ist."
+        },
+        {
+          "t": "p",
+          "text": "Noch eine Regel, die wir still und leise benutzt haben. Die Flächenmaschine ist fair: Mach ein Signal 3-mal so hoch, und jede Scheibe seiner Fläche ist 3-mal so hoch, also auch die ganze Fläche. Addier zwei Signale, und ihre Flächen addieren sich. Mathematiker nennen das **Linearität**."
+        },
+        {
+          "t": "play",
+          "id": "scale",
+          "text": "Nimm {scrub|k}-mal $e^{-rt}$ mit r = {scrub|r}, abgetastet bei s = {scrub|s}: Seine Fläche ist k ÷ (s + r) = {calc|eq}."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Deshalb dürfen wir eine Gleichung Term für Term transformieren, samt Zahlen davor. Und die Gleichung der Drohne ist genau so eine Summe. Setzen wir die Tabelle ein!"
+        }
+      ]
+    },
+    {
+      "id": "pieces",
+      "title": "Einen Hauptnenner rückgängig machen",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Jede Antwort, die wir bekommen, kommt als ein großer Bruch heraus. Aber unsere Tabelle kennt nur kleine: $\\frac1s$, $\\frac{1}{s-a}$, die Sinusse. Wie zerlegen wir einen großen Bruch in Tabellenstücke?"
+        },
+        {
+          "t": "p",
+          "text": "In der Schule hast du Brüche addiert, indem du einen Hauptnenner gesucht hast. Hier gehen wir **rückwärts**: Wir starten mit einem Bruch und suchen die kleinen Stücke, die zusammen genau ihn ergeben. Das heißt **Partialbruchzerlegung**:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{1}{s} + \\frac{1}{s+2} = \\frac{2s + 2}{s\\,(s+2)} \\qquad\\text{so}\\qquad \\frac{2s+2}{s\\,(s+2)} = \\frac{A}{s} + \\frac{B}{s+2}"
+        },
+        {
+          "t": "p",
+          "text": "Was kommt in den Zähler jedes Stücks? **Eine Unbekannte für jede Potenz von $s$ in seinem Nenner.** Ein Nenner wie $s$ oder $s + 2$ bekommt eine schlichte Zahl. Ein quadratischer Nenner wie $s^2 + 2s + 5$ bekommt $B\\,s + C$: zwei Unbekannte, weil ein quadratisches Polynom Platz für zwei hat."
+        },
+        {
+          "t": "widget",
+          "id": "pieces"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Jeder Schieberegler bewegt ein Stück, und in der Zeit addieren sich die Stücke einfach auch. Das Stück $A$ ist ein Sprung, das quadratische Stück ist ein Wackeln, das ausstirbt. Und der große Bruch rechts ist das, was sie zusammen ergeben."
+        },
+        {
+          "t": "p",
+          "text": "Für die Stücke mit erster Potenz gibt es beim Finden der Zahlen eine Abkürzung, den **Zuhalte-Trick**. Multiplizier mit dem Nenner des Stücks und setz dann für $s$ den Wert ein, der ihn null macht: Jedes andere Stück verschwindet, und nur sein Zähler bleibt übrig."
+        },
+        {
+          "t": "math",
+          "tex": "A = \\Big[s \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=0} = \\frac{2}{2} = 1, \\qquad B = \\Big[(s+2) \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=-2} = \\frac{-2}{-2} = 1"
+        },
+        {
+          "t": "p",
+          "text": "Ein quadratischer Nenner braucht noch einen Handgriff, bevor die Tabelle ihn lesen kann: Bring ihn mit der **quadratischen Ergänzung** in die Form $(s + \\sigma)^2 + \\omega^2$, also die mittlere Zahl halbieren und quadrieren. So wird $s^2 + 2s + 5 = (s + 1)^2 + 4$: ein abklingender Kosinus und Sinus mit $\\sigma = 1$ und $\\omega = 2$."
+        },
+        {
+          "t": "callout",
+          "title": "Komplexe Stücke kommen als Zwillinge",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Zerleg das quadratische Polynom weiter, und du triffst seine zwei Nullstellen, ein Spiegelpaar $p$ und $\\bar p$. Ihre Zähler sind auch Spiegelzwillinge, $B$ und $\\bar B$. Zurück in der Zeit sind das die Zwillinge aus Kapitel 6, also heben sich die seitlichen Teile auf: Die Summe ist ein einziger reeller, schrumpfender Kosinus, der beim Winkel von $B$ startet (die Pfeile aus Kapitel 7)."
             },
             {
               "t": "math",
-              "tex": "\\frac{d}{dt}\\!\\int\\!\\err e\\,dt = \\err e \\approx \\frac{\\dis{mg} - K_i\\!\\int\\!\\err e\\,dt}{K_p} \\;\\Longrightarrow\\; \\tau_I \\approx \\frac{K_p}{K_i}"
+              "tex": "\\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\;\\Longrightarrow\\; B\\,e^{pt} + \\bar B\\,e^{\\bar p t} = 2|B|\\,e^{\\sigma t}\\cos\\!\\big(\\omega t + \\angle B\\big)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "solve",
+      "title": "Die Drohne mit Algebra lösen",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Hier ist die Drohne aus Kapitel 2 mit P-Regelung, diesmal ohne geschenkten Schwebeschub, anfangs auf einem **1 m hohen Sims**. Bei $t=0$ lassen wir sie los und verlangen 2 m. In der Rechnung ab diesem Zeitpunkt werden der neue Sollwert und die konstante Schwerkraft jeweils wie ein Sprung transformiert:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\,\\out{h}'' + c\\,\\out{h}' = \\eff{K_p}\\,(\\sp{2} - \\out{h}) - \\dis{m g}"
+        },
+        {
+          "t": "p",
+          "text": "**Schritt 1:** Transformier jeden Term. Weil Flächen skalieren und sich addieren (der Tabellenabschnitt), dürfen wir jeden Term für sich transformieren. Ein Sprung der Größe $r$ wird zu $r/s$, und Steigungen werden zu Multiplikation mit $s$. Das haben wir geschrieben:"
+        },
+        {
+          "t": "math",
+          "on": "ch7:ic",
+          "tex": "m\\,s^2\\out{H} + c\\,s\\,\\out{H} = \\eff{K_p}\\Big(\\frac{\\sp{2}}{s} - \\out{H}\\Big) - \\frac{\\dis{m g}}{s}",
+          "alt": "\\begin{aligned} & m\\big(s^2\\out{H} - s\\,h(0) - h'(0)\\big) \\\\ &\\quad + c\\big(s\\,\\out{H} - h(0)\\big) \\\\ &= \\eff{K_p}\\Big(\\frac{\\sp{2}}{s} - \\out{H}\\Big) - \\frac{\\dis{m g}}{s} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "**Schritt 2:** Jetzt ist es Algebra. Sammle $\\out{H}$ auf einer Seite und teile dann:"
+        },
+        {
+          "t": "math",
+          "on": "ch7:ic",
+          "tex": "\\begin{gathered} \\begin{aligned} &(m s^2 + c s + \\eff{K_p})\\,\\out{H} \\\\ &\\quad = \\frac{\\eff{K_p}\\,\\sp{2} - \\dis{m g}}{s} \\end{aligned} \\\\[8pt] \\out{H}(s) = \\frac{N(s)}{s\\,\\big(m s^2 + c s + \\eff{K_p}\\big)} \\\\[8pt] N(s) = \\eff{K_p}\\,\\sp{2} - \\dis{m g} \\end{gathered}",
+          "alt": "\\begin{gathered} \\begin{aligned} &(m s^2 + c s + \\eff{K_p})\\,\\out{H} \\\\ &\\quad = m\\,h(0)\\,s + m\\,h'(0) + c\\,h(0) \\\\ &\\qquad + \\frac{\\eff{K_p}\\,\\sp{2} - \\dis{m g}}{s} \\end{aligned} \\\\[8pt] \\out{H}(s) = \\frac{N(s)}{s\\,\\big(m s^2 + c s + \\eff{K_p}\\big)} \\\\[8pt] \\begin{aligned} N(s) &= m\\,h(0)\\,s^2 \\\\ &\\quad + \\big(m\\,h'(0) + c\\,h(0)\\big)\\,s \\\\ &\\quad + (\\eff{K_p}\\,\\sp{2} - \\dis{m g}) \\end{aligned} \\end{gathered}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Schau dir das an. Keine Steigungen mehr, nur Buchstaben, die herumgeschoben werden. Theo, dein Notizheft raucht nicht mehr."
+        },
+        {
+          "t": "p",
+          "text": "**Schritt 3:** Zerleg es in Tabellenstücke, wie im Abschnitt oben: eine Zahl in den Zähler des $s$-Stücks und $B s + C$ in den Zähler des quadratischen:"
+        },
+        {
+          "t": "math",
+          "tex": "\\out{H}(s) = \\frac{A}{s} + \\frac{B s + C}{m s^2 + c s + \\eff{K_p}}"
+        },
+        {
+          "t": "p",
+          "text": "Wie finden wir $A$, $B$ und $C$? Multiplizier beide Seiten mit dem gemeinsamen Nenner $s\\,(m s^2 + c s + \\eff{K_p})$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} N(s) &= A\\,(ms^2+cs+\\eff{K_p}) \\\\ &\\quad + s\\,(Bs+C) \\end{aligned}"
+        },
+        {
+          "t": "callout",
+          "title": "Der Zuhalte-Trick",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Für $A$ gibt es eine Abkürzung. Multiplizier $\\out{H}$ mit $s$, und jedes Stück außer $A/s$ hat oben noch ein $s$. Setz $s = 0$, und sie verschwinden alle. Nur $A$ überlebt:"
+            },
+            {
+              "t": "math",
+              "tex": "A = \\Big[s\\,\\out{H}(s)\\Big]_{s=0} = \\frac{N(0)}{\\eff{K_p}} = \\sp{2} - \\frac{\\dis{mg}}{\\eff{K_p}}"
+            },
+            {
+              "t": "p",
+              "text": "Und $s\\,\\out{H}$ nahe $s = 0$ ist genau da, wo die Drohne auf lange Sicht landet, falls sie überhaupt zur Ruhe kommt. Die Endhöhe fällt direkt aus der Algebra heraus, ganz ohne Simulation."
             },
             {
               "t": "say",
               "who": "mika",
-              "mood": "happy",
-              "text": "Er wächst im Verhältnis dazu, wie weit er noch muss. Kapitel 3!"
+              "mood": "surprised",
+              "text": "Moment mal. Wir können ablesen, wo sie sich *einpendelt*, ohne irgendwas zu lösen? Das fühlt sich an wie Schummeln."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Es ist Schummeln, außer alles andere klingt ab. Hier sind die anderen Stücke das eigene Wackeln der Drohne, und das stirbt aus, also bleibt $A$ übrig. Hätte der Nenner eine Nullstelle in der rechten Hälfte, stünde $A/s$ zwar immer noch im Bruch, aber ein wachsendes Stück würde es überrollen, und die Drohne käme nirgends zur Ruhe. Wie man das prüft, zeigt Kapitel 10."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Dann vergleich beide Seiten, eine Potenz von $s$ nach der anderen. Die reinen Zahlen liefern $A$, die $s^2$-Terme liefern $B$ und die $s$-Terme liefern $C$:"
+        },
+        {
+          "t": "math",
+          "on": "ch7:ic",
+          "tex": "\\begin{gathered} A = \\sp{2} - \\frac{\\dis{mg}}{\\eff{K_p}} \\\\ B = -m\\,A, \\qquad C = -c\\,A \\end{gathered}",
+          "alt": "\\begin{gathered} A = \\sp{2} - \\frac{\\dis{mg}}{\\eff{K_p}} \\\\ B = m\\,\\big(h(0) - A\\big) \\\\ C = m\\,h'(0) + c\\,\\big(h(0) - A\\big) \\end{gathered}"
+        },
+        {
+          "t": "p",
+          "text": "Hier kommt keine neue Physik ins Spiel: Wir haben nur einen Hauptnenner rückgängig gemacht, um Stücke zu bekommen, die unsere Tabelle in die Zeit zurückholen kann. Beachte, dass es $A$ egal ist, wo die Drohne gestartet ist."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Und wir mussten kein einziges Mal $e^{st}$ raten. Das Raten hat die Tabelle für uns erledigt."
+        },
+        {
+          "t": "p",
+          "text": "**Schritt 4:** Schlag jedes Stück in der Tabelle nach, die wir gerade hergeleitet haben: $A/s$ ist ein Sprung, und das zweite Stück ist ein abklingender Kosinus plus ein abklingender Sinus (der Abstecher unten zeigt, wie es zu diesen Zeilen passt). Lies $h(t)$ ab."
+        },
+        {
+          "t": "callout",
+          "title": "Quadratische Ergänzung: Kapitel 7 hat sich im Nenner versteckt",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Das zweite Stück steht noch nicht in unserer Tabelle: Sein Nenner ist ein schlichtes quadratisches Polynom. Bring es in die Form $(s+\\sigma)^2 + \\omega^2$ (quadratische Ergänzung, wie im Abschnitt oben), und es passt genau zu den Zeilen mit dem abklingenden Sinus. Der Zähler teilt sich genauso auf, ein Teil für die Kosinuszeile und einer für die Sinuszeile:"
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{gathered} 0{,}5\\,s^2 + s + \\eff{K_p} = 0{,}5\\,\\big((s+1)^2 + \\omega_d^2\\big) \\\\ \\omega_d^2 = 2\\eff{K_p} - 1 \\\\[6pt] B\\,s + C = B\\,(s+1) + (C - B) \\end{gathered}"
             },
             {
               "t": "p",
-              "text": "Das Durchhängen klingt also ab wie abkühlender Kaffee, mit einer Zeitkonstante von etwa $K_p/K_i$ = 2 s bei unseren Verstärkungen. Auf der Karte aus Kapitel 8 ist das ein langsamer Pol nahe $-K_i/K_p = -0{,}5$. (Nur „etwa“: Das schnelle Wackeln braucht einen Moment zum Abklingen, und bei großem $K_i$ vermischen sich die beiden. Deshalb geht die Zahl oben nur bis 12.)"
+              "text": "Also ist $\\sigma = 1$, das ist $\\zeta\\omega_n$ aus Kapitel 7 für unsere Drohne, und $\\omega$ ist das gedämpfte Wackeln $\\omega_d$."
+            },
+            {
+              "t": "play",
+              "id": "square",
+              "text": "Mit $\\eff{K_p}$ = {scrub|kp|eff} N/m ist $\\omega_d^2$ = {calc|wd2}, also ist der Nenner null bei s = {calc|roots}."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "surprised",
+              "text": "Moment. Der Nenner ist genau bei den zwei Punkten null, die wir in Kapitel 7 auf die Karte gesetzt haben! Merk dir diesen Gedanken."
             }
           ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Vergleichen wir’s mit der Simulation!"
         },
         {
           "t": "predict",
-          "id": "ch9-bigki",
+          "id": "ch7-ledge",
           "gate": true,
-          "q": "Mika will das Durchhängen *schnell* loswerden und plant, $K_i$ ordentlich aufzudrehen. Was wird passieren?",
+          "q": "Wir starten die Drohne auf einem 1 m hohen Sims und lassen unsere Formel neben der Simulation laufen. Was werden wir sehen?",
           "options": [
             {
-              "text": "Das Durchhängen verschwindet schnell und sauber",
-              "sketch": "smooth",
-              "why": "Das ist die Hoffnung. Aber der Haufen hat Schwung: Wenn der Fehler null erreicht, hat er schon *zu viel* Schub aufgebaut."
+              "text": "Sie passen vom allerersten Moment an",
+              "why": "Das werden sie, sobald die Formel vom Sims weiß. Unser erster Versuch weiß es nicht: Schau, was wir in Schritt 1 geschrieben haben."
             },
             {
-              "text": "Das Durchhängen verschwindet, aber die Drohne wackelt mehr, und zu viel davon schüttelt sie kaputt",
-              "sketch": "growing-wiggle",
+              "text": "Sie starten getrennt, landen aber auf derselben Höhe",
               "correct": true,
-              "why": "Der Haufen erinnert sich an die Vergangenheit, also drückt er weiter, nachdem die Drohne angekommen ist: Überschwingen. Bei zu großem $K_i$ ist jedes Überschwingen größer als das vorige."
+              "why": "Richtig. Wir haben die $h(0)$-Terme weggelassen, also startet die Formel bei 0 m, während die Drohne bei 1 m startet. Beide pendeln sich trotzdem bei denselben 1,755 m ein, weil das Stück $A$ nicht vom Sims abhängt."
             },
             {
-              "text": "Nichts ändert sich, weil $K_i$ erst ganz am Ende eine Rolle spielt",
-              "sketch": "droop",
-              "why": "Der Haufen wächst ab dem ersten Moment, in dem es einen Fehler gibt. $K_i$ prägt also den ganzen Flug."
+              "text": "Sie stimmen nie überein, nicht mal am Ende",
+              "why": "Die Endhöhe kommt vom Stück $A = 2 - mg/K_p$, und das hängt nicht von $h(0)$ ab. Am Ende treffen sie sich also; nur der Anfang ist falsch."
             }
           ]
         },
         {
-          "t": "p",
-          "text": "Das Widget startet bei $K_i$ = 10 N/(m·s). Achte auf drei Dinge: die {err|rot schattierte Fläche} (der Fehler, der sich anhäuft), den {eff|gestrichelten orangen} Integralanteil des Schubs, der bis zur {dis|lila Schwerkraftlinie} klettert, und die Anzeige fürs Durchhängen. Zieh $K_i$ auf 0, dann ist das Durchhängen aus Kapitel 2 wieder da, und probier danach größere Werte. $K_p$ ist fest auf 20 N/m."
-        },
-        {
-          "t": "play",
-          "id": "area",
-          "text": "In Ruhe drücken P und D gar nichts (kein Fehler, kein Tempo), also hält der Haufen das ganze Gewicht allein. Mit $K_i$ = {scrub|ki|eff} N/(m·s) muss die {err|rote Fläche} unterm Strich genau $mg/K_i$ = {calc|area} m·s ergeben. Vergleich das mit der Anzeige im Widget."
-        },
-        {
           "t": "widget",
-          "id": "integral"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "Aufdrehen! $K_i = 50$! Weg mit dem Ding!"
+          "id": "solve"
         },
         {
           "t": "say",
           "who": "mika",
           "mood": "worried",
-          "text": "…warum hört es nicht auf? Die Hüpfer wurden immer größer, und jetzt jojot sie für immer einen halben Meter auf und ab!"
+          "text": "Oje. Die Formel startet bei **null**, aber die Drohne startet auf dem Sims bei 1 m. Die Algebra lügt?"
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "think",
-          "text": "Bei 50 bist du über eine Art Kante gegangen. Ich hab ein paar Werte ausprobiert: Unter etwa 40 kommt sie zur Ruhe, darüber nicht (und das Jojo braucht etwa eine Sekunde pro Schwung). Warum, sehen wir gleich. Der Haufen ist *immer etwas hinterher*: Er drückt weiter nach oben, wenn die Drohne schon über 2 m hinaus ist."
+          "text": "Die Algebra ist in Ordnung. *Wir* haben gelogen. Schau dir Schritt 1 an: Wir haben $\\mathcal{L}\\{h''\\} = s^2 H$ und $\\mathcal{L}\\{h'\\} = s\\,H$ geschrieben und jedes $h(0)$ weggelassen. Genau das Stück, das sich an den Sims erinnert."
         },
         {
           "t": "p",
-          "text": "Das ist Mikas Fehler, und er ist sehr verbreitet: Das Integral repariert das Durchhängen, aber es bringt **Verzögerung** mit, und Verzögerung bringt Dinge zum Schwingen (das hat uns die Dusche gelehrt). Wir brauchen etwas, das gegen das *Tempo* drückt. (Nach der Mathematik müssten diese Schwünge immer weiter wachsen. Sie hören bei etwa einem halben Meter nur deshalb auf, weil der Schub bei jedem Schwung auf 0 N fällt: Propeller können nicht nach unten ziehen, die Grenze aus Kapitel 8.)"
-        }
-      ]
-    },
-    {
-      "id": "derivative",
-      "title": "D: ein virtueller Stoßdämpfer",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "In Kapitel 6 war der Dämpfer das, was die Feder beruhigt hat. Was, wenn der Regler **so tut**, als wäre er ein Dämpfer?"
-        },
-        {
-          "t": "p",
-          "text": "Ein Dämpfer drückt gegen das Tempo. Also fügen wir einen Term hinzu, der dagegen drückt, wie schnell sich die Drohne bewegt:"
-        },
-        {
-          "t": "math",
-          "tex": "\\eff{T_D} = -K_d\\,\\frac{d\\out{h}}{dt}"
-        },
-        {
-          "t": "p",
-          "text": "Schau dir die Gleichung der Drohne an: Der Luftwiderstand liefert schon $-c\\,\\dot h$. Der D-Term legt $-K_d\\,\\dot h$ obendrauf, also verhält sich die Drohne, als wäre ihr Luftwiderstand $c + K_d$. Wir fügen Luftwiderstand **per Software** hinzu."
+          "text": "Leg den Schalter um, um die Anfangshöhen-Terme zurückzuholen, und schau, wie sich Schritt 1 und 2 und die Koeffizienten oben mitändern. Die gestrichelte Formel und die blaue Simulation liegen jetzt genau übereinander: Die größte Lücke ist kleiner als ein Millionstel Meter, reine Rundung. Ändere $\\eff{K_p}$ oder die Höhe des Simses, und sie stimmen immer noch überein."
         },
         {
           "t": "play",
-          "id": "zeta",
-          "text": "Mit $K_p$ = 20 N/m und $K_d$ = {scrub|kd|eff} N·s/m spürt die Drohne einen Widerstand von {calc|damp|eff} N·s/m, und der Dämpfungsgrad aus Kapitel 6 wird zu $\\zeta = (c+K_d)/(2\\sqrt{m K_p})$ = {calc|zeta}: {calc|regime}. (Mit eingeschaltetem I gibt es noch einen dritten, langsamen Pol. Das hier ist also der Charakter des schnellen Paars.)"
-        },
-        {
-          "t": "note",
-          "text": "Genau genommen ist das D in PID die Steigung des *Fehlers*, $K_d\\,\\dot e$. Wenn der Sollwert stillsteht, ist $\\dot e = -\\dot h$, also dasselbe. Gleich sehen wir, warum der Unterschied trotzdem wichtig ist."
-        },
-        {
-          "t": "widget",
-          "id": "damper"
-        },
-        {
-          "t": "p",
-          "text": "Schalte **Mikas große I-Verstärkung** ein und nimm dann Dämpfung dazu. Schon $K_d = 0{,}5$ N·s/m kippt es zurück ins Stabile (es schiebt die Kante raus auf $K_i = 60$): Aus dem endlosen Jojo wird ein Hüpfen, das abklingt. Aber es schwingt immer noch um mindestens ein Viertel über, egal wie viel D du dazunimmst. Dieser riesige Haufen erinnert sich einfach an zu viel. Schalte jetzt Mikas $K_i$ ab (zurück auf 10) und probier $K_d \\approx 3$–5: Ruhe. **I und D sind ein Tauschgeschäft**: D verschafft dir Spielraum für I, aber keinen unbegrenzten."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Wenn 4 gut ist, muss 10 besser sein. Stoßdämpfer auf Maximum!"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "surprised",
-          "text": "Sie kriecht so langsam hoch… und dann schießt sie *trotzdem* über 2 m hinaus? Mit Verspätung?"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "June, das ist wieder deine Honigdrohne aus Kapitel 6! Ab $K_d \\approx 5{,}3$ ist das schnelle Paar überdämpft. Aber jetzt gibt es auch einen Haufen, und eine langsame Drohne lässt dem Haufen Zeit, überzulaufen."
-        },
-        {
-          "t": "p",
-          "text": "Kritische Dämpfung heißt ζ = 1: $K_d = 2\\sqrt{m K_p} - c \\approx 5{,}3$ N·s/m bei $K_p$ = 20. Mit $K_i$ = 10 steigt das Überschwingen von 0 auf etwa 8 %, wenn man $K_d$ von 4 auf 10 dreht, und die Einschwingzeit von unter einer Sekunde auf etwa 5 s. Mehr D ist nicht immer besser; das Widget sagt es jetzt, wenn du übertreibst."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "happy",
-          "text": "D **sagt also die Zukunft voraus**! Es sieht, wohin die Drohne will, und ist schon vorher da."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Nicht wirklich. Es kennt nur die Steigung *genau jetzt*. Das ist, als würdest du raten, wo ein Ball landet, indem du annimmst, dass er geradeaus weiterfliegt. Meistens eine ordentliche Schätzung, aber keine Magie. Wart ab, bis wir ihm einen zappeligen Sensor geben."
-        }
-      ]
-    },
-    {
-      "id": "poles",
-      "title": "Was jeder Knopf mit den Polen macht",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Zeit für die Karte aus Kapitel 8. Schreiben wir den ganzen Kreis auf, mit $\\err{e} = \\sp{r} - \\out{h}$:"
-        },
-        {
-          "t": "math",
-          "tex": "m\\ddot{\\out h} + c\\dot{\\out h} = \\underbrace{K_p\\,\\err e + K_i\\!\\int\\!\\err e\\,dt - K_d\\,\\dot{\\out h}}_{\\eff{T}} - \\dis{mg}"
-        },
-        {
-          "t": "p",
-          "text": "Das Integral ist unhandlich, also nehmen wir auf beiden Seiten die Steigung. Steigung und Fläche heben sich gegenseitig auf (Kapitel 3), also ist die Steigung von $\\int \\err e\\,dt$ einfach $\\err e$. Die Schwerkraft ist konstant, ihre Steigung ist also **null**: Sie fällt einfach raus. Bei festem Sollwert ist $\\dot{\\err e} = -\\dot{\\out h}$. Term für Term:"
-        },
-        {
-          "t": "math",
-          "tex": "\\begin{aligned} \\tfrac{d}{dt}\\big(K_p\\,\\err e\\big) &= -K_p\\,\\dot{\\out h} \\\\ \\tfrac{d}{dt}\\Big(K_i\\!\\int\\!\\err e\\,dt\\Big) &= K_i\\,(\\sp r - \\out h) \\\\ \\tfrac{d}{dt}\\big(-K_d\\,\\dot{\\out h}\\big) &= -K_d\\,\\ddot{\\out h} \\end{aligned}"
-        },
-        {
-          "t": "p",
-          "text": "Setz alles wieder zusammen und bring alles mit $\\out h$ nach links. Die drei Punkte auf $\\dddot{\\out h}$ bedeuten die Steigung der Steigung der Steigung:"
-        },
-        {
-          "t": "math",
-          "tex": "\\begin{aligned} m\\dddot{\\out h} + (c + K_d)\\,\\ddot{\\out h} &+ K_p\\,\\dot{\\out h} + K_i\\,\\out h \\\\ &= K_i\\,\\sp r \\end{aligned}"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "surprised",
-          "text": "Die Schwerkraft ist aus der Gleichung *verschwunden*. Das ist der Durchhäng-Killer in Algebraform: Der Endhöhe ist $mg$ völlig egal. Jedenfalls, solange sie überhaupt zur Ruhe kommt. Mikas Drohne mit $K_i = 50$ hat das nie getan."
-        },
-        {
-          "t": "p",
-          "text": "Versuchen wir wieder $e^{st}$. **Mit aktivem I-Anteil** ist die Gleichung kubisch und hat drei Pole. Bei $K_i=0$ gibt es keinen Integrator: Das Ableiten hat eine unechte Wurzel bei $s = 0$ hinzugefügt, der gemeinsame Faktor $s$ kürzt sich heraus, und die PD-Drohne hat zwei Pole."
-        },
-        {
-          "t": "math",
-          "tex": "m s^3 + (c + K_d)\\,s^2 + K_p\\,s + K_i = 0"
-        },
-        {
-          "t": "callout",
-          "title": "I ist ein Geteilt-durch-s",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "In Kapitel 7 wurde eine Steigung zu „× s“. Eine Fläche ist das Gegenteil, also wird sie zu „÷ s“. Schreib den Regler so, nimm das eigene Rezept der Drohne $P(s) = 1/(ms^2+cs)$ (Schub rein, Höhe raus) und such die Pole wie in Kapitel 8 mit $1 + C\\,P = 0$, der charakteristischen Gleichung des Kreises. Brüche wegmultiplizieren, und heraus kommt dasselbe kubische Polynom, ohne eine einzige Steigung:"
-            },
-            {
-              "t": "math",
-              "tex": "\\begin{gathered} C(s) = K_p + \\frac{K_i}{s} + K_d\\,s \\\\ 1 + C(s)\\,\\frac{1}{ms^2+cs} = 0 \\\\ ms^3 + (c+K_d)\\,s^2 + K_p\\,s + K_i = 0 \\end{gathered}"
-            },
-            {
-              "t": "say",
-              "who": "mika",
-              "mood": "excited",
-              "text": "Das ÷ s *ist* also der zusätzliche Pol!"
-            },
-            {
-              "t": "say",
-              "who": "june",
-              "mood": "think",
-              "text": "Und oben im Bruch steht $K_p s + K_i$: eine **Nullstelle**, bei $-K_i/K_p$. (Unser D wirkt nur auf $\\out h$, also bringt es keine Nullstelle.) Behaltet sie im Auge."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Für ein kubisches Polynom mit lauter positiven Koeffizienten $a_3 s^3 + a_2 s^2 + a_1 s + a_0$ gibt es einen klassischen Test (das **Routh-Hurwitz**-Kriterium). Er sagt: Alle drei Pole liegen genau dann in der linken Hälfte, wenn $a_2 a_1 > a_3 a_0$. Für unsere Drohne ist das die Klippe:"
-        },
-        {
-          "t": "math",
-          "tex": "(c + K_d)\\,K_p > m\\,K_i \\quad\\Longleftrightarrow\\quad K_i < \\frac{(c+K_d)\\,K_p}{m}"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "Eine Regel mit zwei Namen dran. Müssen wir die einfach glauben?"
+          "id": "residues",
+          "text": "Mit $\\eff{K_p}$ = {scrub|kp|eff} N/m von einem {scrub|h0|out} m hohen Sims: A = {calc|A|out} m, also pendelt sich die Drohne {calc|droop|err} m unter dem Ziel von 2 m ein. Das ist das Durchhängen aus Kapitel 2, $\\dis{mg}/\\eff{K_p}$, und der Sims ändert daran nichts. Der Rest ist $e^{-t}$ × ({calc|wiggle}), ein Wackeln, das abklingt."
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "happy",
-          "text": "Nö. Die Kante finden wir selbst."
-        },
-        {
-          "t": "p",
-          "text": "In dem Moment, in dem ein schwingendes Paar die senkrechte Achse erreicht, ist sein Realteil null. Setzen wir also $s=i\\omega$ in das kubische Polynom ein. Wegen $i^2 = -1$ und $i^3 = -i$ müssen die realen und die senkrechten Teile jeweils null ergeben:"
-        },
-        {
-          "t": "math",
-          "tex": "K_i - (c+K_d)\\,\\omega^2 = 0, \\qquad \\omega\\,\\big(K_p - m\\,\\omega^2\\big) = 0"
-        },
-        {
-          "t": "p",
-          "text": "Die zweite sagt $\\omega^2 = K_p/m$. Setz das in die erste ein:"
-        },
-        {
-          "t": "math",
-          "tex": "\\omega^2=\\frac{K_p}{m},\\qquad K_i=(c+K_d)\\omega^2=\\frac{(c+K_d)K_p}{m}"
-        },
-        {
-          "t": "callout",
-          "title": "Warum unter der Linie die sichere Seite ist",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Fang mit einem winzigen $K_i$ an. Das PD-Paar sitzt sicher links, und der neue Pol sitzt knapp links von null, nahe $-K_i/K_p$. Wenn $K_i$ wächst, gleiten die Pole sanft. Um in die rechte Hälfte zu kommen, muss einer von ihnen die senkrechte Achse überqueren. Bei 0 geht das nur, wenn $K_i = 0$ ist (setz $s = 0$ ins kubische Polynom ein: Nur $K_i$ bleibt übrig), und bei $\\pm i\\omega$ nur an der Kante, die wir gerade gefunden haben. Unter der Kante kann also noch kein Pol hinübergekommen sein."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "happy",
-              "text": "Das Routh-Hurwitz-Kriterium heißt also einfach: „Du kommst nicht auf die andere Seite, ohne die Wand zu berühren.“"
-            }
-          ]
-        },
-        {
-          "t": "play",
-          "id": "cliff",
-          "text": "Mit $K_p$ = {scrub|kp|eff} N/m und $K_d$ = {scrub|kd|eff} N·s/m muss $K_i$ unter $(c+K_d)K_p/m$ = {calc|lim} N/(m·s) bleiben. Genau an der Kante schwingt die Drohne mit $\\omega = \\sqrt{K_p/m}$ = {calc|w} rad/s: ein Schwung alle {calc|T} s."
-        },
-        {
-          "t": "p",
-          "text": "Bei den Standardwerten ($K_p$ = 20, kein D) liegt die Kante bei 40. Genau da ist Mikas Drohne durchgedreht, und ihr Jojo brauchte etwa eine Sekunde pro Schwung: 6,32 rad/s ist das ωn der P-Drohne aus Kapitel 6. Mit $K_d = 4$ wandert die Kante raus auf 200. Glaub uns nicht einfach: Ändere die Zahlen oben oder die Schieberegler unten und schau auf die Pole, die Mini-Karte und die Sprungantwort."
-        },
-        {
-          "t": "widget",
-          "id": "poles"
-        },
-        {
-          "t": "callout",
-          "title": "Warum macht der langsame Pol sie nicht langsam?",
-          "blocks": [
-            {
-              "t": "say",
-              "who": "mika",
-              "mood": "surprised",
-              "text": "Am Anfang steht im Status, der langsamste Pol liegt bei −0,54. Laut Kapitel 8 heißt das etwa 4/0,54 ≈ 7 s. Aber der Sprung ist in unter 3 s eingeschwungen!"
-            },
-            {
-              "t": "say",
-              "who": "june",
-              "mood": "think",
-              "text": "Such die Nullstelle. Das I bringt eine bei $-K_i/K_p = -0{,}5$ mit, direkt neben diesem Pol. Ein Pol und eine Nullstelle so nah beieinander heben sich fast auf, also zeigt sich dieser Modus kaum, wenn wir den Sollwert verschieben."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "think",
-              "text": "Kaum ist nicht nie. Das schnelle Paar allein, mit ζ = 0,47, würde um etwa 19 % überschwingen. Der übrige langsame Modus treibt das auf fast 30 %."
-            }
-          ]
-        },
-        {
-          "t": "list",
-          "items": [
-            "**Der I-Knopf** ($K_i$) bringt einen dritten Pol in den Kreis und kann ein Paar nach rechts schieben. Bei zu viel I überquert es die Linie.",
-            "**Der D-Knopf** ($K_d$) hebt durch zusätzliche Dämpfung die Stabilitätsgrenze für I an. Polbahnen können umkehren: Mehr D verschiebt nicht jeden Pol nach links.",
-            "**Der P-Knopf** ($K_p$) spreizt vor allem das schwingende Paar nach oben und unten: schneller, aber auch schwingender, wenn D nicht mithält."
-          ]
-        }
-      ]
-    },
-    {
-      "id": "playground",
-      "title": "Der Einstell-Spielplatz",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Jetzt der Ernstfall: vom Boden auf 2 m starten, mit echten Motoren (0–20 N). Hol dir alle vier Sterne. Jedes Mal, wenn du eine Verstärkung änderst, bleibt der letzte Flug als blasser Geist stehen."
-        },
-        {
-          "t": "widget",
-          "id": "playground"
+          "text": "In Kapitel 2 mussten wir die Drohne fliegen lassen, um ihr Durchhängen zu finden. Hier ist es einfach aus einem Bruch gefallen."
         },
         {
           "t": "note",
-          "aside": true,
-          "text": "Du steckst fest? Fang mit $K_d$ um 4 an (das ist ζ ≈ 0,8, mitten im Wohlfühlbereich 0,7–1 aus Kapitel 6), erhöhe dann $K_i$, bis das Durchhängen weg ist, und stups dann $K_p$ an."
-        },
-        {
-          "t": "note",
-          "text": "**Integrator-Windup:** Während die Motoren bei 20 N am Anschlag sind, wächst der Fehlerhaufen weiter, obwohl der zusätzliche Schub gar nicht möglich ist. Später kommt der ganze angestaute Schub als Überschwingen heraus. „Anti-Windup“ hält den Haufen einfach an, solange die Motoren am Maximum sind, und bei jeder Drohne in diesem Kapitel war es bisher eingeschaltet. (Ein Motor am Anschlag hat keinen Spielraum mehr, um irgendetwas zu korrigieren. Deshalb zählen die Sterne die Zeit am Anschlag.) Bei $K_p$ = 20, $K_i$ = 20, $K_d$ = 4: etwa 7 % Überschwingen mit Anti-Windup, 17 % ohne. Schalt es um und vergleiche."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "surprised",
-          "text": "Ich hab Anti-Windup ausgeschaltet, $K_p$ = 30, $K_i$ = 60, $K_d$ = 2 eingestellt… und die Drohne ist auf 4 m hochgeschossen, glatt aus ihrem Bild raus!"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Der Haufen ist die ganze Zeit weitergewachsen, während die Motoren Vollgas gaben. Mit Anti-Windup kommen dieselben Verstärkungen nur auf 2,8 m. Gleiche Knöpfe, ganz anderes Gedächtnis."
-        }
-      ]
-    },
-    {
-      "id": "warnings",
-      "title": "Zwei Warnungen zu D",
-      "blocks": [
-        {
-          "t": "h3",
-          "text": "Warnung 1: der D-Stoß"
-        },
-        {
-          "t": "p",
-          "text": "Die Drohne schwebt auf 1 m. Bei $t = 1$ s setzen wir den Sollwert auf 1,5 m. Wenn D die Steigung des *Fehlers* nimmt, **springt** der Fehler in einem Augenblick um einen halben Meter. Seine Steigung ist riesig, und der Schub auch."
-        },
-        {
-          "t": "play",
-          "id": "kick",
-          "text": "Ein Sprung von {scrub|dr} m, gesehen durch einen Filter von {scrub|tf} s, sieht aus wie ein Tempo von etwa {calc|slope} m/s. Mit $K_d$ = 4 verlangt der D-Term also rund {calc|spike|eff} N. Die Motoren schaffen höchstens 20."
-        },
-        {
-          "t": "widget",
-          "id": "kick"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "surprised",
-          "text": "Auf den Fehler verlangt er über 200 N? Von Motoren, die höchstens 20 schaffen?"
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "worried",
-          "text": "Und höflich Nein sagen können sie nicht. Sie geben einen Moment lang Vollgas, und die Drohne kriegt einen Tritt in den Hintern."
-        },
-        {
-          "t": "p",
-          "text": "Nimm stattdessen die Steigung der **gemessenen Höhe**, und das Problem ist weg: Die Drohne kann sich nicht teleportieren, also hat ihre Höhe keine Sprünge. Gleiche Dämpfung, kein Stoß. Fast jeder echte PID-Regler macht das so."
-        },
-        {
-          "t": "h3",
-          "text": "Warnung 2: Rauschen"
-        },
-        {
-          "t": "p",
-          "text": "Echte Höhensensoren zittern um ein paar Zentimeter. Ein paar Zentimeter Zittern, tausendmal pro Sekunde, haben eine **riesige Steigung**. D verstärkt das direkt in die Motoren. Die Lösung: die Messung glätten, bevor man ihre Steigung nimmt (ein Filter mit Zeitkonstante $\\tau_f$). Der Preis: Man reagiert etwas später."
-        },
-        {
-          "t": "play",
-          "id": "jitter",
-          "text": "Jede Millisekunde abgelesen, sehen 2 cm Zittern aus wie ein Tempo von 20 m/s. Durch einen Filter mit $\\tau_f$ = {scrub|tf} s macht $K_d$ = 4 aus $\\sigma_n$ = 2 cm Rauschen etwa $K_d\\sigma_n/\\tau_f$ = {calc|d|eff} N Schubzittern; P fügt nur $K_p\\sigma_n$ = 0,3 N (hier $K_p$ = 15) hinzu."
-        },
-        {
-          "t": "widget",
-          "id": "noise"
-        },
-        {
-          "t": "callout",
-          "title": "Der Filter ist der Kaffee aus Kapitel 3",
-          "blocks": [
-            {
-              "t": "math",
-              "tex": "\\frac{d\\,h_f}{dt} = \\frac{h_m - h_f}{\\tau_f}"
-            },
-            {
-              "t": "p",
-              "text": "Der Glättungsfilter ist Newtons Abkühlungsgesetz, auf den Sensor gerichtet: Die geglättete Höhe $h_f$ jagt dem zappeligen Messwert $h_m$ mit der Zeitkonstante $\\tau_f$ hinterher, so wie der Kaffee der Raumtemperatur. Schnelles Zittern hat keine Chance, sie zu bewegen. Echte Bewegung schon, nur etwa ein $\\tau_f$ zu spät. Das ist der Preis, in Sekunden."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "surprised",
-              "text": "Das Heilmittel für ein zappeliges D ist also… ein bisschen Verzögerung? Genau das, was den Haufen hat schwingen lassen?"
-            },
-            {
-              "t": "say",
-              "who": "june",
-              "mood": "happy",
-              "text": "Etwa eine Zehntelsekunde davon. Verzögerung ist nicht böse. Sie ist ein Preis, und hier ein günstiger."
-            }
-          ]
-        },
-        {
-          "t": "note",
-          "text": "Hast du gesehen, wie die Drohne mit dem kurzen Filter **nach oben driftet**? (Schau auf die Anzeige der mittleren Höhe.) Der ratternde Schub wird viel öfter bei 0 N abgeschnitten als bei 20 N (etwa 55 % der Zeit gegen 5 %: Zum Schweben braucht es nur 4,9 N), also liegt der abgeschnittene Mittelwert *über* dem Gewicht. Rauschen plus Grenzen können sogar den Mittelwert verschieben. Echte Hardware steckt voller solcher Überraschungen."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "surprised",
-          "text": "Okay, D sagt *nicht* die Zukunft voraus. Es sagt voraus, wonach dem Rauschen vor einer Millisekunde zumute war."
+          "text": "Wir tun immer noch so, als hätten die Motoren keine Schubgrenze, damit die lineare Mathematik exakt ist. Echte Grenzen kommen in Kapitel 10."
         }
       ]
     },
     {
       "id": "wrap",
-      "title": "Was wir repariert haben",
+      "title": "Was wir jetzt wissen",
       "blocks": [
         {
           "t": "recap",
           "items": [
-            "**P** drückt proportional zum Fehler, muss aber ein Durchhängen übrig lassen, um die Drohne zu halten.",
-            "**I** häuft vergangene Fehler an; der einzige Ruhepunkt ist null Fehler, also killt es das Durchhängen, das mit einer Zeitkonstante von etwa $K_p/K_i$ abklingt. Es bringt Verzögerung mit, also lässt zu viel davon alles schwingen.",
-            "**D** drückt gegen das Tempo: ein virtueller Dämpfer, der zum Luftwiderstand $c$ dazukommt, also $\\zeta = (c+K_d)/(2\\sqrt{mK_p})$. Mehr D ist nicht immer besser: Überdämpft kriecht die Drohne, und der Haufen läuft über.",
-            "Der geschlossene Regelkreis ist $m s^3 + (c + K_d)s^2 + K_p s + K_i$; er ist genau dann stabil, wenn $(c+K_d)K_p > mK_i$.",
-            "Nimm D von der Messung (kein Stoß) und filtere es (weniger Rauschen)."
+            "Aus Steigungen wird Multiplikation: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. Das $f(0)$ merkt sich, wo das Signal angefangen hat. Vergiss es, und deine Antwort startet an der falschen Stelle.",
+            "Wir haben unsere eigene Tabelle hergeleitet: $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$ und die verschobene Version für abklingende Sinusse. Flächen skalieren und addieren sich, also dürfen wir eine Gleichung Term für Term transformieren.",
+            "Große Brüche zerfallen per **Partialbruchzerlegung**: eine Unbekannte pro Potenz von $s$ in jedem Nenner, gefunden mit dem Zuhalte-Trick. Aus einem quadratischen Nenner wird ein schrumpfender Kosinus und Sinus.",
+            "Transformieren, Algebra machen, in Tabellenstücke zerlegen, Antwort ablesen. Das Stück $A/s$ zeigt, wo sich die Drohne einpendelt, samt Durchhängen. Das passt exakt zur Simulation, **solange du die Anfangswerte mitnimmst**."
           ]
         },
         {
           "t": "quiz",
           "items": [
             {
-              "id": "ch9-q1",
-              "q": "Welcher Term beseitigt das bleibende Durchhängen unter Schwerkraft?",
+              "id": "ch7-q1",
+              "q": "Was ist die Laplace-Transformation von $3e^{-2t}$?",
               "options": [
                 {
-                  "text": "Der Integralterm",
+                  "text": "$\\dfrac{3}{s+2}$",
                   "correct": true,
-                  "why": "Sein Fehlerhaufen ändert sich so lange, bis der Fehler genau null ist, und dann hält er die nötigen 4,9 N ganz allein."
+                  "why": "Die Exponentialzeile mit $a = -2$ ergibt $1/(s+2)$, und die Transformation von 3 mal einem Signal ist 3 mal seine Transformation (Flächen skalieren mit)."
                 },
                 {
-                  "text": "Der Ableitungsterm",
-                  "why": "D reagiert aufs Tempo. Wenn die Drohne ruhig schwebt, ist das Tempo null, und D trägt nichts bei. Halten kann es also nichts."
+                  "text": "$\\dfrac{3}{s-2}$",
+                  "why": "Das gilt für $e^{+2t}$. Die Zeile ist $1/(s-a)$ mit $a = -2$, also $s - (-2) = s+2$."
                 },
                 {
-                  "text": "Eine größere Proportionalverstärkung",
-                  "why": "Größeres $K_p$ verkleinert das Durchhängen ($mg/K_p$), aber nie auf null, und es macht die Drohne wackeliger."
+                  "text": "$\\dfrac{1}{3(s+2)}$",
+                  "why": "Das Signal mal 3 zu nehmen multipliziert die Fläche mit 3, es teilt sie nicht."
                 }
               ]
             },
             {
-              "id": "ch9-q3",
-              "q": "Mit $K_p = 10$ N/m und $K_d = 1$ N·s/m (Drohne: $m = 0{,}5$ kg, $c = 1$ N·s/m): Was ist das größte $K_i$ vor der Instabilität?",
+              "id": "ch7-q5",
+              "q": "$f(t) = e^{-t}$, also $F(s) = \\frac{1}{s+1}$ und $f(0) = 1$. Was ist die Transformation seiner Steigung $f'$?",
               "options": [
                 {
-                  "text": "20 N/(m·s)",
-                  "why": "Prüf die Formel: $(c + K_d)K_p/m = (1+1)\\cdot 10 / 0{,}5$. Vielleicht hast du vergessen, durch $m$ zu teilen."
-                },
-                {
-                  "text": "40 N/(m·s)",
+                  "text": "$\\frac{s}{s+1} - 1 = -\\frac{1}{s+1}$",
                   "correct": true,
-                  "why": "$(1 + 1)\\cdot 10 / 0{,}5 = 40$. Darüber wandern zwei Pole in die rechte Halbebene."
+                  "why": "$s\\,F - f(0)$. Und die Probe stimmt: Die Steigung von $e^{-t}$ ist $-e^{-t}$, und deren Transformation ist $-\\frac{1}{s+1}$."
                 },
                 {
-                  "text": "80 N/(m·s)",
-                  "why": "Zu hoch. Denk dran: Luftwiderstand $c$ und $K_d$ werden zuerst addiert: $(1+1) = 2$, nicht 4."
+                  "text": "$\\frac{s}{s+1}$",
+                  "why": "Das ist $s\\,F$ mit vergessenem Anfangswert: wieder der Sims-Fehler."
+                },
+                {
+                  "text": "$\\frac{1}{(s+1)^2}$",
+                  "why": "Steigungen werden zu einer *Multiplikation* mit $s$, nicht zu einer Division durch ein weiteres $(s+1)$."
                 }
               ]
             },
             {
-              "id": "ch9-q4",
-              "q": "Warum nimmt man die Ableitung der **Messung** statt des Fehlers?",
+              "id": "ch7-q6",
+              "q": "Mit $\\eff{K_p}$ = 10 N/m: Wo pendelt sich die Drohne laut Stück $A/s$ ein (Ziel 2 m, $\\dis{mg} \\approx 4{,}9$ N)?",
               "options": [
                 {
-                  "text": "Wenn der Sollwert springt, springt auch der Fehler, und seine Steigung ist riesig: eine Schubspitze",
+                  "text": "Bei etwa 1,51 m",
                   "correct": true,
-                  "why": "Die Höhe kann nicht springen, also bleibt ihre Steigung vernünftig. Gleiche Dämpfung, kein Stoß."
+                  "why": "$A = 2 - 4{,}9/10 \\approx 1{,}51$ m. Die Drohne hängt 0,49 m zu tief: das Durchhängen aus Kapitel 2."
                 },
                 {
-                  "text": "Weil die Messung weniger rauscht als der Fehler",
-                  "why": "Sie haben genau dasselbe Rauschen; der Fehler ist Sollwert minus Messung."
+                  "text": "Bei genau 2 m",
+                  "why": "Nur ohne Schwerkraft. Der Term $-\\dis{mg}/s$ zieht $A$ um $\\dis{mg}/\\eff{K_p}$ nach unten."
                 },
                 {
-                  "text": "Es macht den Regler aggressiver",
-                  "why": "Im Gegenteil: Es entfernt die aggressive Spitze bei Sollwertänderungen."
-                }
-              ]
-            },
-            {
-              "id": "ch9-q5",
-              "q": "$K_p$ = 20, $K_i$ = 10. Welche Änderung macht das Überschwingen beim Start **größer**?",
-              "options": [
-                {
-                  "text": "$K_d$ von 4 auf 10 erhöhen",
-                  "correct": true,
-                  "why": "Zu viel Dämpfung lässt die Drohne kriechen, und währenddessen füllt sich der Haufen weiter: Das Überschwingen steigt von 0 % auf etwa 8 %."
-                },
-                {
-                  "text": "$K_d$ von 0 auf 4 erhöhen",
-                  "why": "Das ist die gute Richtung: Das Überschwingen fällt von etwa 54 % auf 0 %."
-                },
-                {
-                  "text": "$K_i$ von 10 auf 5 senken",
-                  "why": "Ein kleinerer Haufen erinnert sich an weniger, also schwingt er weniger über (0 % bei $K_d$ = 4). Er braucht nur länger, um das Durchhängen zu beseitigen."
+                  "text": "Bei etwa 0,49 m",
+                  "why": "Das ist das Durchhängen selbst, die Lücke unter dem Ziel, nicht die Höhe."
                 }
               ]
             }
@@ -618,159 +528,135 @@
         },
         {
           "t": "cliff",
-          "text": "June hat unseren Drohnen-PID an der Dusche ausprobiert… und die hat genauso gewackelt wie wir in Kapitel 0. **Was ist bloß mit dieser Verzögerung?**"
+          "text": "June: „Jedes Mal, wenn wir etwas gelöst haben, war die Antwort *(irgendwas)* ÷ *(ein Polynom in s)*, und das Verhalten der Drohne kam von den Stellen, wo der Nenner null ist. Was, wenn dieser Bruch die Drohne **ist**?“"
         }
       ]
     }
   ],
   "widgets": {
-    "integral": {
-      "title": "Der Fehlerhaufen",
-      "slider": "Integralverstärkung $K_i$",
-      "gravity": "Gewicht mg",
-      "iterm": "Integralschub Ki·∫e",
-      "readout": {
-        "droop": "Durchhängen bei 12 s",
-        "pile": "Integralschub",
-        "area": "rote Fläche netto"
+    "derivRule": {
+      "title": "Überlebt die Regel ein Gekritzel?",
+      "f": "dein Signal f(t)",
+      "df": "seine Steigung f′(t)",
+      "plotAria": "Das gezeichnete Signal und seine Steigung über 8 Sekunden.",
+      "sAria": "Beide Seiten der Ableitungsregel über s aufgetragen.",
+      "lhs": "Fläche von f′·e^(−st)",
+      "rhs": "s·F(s) − f(0)",
+      "lhsShort": "Transformation der Steigung",
+      "rhsShort": "s F(s) − f(0)",
+      "s": "Sonde $s$",
+      "draw": "Eigenes Signal zeichnen",
+      "preset": "Andere Vorlage probieren",
+      "help": "Wähl eine Vorlage (der Weg mit der Tastatur), oder drück auf „Eigenes Signal zeichnen“ und zieh im Signal-Diagramm von links nach rechts. Nach 8 s bleibt das Signal flach.",
+      "drawing": "Zieh im Signal-Diagramm von links nach rechts…",
+      "tooShort": "Zeichne ein bisschen weiter (mindestens 3 Sekunden lang).",
+      "drawn": "Hab’s! Beide Seiten wurden aus deiner Zeichnung neu berechnet. Zieh nochmal, um sie zu ersetzen.",
+      "match": "Bei s = {s} sind beide Seiten {v}. Die Regel gilt für dein Signal.",
+      "nomatch": "Hier weichen sie etwas ab. Rundungsfehler bei einer sehr scharfen Zeichnung.",
+      "describe": "Transformation der Steigung {l}, s F minus f von null {r}.",
+      "stopDraw": "Zeichnen beenden",
+      "presetLabel": "Oder wähl ein Signal",
+      "presets": {
+        "0": "Wackeln",
+        "1": "Sprung",
+        "2": "Abfall"
       },
-      "status": {
-        "none": "Kein Integral: Die Drohne hängt durch, genau wie in Kapitel 2.",
-        "slow": "Das Durchhängen schrumpft, aber langsam. Der Haufen braucht Zeit zum Aufbauen.",
-        "ringing": "Stabil, aber nur knapp: Bei 12 s schwingt sie immer noch. Je näher Ki an {lim} kommt, desto langsamer klingen die Schwünge ab.",
-        "gone": "Durchhängen weg! Der Haufen hält jetzt das ganze Gewicht.",
-        "unstable": "Über die Kante (Ki > {lim}): Die Hüpfer wachsen, bis die Motoren an ihre Grenzen stoßen, und sie kommt nie zur Ruhe."
-      },
-      "describe": "Integralverstärkung {ki}. Durchhängen nach 12 Sekunden: {droop} Zentimeter."
+      "rhsBrace": "was die Regel vorhersagt"
     },
-    "damper": {
-      "title": "Einen virtuellen Dämpfer hinzufügen",
-      "slider": "Differenzialverstärkung $K_d$",
-      "bigKi": "Mikas großes $K_i$ = 50",
-      "bigKiName": "Mikas großes Ki = 50",
-      "readout": {
-        "damping": "Gesamtdämpfung c + Kd",
-        "overshoot": "Überschwingen",
-        "zeta": "Dämpfungsgrad ζ"
+    "table": {
+      "title": "Die Tabelle, hergeleitet",
+      "caption": "In diesem Kapitel hergeleitete Tabelle der Laplace-Transformationen",
+      "colSignal": "Signal f(t)",
+      "colF": "Transformation F(s)",
+      "derive": "Herleiten",
+      "show": "Zeigen",
+      "unknown": "noch nicht hergeleitet",
+      "f": "Signal",
+      "product": "Signal × Sonde",
+      "plotAria": "Das gewählte Tabellensignal und sein abgetastetes Produkt mit schattierter Fläche.",
+      "numeric": "gemessene Fläche",
+      "formulaVal": "Formel",
+      "s": "Sonde $s$",
+      "how": "Wie wir darauf kamen",
+      "agree": "Die gemessene Fläche passt zur Formel.",
+      "twinCheck": "Sein Zwilling (Kosinus) passt auch: gemessen {n}, Formel {f}.",
+      "describe": "Gemessene Fläche {n}, Formel {f}.",
+      "rows": {
+        "0": {
+          "f": "1\\ \\ (\\text{Sprung})",
+          "F": "\\dfrac{1}{s}",
+          "steps": "\\text{die Kurve mit der Steigung } e^{-st} \\text{ ist } -\\tfrac{1}{s}e^{-st}||\\begin{aligned} \\int_0^\\infty e^{-st}\\,dt &=\\Big[-\\tfrac{1}{s}e^{-st}\\Big]_0^\\infty \\\\ &= 0-\\big(-\\tfrac{1}{s}\\big)=\\frac{1}{s}\\quad (s>0) \\end{aligned}"
+        },
+        "1": {
+          "f": "e^{at}",
+          "F": "\\dfrac{1}{s-a}",
+          "steps": "e^{at}\\,e^{-st}=e^{-(s-a)t}||\\text{das ist die Sprungzeile, nur mit } s-a \\text{ statt } s||\\begin{gathered} \\int_0^\\infty e^{-(s-a)t}\\,dt=\\frac{1}{s-a} \\\\ (s>a;\\ \\text{hier } a=-1) \\end{gathered}"
+        },
+        "2": {
+          "f": "\\sin\\omega t,\\ \\cos\\omega t",
+          "F": "\\dfrac{\\omega}{s^2+\\omega^2},\\ \\dfrac{s}{s^2+\\omega^2}",
+          "steps": "\\begin{gathered} \\sin\\omega t=\\frac{e^{i\\omega t}-e^{-i\\omega t}}{2i} \\\\ \\text{(Zwillingsdreher)} \\end{gathered}||\\begin{gathered} \\mathcal{L}\\{e^{\\pm i\\omega t}\\}=\\frac{1}{s\\mp i\\omega} \\\\ \\text{(Exponentialzeile, } a=\\pm i\\omega) \\end{gathered}||\\begin{aligned} &\\frac{1}{2i}\\Big(\\frac{1}{s-i\\omega}-\\frac{1}{s+i\\omega}\\Big) \\\\ &=\\frac{1}{2i}\\cdot\\frac{2i\\omega}{s^2+\\omega^2}=\\frac{\\omega}{s^2+\\omega^2} \\end{aligned}||\\begin{gathered} \\cos\\omega t=\\frac{e^{i\\omega t}+e^{-i\\omega t}}{2}\\ \\Rightarrow\\ \\frac{s}{s^2+\\omega^2} \\\\ (\\text{hier }\\omega=2) \\end{gathered}"
+        },
+        "3": {
+          "f": "\\begin{gathered} e^{-\\sigma t}\\sin\\omega t \\\\ e^{-\\sigma t}\\cos\\omega t \\end{gathered}",
+          "F": "\\begin{gathered} \\dfrac{\\omega}{(s+\\sigma)^2+\\omega^2} \\\\[4pt] \\dfrac{s+\\sigma}{(s+\\sigma)^2+\\omega^2} \\end{gathered}",
+          "steps": "e^{-\\sigma t}\\sin\\omega t\\cdot e^{-st}=\\sin\\omega t\\cdot e^{-(s+\\sigma)t}||\\text{also nimm die Sinuszeile und setz } s+\\sigma \\text{ statt } s \\text{ ein}||\\begin{gathered} \\frac{\\omega}{(s+\\sigma)^2+\\omega^2}\\quad\\text{ und }\\quad\\frac{s+\\sigma}{(s+\\sigma)^2+\\omega^2} \\\\ (\\text{hier }\\sigma=0{,}5,\\ \\omega=2) \\end{gathered}"
+        }
       },
-      "status": {
-        "unstable": "Immer noch instabil: braucht mehr Dämpfung.",
-        "bouncy": "Stabil, aber hüpfig. Nimm mehr Kd dazu.",
-        "calm": "Ruhe! Der Dämpfer schluckt das Hüpfen.",
-        "tooMuch": "Mehr D hat es schlimmer gemacht! Jetzt kriecht sie so langsam hoch, dass der Haufen überläuft, und sie schwingt verspätet über. Probier weniger Kd.",
-        "bigPile": "Stabil, aber Mikas großer Haufen schwingt immer noch um {os} % über. Dagegen hilft kein D: Schalte Mikas Ki ab."
-      }
+      "colCheck": "Mit der gemessenen Fläche geprüft",
+      "differ": "Gemessene Fläche und Formel stimmen hier nicht überein. Probier ein größeres s."
     },
-    "poles": {
-      "title": "Drei Knöpfe, drei Pole",
-      "splane": "s-Ebene mit den drei Polen des geschlossenen Regelkreises der Drohne mit PID-Regler",
-      "kp": "$K_p$",
-      "ki": "$K_i$",
-      "kd": "$K_d$",
-      "map": {
-        "x": "Kd (N·s/m)",
-        "y": "Ki (N/(m·s))",
-        "edge": "Klippe Ki = (c+Kd)Kp/m",
-        "you": "du",
-        "aria": "Karte von Ki über Kd mit der Stabilitätsgrenze; unterhalb der Linie ist es stabil."
-      },
-      "stepAria": "Sprungantwort von 1,5 m auf 2 m für die aktuellen Verstärkungen",
-      "status": {
-        "stable": "Stabil: Ki muss unter {lim} bleiben. Der langsamste Pol sitzt bei σ = {s}.",
-        "unstable": "Instabil! Ki liegt über der Kante ({lim}). Zwei Pole sind in die rechte Hälfte gewandert.",
-        "cancel": "(Eine Nullstelle bei {z} hebt ihn fast auf, also zeigt er sich im Sprung kaum.)"
-      },
-      "help": "Bei der Sprungantwort schwebt die Drohne zuerst auf 1,5 m und soll bei t = 1 s auf 2 m, mit echten 20-N-Motoren (bei großem $K_p$ kann sie also vom Polbild abweichen). Pole außerhalb des Rahmens werden zu Pfeilen an seinem Rand. ○ ist die Nullstelle.",
-      "reShort": "σ",
-      "imShort": "ω",
-      "readout": {
-        "overshoot": "Überschwingen (Sprung)",
-        "settling": "Einschwingzeit (2 %)"
-      },
-      "never": "nicht in 14 s",
-      "zero": "Nullstelle"
+    "solve": {
+      "title": "Formel gegen Simulation",
+      "sim": "Simulation (winzige Schritte)",
+      "formula": "unsere Laplace-Formel",
+      "target": "Ziel",
+      "plotAria": "Höhe der Drohne über die Zeit aus der Simulation und aus der Laplace-Formel.",
+      "gap": "größte Lücke",
+      "atZero": "bei t = 0: Sim / Formel",
+      "kp": "Verstärkung $K_p$",
+      "h0": "Anfangshöhe (Sims) $h(0)$",
+      "toggle": "Anfangshöhen-Terme $-h(0)$ mitnehmen",
+      "mismatch": "Sie passen nicht! Die Sim startet auf dem {h}-m-Sims, die Formel bei 0.",
+      "odd": "Immer noch eine Lücke. Prüf die Zahlen.",
+      "match": "Passt perfekt: Formel und Simulation stimmen auf weniger als ein Millionstel Meter überein.",
+      "settle": "pendelt sich bei A ein",
+      "droop": "Durchhängen mg/Kp = {d} m",
+      "hidden": "Vom Boden aus sind die fehlenden Terme null, also versteckt sich der Fehler. Setz die Drohne auf einen Sims, um ihn zu erwischen.",
+      "fixed": "Die −h(0)-Terme sind oben in Schritt 1 und 2 zurück.",
+      "rk4": "Die Simulation macht Schritte von 1 ms, wie die winzigen Schritte aus Kapitel 4, aber jeder Schritt schaut viermal hin, um besser zu zielen. Dieses Rezept nennt man RK4."
     },
-    "playground": {
-      "title": "Einstell-Spielplatz: Start auf 2 m",
-      "kp": "$K_p$",
-      "ki": "$K_i$",
-      "kd": "$K_d$",
-      "antiWindup": "Anti-Windup",
-      "targets": "Sterne gibt’s für: Überschwingen unter {os} %, Einschwingen (auf 2 % genau) unter {ts} s, kein Durchhängen (unter 1 cm) und Motoren weniger als {sat} s am Anschlag.",
-      "readout": {
-        "overshoot": "Überschwingen",
-        "settling": "Einschwingzeit",
-        "sse": "Durchhängen",
-        "saturated": "Motoren am Anschlag"
-      },
-      "never": "nie",
-      "allStars": "Alle vier Sterne! Das ist eine echte Einstellung.",
-      "someStars": "{n} von 4 Sternen.",
-      "starsAria": "{n} von 4 Sternen verdient",
-      "hit": {
-        "back": "Rums! Die Drohne prallte gegen das, was darüber steht, aber die Motoren laufen weiter, und die Rückkopplung bringt sie zurück auf 2 m.",
-        "wild": "Rums! Die Drohne prallte gegen das, was darüber steht. Die Motoren laufen weiter, aber mit diesen Verstärkungen kommt sie nie zur Ruhe.",
-        "mark": "Rums!"
-      },
-      "crash": "Absturz bei {t} s! Sie ist schneller als 1,5 m/s auf dem Boden aufgeschlagen, und eine abgestürzte Drohne bleibt unten.",
-      "neverDroop": "nie (hängt durch)"
-    },
-    "kick": {
-      "title": "Sollwertsprung: 1 m → 1,5 m",
-      "mode": "Ableitung nehmen von…",
-      "onError": "dem Fehler",
-      "onMeasurement": "der gemessenen Höhe",
-      "asked": "Spitze verlangt",
-      "peak": "Spitze geliefert",
-      "kickMark": "Stoß!",
-      "status": {
-        "error": "Der Fehler springt, also ist seine Steigung riesig: Der Regler verlangt {req} N! Die Motoren können nur auf 20 N knallen. Das ist ein D-Stoß.",
-        "measurement": "Die Höhe kann nicht springen, also kein Stoß: Höchstens {req} N werden je verlangt, und der Anstieg ist sanft."
-      }
-    },
-    "noise": {
-      "title": "Ein zappeliger Höhensensor",
-      "toggle": "Sensorrauschen (etwa 2 cm)",
-      "filter": "Ableitungsfilter $\\tau_f$",
-      "filterName": "Zeitkonstante des Ableitungsfilters τf",
-      "measured": "Sensorwert",
-      "jitter": "Schubzittern",
-      "status": {
-        "off": "Ein perfekter Sensor: ruhige Motoren.",
-        "chatter": "Die Motoren rattern! D verstärkt das Rauschen. Probier einen längeren Filter.",
-        "calm": "Viel ruhiger. Von den ±{j} N, die bleiben, reicht P etwa {p} N direkt durch; der Rest ist immer noch D. Der Preis: D reagiert jetzt etwa {tau} s später.",
-        "noD": "Kein D, nichts verstärkt das Rauschen: Die ±{j} N, die bleiben, reicht P direkt durch. Ruhige Motoren, aber jetzt dämpft nur noch der Luftwiderstand die Drohne."
-      },
-      "kd": "Differenzialverstärkung $K_d$",
-      "mean": "mittlere Höhe",
-      "help": "Probier $K_d$ = 0: Das Zittern fällt auf etwa 0,3 N (nur P), aber dann dämpft nur noch der Luftwiderstand die Drohne. Mehr D, mehr Rauschen."
-    },
-    "gains": {
-      "kp": "Proportionalverstärkung Kp",
-      "ki": "Integralverstärkung Ki",
-      "kd": "Differenzialverstärkung Kd"
+    "pieces": {
+      "title": "Stücke und ihre Summe",
+      "y": "Wert",
+      "stepPiece": "Stück A/s: ein Sprung",
+      "wigglePiece": "Stück (Bs + C)/(s² + 2s + 5): ein abklingendes Wackeln",
+      "sum": "ihre Summe",
+      "plotAria": "Das Sprung-Stück, das abklingende Wackel-Stück und ihre Summe im Zeitverlauf.",
+      "A": "Zähler des s-Stücks, A",
+      "B": "Der s-Teil des quadratischen Zählers, B",
+      "C": "Der reine Zahlenteil des quadratischen Zählers, C",
+      "status": "Es pendelt sich bei A = {A} ein: Das s-Stück ist das einzige, das bleibt. Der Zähler des großen Bruchs hat die Zahlen {top}.",
+      "describe": "A = {A}, B = {B}, C = {C}.",
+      "help": "Schieb A, B und C. Jedes Stück ist eine Zeile unserer Tabelle; die Summe ist die ganze Antwort."
     }
   },
   "plays": {
-    "pile": {
-      "ki": "Integralverstärkung Ki, Newton pro Meter-Sekunde"
+    "ruleExp": {
+      "a": "Signalrate a, pro Sekunde",
+      "s": "Sondenrate s, pro Sekunde"
     },
-    "area": {
-      "ki": "Integralverstärkung Ki, Newton pro Meter-Sekunde"
+    "scale": {
+      "k": "wie viel mal höher, k",
+      "r": "Schrumpfrate r, pro Sekunde",
+      "s": "Sondenrate s, pro Sekunde"
     },
-    "zeta": {
-      "kd": "Differenzialverstärkung Kd, Newtonsekunden pro Meter"
+    "square": {
+      "kp": "Verstärkung Kp, Newton pro Meter"
     },
-    "cliff": {
-      "kp": "Proportionalverstärkung Kp, Newton pro Meter",
-      "kd": "Differenzialverstärkung Kd, Newtonsekunden pro Meter"
-    },
-    "kick": {
-      "dr": "Sollwertsprung, Meter",
-      "tf": "Filterzeitkonstante, Sekunden"
-    },
-    "jitter": {
-      "tf": "Filterzeitkonstante, Sekunden"
+    "residues": {
+      "kp": "Verstärkung Kp, Newton pro Meter",
+      "h0": "Höhe des Simses, Meter"
     }
   }
 }

@@ -8,6 +8,10 @@
 > **Baseline:** `0.1.0` at `3d836e9` (main, 2026-09-27).
 > **Status (2026-09-27): built.** See "Status: built" at the end for what changed from this plan
 > and what is still open.
+>
+> **Numbering (2026-09-27):** this plan uses the 12-chapter numbering it was written for. Chapters
+> 5 and 7 were later split (`docs/plans/split-ch05-ch07.md`): old 5 → 5–6, 6 → 7, 7 → 8–9,
+> 8–11 → 10–13.
 
 Every phase follows the project rules: all text in `public/locales/{lang}/chNN.json` for all 10
 locales in the same commit, new terms in `docs/glossary.md`, `locales.test.ts` green, every stated

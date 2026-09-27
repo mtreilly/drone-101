@@ -1,436 +1,370 @@
-import { DRONE, DroneSim, type PID, defaultDroneConfig } from '../../sim/drone-model';
-import { pid, runDrone } from '../ch09/pid-tools';
-import { LIMITS, MISSION, WINDOWS, dSpike, evaluate, hintFor, missionConfig, missionLoop, missionMargins, missionPoles, neverBack, neverSettled, noiseLifted, runMission, starsOnSeeds } from './mission';
-import { flyMission } from './page-hit';
-import { SIX_STAR, plays } from './plays';
-import { HOVER_SPIN, PROP_K, eigenvalues, extraThrust, statePath } from './state';
-import { logspace, sweep } from '../../math/bode';
-import { roots } from '../../math/poly';
+import { DRONE, DroneSim, HOVER_THRUST as MG, defaultDroneConfig } from '../../sim/drone-model';
+import { overshootOf } from '../../ui/s-plane';
+import { hoverStep, kiLimit, pid, pidPoles, runDrone, scoreTrace, stars, takeoff } from './pid-tools';
+import { runUnderCeiling, stayDown } from './page-ceiling';
+import { damperRun, heightTop, integralRun, jitterOf, kickRun, meanHeight, nearlyCancels, noiseRun, piZero, polesStep, slowestPole, stepOf } from './scenarios';
+import { damperStatus, integralStatus, kdCritical, lateSwing, noiseStatus, zetaPD } from './status';
 
-describe('Chapter 11 mission', () => {
-  it('a sensible PID earns all six stars (several seeds)', () => {
-    for (const seed of [1, 7, 42]) {
-      expect(evaluate(runMission(pid(20, 15, 5, { dTau: 0.04 }), seed)).stars).toBe(6);
-      expect(evaluate(runMission(pid(25, 20, 6, { dTau: 0.04 }), seed)).stars).toBe(6);
+
+const growth = (kp: number, ki: number, kd: number) => {
+  const tr = hoverStep(pid(kp, ki, kd), 1.95, 2, 40);
+  const dev = (a: number, b: number) => Math.max(...tr.h.filter((_, i) => tr.t[i] >= a && tr.t[i] < b).map((h) => Math.abs(h - 2)));
+  return dev(30, 40) / dev(5, 15);
+};
+
+describe('Chapter 11 claims', () => {
+  it('Routh edge values quoted in the text', () => {
+    expect(kiLimit(20, 0)).toBeCloseTo(40);
+    expect(kiLimit(20, 4)).toBeCloseTo(200);
+    expect(kiLimit(20, 0.5)).toBeCloseTo(60);
+    expect(kiLimit(10, 1)).toBeCloseTo(40);
+  });
+
+  it('poles agree with the Routh test', () => {
+    for (const [kp, ki, kd] of [[20, 39, 0], [20, 41, 0], [10, 39, 1], [10, 41, 1], [30, 100, 2], [5, 3, 0.2]]) {
+      const stable = pidPoles(kp, ki, kd).every((p) => p.re < 0);
+      expect(stable).toBe(ki < kiLimit(kp, kd));
     }
   });
 
-  it('the default starting tune fails (no integral: droops, and the gust/drop win)', () => {
-    const r = evaluate(runMission(pid(10, 0, 1, { dTau: 0.02 })));
-    expect(r.stars).toBeLessThan(6);
-    expect(r.pass.rise).toBe(false);
+  it('removes the unused integrator pole when Ki is zero', () => {
+    const ps = pidPoles(20, 0, 4);
+    expect(ps).toHaveLength(2);
+    expect(ps.every((p) => p.re < 0)).toBe(true);
   });
 
-  it('nominal poles: good tune stable, huge Ki unstable', () => {
-    expect(missionPoles(pid(20, 15, 5, { dTau: 0.04 })).every((p) => p.re < 0)).toBe(true);
-    expect(missionPoles(pid(20, 400, 0, { dTau: 0.04 })).some((p) => p.re > 0)).toBe(true);
-    // no-lag, no-filter limit reproduces the Chapter 9 cubic's pole count (plus motor)
-    expect(missionPoles(pid(20, 10, 4, { dTau: 0 })).length).toBe(4);
-    const pd = missionPoles(pid(20, 0, 4, { dTau: 0.04 }));
-    expect(pd).toHaveLength(4);
-    expect(pd.every((p) => p.re < 0)).toBe(true);
+  it('simulation agrees: Kp=20, Kd=0 settles below Ki=40 and grows above', () => {
+    expect(growth(20, 36, 0)).toBeLessThan(1);
+    expect(growth(20, 44, 0)).toBeGreaterThan(1);
   });
 
-  it('requires the take-off height to stay in band before the gust', () => {
-    const tr = runMission(pid(20, 15, 5, { dTau: 0.04 }));
-    const excursion = tr.t.findIndex((t) => t >= 4);
-    tr.h[excursion] = 1.8;
-    const result = evaluate(tr);
-    expect(result.pass.rise).toBe(false);
-    expect(result.rise).toBeGreaterThan(4);
+  it("Mika's Ki=50 never settles; D restores stability; calm needs smaller Ki", () => {
+    const wild = runDrone(takeoff(pid(20, 50, 0)), 30);
+    const late = Math.max(...wild.h.filter((_, i) => wild.t[i] > 20).map((h) => Math.abs(h - 2)));
+    expect(late).toBeGreaterThan(0.2); // a permanent ±28 cm yo-yo, limited by the motors
+    expect(late).toBeLessThan(0.35);
+    const rescued = runDrone(takeoff(pid(20, 50, 0.5)), 30);
+    expect(Math.max(...rescued.h.filter((_, i) => rescued.t[i] > 25).map((h) => Math.abs(h - 2)))).toBeLessThan(0.01);
+    expect(scoreTrace(runDrone(takeoff(pid(20, 50, 4)), 12)).overshoot).toBeGreaterThan(20);
+    for (const kd of [3, 4, 5]) expect(scoreTrace(runDrone(takeoff(pid(20, 10, kd)), 12)).overshoot).toBeLessThan(5);
+  });
+
+  it('a modest Ki removes the droop within 12 s', () => {
+    const tr = runDrone(takeoff(pid(20, 10, 0)), 12);
+    expect(Math.abs(2 - tr.h[tr.h.length - 1])).toBeLessThan(0.01);
+    const p = runDrone(takeoff(pid(20, 0, 0)), 12);
+    expect(2 - p.h[p.h.length - 1]).toBeCloseTo(0.245, 2);
+  });
+
+  it('playground: P-only fails, 20/10/4 earns all stars', () => {
+    const bad = stars(scoreTrace(runDrone(takeoff(pid(20, 0, 0)), 15)));
+    expect(Object.values(bad).every(Boolean)).toBe(false);
+    const good = stars(scoreTrace(runDrone(takeoff(pid(20, 10, 4)), 15)));
+    expect(Object.values(good).every(Boolean)).toBe(true);
+  });
+
+  it('derivative kick saturates on error but not on measurement', () => {
+    const onErr = hoverStep(pid(15, 8, 4, { dTau: 0.01, dOnMeasurement: false }), 1, 2, 5);
+    const onMeas = hoverStep(pid(15, 8, 4, { dTau: 0.01, dOnMeasurement: true }), 1, 2, 5);
+    expect(Math.max(...onErr.thrust)).toBeCloseTo(20, 6);
+    expect(Math.max(...onMeas.thrust)).toBeLessThan(20);
+  });
+
+  it('noise: short filter chatters, long filter is calm', () => {
+    const jitter = (tau: number, noise: number) => {
+      const xs = hoverStep(pid(15, 8, 4, { dTau: tau }), 2, 2, 5, noise).thrust.slice(50);
+      const m = xs.reduce((a, b) => a + b, 0) / xs.length;
+      return Math.sqrt(xs.reduce((a, b) => a + (b - m) ** 2, 0) / xs.length);
+    };
+    expect(jitter(0.005, 0.02)).toBeGreaterThan(1.5);
+    expect(jitter(0.1, 0.02)).toBeLessThan(1.5);
+    expect(jitter(0.005, 0)).toBeLessThan(0.01);
   });
 });
 
-describe('extreme slider values stay finite', () => {
-  it('mission and poles at the slider corners', () => {
-    for (const kp of [0, 50]) for (const ki of [0, 50]) for (const kd of [0, 12]) for (const tf of [0.005, 0.2]) {
-      const tr = runMission(pid(kp, ki, kd, { dTau: tf }));
-      expect(tr.h.every(Number.isFinite)).toBe(true);
-      expect(tr.thrust.every((x) => x >= 0 && x <= 20)).toBe(true);
-      expect(missionPoles(pid(kp, ki, kd, { dTau: tf })).every((p) => Number.isFinite(p.re) && Number.isFinite(p.im))).toBe(true);
-      evaluate(tr);
-    }
+describe('Chapter 11: the kick widget shows the kick (1 m → 1.5 m)', () => {
+  const err = kickRun('error');
+  const meas = kickRun('measurement');
+  it('delivered peaks differ by more than 5 N: 20 N pinned vs 12.4 N', () => {
+    expect(Math.max(...err.thrust)).toBeCloseTo(20, 6);
+    expect(Math.max(...meas.thrust)).toBeCloseTo(12.41, 1);
+    expect(Math.max(...err.thrust) - Math.max(...meas.thrust)).toBeGreaterThan(5);
+  });
+  it('asked for: about 209 N on the error (≈ Kd·Δr/τf = 200 N of D), 12.4 N on the measurement', () => {
+    expect(Math.max(...err.request)).toBeGreaterThan(200);
+    expect(Math.max(...err.request)).toBeLessThan(215);
+    expect(Math.max(...err.request)).toBeCloseTo(209, 0);
+    expect((4 * 0.5) / 0.01).toBe(200);
+    // P alone asks Kp·Δr + mg = 7.5 + 4.9 N
+    expect(Math.max(...meas.request)).toBeCloseTo(15 * 0.5 + MG, 0);
+    expect(Math.max(...meas.request)).toBeLessThan(20);
+  });
+  it('the original 1 → 2 m jump asks for about 413 N', () => {
+    const tr = hoverStep(pid(15, 8, 4, { dTau: 0.01, dOnMeasurement: false }), 1, 2, 5);
+    expect(Math.max(...tr.request)).toBeGreaterThan(400);
+    expect(Math.max(...tr.request)).toBeLessThan(420);
   });
 });
 
-const REF = pid(20, 15, 5, { dTau: 0.04 });
-const JUNE = pid(30, 15, 10, { dTau: 0.005 });
-/** the fix the mission text suggests: filter about 0.04 s, Kd about 7 */
-const FIX = pid(30, 15, 7, { dTau: 0.04 });
-const ev = (p: PID, seed = 7, over = {}) => evaluate(runDrone({ ...missionConfig(p, seed), ...over }, MISSION.duration));
-
-/** standard deviation of motor thrust and of the command over [a, b), every 1 ms step (seed 7) */
-function spread(p: PID, over = {}, a = 3, b = 6): { thrust: number; command: number } {
-  const sim = new DroneSim({ ...missionConfig(p, 7), ...over });
-  const T: number[] = [];
-  const C: number[] = [];
-  while (sim.t < b - 1e-9) {
-    sim.step();
-    if (sim.t >= a) {
-      T.push(sim.thrust);
-      C.push(sim.command);
+describe('Chapter 11: honest status lines', () => {
+  it('integral: Ki 30 and 38 are ringing (still swinging > 7 cm after 8 s), not slow; Ki 10 is gone', () => {
+    for (const ki of [30, 38]) {
+      const tr = integralRun(ki);
+      expect(Math.abs(2 - tr.h.at(-1)!)).toBeGreaterThan(0.01);
+      expect(lateSwing(tr)).toBeGreaterThan(0.07);
+      expect(integralStatus(ki, tr)).toBe('ringing');
     }
-  }
-  const sd = (x: number[]) => {
-    const m = x.reduce((s, v) => s + v, 0) / x.length;
-    return Math.sqrt(x.reduce((s, v) => s + (v - m) ** 2, 0) / x.length);
-  };
-  return { thrust: sd(T), command: sd(C) };
-}
-
-describe('briefing numbers', () => {
-  it('the timeline and the grit list are the code (20 s, 0.05 s, 2 cm, 6–9 s, 1.5 N down, 0.2 kg, 12 s, 2 m, 0–20 N)', () => {
-    expect(MISSION).toMatchObject({ duration: 20, motorTau: 0.05, noiseStd: 0.02, gust: { start: 6, end: 9, force: -1.5 }, pkgMass: 0.2, dropAt: 12, setpoint: 2 });
-    expect(LIMITS).toEqual({ rise: 3, overshoot: 10, gust: 0.2, recover: 2, calm: 0.5, band: 0.05 });
-    expect([DRONE.tMin, DRONE.tMax]).toEqual([0, 20]);
+    expect(integralStatus(10, integralRun(10))).toBe('gone');
+    expect(integralStatus(0, integralRun(0))).toBe('none');
+    expect(integralStatus(2, integralRun(2))).toBe('slow');
+    expect(integralStatus(45, integralRun(45))).toBe('unstable');
   });
-
-  it('hover thrust 6.9 N with the package, 4.9 N without: the integral must unlearn 1.96 N', () => {
-    expect((DRONE.m + MISSION.pkgMass) * DRONE.g).toBeCloseTo(6.867, 3);
-    expect(DRONE.m * DRONE.g).toBeCloseTo(4.905, 3);
-    expect(MISSION.pkgMass * DRONE.g).toBeCloseTo(1.962, 3);
+  const os = (ki: number, kd: number) => scoreTrace(damperRun(ki, kd)).overshoot;
+  const damper = (ki: number, kd: number) => damperStatus(ki, kd, os(ki, kd), kd > 0 ? os(ki, kd - 0.5) : os(ki, kd));
+  it('damper: too much D at 20/10/8 and 20/10/10 (5.35 %, 7.88 %), calm at 3–5, bouncy at 0', () => {
+    expect(os(10, 8)).toBeCloseTo(5.35, 1);
+    expect(os(10, 10)).toBeCloseTo(7.88, 1);
+    expect(damper(10, 8)).toBe('tooMuch');
+    expect(damper(10, 10)).toBe('tooMuch');
+    for (const kd of [3, 4, 5]) expect(damper(10, kd)).toBe('calm');
+    expect(damper(10, 0)).toBe('bouncy');
+    expect(damper(50, 0)).toBe('unstable');
+    expect(damper(50, 4)).toBe('bigPile');
   });
-
-  it('20 N is only about three times (2.9×) the loaded weight; the bare drone had about four (4.1×)', () => {
-    expect(20 / ((DRONE.m + MISSION.pkgMass) * DRONE.g)).toBeCloseTo(2.91, 2);
-    expect(20 / (DRONE.m * DRONE.g)).toBeCloseTo(4.08, 2);
-  });
-
-  it('a first-order lag is 63 % of the way after one time constant', () => {
-    expect(1 - Math.exp(-1)).toBeCloseTo(0.632, 3);
-  });
-
-  it('take-off: Kp 20 times the 2 m error asks for 40 N; the motors are told 20 N, for about 0.27 s', () => {
-    const sim = new DroneSim(missionConfig(REF));
-    expect(sim.request).toBeCloseTo(40, 6);
-    expect(sim.command).toBeCloseTo(20, 6);
-    let pinned = 0;
-    while (sim.t < 3) {
-      sim.step();
-      if (sim.command >= 20 - 1e-9) pinned += sim.dt;
-    }
-    expect(pinned).toBeCloseTo(0.268, 2);
-  });
-
-  it('the drop: at rest the pile alone holds the weight, so it moves by 0.2·g = 1.96 N; ∫e = 1.96/15 = 0.131 m·s (no gust, no noise)', () => {
-    const sim = new DroneSim({ ...missionConfig(REF), noiseStd: 0, wind: () => 0 });
-    let before = 0;
-    let area = 0;
-    while (sim.t < MISSION.duration - 1e-9) {
-      sim.step();
-      if (Math.abs(sim.t - MISSION.dropAt) < 5e-4) before = sim.integral;
-      if (sim.t > MISSION.dropAt) area += (sim.h - MISSION.setpoint) * sim.dt;
-    }
-    expect(15 * (before - sim.integral)).toBeCloseTo(1.962, 2);
-    expect(area).toBeCloseTo(0.1308, 2);
-    expect(0.1308 / 0.05).toBeCloseTo(2.6, 1);
-  });
-
-  it('P alone after the drop settles at a different droop: 0.2·g/Kp = 9.8 cm higher (predict option P)', () => {
-    const tr = runDrone({ ...missionConfig(pid(20, 0, 5, { dTau: 0.04 })), noiseStd: 0 }, MISSION.duration);
-    const i = tr.t.findIndex((t) => t >= 11.99);
-    expect(tr.h[tr.h.length - 1] - tr.h[i]).toBeCloseTo(0.0981, 3);
-  });
-});
-
-describe('side trip: a short lag is almost a delay (missionMargins)', () => {
-  it('reference tune: crossover about 10 rad/s (9.85), lag 26°, phase margin 59° → 33°', () => {
-    const real = missionMargins(REF);
-    expect(real.wc).toBeCloseTo(9.85, 1);
-    expect(real.lag).toBeCloseTo(26.2, 0);
-    expect(real.pm).toBeCloseTo(33.4, 0);
-    expect(Math.round(missionMargins(REF, 0).pm)).toBe(59);
-    // a 0.05 s delay at the same crossover would cost ωτ = 28°
-    expect(Math.round((real.wc * 0.05 * 180) / Math.PI)).toBe(28);
-    // the motor lag costs about 25° of margin
-    expect(missionMargins(REF, 0).pm - real.pm).toBeCloseTo(25.1, 0);
-  });
-
-  it('quiz q5: slower motors (0.1 s) squeeze the margin from about 33° to about 21°', () => {
-    expect(Math.round(missionMargins(REF, 0.1).pm)).toBe(21);
-    expect(Math.round(missionMargins(REF, 0.05).pm)).toBe(33);
-  });
-});
-
-describe('mission numbers (30 noise seeds where noise matters)', () => {
-  it('the reference tune (20, 15, 5, τf 0.04) arrives in 1.26 s, dips 6.8 cm in the gust, recovers in 1.46 s, 0.22 N of chatter', () => {
-    const r = ev(REF);
-    expect(r.rise).toBeCloseTo(1.26, 2);
-    expect(r.gust * 100).toBeCloseTo(6.8, 0);
-    expect(r.recover).toBeCloseTo(1.46, 2);
-    expect(r.calm).toBeCloseTo(0.217, 2);
-  });
-
-  it('"Stuck?" start (20, 10, 4) gets five stars at τf 0.04 (arrival fails); the reference gets six', () => {
-    const r = ev(pid(20, 10, 4, { dTau: 0.04 }));
-    expect(r.stars).toBe(5);
-    expect(r.pass.rise).toBe(false);
-    expect(ev(REF).stars).toBe(6);
-  });
-
-  it("June's tune: noise-free it arrives in 1.27 s with six stars; with the real sensor it fails, overshooting about 28 % (seed 7) and never settling on any seed", () => {
-    const calm = ev(JUNE, 7, { noiseStd: 0 });
-    expect(calm.stars).toBe(6);
-    expect(calm.rise).toBeCloseTo(1.27, 2);
-    const r = ev(JUNE);
-    expect(r.stars).toBe(2);
-    expect(r.overshoot).toBeCloseTo(27.9, 0);
-    expect(r.calm).toBeCloseTo(0.643, 2);
-    const s = starsOnSeeds(JUNE);
-    expect(s.passes.overshoot).toBe(0);
-    expect(s.passes.rise).toBe(0);
-    // "the motors buzz" is true on 28 of 30 seeds, and in the widget's own flight (seed 7)
-    expect(s.passes.calm).toBe(2);
-    expect(r.pass.calm).toBe(false);
-  });
-
-  it('the fix (30, 15, ≈7, τf ≈ 0.04) earns six stars on all 30 seeds, arriving in about 1.9 s; Kd 6 misses seed 5, Kd 8 misses the drop 7 times', () => {
-    const s = starsOnSeeds(FIX);
-    expect(s.gold).toBe(30);
-    expect(ev(FIX).rise).toBeCloseTo(1.87, 1);
-    expect(s.range.rise[0]).toBeGreaterThan(1.75);
-    // on other jitter it arrives between 1.8 and 2.2 s: "about" in the prose, the widget (seed 7) shows 1.87 s
-    expect(s.range.rise[1]).toBeLessThan(2.25);
-    const kd6 = starsOnSeeds(pid(30, 15, 6, { dTau: 0.04 }));
-    expect(kd6.misses).toEqual([{ seed: 5, failed: ['rise'] }]);
-    expect(starsOnSeeds(pid(30, 15, 8, { dTau: 0.04 })).gold).toBe(23);
-    // "June's dream of 1.3 s": her noise-free arrival
-    expect(Math.round(ev(JUNE, 7, { noiseStd: 0 }).rise * 10) / 10).toBe(1.3);
-  });
-
-  it('false-obvious: lengthening only the filter (Kd stays 10) fails the drop (2.76 s; noise-free 1.22 s)', () => {
-    const p = pid(30, 15, 10, { dTau: 0.04 });
-    expect(ev(p).pass.recover).toBe(false);
-    expect(ev(p).recover).toBeCloseTo(2.76, 1);
-    expect(ev(p, 7, { noiseStd: 0 }).recover).toBeCloseTo(1.22, 1);
-  });
-
-  it('side trip "why not just more D?": at τf 0.04 chatter grows 0.22 N (Kd 5) → 0.41 N (Kd 10); noise-free Kd 10 is near silent', () => {
-    const at = (kd: number) => spread(pid(20, 15, kd, { dTau: 0.04 })).thrust;
-    expect(at(5)).toBeCloseTo(0.218, 2);
-    expect(at(10)).toBeCloseTo(0.407, 2);
-    expect(spread(pid(20, 15, 10, { dTau: 0.04 }), { noiseStd: 0 }).thrust).toBeLessThan(0.04);
-    // holds on 30 seeds: more D, more buzz
-    const kd5 = starsOnSeeds(pid(20, 15, 5, { dTau: 0.04 }));
-    const kd10 = starsOnSeeds(pid(20, 15, 10, { dTau: 0.04 }));
-    kd5.results.forEach((r, i) => expect(kd10.results[i].calm).toBeGreaterThan(r.calm));
-  });
-
-  it('D turns σ into about Kd·σ/τf of command: 40 N for June, 3.5 N at Kd 7, τf 0.04 (drone parked, no limits; the 1 ms noise hold makes τf 0.005 about 15 % low)', () => {
-    expect((10 * 0.02) / 0.005).toBeCloseTo(40, 9);
-    expect((7 * 0.02) / 0.04).toBeCloseTo(3.5, 9);
-    const run = (kd: number, tf: number) => {
-      const sim = new DroneSim({ ...missionConfig(pid(0, 0, kd, { dTau: tf })), params: { ...DRONE, saturate: false, motorTau: MISSION.motorTau } });
-      const c: number[] = [];
-      while (sim.t < 3) {
-        sim.step();
-        if (sim.t >= 1) c.push(sim.command);
+  it('damper: no Kd setting gives advice that makes things worse', () => {
+    for (const ki of [10, 50]) {
+      for (let kd = 0; kd <= 10; kd += 0.5) {
+        const st = damper(ki, kd);
+        // "add more Kd" must help (or cure the instability); "try less Kd" must help
+        if (st === 'bouncy') expect(os(ki, kd + 0.5)).toBeLessThan(os(ki, kd));
+        if (st === 'unstable') expect(ki < kiLimit(20, kd + 0.5)).toBe(true);
+        if (st === 'tooMuch') expect(os(ki, kd - 0.5)).toBeLessThan(os(ki, kd));
+        // Mika's pile never gets below about a quarter, whatever D does
+        if (ki === 50 && st !== 'unstable') expect(os(ki, kd)).toBeGreaterThan(24);
       }
-      const m = c.reduce((a, b) => a + b, 0) / c.length;
-      return Math.sqrt(c.reduce((a, b) => a + (b - m) ** 2, 0) / c.length);
-    };
-    expect(run(7, 0.04) / 3.5).toBeGreaterThan(0.95);
-    expect(run(7, 0.04) / 3.5).toBeLessThan(1.05);
-    expect(run(10, 0.005) / 40).toBeGreaterThan(0.8);
-    expect(run(10, 0.005) / 40).toBeLessThan(0.9);
-  });
-
-  it('the gust under P (plus a little D): 1.5 N / Kp = 15, 7.5, 5 cm at Kp 10, 20, 30; pure P with motor lag does not show it', () => {
-    const dev = (p: PID, T = 25) => {
-      const tr = runDrone({ ...missionConfig(p), noiseStd: 0, extraMass: () => 0, wind: (t: number) => (t >= 10 ? -1.5 : 0) }, T);
-      const i = tr.t.findIndex((t) => t >= 9.99);
-      return tr.h[i] - tr.h[tr.h.length - 1];
-    };
-    for (const [kp, d] of [[10, 0.15], [20, 0.075], [30, 0.05]]) expect(dev(pid(kp, 0, 5, { dTau: 0.04 }))).toBeCloseTo(d, 3);
-    expect(Math.abs(dev(pid(20, 0, 0, { dTau: 0.04 }), 30) - 0.075)).toBeGreaterThan(0.03);
-  });
-});
-
-describe('the mission widget tells the truth', () => {
-  it('a failed arrival or drop is a verdict ("not settled by 6 s", "not back by 20 s"), not the 6.00 s / 8.00 s fallbacks', () => {
-    const june = ev(JUNE);
-    expect(june.rise).toBeCloseTo(6, 1);
-    expect(neverSettled(june)).toBe(true);
-    expect(june.recover).toBeCloseTo(8, 1);
-    expect(neverBack(june)).toBe(true);
-    // real measurements stay measurements, even late ones
-    const late = ev(pid(20, 10, 4, { dTau: 0.04 }));
-    expect(late.rise).toBeCloseTo(3.53, 2);
-    expect(neverSettled(late)).toBe(false);
-    expect(neverBack(ev(REF))).toBe(false);
-    expect(neverSettled(ev(REF))).toBe(false);
-  });
-
-  it('hints point at the failure to fix first, each backed by a real case', () => {
-    const hint = (p: PID) => hintFor(ev(p), p);
-    // the default tune (no Ki) hangs low: droop
-    expect(hint(pid(10, 0, 1, { dTau: 0.02 }))).toBe('droop');
-    // June: the noise, before anything else it spoils (Kd·σ/τf = 40 N)
-    expect(dSpike(JUNE)).toBeCloseTo(40, 9);
-    expect(hint(JUNE)).toBe('noise');
-    // lengthening only the filter: the drop fails
-    expect(hint(pid(30, 15, 10, { dTau: 0.04 }))).toBe('recover');
-    // (20, 10, 4) creeps up; a little more Ki lights the arrival star on every seed
-    expect(hint(pid(20, 10, 4, { dTau: 0.04 }))).toBe('rise');
-    expect(starsOnSeeds(pid(20, 12, 4, { dTau: 0.04 })).gold).toBe(30);
-    // too little damping overshoots; the motors can't even lift it at Kp 0
-    expect(hint(pid(20, 15, 1, { dTau: 0.04 }))).toBe('overshoot');
-    expect(hint(pid(0, 0, 0, { dTau: 0.02 }))).toBe('ground');
-    expect(hint(REF)).toBeNull();
-  });
-
-  it('every checklist window is inside the mission, and the calm window is 3–6 s', () => {
-    expect(WINDOWS.calm).toEqual([3, 6]);
-    for (const [a, b] of Object.values(WINDOWS)) {
-      expect(a).toBeGreaterThanOrEqual(0);
-      expect(b).toBeLessThanOrEqual(MISSION.duration);
-      expect(b).toBeGreaterThan(a);
     }
+  }, 20000);
+  it('noise: at the longest filter the jitter left is still mostly D (0.67 N vs 0.29 N with P only)', () => {
+    expect(jitterOf(noiseRun(4, 0.2))).toBeCloseTo(0.668, 2);
+    expect(jitterOf(noiseRun(0, 0.2))).toBeCloseTo(0.285, 2);
+    expect(15 * 0.02).toBeCloseTo(0.3, 6);
+    expect(noiseStatus(true, 4, jitterOf(noiseRun(4, 0.2)))).toBe('calm');
+    expect(noiseStatus(true, 4, jitterOf(noiseRun(4, 0.005)))).toBe('chatter');
+    expect(noiseStatus(true, 0, jitterOf(noiseRun(0, 0.005)))).toBe('noD');
   });
 });
 
-describe('page physics: the noise alone can lift a drone into the page (status hitNoise)', () => {
-  it('Kp 5, Ki 0, Kd 12, τf 0.005 climbs to about 6 m on the jitter (desk headroom 4.9 m); noise-free it never reaches 2 m', () => {
-    const p = pid(5, 0, 12, { dTau: 0.005 });
-    expect(Math.max(...runMission(p).h)).toBeCloseTo(5.97, 1);
-    expect(Math.max(...runDrone({ ...missionConfig(p), noiseStd: 0 }, MISSION.duration).h)).toBeLessThan(2);
-    const { sim } = flyMission(p, 4.9);
-    expect(sim.ceilingAt).not.toBeNull();
-    expect(noiseLifted(p)).toBe(true);
-    // the integral-driven page hits are not labelled as noise
-    expect(noiseLifted(pid(5, 20, 0, { dTau: 0.04 }))).toBe(false);
+describe('Chapter 11: the droop and the pile in numbers', () => {
+  it('stuck: mg = 4.905 N; at Kp = 20 the droop is 4.9/20 ≈ 24.5 cm', () => {
+    expect(MG).toBeCloseTo(4.905, 3);
+    expect(MG / 20).toBeCloseTo(0.245, 3);
+    expect(2 - integralRun(0).h.at(-1)!).toBeCloseTo(0.245, 2);
+  });
+  it('integral widget default Ki = 10: droop gone, pile 4.89 N, net red area 0.49 m·s', () => {
+    const tr = integralRun(10);
+    expect(integralStatus(10, tr)).toBe('gone');
+    expect(10 * tr.integral.at(-1)!).toBeCloseTo(4.89, 1);
+    expect(tr.integral.at(-1)!).toBeCloseTo(0.49, 2);
+  });
+  it("Mika's Ki = 50 yo-yo is about half a metre peak to peak", () => {
+    const tr = runDrone(takeoff(pid(20, 50, 0)), 30);
+    const hs = tr.h.filter((_, i) => tr.t[i] > 20);
+    expect(Math.max(...hs) - Math.min(...hs)).toBeCloseTo(0.52, 1);
   });
 });
 
-describe('playable sentences show the verified values at their starting numbers', () => {
-  const t = (k: string) => k;
-  const at = (id: string, over: Record<string, number> = {}) => {
-    const m = plays[id];
-    const v = { ...Object.fromEntries(Object.entries(m.inputs).map(([k, i]) => [k, i.value])), ...over };
-    return Object.fromEntries(Object.entries(m.outputs).map(([k, f]) => [k, f(v, t, t)]));
+describe("Chapter 11: June's too-much-D mistake", () => {
+  it('Ki = 10: Kd 4 → 10 takes the overshoot from 0 to about 8 % and the settling time from 0.83 s to about 5 s', () => {
+    const s4 = scoreTrace(damperRun(10, 4));
+    const s10 = scoreTrace(damperRun(10, 10));
+    expect(s4.overshoot).toBeLessThan(0.01);
+    expect(s10.overshoot).toBeCloseTo(7.88, 1);
+    expect(s4.settling).toBeCloseTo(0.83, 2);
+    expect(s4.settling).toBeLessThan(1);
+    expect(s10.settling).toBeCloseTo(5.03, 1);
+    expect(kdCritical(20)).toBeCloseTo(5.32, 2);
+    // the fast pole runs off to −20 while the slow pair stays near −1
+    expect(Math.min(...pidPoles(20, 10, 10).map((p) => p.re))).toBeCloseTo(-20.06, 1);
+  });
+  it("Mika's Ki = 50 overshoots by at least a quarter for every stable Kd (min 24.4 % at Kd 4)", () => {
+    const os = [0.5, 1, 2, 3, 4, 5, 6, 8, 10].map((kd) => scoreTrace(damperRun(50, kd)).overshoot);
+    expect(Math.min(...os)).toBeGreaterThan(24);
+    expect(Math.min(...os)).toBeLessThan(25);
+    expect(scoreTrace(damperRun(50, 4)).overshoot).toBeCloseTo(24.4, 0);
+  });
+});
+
+describe('Chapter 11: the poles section', () => {
+  /** unlimited motors, small step from hover: envelope ratio late/early (> 1 grows) */
+  const linGrowth = (kp: number, ki: number, kd: number) => {
+    const sim = new DroneSim(defaultDroneConfig({ params: DRONE, pid: pid(kp, ki, kd), setpoint: (tt) => (tt < 1 ? 1.9 : 2), h0: 1.9 }));
+    sim.x[2] = MG / ki;
+    const hs: number[] = [];
+    const ts: number[] = [];
+    sim.advance(40, () => {
+      hs.push(sim.h);
+      ts.push(sim.t);
+    }, 10);
+    const dev = (a: number, b: number) => Math.max(...hs.filter((_, i) => ts[i] >= a && ts[i] < b).map((h) => Math.abs(h - 2)));
+    return dev(30, 40) / dev(10, 20);
   };
-
-  it('limit: 6.87 N loaded, 2.9×, Kp 20 asks for 40 N and is clipped; Kp 10 asks for exactly 20 N', () => {
-    expect(at('limit')).toEqual({ w: '6.87', ratio: '2.9', ask: '40', clip: 'clipped' });
-    expect(at('limit', { kp: 10 }).clip).toBe('');
-  });
-
-  it('lag: about 9.8 rad/s, 26°, 33°; no lag keeps 59° (the sentence\'s "from 59°")', () => {
-    expect(at('lag')).toEqual({ wc: '9.8', lag: '26', pm: '33' });
-    expect(at('lag', { tm: 0 })).toEqual({ wc: '10.8', lag: '0', pm: '59' });
-    expect(at('lag', { tm: 0.1 }).pm).toBe('21');
-    expect(SIX_STAR).toEqual(REF);
-    expect(starsOnSeeds(SIX_STAR).gold).toBe(30);
-  });
-
-  it('drop: 1.96 N, 0.131 m·s, about 2.6 s', () => {
-    expect(at('drop')).toEqual({ dN: '1.96', area: '0.131', time: '2.6' });
-  });
-
-  it('spike: June 40 N, the fix 3.5 N', () => {
-    expect(at('spike')).toEqual({ spike: '40' });
-    expect(at('spike', { kd: 7, tf: 0.04 })).toEqual({ spike: '3.5' });
-    // "about": the tiniest filter the sentence allows is the one whose sim value is checked above
-    expect(plays.spike.inputs.tf.min).toBeGreaterThanOrEqual(0.005);
-  });
-
-  it('gust: 1.5 N against Kp 20 is 7.5 cm; the default push is the mission gust', () => {
-    expect(at('gust')).toEqual({ dev: '7.5' });
-    expect(plays.gust.inputs.F.value).toBe(1.5);
-  });
-
-  it('"about 7": Kd 6.5, 7 and 7.5 at τf 0.04 all hold on 30 seeds; τf 0.035 is already fragile at Kd 7', () => {
-    for (const kd of [6.5, 7, 7.5]) expect(starsOnSeeds(pid(30, 15, kd, { dTau: 0.04 })).gold).toBe(30);
-    expect(starsOnSeeds(pid(30, 15, 7, { dTau: 0.035 })).gold).toBeLessThan(30);
-  });
-
-  it('quiz q4: P passes the jitter straight through, Kp·σ = 0.4 N at Kp 20', () => {
-    expect(20 * MISSION.noiseStd).toBeCloseTo(0.4, 9);
-  });
-
-  it('quiz q5: about 10 rad/s is a swing every 0.6 s', () => {
-    expect((2 * Math.PI) / missionMargins(REF).wc).toBeCloseTo(0.64, 2);
-  });
-});
-
-describe('the six-star tune: 33° of margin, yet under 10 % overshoot', () => {
-  it('its wiggly pair is bouncy (ζ ≈ 0.33, about 33 % alone); the slow poles sit near −1.1 and −2.7', () => {
-    const ps = missionPoles(SIX_STAR);
-    const pair = ps.find((p) => p.im > 0.1)!;
-    const zeta = -pair.re / Math.hypot(pair.re, pair.im);
-    expect(zeta).toBeCloseTo(0.33, 2);
-    expect(100 * Math.exp((-Math.PI * zeta) / Math.sqrt(1 - zeta * zeta))).toBeCloseTo(33, 0);
-    const slow = ps.filter((p) => Math.abs(p.im) < 1e-6 && p.re > -5).map((p) => p.re).sort((a, b) => b - a);
-    expect(slow[0]).toBeCloseTo(-1.08, 2);
-    expect(slow[1]).toBeCloseTo(-2.74, 2);
-    expect(missionMargins(SIX_STAR).pm).toBeCloseTo(33.4, 1);
-  });
-
-  it('with unlimited motors its take-off overshoots only about 7 %', () => {
-    const tr = runDrone(defaultDroneConfig({ params: { ...DRONE, saturate: false, motorTau: MISSION.motorTau }, pid: SIX_STAR, setpoint: () => 2 }), 6, 10);
-    const peak = Math.max(...tr.h);
-    expect(((peak - 2) / 2) * 100).toBeCloseTo(6.9, 1);
-  });
-});
-
-describe("the drone's own Bode plot", () => {
-  it('without motor lag: gain 1 near 10.8 rad/s, 59° of margin, and the phase never reaches −180°', () => {
-    const m = missionMargins(SIX_STAR, 0);
-    expect(m.wc).toBeCloseTo(10.8, 1);
-    expect(m.pm).toBeCloseTo(58.5, 1);
-    expect(m.gm).toBe(Infinity);
-    const L = missionLoop(SIX_STAR, 0);
-    for (const q of sweep(L.num, L.den, 0, logspace(-2, 4, 400))) expect(q.phase).toBeGreaterThan(-180);
-  });
-
-  it('the 0.05 s motor lag: 9.8 rad/s, 26° held back, 33° left, and a cliff appears × 3.3 away at 20.7 rad/s', () => {
-    const m = missionMargins(SIX_STAR, MISSION.motorTau);
-    expect(m.wc).toBeCloseTo(9.85, 2);
-    expect(m.lag).toBeCloseTo(26.2, 1);
-    expect(m.pm).toBeCloseTo(33.4, 1);
-    expect(m.gm).toBeCloseTo(3.34, 2);
-    expect(m.w180).toBeCloseTo(20.7, 1);
-  });
-});
-
-describe('the state plane', () => {
-  it("A's eigenvalues are the poles of m s² + (c + Kd) s + Kp", () => {
-    for (const [kp, kd] of [[20, 0], [20, 12], [10, 3]]) {
-      const ev = eigenvalues(kp, kd).map((z) => [z.re, Math.abs(z.im)]).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
-      const po = roots([DRONE.m, DRONE.c + kd, kp]).map((z) => [z.re, Math.abs(z.im)]).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
-      ev.forEach((e, i) => {
-        expect(e[0]).toBeCloseTo(po[i][0], 9);
-        expect(e[1]).toBeCloseTo(po[i][1], 9);
-      });
+  it('the Routh edge matches the simulation 5 % either side, for five (Kp, Kd) pairs', () => {
+    for (const [kp, kd] of [[20, 0], [20, 0.5], [20, 4], [10, 1], [30, 2]]) {
+      const L = kiLimit(kp, kd);
+      expect(linGrowth(kp, 0.95 * L, kd)).toBeLessThan(0.5);
+      expect(linGrowth(kp, 1.05 * L, kd)).toBeGreaterThan(2);
     }
+  }, 30000);
+  it('on the edge s = iω: real part Ki − (c+Kd)ω² = 0 and sideways part ω(Kp − mω²) = 0', () => {
+    for (const [kp, kd] of [[20, 0], [10, 1], [30, 2]]) {
+      const w2 = kp / DRONE.m;
+      expect(kiLimit(kp, kd) - (DRONE.c + kd) * w2).toBeCloseTo(0, 9);
+      // the cubic has a pair exactly on the axis there
+      const ps = pidPoles(kp, kiLimit(kp, kd), kd);
+      expect(Math.max(...ps.map((p) => p.re))).toBeCloseTo(0, 6);
+      expect(Math.max(...ps.map((p) => p.im))).toBeCloseTo(Math.sqrt(w2), 6);
+    }
+    // s = 0 is a root only when Ki = 0: the cubic at s = 0 is just Ki
+    expect(pidPoles(20, 1e-3, 2).every((p) => p.re < 0)).toBe(true);
   });
-
-  it('Kp = 20 with no D spirals in from 1 m low; past Kd ≈ 5.3 the poles go real', () => {
-    const p = statePath(20, 0, 6);
-    let flips = 0;
-    for (let i = 1; i < p.v.length; i++) if (Math.sign(p.v[i]) !== Math.sign(p.v[i - 1]) && p.v[i] !== 0) flips++;
-    expect(flips).toBeGreaterThan(4);
-    expect(Math.abs(p.dh[p.dh.length - 1])).toBeLessThan(0.01);
-    const crit = 2 * Math.sqrt(DRONE.m * 20) - DRONE.c;
-    expect(crit).toBeCloseTo(5.32, 2);
-    expect(Math.abs(eigenvalues(20, 5.2)[0].im)).toBeGreaterThan(0);
-    expect(Math.abs(eigenvalues(20, 5.4)[0].im)).toBeLessThan(1e-9);
+  it('defaults 20/10/2: slowest pole −0.54, zero −0.5 nearly cancels; step settles in 2.71 s (not 7.4 s), overshoots 28.7 %', () => {
+    const ps = pidPoles(20, 10, 2);
+    const slow = slowestPole(ps);
+    expect(slow.re).toBeCloseTo(-0.54, 2);
+    expect(piZero(20, 10)).toBeCloseTo(-0.5, 9);
+    expect(nearlyCancels(slow, piZero(20, 10))).toBe(true);
+    expect(4 / 0.54).toBeCloseTo(7.4, 1);
+    const m = stepOf(polesStep(20, 10, 2, 20));
+    expect(m.settling).toBeCloseTo(2.71, 1);
+    expect(m.settling).toBeLessThan(3);
+    expect(m.overshoot).toBeCloseTo(28.7, 0);
+    // the fast pair alone (ζ = 0.47) would overshoot about 19 %
+    expect(zetaPD(20, 2)).toBeCloseTo(0.47, 2);
+    expect(overshootOf(zetaPD(20, 2))).toBeCloseTo(18.5, 0);
+    // what the widget shows (15 s run) agrees
+    expect(stepOf(polesStep(20, 10, 2, 15)).overshoot).toBeCloseTo(28.7, 0);
   });
-
-  it('with real poles the path slides in along the slower mode line (v ≈ λ_slow Δh)', () => {
-    const p = statePath(20, 12, 6);
-    const slow = Math.max(...eigenvalues(20, 12).map((z) => z.re));
-    const i = p.t.findIndex((x) => x > 3);
-    expect(p.v[i] / p.dh[i]).toBeCloseTo(slow, 2);
+  it('20/10/4: ζ of the pair is 0.79, yet the step still overshoots 13.1 %', () => {
+    expect(stepOf(polesStep(20, 10, 4, 20)).overshoot).toBeCloseTo(13.1, 0);
   });
+  it('no zero without I', () => {
+    expect(piZero(20, 0)).toBeNull();
+    expect(nearlyCancels(slowestPole(pidPoles(20, 0, 2)), piZero(20, 0))).toBe(false);
+  });
+});
 
-  it('the propeller tangent: 50 rad/s more spin gives 0.73 N, the tangent 0.70 N, 3.4 % too little', () => {
-    const t = (k: string, v?: Record<string, string | number>) => (k === 'pct' ? `${v?.v}%` : k);
-    const out = (name: string, dw: number) => plays.linear.outputs[name]({ dw }, t, t);
-    expect(out('exact', 50)).toBe('0.73');
-    expect(out('lin', 50)).toBe('0.70');
-    expect(out('err', 50)).toBe('3.4%');
-    expect(extraThrust(0)).toBe(0);
-    expect(PROP_K * HOVER_SPIN ** 2).toBeCloseTo(DRONE.m * DRONE.g, 9);
+describe('Chapter 11: the playground', () => {
+  const flight = (kp: number, ki: number, kd: number, aw = true) => runDrone(takeoff(pid(kp, ki, kd, { antiWindup: aw })), 15);
+  it('the hint path Kp 20, Kd 4: Ki 0 → 2 stars, 5 → 3, 10 → 4, 15 → 4, 20 → 2; Kd 4 is ζ ≈ 0.8', () => {
+    const n = (ki: number) => Object.values(stars(scoreTrace(flight(20, ki, 4)))).filter(Boolean).length;
+    expect([0, 5, 10, 15, 20].map(n)).toEqual([2, 3, 4, 4, 2]);
+    expect(zetaPD(20, 4)).toBeCloseTo(0.8, 1);
+    expect(zetaPD(20, 4)).toBeGreaterThan(0.7);
+    expect(zetaPD(20, 4)).toBeLessThan(1);
+  });
+  it('windup: 20/20/4 overshoots about 7 % with anti-windup and 17 % without', () => {
+    expect(scoreTrace(flight(20, 20, 4)).overshoot).toBeCloseTo(6.73, 1);
+    expect(scoreTrace(flight(20, 20, 4, false)).overshoot).toBeCloseTo(17.13, 1);
+  });
+  it("June's 30/60/2 without anti-windup peaks at about 4 m (2.8 m with it) and reaches the page at 1280 px", () => {
+    expect(Math.max(...flight(30, 60, 2).h)).toBeCloseTo(2.77, 2);
+    expect(Math.max(...flight(30, 60, 2, false).h)).toBeCloseTo(4.05, 2);
+    const bump = runUnderCeiling(takeoff(pid(30, 60, 2, { antiWindup: false })), 15, 3.9);
+    expect(bump.hitAt).not.toBeNull();
+    // the height plot grows to 4.5 m so the peak stays on it
+    expect(heightTop(bump.h.slice(0, 601))).toBe(4.5);
+    // no page above (or a taller one, as at 375 px): the 4.05 m peak still fits
+    expect(heightTop(flight(30, 60, 2, false).h.slice(0, 601))).toBe(4.5);
+    expect(heightTop(flight(20, 10, 4).h.slice(0, 601))).toBe(3);
+  });
+  it('every take-off with Kp ≥ 10 peaks at exactly 20 N (why there is no peak-thrust star)', () => {
+    for (const kp of [10, 20, 40]) expect(scoreTrace(flight(kp, 10, 4)).peakThrust).toBeCloseTo(20, 6);
+  });
+  it('P only: settles 24.5 cm low, so its settling time reads "never (droops)"', () => {
+    const s = scoreTrace(flight(20, 0, 0));
+    expect(Number.isFinite(s.settling)).toBe(false);
+    expect(s.sse).toBeGreaterThan(0.04);
+    expect(s.saturated).toBeCloseTo(1.22, 2);
+    expect(scoreTrace(flight(20, 10, 4)).saturated).toBeCloseTo(0.14, 2);
+  });
+  it('page physics rule 7: no Ki = 0 flight reaches the page (max 3.41 m < 3.9 m)', () => {
+    let mx = 0;
+    for (let kp = 0; kp <= 40; kp += 1) for (let kd = 0; kd <= 10; kd += 0.5) mx = Math.max(mx, ...runDrone(takeoff(pid(kp, 0, kd)), 6).h);
+    expect(mx).toBeCloseTo(3.41, 2);
+  }, 60000);
+});
+
+describe('Chapter 11: the noise widget', () => {
+  it('more D, more noise: jitter at τf = 0.02 is 0.29 / 1.20 / 2.10 / 3.51 / 5.28 N for Kd 0 / 1 / 2 / 4 / 8', () => {
+    const want: [number, number][] = [[0, 0.285], [1, 1.202], [2, 2.101], [4, 3.513], [8, 5.277]];
+    for (const [kd, v] of want) expect(jitterOf(noiseRun(kd, 0.02))).toBeCloseTo(v, 2);
+    // Kd = 0: about 0.3 N, whatever the filter (P alone)
+    expect(jitterOf(noiseRun(0, 0.005))).toBeCloseTo(0.3, 1);
+  }, 20000);
+  it('default τf = 0.005: ±6.3 N, clipped at 0 N 55 % of the time and at 20 N 5 %; the average height drifts to about 2.20 m', () => {
+    const tr = noiseRun(4, 0.005);
+    const xs = tr.thrust.slice(50);
+    expect(jitterOf(tr)).toBeCloseTo(6.29, 1);
+    expect(xs.filter((x) => x <= 1e-9).length / xs.length).toBeCloseTo(0.55, 1);
+    expect(xs.filter((x) => x >= 20 - 1e-9).length / xs.length).toBeCloseTo(0.05, 1);
+    expect(meanHeight(tr)).toBeCloseTo(2.2, 1);
+    expect(meanHeight(noiseRun(4, 0.01))).toBeCloseTo(2.05, 1);
+    expect(meanHeight(noiseRun(4, 0.02))).toBeCloseTo(2.01, 1);
+  });
+  it('the calm threshold (1.5 N) is crossed between τf = 0.05 (1.79 N) and 0.1 (1.05 N)', () => {
+    expect(jitterOf(noiseRun(4, 0.05))).toBeCloseTo(1.79, 1);
+    expect(jitterOf(noiseRun(4, 0.1))).toBeCloseTo(1.05, 1);
+  });
+});
+
+describe('Chapter 11: recap and quiz numbers', () => {
+  const os = (ki: number, kd: number) => scoreTrace(runDrone(takeoff(pid(20, ki, kd)), 15)).overshoot;
+  it('q5: Kd 4 → 10 raises the overshoot 0 → 7.88 %; Kd 0 → 4 lowers it 53.7 → 0 %; Ki 10 → 5 (Kd 4) stays at 0 %', () => {
+    expect(os(10, 4)).toBeLessThan(0.01);
+    expect(os(10, 10)).toBeCloseTo(7.88, 1);
+    expect(os(10, 0)).toBeCloseTo(53.7, 0);
+    expect(os(5, 4)).toBeLessThan(0.01);
+  });
+});
+
+describe('Chapter 11: a crashed drone stays down (playground)', () => {
+  const run = (ceiling: number | null) => stayDown(runUnderCeiling(takeoff(pid(30, 60, 2, { antiWindup: false })), 15, ceiling));
+  it("June's windup flight with no page above crashes on the way down, then stays on the ground", () => {
+    const tr = run(null);
+    expect(tr.crashAt).not.toBeNull();
+    expect(tr.crashAt!).toBeGreaterThan(1.5);
+    expect(tr.crashAt!).toBeLessThan(3);
+    const after = tr.h.filter((_, i) => tr.t[i] >= tr.crashAt!);
+    expect(Math.max(...after)).toBe(0);
+    expect(Math.max(...tr.thrust.filter((_, i) => tr.t[i] >= tr.crashAt!))).toBe(0);
+    // it never settles, so the status uses the "never settles" verdict, and it gets no settling star
+    expect(Number.isFinite(scoreTrace(tr).settling)).toBe(false);
+  });
+  it('"motors pinned" stops counting at the crash: the motors are off on the ground, not pinned', () => {
+    const tr = run(null);
+    const before = { ...tr, t: tr.t.filter((t) => t < tr.crashAt! - 1e-9), crashAt: null };
+    before.thrust = tr.thrust.slice(0, before.t.length);
+    expect(scoreTrace(tr).saturated).toBeCloseTo(scoreTrace(before).saturated, 6);
+    expect(scoreTrace(tr).saturated).toBeLessThan(tr.crashAt!);
+  });
+  it('with the page at 3.9 m the bump caps the peak and it does not crash', () => {
+    const tr = run(3.9);
+    expect(tr.hitAt).not.toBeNull();
+    expect(tr.crashAt).toBeNull();
+    expect(stayDown(tr)).toBe(tr);
+  });
+  it('the tuned drones never crash', () => {
+    for (const [kp, ki, kd] of [[20, 10, 4], [20, 0, 0], [20, 20, 4]]) expect(runUnderCeiling(takeoff(pid(kp, ki, kd)), 15, null).crashAt).toBeNull();
+  });
+});
+
+describe("Mika's Ki = 50 yo-yo is held by the motor floor", () => {
+  it('swings about half a metre and the thrust bottoms out at 0 N on the swings', () => {
+    const tr = integralRun(50);
+    const late = tr.t.map((_, i) => i).filter((i) => tr.t[i] > 8);
+    const hs = late.map((i) => tr.h[i]);
+    expect(Math.max(...hs) - Math.min(...hs)).toBeGreaterThan(0.4);
+    expect(Math.max(...hs) - Math.min(...hs)).toBeLessThan(0.6);
+    expect(Math.min(...late.map((i) => tr.thrust[i]))).toBe(0);
   });
 });

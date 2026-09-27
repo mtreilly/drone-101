@@ -120,95 +120,97 @@ export const CONCEPTS: Record<string, Concept> = {
     // e^{iθ} is built from tiny sideways steps, the Chapter 4 way, before Euler's formula
     defines: /\(1 ?\+ ?\\frac\{i/,
   },
-  spiral: { builtIn: at(5, 'map'), prereqs: ['spin'], node: 'spiral' },
-  smap: { builtIn: at(5, 'map'), prereqs: ['spiral'], node: 'smap' },
   // Chapter 6
-  second: { builtIn: at(6, 'spring'), prereqs: ['acceleration', 'guess'], node: 'second' },
+  spiral: { builtIn: at(6, 'map'), prereqs: ['spin'], node: 'spiral' },
+  smap: { builtIn: at(6, 'map'), prereqs: ['spiral'], node: 'smap' },
+  // Chapter 7
+  second: { builtIn: at(7, 'spring'), prereqs: ['acceleration', 'guess'], node: 'second' },
   wnzeta: {
-    builtIn: at(6, 'knobs'),
+    builtIn: at(7, 'knobs'),
     prereqs: ['second', 'smap'],
     node: 'wnzeta',
     uses: [/\\zeta/],
   },
-  critical: { builtIn: at(6, 'knobs'), prereqs: ['wnzeta'], node: 'critical' },
-  mode: { builtIn: at(6, 'knobs'), prereqs: ['spiral'], node: 'mode' },
-  sum: { builtIn: at(6, 'knobs'), prereqs: ['mode'], node: 'sum' },
+  critical: { builtIn: at(7, 'knobs'), prereqs: ['wnzeta'], node: 'critical' },
+  mode: { builtIn: at(7, 'knobs'), prereqs: ['spiral'], node: 'mode' },
+  sum: { builtIn: at(7, 'knobs'), prereqs: ['mode'], node: 'sum' },
   arrows: {
-    builtIn: at(6, 'arrows'),
+    builtIn: at(7, 'arrows'),
     prereqs: ['complex', 'trig'],
     uses: [/arctan/, /\\angle/, /\|G/, /conjugate/i],
     defines: /arctan/,
   },
-  // Chapter 7
+  // Chapter 8
   laplace: {
-    builtIn: at(7, 'probe'),
+    builtIn: at(8, 'probe'),
     prereqs: ['integral', 'spiral'],
     node: 'laplace',
     uses: [/e\^\{-st\}/],
   },
-  splane: { builtIn: at(7, 'explode'), prereqs: ['laplace', 'smap'], node: 'splane' },
-  dtos: { builtIn: at(7, 'rule'), prereqs: ['laplace', 'primeNotation'], node: 'dtos' },
-  table: { builtIn: at(7, 'table'), prereqs: ['dtos', 'arrows'], node: 'table' },
+  splane: { builtIn: at(8, 'explode'), prereqs: ['laplace', 'smap'], node: 'splane' },
+  // Chapter 9
+  dtos: { builtIn: at(9, 'rule'), prereqs: ['laplace', 'primeNotation'], node: 'dtos' },
+  table: { builtIn: at(9, 'table'), prereqs: ['dtos', 'arrows'], node: 'table' },
   partialFractions: {
-    builtIn: at(7, 'pieces'),
+    builtIn: at(9, 'pieces'),
     prereqs: ['table'],
     uses: [/partial fraction/i, /cover-up/i],
     defines: /one unknown/i,
   },
-  // Chapter 8
-  tf: { builtIn: at(8, 'recipe'), prereqs: ['table'], node: 'tf' },
-  poles: { builtIn: at(8, 'poles'), prereqs: ['tf', 'partialFractions', 'mode'], node: 'poles' },
-  stability: { builtIn: at(8, 'poles'), prereqs: ['poles'], node: 'stability' },
-  zeros: { builtIn: at(8, 'zeros'), prereqs: ['poles'], node: 'zeros' },
-  limits: { builtIn: at(8, 'limits'), prereqs: ['poles'], node: 'limits' },
+  // Chapter 10
+  tf: { builtIn: at(10, 'recipe'), prereqs: ['table'], node: 'tf' },
+  poles: { builtIn: at(10, 'poles'), prereqs: ['tf', 'partialFractions', 'mode'], node: 'poles' },
+  stability: { builtIn: at(10, 'poles'), prereqs: ['poles'], node: 'stability' },
+  zeros: { builtIn: at(10, 'zeros'), prereqs: ['poles'], node: 'zeros' },
+  limits: { builtIn: at(10, 'limits'), prereqs: ['poles'], node: 'limits' },
   closedLoop: {
-    builtIn: at(8, 'loop'),
+    builtIn: at(10, 'loop'),
     prereqs: ['tf', 'blockdiagram'],
     node: 'closedloop',
     uses: [/1 ?\+ ?C\(s\)/, /1 ?\+ ?C\\,P/],
     defines: /\\frac\{C\\,P\}\{1 \+ C\\,P\}/,
   },
-  // Chapter 9
+  // Chapter 11
   integralaction: {
-    builtIn: at(9, 'integral'),
+    builtIn: at(11, 'integral'),
     prereqs: ['integral', 'sserror'],
     node: 'integralaction',
   },
   derivativeaction: {
-    builtIn: at(9, 'derivative'),
+    builtIn: at(11, 'derivative'),
     prereqs: ['derivative', 'wnzeta'],
     node: 'derivativeaction',
   },
   pid: {
-    builtIn: at(9, 'poles'),
+    builtIn: at(11, 'poles'),
     prereqs: ['integralaction', 'derivativeaction', 'closedLoop'],
     node: 'pid',
   },
-  noise: { builtIn: at(9, 'warnings'), prereqs: ['derivativeaction'], node: 'noise' },
-  // Chapter 10
-  phaselag: { builtIn: at(10, 'lag'), prereqs: ['delay', 'spin'], node: 'phaselag' },
+  noise: { builtIn: at(11, 'warnings'), prereqs: ['derivativeaction'], node: 'noise' },
+  // Chapter 12
+  phaselag: { builtIn: at(12, 'lag'), prereqs: ['delay', 'spin'], node: 'phaselag' },
   delayTf: {
-    builtIn: at(10, 'lag'),
+    builtIn: at(12, 'lag'),
     prereqs: ['laplace', 'phaselag'],
     uses: [/e\^\{-Ls\}/, /e\^\{-sL\}/],
     // derived with the probe, not argued from one line of the map
     defines: /e\^\{-sL\}\s*\\?,?\s*F\(s\)/,
     once: true,
   },
-  bode: { builtIn: at(10, 'bode'), prereqs: ['arrows', 'phaselag'], node: 'bode' },
+  bode: { builtIn: at(12, 'bode'), prereqs: ['arrows', 'phaselag'], node: 'bode' },
   logScale: {
-    builtIn: at(10, 'bode'),
+    builtIn: at(12, 'bode'),
     prereqs: ['power'],
     uses: [/logarithmic/i, /log scale/i, /\bdB\b/],
     defines: /multipl\w* [^.]*becomes? add/i,
     once: true,
   },
-  margins: { builtIn: at(10, 'margins'), prereqs: ['bode', 'closedLoop'], node: 'margins' },
-  robust: { builtIn: at(10, 'design'), prereqs: ['margins'], node: 'robust' },
-  // Chapter 11
-  motorlag: { builtIn: at(11, 'briefing'), prereqs: ['firstorder', 'margins'], node: 'motorlag' },
+  margins: { builtIn: at(12, 'margins'), prereqs: ['bode', 'closedLoop'], node: 'margins' },
+  robust: { builtIn: at(12, 'design'), prereqs: ['margins'], node: 'robust' },
+  // Chapter 13
+  motorlag: { builtIn: at(13, 'briefing'), prereqs: ['firstorder', 'margins'], node: 'motorlag' },
   stateSpace: {
-    builtIn: at(11, 'state'),
+    builtIn: at(13, 'state'),
     prereqs: ['acceleration', 'poles', 'wnzeta'],
     node: 'statespace',
     uses: [/state[- ]space/i, /state feedback/i],
@@ -216,14 +218,14 @@ export const CONCEPTS: Record<string, Concept> = {
     once: true,
   },
   linearising: {
-    builtIn: at(11, 'state'),
+    builtIn: at(13, 'state'),
     prereqs: ['derivative'],
     uses: [/lineari[sz]/i],
     defines: /tangent/i,
     once: true,
   },
-  tradeoff: { builtIn: at(11, 'reflect'), prereqs: ['pid', 'noise'], node: 'tradeoff' },
-  you: { builtIn: at(11, 'reflect'), prereqs: ['tradeoff'], node: 'you' },
+  tradeoff: { builtIn: at(13, 'reflect'), prereqs: ['pid', 'noise'], node: 'tradeoff' },
+  you: { builtIn: at(13, 'reflect'), prereqs: ['tradeoff'], node: 'you' },
 };
 
 /**

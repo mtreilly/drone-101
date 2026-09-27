@@ -20,7 +20,7 @@ describe('onSettle: one result per deliberate slider choice', () => {
   beforeEach(() => vi.useFakeTimers());
   afterEach(() => vi.useRealTimers());
 
-  it('turns 60 arrow presses into one call, after the pause (Chapter 7 probe: 60 presses = 60 dots)', () => {
+  it('turns 60 arrow presses into one call, after the pause (Chapter 8 probe: 60 presses = 60 dots)', () => {
     const input = fakeInput(0);
     const got: number[] = [];
     onSettle(input as unknown as HTMLInputElement, (v) => got.push(v));

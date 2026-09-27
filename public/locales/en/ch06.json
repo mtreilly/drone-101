@@ -1,67 +1,43 @@
 {
   "kicker": "Chapter 6",
-  "title": "The Drone's Real Personality",
-  "question": "Why does the drone bounce like a spring?",
+  "title": "The Map of s",
+  "question": "How does a spinning number make a real wiggle, and what does every s look like?",
   "sections": [
     {
-      "id": "spring",
-      "title": "The controller is a spring",
+      "id": "twins",
+      "title": "Back to the spring (and a new mistake)",
       "blocks": [
         {
           "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "June asked where our drone lives on the map. Clue: remember the bouncy drone from Chapter 2? The more we cranked $\\eff{K_p}$, the more it boinged. It looked exactly like a weight on a spring."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "\"Looked like\" isn't proof. Let's put them side by side and write down both equations."
+          "who": "june",
+          "mood": "excited",
+          "text": "Last time we built a number that spins. Let's hand it to the spring and see if it behaves."
         },
         {
           "t": "p",
-          "text": "On the left: a mass of 0.5 kg hanging on a spring with a damper (a little oil-filled piston that resists motion). On the right: our drone, same mass, same drag, under proportional control."
-        },
-        {
-          "t": "p",
-          "text": "First, let's write down every force on the mass, one at a time. Measure its position $x$ from the resting point, with up as positive."
-        },
-        {
-          "t": "list",
-          "items": [
-            "**The spring** pulls back towards rest, harder the further it's stretched: $-\\eff{k}\\,x$. Stretch it twice as far and it pulls twice as hard.",
-            "**The damper** pushes against the *motion*, not the position: $-c\\,\\dot{x}$. Standing still, it does nothing. Moving fast, it pushes back hard. ($\\dot{x}$ is Chapter 3's speed.)",
-            "**Gravity** only moves the resting point down a little. Measuring from rest takes care of it."
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Force = mass × acceleration, and acceleration is the slope of the slope (Chapter 3). Add the forces up and move everything to one side:"
-        },
-        {
-          "t": "math",
-          "tex": "m\\,\\ddot{x} = -\\eff{k}\\,x - c\\,\\dot{x} \\quad\\Longrightarrow\\quad m\\,\\ddot{x} + c\\,\\dot{x} + \\eff{k}\\,x = 0"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "So the damper is basically air that hates speed?"
+          "text": "The spring needed $a^2 = -k/m = -4$. Try $a = 2i$: $(2i)^2 = 4\\,i^2 = -4$. ✓ And $a = -2i$ works too."
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "happy",
-          "text": "Pretty much. And for our drone, the damper *is* the air."
+          "text": "Fine, I was wrong. The guess-an-exponential trick survives. The spring is $e^{2it}$, a spinner going round twice every… 2π seconds."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "So the spring's position is $e^{2it}$? Right now it's at… $0.4 + 0.9i$ metres?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "A spring can't be 0.9 metres *sideways*. It only moves up and down."
         },
         {
           "t": "p",
-          "text": "In the widget, the {eff|orange arrow} on the mass is the spring's pull and the grey one is the damper's push. Watch how the damper's arrow vanishes whenever the mass stops for an instant at the top or bottom of a swing."
-        },
-        {
-          "t": "note",
-          "text": "To keep gravity from distracting us, we give the drone its hover thrust (4.9 N) for free here, so it doesn't droop. We'll earn that honestly in Chapter 9."
+          "text": "Mika forgot the other answer. We found **two** solutions, $e^{2it}$ and $e^{-2it}$: a spinner and its **mirror twin** going the other way round. Add them up:"
         },
         {
           "t": "widget",
@@ -69,562 +45,189 @@
         },
         {
           "t": "say",
-          "who": "june",
+          "who": "mika",
           "mood": "surprised",
-          "text": "The curves are **on top of each other**. Not similar. *Identical.*"
+          "text": "The sideways parts cancel perfectly! The sum just slides along the real line, back and forth."
+        },
+        {
+          "t": "math",
+          "tex": "x(t) = \\tfrac12\\left(e^{i\\omega t} + e^{-i\\omega t}\\right) = \\cos(\\omega t),\\qquad \\omega = \\sqrt{k/m}"
+        },
+        {
+          "t": "note",
+          "text": "The ½ is there because the twins each bring half: the widget adds two full-size spinners, so its sum swings to 2. And this pair starts released from 1 m, at rest. Start it moving and the two twins just begin at opposite tilts; their sum still stays on the real line."
         },
         {
           "t": "p",
-          "text": "Look at the two equations. The spring pushes back with force $\\eff{k}\\,x$: the further it's stretched, the harder it pulls. Our controller pushes with $\\eff{K_p}(\\sp{2} - \\out{h})$: the further from the target, the harder it pushes. **Same rule.** The controller *is* a spring: an invisible one, pulling the drone towards 2 m."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "So a P controller is a virtual spring, and the air drag $c$ is a virtual damper. Everything we learn about springs, we get for free."
-        },
-        {
-          "t": "callout",
-          "title": "Units check",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "A spring's stiffness $\\eff{k}$ is measured in **newtons per metre**: newtons of pull for every metre of stretch. Our gain $\\eff{K_p}$ turns metres of error into newtons of thrust, so it's newtons per metre too. The controller isn't just *like* a spring. By the units, it *is* one."
-            },
-            {
-              "t": "play",
-              "id": "units",
-              "text": "At $\\eff{K_p}$ = {scrub|kp|eff} N/m, a drone {scrub|e} m too low gets {calc|f|eff} N of extra thrust."
-            }
-          ]
-        },
-        {
-          "t": "callout",
-          "title": "Real dampers",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "A car's shock absorbers are dampers: oil squeezed through small holes, so they fight fast motion and barely notice slow motion. So are the soft-close hinges on a kitchen cupboard and the closer at the top of a heavy door. Remove the dampers from a car and every bump sets it bouncing. Make them far too stiff and every bump comes straight through to you."
-            }
-          ]
+          "text": "Why is the twin always there? The spring's rule has only real numbers in it ($m$ and $k$, no $i$). Flip a solution top to bottom, turning every $i$ into $-i$, and the rule can't tell the difference: the mirror image is a solution too. So for anything real the spinners come in **mirror pairs**, and together their sideways parts cancel, leaving a real wiggle we can measure."
         }
       ]
     },
     {
-      "id": "knobs",
-      "title": "Two personality knobs",
+      "id": "map",
+      "title": "The map of s",
       "blocks": [
         {
           "t": "p",
-          "text": "Every mass-spring-damper, and so every P-controlled drone, is described by just **two numbers**. Let's earn them one at a time."
-        },
-        {
-          "t": "h3",
-          "text": "How fast: the natural frequency"
-        },
-        {
-          "t": "p",
-          "text": "Take the damper away and we're back in Chapter 5: the spring swings as $\\cos(\\omega t)$ with $\\omega = \\sqrt{k/m}$. We call that speed the **natural frequency** $\\omega_n$: how fast the system *wants* to swing when nothing slows it down."
+          "text": "Chapter 4 gave us exponentials that **grow or shrink**. Now we have spinners that **wiggle**. Put them together: $e^{st}$ with $s = \\sigma + i\\omega$."
         },
         {
           "t": "math",
-          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{k}}{m}} \\qquad\\qquad \\text{one full swing every } \\frac{2\\pi}{\\omega_n} \\text{ s}"
-        },
-        {
-          "t": "play",
-          "id": "wn",
-          "text": "With k = {scrub|k|eff} N/m and m = 0.5 kg, $\\omega_n$ ≈ {calc|wn} rad/s: one full swing every {calc|period} s."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "Stiffer spring, faster swing. So I just crank $\\eff{k}$ and everything gets better!"
+          "tex": "e^{st} = e^{(\\sigma + i\\omega)t} = \\underbrace{e^{\\sigma t}}_{\\text{grow/shrink}}\\cdot\\underbrace{e^{i\\omega t}}_{\\text{spin}}"
         },
         {
           "t": "p",
-          "text": "A stiffer spring pulls harder, so it swings faster. A heavier mass is harder to shove around, so it swings slower. (Radians per second is Chapter 5's spinning speed: one full turn is 2π radians, a rim 2π radii long.)"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "worried",
-          "text": "Careful. In Chapter 2, cranking $\\eff{K_p}$ made the drone faster *and* bouncier. Let's hear what the damper has to say first."
-        },
-        {
-          "t": "h3",
-          "text": "How bouncy: the damping ratio"
-        },
-        {
-          "t": "p",
-          "text": "Now put the damper back. How much damping is \"a lot\"? That depends on the spring: a damper that tames a soft spring barely slows a stiff one. So we compare against one special amount, the **critical damping** $c_{\\text{crit}}$: the smallest damping that stops the overshoot completely."
-        },
-        {
-          "t": "math",
-          "tex": "c_{\\text{crit}} = 2\\sqrt{m\\,\\eff{k}} \\qquad\\qquad \\zeta = \\frac{c}{c_{\\text{crit}}} = \\frac{c}{2\\sqrt{m\\,\\eff{k}}}"
-        },
-        {
-          "t": "p",
-          "text": "The **damping ratio** ζ (the Greek letter zeta) is our damping as a fraction of that. It's a pure number, with no units. ζ = 0 swings forever, ζ = 1 is exactly critical, and ζ = 0.5 has half the damping it would take to stop the overshoot."
-        },
-        {
-          "t": "play",
-          "id": "zeta",
-          "text": "With c = {scrub|c} N·s/m on a k = 20 N/m spring, $c_{\\text{crit}}$ = {calc|ccrit} N·s/m, so ζ = {calc|zeta}: {calc|regime}."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "surprised",
-          "text": "Wait. 0.16? That's exactly the drone's ζ from the first widget!"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "Same mass, same drag, same stiffness, so the same ζ. The spring and the drone really are twins."
-        },
-        {
-          "t": "h3",
-          "text": "The two dots on the map"
-        },
-        {
-          "t": "p",
-          "text": "Now back to the map of $s$. Guessing $x = e^{st}$, as in Chapters 4 and 5, turns the equation into $m s^2 + c s + k = 0$. Divide by $m$, then write the two coefficients with our knobs:"
-        },
-        {
-          "t": "math",
-          "tex": "s^2 + \\underbrace{\\frac{c}{m}}_{2\\zeta\\omega_n}\\, s + \\underbrace{\\frac{\\eff{k}}{m}}_{\\omega_n^2} = 0"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Hold on. Where did that $2\\zeta\\omega_n$ come from? It looks made up."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "Multiply it out: $2\\zeta\\omega_n = 2 \\cdot \\frac{c}{2\\sqrt{mk}} \\cdot \\sqrt{\\frac{k}{m}} = \\frac{c}{m}$. It's the same number, just renamed, so our two knobs show up in the equation."
-        },
-        {
-          "t": "p",
-          "text": "Solve it with the quadratic formula and out come the two values of $s$:"
-        },
-        {
-          "t": "math",
-          "tex": "\\begin{aligned} & s^2 + 2\\zeta\\omega_n\\, s + \\omega_n^2 = 0 \\\\ \\Longrightarrow\\quad & s = -\\zeta\\omega_n \\pm \\omega_n\\sqrt{\\zeta^2 - 1} \\end{aligned}"
-        },
-        {
-          "t": "callout",
-          "title": "Where the ± comes from",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Any equation $s^2 + b\\,s + q = 0$ can be solved by completing the square: $(s + b/2)^2 = b^2/4 - q$. A square root has two answers, one with + and one with −, so there are always **two** values of $s$:"
-            },
-            {
-              "t": "math",
-              "tex": "s = -\\frac{b}{2} \\pm \\sqrt{\\frac{b^2}{4} - q}"
-            },
-            {
-              "t": "p",
-              "text": "With $b = 2\\zeta\\omega_n$ and $q = \\omega_n^2$, the part under the root is $\\omega_n^2(\\zeta^2 - 1)$. When ζ < 1 it's negative, and we need Chapter 5's $i$: the two answers become a mirror pair, $-\\zeta\\omega_n \\pm i\\,\\omega_n\\sqrt{1-\\zeta^2}$. At ζ = 1 the root is exactly zero and the two answers meet. That's where $c_{\\text{crit}} = 2\\sqrt{mk}$ comes from: it's the damping that makes the root vanish."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "The ± sign gives us two answers, one for each dot. The left-right position of a dot is **σ** (sigma): how fast that part of the motion shrinks. Its height is **ω**: how fast it spins. When damping is below 1, the dots share a left-right position but sit at opposite heights. At 1 they meet; above 1 both lie on the horizontal axis."
-        },
-        {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Step response",
-              "def": "How a system answers a sudden jump of its target, here from 0 to 1 m. It's the standard way to show a personality."
-            },
-            {
-              "term": "Settling time (2%)",
-              "def": "How long until the response stays within 2% of the target for good."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Play with the two knobs. Watch the {out|blue dots} on the map: they're the two values of $s$, and on top of the height it settles to, the motion is a mix of $e^{s_1 t}$ and $e^{s_2 t}$. (At exactly ζ = 1 the two dots are one, and the second ingredient becomes $t\\,e^{s_1 t}$.)"
-        },
-        {
-          "t": "widget",
-          "id": "personality"
-        },
-        {
-          "t": "vocab",
-          "title": "Three personalities",
-          "items": [
-            {
-              "term": "Underdamped ($\\zeta < 1$)",
-              "def": "The two $s$ values are a mirror-image pair off the real axis, sitting on a circle of radius $\\omega_n$. The response overshoots and wiggles while it settles."
-            },
-            {
-              "term": "Critically damped ($\\zeta = 1$)",
-              "def": "The pair meets on the real axis as one double dot, so the motion is $(A + B\\,t)\\,e^{-\\omega_n t}$. The fastest response that doesn't overshoot."
-            },
-            {
-              "term": "Overdamped ($\\zeta > 1$)",
-              "def": "The pair splits along the real axis: one moves left, one creeps towards zero. No overshoot, but sluggish."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "One more detail hides in the underdamped dots: their height is $\\omega_n\\sqrt{1-\\zeta^2}$, a bit **less** than $\\omega_n$. Damping doesn't only shrink the wiggle, it slows it down a little too. This is the **damped frequency** $\\omega_d$, and the widget shows it."
-        },
-        {
-          "t": "math",
-          "tex": "\\omega_d = \\omega_n\\sqrt{1 - \\zeta^2}"
-        },
-        {
-          "t": "callout",
-          "title": "Why a circle?",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "The dashed circle in the widget isn't decoration. For ζ < 1 the dots sit at $\\sigma = -\\zeta\\omega_n$ and $\\omega = \\pm\\omega_n\\sqrt{1-\\zeta^2}$. By Pythagoras, their distance from 0 is"
-            },
-            {
-              "t": "math",
-              "tex": "\\sqrt{\\sigma^2 + \\omega^2} = \\sqrt{\\zeta^2\\omega_n^2 + \\omega_n^2\\,(1 - \\zeta^2)} = \\omega_n"
-            },
-            {
-              "t": "play",
-              "id": "circle",
-              "text": "With $\\omega_n$ = 3 and ζ = {scrub|z}, the dots sit at {calc|roots}, a distance {calc|r} from 0."
-            },
-            {
-              "t": "p",
-              "text": "So changing ζ only slides the dots around the circle, and changing $\\omega_n$ changes the size of the circle."
-            }
-          ]
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "So the spirals from Chapter 5 were the drone's personality all along. Spinning = wiggling, shrinking = settling!"
-        }
-      ]
-    },
-    {
-      "id": "damping",
-      "title": "Is more damping always better?",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "Easy. Wiggles are bad and damping kills wiggles. So I'll set $\\zeta = 5$ to be safe. Safest drone ever."
+          "text": "So every number s is a recipe: **σ** (the along part) says how fast to grow or shrink, **ω** (the sideways part) says how fast to spin. Together they draw a **spiral**, and the spiral's shadow is the signal we'd see."
         },
         {
           "t": "predict",
-          "id": "ch6-damping",
+          "id": "ch5-shadow",
           "gate": true,
-          "q": "Same spring, same $\\omega_n$. We raise the damping from $\\zeta = 1$ to $\\zeta = 3$. Does it reach the target **faster** or **slower**?",
+          "q": "Put s at $-0.5 + 3i$. What does the shadow of $e^{st}$ look like?",
           "options": [
             {
-              "text": "Faster: more damping, less wasted motion",
-              "sketch": "smooth",
-              "why": "It's true that there's no overshoot. But the thick damper also resists the motion *towards* the target."
+              "text": "A wiggle that grows",
+              "sketch": "growing-wiggle",
+              "why": "Growth needs σ > 0. Here σ = −0.5 is negative."
             },
             {
-              "text": "About the same",
-              "sketch": "overshoot",
-              "why": "Past $\\zeta = 1$ there's nothing left to calm down, and the extra damping just slows everything."
-            },
-            {
-              "text": "Slower: it creeps",
-              "sketch": "sluggish",
+              "text": "A wiggle that dies away",
+              "sketch": "decaying-wiggle",
               "correct": true,
-              "why": "Right. The damper resists **all** motion, including the motion you want. With $\\zeta = 3$ it takes about four times as long."
-            }
-          ]
-        },
-        {
-          "t": "widget",
-          "id": "race"
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "worried",
-          "text": "My \"safe\" drone takes forever. It's like moving through honey."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "Look at the map! One dot ran off to the left, super fast. But the other one is sitting really close to zero."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "excited",
-          "text": "And $e^{st}$ with $s$ close to zero dies out **very** slowly. The fast one is gone in a blink. The slow one is in charge."
-        },
-        {
-          "t": "p",
-          "text": "Each $e^{st}$ ingredient of the motion is called a **mode**. The motion is a mix of modes, and once the fast ones have faded, only the slowest is left. So for this step response, the **slowest mode that actually appears** sets the long wait."
-        },
-        {
-          "t": "callout",
-          "title": "How long is \"settled\"?",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "A mode $e^{-at}$ has shrunk to 2% when $e^{-at} = 0.02$, which takes $t = \\ln 50 / a \\approx 3.9/a$. With a time constant $\\tau = 1/a$, that's about four time constants: Chapter 3's ruler again. After 4τ, only $e^{-4} \\approx 1.8\\%$ is left."
+              "why": "ω = 3 makes it spin (wiggle about every 2 s), and σ = −0.5 shrinks it by a factor $e^{-0.5} \\approx 0.61$ every second."
             },
             {
-              "t": "play",
-              "id": "settle",
-              "text": "A mode that shrinks at a = {scrub|a} per second is within 2% after about {calc|ts} s."
+              "text": "A smooth decay, no wiggle",
+              "sketch": "decaying-plain",
+              "why": "That's what you'd get with ω = 0 (s on the horizontal axis). Here ω = 3, so it spins."
             }
           ]
         },
         {
-          "t": "p",
-          "text": "Too little damping means wobbles; too much means creeping. In between there's a sweet spot. Pick ζ = 0.7 in the race: it overshoots by less than 5%, but it gets **within 5% of the target** much sooner than ζ = 1 does. Many designs aim for ζ between about 0.7 and 1, trading a small overshoot for speed. Other tasks may prefer a different balance."
-        }
-      ]
-    },
-    {
-      "id": "drone",
-      "title": "Back to the drone",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Now Chapter 2 finally makes sense. For our drone, the spring constant *is* the gain:"
-        },
-        {
-          "t": "math",
-          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{K_p}}{m}}, \\qquad \\zeta = \\frac{c}{2\\sqrt{m\\,\\eff{K_p}}}"
-        },
-        {
-          "t": "p",
-          "text": "$\\eff{K_p}$ sits in the *bottom* of the damping formula. Turning up the gain makes the drone faster (bigger $\\omega_n$), but **less damped**. With $\\eff{K_p} = 20$ N/m: $\\zeta = 1/(2\\sqrt{0.5 \\times 20}) \\approx 0.16$. Very bouncy, just as we saw. On the map, its two $s$ values sit far up and only a little left of the vertical axis. That's where our drone lives."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "worried",
-          "text": "And we can't get more damping without turning $\\eff{K_p}$ way down, which brings back the droop. We need a way to add damping *on purpose*."
-        },
-        {
-          "t": "p",
-          "text": "Drag the gain and watch the trade-off in one sentence:"
-        },
-        {
-          "t": "play",
-          "id": "drone",
-          "text": "With $\\eff{K_p}$ = {scrub|kp|eff} N/m: ζ = {calc|zeta}, $\\omega_n$ = {calc|wn} rad/s, and without the free hover thrust it would droop {calc|droop} m."
-        }
-      ]
-    },
-    {
-      "id": "arrows",
-      "title": "Arrows have a length and an angle",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "Wait. The dots sit on a circle of radius $\\omega_n$, and ζ just slides them round it. So a dot is really two things: **how far** from 0, and **which way**."
-        },
-        {
-          "t": "p",
-          "text": "Every arrow $z = a + b\\,i$ can be told the other way round: by its **length** $|z|$ and its **angle**. Pythagoras gives the length. For an arrow pointing right ($a > 0$), the angle is the one whose rise over run is $b/a$. Its name is the **arctangent**, $\\arctan$: the tangent's undo button."
-        },
-        {
-          "t": "math",
-          "tex": "|z| = \\sqrt{a^2 + b^2}, \\qquad \\angle z = \\arctan\\frac{b}{a} \\quad (a > 0)"
-        },
-        {
-          "t": "play",
-          "id": "arrowRead",
-          "text": "The arrow {scrub|a} + {scrub|b}i is {calc|len} long and points at {calc|ang}° from the real axis."
-        },
-        {
-          "t": "p",
-          "text": "Chapter 5 found that multiplying arrows **multiplies their lengths and adds their angles**. Dividing has to undo that, so it divides the lengths and **subtracts** the angles."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "So $1/(1+i)$: length $1/\\sqrt 2$, and the angle is 45° plus 45°, so 90°? Hmm. Multiply that back by $1+i$ and it points at 135°, nowhere near 1."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "Minus, then. $1/\\sqrt 2$ long at −45°. Times $\\sqrt 2$ at +45°, and it's length 1 at 0°: exactly 1. It checks."
-        },
-        {
           "t": "widget",
-          "id": "arrows"
+          "id": "smap"
         },
         {
           "t": "p",
-          "text": "The faint dashed arrow is the **mirror twin** $\\bar z = a - b\\,i$ from Chapter 5 (mathematicians call it the *conjugate*): same length, opposite angle. Multiply an arrow by its twin and the angles cancel, leaving a plain positive number, the length squared. Chapter 7's table will need exactly this:"
+          "text": "Take a tour of the map by dragging s (or using the arrow keys):"
         },
         {
-          "t": "math",
-          "tex": "z\\,\\bar z = |z|^2 = a^2 + b^2, \\qquad (s - i\\omega)(s + i\\omega) = s^2 + \\omega^2"
-        },
-        {
-          "t": "p",
-          "text": "And the circle? A pole at $-\\zeta\\omega_n + i\\,\\omega_n\\sqrt{1-\\zeta^2}$ has length $\\omega_n$. Measure its angle θ from the *negative* real axis and the leftward part is $\\omega_n\\cos\\theta$. So $\\zeta = \\cos\\theta$: the damping is the angle."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Try the second setting in the widget: 1 + iωτ. That's Chapter 3's coffee rule meeting a wiggle. Dividing by it shrinks and turns back, more and more as the wiggle speeds up, but never past a quarter turn. I bet the shower cares."
-        },
-        {
-          "t": "vocab",
+          "t": "list",
           "items": [
-            {
-              "term": "Length $|z|$",
-              "def": "How long an arrow is: $\\sqrt{a^2+b^2}$ for $z = a + b\\,i$. Multiplying arrows multiplies their lengths."
-            },
-            {
-              "term": "Angle $\\angle z$",
-              "def": "Which way an arrow points, from the positive real axis. $\\arctan(b/a)$ for an arrow pointing right. Multiplying adds angles, dividing subtracts them."
-            },
-            {
-              "term": "Mirror twin $\\bar z$",
-              "def": "The arrow flipped across the real axis, $a - b\\,i$ (the conjugate). $z\\,\\bar z = |z|^2$."
-            }
+            "**Left half** (σ < 0): the spiral shrinks, the wiggle dies away.",
+            "**Right half** (σ > 0): the spiral grows, the wiggle explodes.",
+            "**On the vertical line** (σ = 0): a perfect circle, a wiggle that goes on forever.",
+            "**On the horizontal line** (ω = 0): no spin at all, just the plain exponentials from Chapter 4.",
+            "**Further from the horizontal line** (up or down): faster spinning, faster wiggles. **Further left**: faster fading."
           ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "So a single dot on this map is a whole personality: how fast it wiggles and whether it calms down or blows up."
+        },
+        {
+          "t": "note",
+          "text": "This map is going to become our most important picture. It gets its official name in Chapter 8."
+        }
+      ]
+    },
+    {
+      "id": "fourier",
+      "title": "A quick detour: everything is made of spinners",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "One last surprise. Take spinners of different speeds (1, 3, 5, 7… times as fast), shrink each one and start it at just the right angle, then add their shadows. With enough of them you can build a huge range of shapes, even a square wave with sharp corners."
+        },
+        {
+          "t": "widget",
+          "id": "fourier"
+        },
+        {
+          "t": "p",
+          "text": "**Fourier** showed how many periodic signals can be assembled from spinning pieces. A square wave is one example: more pieces make its flat parts and sharp edges clearer. This is a powerful way to describe signals, with conditions and limits we can explore later."
+        },
+        {
+          "t": "note",
+          "text": "Honesty box: right next to each jump the sum always overshoots by about 9% of the jump, however many pieces you add. The bump gets narrower but never goes away."
         }
       ]
     },
     {
       "id": "wrap",
-      "title": "What we know now",
+      "title": "What we know so far",
       "blocks": [
         {
           "t": "recap",
           "items": [
-            "A P-controlled drone obeys **exactly** the same equation as a mass on a spring: the controller is a virtual spring.",
-            "Two numbers capture its personality: $\\omega_n$ (how fast) and $\\zeta$ (how bouncy).",
-            "$\\omega_n = \\sqrt{k/m}$ is the swing speed with no damper. $\\zeta = c/c_{\\text{crit}}$ compares the damping with the critical damping $2\\sqrt{mk}$ that just stops the overshoot.",
-            "The motion is a mix of two $e^{st}$ terms. The two $s$ values sit on a circle of radius $\\omega_n$ when underdamped, and split along the real axis when overdamped.",
-            "An arrow has a **length** and an **angle** ($\\arctan$). Multiplying multiplies lengths and adds angles; dividing divides and subtracts. $\\zeta = \\cos\\theta$.",
-            "Damping also slows the wiggle a little: $\\omega_d = \\omega_n\\sqrt{1-\\zeta^2}$.",
-            "More damping isn't always better: past $\\zeta = 1$ the slow $s$ value creeps towards zero and everything slows down.",
-            "For the drone, more $K_p$ means less damping. That's why it got wobblier."
+            "Real wiggles come from **mirror-twin spinners** whose sideways parts cancel.",
+            "$e^{st}$ with $s = \\sigma + i\\omega$ spins *and* grows or shrinks: a spiral. Its shadow is a growing or dying wiggle.",
+            "The **map of s**: left calms down, right blows up, up means faster wiggles.",
+            "Many repeating signals, even a square wave, can be built by adding spinners of different speeds (Fourier). Right next to a jump the sum always overshoots by about 9%."
           ]
         },
         {
           "t": "quiz",
           "items": [
             {
-              "id": "ch6-q1",
-              "q": "The two $s$ values of a system are $-1 \\pm 4i$. Which response is it?",
+              "id": "ch5-q2",
+              "q": "Put s exactly on the vertical line, at $s = 2i$. What's the shadow of $e^{st}$?",
               "options": [
                 {
-                  "text": "Overshoots and wiggles",
-                  "sketch": "overshoot",
+                  "text": "A wiggle that goes on forever",
+                  "sketch": "steady-wiggle",
                   "correct": true,
-                  "why": "An imaginary part (±4) means spinning, so wiggling. A negative real part (−1) means the wiggles shrink."
+                  "why": "σ = 0 means no growing or shrinking: a perfect circle, and its shadow is a steady cosine."
                 },
                 {
-                  "text": "Rises smoothly, no overshoot",
-                  "sketch": "smooth",
-                  "why": "Smooth rises come from $s$ values on the real axis (no spinning). These have an imaginary part of ±4."
+                  "text": "A wiggle that dies away",
+                  "sketch": "decaying-wiggle",
+                  "why": "Dying away needs σ < 0 (left of the vertical line)."
                 },
                 {
-                  "text": "Creeps up slowly",
-                  "sketch": "sluggish",
-                  "why": "Creeping comes from a real $s$ very close to zero. The given values have imaginary parts, so the response wiggles."
+                  "text": "Explosive growth",
+                  "sketch": "growing-plain",
+                  "why": "Growth without wiggle is the right half of the *horizontal* line: σ > 0, ω = 0."
                 }
               ]
             },
             {
-              "id": "ch6-q2",
-              "q": "Our drone ($m = 0.5$ kg, $c = 1$ N·s/m) with $K_p = 20$ N/m is…",
+              "id": "ch5-q3",
+              "q": "A guitar string rings with a clear note and slowly fades. Where on the map of s does it live?",
               "options": [
                 {
-                  "text": "Underdamped, $\\zeta \\approx 0.16$",
+                  "text": "Just left of the vertical line, well above the horizontal line",
                   "correct": true,
-                  "why": "$\\zeta = 1/(2\\sqrt{0.5\\cdot 20}) = 1/(2\\sqrt{10}) \\approx 0.158$. Well below 1, so bouncy."
+                  "why": "Slow fading means σ slightly negative, and a clear pitch means a large ω (lots of wiggles per second)."
                 },
                 {
-                  "text": "Critically damped, $\\zeta = 1$",
-                  "why": "That would need $c = 2\\sqrt{m K_p} \\approx 6.3$ N·s/m, over six times more drag than we have."
+                  "text": "In the right half",
+                  "why": "The right half *grows*. A string that got louder by itself would be alarming."
                 },
                 {
-                  "text": "Overdamped, $\\zeta > 1$",
-                  "why": "Overdamping needs lots of damping compared with stiffness. Our gain is high and our drag small, which is the opposite."
+                  "text": "On the horizontal line, far to the left",
+                  "why": "No ω means no wiggle (no note), and far left means it dies instantly. That's a thud."
                 }
               ]
             },
             {
-              "id": "ch6-q5",
-              "q": "A spring with $k = 8$ N/m holds a 0.5 kg mass. How much damping $c$ makes it critically damped?",
+              "id": "ch5-q4",
+              "q": "Why do the spinners of a real, physical wiggle always come in mirror pairs?",
               "options": [
                 {
-                  "text": "$c = 4$ N·s/m",
+                  "text": "The rule has only real numbers, so a spinner's mirror image solves it too",
                   "correct": true,
-                  "why": "$c_{\\text{crit}} = 2\\sqrt{m k} = 2\\sqrt{0.5 \\cdot 8} = 2\\sqrt{4} = 4$ N·s/m."
+                  "why": "Flip $e^{i\\omega t}$ top to bottom and you get $e^{-i\\omega t}$. A rule with no $i$ in it can't tell them apart, so both are solutions, and a real motion uses both: their sideways parts cancel."
                 },
                 {
-                  "text": "$c = 16$ N·s/m",
-                  "why": "That's $2k$. Critical damping uses the square root of mass × stiffness: $2\\sqrt{mk}$."
+                  "text": "Because $i^2 = -1$",
+                  "why": "That's true, but it's why the spinners *exist*, not why they pair up."
                 },
                 {
-                  "text": "$c = 1$ N·s/m",
-                  "why": "That's our drone's air drag, which gives $\\zeta = 0.25$ here: underdamped."
-                }
-              ]
-            },
-            {
-              "id": "ch6-q3",
-              "q": "Using P control only, which $K_p$ would make the drone critically damped ($\\zeta = 1$)?",
-              "options": [
-                {
-                  "text": "$K_p = 0.5$ N/m",
-                  "correct": true,
-                  "why": "Set $c/(2\\sqrt{m K_p}) = 1$ to get $K_p = c^2/(4m) = 0.5$ N/m. But with such a weak spring the drone would need to be 9.8 m *below* the target just to hold itself up, so it never takes off. P control alone can't give us both."
-                },
-                {
-                  "text": "$K_p = 20$ N/m",
-                  "why": "That's our bouncy default with $\\zeta \\approx 0.16$. More gain means *less* damping."
-                },
-                {
-                  "text": "$K_p = 200$ N/m",
-                  "why": "More gain lowers $\\zeta$ even further (to about 0.05). Gain sits in the denominator."
-                }
-              ]
-            },
-            {
-              "id": "ch6-q4",
-              "q": "An overdamped system has $s$ values $-0.2$ and $-10$. Which one decides how long you wait?",
-              "options": [
-                {
-                  "text": "$-0.2$",
-                  "correct": true,
-                  "why": "$e^{-0.2t}$ takes about 20 s to fade to 2%, while $e^{-10t}$ is gone in 0.4 s. The one nearest the vertical axis is in charge."
-                },
-                {
-                  "text": "$-10$",
-                  "why": "$e^{-10t}$ vanishes in a fraction of a second. It's the fast part that's over before you notice."
-                },
-                {
-                  "text": "Both equally",
-                  "why": "They fade at very different speeds, so the slow one dominates what you see."
+                  "text": "Because a spring has two ends",
+                  "why": "Cute, but no. A single swinging pendulum has twin spinners too."
                 }
               ]
             }
@@ -635,130 +238,60 @@
         },
         {
           "t": "cliff",
-          "text": "Theo: \"We *guessed* our way to these $s$ values. Add gravity, wind, packages and a smarter controller, and guessing gets ugly. Is there a machine that turns this calculus into **plain algebra**?\""
+          "text": "June: \"So **where on this map does our drone live?**\""
         }
       ]
     }
   ],
   "widgets": {
     "twins": {
-      "title": "Spring vs. drone",
-      "spring": "mass on a spring",
-      "drone": "drone under P control",
-      "msdAria": "A mass hanging on a spring and a damper, bouncing around its rest position.",
-      "plotY": "distance from target (m)",
-      "plotAria": "Distance from the target over time for the drone and for the spring. The two curves lie on top of each other.",
-      "target": "target / rest",
-      "kp": "Stiffness: spring $k$ = drone gain $K_p$",
-      "personality": "personality",
-      "help": "Both start 1 m below their target and are let go. The slider sets the spring's stiffness and the drone's gain to the same number.",
-      "describe": "Drone is {d} m from target, spring mass is {s} m from rest.",
-      "together": "both, on one graph",
-      "forceSpring": "spring pull",
-      "forceDamper": "damper push"
+      "title": "A spinner and its mirror twin",
+      "re": "along",
+      "im": "sideways",
+      "sum": "sum",
+      "spinnerLabel": "spinner",
+      "twinLabel": "twin",
+      "toggle": "Add the mirror twin",
+      "axis": "value",
+      "realPart": "along part of the sum",
+      "sidePart": "sideways part of the sum",
+      "alone": "One spinner alone: the sum wanders off sideways (dashed curve).",
+      "withTwin": "With its twin added head-to-tail, the sideways parts cancel. The sum stays on the real line: 2·cos(ωt).",
+      "aria": "Two arrows spinning in opposite directions, added head to tail. Their sum is marked with a ring.",
+      "plotAria": "The along and sideways parts of the sum over time."
     },
-    "personality": {
-      "title": "Two knobs, two dots, one personality",
-      "response": "response to a 1 m step",
-      "target": "target",
-      "plotAria": "Step response of a second-order system for the chosen natural frequency and damping ratio.",
-      "planeAria": "The map of s, showing the two s values of the system and a dashed circle of radius omega n.",
-      "msdAria": "A mass on a spring replaying the step response.",
-      "panelAria": "Small step response with damping ratio {z}.",
-      "panel": {
-        "0": "underdamped (ζ = {z})",
-        "1": "critical (ζ = {z})",
-        "2": "overdamped (ζ = {z})"
-      },
-      "radius": "radius ωn = {w}",
-      "wn": "Natural frequency $\\omega_n$",
-      "zeta": "Damping ratio $\\zeta$",
-      "overshoot": "overshoot",
-      "settle": "settles (2%)",
-      "roots": "the two s values",
-      "personality": "personality",
-      "never": "never",
-      "playSpring": "Replay on the spring",
-      "stopSpring": "Pause the spring",
-      "describe": "Damping ratio {z}, natural frequency {w} radians per second, s values {r}.",
-      "planeCap": "the two s values",
-      "springCap": "watch it on a spring",
-      "re": "σ",
-      "im": "ω",
-      "offMap": "{v} is off the map ←",
-      "wd": "wiggle speed ωd",
-      "noWiggle": "no wiggle"
+    "smap": {
+      "title": "The map of s",
+      "re": "σ: shrink ← → grow",
+      "im": "ω: spin",
+      "reShort": "along",
+      "imShort": "sideways",
+      "time": "time →",
+      "shadow": "shadow of e^(st)",
+      "shadowAxis": "shadow",
+      "mirror": "Show the mirror twin",
+      "readS": "s",
+      "readTurns": "turns",
+      "readSize": "size change",
+      "spins": "Spins {n} times per second,",
+      "noSpin": "No spinning at all,",
+      "grows": "and grows.",
+      "shrinks": "and shrinks.",
+      "steady": "and keeps the same size.",
+      "help": "Drag the dot s on the map (or focus it and use the arrow keys). Right: the spiral e^(st) in 3-D, with time running to the right. Its blue shadow is plotted underneath.",
+      "mapAria": "The map of s: drag the point to choose sigma and omega.",
+      "spiralAria": "Three-dimensional spiral of e to the s t, with time running to the right, and its shadow on the back wall.",
+      "plotAria": "Shadow of e to the s t over time."
     },
-    "race": {
-      "title": "The damping race",
-      "choose": "Your damping",
-      "ref": "ζ = 1 (critical)",
-      "yours": "your ζ",
-      "yoursZ": "ζ = {z}",
-      "msdAria": "A mass on a spring moving towards its rest position.",
-      "plotAria": "Step responses for critical damping and for the chosen damping ratio.",
-      "planeAria": "The two s values for the chosen damping ratio.",
-      "settleRef": "ζ = 1 settles",
-      "settleYours": "your ζ settles",
-      "slow": "slow one",
-      "fast": "fast one",
-      "never": "not within 12 s",
-      "same": "This is the reference itself: the fastest no-overshoot response.",
-      "slower": "Your extra damping made it about {k}× slower.",
-      "replay": "Race again",
-      "planeCap": "the two s values",
-      "re": "σ",
-      "im": "ω",
-      "fastOff": "← fast one at {v} (off the map)",
-      "double": "both here",
-      "band5": "within 5%",
-      "sweet": "ζ = 0.7 overshoots by {os}%, but it's within 5% of the target after {y5} s. ζ = 1 needs {r5} s."
-    },
-    "arrows": {
-      "title": "Length, angle and 1 ÷ an arrow",
-      "aria": "A plane with the unit circle, an arrow z, its dashed mirror twin, and the arrow 1 divided by z, with their angles marked.",
-      "re": "real part",
-      "im": "imaginary part",
-      "mode": "Which arrow?",
-      "modeFree": "any arrow z",
-      "modeSmoother": "the smoother, 1 + iωτ",
-      "a": "real part a",
-      "b": "imaginary part b",
-      "wt": "wiggle speed × τ (ωτ)",
-      "mirror": "twin",
-      "out": "1 ÷ (1 + iωτ)",
-      "len": "length |z|",
-      "ang": "angle of z",
-      "ilen": "length of 1/z",
-      "iang": "angle of 1/z",
-      "free": "1/z is {ilen} long (1 ÷ {len}) and turned the other way, to {iang}. Multiply the two and you get length {back} at 0°: exactly 1.",
-      "smooth": "At ωτ = {wt}, 1 ÷ (1 + iωτ) keeps {ilen} of the size and lags {lag}. Faster wiggles: smaller and later, but never past 90°.",
-      "help": "Slide a and b to move z (or switch to the smoother and slide ωτ). The blue arc is the angle of z, the grey arc the angle of 1/z."
-    }
-  },
-  "plays": {
-    "units": {
-      "kp": "gain Kp, newtons per metre",
-      "e": "error, metres"
-    },
-    "wn": {
-      "k": "spring stiffness k, newtons per metre"
-    },
-    "zeta": {
-      "c": "damping c, newton-seconds per metre"
-    },
-    "circle": {
-      "z": "damping ratio zeta"
-    },
-    "settle": {
-      "a": "shrink rate a, per second"
-    },
-    "drone": {
-      "kp": "gain Kp, newtons per metre"
-    },
-    "arrowRead": {
-      "a": "real part a",
-      "b": "imaginary part b"
+    "fourier": {
+      "title": "Building a square wave from spinners",
+      "axis": "value",
+      "target": "square wave",
+      "sum": "sum of spinner shadows",
+      "pieces": "Number of spinners",
+      "status": "{n} spinners added. The fastest spins {f}× as fast as the first.",
+      "aria": "A square wave and the sum of a chosen number of spinner shadows approximating it.",
+      "statusOne": "Just one spinner: a plain wiggle, nothing square about it yet."
     }
   }
 }

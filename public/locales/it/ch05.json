@@ -197,152 +197,6 @@
       ]
     },
     {
-      "id": "twins",
-      "title": "Di nuovo la molla (e un nuovo errore)",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "La molla voleva $a^2 = -k/m = -4$. Prova $a = 2i$: $(2i)^2 = 4\\,i^2 = -4$. ✓ E funziona anche $a = -2i$."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "Va bene, avevo torto. Il trucco dell'esponenziale sopravvive. La molla è $e^{2it}$, una trottola che fa due giri ogni… 2π secondi."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "Quindi la posizione della molla è $e^{2it}$? In questo momento è a… $0{,}4 + 0{,}9i$ metri?"
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "worried",
-          "text": "Una molla non può stare 0,9 metri *di lato*. Si muove solo su e giù."
-        },
-        {
-          "t": "p",
-          "text": "Mika ha dimenticato l'altra risposta. Abbiamo trovato **due** soluzioni, $e^{2it}$ ed $e^{-2it}$: una trottola e la sua **gemella allo specchio** che gira nell'altro verso. Sommiamole:"
-        },
-        {
-          "t": "widget",
-          "id": "twins"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "surprised",
-          "text": "Le parti di lato si annullano alla perfezione! La somma scivola solo lungo la retta reale, avanti e indietro."
-        },
-        {
-          "t": "math",
-          "tex": "x(t) = \\tfrac12\\left(e^{i\\omega t} + e^{-i\\omega t}\\right) = \\cos(\\omega t),\\qquad \\omega = \\sqrt{k/m}"
-        },
-        {
-          "t": "note",
-          "text": "Il fattore ½ c'è perché ciascuna gemella porta metà: il widget somma due trottole a grandezza piena, quindi la sua somma oscilla fino a 2. E questa coppia parte lasciata andare da 1 m, da ferma. Se la fai partire in movimento, le due gemelle cominciano semplicemente con inclinazioni opposte; la loro somma resta comunque sulla retta reale."
-        },
-        {
-          "t": "p",
-          "text": "Perché la gemella c'è sempre? Nella regola della molla ci sono solo numeri reali ($m$ e $k$, nessuna $i$). Capovolgi una soluzione dall'alto in basso, trasformando ogni $i$ in $-i$, e la regola non vede la differenza: anche l'immagine allo specchio è una soluzione. Quindi per qualsiasi cosa reale le trottole arrivano in **coppie allo specchio**, e insieme le loro parti di lato si annullano, lasciando un'oscillazione reale che possiamo misurare."
-        }
-      ]
-    },
-    {
-      "id": "map",
-      "title": "La mappa di s",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Il Capitolo 4 ci ha dato esponenziali che **crescono o calano**. Ora abbiamo trottole che **oscillano**. Mettiamoli insieme: $e^{st}$ con $s = \\sigma + i\\omega$."
-        },
-        {
-          "t": "math",
-          "tex": "e^{st} = e^{(\\sigma + i\\omega)t} = \\underbrace{e^{\\sigma t}}_{\\text{cresce/cala}}\\cdot\\underbrace{e^{i\\omega t}}_{\\text{gira}}"
-        },
-        {
-          "t": "p",
-          "text": "Quindi ogni numero s è una ricetta: **σ** (la parte in avanti) dice quanto in fretta crescere o calare, **ω** (la parte di lato) dice quanto in fretta girare. Insieme disegnano una **spirale**, e l'ombra della spirale è il segnale che vedremmo."
-        },
-        {
-          "t": "predict",
-          "id": "ch5-shadow",
-          "gate": true,
-          "q": "Metti s in $-0{,}5 + 3i$. Che aspetto ha l'ombra di $e^{st}$?",
-          "options": [
-            {
-              "text": "Un'oscillazione che cresce",
-              "sketch": "growing-wiggle",
-              "why": "Per crescere serve σ > 0. Qui σ = −0,5 è negativo."
-            },
-            {
-              "text": "Un'oscillazione che si spegne",
-              "sketch": "decaying-wiggle",
-              "correct": true,
-              "why": "ω = 3 la fa girare (un'oscillazione circa ogni 2 s), e σ = −0,5 la riduce di un fattore $e^{-0{,}5} \\approx 0{,}61$ ogni secondo."
-            },
-            {
-              "text": "Un decadimento dolce, senza oscillazioni",
-              "sketch": "decaying-plain",
-              "why": "È quello che otterresti con ω = 0 (s sull'asse orizzontale). Qui ω = 3, quindi gira."
-            }
-          ]
-        },
-        {
-          "t": "widget",
-          "id": "smap"
-        },
-        {
-          "t": "p",
-          "text": "Fai un giro della mappa trascinando s (o usando le frecce):"
-        },
-        {
-          "t": "list",
-          "items": [
-            "**Metà sinistra** (σ < 0): la spirale si stringe, l'oscillazione si spegne.",
-            "**Metà destra** (σ > 0): la spirale si allarga, l'oscillazione esplode.",
-            "**Sulla linea verticale** (σ = 0): un cerchio perfetto, un'oscillazione che continua per sempre.",
-            "**Sulla linea orizzontale** (ω = 0): nessuna rotazione, solo i semplici esponenziali del Capitolo 4.",
-            "**Più lontano dalla linea orizzontale** (in alto o in basso): rotazione più veloce, oscillazioni più rapide. **Più a sinistra**: si spegne più in fretta."
-          ]
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Quindi un solo puntino su questa mappa è un'intera personalità: quanto in fretta oscilla e se si calma o esplode."
-        },
-        {
-          "t": "note",
-          "text": "Questa mappa diventerà il nostro disegno più importante. Riceverà il suo nome ufficiale nel Capitolo 7."
-        }
-      ]
-    },
-    {
-      "id": "fourier",
-      "title": "Una breve deviazione: tutto è fatto di trottole",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Un'ultima sorpresa. Prendi trottole di velocità diverse (1, 3, 5, 7… volte più veloci), rimpicciolisci ognuna e falla partire proprio all'angolo giusto, poi somma le loro ombre. Con abbastanza trottole puoi costruire una varietà enorme di forme, persino un'onda quadra con gli spigoli vivi."
-        },
-        {
-          "t": "widget",
-          "id": "fourier"
-        },
-        {
-          "t": "p",
-          "text": "**Fourier** mostrò come assemblare molti segnali periodici con pezzi che girano. L’onda quadra è un esempio: più pezzi rendono più nette le parti piatte e gli spigoli. È un modo potente di descrivere i segnali, con condizioni e limiti da esplorare più avanti."
-        },
-        {
-          "t": "note",
-          "text": "Angolo dell'onestà: proprio accanto a ogni salto la somma va sempre oltre di circa il 9% del salto, per quanti pezzi tu aggiunga. La gobba si stringe ma non sparisce mai."
-        }
-      ]
-    },
-    {
       "id": "wrap",
       "title": "Cosa sappiamo finora",
       "blocks": [
@@ -351,11 +205,9 @@
           "items": [
             "I numeri sono frecce. Moltiplicare le ruota e le allunga. **i** è un quarto di giro, quindi $i^2 = -1$.",
             "Un **radiante** è l'angolo il cui arco è lungo un raggio: un giro completo è $2\\pi$. **cos θ** e **sin θ** sono le ombre di una freccia ruotata.",
-            "$e^{i\\omega t}$ è un punto che gira attorno a un cerchio. La sua ombra è un'onda coseno.",
             "$e^{i\\theta}$, costruito con passi piccolissimi di lato $\\left(1 + \\frac{i\\theta}{n}\\right)^n$, è il punto del cerchio ad angolo θ.",
-            "Le oscillazioni reali nascono da **trottole gemelle allo specchio** le cui parti di lato si annullano.",
-            "$e^{st}$ con $s = \\sigma + i\\omega$ gira *e* cresce o cala: una spirale. La sua ombra è un'oscillazione che cresce o si spegne.",
-            "La **mappa di s**: a sinistra si calma, a destra esplode, più in alto vuol dire oscillazioni più rapide."
+            "$e^{i\\omega t}$ è un punto che gira attorno a un cerchio. La sua ombra è un'onda coseno.",
+            "La velocità di una trottola è sempre un quarto di giro avanti rispetto alla sua posizione: velocità $= i\\omega \\times$ posizione. È la proprietà esponenziale con $a = i\\omega$."
           ]
         },
         {
@@ -381,62 +233,40 @@
               ]
             },
             {
-              "id": "ch5-q2",
-              "q": "Metti s esattamente sulla linea verticale, in $s = 2i$. Com'è l'ombra di $e^{st}$?",
+              "id": "ch5-q5",
+              "q": "Una trottola gira a ω = π radianti al secondo. Quanto tempo ci mette a fare un giro completo?",
               "options": [
                 {
-                  "text": "Un'oscillazione che continua per sempre",
-                  "sketch": "steady-wiggle",
+                  "text": "2 secondi",
                   "correct": true,
-                  "why": "σ = 0 vuol dire né crescere né calare: un cerchio perfetto, e la sua ombra è un coseno costante."
+                  "why": "Un giro completo è 2π radianti. A π radianti al secondo ci vogliono 2π ÷ π = 2 secondi."
                 },
                 {
-                  "text": "Un'oscillazione che si spegne",
-                  "sketch": "decaying-wiggle",
-                  "why": "Per spegnersi serve σ < 0 (a sinistra della linea verticale)."
+                  "text": "π secondi",
+                  "why": "π è quanti radianti percorre ogni secondo, non quanto dura un giro."
                 },
                 {
-                  "text": "Crescita esplosiva",
-                  "sketch": "growing-plain",
-                  "why": "La crescita senza oscillazioni è la metà destra della linea *orizzontale*: σ > 0, ω = 0."
+                  "text": "1 secondo",
+                  "why": "In un secondo percorre π radianti: solo mezzo giro."
                 }
               ]
             },
             {
-              "id": "ch5-q3",
-              "q": "Una corda di chitarra suona una nota chiara e si spegne lentamente. Dove vive sulla mappa di s?",
+              "id": "ch5-q6",
+              "q": "Dove punta la velocità della trottola $e^{i\\omega t}$?",
               "options": [
                 {
-                  "text": "Appena a sinistra della linea verticale, ben sopra la linea orizzontale",
+                  "text": "Un quarto di giro avanti rispetto alla freccia della posizione, lungo il cerchio",
                   "correct": true,
-                  "why": "Spegnersi lentamente vuol dire σ leggermente negativo, e una nota chiara vuol dire una ω grande (tante oscillazioni al secondo)."
+                  "why": "Velocità $= i\\omega \\times$ posizione, e $\\times i$ è un quarto di giro. La spinta è sempre di lato, quindi il punto non si avvicina mai al centro e non se ne allontana: gira e basta."
                 },
                 {
-                  "text": "Nella metà destra",
-                  "why": "La metà destra *cresce*. Una corda che diventa più forte da sola sarebbe preoccupante."
+                  "text": "Dritto verso l'interno, verso il centro",
+                  "why": "Allora il punto cadrebbe verso l'interno e la freccia si accorcerebbe. Una spinta a un quarto di giro lo tiene sul cerchio."
                 },
                 {
-                  "text": "Sulla linea orizzontale, molto a sinistra",
-                  "why": "Senza ω non c'è oscillazione (nessuna nota), e molto a sinistra vuol dire che si spegne subito. Quello è un tonfo."
-                }
-              ]
-            },
-            {
-              "id": "ch5-q4",
-              "q": "Perché le trottole di un'oscillazione reale, fisica, arrivano sempre in coppie allo specchio?",
-              "options": [
-                {
-                  "text": "Nella regola ci sono solo numeri reali, quindi anche l'immagine allo specchio di una trottola la risolve",
-                  "correct": true,
-                  "why": "Capovolgi $e^{i\\omega t}$ dall'alto in basso e ottieni $e^{-i\\omega t}$. Una regola senza $i$ non riesce a distinguerle, quindi sono soluzioni tutte e due, e un moto reale le usa entrambe: le loro parti di lato si annullano."
-                },
-                {
-                  "text": "Perché $i^2 = -1$",
-                  "why": "È vero, ma spiega perché le trottole *esistono*, non perché vanno in coppia."
-                },
-                {
-                  "text": "Perché una molla ha due estremità",
-                  "why": "Carina, ma no. Anche un singolo pendolo che oscilla ha trottole gemelle."
+                  "text": "Dritto verso l'esterno, lungo la freccia della posizione",
+                  "why": "Quello è $e^{at}$ con $a$ reale e positivo: cresce. Con $a = i\\omega$ la spinta è di lato."
                 }
               ]
             }
@@ -447,7 +277,7 @@
         },
         {
           "t": "cliff",
-          "text": "June: \"Allora **dove vive il nostro drone su questa mappa?**\""
+          "text": "Mika: \"Quindi il numero misterioso della molla esiste davvero: è 2i. Vuol dire che una molla vera oscilla **di lato**?\""
         }
       ]
     }
@@ -467,68 +297,6 @@
       },
       "aria": "Un piano con una freccia che parte dall'origine. I pulsanti moltiplicano la freccia per 2, un mezzo, meno uno o i, ruotandola o allungandola.",
       "trail": "Le frecce finora"
-    },
-    "spinner": {
-      "title": "La trottola e la sua ombra",
-      "re": "in avanti",
-      "im": "di lato",
-      "position": "posizione",
-      "velocity": "velocità",
-      "shadow": "ombra sull'asse reale",
-      "shadowAxis": "ombra",
-      "omega": "Velocità di rotazione ω",
-      "help": "La freccia della velocità (disegnata più corta per starci) punta sempre un quarto di giro avanti rispetto alla freccia della posizione. Il puntino blu sull'asse reale è l'ombra.",
-      "aria": "Un punto che gira attorno a un cerchio, con la freccia della posizione, una freccia della velocità un quarto di giro avanti e la sua ombra sull'asse reale.",
-      "plotAria": "L'ombra della trottola nel tempo: un'onda coseno."
-    },
-    "twins": {
-      "title": "Una trottola e la sua gemella allo specchio",
-      "re": "in avanti",
-      "im": "di lato",
-      "sum": "somma",
-      "spinnerLabel": "trottola",
-      "twinLabel": "gemella",
-      "toggle": "Aggiungi la gemella allo specchio",
-      "axis": "valore",
-      "realPart": "parte in avanti della somma",
-      "sidePart": "parte di lato della somma",
-      "alone": "Una trottola da sola: la somma se ne va di lato (curva tratteggiata).",
-      "withTwin": "Con la gemella aggiunta in coda, le parti di lato si annullano. La somma resta sulla retta reale: 2·cos(ωt).",
-      "aria": "Due frecce che girano in versi opposti, sommate una in coda all'altra. La loro somma è segnata con un anello.",
-      "plotAria": "Le parti in avanti e di lato della somma nel tempo."
-    },
-    "smap": {
-      "title": "La mappa di s",
-      "re": "σ: cala ← → cresce",
-      "im": "ω: gira",
-      "reShort": "in avanti",
-      "imShort": "di lato",
-      "time": "tempo →",
-      "shadow": "ombra di e^(st)",
-      "shadowAxis": "ombra",
-      "mirror": "Mostra la gemella allo specchio",
-      "readS": "s",
-      "readTurns": "giri",
-      "readSize": "variazione di ampiezza",
-      "spins": "Fa {n} giri al secondo,",
-      "noSpin": "Non gira per niente,",
-      "grows": "e cresce.",
-      "shrinks": "e cala.",
-      "steady": "e mantiene la stessa ampiezza.",
-      "help": "Trascina il puntino s sulla mappa (o selezionalo e usa le frecce). A destra: la spirale e^(st) in 3-D, con il tempo che scorre verso destra. La sua ombra blu è disegnata sotto.",
-      "mapAria": "La mappa di s: trascina il punto per scegliere sigma e omega.",
-      "spiralAria": "Spirale tridimensionale di e elevato a s t, con il tempo che scorre verso destra, e la sua ombra sulla parete di fondo.",
-      "plotAria": "Ombra di e elevato a s t nel tempo."
-    },
-    "fourier": {
-      "title": "Costruire un'onda quadra con le trottole",
-      "axis": "valore",
-      "target": "onda quadra",
-      "sum": "somma delle ombre delle trottole",
-      "pieces": "Numero di trottole",
-      "status": "{n} trottole aggiunte. La più veloce gira {f}× più veloce della prima.",
-      "aria": "Un'onda quadra e la somma di un numero scelto di ombre di trottole che la approssima.",
-      "statusOne": "Una sola trottola: una semplice oscillazione, ancora niente di quadrato."
     },
     "turns": {
       "title": "Misurare i giri in raggi",
@@ -568,6 +336,19 @@
       "one": "Un unico passo gigante: 1 + iθ, ben lontano dal cerchio (lunghezza {len}).",
       "many": "{n} passi: lunghezza {len}, angolo {ang} rad. Con più passi la lunghezza si avvicina piano piano a 1 e l'angolo a θ = {th}.",
       "help": "Fai scorrere n per dividere il giro in più spintarelle, più piccole; fai scorrere θ per cambiare dove è diretto."
+    },
+    "spinner": {
+      "title": "La trottola e la sua ombra",
+      "re": "in avanti",
+      "im": "di lato",
+      "position": "posizione",
+      "velocity": "velocità",
+      "shadow": "ombra sull'asse reale",
+      "shadowAxis": "ombra",
+      "omega": "Velocità di rotazione ω",
+      "help": "La freccia della velocità (disegnata più corta per starci) punta sempre un quarto di giro avanti rispetto alla freccia della posizione. Il puntino blu sull'asse reale è l'ombra.",
+      "aria": "Un punto che gira attorno a un cerchio, con la freccia della posizione, una freccia della velocità un quarto di giro avanti e la sua ombra sull'asse reale.",
+      "plotAria": "L'ombra della trottola nel tempo: un'onda coseno."
     }
   }
 }

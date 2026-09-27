@@ -1,67 +1,43 @@
 {
   "kicker": "Capitolo 6",
-  "title": "La vera personalità del drone",
-  "question": "Perché il drone rimbalza come una molla?",
+  "title": "La mappa di s",
+  "question": "Come fa un numero che gira a creare una vera oscillazione, e che aspetto ha ogni s?",
   "sections": [
     {
-      "id": "spring",
-      "title": "Il controllore è una molla",
+      "id": "twins",
+      "title": "Di nuovo la molla (e un nuovo errore)",
       "blocks": [
         {
           "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "June ha chiesto dove vive il nostro drone sulla mappa. Indizio: vi ricordate il drone saltellante del Capitolo 2? Più alzavamo $\\eff{K_p}$, più faceva boing. Sembrava proprio un peso appeso a una molla."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "\"Sembrava\" non è una prova. Mettiamoli uno accanto all'altro e scriviamo tutte e due le equazioni."
+          "who": "june",
+          "mood": "excited",
+          "text": "L'ultima volta abbiamo costruito un numero che gira. Diamolo alla molla e vediamo se fa il bravo."
         },
         {
           "t": "p",
-          "text": "A sinistra: una massa di 0,5 kg appesa a una molla con uno smorzatore (un pistoncino pieno d'olio che si oppone al movimento). A destra: il nostro drone, stessa massa, stesso attrito, con controllo proporzionale."
-        },
-        {
-          "t": "p",
-          "text": "Prima di tutto, scriviamo ogni forza che agisce sulla massa, una alla volta. Misuriamo la sua posizione $x$ dal punto di riposo, con l'alto come verso positivo."
-        },
-        {
-          "t": "list",
-          "items": [
-            "**La molla** tira indietro verso il riposo, tanto più forte quanto più è allungata: $-\\eff{k}\\,x$. Allungala il doppio e tira il doppio.",
-            "**Lo smorzatore** si oppone al *movimento*, non alla posizione: $-c\\,\\dot{x}$. Da fermo non fa niente. Se si muove veloce, spinge indietro forte. ($\\dot{x}$ è la velocità del Capitolo 3.)",
-            "**La gravità** sposta solo un po' più in basso il punto di riposo. Misurando dal riposo, ce ne liberiamo."
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Forza = massa × accelerazione, e l'accelerazione è la pendenza della pendenza (Capitolo 3). Sommiamo le forze e portiamo tutto da una parte:"
-        },
-        {
-          "t": "math",
-          "tex": "m\\,\\ddot{x} = -\\eff{k}\\,x - c\\,\\dot{x} \\quad\\Longrightarrow\\quad m\\,\\ddot{x} + c\\,\\dot{x} + \\eff{k}\\,x = 0"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "Quindi lo smorzatore è aria che odia la velocità?"
+          "text": "La molla voleva $a^2 = -k/m = -4$. Prova $a = 2i$: $(2i)^2 = 4\\,i^2 = -4$. ✓ E funziona anche $a = -2i$."
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "happy",
-          "text": "Più o meno. E per il nostro drone lo smorzatore *è* l'aria."
+          "text": "Va bene, avevo torto. Il trucco dell'esponenziale sopravvive. La molla è $e^{2it}$, una trottola che fa due giri ogni… 2π secondi."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Quindi la posizione della molla è $e^{2it}$? In questo momento è a… $0{,}4 + 0{,}9i$ metri?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Una molla non può stare 0,9 metri *di lato*. Si muove solo su e giù."
         },
         {
           "t": "p",
-          "text": "Nella simulazione, la {eff|freccia arancione} sulla massa è la trazione della molla e quella grigia è la spinta dello smorzatore. Guarda come la freccia dello smorzatore sparisce ogni volta che la massa si ferma per un istante in cima o in fondo a un'oscillazione."
-        },
-        {
-          "t": "note",
-          "text": "Per non farci distrarre dalla gravità, qui regaliamo al drone la sua spinta necessaria per restare in volo stazionario (4,9 N), così non si abbassa. Ce la guadagneremo onestamente nel Capitolo 9."
+          "text": "Mika ha dimenticato l'altra risposta. Abbiamo trovato **due** soluzioni, $e^{2it}$ ed $e^{-2it}$: una trottola e la sua **gemella allo specchio** che gira nell'altro verso. Sommiamole:"
         },
         {
           "t": "widget",
@@ -69,562 +45,189 @@
         },
         {
           "t": "say",
-          "who": "june",
+          "who": "mika",
           "mood": "surprised",
-          "text": "Le curve sono **una sopra l'altra**. Non simili. *Identiche.*"
+          "text": "Le parti di lato si annullano alla perfezione! La somma scivola solo lungo la retta reale, avanti e indietro."
+        },
+        {
+          "t": "math",
+          "tex": "x(t) = \\tfrac12\\left(e^{i\\omega t} + e^{-i\\omega t}\\right) = \\cos(\\omega t),\\qquad \\omega = \\sqrt{k/m}"
+        },
+        {
+          "t": "note",
+          "text": "Il fattore ½ c'è perché ciascuna gemella porta metà: il widget somma due trottole a grandezza piena, quindi la sua somma oscilla fino a 2. E questa coppia parte lasciata andare da 1 m, da ferma. Se la fai partire in movimento, le due gemelle cominciano semplicemente con inclinazioni opposte; la loro somma resta comunque sulla retta reale."
         },
         {
           "t": "p",
-          "text": "Guarda le due equazioni. La molla spinge indietro con una forza $\\eff{k}\\,x$: più è allungata, più tira forte. Il nostro controllore spinge con $\\eff{K_p}(\\sp{2} - \\out{h})$: più è lontano dall'obiettivo, più spinge forte. **Stessa regola.** Il controllore *è* una molla: una molla invisibile, che tira il drone verso i 2 m."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "Quindi un controllore P è una molla virtuale, e l'attrito dell'aria $c$ è uno smorzatore virtuale. Tutto quello che impariamo sulle molle ce lo ritroviamo gratis."
-        },
-        {
-          "t": "callout",
-          "title": "Controllo delle unità",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "La rigidezza $\\eff{k}$ di una molla si misura in **newton al metro**: newton di trazione per ogni metro di allungamento. Il nostro guadagno $\\eff{K_p}$ trasforma metri di errore in newton di spinta, quindi anche lui è in newton al metro. Il controllore non è solo *simile* a una molla. Unità alla mano, *è* una molla."
-            },
-            {
-              "t": "play",
-              "id": "units",
-              "text": "Con $\\eff{K_p}$ = {scrub|kp|eff} N/m, un drone {scrub|e} m troppo in basso riceve {calc|f|eff} N di spinta in più."
-            }
-          ]
-        },
-        {
-          "t": "callout",
-          "title": "Smorzatori veri",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Gli ammortizzatori di un'auto sono smorzatori: olio spremuto attraverso piccoli fori, così combattono i movimenti rapidi e quasi non si accorgono di quelli lenti. Lo sono anche le cerniere a chiusura ammortizzata di un pensile della cucina e il chiudiporta in cima a una porta pesante. Togli gli ammortizzatori a un'auto e ogni buca la fa rimbalzare. Rendili troppo rigidi e ogni buca ti arriva dritta addosso."
-            }
-          ]
+          "text": "Perché la gemella c'è sempre? Nella regola della molla ci sono solo numeri reali ($m$ e $k$, nessuna $i$). Capovolgi una soluzione dall'alto in basso, trasformando ogni $i$ in $-i$, e la regola non vede la differenza: anche l'immagine allo specchio è una soluzione. Quindi per qualsiasi cosa reale le trottole arrivano in **coppie allo specchio**, e insieme le loro parti di lato si annullano, lasciando un'oscillazione reale che possiamo misurare."
         }
       ]
     },
     {
-      "id": "knobs",
-      "title": "Due manopole della personalità",
+      "id": "map",
+      "title": "La mappa di s",
       "blocks": [
         {
           "t": "p",
-          "text": "Ogni sistema massa-molla-smorzatore, e quindi ogni drone con controllo P, è descritto da soli **due numeri**. Guadagniamoceli uno alla volta."
-        },
-        {
-          "t": "h3",
-          "text": "Quanto è rapido: la pulsazione naturale"
-        },
-        {
-          "t": "p",
-          "text": "Togli lo smorzatore e siamo di nuovo nel Capitolo 5: la molla oscilla come $\\cos(\\omega t)$ con $\\omega = \\sqrt{k/m}$. Chiamiamo quella velocità **pulsazione naturale** $\\omega_n$: quanto in fretta il sistema *vuole* oscillare quando niente lo frena."
+          "text": "Il Capitolo 4 ci ha dato esponenziali che **crescono o calano**. Ora abbiamo trottole che **oscillano**. Mettiamoli insieme: $e^{st}$ con $s = \\sigma + i\\omega$."
         },
         {
           "t": "math",
-          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{k}}{m}} \\qquad\\qquad \\text{un'oscillazione completa ogni } \\frac{2\\pi}{\\omega_n} \\text{ s}"
-        },
-        {
-          "t": "play",
-          "id": "wn",
-          "text": "Con k = {scrub|k|eff} N/m e m = 0,5 kg, $\\omega_n$ ≈ {calc|wn} rad/s: un'oscillazione completa ogni {calc|period} s."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "Molla più rigida, oscillazione più veloce. Allora alzo $\\eff{k}$ al massimo e migliora tutto!"
+          "tex": "e^{st} = e^{(\\sigma + i\\omega)t} = \\underbrace{e^{\\sigma t}}_{\\text{cresce/cala}}\\cdot\\underbrace{e^{i\\omega t}}_{\\text{gira}}"
         },
         {
           "t": "p",
-          "text": "Una molla più rigida tira più forte, quindi oscilla più in fretta. Una massa più pesante è più difficile da spostare, quindi oscilla più lentamente. (I radianti al secondo sono la velocità di rotazione del Capitolo 5: un giro completo è 2π radianti, un bordo lungo 2π raggi.)"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "worried",
-          "text": "Piano. Nel capitolo 2 alzare $\\eff{K_p}$ ha reso il drone più veloce *e* più rimbalzante. Sentiamo prima cosa ne pensa lo smorzatore."
-        },
-        {
-          "t": "h3",
-          "text": "Quanto rimbalza: il coefficiente di smorzamento"
-        },
-        {
-          "t": "p",
-          "text": "Ora rimettiamo lo smorzatore. Quanto smorzamento è \"tanto\"? Dipende dalla molla: uno smorzatore che doma una molla morbida rallenta appena una molla rigida. Quindi facciamo il confronto con una quantità speciale, lo **smorzamento critico** $c_{\\text{crit}}$: lo smorzamento più piccolo che elimina del tutto la sovraelongazione."
-        },
-        {
-          "t": "math",
-          "tex": "c_{\\text{crit}} = 2\\sqrt{m\\,\\eff{k}} \\qquad\\qquad \\zeta = \\frac{c}{c_{\\text{crit}}} = \\frac{c}{2\\sqrt{m\\,\\eff{k}}}"
-        },
-        {
-          "t": "p",
-          "text": "Il **coefficiente di smorzamento** ζ (la lettera greca zeta) è il nostro smorzamento come frazione di quello critico. È un numero puro, senza unità. ζ = 0 oscilla per sempre, ζ = 1 è esattamente critico, e ζ = 0,5 ha metà dello smorzamento che servirebbe per eliminare la sovraelongazione."
-        },
-        {
-          "t": "play",
-          "id": "zeta",
-          "text": "Con c = {scrub|c} N·s/m su una molla da k = 20 N/m, $c_{\\text{crit}}$ = {calc|ccrit} N·s/m, quindi ζ = {calc|zeta}: {calc|regime}."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "surprised",
-          "text": "Aspetta. 0,16? È proprio lo ζ del drone nel primo widget!"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "Stessa massa, stesso attrito, stessa rigidezza: stesso ζ. La molla e il drone sono davvero gemelli."
-        },
-        {
-          "t": "h3",
-          "text": "I due puntini sulla mappa"
-        },
-        {
-          "t": "p",
-          "text": "Ora torniamo alla mappa di $s$. Provando $x = e^{st}$, come nei Capitoli 4 e 5, l'equazione diventa $m s^2 + c s + k = 0$. Dividiamo per $m$, poi scriviamo i due coefficienti con le nostre manopole:"
-        },
-        {
-          "t": "math",
-          "tex": "s^2 + \\underbrace{\\frac{c}{m}}_{2\\zeta\\omega_n}\\, s + \\underbrace{\\frac{\\eff{k}}{m}}_{\\omega_n^2} = 0"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Un momento. Da dove salta fuori quel $2\\zeta\\omega_n$? Sembra inventato."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "Fai il conto: $2\\zeta\\omega_n = 2 \\cdot \\frac{c}{2\\sqrt{mk}} \\cdot \\sqrt{\\frac{k}{m}} = \\frac{c}{m}$. È lo stesso numero, solo con un altro nome, così le nostre due manopole compaiono nell'equazione."
-        },
-        {
-          "t": "p",
-          "text": "Risolviamola con la formula dell'equazione di secondo grado ed ecco i due valori di $s$:"
-        },
-        {
-          "t": "math",
-          "tex": "\\begin{aligned} & s^2 + 2\\zeta\\omega_n\\, s + \\omega_n^2 = 0 \\\\ \\Longrightarrow\\quad & s = -\\zeta\\omega_n \\pm \\omega_n\\sqrt{\\zeta^2 - 1} \\end{aligned}"
-        },
-        {
-          "t": "callout",
-          "title": "Da dove viene il ±",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Qualsiasi equazione $s^2 + b\\,s + q = 0$ si risolve completando il quadrato: $(s + b/2)^2 = b^2/4 - q$. Una radice quadrata ha due risposte, una con + e una con −, quindi ci sono sempre **due** valori di $s$:"
-            },
-            {
-              "t": "math",
-              "tex": "s = -\\frac{b}{2} \\pm \\sqrt{\\frac{b^2}{4} - q}"
-            },
-            {
-              "t": "p",
-              "text": "Con $b = 2\\zeta\\omega_n$ e $q = \\omega_n^2$, la parte sotto la radice è $\\omega_n^2(\\zeta^2 - 1)$. Quando ζ < 1 è negativa, e ci serve la $i$ del Capitolo 5: le due risposte diventano una coppia speculare, $-\\zeta\\omega_n \\pm i\\,\\omega_n\\sqrt{1-\\zeta^2}$. A ζ = 1 la radice è esattamente zero e le due risposte si incontrano. Ecco da dove viene $c_{\\text{crit}} = 2\\sqrt{mk}$: è lo smorzamento che fa sparire la radice."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Il segno ± dà due risposte, una per ogni punto. La posizione orizzontale di un punto è **σ** (sigma): quanto in fretta quella parte del moto si riduce. La sua altezza è **ω**: quanto in fretta gira. Quando lo smorzamento è sotto 1, i punti hanno la stessa posizione orizzontale ma altezze opposte. A 1 si incontrano; sopra 1 sono entrambi sull’asse orizzontale."
-        },
-        {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Risposta al gradino",
-              "def": "Come risponde un sistema a un salto improvviso del suo obiettivo, qui da 0 a 1 m. È il modo classico per mostrare una personalità."
-            },
-            {
-              "term": "Tempo di assestamento (2%)",
-              "def": "Quanto ci vuole perché la risposta resti per sempre entro il 2% dall'obiettivo."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Gioca con le due manopole. Guarda i {out|puntini blu} sulla mappa: sono i due valori di $s$, e oltre all'altezza a cui si assesta, il moto è un miscuglio di $e^{s_1 t}$ ed $e^{s_2 t}$. (Con ζ = 1 esatto i due puntini diventano uno solo, e il secondo ingrediente diventa $t\\,e^{s_1 t}$.)"
-        },
-        {
-          "t": "widget",
-          "id": "personality"
-        },
-        {
-          "t": "vocab",
-          "title": "Tre personalità",
-          "items": [
-            {
-              "term": "Sottosmorzato ($\\zeta < 1$)",
-              "def": "I due valori di $s$ sono una coppia speculare fuori dall'asse reale, su un cerchio di raggio $\\omega_n$. La risposta va oltre e oscilla mentre si assesta."
-            },
-            {
-              "term": "Smorzamento critico ($\\zeta = 1$)",
-              "def": "La coppia si incontra sull'asse reale in un unico puntino doppio, quindi il moto è $(A + B\\,t)\\,e^{-\\omega_n t}$. La risposta più rapida senza sovraelongazione."
-            },
-            {
-              "term": "Sovrasmorzato ($\\zeta > 1$)",
-              "def": "La coppia si separa lungo l'asse reale: uno va a sinistra, l'altro si avvicina piano piano allo zero. Niente sovraelongazione, ma lento."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Nei puntini sottosmorzati si nasconde un altro dettaglio: la loro altezza è $\\omega_n\\sqrt{1-\\zeta^2}$, un po' **meno** di $\\omega_n$. Lo smorzamento non si limita a ridurre l'oscillazione, la rallenta anche un pochino. È la **pulsazione smorzata** $\\omega_d$, e la simulazione la mostra."
-        },
-        {
-          "t": "math",
-          "tex": "\\omega_d = \\omega_n\\sqrt{1 - \\zeta^2}"
-        },
-        {
-          "t": "callout",
-          "title": "Perché un cerchio?",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Il cerchio tratteggiato nella simulazione non è una decorazione. Per ζ < 1 i puntini stanno a $\\sigma = -\\zeta\\omega_n$ e $\\omega = \\pm\\omega_n\\sqrt{1-\\zeta^2}$. Per Pitagora, la loro distanza da 0 è"
-            },
-            {
-              "t": "math",
-              "tex": "\\sqrt{\\sigma^2 + \\omega^2} = \\sqrt{\\zeta^2\\omega_n^2 + \\omega_n^2\\,(1 - \\zeta^2)} = \\omega_n"
-            },
-            {
-              "t": "play",
-              "id": "circle",
-              "text": "Con $\\omega_n$ = 3 e ζ = {scrub|z}, i puntini stanno in {calc|roots}, a una distanza {calc|r} da 0."
-            },
-            {
-              "t": "p",
-              "text": "Quindi cambiare ζ fa solo scorrere i puntini lungo il cerchio, e cambiare $\\omega_n$ cambia la grandezza del cerchio."
-            }
-          ]
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "Quindi le spirali del Capitolo 5 erano la personalità del drone fin dall'inizio. Girare = oscillare, stringersi = assestarsi!"
-        }
-      ]
-    },
-    {
-      "id": "damping",
-      "title": "Più smorzamento è sempre meglio?",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "Facile. Le oscillazioni sono brutte e lo smorzamento le uccide. Quindi metto $\\zeta = 5$ per sicurezza. Il drone più sicuro di sempre."
+          "text": "Quindi ogni numero s è una ricetta: **σ** (la parte in avanti) dice quanto in fretta crescere o calare, **ω** (la parte di lato) dice quanto in fretta girare. Insieme disegnano una **spirale**, e l'ombra della spirale è il segnale che vedremmo."
         },
         {
           "t": "predict",
-          "id": "ch6-damping",
+          "id": "ch5-shadow",
           "gate": true,
-          "q": "Stessa molla, stessa $\\omega_n$. Alziamo lo smorzamento da $\\zeta = 1$ a $\\zeta = 3$. Raggiunge l'obiettivo **più in fretta** o **più lentamente**?",
+          "q": "Metti s in $-0{,}5 + 3i$. Che aspetto ha l'ombra di $e^{st}$?",
           "options": [
             {
-              "text": "Più in fretta: più smorzamento, meno movimento sprecato",
-              "sketch": "smooth",
-              "why": "È vero che non c'è sovraelongazione. Ma lo smorzatore denso si oppone anche al movimento *verso* l'obiettivo."
+              "text": "Un'oscillazione che cresce",
+              "sketch": "growing-wiggle",
+              "why": "Per crescere serve σ > 0. Qui σ = −0,5 è negativo."
             },
             {
-              "text": "Più o meno uguale",
-              "sketch": "overshoot",
-              "why": "Oltre $\\zeta = 1$ non resta niente da calmare, e lo smorzamento in più rallenta e basta."
-            },
-            {
-              "text": "Più lentamente: striscia",
-              "sketch": "sluggish",
+              "text": "Un'oscillazione che si spegne",
+              "sketch": "decaying-wiggle",
               "correct": true,
-              "why": "Esatto. Lo smorzatore si oppone a **tutto** il movimento, anche a quello che vuoi. Con $\\zeta = 3$ ci mette circa quattro volte tanto."
-            }
-          ]
-        },
-        {
-          "t": "widget",
-          "id": "race"
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "worried",
-          "text": "Il mio drone \"sicuro\" ci mette una vita. È come muoversi nel miele."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "Guarda la mappa! Un puntino è scappato a sinistra, velocissimo. Ma l'altro è lì, vicinissimo allo zero."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "excited",
-          "text": "E $e^{st}$ con $s$ vicino a zero si spegne **molto** lentamente. Quello veloce sparisce in un lampo. Quello lento comanda."
-        },
-        {
-          "t": "p",
-          "text": "Ogni ingrediente $e^{st}$ del moto si chiama **modo**. Il moto è un miscuglio di modi, e quando quelli veloci si sono spenti resta solo il più lento. Quindi, per questa risposta al gradino, è il **modo più lento che compare davvero** a decidere la lunga attesa."
-        },
-        {
-          "t": "callout",
-          "title": "Quanto ci vuole per \"assestarsi\"?",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Un modo $e^{-at}$ si è ridotto al 2% quando $e^{-at} = 0{,}02$, cioè dopo $t = \\ln 50 / a \\approx 3{,}9/a$. Con una costante di tempo $\\tau = 1/a$, sono circa quattro costanti di tempo: di nuovo il righello del Capitolo 3. Dopo 4τ resta solo $e^{-4} \\approx 1{,}8\\%$."
+              "why": "ω = 3 la fa girare (un'oscillazione circa ogni 2 s), e σ = −0,5 la riduce di un fattore $e^{-0{,}5} \\approx 0{,}61$ ogni secondo."
             },
             {
-              "t": "play",
-              "id": "settle",
-              "text": "Un modo che si riduce con a = {scrub|a} al secondo è entro il 2% dopo circa {calc|ts} s."
+              "text": "Un decadimento dolce, senza oscillazioni",
+              "sketch": "decaying-plain",
+              "why": "È quello che otterresti con ω = 0 (s sull'asse orizzontale). Qui ω = 3, quindi gira."
             }
           ]
         },
         {
-          "t": "p",
-          "text": "Troppo poco smorzamento fa oscillare; troppo fa strisciare. Nel mezzo c'è un punto ideale. Scegli ζ = 0,7 nella gara: va oltre di meno del 5%, ma arriva **entro il 5% dall'obiettivo** molto prima di ζ = 1. Molti progetti puntano a ζ tra circa 0,7 e 1, scambiando una piccola sovraelongazione con la rapidità. Altri compiti possono preferire un equilibrio diverso."
-        }
-      ]
-    },
-    {
-      "id": "drone",
-      "title": "Torniamo al drone",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Ora il Capitolo 2 ha finalmente senso. Per il nostro drone, la costante della molla *è* il guadagno:"
-        },
-        {
-          "t": "math",
-          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{K_p}}{m}}, \\qquad \\zeta = \\frac{c}{2\\sqrt{m\\,\\eff{K_p}}}"
-        },
-        {
-          "t": "p",
-          "text": "$\\eff{K_p}$ sta al *denominatore* della formula dello smorzamento. Alzare il guadagno rende il drone più rapido ($\\omega_n$ più grande), ma **meno smorzato**. Con $\\eff{K_p} = 20$ N/m: $\\zeta = 1/(2\\sqrt{0{,}5 \\times 20}) \\approx 0{,}16$. Molto saltellante, proprio come abbiamo visto. Sulla mappa, i suoi due valori di $s$ stanno molto in alto e solo un po' a sinistra dell'asse verticale. È lì che vive il nostro drone."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "worried",
-          "text": "E non possiamo avere più smorzamento senza abbassare parecchio $\\eff{K_p}$, che fa tornare l'abbassamento. Ci serve un modo per aggiungere smorzamento *apposta*."
-        },
-        {
-          "t": "p",
-          "text": "Trascina il guadagno e guarda il compromesso in una sola frase:"
-        },
-        {
-          "t": "play",
-          "id": "drone",
-          "text": "Con $\\eff{K_p}$ = {scrub|kp|eff} N/m: ζ = {calc|zeta}, $\\omega_n$ = {calc|wn} rad/s, e senza la spinta di volo stazionario regalata si abbasserebbe di {calc|droop} m."
-        }
-      ]
-    },
-    {
-      "id": "arrows",
-      "title": "Le frecce hanno una lunghezza e un angolo",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "Aspetta. I puntini stanno su un cerchio di raggio $\\omega_n$, e ζ li fa solo scorrere lungo il cerchio. Quindi un puntino è in realtà due cose: **quanto è lontano** da 0, e **da che parte**."
-        },
-        {
-          "t": "p",
-          "text": "Ogni freccia $z = a + b\\,i$ si può raccontare anche al contrario: con la sua **lunghezza** $|z|$ e il suo **angolo**. La lunghezza ce la dà Pitagora. Per una freccia che punta a destra ($a > 0$), l'angolo è quello la cui pendenza (quanto sale fratto quanto avanza) vale $b/a$. Si chiama **arcotangente**, $\\arctan$: il tasto \"annulla\" della tangente."
-        },
-        {
-          "t": "math",
-          "tex": "|z| = \\sqrt{a^2 + b^2}, \\qquad \\angle z = \\arctan\\frac{b}{a} \\quad (a > 0)"
-        },
-        {
-          "t": "play",
-          "id": "arrowRead",
-          "text": "La freccia {scrub|a} + {scrub|b}i è lunga {calc|len} e punta a {calc|ang}° dall'asse reale."
-        },
-        {
-          "t": "p",
-          "text": "Il Capitolo 5 ha scoperto che moltiplicare le frecce **moltiplica le loro lunghezze e somma i loro angoli**. Dividere deve annullare tutto questo, quindi divide le lunghezze e **sottrae** gli angoli."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Quindi $1/(1+i)$: lunghezza $1/\\sqrt 2$, e l'angolo è 45° più 45°, quindi 90°? Mmh. Rimoltiplicala per $1+i$ e punta a 135°, lontanissimo da 1."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "Allora meno. Lunga $1/\\sqrt 2$ a −45°. Per $\\sqrt 2$ a +45°, e viene lunghezza 1 a 0°: esattamente 1. Torna."
-        },
-        {
           "t": "widget",
-          "id": "arrows"
+          "id": "smap"
         },
         {
           "t": "p",
-          "text": "La freccia tratteggiata e sbiadita è la **gemella allo specchio** $\\bar z = a - b\\,i$ del Capitolo 5 (i matematici la chiamano *complesso coniugato*): stessa lunghezza, angolo opposto. Moltiplica una freccia per la sua gemella e gli angoli si annullano, lasciando un semplice numero positivo, la lunghezza al quadrato. La tabella del Capitolo 7 avrà bisogno proprio di questo:"
+          "text": "Fai un giro della mappa trascinando s (o usando le frecce):"
         },
         {
-          "t": "math",
-          "tex": "z\\,\\bar z = |z|^2 = a^2 + b^2, \\qquad (s - i\\omega)(s + i\\omega) = s^2 + \\omega^2"
-        },
-        {
-          "t": "p",
-          "text": "E il cerchio? Un polo in $-\\zeta\\omega_n + i\\,\\omega_n\\sqrt{1-\\zeta^2}$ ha lunghezza $\\omega_n$. Misura il suo angolo θ dall'asse reale *negativo*, e la parte verso sinistra è $\\omega_n\\cos\\theta$. Quindi $\\zeta = \\cos\\theta$: lo smorzamento è l'angolo."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Prova la seconda impostazione del widget: 1 + iωτ. È la regola del caffè del Capitolo 3 che incontra un'oscillazione. Dividere per lei rimpicciolisce e gira all'indietro, sempre di più man mano che l'oscillazione accelera, ma mai oltre un quarto di giro. Scommetto che alla doccia interessa."
-        },
-        {
-          "t": "vocab",
+          "t": "list",
           "items": [
-            {
-              "term": "Lunghezza $|z|$",
-              "def": "Quanto è lunga una freccia: $\\sqrt{a^2+b^2}$ per $z = a + b\\,i$. Moltiplicare le frecce moltiplica le loro lunghezze."
-            },
-            {
-              "term": "Angolo $\\angle z$",
-              "def": "Da che parte punta una freccia, misurato dall'asse reale positivo. $\\arctan(b/a)$ per una freccia che punta a destra. Moltiplicare somma gli angoli, dividere li sottrae."
-            },
-            {
-              "term": "Gemella allo specchio $\\bar z$",
-              "def": "La freccia ribaltata rispetto all'asse reale, $a - b\\,i$ (il complesso coniugato). $z\\,\\bar z = |z|^2$."
-            }
+            "**Metà sinistra** (σ < 0): la spirale si stringe, l'oscillazione si spegne.",
+            "**Metà destra** (σ > 0): la spirale si allarga, l'oscillazione esplode.",
+            "**Sulla linea verticale** (σ = 0): un cerchio perfetto, un'oscillazione che continua per sempre.",
+            "**Sulla linea orizzontale** (ω = 0): nessuna rotazione, solo i semplici esponenziali del Capitolo 4.",
+            "**Più lontano dalla linea orizzontale** (in alto o in basso): rotazione più veloce, oscillazioni più rapide. **Più a sinistra**: si spegne più in fretta."
           ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Quindi un solo puntino su questa mappa è un'intera personalità: quanto in fretta oscilla e se si calma o esplode."
+        },
+        {
+          "t": "note",
+          "text": "Questa mappa diventerà il nostro disegno più importante. Riceverà il suo nome ufficiale nel Capitolo 8."
+        }
+      ]
+    },
+    {
+      "id": "fourier",
+      "title": "Una breve deviazione: tutto è fatto di trottole",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Un'ultima sorpresa. Prendi trottole di velocità diverse (1, 3, 5, 7… volte più veloci), rimpicciolisci ognuna e falla partire proprio all'angolo giusto, poi somma le loro ombre. Con abbastanza trottole puoi costruire una varietà enorme di forme, persino un'onda quadra con gli spigoli vivi."
+        },
+        {
+          "t": "widget",
+          "id": "fourier"
+        },
+        {
+          "t": "p",
+          "text": "**Fourier** mostrò come assemblare molti segnali periodici con pezzi che girano. L’onda quadra è un esempio: più pezzi rendono più nette le parti piatte e gli spigoli. È un modo potente di descrivere i segnali, con condizioni e limiti da esplorare più avanti."
+        },
+        {
+          "t": "note",
+          "text": "Angolo dell'onestà: proprio accanto a ogni salto la somma va sempre oltre di circa il 9% del salto, per quanti pezzi tu aggiunga. La gobba si stringe ma non sparisce mai."
         }
       ]
     },
     {
       "id": "wrap",
-      "title": "Cosa sappiamo adesso",
+      "title": "Cosa sappiamo finora",
       "blocks": [
         {
           "t": "recap",
           "items": [
-            "Un drone con controllo P segue **esattamente** la stessa equazione di una massa su una molla: il controllore è una molla virtuale.",
-            "Due numeri ne catturano la personalità: $\\omega_n$ (quanto è rapido) e $\\zeta$ (quanto è saltellante).",
-            "$\\omega_n = \\sqrt{k/m}$ è la velocità di oscillazione senza smorzatore. $\\zeta = c/c_{\\text{crit}}$ confronta lo smorzamento con lo smorzamento critico $2\\sqrt{mk}$, quello che elimina appena la sovraelongazione.",
-            "Il moto è un miscuglio di due termini $e^{st}$. I due valori di $s$ stanno su un cerchio di raggio $\\omega_n$ quando è sottosmorzato, e si separano lungo l'asse reale quando è sovrasmorzato.",
-            "Una freccia ha una **lunghezza** e un **angolo** ($\\arctan$). Moltiplicare moltiplica le lunghezze e somma gli angoli; dividere divide e sottrae. $\\zeta = \\cos\\theta$.",
-            "Lo smorzamento rallenta anche un po' l'oscillazione: $\\omega_d = \\omega_n\\sqrt{1-\\zeta^2}$.",
-            "Più smorzamento non è sempre meglio: oltre $\\zeta = 1$ il valore di $s$ lento si avvicina allo zero e tutto rallenta.",
-            "Per il drone, più $K_p$ vuol dire meno smorzamento. Ecco perché ballava di più."
+            "Le oscillazioni reali nascono da **trottole gemelle allo specchio** le cui parti di lato si annullano.",
+            "$e^{st}$ con $s = \\sigma + i\\omega$ gira *e* cresce o cala: una spirale. La sua ombra è un'oscillazione che cresce o si spegne.",
+            "La **mappa di s**: a sinistra si calma, a destra esplode, più in alto vuol dire oscillazioni più rapide.",
+            "Molti segnali periodici, persino un'onda quadra, si possono costruire sommando trottole di velocità diverse (Fourier). Proprio accanto a un salto la somma va sempre oltre di circa il 9%."
           ]
         },
         {
           "t": "quiz",
           "items": [
             {
-              "id": "ch6-q1",
-              "q": "I due valori di $s$ di un sistema sono $-1 \\pm 4i$. Qual è la sua risposta?",
+              "id": "ch5-q2",
+              "q": "Metti s esattamente sulla linea verticale, in $s = 2i$. Com'è l'ombra di $e^{st}$?",
               "options": [
                 {
-                  "text": "Va oltre e oscilla",
-                  "sketch": "overshoot",
+                  "text": "Un'oscillazione che continua per sempre",
+                  "sketch": "steady-wiggle",
                   "correct": true,
-                  "why": "Una parte immaginaria (±4) vuol dire rotazione, quindi oscillazione. Una parte reale negativa (−1) vuol dire che le oscillazioni si riducono."
+                  "why": "σ = 0 vuol dire né crescere né calare: un cerchio perfetto, e la sua ombra è un coseno costante."
                 },
                 {
-                  "text": "Sale dolcemente, senza sovraelongazione",
-                  "sketch": "smooth",
-                  "why": "Le salite dolci vengono da valori di $s$ sull'asse reale (niente rotazione). Questi hanno parte immaginaria ±4."
+                  "text": "Un'oscillazione che si spegne",
+                  "sketch": "decaying-wiggle",
+                  "why": "Per spegnersi serve σ < 0 (a sinistra della linea verticale)."
                 },
                 {
-                  "text": "Sale strisciando lentamente",
-                  "sketch": "sluggish",
-                  "why": "Una salita lenta senza oscillazioni corrisponde a un valore reale negativo di $s$ molto vicino a zero. Qui i valori hanno parti immaginarie (±4), quindi la risposta oscilla."
+                  "text": "Crescita esplosiva",
+                  "sketch": "growing-plain",
+                  "why": "La crescita senza oscillazioni è la metà destra della linea *orizzontale*: σ > 0, ω = 0."
                 }
               ]
             },
             {
-              "id": "ch6-q2",
-              "q": "Il nostro drone ($m = 0{,}5$ kg, $c = 1$ N·s/m) con $K_p = 20$ N/m è…",
+              "id": "ch5-q3",
+              "q": "Una corda di chitarra suona una nota chiara e si spegne lentamente. Dove vive sulla mappa di s?",
               "options": [
                 {
-                  "text": "Sottosmorzato, $\\zeta \\approx 0{,}16$",
+                  "text": "Appena a sinistra della linea verticale, ben sopra la linea orizzontale",
                   "correct": true,
-                  "why": "$\\zeta = 1/(2\\sqrt{0{,}5\\cdot 20}) = 1/(2\\sqrt{10}) \\approx 0{,}158$. Ben sotto 1, quindi saltellante."
+                  "why": "Spegnersi lentamente vuol dire σ leggermente negativo, e una nota chiara vuol dire una ω grande (tante oscillazioni al secondo)."
                 },
                 {
-                  "text": "Con smorzamento critico, $\\zeta = 1$",
-                  "why": "Servirebbe $c = 2\\sqrt{m K_p} \\approx 6{,}3$ N·s/m, più di sei volte l'attrito che abbiamo."
+                  "text": "Nella metà destra",
+                  "why": "La metà destra *cresce*. Una corda che diventa più forte da sola sarebbe preoccupante."
                 },
                 {
-                  "text": "Sovrasmorzato, $\\zeta > 1$",
-                  "why": "Per essere sovrasmorzato serve tanto smorzamento rispetto alla rigidezza. Il nostro guadagno è alto e l'attrito piccolo: l'opposto."
+                  "text": "Sulla linea orizzontale, molto a sinistra",
+                  "why": "Senza ω non c'è oscillazione (nessuna nota), e molto a sinistra vuol dire che si spegne subito. Quello è un tonfo."
                 }
               ]
             },
             {
-              "id": "ch6-q5",
-              "q": "Una molla con $k = 8$ N/m regge una massa di 0,5 kg. Quanto smorzamento $c$ la rende a smorzamento critico?",
+              "id": "ch5-q4",
+              "q": "Perché le trottole di un'oscillazione reale, fisica, arrivano sempre in coppie allo specchio?",
               "options": [
                 {
-                  "text": "$c = 4$ N·s/m",
+                  "text": "Nella regola ci sono solo numeri reali, quindi anche l'immagine allo specchio di una trottola la risolve",
                   "correct": true,
-                  "why": "$c_{\\text{crit}} = 2\\sqrt{m k} = 2\\sqrt{0{,}5 \\cdot 8} = 2\\sqrt{4} = 4$ N·s/m."
+                  "why": "Capovolgi $e^{i\\omega t}$ dall'alto in basso e ottieni $e^{-i\\omega t}$. Una regola senza $i$ non riesce a distinguerle, quindi sono soluzioni tutte e due, e un moto reale le usa entrambe: le loro parti di lato si annullano."
                 },
                 {
-                  "text": "$c = 16$ N·s/m",
-                  "why": "Quello è $2k$. Lo smorzamento critico usa la radice quadrata di massa × rigidezza: $2\\sqrt{mk}$."
+                  "text": "Perché $i^2 = -1$",
+                  "why": "È vero, ma spiega perché le trottole *esistono*, non perché vanno in coppia."
                 },
                 {
-                  "text": "$c = 1$ N·s/m",
-                  "why": "È l'attrito dell'aria del nostro drone, che qui dà $\\zeta = 0{,}25$: sottosmorzato."
-                }
-              ]
-            },
-            {
-              "id": "ch6-q3",
-              "q": "Usando solo il controllo P, quale $K_p$ renderebbe il drone a smorzamento critico ($\\zeta = 1$)?",
-              "options": [
-                {
-                  "text": "$K_p = 0{,}5$ N/m",
-                  "correct": true,
-                  "why": "Poni $c/(2\\sqrt{m K_p}) = 1$ e ottieni $K_p = c^2/(4m) = 0{,}5$ N/m. Ma con una molla così debole il drone dovrebbe stare 9,8 m *sotto* l'obiettivo solo per reggersi, quindi non decolla mai. Il controllo P da solo non ci dà entrambe le cose."
-                },
-                {
-                  "text": "$K_p = 20$ N/m",
-                  "why": "È il nostro valore saltellante di default, con $\\zeta \\approx 0{,}16$. Più guadagno vuol dire *meno* smorzamento."
-                },
-                {
-                  "text": "$K_p = 200$ N/m",
-                  "why": "Più guadagno abbassa $\\zeta$ ancora di più (a circa 0,05). Il guadagno sta al denominatore."
-                }
-              ]
-            },
-            {
-              "id": "ch6-q4",
-              "q": "Un sistema sovrasmorzato ha valori di $s$ pari a $-0{,}2$ e $-10$. Quale dei due decide quanto aspetti?",
-              "options": [
-                {
-                  "text": "$-0{,}2$",
-                  "correct": true,
-                  "why": "$e^{-0{,}2t}$ ci mette circa 20 s a scendere al 2%, mentre $e^{-10t}$ sparisce in 0,4 s. Comanda quello più vicino all'asse verticale."
-                },
-                {
-                  "text": "$-10$",
-                  "why": "$e^{-10t}$ svanisce in una frazione di secondo. È la parte veloce, finita prima che te ne accorga."
-                },
-                {
-                  "text": "Tutti e due allo stesso modo",
-                  "why": "Si spengono a velocità molto diverse, quindi quello lento domina quello che vedi."
+                  "text": "Perché una molla ha due estremità",
+                  "why": "Carina, ma no. Anche un singolo pendolo che oscilla ha trottole gemelle."
                 }
               ]
             }
@@ -635,130 +238,60 @@
         },
         {
           "t": "cliff",
-          "text": "Theo: \"Siamo arrivati a questi valori di $s$ *tirando a indovinare*. Aggiungi gravità, vento, pacchi e un controllore più furbo, e indovinare diventa un incubo. Esiste una macchina che trasformi quest'analisi in **semplice algebra**?\""
+          "text": "June: \"Allora **dove vive il nostro drone su questa mappa?**\""
         }
       ]
     }
   ],
   "widgets": {
     "twins": {
-      "title": "Molla contro drone",
-      "spring": "massa su una molla",
-      "drone": "drone con controllo P",
-      "msdAria": "Una massa appesa a una molla e a uno smorzatore, che rimbalza attorno alla posizione di riposo.",
-      "plotY": "distanza dall'obiettivo (m)",
-      "plotAria": "Distanza dall'obiettivo nel tempo per il drone e per la molla. Le due curve sono una sopra l'altra.",
-      "target": "obiettivo / riposo",
-      "kp": "Rigidezza: molla $k$ = guadagno del drone $K_p$",
-      "personality": "personalità",
-      "help": "Entrambi partono 1 m sotto il loro obiettivo e vengono lasciati andare. Il cursore imposta la rigidezza della molla e il guadagno del drone allo stesso numero.",
-      "describe": "Il drone è a {d} m dall'obiettivo, la massa della molla a {s} m dal riposo.",
-      "together": "tutti e due, in un solo grafico",
-      "forceSpring": "trazione della molla",
-      "forceDamper": "spinta dello smorzatore"
+      "title": "Una trottola e la sua gemella allo specchio",
+      "re": "in avanti",
+      "im": "di lato",
+      "sum": "somma",
+      "spinnerLabel": "trottola",
+      "twinLabel": "gemella",
+      "toggle": "Aggiungi la gemella allo specchio",
+      "axis": "valore",
+      "realPart": "parte in avanti della somma",
+      "sidePart": "parte di lato della somma",
+      "alone": "Una trottola da sola: la somma se ne va di lato (curva tratteggiata).",
+      "withTwin": "Con la gemella aggiunta in coda, le parti di lato si annullano. La somma resta sulla retta reale: 2·cos(ωt).",
+      "aria": "Due frecce che girano in versi opposti, sommate una in coda all'altra. La loro somma è segnata con un anello.",
+      "plotAria": "Le parti in avanti e di lato della somma nel tempo."
     },
-    "personality": {
-      "title": "Due manopole, due puntini, una personalità",
-      "response": "risposta a un gradino di 1 m",
-      "target": "obiettivo",
-      "plotAria": "Risposta al gradino di un sistema del secondo ordine per la pulsazione naturale e il coefficiente di smorzamento scelti.",
-      "planeAria": "La mappa di s, con i due valori di s del sistema e un cerchio tratteggiato di raggio omega n.",
-      "msdAria": "Una massa su una molla che ripete la risposta al gradino.",
-      "panelAria": "Piccola risposta al gradino con coefficiente di smorzamento {z}.",
-      "panel": {
-        "0": "sottosmorzato (ζ = {z})",
-        "1": "critico (ζ = {z})",
-        "2": "sovrasmorzato (ζ = {z})"
-      },
-      "radius": "raggio ωn = {w}",
-      "wn": "Pulsazione naturale $\\omega_n$",
-      "zeta": "Coefficiente di smorzamento $\\zeta$",
-      "overshoot": "sovraelongazione",
-      "settle": "si assesta (2%)",
-      "roots": "i due valori di s",
-      "personality": "personalità",
-      "never": "mai",
-      "playSpring": "Rivedi sulla molla",
-      "stopSpring": "Metti in pausa la molla",
-      "describe": "Coefficiente di smorzamento {z}, pulsazione naturale {w} radianti al secondo, valori di s {r}.",
-      "planeCap": "i due valori di s",
-      "springCap": "guardalo su una molla",
-      "re": "σ",
-      "im": "ω",
-      "offMap": "{v} è fuori dalla mappa ←",
-      "wd": "pulsazione smorzata ωd",
-      "noWiggle": "nessuna oscillazione"
+    "smap": {
+      "title": "La mappa di s",
+      "re": "σ: cala ← → cresce",
+      "im": "ω: gira",
+      "reShort": "in avanti",
+      "imShort": "di lato",
+      "time": "tempo →",
+      "shadow": "ombra di e^(st)",
+      "shadowAxis": "ombra",
+      "mirror": "Mostra la gemella allo specchio",
+      "readS": "s",
+      "readTurns": "giri",
+      "readSize": "variazione di ampiezza",
+      "spins": "Fa {n} giri al secondo,",
+      "noSpin": "Non gira per niente,",
+      "grows": "e cresce.",
+      "shrinks": "e cala.",
+      "steady": "e mantiene la stessa ampiezza.",
+      "help": "Trascina il puntino s sulla mappa (o selezionalo e usa le frecce). A destra: la spirale e^(st) in 3-D, con il tempo che scorre verso destra. La sua ombra blu è disegnata sotto.",
+      "mapAria": "La mappa di s: trascina il punto per scegliere sigma e omega.",
+      "spiralAria": "Spirale tridimensionale di e elevato a s t, con il tempo che scorre verso destra, e la sua ombra sulla parete di fondo.",
+      "plotAria": "Ombra di e elevato a s t nel tempo."
     },
-    "race": {
-      "title": "La gara dello smorzamento",
-      "choose": "Il tuo smorzamento",
-      "ref": "ζ = 1 (critico)",
-      "yours": "la tua ζ",
-      "yoursZ": "ζ = {z}",
-      "msdAria": "Una massa su una molla che si muove verso la posizione di riposo.",
-      "plotAria": "Risposte al gradino con smorzamento critico e con il coefficiente di smorzamento scelto.",
-      "planeAria": "I due valori di s per il coefficiente di smorzamento scelto.",
-      "settleRef": "ζ = 1 si assesta",
-      "settleYours": "la tua ζ si assesta",
-      "slow": "quello lento",
-      "fast": "quello veloce",
-      "never": "non entro 12 s",
-      "same": "Questo è proprio il riferimento: la risposta più rapida senza sovraelongazione.",
-      "slower": "Il tuo smorzamento in più l'ha reso circa {k}× più lento.",
-      "replay": "Rifai la gara",
-      "planeCap": "i due valori di s",
-      "re": "σ",
-      "im": "ω",
-      "fastOff": "← quello veloce a {v} (fuori dalla mappa)",
-      "double": "tutti e due qui",
-      "band5": "entro il 5%",
-      "sweet": "ζ = 0,7 va oltre del {os}%, ma è entro il 5% dall'obiettivo dopo {y5} s. A ζ = 1 servono {r5} s."
-    },
-    "arrows": {
-      "title": "Lunghezza, angolo e 1 ÷ una freccia",
-      "aria": "Un piano con il cerchio unitario, una freccia z, la sua gemella allo specchio tratteggiata e la freccia 1 diviso z, con i loro angoli segnati.",
-      "re": "parte reale",
-      "im": "parte immaginaria",
-      "mode": "Quale freccia?",
-      "modeFree": "una freccia z qualsiasi",
-      "modeSmoother": "lo smussatore, 1 + iωτ",
-      "a": "parte reale a",
-      "b": "parte immaginaria b",
-      "wt": "velocità dell'oscillazione × τ (ωτ)",
-      "mirror": "gemella",
-      "out": "1 ÷ (1 + iωτ)",
-      "len": "lunghezza |z|",
-      "ang": "angolo di z",
-      "ilen": "lunghezza di 1/z",
-      "iang": "angolo di 1/z",
-      "free": "1/z è lunga {ilen} (1 ÷ {len}) e girata dall'altra parte, a {iang}. Moltiplica le due frecce e ottieni lunghezza {back} a 0°: esattamente 1.",
-      "smooth": "Con ωτ = {wt}, 1 ÷ (1 + iωτ) conserva {ilen} della grandezza e resta indietro di {lag}. Oscillazioni più rapide: più piccola e più in ritardo, ma mai oltre 90°.",
-      "help": "Fai scorrere a e b per spostare z (oppure passa allo smussatore e fai scorrere ωτ). L'arco blu è l'angolo di z, l'arco grigio l'angolo di 1/z."
-    }
-  },
-  "plays": {
-    "units": {
-      "kp": "guadagno Kp, newton al metro",
-      "e": "errore, metri"
-    },
-    "wn": {
-      "k": "rigidezza della molla k, newton al metro"
-    },
-    "zeta": {
-      "c": "smorzamento c, newton secondo al metro"
-    },
-    "circle": {
-      "z": "coefficiente di smorzamento zeta"
-    },
-    "settle": {
-      "a": "tasso di riduzione a, al secondo"
-    },
-    "drone": {
-      "kp": "guadagno Kp, newton al metro"
-    },
-    "arrowRead": {
-      "a": "parte reale a",
-      "b": "parte immaginaria b"
+    "fourier": {
+      "title": "Costruire un'onda quadra con le trottole",
+      "axis": "valore",
+      "target": "onda quadra",
+      "sum": "somma delle ombre delle trottole",
+      "pieces": "Numero di trottole",
+      "status": "{n} trottole aggiunte. La più veloce gira {f}× più veloce della prima.",
+      "aria": "Un'onda quadra e la somma di un numero scelto di ombre di trottole che la approssima.",
+      "statusOne": "Una sola trottola: una semplice oscillazione, ancora niente di quadrato."
     }
   }
 }

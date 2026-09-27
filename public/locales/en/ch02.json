@@ -13,7 +13,7 @@
         { "t": "p", "text": "That's the most famous controller there is, **proportional control** (\"P control\" for short):" },
         { "t": "math", "tex": "\\eff{T} = K_p \\, \\err{e} = K_p\\,(\\sp{r} - \\out{h})" },
         { "t": "p", "text": "$K_p$ is the **gain**: how many newtons of thrust you add for every metre of error. Its unit is newtons per metre (N/m). Big $K_p$ means an eager controller, small $K_p$ a relaxed one. That's the only knob we get in this chapter." },
-        { "t": "note", "aside": true, "text": "Still pretending the motors are unlimited. They can even pull down a bit if the drone is too high. We'll get honest about limits in Chapter 8." },
+        { "t": "note", "aside": true, "text": "Still pretending the motors are unlimited. They can even pull down a bit if the drone is too high. We'll get honest about limits in Chapter 10." },
         {
           "t": "predict",
           "id": "ch2-kp5",
@@ -52,7 +52,7 @@
         },
         { "t": "say", "who": "june", "mood": "think", "text": "Why would pushing *harder* make it *wobble*?" },
         { "t": "say", "who": "theo", "mood": "think", "text": "A big push gets it moving fast. When it reaches the right height it's still going quickly, and nothing in our rule says \"slow down, you're nearly there\". Only the air drag gently brakes it. So it sails past, gets pushed back, sails past again…" },
-        { "t": "note", "text": "Honest note: with our simple drone, P control wiggles but never truly **explodes**. The swings always die out eventually. Real drones have small delays (motors take time to spin up) that make too much gain genuinely dangerous. That's Chapters 10 and 11." }
+        { "t": "note", "text": "Honest note: with our simple drone, P control wiggles but never truly **explodes**. The swings always die out eventually. Real drones have small delays (motors take time to spin up) that make too much gain genuinely dangerous. That's Chapters 12 and 13." }
       ]
     },
     {
@@ -97,7 +97,7 @@
               "options": [
                 { "text": "Low, with a little wiggle", "sketch": "droop", "why": "A big droop means a *small* gain: lots of error is needed to make enough thrust." },
                 { "text": "Close to the target, with big wiggles", "sketch": "overshoot", "correct": true, "why": "Small droop and lots of overshoot are the signature of a high gain." },
-                { "text": "Smoothly and exactly onto the target", "sketch": "sluggish", "why": "Trick option: a pure P controller fighting gravity can **never** end exactly on the target, whatever $K_p$ is. Something is missing (Chapter 9)." }
+                { "text": "Smoothly and exactly onto the target", "sketch": "sluggish", "why": "Trick option: a pure P controller fighting gravity can **never** end exactly on the target, whatever $K_p$ is. Something is missing (Chapter 11)." }
               ]
             },
             {

@@ -1,67 +1,43 @@
 {
   "kicker": "Chapitre 6",
-  "title": "La vraie personnalité du drone",
-  "question": "Pourquoi le drone rebondit-il comme un ressort ?",
+  "title": "La carte de s",
+  "question": "Comment un nombre qui tourne fait-il une vraie oscillation, et à quoi ressemble chaque s ?",
   "sections": [
     {
-      "id": "spring",
-      "title": "Le correcteur est un ressort",
+      "id": "twins",
+      "title": "Retour au ressort (et une nouvelle erreur)",
       "blocks": [
         {
           "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "June a demandé où vit notre drone sur la carte. Indice : vous vous souvenez du drone rebondissant du chapitre 2 ? Plus on montait $\\eff{K_p}$, plus il faisait « boing ». On aurait vraiment dit un poids au bout d'un ressort."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "« On aurait dit », ce n'est pas une preuve. Mettons-les côte à côte et écrivons les deux équations."
+          "who": "june",
+          "mood": "excited",
+          "text": "La dernière fois, on a construit un nombre qui tourne. Donnons-le au ressort et voyons s'il se comporte bien."
         },
         {
           "t": "p",
-          "text": "À gauche : une masse de 0,5 kg suspendue à un ressort avec un amortisseur (un petit piston rempli d'huile qui résiste au mouvement). À droite : notre drone, même masse, même traînée, en commande proportionnelle."
-        },
-        {
-          "t": "p",
-          "text": "D'abord, écrivons toutes les forces qui agissent sur la masse, une par une. On mesure sa position $x$ depuis le point de repos, vers le haut positif."
-        },
-        {
-          "t": "list",
-          "items": [
-            "**Le ressort** tire vers le repos, d'autant plus fort qu'il est étiré : $-\\eff{k}\\,x$. Étire-le deux fois plus, il tire deux fois plus fort.",
-            "**L'amortisseur** s'oppose au *mouvement*, pas à la position : $-c\\,\\dot{x}$. À l'arrêt, il ne fait rien. En mouvement rapide, il repousse fort. ($\\dot{x}$, c'est la vitesse du chapitre 3.)",
-            "**La gravité** abaisse juste un peu le point de repos. En mesurant depuis le repos, on s'en débarrasse."
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Force = masse × accélération, et l'accélération, c'est la pente de la pente (chapitre 3). On additionne les forces et on met tout du même côté :"
-        },
-        {
-          "t": "math",
-          "tex": "m\\,\\ddot{x} = -\\eff{k}\\,x - c\\,\\dot{x} \\quad\\Longrightarrow\\quad m\\,\\ddot{x} + c\\,\\dot{x} + \\eff{k}\\,x = 0"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "Donc l'amortisseur, c'est de l'air qui déteste la vitesse ?"
+          "text": "Le ressort avait besoin de $a^2 = -k/m = -4$. Essaie $a = 2i$ : $(2i)^2 = 4\\,i^2 = -4$. ✓ Et $a = -2i$ marche aussi."
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "happy",
-          "text": "En gros, oui. Et pour notre drone, l'amortisseur, *c'est* l'air."
+          "text": "D'accord, j'avais tort. L'astuce « deviner une exponentielle » survit. Le ressort, c'est $e^{2it}$, un tourniquet qui fait deux tours toutes les… 2π secondes."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Donc la position du ressort, c'est $e^{2it}$ ? Là, maintenant, il est à… $0{,}4 + 0{,}9i$ mètre ?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Un ressort ne peut pas être à 0,9 mètre *sur le côté*. Il ne bouge que de haut en bas."
         },
         {
           "t": "p",
-          "text": "Dans la simulation, la {eff|flèche orange} sur la masse est la traction du ressort, et la grise la poussée de l'amortisseur. Regarde : la flèche de l'amortisseur disparaît chaque fois que la masse s'arrête un instant en haut ou en bas d'une oscillation."
-        },
-        {
-          "t": "note",
-          "text": "Pour que la gravité ne nous distraie pas, on offre ici au drone sa poussée de vol stationnaire (4,9 N), pour qu'il ne s'affaisse pas. On la gagnera honnêtement au chapitre 9."
+          "text": "Mika a oublié l'autre réponse. On a trouvé **deux** solutions, $e^{2it}$ et $e^{-2it}$ : un tourniquet et son **jumeau miroir** qui tourne dans l'autre sens. Additionne-les :"
         },
         {
           "t": "widget",
@@ -69,562 +45,189 @@
         },
         {
           "t": "say",
-          "who": "june",
+          "who": "mika",
           "mood": "surprised",
-          "text": "Les courbes sont **superposées**. Pas semblables. *Identiques.*"
+          "text": "Les parties de côté s'annulent parfaitement ! La somme glisse juste le long de la droite réelle, d'avant en arrière."
+        },
+        {
+          "t": "math",
+          "tex": "x(t) = \\tfrac12\\left(e^{i\\omega t} + e^{-i\\omega t}\\right) = \\cos(\\omega t),\\qquad \\omega = \\sqrt{k/m}"
+        },
+        {
+          "t": "note",
+          "text": "Le ½ est là parce que chaque jumeau apporte la moitié : le widget additionne deux tourniquets de taille normale, donc sa somme va jusqu'à 2. Et cette paire part lâchée à 1 m, au repos. Lance-la avec une vitesse et les deux jumeaux démarrent simplement avec des inclinaisons opposées ; leur somme reste toujours sur la droite réelle."
         },
         {
           "t": "p",
-          "text": "Regarde les deux équations. Le ressort repousse avec une force $\\eff{k}\\,x$ : plus il est étiré, plus il tire fort. Notre correcteur pousse avec $\\eff{K_p}(\\sp{2} - \\out{h})$ : plus on est loin de la cible, plus il pousse fort. **Même règle.** Le correcteur *est* un ressort : un ressort invisible, qui tire le drone vers 2 m."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "Donc un correcteur P est un ressort virtuel, et la traînée de l'air $c$ est un amortisseur virtuel. Tout ce qu'on apprend sur les ressorts, on l'a gratuitement."
-        },
-        {
-          "t": "callout",
-          "title": "Vérifions les unités",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "La raideur $\\eff{k}$ d'un ressort se mesure en **newtons par mètre** : des newtons de traction pour chaque mètre d'étirement. Notre gain $\\eff{K_p}$ transforme des mètres d'erreur en newtons de poussée, donc il s'exprime lui aussi en newtons par mètre. Le correcteur ne *ressemble* pas seulement à un ressort. D'après les unités, c'en *est* un."
-            },
-            {
-              "t": "play",
-              "id": "units",
-              "text": "Avec $\\eff{K_p}$ = {scrub|kp|eff} N/m, un drone {scrub|e} m trop bas reçoit {calc|f|eff} N de poussée en plus."
-            }
-          ]
-        },
-        {
-          "t": "callout",
-          "title": "De vrais amortisseurs",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Les amortisseurs d'une voiture en sont : de l'huile qui passe par de petits trous, si bien qu'ils combattent les mouvements rapides et remarquent à peine les lents. Les charnières à fermeture douce d'un placard de cuisine aussi, tout comme le ferme-porte en haut d'une lourde porte. Enlève les amortisseurs d'une voiture et chaque bosse la fait rebondir. Rends-les beaucoup trop durs et tu sens chaque bosse de plein fouet."
-            }
-          ]
+          "text": "Pourquoi le jumeau est-il toujours là ? La règle du ressort ne contient que des nombres réels ($m$ et $k$, pas de $i$). Retourne une solution de haut en bas, en changeant chaque $i$ en $-i$, et la règle ne voit pas la différence : l'image miroir est aussi une solution. Donc pour tout ce qui est réel, les tourniquets viennent par **paires miroirs**, et ensemble leurs parties de côté s'annulent : il reste une vraie oscillation qu'on peut mesurer."
         }
       ]
     },
     {
-      "id": "knobs",
-      "title": "Deux boutons de personnalité",
+      "id": "map",
+      "title": "La carte de s",
       "blocks": [
         {
           "t": "p",
-          "text": "Chaque système masse-ressort-amortisseur, et donc chaque drone en commande P, est décrit par seulement **deux nombres**. Gagnons-les un par un."
-        },
-        {
-          "t": "h3",
-          "text": "À quelle vitesse : la pulsation propre"
-        },
-        {
-          "t": "p",
-          "text": "Enlève l'amortisseur et on revient au chapitre 5 : le ressort oscille comme $\\cos(\\omega t)$ avec $\\omega = \\sqrt{k/m}$. Cette vitesse, on l'appelle la **pulsation propre** $\\omega_n$ : à quelle vitesse le système *veut* osciller quand rien ne le freine."
+          "text": "Le chapitre 4 nous a donné des exponentielles qui **grandissent ou rétrécissent**. Maintenant, on a des tourniquets qui **oscillent**. Mettons-les ensemble : $e^{st}$ avec $s = \\sigma + i\\omega$."
         },
         {
           "t": "math",
-          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{k}}{m}} \\qquad\\qquad \\text{une oscillation complète toutes les } \\frac{2\\pi}{\\omega_n} \\text{ s}"
-        },
-        {
-          "t": "play",
-          "id": "wn",
-          "text": "Avec k = {scrub|k|eff} N/m et m = 0,5 kg, $\\omega_n$ ≈ {calc|wn} rad/s : une oscillation complète toutes les {calc|period} s."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "Ressort plus raide, oscillation plus rapide. Il suffit de pousser $\\eff{k}$ à fond et tout s'améliore !"
+          "tex": "e^{st} = e^{(\\sigma + i\\omega)t} = \\underbrace{e^{\\sigma t}}_{\\text{grandir/rétrécir}}\\cdot\\underbrace{e^{i\\omega t}}_{\\text{tourner}}"
         },
         {
           "t": "p",
-          "text": "Un ressort plus raide tire plus fort, donc il oscille plus vite. Une masse plus lourde est plus dure à bousculer, donc elle oscille plus lentement. (Les radians par seconde, c'est la vitesse de rotation du chapitre 5 : un tour complet fait 2π radians, soit un bord long de 2π rayons.)"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "worried",
-          "text": "Doucement. Au chapitre 2, pousser $\\eff{K_p}$ a rendu le drone plus rapide *et* plus rebondissant. Écoutons d'abord ce que l'amortisseur a à dire."
-        },
-        {
-          "t": "h3",
-          "text": "À quel point ça rebondit : le taux d'amortissement"
-        },
-        {
-          "t": "p",
-          "text": "Maintenant, remets l'amortisseur. C'est quoi, « beaucoup » d'amortissement ? Ça dépend du ressort : un amortisseur qui calme un ressort mou freine à peine un ressort raide. On compare donc à une quantité spéciale, l'**amortissement critique** $c_{\\text{crit}}$ : le plus petit amortissement qui supprime complètement le dépassement."
-        },
-        {
-          "t": "math",
-          "tex": "c_{\\text{crit}} = 2\\sqrt{m\\,\\eff{k}} \\qquad\\qquad \\zeta = \\frac{c}{c_{\\text{crit}}} = \\frac{c}{2\\sqrt{m\\,\\eff{k}}}"
-        },
-        {
-          "t": "p",
-          "text": "Le **taux d'amortissement** ζ (la lettre grecque zêta) est notre amortissement exprimé en fraction de celui-ci. C'est un nombre pur, sans unité. ζ = 0 oscille pour toujours, ζ = 1 est exactement critique, et ζ = 0,5 a la moitié de l'amortissement qu'il faudrait pour supprimer le dépassement."
-        },
-        {
-          "t": "play",
-          "id": "zeta",
-          "text": "Avec c = {scrub|c} N·s/m sur un ressort k = 20 N/m, $c_{\\text{crit}}$ = {calc|ccrit} N·s/m, donc ζ = {calc|zeta} : {calc|regime}."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "surprised",
-          "text": "Attends. 0,16 ? C'est exactement le ζ du drone dans le premier widget !"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "Même masse, même frottement, même raideur, donc même ζ. Le ressort et le drone sont vraiment jumeaux."
-        },
-        {
-          "t": "h3",
-          "text": "Les deux points sur la carte"
-        },
-        {
-          "t": "p",
-          "text": "Retour à la carte de $s$. En devinant $x = e^{st}$, comme aux chapitres 4 et 5, l'équation devient $m s^2 + c s + k = 0$. Divise par $m$, puis écris les deux coefficients avec nos boutons :"
-        },
-        {
-          "t": "math",
-          "tex": "s^2 + \\underbrace{\\frac{c}{m}}_{2\\zeta\\omega_n}\\, s + \\underbrace{\\frac{\\eff{k}}{m}}_{\\omega_n^2} = 0"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Attends. D'où sort ce $2\\zeta\\omega_n$ ? On dirait qu'il tombe du ciel."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "Développe : $2\\zeta\\omega_n = 2 \\cdot \\frac{c}{2\\sqrt{mk}} \\cdot \\sqrt{\\frac{k}{m}} = \\frac{c}{m}$. C'est le même nombre, juste renommé, pour que nos deux boutons apparaissent dans l'équation."
-        },
-        {
-          "t": "p",
-          "text": "Résous-la avec la formule du second degré et voilà les deux valeurs de $s$ :"
-        },
-        {
-          "t": "math",
-          "tex": "\\begin{aligned} & s^2 + 2\\zeta\\omega_n\\, s + \\omega_n^2 = 0 \\\\ \\Longrightarrow\\quad & s = -\\zeta\\omega_n \\pm \\omega_n\\sqrt{\\zeta^2 - 1} \\end{aligned}"
-        },
-        {
-          "t": "callout",
-          "title": "D'où vient le ±",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Toute équation $s^2 + b\\,s + q = 0$ se résout en complétant le carré : $(s + b/2)^2 = b^2/4 - q$. Une racine carrée a deux réponses, une avec + et une avec −, donc il y a toujours **deux** valeurs de $s$ :"
-            },
-            {
-              "t": "math",
-              "tex": "s = -\\frac{b}{2} \\pm \\sqrt{\\frac{b^2}{4} - q}"
-            },
-            {
-              "t": "p",
-              "text": "Avec $b = 2\\zeta\\omega_n$ et $q = \\omega_n^2$, ce qu'il y a sous la racine vaut $\\omega_n^2(\\zeta^2 - 1)$. Quand ζ < 1, c'est négatif, et il nous faut le $i$ du chapitre 5 : les deux réponses deviennent une paire miroir, $-\\zeta\\omega_n \\pm i\\,\\omega_n\\sqrt{1-\\zeta^2}$. À ζ = 1, la racine vaut exactement zéro et les deux réponses se rejoignent. C'est de là que vient $c_{\\text{crit}} = 2\\sqrt{mk}$ : c'est l'amortissement qui fait disparaître la racine."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Le signe ± donne deux réponses, une pour chaque point. La position horizontale d'un point, c'est **σ** (sigma) : à quelle vitesse cette partie du mouvement rétrécit. Sa hauteur, c'est **ω** : à quelle vitesse elle tourne. Quand l'amortissement est inférieur à 1, les points ont la même position horizontale, mais des hauteurs opposées. À 1 ils se rejoignent ; au-dessus de 1, tous deux sont sur l'axe horizontal."
-        },
-        {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Réponse indicielle",
-              "def": "Comment un système répond à un saut brusque de sa cible, ici de 0 à 1 m. C'est la façon classique de montrer une personnalité."
-            },
-            {
-              "term": "Temps de réponse à 2 %",
-              "def": "Le temps qu'il faut pour que la réponse reste pour de bon à moins de 2 % de la cible."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Joue avec les deux boutons. Regarde les {out|points bleus} sur la carte : ce sont les deux valeurs de $s$, et en plus de la hauteur où il se stabilise, le mouvement est un mélange de $e^{s_1 t}$ et $e^{s_2 t}$. (Pour ζ = 1 exactement, les deux points n'en font qu'un, et le second ingrédient devient $t\\,e^{s_1 t}$.)"
-        },
-        {
-          "t": "widget",
-          "id": "personality"
-        },
-        {
-          "t": "vocab",
-          "title": "Trois personnalités",
-          "items": [
-            {
-              "term": "Sous-amorti ($\\zeta < 1$)",
-              "def": "Les deux valeurs de $s$ forment une paire miroir hors de l'axe réel, posée sur un cercle de rayon $\\omega_n$. La réponse dépasse et oscille avant de se stabiliser."
-            },
-            {
-              "term": "Amortissement critique ($\\zeta = 1$)",
-              "def": "La paire se rejoint sur l'axe réel en un seul point double, donc le mouvement est $(A + B\\,t)\\,e^{-\\omega_n t}$. La réponse la plus rapide sans dépassement."
-            },
-            {
-              "term": "Sur-amorti ($\\zeta > 1$)",
-              "def": "La paire se sépare le long de l'axe réel : l'une part vers la gauche, l'autre se traîne vers zéro. Pas de dépassement, mais c'est mou."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Un dernier détail se cache dans les points sous-amortis : leur hauteur vaut $\\omega_n\\sqrt{1-\\zeta^2}$, un peu **moins** que $\\omega_n$. L'amortissement ne fait pas que rétrécir l'oscillation, il la ralentit aussi un peu. C'est la **pseudo-pulsation** $\\omega_d$, et la simulation l'affiche."
-        },
-        {
-          "t": "math",
-          "tex": "\\omega_d = \\omega_n\\sqrt{1 - \\zeta^2}"
-        },
-        {
-          "t": "callout",
-          "title": "Pourquoi un cercle ?",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Le cercle en tirets de la simulation n'est pas là pour décorer. Pour ζ < 1, les points sont en $\\sigma = -\\zeta\\omega_n$ et $\\omega = \\pm\\omega_n\\sqrt{1-\\zeta^2}$. D'après Pythagore, leur distance à 0 vaut"
-            },
-            {
-              "t": "math",
-              "tex": "\\sqrt{\\sigma^2 + \\omega^2} = \\sqrt{\\zeta^2\\omega_n^2 + \\omega_n^2\\,(1 - \\zeta^2)} = \\omega_n"
-            },
-            {
-              "t": "play",
-              "id": "circle",
-              "text": "Avec $\\omega_n$ = 3 et ζ = {scrub|z}, les points sont en {calc|roots}, à une distance {calc|r} de 0."
-            },
-            {
-              "t": "p",
-              "text": "Changer ζ fait donc seulement glisser les points le long du cercle, et changer $\\omega_n$ change la taille du cercle."
-            }
-          ]
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "Donc les spirales du chapitre 5, c'était la personnalité du drone depuis le début. Tourner = osciller, rétrécir = se stabiliser !"
-        }
-      ]
-    },
-    {
-      "id": "damping",
-      "title": "Plus d'amortissement, c'est toujours mieux ?",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "Facile. Les oscillations, c'est mal, et l'amortissement tue les oscillations. Donc je mets $\\zeta = 5$ par sécurité. Le drone le plus sûr de tous les temps."
+          "text": "Chaque nombre s est donc une recette : **σ** (la partie « en avant ») dit à quelle vitesse grandir ou rétrécir, **ω** (la partie « de côté ») dit à quelle vitesse tourner. Ensemble, ils dessinent une **spirale**, et l'ombre de la spirale est le signal qu'on verrait."
         },
         {
           "t": "predict",
-          "id": "ch6-damping",
+          "id": "ch5-shadow",
           "gate": true,
-          "q": "Même ressort, même $\\omega_n$. On augmente l'amortissement de $\\zeta = 1$ à $\\zeta = 3$. Atteint-il la cible **plus vite** ou **plus lentement** ?",
+          "q": "Place s en $-0{,}5 + 3i$. À quoi ressemble l'ombre de $e^{st}$ ?",
           "options": [
             {
-              "text": "Plus vite : plus d'amortissement, moins de mouvement gaspillé",
-              "sketch": "smooth",
-              "why": "C'est vrai qu'il n'y a pas de dépassement. Mais l'amortisseur épais freine aussi le mouvement *vers* la cible."
+              "text": "Une oscillation qui grandit",
+              "sketch": "growing-wiggle",
+              "why": "Pour grandir, il faut σ > 0. Ici σ = −0,5 est négatif."
             },
             {
-              "text": "À peu près pareil",
-              "sketch": "overshoot",
-              "why": "Au-delà de $\\zeta = 1$, il n'y a plus rien à calmer, et l'amortissement en plus ralentit tout."
-            },
-            {
-              "text": "Plus lentement : il se traîne",
-              "sketch": "sluggish",
+              "text": "Une oscillation qui s'éteint",
+              "sketch": "decaying-wiggle",
               "correct": true,
-              "why": "Exact. L'amortisseur freine **tout** mouvement, y compris celui qu'on veut. Avec $\\zeta = 3$, ça prend environ quatre fois plus de temps."
-            }
-          ]
-        },
-        {
-          "t": "widget",
-          "id": "race"
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "worried",
-          "text": "Mon drone « sûr » met une éternité. C'est comme avancer dans du miel."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "Regarde la carte ! Un des points est parti loin à gauche, super rapide. Mais l'autre est tout près de zéro."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "excited",
-          "text": "Et $e^{st}$ avec $s$ proche de zéro s'éteint **très** lentement. Le rapide a disparu en un clin d'œil. C'est le lent qui commande."
-        },
-        {
-          "t": "p",
-          "text": "Chaque ingrédient $e^{st}$ du mouvement s'appelle un **mode**. Le mouvement est un mélange de modes, et une fois les rapides éteints, il ne reste que le plus lent. Pour cette réponse indicielle, c'est donc le **mode le plus lent réellement présent** qui impose la longue attente."
-        },
-        {
-          "t": "callout",
-          "title": "Combien de temps pour être « stabilisé » ?",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Un mode $e^{-at}$ est tombé à 2 % quand $e^{-at} = 0{,}02$, ce qui prend $t = \\ln 50 / a \\approx 3{,}9/a$. Avec une constante de temps $\\tau = 1/a$, ça fait environ quatre constantes de temps : encore la règle graduée du chapitre 3. Après 4τ, il ne reste que $e^{-4} \\approx 1{,}8\\%$."
+              "why": "ω = 3 la fait tourner (une oscillation toutes les 2 s environ), et σ = −0,5 la rétrécit d'un facteur $e^{-0{,}5} \\approx 0{,}61$ chaque seconde."
             },
             {
-              "t": "play",
-              "id": "settle",
-              "text": "Un mode qui rétrécit au rythme a = {scrub|a} par seconde est à moins de 2 % après environ {calc|ts} s."
+              "text": "Une décroissance douce, sans oscillation",
+              "sketch": "decaying-plain",
+              "why": "C'est ce qu'on obtiendrait avec ω = 0 (s sur l'axe horizontal). Ici ω = 3, donc ça tourne."
             }
           ]
         },
         {
-          "t": "p",
-          "text": "Trop peu d'amortissement fait osciller ; trop fait se traîner. Entre les deux, il y a un juste milieu. Choisis ζ = 0,7 dans la course : il dépasse de moins de 5 %, mais il arrive **à moins de 5 % de la cible** bien plus tôt que ζ = 1. Beaucoup de réglages visent un ζ entre environ 0,7 et 1, en échangeant un petit dépassement contre de la vitesse. D'autres tâches peuvent demander un autre compromis."
-        }
-      ]
-    },
-    {
-      "id": "drone",
-      "title": "Retour au drone",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Maintenant, le chapitre 2 prend enfin tout son sens. Pour notre drone, la raideur du ressort *est* le gain :"
-        },
-        {
-          "t": "math",
-          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{K_p}}{m}}, \\qquad \\zeta = \\frac{c}{2\\sqrt{m\\,\\eff{K_p}}}"
-        },
-        {
-          "t": "p",
-          "text": "$\\eff{K_p}$ est *en bas* de la formule de l'amortissement. Monter le gain rend le drone plus rapide (plus grand $\\omega_n$), mais **moins amorti**. Avec $\\eff{K_p} = 20$ N/m : $\\zeta = 1/(2\\sqrt{0{,}5 \\times 20}) \\approx 0{,}16$. Très rebondissant, exactement comme on l'a vu. Sur la carte, ses deux valeurs de $s$ sont très haut et juste un peu à gauche de l'axe vertical. C'est là que vit notre drone."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "worried",
-          "text": "Et on ne peut pas avoir plus d'amortissement sans baisser énormément $\\eff{K_p}$, ce qui ramène l'affaissement. Il nous faut un moyen d'ajouter de l'amortissement *exprès*."
-        },
-        {
-          "t": "p",
-          "text": "Fais glisser le gain et regarde le compromis tenir en une phrase :"
-        },
-        {
-          "t": "play",
-          "id": "drone",
-          "text": "Avec $\\eff{K_p}$ = {scrub|kp|eff} N/m : ζ = {calc|zeta}, $\\omega_n$ = {calc|wn} rad/s, et sans la poussée de vol stationnaire offerte, il s'affaisserait de {calc|droop} m."
-        }
-      ]
-    },
-    {
-      "id": "arrows",
-      "title": "Les flèches ont une longueur et un angle",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "Attends. Les points sont sur un cercle de rayon $\\omega_n$, et ζ les fait juste glisser le long du cercle. Donc un point, c'est en fait deux choses : **à quelle distance** de 0, et **dans quelle direction**."
-        },
-        {
-          "t": "p",
-          "text": "Chaque flèche $z = a + b\\,i$ a une **partie réelle** (le « en avant » du chapitre 5) et une **partie imaginaire** (le « de côté »). Elle peut aussi se décrire autrement : par sa **longueur** $|z|$ et son **angle**. Pythagore donne la longueur. Pour une flèche qui pointe vers la droite ($a > 0$), l'angle est celui dont la pente (la montée divisée par l'avancée) vaut $b/a$. Il s'appelle l'**arc tangente**, $\\arctan$ : le bouton « annuler » de la fonction tangente."
-        },
-        {
-          "t": "math",
-          "tex": "|z| = \\sqrt{a^2 + b^2}, \\qquad \\angle z = \\arctan\\frac{b}{a} \\quad (a > 0)"
-        },
-        {
-          "t": "play",
-          "id": "arrowRead",
-          "text": "La flèche {scrub|a} + {scrub|b}i mesure {calc|len} de long et pointe à {calc|ang}° de l'axe réel."
-        },
-        {
-          "t": "p",
-          "text": "Le chapitre 5 a montré que multiplier des flèches **multiplie leurs longueurs et additionne leurs angles**. Diviser doit défaire ça : on divise donc les longueurs et on **soustrait** les angles."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Donc $1/(1+i)$ : longueur $1/\\sqrt 2$, et l'angle, c'est 45° plus 45°, donc 90° ? Hum. Remultiplie ça par $1+i$ et ça pointe à 135°, très loin de 1."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "Moins, alors. Longueur $1/\\sqrt 2$ à −45°. Fois $\\sqrt 2$ à +45°, et on obtient une longueur 1 à 0° : exactement 1. Ça colle."
-        },
-        {
           "t": "widget",
-          "id": "arrows"
+          "id": "smap"
         },
         {
           "t": "p",
-          "text": "La flèche pâle en pointillés, c'est le **jumeau miroir** $\\bar z = a - b\\,i$ du chapitre 5 (les mathématiciens l'appellent le *conjugué*) : même longueur, angle opposé. Multiplie une flèche par son jumeau et les angles s'annulent : il reste un simple nombre positif, la longueur au carré. Le tableau du chapitre 7 aura besoin exactement de ça :"
+          "text": "Fais le tour de la carte en déplaçant s (ou avec les flèches du clavier) :"
         },
         {
-          "t": "math",
-          "tex": "z\\,\\bar z = |z|^2 = a^2 + b^2, \\qquad (s - i\\omega)(s + i\\omega) = s^2 + \\omega^2"
-        },
-        {
-          "t": "p",
-          "text": "Et le cercle ? Un pôle en $-\\zeta\\omega_n + i\\,\\omega_n\\sqrt{1-\\zeta^2}$ a pour longueur $\\omega_n$. Mesure son angle θ depuis l'axe réel *négatif* : la partie vers la gauche vaut $\\omega_n\\cos\\theta$. Donc $\\zeta = \\cos\\theta$ : l'amortissement, c'est l'angle."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Essaie le deuxième réglage de la simulation : 1 + iωτ. C'est la règle du café du chapitre 3 qui rencontre une oscillation. Diviser par elle rétrécit et fait tourner en arrière, de plus en plus quand l'oscillation accélère, mais jamais au-delà d'un quart de tour. Je parie que la douche s'en soucie."
-        },
-        {
-          "t": "vocab",
+          "t": "list",
           "items": [
-            {
-              "term": "Longueur $|z|$",
-              "def": "La taille d'une flèche : $\\sqrt{a^2+b^2}$ pour $z = a + b\\,i$. Multiplier des flèches multiplie leurs longueurs."
-            },
-            {
-              "term": "Angle $\\angle z$",
-              "def": "La direction d'une flèche, mesurée depuis l'axe réel positif. $\\arctan(b/a)$ pour une flèche qui pointe vers la droite. Multiplier additionne les angles, diviser les soustrait."
-            },
-            {
-              "term": "Jumeau miroir $\\bar z$",
-              "def": "La flèche retournée de l'autre côté de l'axe réel, $a - b\\,i$ (le conjugué). $z\\,\\bar z = |z|^2$."
-            }
+            "**Moitié gauche** (σ < 0) : la spirale rétrécit, l'oscillation s'éteint.",
+            "**Moitié droite** (σ > 0) : la spirale grandit, l'oscillation explose.",
+            "**Sur la ligne verticale** (σ = 0) : un cercle parfait, une oscillation qui dure pour toujours.",
+            "**Sur la ligne horizontale** (ω = 0) : aucune rotation, juste les exponentielles simples du chapitre 4.",
+            "**Plus loin de la ligne horizontale** (vers le haut ou vers le bas) : ça tourne plus vite, les oscillations sont plus rapides. **Plus à gauche** : ça s'éteint plus vite."
           ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Donc un seul point sur cette carte, c'est toute une personnalité : à quelle vitesse ça oscille, et si ça se calme ou si ça explose."
+        },
+        {
+          "t": "note",
+          "text": "Cette carte va devenir notre image la plus importante. Elle recevra son nom officiel au chapitre 8."
+        }
+      ]
+    },
+    {
+      "id": "fourier",
+      "title": "Petit détour : tout est fait de tourniquets",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Une dernière surprise. Prends des tourniquets de vitesses différentes (1, 3, 5, 7… fois plus rapides), rétrécis chacun et fais-le démarrer juste au bon angle, puis additionne leurs ombres. Avec assez de tourniquets, tu peux construire une énorme variété de formes, même un signal carré avec des coins pointus."
+        },
+        {
+          "t": "widget",
+          "id": "fourier"
+        },
+        {
+          "t": "p",
+          "text": "**Fourier** a montré comment assembler beaucoup de signaux périodiques à partir de morceaux qui tournent. L’onde carrée en est un exemple : ajouter des morceaux précise ses parties plates et ses bords abrupts. C’est une façon puissante de décrire les signaux, avec des conditions et des limites à explorer plus tard."
+        },
+        {
+          "t": "note",
+          "text": "Minute honnêteté : juste à côté de chaque saut, la somme dépasse toujours d'environ 9 % de la hauteur du saut, quel que soit le nombre de morceaux ajoutés. La bosse devient plus étroite mais ne disparaît jamais."
         }
       ]
     },
     {
       "id": "wrap",
-      "title": "Ce qu'on sait maintenant",
+      "title": "Ce qu'on sait pour l'instant",
       "blocks": [
         {
           "t": "recap",
           "items": [
-            "Un drone en commande P obéit **exactement** à la même équation qu'une masse au bout d'un ressort : le correcteur est un ressort virtuel.",
-            "Deux nombres résument sa personnalité : $\\omega_n$ (à quelle vitesse) et $\\zeta$ (à quel point ça rebondit).",
-            "$\\omega_n = \\sqrt{k/m}$ est la vitesse d'oscillation sans amortisseur. $\\zeta = c/c_{\\text{crit}}$ compare l'amortissement à l'amortissement critique $2\\sqrt{mk}$, celui qui supprime tout juste le dépassement.",
-            "Le mouvement est un mélange de deux termes $e^{st}$. Les deux valeurs de $s$ sont sur un cercle de rayon $\\omega_n$ quand c'est sous-amorti, et se séparent le long de l'axe réel quand c'est sur-amorti.",
-            "Une flèche a une **longueur** et un **angle** ($\\arctan$). Multiplier multiplie les longueurs et additionne les angles ; diviser divise et soustrait. $\\zeta = \\cos\\theta$.",
-            "L'amortissement ralentit aussi un peu l'oscillation : $\\omega_d = \\omega_n\\sqrt{1-\\zeta^2}$.",
-            "Plus d'amortissement, ce n'est pas toujours mieux : au-delà de $\\zeta = 1$, la valeur de $s$ lente se traîne vers zéro et tout ralentit.",
-            "Pour le drone, plus de $K_p$ veut dire moins d'amortissement. C'est pour ça qu'il oscillait de plus en plus."
+            "Les vraies oscillations viennent de **tourniquets jumeaux miroirs** dont les parties de côté s'annulent.",
+            "$e^{st}$ avec $s = \\sigma + i\\omega$ tourne *et* grandit ou rétrécit : une spirale. Son ombre est une oscillation qui grandit ou s'éteint.",
+            "La **carte de s** : à gauche ça se calme, à droite ça explose, plus haut les oscillations sont plus rapides.",
+            "Beaucoup de signaux périodiques, même un signal carré, se construisent en additionnant des tourniquets de vitesses différentes (Fourier). Juste à côté d'un saut, la somme dépasse toujours d'environ 9 %."
           ]
         },
         {
           "t": "quiz",
           "items": [
             {
-              "id": "ch6-q1",
-              "q": "Les deux valeurs de $s$ d'un système sont $-1 \\pm 4i$. Quelle réponse est-ce ?",
+              "id": "ch5-q2",
+              "q": "Place s exactement sur la ligne verticale, en $s = 2i$. Quelle est l'ombre de $e^{st}$ ?",
               "options": [
                 {
-                  "text": "Dépasse et oscille",
-                  "sketch": "overshoot",
+                  "text": "Une oscillation qui dure pour toujours",
+                  "sketch": "steady-wiggle",
                   "correct": true,
-                  "why": "Une partie imaginaire (±4) veut dire rotation, donc oscillation. Une partie réelle négative (−1) veut dire que les oscillations rétrécissent."
+                  "why": "σ = 0 veut dire ni grandir ni rétrécir : un cercle parfait, et son ombre est un cosinus régulier."
                 },
                 {
-                  "text": "Monte en douceur, sans dépassement",
-                  "sketch": "smooth",
-                  "why": "Les montées douces viennent de valeurs de $s$ sur l'axe réel (sans rotation). Celles-ci ont une partie imaginaire de ±4."
+                  "text": "Une oscillation qui s'éteint",
+                  "sketch": "decaying-wiggle",
+                  "why": "Pour s'éteindre, il faut σ < 0 (à gauche de la ligne verticale)."
                 },
                 {
-                  "text": "Monte lentement en se traînant",
-                  "sketch": "sluggish",
-                  "why": "Une montée lente sans oscillation vient d'une valeur réelle négative de $s$ très proche de zéro. Ici, les valeurs ont des parties imaginaires (±4) : la réponse oscille."
+                  "text": "Une croissance explosive",
+                  "sketch": "growing-plain",
+                  "why": "Une croissance sans oscillation, c'est la moitié droite de la ligne *horizontale* : σ > 0, ω = 0."
                 }
               ]
             },
             {
-              "id": "ch6-q2",
-              "q": "Notre drone ($m = 0{,}5$ kg, $c = 1$ N·s/m) avec $K_p = 20$ N/m est…",
+              "id": "ch5-q3",
+              "q": "Une corde de guitare sonne une note claire et s'éteint lentement. Où vit-elle sur la carte de s ?",
               "options": [
                 {
-                  "text": "Sous-amorti, $\\zeta \\approx 0{,}16$",
+                  "text": "Juste à gauche de la ligne verticale, bien au-dessus de la ligne horizontale",
                   "correct": true,
-                  "why": "$\\zeta = 1/(2\\sqrt{0{,}5\\cdot 20}) = 1/(2\\sqrt{10}) \\approx 0{,}158$. Bien en dessous de 1, donc rebondissant."
+                  "why": "S'éteindre lentement veut dire σ légèrement négatif, et une note claire veut dire un grand ω (beaucoup d'oscillations par seconde)."
                 },
                 {
-                  "text": "En amortissement critique, $\\zeta = 1$",
-                  "why": "Il faudrait $c = 2\\sqrt{m K_p} \\approx 6{,}3$ N·s/m, plus de six fois la traînée qu'on a."
+                  "text": "Dans la moitié droite",
+                  "why": "La moitié droite *grandit*. Une corde qui jouerait de plus en plus fort toute seule, ce serait inquiétant."
                 },
                 {
-                  "text": "Sur-amorti, $\\zeta > 1$",
-                  "why": "Le sur-amortissement demande beaucoup d'amortissement par rapport à la raideur. Notre gain est élevé et notre traînée faible : c'est l'inverse."
+                  "text": "Sur la ligne horizontale, très à gauche",
+                  "why": "Pas de ω veut dire pas d'oscillation (pas de note), et très à gauche veut dire que ça s'éteint instantanément. Ça fait « bonk »."
                 }
               ]
             },
             {
-              "id": "ch6-q5",
-              "q": "Un ressort avec $k = 8$ N/m porte une masse de 0,5 kg. Quel amortissement $c$ donne un amortissement critique ?",
+              "id": "ch5-q4",
+              "q": "Pourquoi les tourniquets d'une vraie oscillation physique viennent-ils toujours par paires miroirs ?",
               "options": [
                 {
-                  "text": "$c = 4$ N·s/m",
+                  "text": "La règle ne contient que des nombres réels, donc l'image miroir d'un tourniquet la résout aussi",
                   "correct": true,
-                  "why": "$c_{\\text{crit}} = 2\\sqrt{m k} = 2\\sqrt{0{,}5 \\cdot 8} = 2\\sqrt{4} = 4$ N·s/m."
+                  "why": "Retourne $e^{i\\omega t}$ de haut en bas et tu obtiens $e^{-i\\omega t}$. Une règle sans $i$ ne peut pas les distinguer, donc les deux sont des solutions, et un vrai mouvement utilise les deux : leurs parties de côté s'annulent."
                 },
                 {
-                  "text": "$c = 16$ N·s/m",
-                  "why": "Ça, c'est $2k$. L'amortissement critique utilise la racine carrée de masse × raideur : $2\\sqrt{mk}$."
+                  "text": "Parce que $i^2 = -1$",
+                  "why": "C'est vrai, mais c'est la raison pour laquelle les tourniquets *existent*, pas pour laquelle ils vont par paires."
                 },
                 {
-                  "text": "$c = 1$ N·s/m",
-                  "why": "C'est la traînée de l'air de notre drone, qui donne ici $\\zeta = 0{,}25$ : sous-amorti."
-                }
-              ]
-            },
-            {
-              "id": "ch6-q3",
-              "q": "Avec seulement une commande P, quel $K_p$ donnerait au drone un amortissement critique ($\\zeta = 1$) ?",
-              "options": [
-                {
-                  "text": "$K_p = 0{,}5$ N/m",
-                  "correct": true,
-                  "why": "Pose $c/(2\\sqrt{m K_p}) = 1$ pour obtenir $K_p = c^2/(4m) = 0{,}5$ N/m. Mais avec un ressort aussi faible, le drone devrait être 9,8 m *sous* la cible rien que pour se maintenir en l'air, donc il ne décolle jamais. La commande P seule ne peut pas nous donner les deux."
-                },
-                {
-                  "text": "$K_p = 20$ N/m",
-                  "why": "C'est notre réglage rebondissant par défaut, avec $\\zeta \\approx 0{,}16$. Plus de gain veut dire *moins* d'amortissement."
-                },
-                {
-                  "text": "$K_p = 200$ N/m",
-                  "why": "Plus de gain fait baisser $\\zeta$ encore plus (à environ 0,05). Le gain est au dénominateur."
-                }
-              ]
-            },
-            {
-              "id": "ch6-q4",
-              "q": "Un système sur-amorti a pour valeurs de $s$ $-0{,}2$ et $-10$. Laquelle décide du temps d'attente ?",
-              "options": [
-                {
-                  "text": "$-0{,}2$",
-                  "correct": true,
-                  "why": "$e^{-0{,}2t}$ met environ 20 s à tomber à 2 %, alors que $e^{-10t}$ a disparu en 0,4 s. C'est celle qui est la plus proche de l'axe vertical qui commande."
-                },
-                {
-                  "text": "$-10$",
-                  "why": "$e^{-10t}$ disparaît en une fraction de seconde. C'est la partie rapide, finie avant qu'on la remarque."
-                },
-                {
-                  "text": "Les deux autant",
-                  "why": "Elles s'éteignent à des vitesses très différentes, donc c'est la lente qui domine ce qu'on voit."
+                  "text": "Parce qu'un ressort a deux bouts",
+                  "why": "Mignon, mais non. Un simple pendule qui se balance a aussi des tourniquets jumeaux."
                 }
               ]
             }
@@ -635,130 +238,60 @@
         },
         {
           "t": "cliff",
-          "text": "Theo : « On a trouvé ces valeurs de $s$ en *devinant*. Ajoute la gravité, le vent, des colis et un correcteur plus malin, et deviner devient l'enfer. Existe-t-il une machine qui transforme ce calcul différentiel en **simple algèbre** ? »"
+          "text": "June : « Alors **où vit notre drone, sur cette carte ?** »"
         }
       ]
     }
   ],
   "widgets": {
     "twins": {
-      "title": "Ressort contre drone",
-      "spring": "masse au bout d'un ressort",
-      "drone": "drone en commande P",
-      "msdAria": "Une masse suspendue à un ressort et un amortisseur, qui rebondit autour de sa position de repos.",
-      "plotY": "distance à la cible (m)",
-      "plotAria": "Distance à la cible au cours du temps pour le drone et pour le ressort. Les deux courbes sont superposées.",
-      "target": "cible / repos",
-      "kp": "Raideur : ressort $k$ = gain du drone $K_p$",
-      "personality": "personnalité",
-      "help": "Les deux partent 1 m sous leur cible et sont lâchés. Le curseur règle la raideur du ressort et le gain du drone sur le même nombre.",
-      "describe": "Le drone est à {d} m de la cible, la masse du ressort à {s} m du repos.",
-      "together": "les deux, sur un seul graphique",
-      "forceSpring": "traction du ressort",
-      "forceDamper": "poussée de l'amortisseur"
+      "title": "Un tourniquet et son jumeau miroir",
+      "re": "en avant",
+      "im": "de côté",
+      "sum": "somme",
+      "spinnerLabel": "tourniquet",
+      "twinLabel": "jumeau",
+      "toggle": "Ajouter le jumeau miroir",
+      "axis": "valeur",
+      "realPart": "partie « en avant » de la somme",
+      "sidePart": "partie « de côté » de la somme",
+      "alone": "Un tourniquet seul : la somme part sur le côté (courbe en tirets).",
+      "withTwin": "Avec son jumeau ajouté bout à bout, les parties de côté s'annulent. La somme reste sur la droite réelle : 2·cos(ωt).",
+      "aria": "Deux flèches qui tournent en sens opposés, ajoutées bout à bout. Leur somme est marquée d'un anneau.",
+      "plotAria": "Les parties « en avant » et « de côté » de la somme au cours du temps."
     },
-    "personality": {
-      "title": "Deux boutons, deux points, une personnalité",
-      "response": "réponse à un échelon de 1 m",
-      "target": "cible",
-      "plotAria": "Réponse indicielle d'un système du second ordre pour la pulsation propre et le taux d'amortissement choisis.",
-      "planeAria": "La carte de s, montrant les deux valeurs de s du système et un cercle en tirets de rayon oméga n.",
-      "msdAria": "Une masse au bout d'un ressort qui rejoue la réponse indicielle.",
-      "panelAria": "Petite réponse indicielle avec un taux d'amortissement de {z}.",
-      "panel": {
-        "0": "sous-amorti (ζ = {z})",
-        "1": "critique (ζ = {z})",
-        "2": "sur-amorti (ζ = {z})"
-      },
-      "radius": "rayon ωn = {w}",
-      "wn": "Pulsation propre $\\omega_n$",
-      "zeta": "Taux d'amortissement $\\zeta$",
-      "overshoot": "dépassement",
-      "settle": "stabilisé (2 %)",
-      "roots": "les deux valeurs de s",
-      "personality": "personnalité",
-      "never": "jamais",
-      "playSpring": "Rejouer sur le ressort",
-      "stopSpring": "Mettre le ressort en pause",
-      "describe": "Taux d'amortissement {z}, pulsation propre {w} radians par seconde, valeurs de s {r}.",
-      "planeCap": "les deux valeurs de s",
-      "springCap": "regarde-le sur un ressort",
-      "re": "σ",
-      "im": "ω",
-      "offMap": "{v} est hors de la carte ←",
-      "wd": "pseudo-pulsation ωd",
-      "noWiggle": "pas d'oscillation"
+    "smap": {
+      "title": "La carte de s",
+      "re": "σ : rétrécir ← → grandir",
+      "im": "ω : tourner",
+      "reShort": "en avant",
+      "imShort": "de côté",
+      "time": "temps →",
+      "shadow": "ombre de e^(st)",
+      "shadowAxis": "ombre",
+      "mirror": "Afficher le jumeau miroir",
+      "readS": "s",
+      "readTurns": "tours",
+      "readSize": "variation de taille",
+      "spins": "Fait {n} tours par seconde,",
+      "noSpin": "Ne tourne pas du tout,",
+      "grows": "et grandit.",
+      "shrinks": "et rétrécit.",
+      "steady": "et garde la même taille.",
+      "help": "Déplace le point s sur la carte (ou sélectionne-le et utilise les flèches). À droite : la spirale e^(st) en 3D, avec le temps qui s'écoule vers la droite. Son ombre bleue est tracée en dessous.",
+      "mapAria": "La carte de s : déplace le point pour choisir sigma et oméga.",
+      "spiralAria": "Spirale en trois dimensions de e puissance s t, avec le temps qui s'écoule vers la droite, et son ombre sur le mur du fond.",
+      "plotAria": "Ombre de e puissance s t au cours du temps."
     },
-    "race": {
-      "title": "La course de l'amortissement",
-      "choose": "Ton amortissement",
-      "ref": "ζ = 1 (critique)",
-      "yours": "ton ζ",
-      "yoursZ": "ζ = {z}",
-      "msdAria": "Une masse au bout d'un ressort qui se dirige vers sa position de repos.",
-      "plotAria": "Réponses indicielles pour l'amortissement critique et pour le taux d'amortissement choisi.",
-      "planeAria": "Les deux valeurs de s pour le taux d'amortissement choisi.",
-      "settleRef": "ζ = 1 se stabilise",
-      "settleYours": "ton ζ se stabilise",
-      "slow": "la lente",
-      "fast": "la rapide",
-      "never": "pas en 12 s",
-      "same": "C'est la référence elle-même : la réponse la plus rapide sans dépassement.",
-      "slower": "Ton amortissement en plus l'a rendu environ {k}× plus lent.",
-      "replay": "Refaire la course",
-      "planeCap": "les deux valeurs de s",
-      "re": "σ",
-      "im": "ω",
-      "fastOff": "← la rapide en {v} (hors de la carte)",
-      "double": "les deux ici",
-      "band5": "à moins de 5 %",
-      "sweet": "ζ = 0,7 dépasse de {os} %, mais il est à moins de 5 % de la cible après {y5} s. ζ = 1 a besoin de {r5} s."
-    },
-    "arrows": {
-      "title": "Longueur, angle et 1 ÷ une flèche",
-      "aria": "Un plan avec le cercle unité, une flèche z, son jumeau miroir en pointillés, et la flèche 1 divisé par z, avec leurs angles marqués.",
-      "re": "partie réelle",
-      "im": "partie imaginaire",
-      "mode": "Quelle flèche ?",
-      "modeFree": "une flèche z quelconque",
-      "modeSmoother": "le lisseur, 1 + iωτ",
-      "a": "partie réelle a",
-      "b": "partie imaginaire b",
-      "wt": "vitesse d'oscillation × τ (ωτ)",
-      "mirror": "jumeau",
-      "out": "1 ÷ (1 + iωτ)",
-      "len": "longueur |z|",
-      "ang": "angle de z",
-      "ilen": "longueur de 1/z",
-      "iang": "angle de 1/z",
-      "free": "1/z mesure {ilen} de long (1 ÷ {len}) et est tournée dans l'autre sens, à {iang}. Multiplie les deux et tu obtiens une longueur {back} à 0° : exactement 1.",
-      "smooth": "À ωτ = {wt}, 1 ÷ (1 + iωτ) garde {ilen} de la taille et prend {lag} de retard. Oscillations plus rapides : plus petite et plus en retard, mais jamais au-delà de 90°.",
-      "help": "Fais glisser a et b pour déplacer z (ou passe au lisseur et fais glisser ωτ). L'arc bleu est l'angle de z, l'arc gris l'angle de 1/z."
-    }
-  },
-  "plays": {
-    "units": {
-      "kp": "gain Kp, newtons par mètre",
-      "e": "erreur, mètres"
-    },
-    "wn": {
-      "k": "raideur du ressort k, newtons par mètre"
-    },
-    "zeta": {
-      "c": "amortissement c, newtons-secondes par mètre"
-    },
-    "circle": {
-      "z": "taux d'amortissement zêta"
-    },
-    "settle": {
-      "a": "vitesse de décroissance a, par seconde"
-    },
-    "drone": {
-      "kp": "gain Kp, newtons par mètre"
-    },
-    "arrowRead": {
-      "a": "partie réelle a",
-      "b": "partie imaginaire b"
+    "fourier": {
+      "title": "Construire un signal carré avec des tourniquets",
+      "axis": "valeur",
+      "target": "signal carré",
+      "sum": "somme des ombres des tourniquets",
+      "pieces": "Nombre de tourniquets",
+      "status": "{n} tourniquets ajoutés. Le plus rapide tourne {f}× plus vite que le premier.",
+      "aria": "Un signal carré et la somme d'un nombre choisi d'ombres de tourniquets qui l'approche.",
+      "statusOne": "Un seul tourniquet : une simple oscillation, rien de carré pour l'instant."
     }
   }
 }

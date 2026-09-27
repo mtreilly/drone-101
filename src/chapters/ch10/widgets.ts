@@ -1,480 +1,649 @@
-import '../ch09/ch09.css';
-import { h } from '../../core/dom';
-import { canvasHandFont } from '../../core/font';
+import { h, s as svg } from '../../core/dom';
 import { fmt, tc, unitLabel } from '../../core/i18n';
-import { progress } from '../../core/progress';
-import { logspace, sweep } from '../../math/bode';
-import { SHOWER, ShowerSim } from '../../sim/shower-model';
-import type { WidgetCtx, WidgetFactory } from '../../story/types';
-import { readout, slider, toggle, transport } from '../../ui/controls';
-import { color } from '../../ui/colors';
+import { setRich, tex } from '../../core/rich-text';
+import { regionPath } from '../../math/region';
+import { stepMetrics } from '../../math/metrics';
+import { DRONE, DroneSim, defaultDroneConfig } from '../../sim/drone-model';
+import { followPlay } from '../../story/play';
+import type { WidgetFactory } from '../../story/types';
+import { readout, segmented, slider, toggle } from '../../ui/controls';
+import { DroneView } from '../../ui/drone-view';
 import { Loop } from '../../ui/loop';
-import { marginPlots } from '../../ui/margin-plots';
 import { Plot } from '../../ui/plot';
-import { ShowerView } from '../../ui/shower-view';
-import { HAND_GAIN } from '../ch00/hands';
-import { SHOWER_RUN_KEY, type SavedShowerRun } from '../ch00/saved-run';
+import { PlaneCanvas } from '../../ui/plane-canvas';
+import { SPlane, formatS } from '../../ui/s-plane';
+import { caption, mark, sample } from '../ch07/helpers';
+import './ch10.css';
+import { fallSim, fallTrace } from './fall';
+import { LIMIT_T, bestRealSettling, limitRun, pd } from './limit';
+import { LOOP_W, closest, lap, lapAngle, lapCurve, loopZeta, toCliff } from './loop';
 import {
-  BODE_STEP,
-  BODE_W_MAX,
-  BODE_W_MIN,
-  comfortTime,
-  criticalHandGain,
-  firstUpCrossing,
-  handLoop,
-  handPolicy,
-  JUNE_PI,
-  lagStatus,
-  KNOB_GAIN,
-  measureSine,
-  piLoop,
-  piPolicy,
-  runShower,
-  showerFlip,
-  sliderFromW,
-  swingPeriod,
-  THEO_PI,
-  unwrapNear,
-  wFromSlider,
-  withDelay,
-  type ShowerTrace,
-} from './shower-tools';
+  CHALLENGE,
+  PLAY_T,
+  budgetRadius,
+  challengeOk,
+  challengeZone,
+  firstPush,
+  gainsFromPoles,
+  measuredMetrics,
+  noZeroResponse,
+  noZeroSlope,
+  overshootOf,
+  playgroundTrace,
+  recipeGain,
+  settleOf,
+  stateAt,
+  verdictOf,
+  zeroResponse,
+  zetaOf,
+} from './poles';
 
+const { m, c } = DRONE;
 
-function tempPlot(onCleanup: WidgetCtx['onCleanup'], host: HTMLElement, label: string, tMax: number, series: { id: string; color: string; label: string; ghost?: boolean; dash?: number[]; width?: number }[]): Plot {
-  const p = new Plot(host, {
-    x: { label: tc('plots.time'), min: 0, max: tMax },
-    y: { label: tc('plots.temp'), min: 10, max: 62 },
-    series,
-    height: 200,
-    label,
-  }, onCleanup);
-  p.setBands([{ kind: 'h', from: SHOWER.target - SHOWER.band, to: SHOWER.target + SHOWER.band, color: 'sp@0.16' }]);
-  p.setLines([{ kind: 'h', at: SHOWER.target, color: 'sp', label: '38 °C' }]);
-  return p;
-}
-
-/** 10a: the same delay is a small nudge for a slow wave and a half-turn for a fast one. */
-const phase: WidgetFactory = (host, ctx) => {
+/** 10a — G(s) maps setpoint changes to height changes around the 1 m hover. */
+const recipe: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
-  const L = SHOWER.delay;
+  mark(host);
+  const KP = 20;
+  const T1 = 8;
+  type In = 'step' | 'pulse' | 'wave';
+  let input: In = 'step';
+  const setpoints: Record<In, (tt: number) => number> = {
+    step: () => 2,
+    pulse: (tt) => 2 - Math.exp(-2 * tt),
+    wave: (tt) => 1 + 0.5 * Math.sin(2 * tt),
+  };
+  // each input's change from the 1 m hover, in time and in s-land (Chapter 9's table)
+  const R: Record<In, string> = {
+    step: '\\frac{1}{s}',
+    pulse: '\\frac{1}{s} - \\frac{1}{s+2}',
+    wave: `\\frac{${fmt(0.5, 1)}\\cdot 2}{s^2 + 4}`,
+  };
+  const r: Record<In, string> = {
+    step: '1',
+    pulse: '1 - e^{-2t}',
+    wave: `${fmt(0.5, 1)}\\sin 2t`,
+  };
   host.append(h('p', { class: 'w-title' }, t('title')));
-  const plot = new Plot(host, {
-    x: { label: tc('plots.time'), min: 0, max: 30 },
-    y: { label: t('y'), min: -1.3, max: 1.3 },
-    series: [
-      { id: 'in', color: 'eff', label: t('in') },
-      { id: 'out', color: 'out', label: t('out') },
-    ],
-    height: 200,
-    label: t('aria'),
-  }, ctx.onCleanup);
-  // a lag is not an error: the delay's purple, like the arrow
-  const rLag = readout(t('lag'), 'dis');
-  const rW = readout(t('w'));
-  const rShare = readout(t('share'));
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
-  const draw = (period: number) => {
-    const w = (2 * Math.PI) / period;
-    plot.fn('in', (x) => Math.sin(w * x));
-    plot.fn('out', (x) => (x < L ? 0 : Math.sin(w * (x - L))));
-    const deg = (360 * L) / period;
-    // bracket the 2.5 s between matching peaks, so the lag is something you can see
-    // first input peak, and the same peak arriving L seconds later
-    const peak = period / 4;
-    plot.overlay = (c, px, py) => {
-      const x0 = px(peak);
-      const x1 = px(peak + L);
-      if (x1 > px(30)) return;
-      const y = py(1.13);
-      c.strokeStyle = c.fillStyle = color('dis');
-      c.lineWidth = 1.6;
-      c.beginPath();
-      c.moveTo(x0, y);
-      c.lineTo(x1, y);
-      c.moveTo(x0 + 6, y - 4);
-      c.lineTo(x0, y);
-      c.lineTo(x0 + 6, y + 4);
-      c.moveTo(x1 - 6, y - 4);
-      c.lineTo(x1, y);
-      c.lineTo(x1 - 6, y + 4);
-      c.stroke();
-      c.font = canvasHandFont(15);
-      c.textAlign = 'left';
-      c.textBaseline = 'middle';
-      c.fillText(`${fmt(L, 1)} s`, x1 + 6, y);
-    };
-    rLag.set(`${fmt(deg, 0)}°`);
-    rW.set(`${fmt(w, 2)} rad/s`);
-    rShare.set(fmt(L / period, 2));
-    status.textContent = t(`status.${lagStatus(deg)}`, { d: fmt(deg, 0), f: fmt(L / period, 2) });
-    plot.describe(t('describe', { p: fmt(period, 1), d: fmt(deg, 0) }));
-  };
-  const sl = slider({ label: t('slider'), min: 2, max: 30, step: 0.5, value: 20, unit: 's', color: 'eff', onInput: draw });
-  host.classList.add('pid-widget');
-  host.append(h('div', { class: 'w-controls' }, sl.el), h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rLag.el, rShare.el, rW.el)), status);
-  draw(20);
-};
-
-/** 10b: measure the frequency response one sine at a time. */
-const bode: WidgetFactory = (host, ctx) => {
-  const { t } = ctx;
-  host.append(h('p', { class: 'w-title' }, t('title')));
-  // the slider snaps to its own step, so start from a slider position: slider, status and dot agree
-  const v0 = sliderFromW(0.2);
-  let w = wFromSlider(v0);
-  const dots: { w: number; gain: number; phase: number }[] = [];
-  const grid = h('div', { class: 'w-grid two' });
-  const left = h('div');
-  const right = h('div');
-  grid.append(left, right);
-  host.append(grid);
-  const timePlot = new Plot(left, {
-    x: { label: tc('plots.time'), min: 0, max: 30 },
-    y: { label: tc('plots.temp'), min: 20, max: 55 },
-    series: [
-      { id: 'mix', color: 'eff', label: t('mix'), width: 1.8 },
-      { id: 'T', color: 'out', label: t('head') },
-    ],
-    height: 220,
-    label: t('timeAria'),
-  }, ctx.onCleanup);
-  const wAxis = { label: t('w'), min: BODE_W_MIN, max: BODE_W_MAX, log: true, logSteps: [1, 2, 5] };
-  const gainPlot = new Plot(right, {
-    x: wAxis,
-    y: { label: t('gain'), min: 0.2, max: 1.2, log: true, logSteps: [1, 2, 5] },
-    series: [
-      { id: 'formula', color: 'ink3', label: t('formula'), dash: [5, 4] },
-      { id: 'dots', color: 'out', label: t('measured'), dots: true },
-    ],
-    height: 170,
-    label: t('gainAria'),
-  }, ctx.onCleanup);
-  const phasePlot = new Plot(right, {
-    x: wAxis,
-    y: { label: t('phase'), min: -540, max: 0, ticks: [0, -180, -360, -540] },
-    series: [
-      { id: 'formula', color: 'ink3', dash: [5, 4] },
-      { id: 'dots', color: 'out', dots: true },
-    ],
-    height: 170,
-    label: t('phaseAria'),
-  }, ctx.onCleanup);
-  const flipLine = { kind: 'h' as const, at: -180, color: 'err', label: t('flip'), labelAt: 'start' as const, labelSide: 'below' as const };
-  phasePlot.setLines([flipLine]);
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite' }, t('status.start'));
-  const ws = logspace(Math.log10(BODE_W_MIN), Math.log10(BODE_W_MAX), 200);
-  const exact = sweep([1], [SHOWER.tau, 1], SHOWER.delay, ws);
-  // where the shower alone turns a wiggle upside down (0.95 rad/s): the position hand's edge
-  const flip = showerFlip();
-  let showFormula = false;
-  const redraw = () => {
-    const sorted = [...dots].sort((a, b) => a.w - b.w);
-    gainPlot.set('dots', sorted.map((d) => d.w), sorted.map((d) => d.gain));
-    phasePlot.set('dots', sorted.map((d) => d.w), sorted.map((d) => d.phase));
-    gainPlot.set('formula', showFormula ? ws : [], showFormula ? exact.map((p) => p.mag) : []);
-    phasePlot.set('formula', showFormula ? ws : [], showFormula ? exact.map((p) => p.phase) : []);
-    const flipV = { kind: 'v' as const, at: flip.w, color: 'err', dash: [3, 4] };
-    phasePlot.setLines(showFormula ? [flipLine, flipV] : [flipLine]);
-    gainPlot.setLines(showFormula ? [flipV] : []);
-    phasePlot.setMarkers(showFormula ? [{ x: flip.w, y: -180, color: 'err', shape: 'diamond', label: t('cross', { w: fmt(flip.w, 2) }) }] : []);
-    formulaToggle.input.disabled = dots.length < 5;
-    gainPlot.describe(t('describe', { n: dots.length }));
-  };
-  const measure = (wm: number, show = true) => {
-    const m = measureSine(wm);
-    const ref = sweep([1], [SHOWER.tau, 1], SHOWER.delay, [wm])[0].phase;
-    const ph = unwrapNear(m.phase, ref);
-    // one dot per speed: measuring the same speed again replaces it
-    const same = dots.findIndex((d) => Math.abs(d.w - wm) < 1e-9);
-    if (same >= 0) dots.splice(same, 1);
-    dots.push({ w: wm, gain: m.gain, phase: ph });
-    if (show) {
-      const tEnd = m.trace.t[m.trace.t.length - 1];
-      const t0 = Math.max(0, tEnd - Math.max(30, (3 * 2 * Math.PI) / wm));
-      timePlot.setX(t0, tEnd);
-      timePlot.set('mix', m.trace.t, m.mix);
-      timePlot.set('T', m.trace.t, m.trace.T);
-      status.textContent = t('status.measured', { w: fmt(wm, 2), p: fmt((2 * Math.PI) / wm, 1), g: fmt(m.gain, 2), ph: fmt(ph, 0) });
-    }
-  };
-  const btn = h('button', { class: 'btn primary small', type: 'button' }, t('measure'));
-  btn.addEventListener('click', () => {
-    measure(w);
-    redraw();
-  });
-  const sweepBtn = h('button', { class: 'btn small', type: 'button' }, t('sweep'));
-  sweepBtn.addEventListener('click', () => {
-    // a sweep speed next to one already measured (or the slider's) would draw two dots on top of each other
-    const near = (a: number, b: number) => Math.abs(Math.log(a / b)) < Math.log(1.15);
-    const taken = [w, ...dots.map((d) => d.w)];
-    for (const wm of logspace(Math.log10(0.07), Math.log10(2.5), 8)) if (!taken.some((d) => near(d, wm))) measure(wm, false);
-    measure(w);
-    redraw();
-  });
-  const clearBtn = h('button', { class: 'btn small', type: 'button' }, t('clear'));
-  clearBtn.addEventListener('click', () => {
-    dots.length = 0;
-    showFormula = false;
-    formulaToggle.input.checked = false;
-    redraw();
-  });
-  const formulaToggle = toggle(t('showFormula'), false, (v) => {
-    showFormula = v;
-    redraw();
-    if (v) status.textContent = t('status.formula', { w: fmt(flip.w, 2), p: fmt(flip.period, 1) });
-  });
-  const sl = slider({
-    label: t('slider'),
-    min: 0,
-    max: 1,
-    step: BODE_STEP,
-    value: v0,
-    // each number + unit is its own left-to-right run, so the words around them can read right to left
-    format: (v) => `${fmt(wFromSlider(v), 2)} ${unitLabel('rad/s')} (${t('period')} ${fmt((2 * Math.PI) / wFromSlider(v), 1)} ${unitLabel('s')})`,
-    color: 'eff',
-    onInput: (v) => (w = wFromSlider(v)),
-    // one measurement per deliberate choice (pointer release, or a pause in arrow presses)
-    onSettle: (v) => {
-      w = wFromSlider(v);
-      measure(w);
-      redraw();
+  const seg = segmented(
+    t('choose'),
+    (['step', 'pulse', 'wave'] as In[]).map((v) => ({ value: v, label: t(`in.${v}`) })),
+    input,
+    (v) => {
+      input = v;
+      run();
     },
-  });
-  host.classList.add('pid-widget');
-  host.append(h('div', { class: 'w-controls' }, sl.el), h('div', { class: 'w-hud' }, h('div', { class: 'w-row' }, btn, sweepBtn, clearBtn), formulaToggle.el), status, h('p', { class: 'w-help' }, t('help')));
-  // start with one measurement so the plots are never blank
-  measure(w);
-  redraw();
-};
-
-const LOOP_W_MIN = 0.05;
-const LOOP_W_MAX = 3;
-const LOOP_WS = logspace(Math.log10(LOOP_W_MIN), Math.log10(LOOP_W_MAX), 300);
-
-/** 10c: gain and phase margin — how close to the cliff edge the hand is. */
-const margins: WidgetFactory = (host, ctx) => {
-  const { t } = ctx;
-  let k = 0.008;
-  let delay = SHOWER.delay;
-  host.append(h('p', { class: 'w-title' }, t('title')));
-  const grid = h('div', { class: 'w-grid two' });
-  const left = h('div');
-  const right = h('div');
-  grid.append(left, right);
-  host.append(grid);
-  const plots = marginPlots(ctx.onCleanup, left, t, { ws: LOOP_WS });
-  const temp = tempPlot(ctx.onCleanup, right, t('timeAria'), 60, [{ id: 'T', color: 'out', label: t('temp'), ghost: true }]);
-  const rGm = readout(t('gm'));
-  const rPm = readout(t('pm'));
-  const rCrit = readout(t('crit'), 'eff');
-  const rW180 = readout(t('w180'));
-  const rPeriod = readout(t('period'));
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
-  // ghost = the last settled setting, not the previous drag frame
-  let fresh = true;
-  const update = () => {
-    const m = plots.show(handLoop(k), delay, fresh);
-    const edge = criticalHandGain(delay);
-    const stable = m.gm > 1;
-    rGm.set(`× ${fmt(m.gm, 2)}`, stable ? (m.gm > 2 ? 'good' : '') : 'bad');
-    rPm.set(stable ? `${fmt(m.pm, 0)}°` : '—', stable ? (m.pm > 45 ? 'good' : '') : 'bad');
-    rCrit.set(`${fmt(edge.k * 100, 2)} %/(°C·s)`);
-    rW180.set(`${fmt(m.w180, 2)} rad/s`);
-    rPeriod.set(`${fmt((2 * Math.PI) / m.w180, 1)} s`);
-    temp.clear(fresh);
-    fresh = false;
-    const tr = runShower(handPolicy(k), 60, delay);
-    temp.set('T', tr.t, tr.T);
-    // the swings the run really shows (15.5 s for the normal hand); the edge period if it has too few
-    const swing = swingPeriod(tr);
-    const T = Number.isFinite(swing) ? swing : (2 * Math.PI) / m.w180;
-    const vars = { p: fmt(m.pm, 0), g: fmt(m.gm, 2), T: fmt(T, 1) };
-    status.textContent = !stable ? t('status.over', vars) : m.gm < 1.5 || m.pm < 30 ? t('status.edge', vars) : t('status.safe', vars);
-    status.className = `w-status${!stable ? ' bad' : m.pm > 45 ? ' good' : ''}`;
-    plots.gain?.describe(t('describe', { gm: fmt(m.gm, 2), pm: fmt(m.pm, 0) }));
-  };
-  const sK = slider({ label: t('k'), min: 0.1, max: 2, step: 0.05, value: k * 100, unit: '%/(°C·s)', color: 'eff', onInput: (v) => { k = v / 100; update(); } });
-  const sL = slider({ label: t('delay'), min: 1, max: 5, step: 0.25, value: delay, unit: 's', color: 'dis', onInput: (v) => { delay = v; update(); } });
-  for (const el of [sK.input, sL.input]) el.addEventListener('change', () => (fresh = true));
-  host.classList.add('pid-widget');
-  host.append(h('div', { class: 'w-controls' }, sK.el, sL.el), h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rGm.el, rPm.el, rCrit.el, rW180.el, rPeriod.el)), status);
-  update();
-};
-
-/** 10c (callback): the learner's own Chapter 0 swings, compared with the prediction. */
-const replay: WidgetFactory = (host, ctx) => {
-  const { t } = ctx;
-  const saved = progress.load<SavedShowerRun>(SHOWER_RUN_KEY);
-  let tr: ShowerTrace;
-  let yours = false;
-  if (saved && saved.t.length > 50) {
-    tr = { t: saved.t, T: saved.T, u: saved.u };
-    yours = true;
-  } else {
-    tr = runShower(handPolicy(HAND_GAIN), 60);
-  }
-  host.append(h('p', { class: 'w-title' }, t('title')), h('p', { class: 'w-help' }, yours ? t('yours') : t('robot')));
-  const plot = tempPlot(ctx.onCleanup, host, t('aria'), 60, [
-    { id: 'T', color: 'out', label: t('temp') },
-    { id: 'mix', color: 'eff', label: t('mix'), dash: [2, 3], width: 1.5 },
-  ]);
-  plot.set('T', tr.t, tr.T);
-  plot.set('mix', tr.t, tr.u.map((u) => SHOWER.cold + KNOB_GAIN * u));
-  const period = swingPeriod(tr);
-  const pSpeed = criticalHandGain().period;
-  const pPos = criticalHandGain(SHOWER.delay, SHOWER.tau, 'position').period;
-  // one measured swing, bracketed on the plot: from an upward crossing of 38 °C, one period long
-  if (Number.isFinite(period)) {
-    const up = firstUpCrossing(tr, 5, 60 - period);
-    if (Number.isFinite(up)) plot.setArrows([{ kind: 'h', at: 58, from: up, to: up + period, color: 'out', label: `${fmt(period, 1)} s`, labelSide: 'above' }]);
-  }
-  const rYours = readout(yours ? t('periodYours') : t('periodRobot'), 'out');
-  // predictions are not errors: neutral ink
-  const rSpeed = readout(t('predSpeed'));
-  const rPos = readout(t('predPos'));
-  rYours.set(Number.isFinite(period) ? `${fmt(period, 1)} s` : '—');
-  rSpeed.set(`${fmt(pSpeed, 1)} s`);
-  rPos.set(`${fmt(pPos, 1)} s`);
-  let verdict: string;
-  if (!Number.isFinite(period)) verdict = t('verdict.calm');
-  else if (!yours) verdict = t('verdict.robot', { p: fmt(period, 1), e: fmt(pSpeed, 1) });
-  else if (Math.abs(period - pPos) < Math.abs(period - pSpeed)) verdict = t('verdict.position', { p: fmt(period, 1) });
-  else verdict = t('verdict.speed', { p: fmt(period, 1) });
-  host.classList.add('pid-widget');
-  host.append(h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rYours.el, rSpeed.el, rPos.el)), h('p', { class: 'w-status' }, verdict));
-  plot.describe(verdict);
-};
-
-/** 10d: design a robot shower (PI) that beats your hands. Opens on June's mistake. */
-const designer: WidgetFactory = (host, ctx) => {
-  const { t } = ctx;
-  let kp = JUNE_PI.kp;
-  let ki = JUNE_PI.ki;
-  host.append(h('p', { class: 'w-title' }, t('title')));
-  const grid = h('div', { class: 'w-grid side' });
-  const left = h('div');
-  const right = h('div');
-  grid.append(left, right);
-  host.append(grid);
-  const view = new ShowerView(left, {
-    labels: { aria: t('view.aria'), knob: t('view.knob'), cold: 'C', hot: 'H', pipe: t('view.pipe'), head: t('view.head'), thermo: t('view.thermo') },
-  });
-  const plot = tempPlot(ctx.onCleanup, right, t('aria'), 40, [
-    { id: 'T', color: 'out', label: t('temp'), ghost: true },
-    { id: 'mix', color: 'eff', label: t('mix'), dash: [2, 3], width: 1.5 },
-  ]);
-  // the loop's phase, so the phase-margin readout has a picture (arrow to −180°)
-  const loopPlot = marginPlots(ctx.onCleanup, right, t, { ws: LOOP_WS, withGain: false, height: 150, phaseMin: -540 });
-  let loopFresh = true;
-  const rPm = readout(t('pm'));
-  const rGm = readout(t('gm'));
-  const rComfort = readout(t('comfort'));
-  const rYours = readout(t('yours'));
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
-  const saved = progress.load<SavedShowerRun>(SHOWER_RUN_KEY);
-  const yourComfort = saved && saved.t.length > 50 ? comfortTime({ t: saved.t, T: saved.T, u: saved.u }) : Number.NaN;
-  rYours.set(saved ? (Number.isFinite(yourComfort) ? `${fmt(yourComfort, 1)} s` : t('never')) : t('notPlayed'));
-  // replay the computed run in real time
-  let sim = new ShowerSim(withDelay(SHOWER.delay), piPolicy(kp, ki), 0);
-  let acc = 0;
-  const loop = new Loop((dt) => {
-    sim.advance(dt);
-    acc += dt;
-    if (acc >= 0.1) {
-      acc = 0;
-      plot.push('T', sim.t, sim.temp);
-      plot.push('mix', sim.t, sim.mix(sim.u));
-    }
-    view.update({ u: sim.u, pipe: sim.pipeProfile(30), temp: sim.temp }, dt);
-    if (sim.t >= 40) loop.pause();
-  }, host);
-  loop.speed = 2;
-  const restart = () => {
-    loop.pause();
-    plot.clear();
-    sim = new ShowerSim(withDelay(SHOWER.delay), piPolicy(kp, ki), 0);
-    view.update({ u: 0, pipe: sim.pipeProfile(30), temp: sim.temp });
-    if (Loop.autoplay) loop.play();
-    else {
-      // reduced motion: the whole run as a static trace
-      const tr = runShower(piPolicy(kp, ki), 40);
-      plot.set('T', tr.t, tr.T);
-      plot.set('mix', tr.t, tr.u.map((u) => SHOWER.cold + KNOB_GAIN * u));
-    }
-  };
-  const evaluate = () => {
-    const m = loopPlot.show(piLoop(kp, ki), SHOWER.delay, loopFresh);
-    loopFresh = false;
-    const stable = m.gm > 1;
-    const run = runShower(piPolicy(kp, ki), 40);
-    const comfort = comfortTime(run);
-    rPm.set(stable ? `${fmt(m.pm, 0)}°` : '—', stable && m.pm > 45 ? 'good' : 'bad');
-    rGm.set(`× ${fmt(m.gm, 2)}`, m.gm > 2 ? 'good' : m.gm > 1 ? '' : 'bad');
-    rComfort.set(Number.isFinite(comfort) ? `${fmt(comfort, 1)} s` : t('never'), comfort < 12 ? 'good' : 'bad');
-    const beatsYou = !Number.isFinite(yourComfort) || comfort < yourComfort;
-    const win = stable && m.pm > 45 && comfort < 12;
-    const swing = swingPeriod(run);
-    const over = Number.isFinite(swing) ? t('status.unstable', { g: fmt(m.gm, 2), p: fmt(swing, 1) }) : t('status.unstableSlow', { g: fmt(m.gm, 2) });
-    status.textContent = !stable ? over : win ? (beatsYou ? t('status.win') : t('status.winButYou')) : m.pm <= 45 ? t('status.edge', { pm: fmt(m.pm, 0) }) : t('status.slow');
-    status.className = `w-status${win ? ' good' : !stable ? ' bad' : ''}`;
-    if (win) progress.save('ch10.robot', { kp, ki, comfort });
-    plot.describe(status.textContent ?? '');
-  };
-  // dragging shows the whole run instantly (ghosting the last settled one);
-  // releasing a pointer drag replays it live. Keyboard steps never animate.
-  let fresh = true;
-  let pointer = false;
-  const preview = () => {
-    evaluate();
-    loop.pause();
-    plot.clear(fresh);
-    fresh = false;
-    const tr = runShower(piPolicy(kp, ki), 40);
-    plot.set('T', tr.t, tr.T);
-    plot.set('mix', tr.t, tr.u.map((u) => SHOWER.cold + KNOB_GAIN * u));
-    const last = tr.t.length - 1;
-    view.update({ u: tr.u[last], pipe: Array.from({ length: 30 }, () => SHOWER.cold + (SHOWER.hot - SHOWER.cold) * tr.u[last]), temp: tr.T[last] });
-  };
-  const change = () => {
-    loopFresh = true;
-    evaluate();
-    restart();
-    fresh = true;
-  };
-  const sKp = slider({ label: t('kp'), min: 0, max: 6, step: 0.1, value: kp * 100, unit: '%/°C', color: 'eff', onInput: (v) => { kp = v / 100; preview(); } });
-  const sKi = slider({ label: t('ki'), min: 0, max: 6, step: 0.05, value: ki * 100, unit: '%/(°C·s)', color: 'eff', onInput: (v) => { ki = v / 100; preview(); } });
-  for (const sl of [sKp, sKi]) {
-    sl.input.addEventListener('pointerdown', () => (pointer = true));
-    sl.input.addEventListener('change', () => {
-      fresh = true;
-      loopFresh = true;
-      if (pointer && Loop.autoplay) restart();
-      pointer = false;
-    });
-  }
-  const preset = (label: string, p: number, i: number) => {
-    const b = h('button', { class: 'btn small', type: 'button' }, label);
-    b.addEventListener('click', () => {
-      kp = p;
-      ki = i;
-      sKp.value = p * 100;
-      sKi.value = i * 100;
-      change();
-    });
-    return b;
-  };
-  host.classList.add('pid-widget');
-  host.append(
-    h('div', { class: 'w-controls' }, sKp.el, sKi.el),
-    h('div', { class: 'w-row' }, preset(t('presetJune'), JUNE_PI.kp, JUNE_PI.ki), preset(t('presetHand'), 0, HAND_GAIN), preset(t('presetTheo'), THEO_PI.kp, THEO_PI.ki)),
-    h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rPm.el, rGm.el, rComfort.el, rYours.el), transport({ loop, onReset: restart, onStep: () => sim.advance(0.5) })),
-    status,
-    h('p', { class: 'w-help' }, t('goal')),
   );
-  evaluate();
-  restart();
+  const grid = h('div', { class: 'w-grid side-r' });
+  const left = h('div');
+  const right = h('div');
+  grid.append(left, right);
+  host.append(seg.el, grid);
+  const plot = new Plot(left, {
+    x: { label: tc('plots.time'), min: 0, max: T1 },
+    y: { label: tc('plots.height'), min: 0, max: 3 },
+    series: [
+      { id: 'r', color: 'sp', label: t('input'), dash: [6, 4], width: 2 },
+      { id: 'h', color: 'out', label: t('output'), ghost: true },
+    ],
+    height: 240,
+    label: t('plotAria'),
+  }, ctx.onCleanup);
+  right.append(caption(t('droneCap')));
+  const view = new DroneView(right, { hMax: 3, width: 200 }, ctx.onCleanup);
+  const eq = h('div', { class: 'math-block' });
+  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  host.append(eq, status);
+  let hs: number[] = [];
+  let rs: number[] = [];
+  let ts: number[] = [];
+  let thr: number[] = [];
+  let playT = 0;
+  const loop = new Loop((dt) => {
+    playT += dt;
+    if (playT > T1 + 1) playT = 0;
+    const i = Math.min(ts.length - 1, Math.round((Math.min(playT, T1) / T1) * (ts.length - 1)));
+    view.update({ h: hs[i], r: rs[i], thrust: thr[i] });
+    plot.setCursor(Math.min(playT, T1));
+  }, host);
+  const run = () => {
+    plot.clear(true);
+    const sp = setpoints[input];
+    const sim = new DroneSim(defaultDroneConfig({ pid: pd(KP, 0), h0: 1, setpoint: sp }));
+    ts = [0];
+    hs = [sim.h];
+    rs = [sp(0)];
+    thr = [sim.thrust];
+    let peak = sim.h;
+    let k = 0;
+    sim.advance(T1, () => {
+      peak = Math.max(peak, sim.h);
+      if (++k % 20) return;
+      ts.push(sim.t);
+      hs.push(sim.h);
+      rs.push(sp(sim.t));
+      thr.push(sim.thrust);
+    }, 1);
+    plot.set('r', ts, rs);
+    plot.set('h', ts, hs);
+    const under = `\\substack{\\Delta\\sp{R}(s)\\ \\text{${t('changes')}} \\\\ \\Delta\\sp{r}(t) = ${r[input]}}`;
+    eq.innerHTML = tex(`\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{20}}{${fmt(0.5, 1)}s^2 + s + \\eff{20}}}_{G(s)\\ \\text{${t('same')}}} \\cdot \\underbrace{${R[input]}}_{${under}}`, true);
+    // the wave's steady output amplitude is 0.5·|G(2i)|; the steps report their measured peak
+    status.textContent = input === 'wave' ? t('status.wave', { a: fmt(0.5, 2), b: fmt(0.5 * recipeGain(2), 2) }) : t(`status.${input}`, { p: fmt(peak, 2) });
+    plot.describe(`${t(`describe.${input}`)} ${status.textContent}`);
+    playT = 0;
+    if (Loop.autoplay) loop.play();
+    else view.update({ h: hs[hs.length - 1], r: rs[rs.length - 1], thrust: thr[thr.length - 1] });
+  };
+  run();
   return () => loop.destroy();
 };
 
-export const widgets: Record<string, WidgetFactory> = { phase, bode, margins, replay, designer };
+let zoneCache: string | null = null;
+
+/**
+ * Where the ωn circle's label goes (degrees, for `SPlane.setCircle`): the first spot that stays on the
+ * playground's map (σ −10…4, ω ±8) and keeps well away from both poles, which ride the circle.
+ * Below the positive real axis first (the right half is otherwise empty), then above the negative
+ * one; `undefined` puts it under the circle's lowest point. 195° is the budget circle's label.
+ */
+function circleLabelAt(r: number, re: number, im: number): number | undefined {
+  const pole = (Math.atan2(im, re) * 180) / Math.PI;
+  const far = (a: number) => [pole, -pole].every((p) => Math.abs(((a - p + 540) % 360) - 180) > 35);
+  const room = 2.4; // label width in plane units, roughly
+  const fits = (a: number) => {
+    const x = r * Math.cos((a * Math.PI) / 180);
+    const y = r * Math.sin((a * Math.PI) / 180);
+    // anchored away from the circle: to the right of the point on the right, to the left on the left
+    const x0 = x > 0 ? x : x - room;
+    const x1 = x > 0 ? x + room : x;
+    return x0 > -10 && x1 < 4 && Math.abs(y) < 7.2;
+  };
+  // 205° is below the budget circle's label (195°): skip it when the two circles nearly meet
+  const spots = [-25, 155, 205, 135].filter((a) => a !== 205 || Math.abs(r - budgetRadius(1)) > 1);
+  return spots.find((a) => far(a) && fits(a));
+}
+
+/** 10b — the centrepiece: drag the poles, everything else follows. */
+const playground: WidgetFactory = (host, ctx) => {
+  const { t } = ctx;
+  mark(host);
+  const T1 = PLAY_T;
+  let re = -1;
+  let im = Math.sqrt(39);
+  host.append(h('p', { class: 'w-title' }, t('title')));
+  const grid = h('div', { class: 'w-grid two' });
+  const left = h('div');
+  const right = h('div');
+  grid.append(left, right);
+  host.append(grid);
+  const plane = new SPlane(left, {
+    reMin: -10,
+    reMax: 4,
+    imMax: 8,
+    label: t('planeAria'),
+    reLabel: t('re'),
+    imLabel: t('im'),
+    regions: true,
+    step: 0.1,
+    onChange: (p) => {
+      re = p.re;
+      im = Math.max(0, p.im);
+      pushTrail(re, im);
+      if (Math.hypot(re, im) < 0.15) {
+        re = -0.15;
+        plane.move('p', re, im);
+      }
+      update();
+    },
+  }, ctx.onCleanup);
+  // built-in guides (locale-aware labels): settling lines, constant-ζ rays with their overshoot
+  plane.setSettleLines([1, 2, 4]);
+  plane.setRays([0.2, 0.5, 0.7]);
+  // our own guides: the challenge zone, the 20 N budget circle, the wiggle line and the trail
+  const zone = svg('path', { class: 'challenge-zone', 'fill-rule': 'evenodd' });
+  const R20 = budgetRadius(1);
+  const budget = svg('circle', { class: 'budget', cx: plane.sx(0), cy: plane.sy(0), r: plane.sx(R20) - plane.sx(0) });
+  // its label sits just outside it, below the negative real axis (the wiggle line only lives above)
+  const ba = (195 * Math.PI) / 180;
+  const budgetLabel = svg('text', { class: 'guide-label budget-label', x: plane.sx(R20 * Math.cos(ba)) - 5, y: plane.sy(R20 * Math.sin(ba)), dy: '0.9em', 'text-anchor': 'end' }, t('budget'));
+  plane.deco.append(zone, budget, budgetLabel);
+  {
+    // keep guides inside the plane
+    const clipId = `clip-${Math.random().toString(36).slice(2, 8)}`;
+    const box = plane.svg.viewBox.baseVal;
+    plane.svg.prepend(svg('defs', null, svg('clipPath', { id: clipId }, svg('rect', { x: 0, y: 0, width: box.width, height: box.height }))));
+    plane.deco.setAttribute('clip-path', `url(#${clipId})`);
+  }
+  const wLine = svg('line', { class: 'guide wiggle' });
+  const wLabel = svg('text', { class: 'guide-label wiggle-label', 'text-anchor': 'start' });
+  // a faint trail of where the poles have just been; it fades once you let go
+  const trail = svg('polyline', { class: 'pole-trail' });
+  const trailTwin = svg('polyline', { class: 'pole-trail' });
+  plane.deco.append(wLine, wLabel, trail, trailTwin);
+  let trailPts: [number, number][] = [];
+  let trailTimer = 0;
+  function pushTrail(r: number, i: number): void {
+    trailPts.push([r, i]);
+    if (trailPts.length > 40) trailPts.shift();
+    trail.setAttribute('points', trailPts.map(([x, y]) => `${plane.sx(x)},${plane.sy(y)}`).join(' '));
+    trailTwin.setAttribute('points', trailPts.map(([x, y]) => `${plane.sx(x)},${plane.sy(-y)}`).join(' '));
+    trail.classList.add('on');
+    trailTwin.classList.add('on');
+    clearTimeout(trailTimer);
+    trailTimer = window.setTimeout(() => {
+      trail.classList.remove('on');
+      trailTwin.classList.remove('on');
+      trailPts = [];
+    }, 900);
+  }
+  plane.set([{ id: 'p', re, im, kind: 'pole', mirror: true, draggable: true }]);
+
+  const top = h('div', { class: 'pair-grid map-pair' });
+  const vbox = h('div');
+  const rbox = h('div');
+  top.append(vbox, rbox);
+  right.append(top);
+  // an unstable drone can fly out of its picture into the page; the hit stalls it and it falls (see fall.ts)
+  const view = new DroneView(vbox, { hMax: 3, width: 180, onCeiling: () => hitPage() }, ctx.onCleanup);
+  const rP = readout(t('poles'));
+  const rZ = readout(t('zeta'));
+  const rW = readout(t('wn'));
+  const rOs = readout(t('overshoot'));
+  const rTs = readout(t('settle'));
+  const rTm = readout(t('settleReal'));
+  const rKp = readout('Kp', 'eff');
+  const rKd = readout('Kd', 'eff');
+  const rPush = readout(t('push'), 'eff');
+  rbox.append(h('div', { class: 'readouts map-readouts' }, rP.el, rZ.el, rW.el, rOs.el, rTs.el, rTm.el));
+  const plot = new Plot(right, {
+    x: { label: tc('plots.time'), min: 0, max: T1 },
+    y: { label: tc('plots.height'), min: -0.5, max: 4 },
+    series: [{ id: 'h', color: 'out', label: t('response'), ghost: true }],
+    height: 210,
+    label: t('plotAria'),
+  }, ctx.onCleanup);
+  plot.setLines([{ kind: 'h', at: 2, color: 'sp', label: t('target') }]);
+  const eq = h('div', { class: 'math-block' });
+  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  const challengeStatus = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  host.append(h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rKp.el, rKd.el, rPush.el)), eq, status);
+  const chal = toggle(t('challenge'), false, (v) => {
+    zone.style.display = v ? '' : 'none';
+    challengeStatus.hidden = !v;
+    if (v && !zoneCache) {
+      // worked out once, the first time the challenge is switched on (a fraction of a second)
+      zoneCache = regionPath(challengeZone(0.1), (x) => plane.sx(x), (y) => plane.sy(y));
+    }
+    if (zoneCache) zone.setAttribute('d', zoneCache);
+    update(false);
+  });
+  host.append(h('div', { class: 'w-row fix-row' }, chal.el), challengeStatus, h('p', { class: 'w-help' }, t('help')));
+  zone.style.display = 'none';
+  challengeStatus.hidden = true;
+  let trace = playgroundTrace(re, im);
+  let playT = 0;
+  // the state at the latest frame, and (after hitting the page) the stalled fall that replaces the formula
+  let now = { t: 0, h: 0, v: 0 };
+  let fall: { sim: DroneSim; t0: number; carry: number } | null = null;
+  let verdict = verdictOf(re);
+  function hitPage(): void {
+    if (fall) return;
+    fall = { sim: fallSim(now.h, now.v), t0: now.t, carry: 0 };
+    // the plot shows what really happened: the formula up to the hit, then the fall
+    const tr = fallTrace(now.h, now.v);
+    const keep = trace.xs.findIndex((x) => x > now.t);
+    const xs = [...trace.xs.slice(0, keep < 0 ? undefined : keep), ...tr.t.map((x) => now.t + x)];
+    const ys = [...trace.ys.slice(0, keep < 0 ? undefined : keep), ...tr.h];
+    plot.set('h', xs, ys);
+    status.textContent = `${t(`verdict.${verdict}`)} ${t(verdict === 'marginal' ? 'verdict.hitPageMarginal' : 'verdict.hitPage')}`;
+    status.className = 'w-status bad';
+    plot.describe(status.textContent);
+  }
+  const loop = new Loop((dt) => {
+    if (fall) {
+      fall.carry += dt;
+      const n = Math.floor(fall.carry / fall.sim.dt + 1e-9);
+      fall.carry -= n * fall.sim.dt;
+      for (let i = 0; i < n && !fall.sim.landed; i++) fall.sim.step();
+      view.update({ h: fall.sim.h, r: 2, thrust: 0, crashed: fall.sim.crashed });
+      plot.setCursor(Math.min(T1, fall.t0 + fall.sim.t));
+      // it stays where it fell until you move the poles
+      if (fall.sim.landed) loop.pause();
+      return;
+    }
+    playT += dt;
+    if (playT > T1 + 1) playT = 0;
+    const tt = Math.min(playT, T1);
+    // down on the ground from the touchdown on (the plot is cut there too), until the replay restarts
+    const st = stateAt(trace, tt, re, im);
+    now = { t: tt, h: st.h, v: st.v };
+    view.update({ h: st.h, r: 2, thrust: st.thrust, crashed: st.crashed });
+    plot.setCursor(tt);
+  }, host);
+  const svgEl = plane.svg;
+  svgEl.addEventListener('pointerdown', () => plot.clear(true));
+  let lastKey = 0;
+  svgEl.addEventListener('keydown', () => {
+    if (performance.now() - lastKey > 700) plot.clear(true);
+    lastKey = performance.now();
+  });
+  /** `restart` false: only the words change (the challenge switched), the replay keeps going */
+  function update(restart = true): void {
+    if (restart) {
+      fall = null;
+      if (Loop.autoplay && !loop.playing) loop.play();
+      trace = playgroundTrace(re, im);
+      plot.set('h', trace.xs, trace.ys);
+      playT = 0;
+    }
+    const { kp, kd } = gainsFromPoles(re, im);
+    const ts = settleOf(re);
+    const os = overshootOf(re, im);
+    const zeta = zetaOf(re, im);
+    const wn = Math.hypot(re, im);
+    const mm = measuredMetrics(re, im);
+    const push = firstPush(re, im);
+    verdict = verdictOf(re);
+    rP.set(formatS(re, im, true));
+    rZ.set(fmt(zeta, 2));
+    rW.set(fmt(wn, 2));
+    rTs.set(Number.isFinite(ts) ? `≈ ${fmt(ts, 1)} s` : t('never'));
+    rTm.set(verdict !== 'stable' ? t('never') : Number.isNaN(mm.settlingTime) ? t('notIn', { T: fmt(T1, 0) }) : `${fmt(mm.settlingTime, 2)} s`);
+    rOs.set(Number.isFinite(os) ? t('pct', { v: fmt(os, 0) }) : '∞');
+    rKp.set(`${fmt(kp, 1)} N/m`);
+    rKd.set(`${fmt(kd, 2)} N·s/m`);
+    rPush.set(`${fmt(push, 1)} N`, push > 20 ? 'bad' : '');
+    // the ωn circle through the pole (Chapter 7): every point on it has the same |p|
+    plane.setCircle(wn > 0.3 ? wn : null, t('wnCircle', { w: fmt(wn, 2) }), circleLabelAt(wn, re, im));
+    const cd = c + kd;
+    const lhs = `\\frac{\\Delta\\out{H}(s)}{\\Delta\\sp{R}(s)}`;
+    const general = `\\frac{\\eff{K_p}}{m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p}}`;
+    const numeric = `\\frac{\\eff{${fmt(kp, 1)}}}{${fmt(m, 1)}s^2 ${cd >= 0 ? '+' : '-'} ${fmt(Math.abs(cd), 2)}s + \\eff{${fmt(kp, 1)}}}`;
+    const factored = `\\frac{${fmt(kp / m, 1)}}{(s - p)(s - \\bar p)},\\quad p = ${formatS(re, im).replace('i', '\\,i')}`;
+    // wide screens: one line; narrow screens: aligned steps instead of a sideways scroll
+    eq.innerHTML = tex(
+      host.clientWidth < 760
+        ? `\\begin{aligned} ${lhs} &= ${general} \\\\[4pt] &= ${numeric} \\\\[4pt] &= ${factored} \\end{aligned}`
+        : `${lhs} = ${general} = ${numeric} = ${factored}`,
+      true,
+    );
+    const w = im;
+    wLine.setAttribute('x1', String(plane.sx(-10)));
+    wLine.setAttribute('x2', String(plane.sx(4)));
+    wLine.setAttribute('y1', String(plane.sy(w)));
+    wLine.setAttribute('y2', String(plane.sy(w)));
+    wLine.style.display = w > 0.05 ? '' : 'none';
+    // sit the label at the left edge, clear of the pole marker and axis names; high up it hangs
+    // under the line, out of the ray labels along the top edge
+    wLabel.setAttribute('x', String(plane.sx(-10) + 6));
+    // (and never inside the band the ray labels hang in along the top edge)
+    wLabel.setAttribute('y', String(w > 5.2 ? Math.max(plane.sy(w) + 16, plane.sy(8) + 62) : plane.sy(w) - 6));
+    wLabel.textContent = w > 0.05 ? t('wiggle', { T: fmt((2 * Math.PI) / w, 2) }) : '';
+    // the status tells the whole story of this replay: where it lives, the ground, odd gains, thrust
+    const words = [t(`verdict.${verdict}`)];
+    if (trace.at !== null) words.push(t('verdict.hitGround'));
+    if (kd < -1e-9) words.push(t('negKd'));
+    if (push > 20) words.push(t('pushWarn'));
+    if (!fall) {
+      status.textContent = words.join(' ');
+      status.className = `w-status${verdict === 'stable' ? ' good' : verdict === 'unstable' ? ' bad' : ''}`;
+    }
+    if (!challengeStatus.hidden) {
+      const ok = challengeOk(re, im);
+      const s = Number.isNaN(mm.settlingTime) ? '—' : fmt(mm.settlingTime, 2);
+      challengeStatus.textContent = ok ? t('chalOk', { o: fmt(mm.overshoot, 1), s }) : t('chalNo', { o: fmt(mm.overshoot, 0), s, O: fmt(CHALLENGE.os, 0), S: fmt(CHALLENGE.ts, 0) });
+      challengeStatus.className = `w-status${ok ? ' good' : ''}`;
+    }
+    plane.describe();
+    plot.describe(t('describe', { p: formatS(re, im, true), s: Number.isFinite(ts) ? fmt(ts, 1) : '∞', o: Number.isFinite(os) ? fmt(os, 0) : '∞', z: fmt(zeta, 2) }));
+    // reduced motion: no replay, so the picture pins the state at the end of the plotted window
+    // (clipped to its frame, the readout still true) and agrees with the plot's last point
+    if (!Loop.autoplay) {
+      const st = stateAt(trace, T1, re, im);
+      view.update({ h: st.h, r: 2, thrust: st.thrust, crashed: st.crashed });
+    }
+  }
+  update();
+  if (Loop.autoplay) loop.play();
+  const moveTo = (r: number, i: number) => {
+    plane.move('p', r, i);
+    re = r;
+    im = i;
+    update();
+  };
+  const offs = [
+    ctx.bus.on('predict:ch8-rhp', () => {
+      plot.clear(true);
+      moveTo(0.6, 3);
+    }),
+    // "straight up": the pair at σ = 2 moves from ±4i to ±8i, the old one stays as a ghost
+    ctx.bus.on('predict:ch8-up', () => {
+      moveTo(-2, 4);
+      plane.ghost();
+      plot.clear(true);
+      moveTo(-2, 8);
+    }),
+    // the "gains" sentence moves the poles it talks about
+    followPlay(ctx.bus, 'gains', ({ sig, w }) => {
+      plot.clear(true);
+      moveTo(-sig, w);
+    }),
+  ];
+  return () => {
+    offs.forEach((off) => off());
+    clearTimeout(trailTimer);
+    loop.destroy();
+  };
+};
+
+/** 10c — a zero: same poles, extra kick. */
+const zero: WidgetFactory = (host, ctx) => {
+  const { t } = ctx;
+  mark(host);
+  const T1 = 4;
+  let z = -3;
+  host.append(h('p', { class: 'w-title' }, t('title')));
+  const grid = h('div', { class: 'w-grid two' });
+  const left = h('div');
+  const right = h('div');
+  grid.append(left, right);
+  host.append(grid);
+  const plane = new SPlane(left, {
+    reMin: -12,
+    reMax: 2,
+    imMax: 5,
+    label: t('planeAria'),
+    reLabel: t('re'),
+    imLabel: t('im'),
+    step: 0.1,
+    onChange: (p) => {
+      z = Math.min(-0.3, p.re);
+      if (p.re > -0.3) plane.move('z', z, 0);
+      update();
+    },
+  }, ctx.onCleanup);
+  plane.set([
+    { id: 'p', re: -2, im: 3, kind: 'pole', mirror: true },
+    { id: 'z', re: z, im: 0, kind: 'zero', draggable: true, realOnly: true },
+  ]);
+  // the y-axis grows to fit the kick (a zero near 0 overshoots over 500 %), so the curve never leaves its plot
+  const plot = new Plot(right, {
+    x: { label: tc('plots.time'), min: 0, max: T1 },
+    y: { label: t('y'), min: 0, max: 2.5, autoMax: true, autoMin: true },
+    series: [
+      { id: 'ref', color: 'pencil', label: t('noZero'), dash: [6, 4], width: 2 },
+      { id: 'slope', color: 'out', label: t('slope', { g: fmt(1 / 3, 2) }), dash: [1, 5], width: 2 },
+      { id: 'y', color: 'out', label: t('withZero'), ghost: true },
+    ],
+    height: 240,
+    label: t('plotAria'),
+  }, ctx.onCleanup);
+  plot.setLines([{ kind: 'h', at: 1, color: 'sp' }]);
+  const slopeLegend = plot.el.querySelectorAll('.plot-legend-item')[1]?.lastChild ?? null;
+  const ref = sample(noZeroResponse, T1, 400);
+  plot.set('ref', ref.xs, ref.ys);
+  const rA = readout(t('osNo'));
+  const rB = readout(t('osYes'));
+  const eq = h('div', { class: 'math-block zero-eq' });
+  const note = h('p', { class: 'w-cap zero-note' });
+  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  right.append(h('div', { class: 'readouts' }, rA.el, rB.el), status);
+  host.append(eq, note, h('p', { class: 'w-help' }, t('help')));
+  const osNo = stepMetrics(ref.xs, ref.ys, 0, 1).overshoot;
+  rA.set(t('pct', { v: fmt(osNo, 1) }));
+  plane.svg.addEventListener('pointerdown', () => plot.clear(true));
+  const trim = (v: number) => fmt(v, Math.abs(v * 10 - Math.round(v * 10)) < 1e-9 ? (Number.isInteger(v) ? 0 : 1) : 2);
+  function update(): void {
+    const g = -1 / z;
+    const d = sample(zeroResponse(z), T1, 400);
+    plot.set('y', d.xs, d.ys);
+    // the with-zero curve is the no-zero curve plus (1/|z|) × its slope: draw that slope part
+    const sl = sample((tt) => g * noZeroSlope(tt), T1, 400);
+    plot.set('slope', sl.xs, sl.ys);
+    if (slopeLegend) slopeLegend.textContent = t('slope', { g: fmt(g, 2) });
+    const os = stepMetrics(d.xs, d.ys, 0, 1).overshoot;
+    rB.set(t('pct', { v: fmt(os, 1) }), os > osNo + 1 ? 'bad' : '');
+    const zz = trim(-z);
+    eq.innerHTML = tex(`G(s) = \\frac{13}{${zz}}\\cdot\\frac{s + ${zz}}{s^2 + 4s + 13}`, true);
+    // the words live outside the formula, so they wrap on a phone and read in the page's direction
+    setRich(note, t('note', { z: `$s = ${trim(z)}$` }));
+    status.textContent = t(z > -1.5 ? 'near' : z < -8 ? 'far' : 'mid', { g: fmt(g, 2) });
+    plot.describe(t('describe', { z: fmt(z, 2), o: fmt(os, 0) }));
+  }
+  update();
+};
+
+/** 10d — "further left is always better?" — not with real motors. */
+const limit: WidgetFactory = (host, ctx) => {
+  const { t } = ctx;
+  mark(host);
+  const T1 = LIMIT_T;
+  let sig = 2;
+  let real = true;
+  host.append(h('p', { class: 'w-title' }, t('title')));
+  const grid = h('div', { class: 'w-grid two' });
+  const a = h('div');
+  const b = h('div');
+  grid.append(a, b);
+  host.append(grid);
+  const hp = new Plot(a, {
+    x: { label: tc('plots.time'), min: 0, max: T1 },
+    y: { label: tc('plots.height'), min: 0.5, max: 2.8 },
+    series: [
+      { id: 'ideal', color: 'pencil', label: t('ideal'), dash: [6, 4], width: 2 },
+      { id: 'real', color: 'out', label: t('real') },
+    ],
+    height: 230,
+    label: t('hAria'),
+  }, ctx.onCleanup);
+  hp.setLines([{ kind: 'h', at: 2, color: 'sp' }]);
+  const tp = new Plot(b, {
+    x: { label: tc('plots.time'), min: 0, max: T1 },
+    y: { label: tc('plots.thrust'), min: -40, max: 80, extraTicks: [20] },
+    series: [
+      { id: 'ideal', color: 'pencil', label: t('idealT'), dash: [6, 4], width: 2 },
+      { id: 'real', color: 'eff', label: t('realT') },
+    ],
+    height: 230,
+    label: t('tAria'),
+  }, ctx.onCleanup);
+  // "can't pull down" sits under the 0 N line, in the band no curve reaches unless the maths goes negative
+  tp.setLines([
+    { kind: 'h', at: 20, color: 'ink3', label: t('max'), avoid: ['real', 'ideal'] },
+    { kind: 'h', at: 0, color: 'ink3', label: t('min'), labelAt: 'start', labelSide: 'below', avoid: ['real', 'ideal'] },
+  ]);
+  const rPeak = readout(t('peak'), 'eff');
+  const rTsI = readout(t('tsIdeal'));
+  const rTsR = readout(t('tsReal'));
+  const rOsR = readout(t('osReal'));
+  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  const update = () => {
+    const I = limitRun(sig, false);
+    const R = limitRun(sig, real);
+    hp.set('ideal', I.xs, I.hs);
+    hp.set('real', R.xs, R.hs);
+    tp.set('ideal', I.xs, I.th);
+    tp.set('real', R.xs, R.th);
+    const peak = Math.max(...I.th);
+    rPeak.set(`${fmt(peak, 0)} N`, peak > 20 ? 'bad' : 'good');
+    rTsI.set(Number.isNaN(I.m.settlingTime) ? '—' : `${fmt(I.m.settlingTime, 2)} s`);
+    rTsR.set(Number.isNaN(R.m.settlingTime) ? t('notYet') : `${fmt(R.m.settlingTime, 2)} s`);
+    rOsR.set(t('pct', { v: fmt(R.m.overshoot, 1) }), R.m.overshoot > I.m.overshoot + 1 ? 'bad' : '');
+    const best = bestRealSettling();
+    status.textContent =
+      real && peak > 20
+        ? t('capped', { p: fmt(peak, 0), s: fmt(R.m.settlingTime, 2), b: fmt(best.ts, 2) })
+        : peak > 20
+          ? t('fantasy', { p: fmt(peak, 0) })
+          : t('fine');
+    status.className = `w-status${real && peak > 20 ? ' bad' : ''}`;
+    hp.describe(status.textContent);
+  };
+  const sl = slider({ label: t('sigma'), min: 1, max: 8, step: 0.5, value: sig, unit: '', format: (v) => `−${fmt(v, 1)} ± ${fmt(v, 1)}i`, onInput: (v) => ((sig = v), update()) });
+  const tg = toggle(t('toggle'), real, (v) => ((real = v), update()));
+  host.append(h('div', { class: 'w-controls limit-controls' }, sl.el, tg.el), h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rPeak.el, rTsI.el, rTsR.el, rOsR.el)), status);
+  update();
+};
+
+/** 10e: one lap round the loop, C(iω)·P(iω), and the point −1 where a lap would feed itself. */
+const loop: WidgetFactory = (host, ctx) => {
+  const { t } = ctx;
+  mark(host);
+  // frame the corner the lap lives in: left of 0 and below the real axis, with −1 in view
+  const EXTENT = 1.6;
+  const CENTER: [number, number] = [-0.75, -0.65];
+  let kp = 20;
+  let u = Math.log10(6.5);
+  host.append(h('p', { class: 'w-title' }, t('title')));
+  const grid = h('div', { class: 'w-grid two' });
+  const left = h('div');
+  const right = h('div');
+  grid.append(left, right);
+  host.append(grid);
+  const plane = new PlaneCanvas(left, { extent: EXTENT, center: CENTER, label: t('aria'), reLabel: t('re'), imLabel: t('im') });
+  ctx.onCleanup(() => plane.destroy());
+  const rG = readout(t('size'), 'out');
+  const rA = readout(t('angle'), 'out');
+  const rD = readout(t('distance'));
+  const rZ = readout(t('zeta'));
+  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  right.append(h('div', { class: 'readouts' }, rG.el, rA.el, rD.el, rZ.el), status);
+  const say = () => {
+    const near = closest(kp);
+    const text = t('status', { d: fmt(near.d, 2), w: fmt(near.w, 1), z: fmt(loopZeta(kp), 2) });
+    if (status.textContent !== text) status.textContent = text;
+  };
+  const draw = () => {
+    const w = 10 ** u;
+    const z = lap(kp, w);
+    const near = closest(kp);
+    const nz = lap(kp, near.w);
+    plane.draw([
+      { kind: 'path', pts: lapCurve(kp, EXTENT, CENTER), color: 'ink2', width: 2 },
+      { kind: 'dot', at: [nz.re, nz.im], color: 'ink3', r: 3.5 },
+      { kind: 'line', from: [-1, 0], to: [z.re, z.im], color: 'ink2', dash: [4, 4], width: 1.5 },
+      { kind: 'dot', at: [-1, 0], color: 'bad', r: 7, ring: true, label: t('cliff'), labelAt: 'above' },
+      { kind: 'arrow', to: [z.re, z.im], color: 'out', width: 3, label: t('lap') },
+    ]);
+    rG.set(fmt(Math.hypot(z.re, z.im), 2));
+    rA.set(`${fmt(lapAngle(kp, w), 0)}°`);
+    rD.set(fmt(toCliff(kp, w), 2), toCliff(kp, w) < 0.35 ? 'bad' : '');
+    rZ.set(fmt(loopZeta(kp), 2));
+  };
+  const sK = slider({ label: t('kp'), min: 1, max: 80, step: 1, value: kp, unit: 'N/m', color: 'eff', onInput: (v) => ((kp = v), draw()), onSettle: say });
+  const sW = slider({
+    label: t('w'),
+    min: Math.log10(LOOP_W.min),
+    max: Math.log10(LOOP_W.max),
+    step: 0.01,
+    value: u,
+    format: (v) => `${fmt(10 ** v, 10 ** v < 10 ? 1 : 0)} ${unitLabel('rad/s')}`,
+    onInput: (v) => ((u = v), draw()),
+  });
+  host.append(h('div', { class: 'w-controls' }, sK.el, sW.el), h('p', { class: 'w-help' }, t('help')));
+  draw();
+  say();
+};
+
+export const widgets: Record<string, WidgetFactory> = { recipe, playground, zero, limit, loop };

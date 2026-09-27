@@ -1,0 +1,701 @@
+{
+  "kicker": "Rozdział 13",
+  "title": "Wyzwanie z dronem",
+  "question": "Czy *ty* utrzymasz drona na 2 m mimo wszystkiego?",
+  "sections": [
+    {
+      "id": "briefing",
+      "title": "Odprawa przed misją",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Dobra. Prawdziwy dron, prawdziwa dostawa. Startuje z paczką, przetrzymuje podmuch, zrzuca paczkę i przez cały czas trzyma 2 m. Dwadzieścia sekund."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "I nie wolno nam niczego dotykać, kiedy leci?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "W tym cały sens. Regulator musi to zrobić sam. My tylko wybieramy trzy liczby. No, cztery: jeszcze filtr."
+        },
+        {
+          "t": "p",
+          "text": "Misja, sekunda po sekundzie:"
+        },
+        {
+          "t": "list",
+          "ordered": true,
+          "items": [
+            "**0 s:** start z ziemi z {dis|paczką} 0,2 kg (razem 0,7 kg).",
+            "**6–9 s:** {dis|podmuch} w dół pcha z siłą 1,5 N.",
+            "**12 s:** {dis|paczka spada}. Nagle dron jest o 0,2 kg lżejszy.",
+            "**20 s:** koniec misji."
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Na finał nasz model drona robi się trochę uczciwszy. Każda z tych rzeczy to coś, z czym muszą żyć prawdziwe drony, i każda to stary znajomy z wcześniejszego rozdziału:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Bezwładność silników (τ ≈ 0,05 s):** śmigło nie zmieni prędkości w mgnieniu oka. Jego ciąg podąża za poleceniem jak stygnąca kawa z rozdziału 3, człon inercyjny pierwszego rzędu: po 0,05 s jest w 63 % drogi. Spóźnione pchnięcie to opóźnienie fazowe z rozdziału 12 w przebraniu.",
+            "**Zaszumiony czujnik ($\\sigma_n$ ≈ 2 cm, n od ang. *noise*, czyli szum; to nie σ bieguna):** każdy odczyt wysokości jest przekłamany o około 2 cm, losowo, tysiąc razy na sekundę. Rozdział 11 ostrzegał: D zamienia to drżenie w wielkie skoki ciągu.",
+            "**Ograniczone silniki (od 0 do 20 N):** ograniczenie z rozdziału 10 zostaje. Z paczką dron waży 6,9 N, więc 20 N to tylko około trzy razy więcej niż jego ciężar, a silniki nigdy nie pociągną w dół. Dopóki są na ograniczeniu, stos czeka (anti-windup z rozdziału 11).",
+            "**D jest filtrowane:** poprawka z rozdziału 11. D bierze nachylenie wygładzonego odczytu czujnika, członu inercyjnego pierwszego rzędu ze stałą czasową $\\tau_f$, którą wybierasz. Dłuższe $\\tau_f$ to spokojniej, ale później."
+          ]
+        },
+        {
+          "t": "play",
+          "id": "limit",
+          "text": "Przy starcie $\\eff{K_p}$ = {scrub|kp|eff} N/m razy uchyb 2 m daje żądanie {calc|ask} N{calc|clip}. Z paczką dron waży {calc|w} N, więc 20 N to tylko {calc|ratio}× jego ciężar."
+        },
+        {
+          "t": "callout",
+          "title": "Krótka bezwładność to prawie opóźnienie",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Silnik, który potrzebuje 0,05 s, żeby się rozkręcić… czy to nie jest po prostu malutkie opóźnienie?"
+            },
+            {
+              "t": "math",
+              "tex": "\\angle \\frac{1}{1 + i\\omega\\tau_m} = -\\arctan(\\omega\\tau_m) \\approx -\\omega\\tau_m \\qquad (\\omega\\tau_m \\ll 1)"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "excited",
+              "text": "Prawie! Weź nastawy, które zdobywają wszystkie sześć gwiazdek (bez spoilerów). Ich wzmocnienie pętli wynosi dokładnie 1 przy około 10 rad/s, tam gdzie rozdział 12 odczytuje zapas fazy. Tam opóźnienie 0,05 s kosztowałoby 28°. Bezwładność kosztuje 26°."
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "happy",
+              "text": "Czyli znowu rozdział 12, tylko w mniejszej skali."
+            },
+            {
+              "t": "play",
+              "id": "lag",
+              "text": "Dla tych sześciogwiazdkowych nastaw wzmocnienie pętli wynosi 1 przy około {calc|wc} rad/s. Bezwładność silników $\\tau_m$ = {scrub|tm} s opóźnia to wahnięcie o {calc|lag}°, więc zapas fazy spada z 59° do {calc|pm}°."
+            },
+            {
+              "t": "p",
+              "text": "Z prawdziwymi silnikami około 25° zapasu znika, zanim w ogóle wkroczą szum czy ograniczenia. Dlatego zwycięskie nastawy w finale są łagodniejsze niż w rozdziale 11."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "surprised",
+              "text": "Tylko 33°? Według par zapas–ζ z rozdziału 12 to rozkołysane ζ około 0,3. To jak te nastawy zdobywają gwiazdkę za przeregulowanie?"
+            },
+            {
+              "t": "p",
+              "text": "Ich rozkołysana para biegunów naprawdę jest aż tak rozkołysana (ζ ≈ 0,33: sama przestrzeliłaby o około 33 %). Ale większość wznoszenia niosą dwa wolne, spokojne bieguny w okolicy −1,1 i −2,7, a rozkołysanej parze przypada tylko mały udział. Nawet z nieograniczonymi silnikami start przestrzeliwuje tylko o około 7 %. Pary z rozdziału 12 dotyczą tamtejszej prostej pętli. Ta ma więcej części, więc jej zapas czytaj jako bezpieczną odległość, a nie jako obietnicę co do przeregulowania."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Rozdział 12 by to narysował. Oto własna pętla drona, sześciogwiazdkowe nastawy raz dookoła: regulator, silniki, dron. Przesuń bezwładność silników i patrz, jak faza wygina się w dół."
+        },
+        {
+          "t": "widget",
+          "id": "droneBode"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Bez bezwładności faza nigdy nie dochodzi do −180°, więc urwiska w ogóle nie ma: choćbyś nie wiem jak mocno podkręcił wzmocnienie, pętla nigdy nie dosięgnęłaby −1 z rozdziału 10. To malutka bezwładność silników buduje urwisko."
+        },
+        {
+          "t": "note",
+          "text": "Wciąż pomijamy przechylanie, boczny wiatr, słabnące baterie i sto innych rzeczy. Ale pętla wysokości prawdziwego drona wygląda bardzo podobnie do tej."
+        },
+        {
+          "t": "predict",
+          "id": "ch11-drop",
+          "gate": true,
+          "q": "Gdy w 12. sekundzie paczka spada, który składnik wykonuje najcięższą pracę, żeby przywrócić drona dokładnie na 2 m?",
+          "options": [
+            {
+              "text": "P: od razu reaguje na uchyb",
+              "why": "P reaguje pierwsze, ale samo P ustaliłoby się po prostu przy *innym* zwisie, bo zmienił się ciąg potrzebny do zawisu: przy $K_p$ = 20 około 10 cm za wysoko."
+            },
+            {
+              "text": "I: stos musi znaleźć nowy ciąg zawisu",
+              "correct": true,
+              "why": "Dron potrzebuje teraz około 4,9 N zamiast 6,9 N. W spoczynku uchyb wynosi 0 i D wynosi 0, więc sam stos musi utrzymać nowy ciężar. Tylko całka potrafi wytropić nowe stałe pchnięcie i mimo to skończyć z zerowym uchybem."
+            },
+            {
+              "text": "D: powstrzymuje podskok",
+              "why": "D tłumi podskok, co się przydaje, ale milknie, gdy dron stoi w miejscu, więc nie utrzyma nowej równowagi."
+            }
+          ]
+        },
+        {
+          "t": "play",
+          "id": "drop",
+          "text": "Gdy spada paczka o masie {scrub|pkg} kg, pchnięcie do zawisu musi zmaleć o {calc|dN|eff} N. Na stałe utrzyma to tylko całka: przy $\\eff{K_i}$ = {scrub|ki|eff} N/(m·s) musi zgromadzić {calc|area} m·s uchybu, co przy średnim uchybie {scrub|e} cm zajmuje około {calc|time} s."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Chwila. Czyli po zrzucie dron *musi* przez jakiś czas wisieć trochę za wysoko? To z tego uchybu stos się oducza!"
+        }
+      ]
+    },
+    {
+      "id": "mission",
+      "title": "Wykonaj misję",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Każda zmiana suwaka restartuje misję, a poprzedni lot zostaje jako duch. Mała płaszczyzna s pokazuje bieguny **nominalne**: bezwładność silników i filtr są uwzględnione, pominięte zostają tylko szum, paczka i ograniczenia. Widzisz więc liniowy obrazek, podczas gdy obok toczy się prawdziwy, bałaganiarski lot. Zdobądź wszystkie sześć gwiazdek, żeby dostać złoto."
+        },
+        {
+          "t": "p",
+          "text": "Progi to to, co zauważyłby klient czekający na przesyłkę: ustalenie w ciągu 3 s, nigdy więcej niż 10 % za wysoko, podmuch spycha najwyżej na szerokość dłoni (20 cm), powrót w 2 s po zrzucie, żadnego szorowania o ziemię i silniki, które nie bzyczą (poniżej 0,5 N terkotu)."
+        },
+        {
+          "t": "p",
+          "text": "Aby dostać gwiazdkę za dolot, **rzeczywista wysokość musi pozostać** w granicach ±5 cm od chwili dotarcia aż do podmuchu w 6 s; jednorazowe przecięcie 2 m się nie liczy. Gwiazdka za spokojne silniki używa **odchylenia standardowego** ciągu od 3 do 6 s, po starcie, a przed podmuchem: typowego odchylenia od średniej, wraz z późnym uspokajaniem i terkotem od czujnika. Wskaż wiersz listy kontrolnej (albo przejdź do niego klawiszem Tab), żeby zacieniować sekundy, które ocenia."
+        },
+        {
+          "t": "widget",
+          "id": "mission"
+        },
+        {
+          "t": "note",
+          "text": "Drżenie czujnika jest losowe, ale w każdym locie to *ten sam* los, więc gdy duch i nowy lot się różnią, to twoja zasługa. Prawdziwy dron co dzień dostaje nowy szum, a dobre nastawy wygrywają z każdym szumem: przepuściliśmy sześciogwiazdkowe nastawy przez 30 różnych wzorów drżenia i za każdym razem zdobyły sześć gwiazdek."
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Nie wiesz, od czego zacząć? Zacznij od spokojnych nastaw z rozdziału 11, na przykład $K_p$ = 20, $K_i$ = 10, $K_d$ = 4 i $\\tau_f$ = 0,04 s. To pięć gwiazdek. Potem podnoś $K_i$, aż zaświeci się gwiazdka za dolot."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Nastroiłam w głowie idealny regulator: ogromne $K_d$, najmniejszy filtr, żeby D reagowało natychmiast. W spokojnym powietrzu jest bez zarzutu! Patrzcie…"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "…czemu silniki wyją? Pomarańczowa linia to sam puch, a teraz jeszcze przestrzeliwuje!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Rozdział 11, ostrzeżenie 2. Duże $K_d$ razy malutki filtr zamienia każde 2 cm drżenia czujnika w skok ciągu. A skoki dużo częściej obcinają się na 0 N niż na 20 N (blada pomarańczowa linia pokazuje, o co regulator *prosił*: zobacz, jak często dobija do 0 N), więc dodają krzywe, jednostronne pchnięcie. Stąd przeregulowanie, ten sam dryf w górę, który przyłapaliśmy w rozdziale 11. Był bez zarzutu tylko dlatego, że twoje wyobrażone spokojne powietrze miało w pakiecie idealny czujnik."
+        },
+        {
+          "t": "play",
+          "id": "spike",
+          "text": "Przy $\\eff{K_d}$ = {scrub|kd|eff} N·s/m i filtrze $\\tau_f$ = {scrub|tf} s każde 2 cm drgnięcia czujnika to żądanie około {calc|spike|eff} N od silników ($K_d\\sigma_n/\\tau_f$). Do zawisu wystarczy 6,9 N."
+        },
+        {
+          "t": "callout",
+          "title": "Czemu po prostu nie więcej D?",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "think",
+              "text": "Silniki są nerwowe, więc potrzebują więcej tłumienia. Więcej D!"
+            },
+            {
+              "t": "p",
+              "text": "Theo próbuje z $K_p$ = 20, $K_i$ = 15 i $\\tau_f$ = 0,04 s. Puch robi się *gorszy*: 0,22 N terkotu przy $K_d$ = 5, 0,41 N przy $K_d$ = 10. Bez szumu to samo $K_d$ = 10 jest prawie ciche."
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "happy",
+              "text": "Czyli D nie uspokaja szumu, tylko go wzmacnia. Tłumienie uspokaja *ruch*, a szum to nie ruch: to czujnik, który zmyśla."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Wypróbuj **nastawy June na spokojne powietrze** i patrz, jak gwiazdka „spokojne silniki” gaśnie. Potem wydłuż filtr do 0,04 s i zmniejsz $K_d$ do około 7. Przy $K_d$ = 7 dron dociera w około 1,9 s zamiast wymarzonych przez June 1,3 s: to cena spokojnych silników. Ta wymiana, szybkość przeciw szumowi i przeciw odporności, *to właśnie* inżynieria sterowania."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Trochę wolniej, za to silniki przestają wyć. Zgoda. W mojej głowie powietrze było spokojne, *a* czujnik idealny."
+        },
+        {
+          "t": "callout",
+          "title": "Podmuch to robota dla P",
+          "blocks": [
+            {
+              "t": "play",
+              "id": "gust",
+              "text": "Stałe pchnięcie {scrub|F|dis} N przy wzmocnieniu P $\\eff{K_p}$ = {scrub|kp|eff} N/m przesuwa drona o $F/K_p$ = {calc|dev} cm, gdy odrobina D pozwoli mu się ustalić."
+            },
+            {
+              "t": "p",
+              "text": "Podmuch w misji trwa tylko 3 s, więc całka ledwo ma coś do powiedzenia: sześciogwiazdkowe nastawy z $K_p$ = 20 i tak zapadają się o około 7 cm. A bez żadnego D człon P chwieje się dalej na spóźnionych silnikach, zamiast się ustalić."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "happy",
+              "text": "Więc jeśli gwiazdka za podmuch nie wychodzi, nie sięgaj po $K_i$. Usztywnij sprężynę: więcej $K_p$."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reflect",
+      "title": "Patrząc wstecz",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Na początku myślałam, że „pchaj mocniej” naprawia wszystko. A jest odwrotnie, prawda? Większość kłopotów brała się ze zbyt mocnego pchania na podstawie starych albo zaszumionych informacji. Cieszę się, że zadałam wszystkie te głupie pytania. Żadne z nich nie było głupie."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "W końcu wierzę w transformatę Laplace'a. To nie tabelka do sprawdzania: to sonda, która pyta sygnał „ile jest w tobie $e^{st}$?”. A ponieważ nachylenia zamieniają się w mnożenie przez $s$, analiza zamienia się w algebrę. Bieguny to miejsca, gdzie odpowiedź wybucha: $e^{st}$, z których zbudowany jest układ."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "A ja nauczyłam się, że „więcej” to nie „lepiej”: więcej wzmocnienia, więcej tłumienia, więcej $K_i$, więcej szybkości. Zawsze jest jakieś urwisko, a dobre projekty trzymają od niego zapas. I jeszcze: zawsze wypróbuj to na dronie."
+        },
+        {
+          "t": "p",
+          "text": "Oto wszystko, co zbudowaliśmy, od prysznica do finału. Każdy bąbelek prowadzi z powrotem tam, gdzie się narodził."
+        },
+        {
+          "t": "recap",
+          "title": "Cała podróż na jednym oddechu",
+          "items": [
+            "**Sprzężenie zwrotne**: zmierz, co się stało, porównaj z celem, działaj na podstawie uchybu (rozdz. 0–1).",
+            "**Regulator P** pcha proporcjonalnie do uchybu, ale zostawia zwis i kołysze się, gdy jest silny (rozdz. 2).",
+            "**Pochodne, wykładnicze i wirujące liczby** opisują, jak rzeczy się zmieniają: $e^{st}$, gdzie $s = \\sigma + i\\omega$, rośnie albo maleje *i* się kołysze (rozdz. 3–7).",
+            "**Transformata Laplace'a** zamienia nachylenia w mnożenie przez $s$, więc analiza staje się algebrą (rozdz. 9).",
+            "**Nieskrócone bieguny** transmitancji wskazują naturalne ruchy widoczne od wybranego wejścia do wyjścia: po lewej zanikają, po prawej rosną (rozdz. 10).",
+            "**PID**: I eliminuje zwis, D dodaje tłumienia, a każdy z nich przesuwa bieguny (rozdz. 11).",
+            "**Opóźnienie** dodaje opóźnienia fazowego; **zapasy** mówią, jak daleko jesteś od krawędzi urwiska (rozdz. 12).",
+            "Prawdziwy sprzęt dodaje **ograniczenia** (rozdz. 10), **bezwładność**, która kosztuje zapas fazy (rozdz. 3 + rozdz. 12), i **szum**, który D wzmacnia (rozdz. 11), więc dobre regulatory są nie tylko szybkie, ale i spokojne (rozdz. 13)."
+          ]
+        },
+        {
+          "t": "map"
+        }
+      ]
+    },
+    {
+      "id": "final-check",
+      "title": "Wytłumacz to znajomemu",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Najpierw twoja misja: ile masz gwiazdek i która była najtrudniejsza? Powiedz na głos *dlaczego*, zanim zaczniesz czytać dalej."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "U mnie gwiazdka za spokojne silniki. Ciągle dodawałam D, żeby uspokoić silniki, a one tylko robiły się głośniejsze."
+        },
+        {
+          "t": "p",
+          "text": "Najlepszym testem zrozumienia jest tłumaczenie. Przed każdą odpowiedzią spróbuj powiedzieć na głos *swoją* wersję. Potem wybierz wyjaśnienie, które najbardziej do niej pasuje."
+        },
+        {
+          "t": "quiz",
+          "title": "Sprawdzian końcowy",
+          "items": [
+            {
+              "id": "ch11-q1",
+              "q": "Znajomy pyta: „Po co w ogóle istnieje transformata Laplace'a?”",
+              "options": [
+                {
+                  "text": "Zamienia nachylenia w mnożenie przez $s$, więc równania o zmianie stają się algebrą, a bieguny odpowiedzi pokazują, z jakich zachowań $e^{st}$ zbudowany jest układ",
+                  "correct": true,
+                  "why": "To jest sedno: z analizy do algebry, plus mapa (płaszczyzna s), która pokazuje charakter na pierwszy rzut oka."
+                },
+                {
+                  "text": "To tabelka wzorów, którą inżynierowie wkuwają, żeby sprawdzać odpowiedzi",
+                  "why": "Tabelka to *wynik*. Każdy jej wiersz wyprowadziliśmy, badając sygnały sondą $e^{-st}$ i mierząc pole."
+                },
+                {
+                  "text": "Zamienia sygnały na częstotliwości dźwięku",
+                  "why": "To bliżej transformaty Fouriera, która używa tylko części wirującej ($s = i\\omega$). Laplace dopuszcza też wzrost i zanik ($\\sigma$)."
+                }
+              ]
+            },
+            {
+              "id": "ch11-q2",
+              "q": "„Czym tak naprawdę jest biegun?”",
+              "options": [
+                {
+                  "text": "Wartością $s$, przy której transmitancja wybucha: jednym z ruchów $e^{st}$, które układ wykonuje w naturalny sposób; część rzeczywista mówi o wzroście/zaniku, a urojona o kołysaniu",
+                  "correct": true,
+                  "why": "Lewa połowa = wygasa, prawa połowa = wybucha, wysokość = prędkość kołysania. Cały charakter na jednej mapie."
+                },
+                {
+                  "text": "Fizyczną częścią drona, jak silnik",
+                  "why": "Bieguny należą do *całej pętli*: zmień wzmocnienie, a się przesuną, choć żadna część drona się nie zmieniła."
+                },
+                {
+                  "text": "Punktem, w którym układ staje się niestabilny",
+                  "why": "Każdy układ ma bieguny, także stabilny. Niestabilność jest wtedy, gdy biegun leży w prawej półpłaszczyźnie."
+                }
+              ]
+            },
+            {
+              "id": "ch11-q4",
+              "q": "Dron twojego kolegi wisi w miejscu, ale silniki bzyczą i się grzeją. Czujnik wysokości drży o 2 cm. Co wypróbować najpierw?",
+              "options": [
+                {
+                  "text": "Wydłużyć filtr członu różniczkującego albo zmniejszyć $K_d$",
+                  "correct": true,
+                  "why": "D zamienia drżenie czujnika w około $K_d\\sigma_n/\\tau_f$ niutonów polecenia: 40 N przy $K_d$ = 10 i $\\tau_f$ = 0,005 s, tylko 3,5 N przy $K_d$ = 7 i $\\tau_f$ = 0,04 s. Tracisz odrobinę szybkości dolotu."
+                },
+                {
+                  "text": "Więcej $K_d$, dla większego tłumienia",
+                  "why": "Tłumienie uspokaja *ruch*, a nie zmyślenia czujnika. Przy $\\tau_f$ = 0,04 s terkot rośnie z 0,22 N przy $K_d$ = 5 do 0,41 N przy $K_d$ = 10."
+                },
+                {
+                  "text": "Wyłączyć całkowanie",
+                  "why": "I sumuje uchyb powoli, więc drżenie ledwo przez nie przechodzi. Bez niego dron ma zwis i nie potrafi odrobić zrzutu paczki."
+                },
+                {
+                  "text": "Więcej $K_p$",
+                  "why": "P przepuszcza drżenie wprost ($K_p\\sigma_n$: 0,4 N przy $K_p$ = 20), więc więcej P to trochę *więcej* bzyczenia, a nie mniej."
+                }
+              ]
+            },
+            {
+              "id": "ch11-q5",
+              "q": "Silniki robią się wolniejsze: ich bezwładność rośnie z 0,05 s do 0,1 s. Co się dzieje z sześciogwiazdkowymi nastawami z dygresji?",
+              "options": [
+                {
+                  "text": "Ich zapas fazy maleje, z około 33° do około 21°, więc bardziej się chwieją",
+                  "correct": true,
+                  "why": "Bezwładność opóźnia każde wahnięcie o $\\arctan(\\omega\\tau)$: to opóźnienie fazowe z rozdziału 12, to samo, przez które prysznic przestrzeliwał. Dłuższa bezwładność zostawia mniej zapasu przed −180°."
+                },
+                {
+                  "text": "Nic: 0,1 s to drobiazg przy 20-sekundowej misji",
+                  "why": "Liczy się bezwładność w porównaniu z wahnięciem pętli, około 10 rad/s (jedno wahnięcie co 0,6 s), a nie długość misji."
+                },
+                {
+                  "text": "Zwis się zwiększa",
+                  "why": "Z włączonym I nie ma żadnego zwisu, a bezwładność zmienia *przebieg w czasie*, a nie końcową równowagę sił."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "state",
+      "title": "Jeszcze jeden obrazek: płaszczyzna stanu",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Każdy wykres w tym kursie pokazywał wysokość w czasie. Ale sama wysokość nie powie ci, co będzie dalej: 2 m i w górę to nie to samo co 2 m i w dół."
+        },
+        {
+          "t": "p",
+          "text": "Przyszłość wyznaczają dwie liczby: wysokość mierzona od celu, $\\Delta h$, i prędkość $v$. Razem tworzą **stan** drona. Połóż je na jednej płaszczyźnie, wysokość w poziomie, a prędkość w pionie, i cały lot staje się ścieżką jednego ruchomego punktu."
+        },
+        {
+          "t": "p",
+          "text": "Ruchem tego punktu rządzą nachylenia z rozdziału 3, po jednym dla każdej liczby: wysokość zmienia się w tempie prędkości, a prędkość w tempie przyspieszenia z równania z rozdziału 1. Gdy ciąg zawisu mamy już z głowy, a na wierzch dokładamy regulator PD $T = -K_p\\,\\Delta h - K_d\\,v$, obie reguły mieszczą się w jednej tabelce:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{d}{dt}\\begin{pmatrix}\\Delta h\\\\ v\\end{pmatrix} = \\underbrace{\\begin{pmatrix}0 & 1\\\\ -\\frac{K_p}{m} & -\\frac{c+K_d}{m}\\end{pmatrix}}_{A}\\begin{pmatrix}\\Delta h\\\\ v\\end{pmatrix}"
+        },
+        {
+          "t": "p",
+          "text": "Ta tabelka $A$ to **macierz**: pomnóż przez nią stan, a wyjdzie tempo, w jakim stan się zmienia. Górny wiersz mówi, że wysokość zmienia się w tempie prędkości; dolny wiersz to prawo Newtona."
+        },
+        {
+          "t": "predict",
+          "id": "ch11-state",
+          "gate": true,
+          "q": "Przy $K_p$ = 20 N/m i bez D dron startuje 1 m za nisko i w bezruchu. Jaką ścieżkę kreśli jego stan?",
+          "options": [
+            {
+              "text": "Prosto do środka",
+              "why": "Prosty zjazd wymaga biegunów rzeczywistych. Przy ζ ≈ 0,16 dron przestrzeliwuje i się kołysze, więc ścieżka musi się zawijać."
+            },
+            {
+              "text": "Spiralą do środka",
+              "correct": true,
+              "why": "Tak. Każde wahnięcie wymienia wysokość na prędkość i z powrotem, a opór powietrza z każdym obrotem je zmniejsza: to zwijająca się spirala z rozdziału 6, narysowana w wysokości i prędkości."
+            },
+            {
+              "text": "Okrąg, w nieskończoność",
+              "why": "Do tego trzeba by zupełnie żadnego tłumienia. Opór powietrza zabiera trochę z każdego wahnięcia, więc okrąg zwija się w spiralę."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "statePlane"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "To spirala z rozdziału 6! A kiedy podniosę $K_d$ powyżej około 5,3, spirala się prostuje i wjeżdża do środka wzdłuż dwóch przerywanych linii."
+        },
+        {
+          "t": "p",
+          "text": "Te proste linie to **mody**: zacznij dokładnie na jednej, a stan zjedzie prosto do środka we własnym tempie tego modu. Te tempa to specjalne liczby macierzy, jej **wartości własne**, leżące tam, gdzie $\\det(sI - A) = 0$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\det(sI - A) = s^2 + \\frac{c + K_d}{m}\\,s + \\frac{K_p}{m} = 0"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "To równanie z rozdziału 7! Wartości własne to bieguny. Ten sam dron, nowy obrazek."
+        },
+        {
+          "t": "p",
+          "text": "A plac zabaw z biegunami z rozdziału 10 przez cały czas po cichu robił **sprzężenie zwrotne od stanu**: $T = -K_p\\,\\Delta h - K_d\\,v$ naciska na obie liczby stanu, a wybór dwóch wzmocnień ustawiał oba bieguny. Dodaj do stanu więcej liczb (przechył, obrót, położenie w bok), a macierz urośnie, ale idea zostaje: wartości własne to bieguny, a sprzężenie zwrotne od całego stanu może ustawić je wszystkie."
+        },
+        {
+          "t": "p",
+          "text": "Jeszcze jedno wyznanie. Każda reguła w tym kursie to reguła linii prostej, ale prawdziwe rzeczy się wyginają. Ciąg śmigła rośnie z *kwadratem* jego prędkości obrotowej, $T = k\\,w^2$. W pobliżu zawisu krzywa jest prawie prosta, więc zamieniamy ją na styczną w punkcie zawisu, linijkę z rozdziału 3:"
+        },
+        {
+          "t": "math",
+          "tex": "T \\approx T_0 + 2k\\,w_0\\,\\Delta w"
+        },
+        {
+          "t": "play",
+          "id": "linear",
+          "text": "W zawisie przy $w_0$ = 700 rad/s zakręć śmigłami o {scrub|dw} rad/s szybciej: prawdziwy dodatkowy ciąg to {calc|exact|eff} N, styczna mówi {calc|lin|eff} N, o {calc|err} za mało."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Czyli proste linie wcale nie kłamały. To obrazek w powiększeniu: uczciwy blisko zawisu, tym gorszy, im dalej odlecisz. Dlatego nasza matematyka potrzebowała drona w pobliżu 2 m."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Stan",
+              "def": "Liczby, które wyznaczają przyszłość: dla naszego drona wysokość i prędkość. Jeden punkt na płaszczyźnie stanu."
+            },
+            {
+              "term": "Macierz $A$",
+              "def": "Tabelka liczb, która zamienia stan w tempo jego zmian."
+            },
+            {
+              "term": "Wartości własne",
+              "def": "Specjalne tempa macierzy, tam gdzie $\\det(sI - A) = 0$. Dla macierzy $A$ drona to jego bieguny."
+            },
+            {
+              "term": "Linearyzacja",
+              "def": "Zastąpienie krzywej reguły jej styczną w pobliżu punktu, który cię interesuje (tu: zawisu)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "next",
+      "title": "Dokąd dalej",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Znasz teraz więcej teorii sterowania, niż większość ludzi kiedykolwiek spotka. Oto dokąd prowadzi dalej droga, każdy punkt to nowy zeszyt:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Linie pierwiastkowe (root locus):** zamiast przeciągać bieguny, przeciągaj *wzmocnienie* i patrz, jak bieguny rysują ścieżki. Od razu widać, które $K_p$ to już za dużo.",
+            "**Sterowanie w przestrzeni stanów:** pierwszy przedsmak masz już za sobą. Wiele czujników i silników naraz: prawdziwy dron musi jednocześnie trzymać przechył, obrót i położenie, a strojenie po jednym pokrętle przestaje działać.",
+            "**Sterowanie cyfrowe:** prawdziwe regulatory działają na komputerach, które próbkują co kilka milisekund. Próbkowanie to też małe opóźnienie, a płaszczyzna s dostaje kuzynkę, płaszczyznę z.",
+            "**Filtry Kalmana:** łączą to, co przewiduje model, z tym, co mówi czujnik, więc można używać zaszumionego czujnika bez powolnego filtra.",
+            "**Predyktory Smitha i sterowanie predykcyjne (MPC):** regulatory, które noszą w sobie małą symulację, żeby zajrzeć za opóźnienia. To prawdziwe lekarstwo na prysznic.",
+            "**Sterowanie nieliniowe i odporne:** co robić, gdy opór powietrza nie jest liniowy albo dron lata w 3D, i jak *udowodnić*, że wciąż masz zapas."
+          ]
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Najpierw linie pierwiastkowe. Chcę *patrzeć*, jak bieguny się ruszają, kiedy kręcę jednym pokrętłem."
+        },
+        {
+          "t": "cliff",
+          "text": "Następnym razem, gdy prysznic każe ci tańczyć między wrzątkiem a lodem, będziesz dokładnie wiedzieć, co się dzieje. I będziesz wiedzieć, że to nie twoja wina. **To zapas fazy.**"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "mission": {
+      "title": "Centrum kontroli misji",
+      "measured": "odczyt czujnika",
+      "hAria": "Wysokość w ciągu 20-sekundowej misji z pasem docelowym; zaznaczone chwile podmuchu i zrzutu paczki.",
+      "tAria": "Ciąg w trakcie misji: o co prosił regulator (obcięte do zakresu silników od 0 do 20 N) i co dostarczyły spóźnione silniki.",
+      "gust": "podmuch",
+      "drop": "zrzut",
+      "max": "maks. 20 N",
+      "min": "0 N: w dół nie pociągnie",
+      "asked": "żądany",
+      "delivered": "dostarczony",
+      "splane": "Nominalne bieguny układu zamkniętego drona z bezwładnością silników i filtrowaną pochodną.",
+      "filter": "Filtr D $\\tau_f$",
+      "presetJune": "Nastawy June na spokojne powietrze",
+      "instant": "Leć natychmiast",
+      "checklist": "Lista kontrolna misji",
+      "crit": {
+        "rise": "Do {rise} s osiągnąć 2 m (± {bandCm} cm) i utrzymać je do podmuchu",
+        "overshoot": "Przeregulowanie przy starcie poniżej {overshoot} %",
+        "gust": "Od podmuchu do zrzutu paczki utrzymać się w granicach {gustCm} cm",
+        "recover": "Powrót do ± {bandCm} cm w mniej niż {recover} s po zrzucie",
+        "ground": "Nigdy nie dotknij ziemi po starcie",
+        "calm": "Odchylenie standardowe ciągu od 3 do 6 s poniżej {calm} N",
+        "neverRise": "nieustalony do {s} s",
+        "neverBack": "bez powrotu do {s} s"
+      },
+      "touched": "dotknął!",
+      "clear": "czysto",
+      "ready": "Gotowe. Ustaw wzmocnienia, a potem naciśnij Start (albo Leć natychmiast).",
+      "flying": "Lecimy…",
+      "hitPage": "Bum! Wyleciał poza rysunek i uderzył w to, co jest nad nim. Silniki stanęły i spadł. W prawdziwym pokoju przeregulowanie kończy się na suficie.",
+      "hitNoise": "Uniósł go szum czujnika: obcięty terkot pcha bardziej w górę niż w dół.",
+      "gold": "ZŁOTO! Wszystkie sześć gwiazdek. Witaj w klubie inżynierów automatyków.",
+      "stars": "{n} z 6 gwiazdek. Strój dalej!",
+      "hint": {
+        "ground": "Siedział na ziemi albo na nią spadł. Zacznij od większego Kp: to ono go podnosi.",
+        "noise": "Silniki terkoczą: D zamienia drżenie czujnika w skoki ciągu. Wydłuż τf albo zmniejsz Kd.",
+        "droop": "Wisi poniżej 2 m: to zwis. Trochę Ki to naprawi.",
+        "overshoot": "Przy starcie przestrzeliwuje. Więcej Kd albo mniej Ki.",
+        "rise": "Wspina się za wolno: do 3 s się nie ustalił. Spróbuj odrobinę większego Ki.",
+        "gust": "Podmuch spycha go za daleko. Większe Kp go usztywni.",
+        "recover": "Odrabianie zrzutu trwa za długo. To zadanie całki: spróbuj większego Ki.",
+        "swing": "Od 3 do 6 s ciąg wciąż się waha: dron się nie ustalił. Odrobina większego Kd uspokoi ruch."
+      },
+      "best": "Dotychczasowy rekord: {n} z 6 gwiazdek (Kp {kp}, Ki {ki}, Kd {kd}, τf {tf} s).",
+      "phase": {
+        "takeoff": "{s} s: start z paczką",
+        "gust": "{s} s: podmuch spycha w dół!",
+        "hover": "{s} s: zawis, paczka na pokładzie",
+        "drop": "{s} s: paczka zrzucona!",
+        "done": "Misja zakończona."
+      },
+      "poles": {
+        "stable": "Bieguny nominalne: wszystkie w lewej połowie.",
+        "unstable": "Jeden z biegunów nominalnych jest w prawej połowie: te nastawy nie wytrzymają!",
+        "off_one": "(1 szybki biegun poza lewą krawędzią.)",
+        "off_other": "(Szybkie bieguny poza lewą krawędzią: {n}.)",
+        "marginal": "Bieguny nominalne: biegun leży na granicy stabilności."
+      },
+      "state": {
+        "pass": "zaliczone",
+        "fail": "niezaliczone",
+        "pending": "jeszcze nierozstrzygnięte"
+      }
+    },
+    "droneBode": {
+      "title": "Charakterystyki Bodego samego drona",
+      "w": "prędkość wahań ω (rad/s)",
+      "gain": "wzmocnienie pętli",
+      "phase": "faza (°)",
+      "loop": "raz dookoła pętli",
+      "gainAria": "Wzmocnienie pętli sześciogwiazdkowych nastaw drona w funkcji prędkości wahań, osie logarytmiczne, z pętlą bez bezwładności silników jako bladym duchem.",
+      "phaseAria": "Faza pętli drona w funkcji prędkości wahań, z urwiskiem −180° i zapasem fazy przy prędkości wzmocnienia 1.",
+      "one": "wzmocnienie = 1",
+      "cliff": "−180°",
+      "atCross": "zapas fazy",
+      "gm": "zapas wzmocnienia",
+      "tm": "Bezwładność silników $\\tau_m$",
+      "wc": "prędkość wzmocnienia 1",
+      "pm": "zapas fazy",
+      "lag": "opóźnienie tutaj",
+      "noCliff": "brak urwiska",
+      "noLag": "Bez bezwładności silników: pętla ma wzmocnienie 1 w okolicy {wc} rad/s przy {pm}° zapasu, a jej faza nigdy nie dociera do −180°.",
+      "withLag": "Przy {wc} rad/s, gdzie wzmocnienie pętli wynosi 1, silniki opóźniają wahnięcie o {lag}°: zostaje {pm}° zapasu (bez nich było {pm0}°), a teraz pojawia się urwisko, w odległości × {gm}.",
+      "describe": "Zapas fazy {pm} stopni przy {wc} radianach na sekundę.",
+      "help": "Przesuń bezwładność silników. Blady duch to ta sama pętla z natychmiastowymi silnikami."
+    },
+    "statePlane": {
+      "title": "Dron jako ruchomy punkt",
+      "dh": "uchyb wysokości Δh (m)",
+      "v": "prędkość v (m/s)",
+      "mode": "linie modów (bieguny rzeczywiste)",
+      "path": "ścieżka stanu",
+      "height": "uchyb wysokości",
+      "target": "u celu",
+      "planeAria": "Płaszczyzna stanu: uchyb wysokości w poziomie, prędkość w pionie, ze ścieżką drona startującego 1 m za nisko i liniami modów, gdy bieguny są rzeczywiste.",
+      "timeAria": "Ten sam lot jako uchyb wysokości w czasie.",
+      "poles": "bieguny (wartości własne A)",
+      "state": "stan przy kursorze",
+      "kp": "Wzmocnienie $K_p$",
+      "kd": "Wzmocnienie $K_d$",
+      "at": "Kursor czasu",
+      "spiral": "Bieguny {p}: stan zwija się spiralą do środka, przy każdym wahnięciu wymieniając wysokość na prędkość.",
+      "real": "Bieguny rzeczywiste {p}: bez kołysania. Ścieżka wygina się na wolniejszą linię modu i zjeżdża wzdłuż niej do środka.",
+      "describe": "Kp {kp}, Kd {kd}: po {t} s uchyb wysokości wynosi {h} m, a prędkość {v} m/s.",
+      "help": "Przesuwaj wzmocnienia, żeby zmienić macierz i ścieżkę; przesuwaj kursor czasu, żeby przesuwać kropkę po ścieżce i wykres w czasie jednocześnie."
+    }
+  },
+  "plays": {
+    "limit": {
+      "kp": "wzmocnienie Kp, niutony na metr",
+      "clipped": ", a silniki dają 20"
+    },
+    "lag": {
+      "tm": "bezwładność silników, sekundy"
+    },
+    "drop": {
+      "pkg": "masa paczki, kilogramy",
+      "ki": "wzmocnienie Ki, niutony na metr i sekundę",
+      "e": "średni uchyb, centymetry"
+    },
+    "spike": {
+      "kd": "wzmocnienie Kd, niutonosekundy na metr",
+      "tf": "stała czasowa filtra, sekundy"
+    },
+    "gust": {
+      "F": "stałe pchnięcie, niutony",
+      "kp": "wzmocnienie Kp, niutony na metr"
+    },
+    "linear": {
+      "dw": "dodatkowa prędkość obrotowa, radiany na sekundę",
+      "pct": "{v} %"
+    }
+  }
+}

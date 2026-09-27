@@ -2,7 +2,7 @@
 
 > **Working title:** *Who Keeps the Drone Up? A Feedback Adventure*
 > **Driving question:** How does a machine keep itself where it's supposed to be?
-> **Status:** Built. All 12 chapters implemented (see README for how to run).
+> **Status:** Built. All 14 chapters implemented (see README for how to run). Chapters 5 and 7 of the first build were each split in two on 2026-09-27 (`docs/plans/split-ch05-ch07.md`).
 
 ---
 
@@ -38,11 +38,11 @@ All colour-coded equation terms use the same tokens (KaTeX `\htmlClass`). Colour
 **The drone** (1-D vertical only)
 - Mass `m = 0.5 kg`, gravity `g = 9.81 m/s²` → hover thrust `mg ≈ 4.9 N`.
 - Vertical drag / rotor inflow damping `c = 1.0 N·s/m` (linear — *"we're pretending drag is proportional to speed; real drag is messier"*).
-- Thrust limits `0 ≤ T ≤ 20 N` (thrust-to-weight ≈ 4, plausible for a small drone). **Chapters 1–7 pretend the motors are unlimited** (and can even pull down) so the linear maths is exact; this is said out loud, and the limit arrives in Ch 8 ("further left needs thrust we don't have") and stays for Ch 9–11.
+- Thrust limits `0 ≤ T ≤ 20 N` (thrust-to-weight ≈ 4, plausible for a small drone). **Chapters 1–9 pretend the motors are unlimited** (and can even pull down) so the linear maths is exact; this is said out loud, and the limit arrives in Ch 10 ("further left needs thrust we don't have") and stays for Ch 9–11.
 - Ground: height can't go below 0 (drone sits on the floor until thrust > weight).
 - Equation: `m ḧ = T − m g − c ḣ + F_wind`.
 - Package: +0.2 kg (pickup) or −0.2 kg (drop).
-- Introduced late (Ch 11 only): motor lag `τ_m = 0.05 s`, sensor noise `σ = 2 cm`.
+- Introduced late (Ch 13 only): motor lag `τ_m = 0.05 s`, sensor noise `σ = 2 cm`.
 
 Useful consequences we'll exploit (verified in §3):
 - Open loop, extra 0.2 kg with fixed thrust → sinks at terminal speed `Δm·g/c ≈ 2 m/s` → crash within ~1 s. Dramatic, correct.
@@ -56,7 +56,7 @@ Useful consequences we'll exploit (verified in §3):
 - Pipe transport delay `L = 2.5 s`, then first-order mixing/heat lag `τ = 1 s`.
 - Target: 38 °C (± 1 °C comfort band).
 - Transfer function: `G(s) = 45 · e^(−Ls) / (τ s + 1)` (°C per unit knob).
-- For a position-style (P) hand, the phase crosses −180° at `ω ≈ 0.95 rad/s` → hunting period ≈ 6.6 s, critical gain ≈ 0.031 knob-units/°C. Chapter 0's robot hands turn the knob at a rate (an I controller), so their edge is slower: ≈ 13.8 s (verified in the Chapter 10 tests).
+- For a position-style (P) hand, the phase crosses −180° at `ω ≈ 0.95 rad/s` → hunting period ≈ 6.6 s, critical gain ≈ 0.031 knob-units/°C. Chapter 0's robot hands turn the knob at a rate (an I controller), so their edge is slower: ≈ 13.8 s (verified in the Chapter 12 tests).
 
 **Secondary systems** (brief, always tied back to the drone): cooling coffee (`τ ≈ 10 min`), filling tank, mass on a spring, cruise control (one panel in Ch 1).
 
@@ -167,29 +167,42 @@ Legend for each chapter: **Q** = driving question · **Idea** = the one new idea
 
 ### Chapter 5 — Spinning Numbers
 - **Q:** "What kind of number could square to −1 — and why would it wiggle?"
-- **Idea:** *Complex numbers are arrows you can rotate; `e^(iωt)` is a point spinning around a circle, and `e^(st)` with `s = σ + iω` spins while growing or shrinking.* Split into sections:
+- **Idea:** *Complex numbers are arrows you can rotate, turns are measured in radians, and `e^(iωt)` is a point spinning around a circle.* Sections:
   - **5a Numbers as arrows / multiplication as rotation:** ×(−1) is a half-turn. What's a quarter-turn? Call it `i`. Two quarter-turns = half-turn → `i² = −1`. "Not imaginary — just sideways."
   - **5b Spinning:** the velocity of a point moving around a circle is always 90° to its position → velocity = `iω` × position → exactly the "slope is a copy of itself" property from Ch 4, with `a = iω`. So `e^(iωt)` spins. Its shadow on the real axis is a cosine.
-  - **5c Twin spinners:** a spinner and its mirror twin (`+iω` and `−iω`) add up to a purely real wiggle → why these values come in mirror pairs. Resolves the spring: `a = ±i√(k/m)`.
-  - **5d The map of s:** `e^(st)`, `s = σ + iω`. **Interactive:** drag a point `s` on a plane (unnamed yet — "the map"); a 3-D-ish spiral and its shadow update live. Left half = shrinking spiral, right half = growing, on the vertical line = pure circle, on the horizontal line = no spin (plain exponential from Ch 4). Keyboard: arrow keys move `s`.
-  - **5e Fourier nod (short):** add spinners of different speeds and see a square-ish wave form; one margin note: "someone named Fourier figured out *any* signal can be built this way."
-- **Predict:** (5d) "Put `s` at −0.5 + 3i. Sketch the shadow." Learner picks from 3 sketches (growing wiggle, decaying wiggle, decaying no-wiggle), then it runs.
+  - **Measuring turns / tiny turns:** radians, cos and sin as shadows; `e^(iθ)` built from n tiny sideways steps, the Chapter 4 way (added by the maths-explanations pass).
 - **Misconception:** "Imaginary numbers aren't real / aren't physical." (Theo.) Answer: they're bookkeeping for rotation; the *shadow* is what we measure, and it's perfectly real.
-- **Mistake:** Mika thinks the spring solution is `e^(i√(k/m) t)` alone and asks why the spring position is complex. The twin-spinner section resolves it.
+- **Mistake:** Mika: two radians per second "goes round twice a second"; Theo counts it out (one turn every π s).
 - **Check:**
   1. What does multiplying by `i` twice do to the arrow 3? (→ −3)
-  2. Match four `s` positions to four shadow plots.
-  3. Where on the map would you put `s` for a guitar string that rings and slowly fades?
-  4. Why do the spinners come in mirror pairs for a real object?
-- **Map:** `Complex number as rotation`, `e^(iωt) spinning / sine as shadow`, `e^(st) spiral`, `The s-map` (renamed "s-plane" in Ch 7).
+  2. At ω = π rad/s, how long is one turn? (2 s)
+  3. Which way does a spinner's velocity point? (a quarter turn ahead, along the circle)
+- **Map:** `Complex number as rotation`, `e^(iωt) spinning / sine as shadow`.
+- **Cliffhanger:** Mika: "So the spring's mystery number exists: it's 2i. Does a real spring swing *sideways*?"
+
+---
+
+### Chapter 6 — The Map of s
+- **Q:** "How does a spinning number make a real wiggle, and what does every s look like?"
+- **Idea:** *Mirror-twin spinners add up to a real wiggle, and `e^(st)` with `s = σ + iω` spins while growing or shrinking: every point of the map of s is a personality.* Sections:
+  - **6a Twin spinners:** a spinner and its mirror twin (`+iω` and `−iω`) add up to a purely real wiggle → why these values come in mirror pairs. Resolves the spring: `a = ±i√(k/m)`.
+  - **6b The map of s:** `e^(st)`, `s = σ + iω`. **Interactive:** drag a point `s` on a plane (unnamed yet — "the map"); a 3-D-ish spiral and its shadow update live. Left half = shrinking spiral, right half = growing, on the vertical line = pure circle, on the horizontal line = no spin (plain exponential from Ch 4). Keyboard: arrow keys move `s`.
+  - **6c Fourier nod (short):** add spinners of different speeds and see a square-ish wave form; one margin note: "someone named Fourier figured out *any* signal can be built this way."
+- **Predict:** (6b) "Put `s` at −0.5 + 3i. Sketch the shadow." Learner picks from 3 sketches (growing wiggle, decaying wiggle, decaying no-wiggle), then it runs.
+- **Mistake:** Mika thinks the spring solution is `e^(i√(k/m) t)` alone and asks why the spring position is complex. The twin-spinner section resolves it.
+- **Check:**
+  1. Where is the shadow of `e^(st)` for `s = 2i`? (a steady wiggle)
+  2. Where on the map would you put `s` for a guitar string that rings and slowly fades?
+  3. Why do the spinners come in mirror pairs for a real object?
+- **Map:** `e^(st) spiral`, `The s-map` (renamed "s-plane" in Ch 8).
 - **Cliffhanger:** June: "So *where* on this map does our drone live?"
 
 ---
 
-### Chapter 6 — Second-Order Systems: The Drone's Real Personality
+### Chapter 7 — Second-Order Systems: The Drone's Real Personality
 - **Q:** "Why does the drone bounce like a spring?"
 - **Idea:** *Mass + spring + damper has two personality knobs: natural frequency ωn (how fast) and damping ratio ζ (how bouncy).*
-- **Earn every term (added):** forces built one at a time (spring −kx, damper −cẋ, gravity absorbed by measuring from rest) with force arrows on the mass; ωn from Chapter 5's undamped spring plus the swing period 2π/ωn; critical damping c_crit = 2√(mk) named before ζ = c/c_crit; the relabelling c/m = 2ζωn, k/m = ωn² checked on the page (Theo doubts, June multiplies it out); damped frequency ωd = ωn√(1 − ζ²) (readout in the widget); "mode" and "step response"/"settling time (2 %)" defined; ζ = 0.7 lane in the damping race (4.6 % overshoot, within 5 % in ≈ 0.97 s vs 1.60 s for ζ = 1; not faster to 2 %). Playable sentences for units (N/m), ωn, ζ, the circle, 2 % settling and the drone's Kp trade-off. Side trips: Units check, Real dampers, Where the ± comes from, Why a circle?, How long is "settled"?
+- **Earn every term (added):** forces built one at a time (spring −kx, damper −cẋ, gravity absorbed by measuring from rest) with force arrows on the mass; ωn from Chapter 6's undamped spring plus the swing period 2π/ωn; critical damping c_crit = 2√(mk) named before ζ = c/c_crit; the relabelling c/m = 2ζωn, k/m = ωn² checked on the page (Theo doubts, June multiplies it out); damped frequency ωd = ωn√(1 − ζ²) (readout in the widget); "mode" and "step response"/"settling time (2 %)" defined; ζ = 0.7 lane in the damping race (4.6 % overshoot, within 5 % in ≈ 0.97 s vs 1.60 s for ζ = 1; not faster to 2 %). Playable sentences for units (N/m), ωn, ζ, the circle, 2 % settling and the drone's Kp trade-off. Side trips: Units check, Real dampers, Where the ± comes from, Why a circle?, How long is "settled"?
 - **Hook:** Physical mass-spring-damper animation next to the drone under P control. Side-by-side equations reveal they're the same equation (`k ↔ Kp`), with a margin note: "the controller *is* the spring — a virtual spring pulling towards 2 m." Two sliders (ωn, ζ) drive a 3-panel comparison: underdamped / critically damped / overdamped, plus a live s-map showing the two `s` values (roots of `m s² + c s + k`). As ζ increases the pair slides along a circle of radius ωn, meets on the real axis at ζ = 1, then splits apart along it.
 - **Predict:** "Increase damping from ζ = 1 to ζ = 3. Does it settle faster or slower?" → slower. Surprise: more damping isn't always better.
 - **Linked reps:** Drag ζ, and the drone, spring, step response and s-map roots all update together. Drone's `ζ = c / (2√(m Kp))` shown — explains *why* higher Kp made it wigglier in Ch 2 (callback).
@@ -204,56 +217,70 @@ Legend for each chapter: **Q** = driving question · **Idea** = the one new idea
 
 ---
 
-### Chapter 7 — The Laplace Transform (the payoff)
-- **Q:** "Can we turn calculus problems into algebra problems?"
-- **Idea:** *Probe a signal with `e^(−st)` and total the area: `F(s) = ∫₀^∞ f(t) e^(−st) dt`. Slopes in time become multiplication by `s`.* Sections:
-  - **7a The probe:** pick a signal `f(t)`; the probe `e^(−st)` (for real `s` first) multiplies it; the product and its shaded area animate. Slide `s`: area changes. Record area vs s as a curve being traced → that curve is `F(s)` (one dot per deliberate choice, also from the keyboard). Side trips: *why this probe* (its slope is −s × itself; it cancels `e^(at)` at s = a) and *an endless area that stops growing* (`1 − e^(−T)`, play `longArea`); play `stepArea` (1/s). The sine at s ≤ 0 sloshes rather than running off.
-  - **7b The explosion:** for `f = e^(at)`, the area is `1/(s − a)` and blows up as `s → a`. "The transform screams exactly at the `s` where the signal lives." (Seed for poles.) Play `scream` (a, s → 1/(s − a)). Then extend to complex `s` using Ch 5's spring spinner `e^(2it)`: the probe unspins it, one arrow per ¼ s laid head to tail; the frame grows so the matched total 1/σ stays in view.
-  - **7c The key property:** `L{f'} = s F(s) − f(0)`. Mika peels Ch 4's sticky note; a shorthand box defines `f′`, `𝓛{f}` and capital letters. Shown first with `e^(at)` algebra on screen (play `ruleExp`), then **with the learner's own hand-drawn signal**: both sides are computed numerically and matched. "It's not a lookup rule. It holds for anything you draw." Side trips: *what about a jump?* (the slope spike; 1.4e^(−2s) without it) and *area undoes slope, even for a product* (integration by parts from the product rule). `L{f''}` is derived in one line.
-  - **7d Build the table ourselves:** step `1/s`, exponential `1/(s−a)`, sine `ω/(s²+ω²)` (via twin spinners), decaying sine `ω/((s+σ)²+ω²)`. Each row has its probe animation. Table grows row by row on the page. Mika: subtract the twins and the along parts cancel, leaving 2i sin ωt. Linearity is earned here (play `scale`) because Step 1 needs it.
-  - **7e Solve the drone:** under P control, from rest on the ground with the setpoint and gravity as steps:
-    `m s² H + c s H = Kp(R/s − H) − mg/s` → `H(s) = (Kp·r − mg) / (s(m s² + c s + Kp))`.
-    Partial fractions step by step, with A, B and C derived and side trips for the *cover-up trick* (A = [s·H]ₛ₌₀, the final value) and *completing the square* (σ = 1 = ζωn, ωd² = 2Kp − 1; play `square`: the bottom is zero at Ch 6's two dots). Step 1, Step 2 and B/C first show the group's version without `h(0)` and swap to the fixed forms when the reader flips the switch (`ch7:ic`). Result overlaid on the RK4 simulation — they coincide to better than a millionth of a metre. The widget draws the settle line at A and the droop band; play `residues`: A = 2 − mg/Kp, droop `mg/Kp` → Ch 2 callback. No page physics: there is no drone picture, and a bonk would break "formula = sim".
+### Chapter 8 — The Laplace Probe
+- **Q:** "Can one measured area tell us where a signal lives?"
+- **Idea:** *Probe a signal with `e^(−st)` and total the area: `F(s) = ∫₀^∞ f(t) e^(−st) dt`.* Sections:
+  - **8a The probe:** pick a signal `f(t)`; the probe `e^(−st)` (for real `s` first) multiplies it; the product and its shaded area animate. Slide `s`: area changes. Record area vs s as a curve being traced → that curve is `F(s)` (one dot per deliberate choice, also from the keyboard). Side trips: *why this probe* (its slope is −s × itself; it cancels `e^(at)` at s = a) and *an endless area that stops growing* (`1 − e^(−T)`, play `longArea`); play `stepArea` (1/s). The sine at s ≤ 0 sloshes rather than running off.
+  - **8b The explosion:** for `f = e^(at)`, the area is `1/(s − a)` and blows up as `s → a`. "The transform screams exactly at the `s` where the signal lives." (Seed for poles.) Play `scream` (a, s → 1/(s − a)). Then extend to complex `s` using Ch 6's spring spinner `e^(2it)`: the probe unspins it, one arrow per ¼ s laid head to tail; the frame grows so the matched total 1/σ stays in view.
   - The plane is officially named the **s-plane** here.
-- **Predict:** (7a) "For `f(t) = 1` (a step), what happens to the area as `s` gets bigger?" (a) grows (b) shrinks (c) stays. → shrinks (`1/s`). (7e, `ch7-ledge`) "We start on a 1 m ledge and run the formula next to the sim. What will we see?" → they start apart but settle at the same 1.755 m.
+- **Predict:** (8a) "For `f(t) = 1` (a step), what happens to the area as `s` gets bigger?" (a) grows (b) shrinks (c) stays. → shrinks (`1/s`).
+- **Mistake:** Theo plugs `s = 1` into `1/(s − 3)` for `e^(3t)` and gets −½, an "area" that doesn't exist: the product `e^(2t)` never settles (quiz `ch7-q7`).
+- **Check:**
+  1. The transform of `e^(3t)` at `s = 1`? (none: the formula holds only for s > 3)
+  2. If `F(s) = 5/(s+4)`, which signal? (`5e^(−4t)`)
+  3. Where does the transform of `e^(2it)` explode? (at `s = 2i`)
+- **Map:** `Laplace transform (probe + area)`, `s-plane`.
+- **Cliffhanger:** Theo: "So the probe tells us *where* a signal lives. What does it do to a slope?"
+
+---
+
+### Chapter 9 — Calculus into Algebra
+- **Q:** "Can we turn calculus problems into algebra problems?"
+- **Idea:** *Slopes in time become multiplication by `s`; with a table we derive ourselves and partial fractions, solving the drone is algebra.* Sections:
+  - **9a The key property:** `L{f'} = s F(s) − f(0)`. Mika peels Ch 4's sticky note; a shorthand box defines `f′`, `𝓛{f}` and capital letters. Shown first with `e^(at)` algebra on screen (play `ruleExp`), then **with the learner's own hand-drawn signal**: both sides are computed numerically and matched. "It's not a lookup rule. It holds for anything you draw." Side trips: *what about a jump?* (the slope spike; 1.4e^(−2s) without it) and *area undoes slope, even for a product* (integration by parts from the product rule). `L{f''}` is derived in one line.
+  - **9b Build the table ourselves:** step `1/s`, exponential `1/(s−a)`, sine `ω/(s²+ω²)` (via twin spinners), decaying sine `ω/((s+σ)²+ω²)`. Each row has its probe animation. Table grows row by row on the page. Mika: subtract the twins and the along parts cancel, leaving 2i sin ωt. Linearity is earned here (play `scale`) because Step 1 needs it.
+  - **9c Undoing a common denominator:** partial fractions as a picture (the `pieces` widget): one unknown per power of `s` in each bottom, the cover-up trick, completing the square, and complex pieces that come in mirror twins.
+  - **9d Solve the drone:** under P control, from rest on the ground with the setpoint and gravity as steps:
+    `m s² H + c s H = Kp(R/s − H) − mg/s` → `H(s) = (Kp·r − mg) / (s(m s² + c s + Kp))`.
+    Partial fractions step by step, with A, B and C derived and side trips for the *cover-up trick* (A = [s·H]ₛ₌₀, the final value) and *completing the square* (σ = 1 = ζωn, ωd² = 2Kp − 1; play `square`: the bottom is zero at Ch 7's two dots). Step 1, Step 2 and B/C first show the group's version without `h(0)` and swap to the fixed forms when the reader flips the switch (`ch7:ic`). Result overlaid on the RK4 simulation — they coincide to better than a millionth of a metre. The widget draws the settle line at A and the droop band; play `residues`: A = 2 − mg/Kp, droop `mg/Kp` → Ch 2 callback. No page physics: there is no drone picture, and a bonk would break "formula = sim".
+- **Predict:** (9d, `ch7-ledge`) "We start on a 1 m ledge and run the formula next to the sim. What will we see?" → they start apart but settle at the same 1.755 m.
 - **Misconception:** "The Laplace transform is just a lookup table." (Theo.) Resolved by building every row and testing the derivative rule on a hand-drawn curve.
 - **Mistake:** The group solves the drone starting at 1 m (a ledge) and forgets the `f(0)` term — on the page: Step 1 is shown as they wrote it. Their formula and the sim disagree at `t = 0`. Theo finds the missing `−h(0)` terms. After fixing, the maths above swaps and the curves overlap perfectly. From the ground the mistake hides (the missing terms are zero).
 - **Check:**
   1. What's the transform of `3e^(−2t)`? (`3/(s+2)`)
-  2. If `F(s) = 5/(s+4)`, sketch/pick `f(t)`.
-  3. `f = e^(−t)`, `F = 1/(s+1)`: transform of `f′`? (`s/(s+1) − 1 = −1/(s+1)`; forgetting `f(0)` is the ledge mistake)
-  4. With `Kp = 10`, where does `A/s` say the drone settles? (≈ 1.51 m; 0.49 m of droop)
-- **Map:** `Laplace transform (probe + area)`, `Derivative → × s`, `Transform table`, `s-plane`.
+  2. `f = e^(−t)`, `F = 1/(s+1)`: transform of `f′`? (`s/(s+1) − 1 = −1/(s+1)`; forgetting `f(0)` is the ledge mistake)
+  3. With `Kp = 10`, where does `A/s` say the drone settles? (≈ 1.51 m; 0.49 m of droop)
+- **Map:** `Derivative → × s`, `Transform table`.
 - **Cliffhanger:** June: "Every time we solved something, the answer was (stuff)/(polynomial in s). What if that fraction *is* the drone?"
 
 ---
 
-### Chapter 8 — Transfer Functions, Poles and Zeros
+### Chapter 10 — Transfer Functions, Poles and Zeros
 - **Q:** "Can we read a system's whole personality off one fraction?"
-- **Idea:** *Transfer function = output change ÷ input change in s-land, starting from rest (measured from the hover, so Ch 7's `−h(0)` terms really are zero). It comes straight from the drone's equation with Ch 7's slope rule (side trip). Its poles (where the denominator is 0) are the `e^(pt)` modes of Ch 6: Ch 7's "the transform screams at s = a" read backwards (side trip: partial fractions).* A short sub-section "Reading the map" gives every rule its reason: settling ≈ 4/|σ| (ln 50 ≈ 3.9, with a side trip on how rough it is: 3.0–5.8 s at σ = −1), one wiggle 2π/ω, overshoot e^(−π|σ|/ω) with ζ = cos θ (side trip), and the dominant pole (−0.2 vs −5). Zeros as a short second section.
+- **Idea:** *Transfer function = output change ÷ input change in s-land, starting from rest (measured from the hover, so Ch 9's `−h(0)` terms really are zero). It comes straight from the drone's equation with Ch 7's slope rule (side trip). Its poles (where the denominator is 0) are the `e^(pt)` modes of Ch 7: Ch 7's "the transform screams at s = a" read backwards (side trip: partial fractions).* A short sub-section "Reading the map" gives every rule its reason: settling ≈ 4/|σ| (ln 50 ≈ 3.9, with a side trip on how rough it is: 3.0–5.8 s at σ = −1), one wiggle 2π/ω, overshoot e^(−π|σ|/ω) with ζ = cos θ (side trip), and the dominant pole (−0.2 vs −5). Zeros as a short second section.
 - **Hook / CENTERPIECE:** **Pole playground.** Draggable conjugate pole pair on the s-plane. Linked in real time: step response (with ghost), physical drone animation, the transfer function with colour-coded coefficients, and the equivalent controller (the pair sets `m s² + (c + Kd) s + Kp`, so we display the Kp and damping the drone would need). Shaded regions: left half "calms down", right half "explodes". Guides: vertical lines "settling time", rays "overshoot %", horizontal lines "wiggle frequency". Keyboard: select pole, arrow keys move it; screen-reader description updates ("poles at −2 ± 4i, settles in ≈2 s, overshoots ≈20%").
 - **Predict:** "Drag the poles to the right half-plane. What does the drone do?" (a) lands (b) hovers wobbly (c) oscillates with growing swings and crashes/flies off. Then run. Also: "Move poles straight up. What changes?" (faster wiggle, same decay envelope).
-- **Zeros (short):** the playground's Kd acts on the measured speed, so its recipe has no zero; a PD on the *error* `(Kd s + Kp)/(…)` has one at −Kp/Kd (−6.5 for −2 ± 3i: 15 % overshoot instead of 12 %). Drag the ○: close to the origin → extra overshoot/"kick" even with the same poles, because the factor (1 + s/|z|) adds 1/|z| × the slope (drawn as a dotted curve, and a playable sentence). Side trip: a zero at −3 blocks the input e^(−3t) completely. Sets up derivative kick in Ch 9.
+- **Zeros (short):** the playground's Kd acts on the measured speed, so its recipe has no zero; a PD on the *error* `(Kd s + Kp)/(…)` has one at −Kp/Kd (−6.5 for −2 ± 3i: 15 % overshoot instead of 12 %). Drag the ○: close to the origin → extra overshoot/"kick" even with the same poles, because the factor (1 + s/|z|) adds 1/|z| × the slope (drawn as a dotted curve, and a playable sentence). Side trip: a zero at −3 blocks the input e^(−3t) completely. Sets up derivative kick in Ch 11.
 - **Misconception:** "Moving poles further left is always better." (June.) The first push is mg + m|p|²·Δr (a playable sentence; side trip: for a 1 m step the 20 N budget is a circle of radius 5.49, drawn in the playground), so past −3.9 ± 3.9i the thrust hits the 20 N limit, and past −6 ± 6i the maths even wants to pull down. Real settling is best, about 0.72 s, near −6.5 ± 6.5i; June slides to −8 ± 8i and gets 0.77 s (the maths promised 0.53 s) with 16 % overshoot. The 20 N limit stays on from here: the Kp = 20 drone then overshoots 74.9 %, not 60.5 %.
-- **Mistake:** Mika drags just one pole off the real axis and it won't separate from its twin — frustrated. Callback to Ch 5c: real systems have mirror-twin spinners, so poles move in pairs.
+- **Mistake:** Mika drags just one pole off the real axis and it won't separate from its twin — frustrated. Callback to Ch 6a: real systems have mirror-twin spinners, so poles move in pairs.
 - **Check:**
   1. Given 4 pole diagrams, rank them by settling time.
   2. `G(s) = 3/(s² + 2s + 10)`: where are the poles? stable? wiggly? (−1 ± 3i; yes; yes)
   3. Mini-challenge: place poles so overshoot < 10% and settling < 2 s. The highlighted region is drawn from the same measured judgement as the status (`regionFromMetric`), not from the rules of thumb.
   4. Which pole in a pair of real poles (−0.2 and −5) dominates the response, and why?
-- **Map:** `Transfer function`, `Poles`, `Zeros`, `Stability (left half-plane)`, `Motor limits` (edges from Ch 6's modes and ωn/ζ to poles; limits → Ch 9's integral action).
+- **Map:** `Transfer function`, `Poles`, `Zeros`, `Stability (left half-plane)`, `Motor limits` (edges from Ch 7's modes and ωn/ζ to poles; limits → Ch 11's integral action).
 - **Cliffhanger:** Theo: "The poles are nice, but the drone still droops under gravity. Our controller is the problem, not the map."
 
 ---
 
-### Chapter 9 — PID: Fixing Everything
+### Chapter 11 — PID: Fixing Everything
 - **Q:** "How do we kill the droop *and* stop the wiggle?"
 - **Idea (one per section):**
-  - **9a Integral:** *accumulate past error (Ch 3c area!) and push by that.* The droop can't survive: as long as error ≠ 0, the pile keeps growing. Shown with the error area shading and the orange integral contribution rising until gravity is exactly cancelled. From the 24.5 cm droop the pile climbs like Ch 3's coffee, with τ_I ≈ Kp/Ki (2 s at 20/10); at rest the net error area is mg/Ki.
-  - **9b Derivative:** *push against the speed of the error* — a virtual damper (Ch 6 callback, adds to `c`, so ζ = (c+Kd)/(2√(m Kp)); critical at Kd ≈ 5.3). June's mistake: "maximum shock absorber" (Kd = 10) creeps and overshoots late (0 → 8 %).
-  - **9c Poles move:** each gain's effect on the 3 closed-loop poles of `m s³ + (c + Kd)s² + Kp s + Ki`. Sliders drag poles in real time. The cubic is derived twice (slopes, then I = ÷ s), the Routh edge is found from s = iω, and a continuity side trip explains why below the edge is safe. The PI zero at −Ki/Kp nearly cancels the slow pole, so the step settles far faster than 4/|σ|.
-  - **9d Playground:** Kp, Ki, Kd sliders + live response + scoreboard (the pole plot lives in 9c; a mini s-plane here is still open) (overshoot, 2% settling time, steady-state error, time with thrust pinned at a motor limit). Stars for meeting targets.
-  - **9e Warnings:** (i) derivative kick when the setpoint jumps 1 m → 1.5 m (asks for ≈ 209 N vs 12.4 N; delivered 20 N vs 12.4 N; fix: derivative on measurement); (ii) sensor noise amplified by D (toggle noise, watch orange go fuzzy; fix: filter, Ch 3's first-order lag; a Kd slider shows more D = more noise). Short, visual.
+  - **11a Integral:** *accumulate past error (Ch 3c area!) and push by that.* The droop can't survive: as long as error ≠ 0, the pile keeps growing. Shown with the error area shading and the orange integral contribution rising until gravity is exactly cancelled. From the 24.5 cm droop the pile climbs like Ch 3's coffee, with τ_I ≈ Kp/Ki (2 s at 20/10); at rest the net error area is mg/Ki.
+  - **11b Derivative:** *push against the speed of the error* — a virtual damper (Ch 7 callback, adds to `c`, so ζ = (c+Kd)/(2√(m Kp)); critical at Kd ≈ 5.3). June's mistake: "maximum shock absorber" (Kd = 10) creeps and overshoots late (0 → 8 %).
+  - **11c Poles move:** each gain's effect on the 3 closed-loop poles of `m s³ + (c + Kd)s² + Kp s + Ki`. Sliders drag poles in real time. The cubic is derived twice (slopes, then I = ÷ s), the Routh edge is found from s = iω, and a continuity side trip explains why below the edge is safe. The PI zero at −Ki/Kp nearly cancels the slow pole, so the step settles far faster than 4/|σ|.
+  - **11d Playground:** Kp, Ki, Kd sliders + live response + scoreboard (the pole plot lives in 9c; a mini s-plane here is still open) (overshoot, 2% settling time, steady-state error, time with thrust pinned at a motor limit). Stars for meeting targets.
+  - **11e Warnings:** (i) derivative kick when the setpoint jumps 1 m → 1.5 m (asks for ≈ 209 N vs 12.4 N; delivered 20 N vs 12.4 N; fix: derivative on measurement); (ii) sensor noise amplified by D (toggle noise, watch orange go fuzzy; fix: filter, Ch 3's first-order lag; a Kd slider shows more D = more noise). Short, visual.
 - **Predict:** "Add a big Ki to fix droop faster. What happens?" (a) droop vanishes quickly and cleanly (b) droop vanishes but it wiggles more (c) it can go unstable. → (b), and past the cliff (c). The stability boundary `(c + Kd)·Kp = m·Ki` is drawn on a Ki-vs-Kd mini-map with a dot for the current gains.
 - **Misconception:** "The D term predicts the future." (Mika.) It only extrapolates the current slope, and noise makes its "prediction" wild.
 - **Mistake:** Mika cranks Ki to kill droop instantly; poles cross into the right half-plane and the drone oscillates wildly. June adds Kd, which pulls them back — group realises the terms trade off.
@@ -268,13 +295,13 @@ Legend for each chapter: **Q** = driving question · **Idea** = the one new idea
 
 ---
 
-### Chapter 10 — Back to the Shower: Delay and Robustness
+### Chapter 12 — Back to the Shower: Delay and Robustness
 - **Q:** "Why did we oscillate in the shower — and how close to the edge is any controller?"
 - **Idea (one per section):**
-  - **10a Delay = lag in time = lag in phase:** a sine going through a 2.5 s delay comes out shifted; the shift *in degrees* grows with frequency (`ωL`). Animated: the same delay is a small nudge for a slow wave and a half-cycle for a fast one.
-  - **10b Frequency response:** feed sine waves of chosen speed into the shower; measure output size and lag; **each measurement drops a dot onto two plots** (gain & phase vs frequency). After ~8 dots, the analytic Bode curve fades in over them — "we just drew a Bode plot by hand."
-  - **10c Margins:** where phase hits −180° a wave comes back perfectly flipped — "pushing a swing at the wrong moment." If the loop gain there ≥ 1, it self-sustains. Gain margin and phase margin drawn as "distance to the cliff edge." Ch 0 callback: the robot hands (I controllers) reach the edge at a ≈13.8 s period; a position-style human hand at ≈6.6 s. We replay the learner's own Ch 0 run next to the prediction.
-  - **10d Design the robot shower:** PI controller with sliders; margins shown live; beat your Ch 0 score (time-to-comfort and time-in-band) against your saved run.
+  - **12a Delay = lag in time = lag in phase:** a sine going through a 2.5 s delay comes out shifted; the shift *in degrees* grows with frequency (`ωL`). Animated: the same delay is a small nudge for a slow wave and a half-cycle for a fast one.
+  - **12b Frequency response:** feed sine waves of chosen speed into the shower; measure output size and lag; **each measurement drops a dot onto two plots** (gain & phase vs frequency). After ~8 dots, the analytic Bode curve fades in over them — "we just drew a Bode plot by hand."
+  - **12c Margins:** where phase hits −180° a wave comes back perfectly flipped — "pushing a swing at the wrong moment." If the loop gain there ≥ 1, it self-sustains. Gain margin and phase margin drawn as "distance to the cliff edge." Ch 0 callback: the robot hands (I controllers) reach the edge at a ≈13.8 s period; a position-style human hand at ≈6.6 s. We replay the learner's own Ch 0 run next to the prediction.
+  - **12d Design the robot shower:** PI controller with sliders; margins shown live; beat your Ch 0 score (time-to-comfort and time-in-band) against your saved run.
 - **Predict:** "Double the pipe delay. Does the critical gain go up or down?" → down; the cliff gets closer.
 - **Misconception:** "Delay only makes things slower, it can't make them unstable." (Theo.)
 - **Mistake:** June's first robot shower uses the aggressive PID from the drone (the designer opens on her gains). It hunts every ≈6.3 s with the knob slamming end to end, close to a position hand's 6.6 s edge (the Ch 0 robot hands, I controllers, hunt near 13.8 s). Group realises: the drone had no big delay; the shower does, so a robust design needs gentler gains (margin), not more cleverness. (Honest aside: fancier fixes like a Smith predictor exist — "where next".)
@@ -288,9 +315,9 @@ Legend for each chapter: **Q** = driving question · **Idea** = the one new idea
 
 ---
 
-### Chapter 11 — Finale: The Drone Challenge
+### Chapter 13 — Finale: The Drone Challenge
 - **Q:** "Can *you* keep the drone at 2 m through everything?"
-- **Idea:** *Putting it together under realistic conditions* (the only new ingredients — motor lag, sensor noise, derivative filter, saturation — are listed as "real-world grit", each with a number, a reason and a callback: motor lag is Ch 3's first-order lag and costs the reference tune about 25° of phase margin (Ch 10); the 20 N limit is Ch 8's; the noise and its filter are Ch 9's; a side trip shows a short lag acts almost like a delay).
+- **Idea:** *Putting it together under realistic conditions* (the only new ingredients — motor lag, sensor noise, derivative filter, saturation — are listed as "real-world grit", each with a number, a reason and a callback: motor lag is Ch 3's first-order lag and costs the reference tune about 25° of phase margin (Ch 12); the 20 N limit is Ch 10's; the noise and its filter are Ch 11's; a side trip shows a short lag acts almost like a delay).
 - **Hook:** Sandbox with Kp, Ki, Kd and the derivative filter (D always acts on the measurement, so the old toggle is gone; old saved tunes still load). Scripted 20 s mission: take off → 2 m; wind gust (1.5 N downward, t = 6–9 s); package drop (0.2 kg released) at t = 12 s; sensor noise throughout (the same random jitter every flight). Live s-plane (nominal model, true pole values, ghosts), response, thrust ("asked for" behind "delivered", so clipping shows), and a mission checklist whose items shade their time window.
 - **Pass criteria (tuned and verified during build; draft):** reach 2 m ± 5 cm within 3 s; overshoot < 10%; max deviation during gust < 20 cm; after package drop back within ± 5 cm in 2 s; never touches ground after take-off; motors calm in hover (thrust standard deviation < 0.5 N from 3 to 6 s, on running motors). Stars for each; "gold" for all.
 - **Predict:** "Before you tune: which term will matter most for the package drop?" (Ki — the weight changed; only integral re-finds the new hover thrust.)
@@ -342,7 +369,7 @@ Legend for each chapter: **Q** = driving question · **Idea** = the one new idea
 2. Drone P-control steady state = `r − mg/Kp`; open-loop sink speed = `Δm·g/c`.
 3. Numerical Laplace integral vs table rows (step, `e^(at)`, `sin`, decaying sine) at several `s`: rel. error < 1e-4.
 4. Derivative rule `L{f'} = sF − f(0)` checked numerically on random smooth signals.
-5. Ch 7 partial-fraction solution vs simulation (including non-zero initial height).
+5. Ch 9 partial-fraction solution vs simulation (including non-zero initial height).
 6. PID Routh boundary `(c+Kd)Kp = m Ki` vs simulated growth/decay on both sides.
 7. Shower: phase-crossover frequency and critical gain vs simulated sustained oscillation; Bode dots vs analytic `|G(iω)|`, `∠G(iω)`.
 8. Delay line exactness; integrator stability at extreme slider values (max gains, min damping).
@@ -355,7 +382,7 @@ Legend for each chapter: **Q** = driving question · **Idea** = the one new idea
 4. **Phase 4:** Chapters 3–5 (tangent/area tools, exponential playground, spiral + s-map).
 5. **Phase 5:** Chapters 6–8 (MSD, Laplace probe, pole playground) + tests 3–5.
 6. **Phase 6:** Chapters 9–10 (PID, Bode builder, margins) + tests 6–7.
-7. **Phase 7:** Chapter 11 finale, full concept map, narrative/continuity review, a11y and breakpoint pass (375 / 768 / 1024 / 1440).
+7. **Phase 7:** Chapter 13 finale, full concept map, narrative/continuity review, a11y and breakpoint pass (375 / 768 / 1024 / 1440).
 
 ---
 
@@ -363,7 +390,7 @@ Legend for each chapter: **Q** = driving question · **Idea** = the one new idea
 1. **Stack vs. your global rules.** The brief says "HTML/CSS/JS, minimal deps, CDNs"; your global setup prefers pnpm + Vite (+ React/shadcn for apps). I propose **Vite + TypeScript, no framework**, dependencies via pnpm (Rough.js, KaTeX). OK, or do you want React, or a zero-build CDN-only site?
 2. **i18n.** Your global rules say no hardcoded strings. For a narrative course that means all prose/dialogue lives in `/public/locales/en/*.json` (one namespace per chapter). Worth doing here, or keep prose in per-chapter content files and only extract UI strings?
 3. **Chapter granularity.** One URL per chapter (hash routing), with sections scrolling within a chapter. OK?
-4. **Progress persistence.** Save progress, predictions and the learner's Ch 0 shower run in `localStorage` so Ch 10 can replay it. OK?
+4. **Progress persistence.** Save progress, predictions and the learner's Ch 0 shower run in `localStorage` so Ch 12 can replay it. OK?
 
 ## 4. What's next
 After approval: Phase 1 (scaffold + tested sim core), then chapters in order, testing each interactive at extreme values before moving on.

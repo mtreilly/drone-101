@@ -54,7 +54,7 @@ New plans go in `docs/plans/{feature}.md`; new standing documentation goes in `d
   mood, ids, sketches, correct answers, gates, …), maths, `{placeholders}` and colour markers. It
   must pass.
 - Keep each language's terms consistent with `docs/glossary.md` (feedback, setpoint, plant,
-  overshoot, droop, pole, s-plane — "map of s" before chapter 7 — etc.) and add every new term
+  overshoot, droop, pole, s-plane — "map of s" before chapter 8 — etc.) and add every new term
   there in the same commit as the translation. Match the voice: playful, short sentences,
   natural address for that language. Format prose numbers according to the locale, not a blanket
   "decimal comma outside English" rule; inside maths write decimal commas as `{,}` (`tex()` also
@@ -204,6 +204,13 @@ Hard-won habits from extending chapters. They apply to any chapter, whatever the
 - **A rule of thumb states when it holds.** Overshoot from the pole angle, the dominant pole,
   settling in 4/|σ|, the final value theorem, margin ↔ ζ: say the condition and name the case
   where it fails, ideally one the reader has already met.
+
+- **Renumbering chapters is a content change, not a rename.** A chapter's number is its route,
+  its locale file, its `common:chapters.N`, its concept-map cluster and every "Chapter N" in ten
+  languages (Arabic also writes ordinal words, Italian "dal 4 al 6", Chinese "第 4 到第 6 章").
+  Decide each reference to a split chapter on the English by what it points at, carry that
+  decision to the same string in every locale, count the numbers per string against English,
+  migrate stored progress once, and keep quiz and prediction ids (they are saved answers).
 
 **Right-to-left and mixed scripts**
 - **A little equation must stay one text run.** Splitting "2 × 2 × 2" and "= 8" into separate live

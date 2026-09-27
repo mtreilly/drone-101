@@ -58,7 +58,7 @@ describe('regionFromMetric: the outline of where a judgement holds', () => {
   });
 });
 
-describe("Chapter 8's challenge zone, judged by the measured step response", () => {
+describe("Chapter 10's challenge zone, judged by the measured step response", () => {
   // the playground: poles −σ ± iω, a 1 m → 2 m step, 400 intervals over 6 s, "OS < 10 % and settles (2 %) in < 2 s"
   const t = Array.from({ length: 401 }, (_, i) => (6 * i) / 400);
   const metrics = (re: number, im: number) => {

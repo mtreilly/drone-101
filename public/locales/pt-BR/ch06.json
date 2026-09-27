@@ -1,67 +1,43 @@
 {
   "kicker": "Capítulo 6",
-  "title": "A Verdadeira Personalidade do Drone",
-  "question": "Por que o drone quica como uma mola?",
+  "title": "O Mapa de s",
+  "question": "Como um número que gira faz uma oscilação real, e qual é a cara de cada s?",
   "sections": [
     {
-      "id": "spring",
-      "title": "O controlador é uma mola",
+      "id": "twins",
+      "title": "De volta à mola (e um novo erro)",
       "blocks": [
         {
           "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "June perguntou onde nosso drone mora no mapa. Dica: lembra do drone quicante do Capítulo 2? Quanto mais a gente aumentava $\\eff{K_p}$, mais ele quicava. Parecia exatamente um peso numa mola."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "\"Parecia\" não é prova. Vamos colocá-los lado a lado e escrever as duas equações."
+          "who": "june",
+          "mood": "excited",
+          "text": "Da última vez construímos um número que gira. Vamos entregá-lo para a mola e ver se ele se comporta."
         },
         {
           "t": "p",
-          "text": "À esquerda: uma massa de 0,5 kg pendurada numa mola com um amortecedor (um pequeno pistão cheio de óleo que resiste ao movimento). À direita: nosso drone, mesma massa, mesmo arrasto, sob controle proporcional."
-        },
-        {
-          "t": "p",
-          "text": "Primeiro, vamos anotar cada força sobre a massa, uma de cada vez. Meça sua posição $x$ a partir do ponto de repouso, com para cima positivo."
-        },
-        {
-          "t": "list",
-          "items": [
-            "**A mola** puxa de volta para o repouso, com mais força quanto mais esticada estiver: $-\\eff{k}\\,x$. Estique o dobro e ela puxa com o dobro da força.",
-            "**O amortecedor** empurra contra o *movimento*, não contra a posição: $-c\\,\\dot{x}$. Com a massa parada, ele não faz nada. Com ela rápida, ele empurra de volta com força. ($\\dot{x}$ é a velocidade do Capítulo 3.)",
-            "**A gravidade** só desloca o ponto de repouso um pouquinho para baixo. Medir a partir do repouso já resolve isso."
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Força = massa × aceleração, e aceleração é a inclinação da inclinação (Capítulo 3). Some as forças e passe tudo para um lado:"
-        },
-        {
-          "t": "math",
-          "tex": "m\\,\\ddot{x} = -\\eff{k}\\,x - c\\,\\dot{x} \\quad\\Longrightarrow\\quad m\\,\\ddot{x} + c\\,\\dot{x} + \\eff{k}\\,x = 0"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "Então o amortecedor é basicamente ar que odeia velocidade?"
+          "text": "A mola precisava de $a^2 = -k/m = -4$. Tente $a = 2i$: $(2i)^2 = 4\\,i^2 = -4$. ✓ E $a = -2i$ também funciona."
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "happy",
-          "text": "Mais ou menos. E no nosso drone, o amortecedor *é* o ar."
+          "text": "Certo, eu estava errado. O truque de chutar uma exponencial sobrevive. A mola é $e^{2it}$, um girador dando duas voltas a cada… 2π segundos."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Então a posição da mola é $e^{2it}$? Agora mesmo ela está em… $0{,}4 + 0{,}9i$ metros?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Uma mola não pode ficar 0,9 metros *de lado*. Ela só se move para cima e para baixo."
         },
         {
           "t": "p",
-          "text": "No widget, a {eff|seta laranja} na massa é o puxão da mola e a cinza é o empurrão do amortecedor. Repare como a seta do amortecedor some sempre que a massa para por um instante no alto ou no fundo de uma oscilação."
-        },
-        {
-          "t": "note",
-          "text": "Para evitar que a gravidade nos distraia, damos ao drone seu empuxo de pairar (4,9 N) de graça aqui, para que ele não caia. Vamos conquistar isso honestamente no Capítulo 9."
+          "text": "Mika esqueceu a outra resposta. Encontramos **duas** soluções, $e^{2it}$ e $e^{-2it}$: um girador e seu **gêmeo espelhado** girando no sentido contrário. Some-os:"
         },
         {
           "t": "widget",
@@ -69,562 +45,189 @@
         },
         {
           "t": "say",
-          "who": "june",
+          "who": "mika",
           "mood": "surprised",
-          "text": "As curvas estão **uma em cima da outra**. Não são parecidas. *Idênticas.*"
+          "text": "As partes laterais se cancelam perfeitamente! A soma apenas desliza ao longo da reta real, para frente e para trás."
+        },
+        {
+          "t": "math",
+          "tex": "x(t) = \\tfrac12\\left(e^{i\\omega t} + e^{-i\\omega t}\\right) = \\cos(\\omega t),\\qquad \\omega = \\sqrt{k/m}"
+        },
+        {
+          "t": "note",
+          "text": "O ½ está ali porque cada gêmeo traz metade: o widget soma dois giradores de tamanho inteiro, então a soma dele oscila até 2. E este par começa solto a partir de 1 m, em repouso. Se ele já começar em movimento, os dois gêmeos apenas partem com inclinações opostas; a soma continua na reta real."
         },
         {
           "t": "p",
-          "text": "Olhe as duas equações. A mola empurra de volta com força $\\eff{k}\\,x$: quanto mais esticada, com mais força puxa. Nosso controlador empurra com $\\eff{K_p}(\\sp{2} - \\out{h})$: quanto mais longe do alvo, com mais força empurra. **Mesma regra.** O controlador *é* uma mola: uma invisível, puxando o drone em direção a 2 m."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "Então um controlador P é uma mola virtual, e o arrasto do ar $c$ é um amortecedor virtual. Tudo o que aprendemos sobre molas, ganhamos de graça."
-        },
-        {
-          "t": "callout",
-          "title": "Conferindo as unidades",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "A rigidez $\\eff{k}$ de uma mola é medida em **newtons por metro**: newtons de puxão para cada metro de estiramento. Nosso ganho $\\eff{K_p}$ transforma metros de erro em newtons de empuxo, então também é newtons por metro. O controlador não é só *parecido* com uma mola. Pelas unidades, ele *é* uma."
-            },
-            {
-              "t": "play",
-              "id": "units",
-              "text": "Com $\\eff{K_p}$ = {scrub|kp|eff} N/m, um drone {scrub|e} m baixo demais ganha {calc|f|eff} N de empuxo extra."
-            }
-          ]
-        },
-        {
-          "t": "callout",
-          "title": "Amortecedores de verdade",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Os amortecedores de um carro são exatamente isso: óleo espremido por furinhos, então eles lutam contra movimentos rápidos e mal notam os lentos. As dobradiças com fechamento suave de um armário de cozinha e o fecha-porta no alto de uma porta pesada também são amortecedores. Tire os amortecedores de um carro e cada lombada o deixa quicando. Deixe-os duros demais e cada lombada chega direto até você."
-            }
-          ]
+          "text": "Por que o gêmeo está sempre lá? A regra da mola só tem números reais ($m$ e $k$, nenhum $i$). Vire uma solução de cabeça para baixo, trocando cada $i$ por $-i$, e a regra não percebe a diferença: a imagem espelhada também é uma solução. Então, para qualquer coisa real, os giradores vêm em **pares espelhados**, e juntos suas partes laterais se cancelam, deixando uma oscilação real que podemos medir."
         }
       ]
     },
     {
-      "id": "knobs",
-      "title": "Dois botões de personalidade",
+      "id": "map",
+      "title": "O mapa de s",
       "blocks": [
         {
           "t": "p",
-          "text": "Todo sistema massa-mola-amortecedor, e portanto todo drone com controle P, é descrito por apenas **dois números**. Vamos conquistá-los um de cada vez."
-        },
-        {
-          "t": "h3",
-          "text": "Quão rápido: a frequência natural"
-        },
-        {
-          "t": "p",
-          "text": "Tire o amortecedor e voltamos ao Capítulo 5: a mola oscila como $\\cos(\\omega t)$ com $\\omega = \\sqrt{k/m}$. Chamamos essa velocidade de **frequência natural** $\\omega_n$: quão rápido o sistema *quer* oscilar quando nada o freia."
+          "text": "O Capítulo 4 nos deu exponenciais que **crescem ou diminuem**. Agora temos giradores que **oscilam**. Junte-os: $e^{st}$ com $s = \\sigma + i\\omega$."
         },
         {
           "t": "math",
-          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{k}}{m}} \\qquad\\qquad \\text{uma oscilação completa a cada } \\frac{2\\pi}{\\omega_n} \\text{ s}"
-        },
-        {
-          "t": "play",
-          "id": "wn",
-          "text": "Com k = {scrub|k|eff} N/m e m = 0,5 kg, $\\omega_n$ ≈ {calc|wn} rad/s: uma oscilação completa a cada {calc|period} s."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "Mola mais dura, oscilação mais rápida. Então é só aumentar $\\eff{k}$ no máximo e tudo melhora!"
+          "tex": "e^{st} = e^{(\\sigma + i\\omega)t} = \\underbrace{e^{\\sigma t}}_{\\text{crescer/encolher}}\\cdot\\underbrace{e^{i\\omega t}}_{\\text{girar}}"
         },
         {
           "t": "p",
-          "text": "Uma mola mais rígida puxa com mais força, então oscila mais rápido. Uma massa mais pesada é mais difícil de empurrar, então oscila mais devagar. (Radianos por segundo é a velocidade de giro do Capítulo 5: uma volta completa é 2π radianos, um aro de 2π raios de comprimento.)"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "worried",
-          "text": "Calma. No capítulo 2, aumentar $\\eff{K_p}$ deixou o drone mais rápido *e* mais saltitante. Vamos ouvir primeiro o que o amortecedor tem a dizer."
-        },
-        {
-          "t": "h3",
-          "text": "Quão saltitante: a razão de amortecimento"
-        },
-        {
-          "t": "p",
-          "text": "Agora coloque o amortecedor de volta. Quanto amortecimento é \"muito\"? Depende da mola: um amortecedor que doma uma mola mole mal freia uma mola dura. Por isso comparamos com uma quantidade especial, o **amortecimento crítico** $c_{\\text{crit}}$: o menor amortecimento que acaba de vez com o sobressinal."
-        },
-        {
-          "t": "math",
-          "tex": "c_{\\text{crit}} = 2\\sqrt{m\\,\\eff{k}} \\qquad\\qquad \\zeta = \\frac{c}{c_{\\text{crit}}} = \\frac{c}{2\\sqrt{m\\,\\eff{k}}}"
-        },
-        {
-          "t": "p",
-          "text": "A **razão de amortecimento** ζ (a letra grega zeta) é o nosso amortecimento como fração disso. É um número puro, sem unidades. ζ = 0 oscila para sempre, ζ = 1 é exatamente crítico, e ζ = 0,5 tem metade do amortecimento necessário para acabar com o sobressinal."
-        },
-        {
-          "t": "play",
-          "id": "zeta",
-          "text": "Com c = {scrub|c} N·s/m numa mola de k = 20 N/m, $c_{\\text{crit}}$ = {calc|ccrit} N·s/m, então ζ = {calc|zeta}: {calc|regime}."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "surprised",
-          "text": "Peraí. 0,16? É exatamente o ζ do drone no primeiro widget!"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "Mesma massa, mesmo atrito, mesma rigidez, então o mesmo ζ. A mola e o drone são gêmeos mesmo."
-        },
-        {
-          "t": "h3",
-          "text": "Os dois pontos no mapa"
-        },
-        {
-          "t": "p",
-          "text": "Agora, de volta ao mapa de $s$. Chutar $x = e^{st}$, como nos Capítulos 4 e 5, transforma a equação em $m s^2 + c s + k = 0$. Divida por $m$ e escreva os dois coeficientes com os nossos botões:"
-        },
-        {
-          "t": "math",
-          "tex": "s^2 + \\underbrace{\\frac{c}{m}}_{2\\zeta\\omega_n}\\, s + \\underbrace{\\frac{\\eff{k}}{m}}_{\\omega_n^2} = 0"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Peraí. De onde saiu esse $2\\zeta\\omega_n$? Parece inventado."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "Multiplique: $2\\zeta\\omega_n = 2 \\cdot \\frac{c}{2\\sqrt{mk}} \\cdot \\sqrt{\\frac{k}{m}} = \\frac{c}{m}$. É o mesmo número, só com outro nome, para que os nossos dois botões apareçam na equação."
-        },
-        {
-          "t": "p",
-          "text": "Resolva com a fórmula de Bhaskara e saem os dois valores de $s$:"
-        },
-        {
-          "t": "math",
-          "tex": "\\begin{aligned} & s^2 + 2\\zeta\\omega_n\\, s + \\omega_n^2 = 0 \\\\ \\Longrightarrow\\quad & s = -\\zeta\\omega_n \\pm \\omega_n\\sqrt{\\zeta^2 - 1} \\end{aligned}"
-        },
-        {
-          "t": "callout",
-          "title": "De onde vem o ±",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Qualquer equação $s^2 + b\\,s + q = 0$ pode ser resolvida completando o quadrado: $(s + b/2)^2 = b^2/4 - q$. Uma raiz quadrada tem duas respostas, uma com + e outra com −, então sempre há **dois** valores de $s$:"
-            },
-            {
-              "t": "math",
-              "tex": "s = -\\frac{b}{2} \\pm \\sqrt{\\frac{b^2}{4} - q}"
-            },
-            {
-              "t": "p",
-              "text": "Com $b = 2\\zeta\\omega_n$ e $q = \\omega_n^2$, a parte sob a raiz é $\\omega_n^2(\\zeta^2 - 1)$. Quando ζ < 1 ela é negativa, e precisamos do $i$ do Capítulo 5: as duas respostas viram um par espelhado, $-\\zeta\\omega_n \\pm i\\,\\omega_n\\sqrt{1-\\zeta^2}$. Em ζ = 1 a raiz é exatamente zero e as duas respostas se encontram. É daí que vem $c_{\\text{crit}} = 2\\sqrt{mk}$: é o amortecimento que faz a raiz sumir."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "O sinal ± nos dá duas respostas, uma para cada ponto. A posição esquerda-direita de um ponto é **σ** (sigma): quão rápido aquela parte do movimento encolhe. Sua altura é **ω**: quão rápido ela gira. Quando o amortecimento é menor que 1, os pontos compartilham a posição esquerda-direita, mas ficam em alturas opostas. Em 1 eles se encontram; acima de 1 ambos ficam no eixo horizontal."
-        },
-        {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Resposta ao degrau",
-              "def": "Como um sistema responde a um salto repentino do seu alvo, aqui de 0 para 1 m. É o jeito padrão de mostrar uma personalidade."
-            },
-            {
-              "term": "Tempo de acomodação (2%)",
-              "def": "Quanto tempo até a resposta ficar dentro de 2% do alvo de uma vez por todas."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Brinque com os dois botões. Observe os {out|pontos azuis} no mapa: eles são os dois valores de $s$, e, além da altura em que ele se acomoda, o movimento é uma mistura de $e^{s_1 t}$ e $e^{s_2 t}$. (Com ζ = 1 exato, os dois pontos viram um só, e o segundo ingrediente passa a ser $t\\,e^{s_1 t}$.)"
-        },
-        {
-          "t": "widget",
-          "id": "personality"
-        },
-        {
-          "t": "vocab",
-          "title": "Três personalidades",
-          "items": [
-            {
-              "term": "Subamortecido ($\\zeta < 1$)",
-              "def": "Os dois valores de $s$ são um par espelhado fora do eixo real, situados em um círculo de raio $\\omega_n$. A resposta ultrapassa o alvo e oscila enquanto se estabiliza."
-            },
-            {
-              "term": "Criticamente amortecido ($\\zeta = 1$)",
-              "def": "O par se encontra no eixo real como um único ponto duplo, então o movimento é $(A + B\\,t)\\,e^{-\\omega_n t}$. A resposta mais rápida que não ultrapassa o alvo."
-            },
-            {
-              "term": "Superamortecido ($\\zeta > 1$)",
-              "def": "O par se separa ao longo do eixo real: um se move para a esquerda, o outro se aproxima lentamente do zero. Sem sobressinal, mas lento."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Mais um detalhe se esconde nos pontos subamortecidos: a altura deles é $\\omega_n\\sqrt{1-\\zeta^2}$, um pouco **menor** que $\\omega_n$. O amortecimento não só encolhe a oscilação, ele também a deixa um pouco mais lenta. Essa é a **frequência amortecida** $\\omega_d$, e o widget a mostra."
-        },
-        {
-          "t": "math",
-          "tex": "\\omega_d = \\omega_n\\sqrt{1 - \\zeta^2}"
-        },
-        {
-          "t": "callout",
-          "title": "Por que um círculo?",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "O círculo tracejado no widget não é enfeite. Para ζ < 1 os pontos ficam em $\\sigma = -\\zeta\\omega_n$ e $\\omega = \\pm\\omega_n\\sqrt{1-\\zeta^2}$. Por Pitágoras, a distância deles até 0 é"
-            },
-            {
-              "t": "math",
-              "tex": "\\sqrt{\\sigma^2 + \\omega^2} = \\sqrt{\\zeta^2\\omega_n^2 + \\omega_n^2\\,(1 - \\zeta^2)} = \\omega_n"
-            },
-            {
-              "t": "play",
-              "id": "circle",
-              "text": "Com $\\omega_n$ = 3 e ζ = {scrub|z}, os pontos ficam em {calc|roots}, a uma distância {calc|r} de 0."
-            },
-            {
-              "t": "p",
-              "text": "Então mudar ζ só desliza os pontos ao longo do círculo, e mudar $\\omega_n$ muda o tamanho do círculo."
-            }
-          ]
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "Então as espirais do Capítulo 5 eram a personalidade do drone desde o início. Girar = oscilar, encolher = estabilizar!"
-        }
-      ]
-    },
-    {
-      "id": "damping",
-      "title": "Mais amortecimento é sempre melhor?",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "Fácil. Oscilações são ruins e o amortecimento mata as oscilações. Então vou definir $\\zeta = 5$ para ficar seguro. O drone mais seguro de todos."
+          "text": "Então cada número s é uma receita: **σ** (a parte ao longo) diz quão rápido crescer ou diminuir, **ω** (a parte lateral) diz quão rápido girar. Juntos, eles desenham uma **espiral**, e a sombra da espiral é o sinal que veríamos."
         },
         {
           "t": "predict",
-          "id": "ch6-damping",
+          "id": "ch5-shadow",
           "gate": true,
-          "q": "Mesma mola, mesmo $\\omega_n$. Aumentamos o amortecimento de $\\zeta = 1$ para $\\zeta = 3$. Ele atinge o alvo **mais rápido** ou **mais devagar**?",
+          "q": "Coloque s em $-0{,}5 + 3i$. Como é a sombra de $e^{st}$?",
           "options": [
             {
-              "text": "Mais rápido: mais amortecimento, menos movimento desperdiçado",
-              "sketch": "smooth",
-              "why": "É verdade que não há sobressinal. Mas o amortecedor grosso também resiste ao movimento *em direção* ao alvo."
+              "text": "Uma oscilação que cresce",
+              "sketch": "growing-wiggle",
+              "why": "O crescimento precisa de σ > 0. Aqui σ = −0,5 é negativo."
             },
             {
-              "text": "Mais ou menos o mesmo",
-              "sketch": "overshoot",
-              "why": "Depois de $\\zeta = 1$ não há mais nada para acalmar, e o amortecimento extra só deixa tudo mais lento."
-            },
-            {
-              "text": "Mais devagar: ele se arrasta",
-              "sketch": "sluggish",
+              "text": "Uma oscilação que morre",
+              "sketch": "decaying-wiggle",
               "correct": true,
-              "why": "Certo. O amortecedor resiste a **todo** movimento, incluindo o movimento que você quer. Com $\\zeta = 3$, leva cerca de quatro vezes mais tempo."
-            }
-          ]
-        },
-        {
-          "t": "widget",
-          "id": "race"
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "worried",
-          "text": "Meu drone \"seguro\" demora uma eternidade. É como se mover através de mel."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "Olhe o mapa! Um ponto disparou para a esquerda, super rápido. Mas o outro está bem pertinho de zero."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "excited",
-          "text": "E $e^{st}$ com $s$ próximo de zero desaparece **muito** lentamente. O rápido some num piscar. O lento é quem manda."
-        },
-        {
-          "t": "p",
-          "text": "Cada ingrediente $e^{st}$ do movimento se chama **modo**. O movimento é uma mistura de modos e, quando os rápidos já sumiram, só sobra o mais lento. Então, para esta resposta ao degrau, o **modo mais lento que realmente aparece** determina a longa espera."
-        },
-        {
-          "t": "callout",
-          "title": "Quanto tempo é \"acomodado\"?",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Um modo $e^{-at}$ encolheu até 2% quando $e^{-at} = 0{,}02$, o que leva $t = \\ln 50 / a \\approx 3{,}9/a$. Com uma constante de tempo $\\tau = 1/a$, isso dá cerca de quatro constantes de tempo: a régua do Capítulo 3 de novo. Depois de 4τ, só sobra $e^{-4} \\approx 1{,}8\\%$."
+              "why": "ω = 3 faz girar (oscila a cada 2 s aproximadamente), e σ = −0,5 a encolhe por um fator $e^{-0{,}5} \\approx 0{,}61$ a cada segundo."
             },
             {
-              "t": "play",
-              "id": "settle",
-              "text": "Um modo que encolhe a a = {scrub|a} por segundo fica dentro de 2% depois de cerca de {calc|ts} s."
+              "text": "Um decaimento suave, sem oscilação",
+              "sketch": "decaying-plain",
+              "why": "Isso é o que você obteria com ω = 0 (s no eixo horizontal). Aqui ω = 3, então ele gira."
             }
           ]
         },
         {
-          "t": "p",
-          "text": "Amortecimento de menos significa oscilações; de mais significa arrasto. No meio existe um ponto ideal. Escolha ζ = 0,7 na corrida: ele ultrapassa o alvo em menos de 5%, mas chega **a menos de 5% do alvo** bem antes de ζ = 1. Muitos projetos miram ζ entre cerca de 0,7 e 1, trocando um pequeno sobressinal por velocidade. Outras tarefas podem preferir um equilíbrio diferente."
-        }
-      ]
-    },
-    {
-      "id": "drone",
-      "title": "De volta ao drone",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Agora o Capítulo 2 finalmente faz sentido. Para o nosso drone, a constante da mola *é* o ganho:"
-        },
-        {
-          "t": "math",
-          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{K_p}}{m}}, \\qquad \\zeta = \\frac{c}{2\\sqrt{m\\,\\eff{K_p}}}"
-        },
-        {
-          "t": "p",
-          "text": "$\\eff{K_p}$ fica na parte *de baixo* da fórmula do amortecimento. Aumentar o ganho deixa o drone mais rápido ($\\omega_n$ maior), mas **menos amortecido**. Com $\\eff{K_p} = 20$ N/m: $\\zeta = 1/(2\\sqrt{0{,}5 \\times 20}) \\approx 0{,}16$. Bem saltitante, exatamente como vimos. No mapa, seus dois valores de $s$ ficam bem lá em cima e só um pouco à esquerda do eixo vertical. É aí que nosso drone vive."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "worried",
-          "text": "E não conseguimos mais amortecimento sem baixar muito $\\eff{K_p}$, o que traz de volta o desvio residual. Precisamos de uma forma de adicionar amortecimento *de propósito*."
-        },
-        {
-          "t": "p",
-          "text": "Arraste o ganho e veja o compromisso numa só frase:"
-        },
-        {
-          "t": "play",
-          "id": "drone",
-          "text": "Com $\\eff{K_p}$ = {scrub|kp|eff} N/m: ζ = {calc|zeta}, $\\omega_n$ = {calc|wn} rad/s e, sem o empuxo de pairar de graça, ele teria um desvio residual de {calc|droop} m."
-        }
-      ]
-    },
-    {
-      "id": "arrows",
-      "title": "Setas têm comprimento e ângulo",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "Peraí. Os pontos ficam num círculo de raio $\\omega_n$, e o ζ só desliza eles ao redor. Então um ponto é na verdade duas coisas: **quão longe** do 0 e **para que lado**."
-        },
-        {
-          "t": "p",
-          "text": "Toda seta $z = a + b\\,i$ pode ser descrita do outro jeito: pelo seu **comprimento** $|z|$ e pelo seu **ângulo**. Pitágoras dá o comprimento. Para uma seta que aponta para a direita ($a > 0$), o ângulo é aquele cuja subida dividida pelo avanço (o \"cateto oposto sobre cateto adjacente\" da escola) é $b/a$. O nome dele é **arco tangente**, $\\arctan$: o botão de desfazer da tangente."
-        },
-        {
-          "t": "math",
-          "tex": "|z| = \\sqrt{a^2 + b^2}, \\qquad \\angle z = \\arctan\\frac{b}{a} \\quad (a > 0)"
-        },
-        {
-          "t": "play",
-          "id": "arrowRead",
-          "text": "A seta {scrub|a} + {scrub|b}i tem comprimento {calc|len} e aponta a {calc|ang}° do eixo real."
-        },
-        {
-          "t": "p",
-          "text": "O Capítulo 5 descobriu que multiplicar setas **multiplica os comprimentos e soma os ângulos**. Dividir tem que desfazer isso, então divide os comprimentos e **subtrai** os ângulos."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Então $1/(1+i)$: comprimento $1/\\sqrt 2$, e o ângulo é 45° mais 45°, então 90°? Hmm. Multiplique isso de volta por $1+i$ e dá uma seta apontando para 135°, nada perto de 1."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "Menos, então. Comprimento $1/\\sqrt 2$ a −45°. Vezes $\\sqrt 2$ a +45°, e dá comprimento 1 a 0°: exatamente 1. Confere."
-        },
-        {
           "t": "widget",
-          "id": "arrows"
+          "id": "smap"
         },
         {
           "t": "p",
-          "text": "A seta tracejada clarinha é o **gêmeo espelhado** $\\bar z = a - b\\,i$ do Capítulo 5 (os matemáticos chamam de *conjugado*): mesmo comprimento, ângulo oposto. Multiplique uma seta pelo seu gêmeo e os ângulos se cancelam, sobrando um número positivo simples, o comprimento ao quadrado. A tabela do Capítulo 7 vai precisar exatamente disto:"
+          "text": "Faça um tour pelo mapa arrastando s (ou usando as teclas de seta):"
         },
         {
-          "t": "math",
-          "tex": "z\\,\\bar z = |z|^2 = a^2 + b^2, \\qquad (s - i\\omega)(s + i\\omega) = s^2 + \\omega^2"
-        },
-        {
-          "t": "p",
-          "text": "E o círculo? Um polo em $-\\zeta\\omega_n + i\\,\\omega_n\\sqrt{1-\\zeta^2}$ tem comprimento $\\omega_n$. Meça o ângulo θ dele a partir do eixo real *negativo*, e a parte para a esquerda é $\\omega_n\\cos\\theta$. Então $\\zeta = \\cos\\theta$: o amortecimento é o ângulo."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Experimente a segunda opção do widget: 1 + iωτ. É a regra do café do Capítulo 3 encontrando uma oscilação. Dividir por ela encolhe e gira para trás, cada vez mais conforme a oscilação acelera, mas nunca além de um quarto de volta. Aposto que o chuveiro liga para isso."
-        },
-        {
-          "t": "vocab",
+          "t": "list",
           "items": [
-            {
-              "term": "Comprimento $|z|$",
-              "def": "O tamanho de uma seta: $\\sqrt{a^2+b^2}$ para $z = a + b\\,i$. Multiplicar setas multiplica os comprimentos."
-            },
-            {
-              "term": "Ângulo $\\angle z$",
-              "def": "Para que lado uma seta aponta, medido a partir do eixo real positivo. $\\arctan(b/a)$ para uma seta que aponta para a direita. Multiplicar soma os ângulos, dividir os subtrai."
-            },
-            {
-              "term": "Gêmeo espelhado $\\bar z$",
-              "def": "A seta refletida no eixo real, $a - b\\,i$ (o conjugado). $z\\,\\bar z = |z|^2$."
-            }
+            "**Metade esquerda** (σ < 0): a espiral encolhe, a oscilação morre.",
+            "**Metade direita** (σ > 0): a espiral cresce, a oscilação explode.",
+            "**Na linha vertical** (σ = 0): um círculo perfeito, uma oscilação que continua para sempre.",
+            "**Na linha horizontal** (ω = 0): nenhum giro, apenas as exponenciais simples do Capítulo 4.",
+            "**Mais longe da linha horizontal** (para cima ou para baixo): giro mais rápido, oscilações mais rápidas. **Mais para a esquerda**: desaparecimento mais rápido."
           ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Então um único ponto neste mapa é toda uma personalidade: quão rápido ele oscila e se ele se acalma ou explode."
+        },
+        {
+          "t": "note",
+          "text": "Este mapa vai se tornar nossa imagem mais importante. Ele ganha seu nome oficial no Capítulo 8."
+        }
+      ]
+    },
+    {
+      "id": "fourier",
+      "title": "Um parêntese rápido: tudo é feito de giradores",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Uma última surpresa. Pegue giradores de velocidades diferentes (1, 3, 5, 7… vezes mais rápido), encolha cada um, comece cada um exatamente no ângulo certo e some suas sombras. Com o suficiente deles, você pode construir uma enorme variedade de formas, até mesmo uma onda quadrada com cantos afiados."
+        },
+        {
+          "t": "widget",
+          "id": "fourier"
+        },
+        {
+          "t": "p",
+          "text": "**Fourier** mostrou como muitos sinais periódicos podem ser montados a partir de peças giratórias. Uma onda quadrada é um exemplo: mais peças tornam suas partes planas e bordas afiadas mais nítidas. Essa é uma forma poderosa de descrever sinais, com condições e limites que podemos explorar mais adiante."
+        },
+        {
+          "t": "note",
+          "text": "Caixa da honestidade: bem ao lado de cada salto, a soma sempre ultrapassa o alvo em cerca de 9% do salto, não importa quantas peças você adicione. A saliência fica mais estreita, mas nunca desaparece."
         }
       ]
     },
     {
       "id": "wrap",
-      "title": "O que sabemos agora",
+      "title": "O que sabemos até agora",
       "blocks": [
         {
           "t": "recap",
           "items": [
-            "Um drone controlado por P obedece **exatamente** à mesma equação que uma massa numa mola: o controlador é uma mola virtual.",
-            "Dois números capturam a personalidade dele: $\\omega_n$ (quão rápido) e $\\zeta$ (quão oscilante).",
-            "$\\omega_n = \\sqrt{k/m}$ é a velocidade de oscilação sem amortecedor. $\\zeta = c/c_{\\text{crit}}$ compara o amortecimento com o amortecimento crítico $2\\sqrt{mk}$, que acaba exatamente com o sobressinal.",
-            "O movimento é uma mistura de dois termos $e^{st}$. Os dois valores de $s$ ficam sobre um círculo de raio $\\omega_n$ quando o sistema é subamortecido, e se separam ao longo do eixo real quando é superamortecido.",
-            "Uma seta tem **comprimento** e **ângulo** ($\\arctan$). Multiplicar multiplica os comprimentos e soma os ângulos; dividir divide e subtrai. $\\zeta = \\cos\\theta$.",
-            "O amortecimento também deixa a oscilação um pouco mais lenta: $\\omega_d = \\omega_n\\sqrt{1-\\zeta^2}$.",
-            "Mais amortecimento nem sempre é melhor: depois de $\\zeta = 1$, o valor lento de $s$ se aproxima devagar de zero e tudo fica mais lento.",
-            "Para o drone, mais $K_p$ significa menos amortecimento. É por isso que ele ficou mais oscilante."
+            "Ondulações reais vêm de **giradores espelhados gêmeos** cujas partes laterais se cancelam.",
+            "$e^{st}$ com $s = \\sigma + i\\omega$ gira *e* cresce ou encolhe: uma espiral. Sua sombra é uma ondulação que cresce ou morre.",
+            "O **mapa de s**: à esquerda acalma, à direita explode, para cima significa ondulações mais rápidas.",
+            "Muitos sinais periódicos, até uma onda quadrada, podem ser montados somando giradores de velocidades diferentes (Fourier). Bem ao lado de um salto, a soma sempre ultrapassa o alvo em cerca de 9%."
           ]
         },
         {
           "t": "quiz",
           "items": [
             {
-              "id": "ch6-q1",
-              "q": "Os dois valores de $s$ de um sistema são $-1 \\pm 4i$. Qual é a resposta dele?",
+              "id": "ch5-q2",
+              "q": "Coloque s exatamente na linha vertical, em $s = 2i$. Qual é a sombra de $e^{st}$?",
               "options": [
                 {
-                  "text": "Ultrapassa o alvo e oscila",
-                  "sketch": "overshoot",
+                  "text": "Uma oscilação que continua para sempre",
+                  "sketch": "steady-wiggle",
                   "correct": true,
-                  "why": "Uma parte imaginária (±4) significa rotação, ou seja, oscilação. Uma parte real negativa (−1) significa que as oscilações diminuem."
+                  "why": "σ = 0 significa que não cresce nem diminui: um círculo perfeito, e sua sombra é um cosseno constante."
                 },
                 {
-                  "text": "Sobe suavemente, sem ultrapassar o alvo",
-                  "sketch": "smooth",
-                  "why": "Subidas suaves vêm de valores de $s$ no eixo real (sem rotação). Esses valores têm parte imaginária ±4."
+                  "text": "Uma oscilação que vai morrendo",
+                  "sketch": "decaying-wiggle",
+                  "why": "Morrer aos poucos exige σ < 0 (à esquerda da linha vertical)."
                 },
                 {
-                  "text": "Sobe devagar",
-                  "sketch": "sluggish",
-                  "why": "Uma subida lenta e sem oscilações vem de um valor real negativo de $s$ muito próximo de zero. Aqui, os valores têm partes imaginárias (±4), então a resposta oscila."
+                  "text": "Crescimento explosivo",
+                  "sketch": "growing-plain",
+                  "why": "Crescer sem oscilar é a metade direita da linha *horizontal*: σ > 0, ω = 0."
                 }
               ]
             },
             {
-              "id": "ch6-q2",
-              "q": "Nosso drone ($m = 0{,}5$ kg, $c = 1$ N·s/m) com $K_p = 20$ N/m é…",
+              "id": "ch5-q3",
+              "q": "Uma corda de violão soa com uma nota clara e vai sumindo devagar. Onde, no mapa de s, ela mora?",
               "options": [
                 {
-                  "text": "Subamortecido, $\\zeta \\approx 0{,}16$",
+                  "text": "Um pouco à esquerda da linha vertical, bem acima da linha horizontal",
                   "correct": true,
-                  "why": "$\\zeta = 1/(2\\sqrt{0{,}5\\cdot 20}) = 1/(2\\sqrt{10}) \\approx 0{,}158$. Bem abaixo de 1, então oscila bastante."
+                  "why": "Desvanecimento lento significa σ levemente negativo, e um tom claro significa um ω grande (muitas oscilações por segundo)."
                 },
                 {
-                  "text": "Criticamente amortecido, $\\zeta = 1$",
-                  "why": "Isso exigiria $c = 2\\sqrt{m K_p} \\approx 6{,}3$ N·s/m, mais de seis vezes o arrasto que temos."
+                  "text": "Na metade direita",
+                  "why": "A metade direita *cresce*. Uma corda que ficasse mais alta sozinha seria alarmante."
                 },
                 {
-                  "text": "Superamortecido, $\\zeta > 1$",
-                  "why": "O superamortecimento exige muito amortecimento em comparação com a rigidez. Nosso ganho é alto e nosso arrasto é pequeno, que é o oposto."
+                  "text": "Na linha horizontal, bem à esquerda",
+                  "why": "Sem ω não há oscilação (nenhuma nota), e bem à esquerda significa que morre instantaneamente. Isso é um baque."
                 }
               ]
             },
             {
-              "id": "ch6-q5",
-              "q": "Uma mola com $k = 8$ N/m segura uma massa de 0,5 kg. Quanto amortecimento $c$ a deixa criticamente amortecida?",
+              "id": "ch5-q4",
+              "q": "Por que os giradores de uma oscilação real e física sempre vêm em pares espelhados?",
               "options": [
                 {
-                  "text": "$c = 4$ N·s/m",
+                  "text": "A regra só tem números reais, então a imagem espelhada de um girador também a resolve",
                   "correct": true,
-                  "why": "$c_{\\text{crit}} = 2\\sqrt{m k} = 2\\sqrt{0{,}5 \\cdot 8} = 2\\sqrt{4} = 4$ N·s/m."
+                  "why": "Vire $e^{i\\omega t}$ de cabeça para baixo e você obtém $e^{-i\\omega t}$. Uma regra sem nenhum $i$ não consegue distingui-los, então os dois são soluções, e um movimento real usa os dois: suas partes laterais se cancelam."
                 },
                 {
-                  "text": "$c = 16$ N·s/m",
-                  "why": "Isso é $2k$. O amortecimento crítico usa a raiz quadrada de massa × rigidez: $2\\sqrt{mk}$."
+                  "text": "Porque $i^2 = -1$",
+                  "why": "Isso é verdade, mas é por isso que os giradores *existem*, não por que eles se emparelham."
                 },
                 {
-                  "text": "$c = 1$ N·s/m",
-                  "why": "Esse é o arrasto do ar do nosso drone, que aqui dá $\\zeta = 0{,}25$: subamortecido."
-                }
-              ]
-            },
-            {
-              "id": "ch6-q3",
-              "q": "Usando apenas controle P, qual $K_p$ tornaria o drone criticamente amortecido ($\\zeta = 1$)?",
-              "options": [
-                {
-                  "text": "$K_p = 0{,}5$ N/m",
-                  "correct": true,
-                  "why": "Defina $c/(2\\sqrt{m K_p}) = 1$ para obter $K_p = c^2/(4m) = 0{,}5$ N/m. Mas com uma mola tão fraca o drone precisaria estar 9,8 m *abaixo* do alvo só para se manter no ar, então ele nunca decola. O controle P sozinho não consegue nos dar as duas coisas."
-                },
-                {
-                  "text": "$K_p = 20$ N/m",
-                  "why": "Esse é o nosso padrão oscilante com $\\zeta \\approx 0{,}16$. Mais ganho significa *menos* amortecimento."
-                },
-                {
-                  "text": "$K_p = 200$ N/m",
-                  "why": "Mais ganho diminui $\\zeta$ ainda mais (para cerca de 0,05). O ganho fica no denominador."
-                }
-              ]
-            },
-            {
-              "id": "ch6-q4",
-              "q": "Um sistema superamortecido tem valores de $s$ $-0{,}2$ e $-10$. Qual deles decide quanto tempo você espera?",
-              "options": [
-                {
-                  "text": "$-0{,}2$",
-                  "correct": true,
-                  "why": "$e^{-0{,}2t}$ leva cerca de 20 s para desaparecer até 2%, enquanto $e^{-10t}$ some em 0,4 s. O que está mais próximo do eixo vertical é quem manda."
-                },
-                {
-                  "text": "$-10$",
-                  "why": "$e^{-10t}$ desaparece em uma fração de segundo. É a parte rápida que acaba antes de você perceber."
-                },
-                {
-                  "text": "Ambos igualmente",
-                  "why": "Eles desaparecem em velocidades bem diferentes, então o lento domina o que você vê."
+                  "text": "Porque uma mola tem duas extremidades",
+                  "why": "Fofo, mas não. Um único pêndulo balançando também tem giradores gêmeos."
                 }
               ]
             }
@@ -635,130 +238,60 @@
         },
         {
           "t": "cliff",
-          "text": "Theo: \"Nós *chutamos* o caminho até esses valores de $s$. Adicione gravidade, vento, pacotes e um controlador mais inteligente, e o chute fica feio. Existe uma máquina que transforma esse cálculo em **álgebra simples**?\""
+          "text": "June: \"Então **onde neste mapa mora o nosso drone?**\""
         }
       ]
     }
   ],
   "widgets": {
     "twins": {
-      "title": "Mola vs. drone",
-      "spring": "massa em uma mola",
-      "drone": "drone sob controle P",
-      "msdAria": "Uma massa pendurada em uma mola e um amortecedor, oscilando em torno de sua posição de repouso.",
-      "plotY": "distância até o alvo (m)",
-      "plotAria": "Distância até o alvo ao longo do tempo para o drone e para a mola. As duas curvas ficam sobrepostas.",
-      "target": "alvo / repouso",
-      "kp": "Rigidez: mola $k$ = ganho do drone $K_p$",
-      "personality": "personalidade",
-      "help": "Ambos começam 1 m abaixo de seu alvo e são soltos. O controle deslizante define a rigidez da mola e o ganho do drone para o mesmo número.",
-      "describe": "O drone está a {d} m do alvo, a massa da mola está a {s} m do repouso.",
-      "together": "ambos, em um único gráfico",
-      "forceSpring": "puxão da mola",
-      "forceDamper": "empurrão do amortecedor"
+      "title": "Um girador e seu gêmeo espelhado",
+      "re": "ao longo",
+      "im": "lateral",
+      "sum": "soma",
+      "spinnerLabel": "rotador",
+      "twinLabel": "gêmeo",
+      "toggle": "Adicione o gêmeo espelhado",
+      "axis": "valor",
+      "realPart": "parte ao longo da soma",
+      "sidePart": "parte lateral da soma",
+      "alone": "Um rotador sozinho: a soma desvia para o lado (curva tracejada).",
+      "withTwin": "Com seu gêmeo adicionado ponta com cauda, as partes laterais se cancelam. A soma permanece na reta real: 2·cos(ωt).",
+      "aria": "Duas setas girando em direções opostas, adicionadas ponta com cauda. A soma delas é marcada com um anel.",
+      "plotAria": "As partes ao longo e de lado da soma ao longo do tempo."
     },
-    "personality": {
-      "title": "Duas manoplas, dois pontos, uma personalidade",
-      "response": "resposta a um degrau de 1 m",
-      "target": "alvo",
-      "plotAria": "Resposta ao degrau de um sistema de segunda ordem para a frequência natural e a razão de amortecimento escolhidas.",
-      "planeAria": "O mapa de s, mostrando os dois valores de s do sistema e um círculo tracejado de raio ômega n.",
-      "msdAria": "Uma massa presa a uma mola reproduzindo a resposta ao degrau.",
-      "panelAria": "Resposta ao degrau pequeno com razão de amortecimento {z}.",
-      "panel": {
-        "0": "subamortecido (ζ = {z})",
-        "1": "criticamente amortecido (ζ = {z})",
-        "2": "superamortecido (ζ = {z})"
-      },
-      "radius": "raio ωn = {w}",
-      "wn": "Frequência natural $\\omega_n$",
-      "zeta": "Razão de amortecimento $\\zeta$",
-      "overshoot": "sobressinal",
-      "settle": "acomoda (2%)",
-      "roots": "os dois valores de s",
-      "personality": "personalidade",
-      "never": "nunca",
-      "playSpring": "Reproduzir na mola",
-      "stopSpring": "Pausar a mola",
-      "describe": "Razão de amortecimento {z}, frequência natural {w} radianos por segundo, valores de s {r}.",
-      "planeCap": "os dois valores de s",
-      "springCap": "observe em uma mola",
-      "re": "σ",
-      "im": "ω",
-      "offMap": "{v} está fora do mapa ←",
-      "wd": "velocidade da oscilação ωd",
-      "noWiggle": "sem oscilação"
+    "smap": {
+      "title": "O mapa de s",
+      "re": "σ: encolher ← → crescer",
+      "im": "ω: girar",
+      "reShort": "ao longo",
+      "imShort": "de lado",
+      "time": "tempo →",
+      "shadow": "sombra de e^(st)",
+      "shadowAxis": "sombra",
+      "mirror": "Mostrar o gêmeo espelhado",
+      "readS": "s",
+      "readTurns": "gira",
+      "readSize": "mudança de tamanho",
+      "spins": "Gira {n} vezes por segundo,",
+      "noSpin": "Não gira nada,",
+      "grows": "e cresce.",
+      "shrinks": "e encolhe.",
+      "steady": "e mantém o mesmo tamanho.",
+      "help": "Arraste o ponto s no mapa (ou focalize-o e use as teclas de seta). À direita: a espiral e^(st) em 3-D, com o tempo correndo para a direita. Sua sombra azul é traçada embaixo.",
+      "mapAria": "O mapa de s: arraste o ponto para escolher sigma e ômega.",
+      "spiralAria": "Espiral tridimensional de e elevado a s t, com o tempo correndo para a direita, e sua sombra na parede do fundo.",
+      "plotAria": "Sombra de e elevado a s t ao longo do tempo."
     },
-    "race": {
-      "title": "A corrida do amortecimento",
-      "choose": "Seu amortecimento",
-      "ref": "ζ = 1 (crítico)",
-      "yours": "seu ζ",
-      "yoursZ": "ζ = {z}",
-      "msdAria": "Uma massa em uma mola se movendo em direção à sua posição de repouso.",
-      "plotAria": "Respostas ao degrau para o amortecimento crítico e para a razão de amortecimento escolhida.",
-      "planeAria": "Os dois valores de s para a razão de amortecimento escolhida.",
-      "settleRef": "ζ = 1 acomoda",
-      "settleYours": "seu ζ acomoda",
-      "slow": "lento",
-      "fast": "rápido",
-      "never": "não dentro de 12 s",
-      "same": "Esta é a própria referência: a resposta mais rápida sem sobressinal.",
-      "slower": "Seu amortecimento extra o tornou cerca de {k}× mais lento.",
-      "replay": "Corra de novo",
-      "planeCap": "os dois valores de s",
-      "re": "σ",
-      "im": "ω",
-      "fastOff": "← rápido em {v} (fora do mapa)",
-      "double": "ambos aqui",
-      "band5": "dentro de 5%",
-      "sweet": "ζ = 0,7 ultrapassa o alvo em {os}%, mas fica dentro de 5% do alvo depois de {y5} s. ζ = 1 precisa de {r5} s."
-    },
-    "arrows": {
-      "title": "Comprimento, ângulo e 1 ÷ uma seta",
-      "aria": "Um plano com o círculo unitário, uma seta z, seu gêmeo espelhado tracejado e a seta 1 dividido por z, com os ângulos marcados.",
-      "re": "parte real",
-      "im": "parte imaginária",
-      "mode": "Qual seta?",
-      "modeFree": "qualquer seta z",
-      "modeSmoother": "o suavizador, 1 + iωτ",
-      "a": "parte real a",
-      "b": "parte imaginária b",
-      "wt": "velocidade da oscilação × τ (ωτ)",
-      "mirror": "gêmeo",
-      "out": "1 ÷ (1 + iωτ)",
-      "len": "comprimento |z|",
-      "ang": "ângulo de z",
-      "ilen": "comprimento de 1/z",
-      "iang": "ângulo de 1/z",
-      "free": "1/z tem comprimento {ilen} (1 ÷ {len}) e gira para o outro lado, até {iang}. Multiplique as duas e você obtém comprimento {back} a 0°: exatamente 1.",
-      "smooth": "Com ωτ = {wt}, 1 ÷ (1 + iωτ) mantém {ilen} do tamanho e se atrasa {lag}. Oscilações mais rápidas: menores e mais atrasadas, mas nunca além de 90°.",
-      "help": "Deslize a e b para mover z (ou mude para o suavizador e deslize ωτ). O arco azul é o ângulo de z; o arco cinza, o ângulo de 1/z."
-    }
-  },
-  "plays": {
-    "units": {
-      "kp": "ganho Kp, newtons por metro",
-      "e": "erro, metros"
-    },
-    "wn": {
-      "k": "rigidez da mola k, newtons por metro"
-    },
-    "zeta": {
-      "c": "amortecimento c, newton-segundos por metro"
-    },
-    "circle": {
-      "z": "razão de amortecimento zeta"
-    },
-    "settle": {
-      "a": "taxa de encolhimento a, por segundo"
-    },
-    "drone": {
-      "kp": "ganho Kp, newtons por metro"
-    },
-    "arrowRead": {
-      "a": "parte real a",
-      "b": "parte imaginária b"
+    "fourier": {
+      "title": "Construindo uma onda quadrada a partir de giradores",
+      "axis": "valor",
+      "target": "onda quadrada",
+      "sum": "soma das sombras dos giradores",
+      "pieces": "Número de giradores",
+      "status": "{n} giradores adicionados. O mais rápido gira {f}× mais rápido que o primeiro.",
+      "aria": "Uma onda quadrada e a soma das sombras de um número escolhido de giradores que a aproximam.",
+      "statusOne": "Apenas um girador: uma oscilação simples, nada de quadrado nela ainda."
     }
   }
 }

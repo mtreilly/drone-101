@@ -13,7 +13,7 @@
         { "t": "p", "text": "È il controllore più famoso che esista, il **controllo proporzionale** (\"controllo P\" per gli amici):" },
         { "t": "math", "tex": "\\eff{T} = K_p \\, \\err{e} = K_p\\,(\\sp{r} - \\out{h})" },
         { "t": "p", "text": "$K_p$ è il **guadagno**: quanti newton di spinta aggiungi per ogni metro di errore. Si misura in newton al metro (N/m). $K_p$ grande vuol dire un controllore impaziente, $K_p$ piccolo uno rilassato. È l'unica manopola che abbiamo in questo capitolo." },
-        { "t": "note", "aside": true, "text": "Facciamo ancora finta che i motori siano illimitati. Possono persino tirare un po' verso il basso se il drone è troppo alto. Sui limiti saremo onesti nel Capitolo 8." },
+        { "t": "note", "aside": true, "text": "Facciamo ancora finta che i motori siano illimitati. Possono persino tirare un po' verso il basso se il drone è troppo alto. Sui limiti saremo onesti nel Capitolo 10." },
         {
           "t": "predict",
           "id": "ch2-kp5",
@@ -52,7 +52,7 @@
         },
         { "t": "say", "who": "june", "mood": "think", "text": "Perché spingere *più forte* dovrebbe farlo *ballare*?" },
         { "t": "say", "who": "theo", "mood": "think", "text": "Una spinta grande lo fa partire veloce. Quando arriva all'altezza giusta sta ancora andando forte, e niente nella nostra regola dice \"rallenta, ci sei quasi\". Solo l'attrito dell'aria lo frena un pochino. Così tira dritto, viene rispinto indietro, tira dritto di nuovo…" },
-        { "t": "note", "text": "Nota onesta: con il nostro drone semplice, il controllo P oscilla ma non **esplode** mai davvero. Le oscillazioni prima o poi si spengono sempre. I droni veri hanno piccoli ritardi (i motori ci mettono un po' a prendere giri) che rendono un guadagno eccessivo davvero pericoloso. Ne parliamo nei Capitoli 10 e 11." }
+        { "t": "note", "text": "Nota onesta: con il nostro drone semplice, il controllo P oscilla ma non **esplode** mai davvero. Le oscillazioni prima o poi si spengono sempre. I droni veri hanno piccoli ritardi (i motori ci mettono un po' a prendere giri) che rendono un guadagno eccessivo davvero pericoloso. Ne parliamo nei Capitoli 12 e 13." }
       ]
     },
     {
@@ -97,7 +97,7 @@
               "options": [
                 { "text": "Bassa, con una piccola oscillazione", "sketch": "droop", "why": "Un grande abbassamento vuol dire un guadagno *piccolo*: serve tanto errore per fare abbastanza spinta." },
                 { "text": "Vicina all'obiettivo, con grandi oscillazioni", "sketch": "overshoot", "correct": true, "why": "Abbassamento piccolo e tanta sovraelongazione sono la firma di un guadagno alto." },
-                { "text": "Dolcemente ed esattamente sull'obiettivo", "sketch": "sluggish", "why": "Opzione trabocchetto: un controllore P puro che lotta contro la gravità non può **mai** finire esattamente sull'obiettivo, qualunque sia $K_p$. Manca qualcosa (Capitolo 9)." }
+                { "text": "Dolcemente ed esattamente sull'obiettivo", "sketch": "sluggish", "why": "Opzione trabocchetto: un controllore P puro che lotta contro la gravità non può **mai** finire esattamente sull'obiettivo, qualunque sia $K_p$. Manca qualcosa (Capitolo 11)." }
               ]
             },
             {

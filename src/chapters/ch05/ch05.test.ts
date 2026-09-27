@@ -1,7 +1,15 @@
 import { abs, c, sub } from '../../math/complex';
 import { I, rotateBy, shadow, spiralPoint, squareWavePartial, tinyTurns, twinSum } from './models';
 
-describe('Chapter 5 numbers', () => {
+describe('Chapters 5–6 numbers', () => {
+  it('Chapter 5 quiz: at ω = π rad/s a full turn (2π) takes 2 s, and one second is half a turn', () => {
+    const w = Math.PI;
+    expect((2 * Math.PI) / w).toBeCloseTo(2, 12);
+    // after 1 s the spinner points the other way: e^{iπ} = −1
+    expect(abs(sub(spiralPoint(0, w, 1), c(-1)))).toBeLessThan(1e-12);
+    expect(abs(sub(spiralPoint(0, w, 2), c(1)))).toBeLessThan(1e-12);
+  });
+
   it('two quarter turns are a half turn: i·i·3 = −3', () => {
     const z = rotateBy(rotateBy(c(3), I), I);
     expect(abs(sub(z, c(-3)))).toBeLessThan(1e-12);

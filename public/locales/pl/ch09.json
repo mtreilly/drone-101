@@ -1,613 +1,523 @@
 {
   "kicker": "Rozdział 9",
-  "title": "PID: naprawiamy wszystko",
-  "question": "Jak pozbyć się zwisu *i* zatrzymać kołysanie?",
+  "title": "Od analizy do algebry",
+  "question": "Czy da się zamienić analizę matematyczną w algebrę?",
   "sections": [
     {
-      "id": "stuck",
-      "title": "Zwis, który nie chce zniknąć",
+      "id": "rule",
+      "title": "Nachylenia stają się mnożeniem",
       "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Pamiętasz karteczkę z rozdziału 4? Dla $e^{at}$ branie nachylenia było po prostu mnożeniem $\\times\\, a$. Zobacz teraz, co sonda robi z nachyleniem."
+        },
+        {
+          "t": "vocab",
+          "title": "Skróty w tym rozdziale",
+          "items": [
+            {
+              "term": "$f'$ i $f''$",
+              "def": "Skrót od $\\frac{df}{dt}$, czyli nachylenia $f$, oraz nachylenia tego nachylenia. W rozdziale 7 pisaliśmy je z kropkami: $\\dot x$ i $\\ddot x$."
+            },
+            {
+              "term": "$\\mathcal{L}\\{f\\}$",
+              "def": "„Transformata $f$”: to samo co $F(s)$, przydatne, gdy $f$ jest całym wyrażeniem."
+            },
+            {
+              "term": "Wielkie litery",
+              "def": "Wielka litera to transformata swojej małej litery: $F$ dla $f$, $H$ dla wysokości $h$, $X$ dla $x$."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Oto własność, dla której cała ta zabawa jest warta zachodu. Co dzieje się z transformatą, gdy bierzemy **nachylenie** sygnału? Spróbuj z $f = e^{at}$. Jej nachylenie to $a e^{at}$ (rozdział 4), więc"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\mathcal{L}\\{f'\\} &= \\frac{a}{s-a} = \\frac{s}{s-a} - 1 \\\\ &= s\\,F(s) - f(0) \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Nachylenie zamieniło się w **mnożenie przez** $s$, minus wartość początkowa $f(0)$. Analiza stała się algebrą!"
+        },
+        {
+          "t": "play",
+          "id": "ruleExp",
+          "text": "Przy a = {scrub|a} i s = {scrub|s}: pole nachylenia wynosi {calc|lhs}, a s·F − f(0) = {calc|rhs}. Ta sama liczba."
+        },
         {
           "t": "say",
           "who": "theo",
           "mood": "think",
-          "text": "Pamiętacie rozdział 2? Nasz regulator P zostawiał drona **wiszącego poniżej 2 m** i żadne $K_p$ nie mogło tego naprawić. Czas się dowiedzieć, co może."
-        },
-        {
-          "t": "p",
-          "text": "Żeby utrzymać drona w górze, silniki muszą pchać z siłą $mg \\approx 4{,}9$ N, bez końca. Regulator P pcha tylko wtedy, gdy jest uchyb: $\\eff{T} = K_p\\,\\err{e}$. Więc żeby pchać z siłą 4,9 N, *potrzebuje* uchybu $\\err{e} = mg/K_p$. Przy $K_p$ = 20 N/m to $\\err e$ = 4,9/20 ≈ 24,5 cm, na zawsze. Zwis to nie błąd w strojeniu. To cena, jaką P pobiera za utrzymywanie czegokolwiek w górze."
+          "text": "Zaraz. To trik, który działa dla $e^{at}$, bo $e^{at}$ jest wyjątkowa. Zaraz mi powiecie, że to reguła z tabelki do wykucia na pamięć. Nie kupuję tego dla *dowolnej* krzywej."
         },
         {
           "t": "say",
           "who": "june",
-          "mood": "excited",
-          "text": "Czyli potrzebujemy części regulatora, która potrafi pchać z siłą 4,9 N **przy zerowym uchybie**. Czegoś z pamięcią."
-        },
-        {
-          "t": "note",
-          "text": "Od rozdziału 8 silniki są prawdziwe: mogą pchać od 0 do 20 N, nie więcej, i nie potrafią ciągnąć w dół. Pomarańczowe krzywe ciągu spłaszczają się, gdy dojdą do ograniczenia."
-        }
-      ]
-    },
-    {
-      "id": "integral",
-      "title": "I: stos dawnego uchybu",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Pomysł jest taki. Prowadź bieżącą sumę uchybu, czyli **pole pod krzywą uchybu**, dokładnie to „zbierane pole” z [rozdziału 3](#/ch/3). Pchaj proporcjonalnie do tego stosu:"
-        },
-        {
-          "t": "math",
-          "tex": "\\eff{T_I} = K_i \\int_0^t \\err{e}\\,dt"
+          "mood": "happy",
+          "text": "To przetestujmy ją na najbrzydszej krzywej, jaką potrafisz narysować."
         },
         {
           "t": "p",
-          "text": "Dopóki dron jest poniżej 2 m, uchyb jest dodatni i stos ciągle rośnie, więc pchnięcie też ciągle rośnie. Stos przestaje rosnąć dopiero wtedy, gdy uchyb jest **dokładnie zerowy**. Wtedy po prostu *zostaje*, trzymając ciąg, jaki zdążył zbudować. To właśnie pamięć, której chciała June."
+          "text": "Narysuj na pierwszym wykresie dowolny sygnał (albo wybierz gotowy). Obliczamy jego nachylenie, a potem maszyną do pól wyliczamy **obie strony** reguły: transformatę nachylenia oraz $s\\,F(s) - f(0)$. Drugi wykres pokazuje te dwie strony dla każdego $s$."
+        },
+        {
+          "t": "widget",
+          "id": "derivRule"
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "surprised",
-          "text": "O, to sprytne. Dron nie może się ustalić *nigdzie* poza 2 m, bo wszędzie indziej stos wciąż by się zmieniał."
-        },
-        {
-          "t": "play",
-          "id": "pile",
-          "text": "Gdy dron utknął 24,5 cm za nisko, stos rośnie o 0,245 m·s na sekundę. Przy $K_i$ = {scrub|ki|eff} N/(m·s) to {calc|rate|eff} N pchnięcia więcej co sekundę: w tym tempie całe 4,9 N byłoby po {calc|tau} s. Tak szybko to jednak nigdy nie idzie. Kiedy dron się wznosi, uchyb maleje, a stos rośnie coraz wolniej. Po {calc|tau} s jest mniej więcej w 63 % drogi, po około {calc|ts} s w 98 %."
+          "text": "Zgadzają się, nawet dla mojego krzywego bazgrołu. To wcale nie reguła z tabelki: tak maszyna do pól traktuje każde nachylenie."
         },
         {
           "t": "callout",
-          "title": "Dlaczego stos zwalnia",
+          "title": "A co ze skokiem?",
           "blocks": [
             {
               "t": "say",
               "who": "theo",
-              "mood": "think",
-              "text": "Chwila. 63 % po jednej stałej czasowej? Przecież to kawa z rozdziału 3!"
+              "mood": "surprised",
+              "text": "Nacisnąłem „skok” i *nadal* się zgadza. Ale skok nie jest gładki. Na urwisku nie ma nachylenia!"
+            },
+            {
+              "t": "p",
+              "text": "Spójrz na nachylenie na pierwszym wykresie: w $t = 2$ jest wysoka, cienka szpilka. Nachylenie liczone przez komputer potraktowało skok jak jedną bardzo stromą wspinaczkę. Pomiń tę szpilkę, a obie strony rozjadą się o $1{,}4\\,e^{-2s}$ (skok ma wysokość 1,4 i jest w $t = 2$), czyli o około 0,19 przy $s = 1$."
+            },
+            {
+              "t": "math",
+              "tex": "\\text{różnica bez szpilki} = 1{,}4\\,e^{-2s}"
             },
             {
               "t": "say",
               "who": "june",
-              "mood": "excited",
-              "text": "Bo to *jest* ta kawa. Kiedy szybkie kołysanie zniknie, P dopycha to, czego brakuje stosowi. Uchyb to więc brakujące pchnięcie podzielone przez $K_p$, a stos rośnie właśnie o ten uchyb."
+              "mood": "think",
+              "text": "Czyli nagły skok to nadal zmiana, tylko ściśnięta w jedną chwilę, a reguła liczy każdą zmianę. Mam przeczucie, że ta szpilka jeszcze wróci."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Oto brakujący rachunek, w formie obrazka. Iloczyn zmienia się z dwóch powodów. $f$ się zmienia, gdy sonda stoi w miejscu, a sonda się zmienia, gdy $f$ stoi w miejscu. Wyobraź sobie prostokąt o bokach $f$ i $e^{-st}$: rośnie wzdłuż jednego boku, potem wzdłuż drugiego. Ten chwyt ma swoją nazwę: **całkowanie przez części**."
+        },
+        {
+          "t": "math",
+          "tex": "\\big(f\\,e^{-st}\\big)' = f'\\,e^{-st} - s\\,f\\,e^{-st}"
+        },
+        {
+          "t": "p",
+          "text": "Zsumuj te zmiany od 0 do ∞ (rozdział 3: pole cofa nachylenie), a dostaniesz wartość na końcu minus wartość na początku. To właśnie oznacza nawias $\\big[\\,\\cdot\\,\\big]_0^\\infty$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\big[f\\,e^{-st}\\big]_0^\\infty = \\int_0^\\infty f'\\,e^{-st}\\,dt - s\\,F(s)"
+        },
+        {
+          "t": "p",
+          "text": "Na dalekim końcu sonda zgniotła wszystko do zera (o ile $s$ przegania wzrost sygnału), więc lewa strona to po prostu $0 - f(0)$. Przenieś $s\\,F(s)$ na drugą stronę i masz regułę."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Czyli $f(0)$ to nie żadna naciągana poprawka. To prostokąt, od którego zaczęliśmy."
+        },
+        {
+          "t": "p",
+          "text": "Zastosuj tę samą regułę jeszcze raz, tym razem do $f'$, którego wartością początkową jest $f'(0)$, czyli **prędkość początkowa**:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\mathcal{L}\\{f''\\} &= s\\,\\mathcal{L}\\{f'\\} - f'(0) \\\\ &= s\\big(s\\,F(s) - f(0)\\big) - f'(0) \\\\ &= s^2 F(s) - s\\,f(0) - f'(0) \\end{aligned}"
+        },
+        {
+          "t": "note",
+          "text": "Składniki z $f(0)$ pamiętają, gdzie sygnał **się zaczął**. Miej je na oku. Ktoś wkrótce o nich zapomni."
+        }
+      ]
+    },
+    {
+      "id": "table",
+      "title": "Nasza własna tabelka",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Podręczniki drukują „tablicę transformat Laplace'a”, jakby spadła z nieba. My na swoją zapracujemy, wiersz po wierszu. Każdy wiersz to po prostu maszyna sonda-i-pole zastosowana do jednego sygnału, ze sprawdzeniem, czy wzór zgadza się z faktycznym polem."
+        },
+        {
+          "t": "widget",
+          "id": "table"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Wiersz z sinusem to mój ulubiony. Sinus to po prostu dwa bliźniacze bączki, a transformata każdego bączka to wiersz wykładniczy z $a = \\pm i\\omega$. W rozdziale 6 *dodawaliśmy* bliźniaki, żeby dostać cosinus. Jeśli je zamiast tego *odejmiesz*, części poziome się zniosą i zostanie $2i\\sin\\omega t$. Stąd właśnie bierze się to $2i$! A mnożenie mianowników bliźniaków to lustrzany iloczyn z rozdziału 7, $(s - i\\omega)(s + i\\omega) = s^2 + \\omega^2$."
+        },
+        {
+          "t": "p",
+          "text": "(Dla zespolonego $a$ wiersz wykładniczy nadal działa, o ile część pozioma $s$ przegania część poziomą $a$. Dla bliźniaków to po prostu $\\sigma > 0$.)"
+        },
+        {
+          "t": "p",
+          "text": "A ostatni wiersz nie wymagał żadnej nowej pracy: mnożenie przez $e^{-\\sigma t}$ po prostu **przesuwa** $s$ do $s+\\sigma$. Cztery wiersze, wszystkie wyprowadzone, wszystkie sprawdzone."
+        },
+        {
+          "t": "note",
+          "text": "Jedno uczciwe ostrzeżenie. Pole istnieje tylko na prawo od najwolniejszego tempa sygnału: dla $e^{-t} + e^{-5t}$ poddaje się przy $s = -1$, długo przed $-5$. Ułamek $\\frac{1}{s+1} + \\frac{1}{s+5}$ spokojnie działa dalej i nadal wybucha w obu punktach. Od teraz ufamy ułamkowi wszędzie, nawet tam, gdzie maszyna do pól się poddała. Matematycy sprawdzili, że to bezpieczne."
+        },
+        {
+          "t": "p",
+          "text": "Jest jeszcze jedna reguła, z której po cichu korzystamy. Maszyna do pól jest uczciwa: zrób sygnał 3 razy wyższy, a każdy plasterek jego pola będzie 3 razy wyższy, więc całe pole też. Dodaj dwa sygnały, a ich pola się dodadzą. Matematycy nazywają to **liniowością**."
+        },
+        {
+          "t": "play",
+          "id": "scale",
+          "text": "Weź {scrub|k} razy $e^{-rt}$ z r = {scrub|r} i zbadaj sondą przy s = {scrub|s}: pole wynosi k ÷ (s + r) = {calc|eq}."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Dzięki temu możemy transformować równanie składnik po składniku, razem z liczbami z przodu. A równanie drona to właśnie taka suma. Użyjmy tabelki!"
+        }
+      ]
+    },
+    {
+      "id": "pieces",
+      "title": "Cofamy sprowadzanie do wspólnego mianownika",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Każda odpowiedź, jaką dostaniemy, wychodzi jako jeden wielki ułamek. A nasza tabelka zna tylko małe: $\\frac1s$, $\\frac{1}{s-a}$, sinusy. Jak rozbić wielki ułamek na kawałki z tabelki?"
+        },
+        {
+          "t": "p",
+          "text": "W szkole dodawało się ułamki, sprowadzając je do wspólnego mianownika. Tutaj idziemy **wstecz**: zaczynamy od jednego ułamka i szukamy małych kawałków, które się do niego sumują. To się nazywa rozkład na **ułamki proste**:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{1}{s} + \\frac{1}{s+2} = \\frac{2s + 2}{s\\,(s+2)} \\qquad\\text{więc}\\qquad \\frac{2s+2}{s\\,(s+2)} = \\frac{A}{s} + \\frac{B}{s+2}"
+        },
+        {
+          "t": "p",
+          "text": "Co trafia do licznika każdego kawałka? **Jedna niewiadoma na każdą potęgę $s$ w jego mianowniku.** Mianownik taki jak $s$ albo $s + 2$ dostaje zwykłą liczbę. Mianownik kwadratowy, taki jak $s^2 + 2s + 5$, dostaje $B\\,s + C$: dwie niewiadome, bo trójmian kwadratowy ma miejsce na dwie."
+        },
+        {
+          "t": "widget",
+          "id": "pieces"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Każdy suwak rusza jednym kawałkiem, a w czasie kawałki też po prostu się sumują. Kawałek $A$ to skok, kawałek kwadratowy to kołysanie, które wygasa. A wielki ułamek po prawej to ich suma."
+        },
+        {
+          "t": "p",
+          "text": "Do znalezienia liczb w kawałkach pierwszego stopnia jest skrót: **sztuczka z zakrywaniem** (w podręcznikach: metoda przesłaniania). Pomnóż przez mianownik kawałka, a potem ustaw $s$ na wartość, która go zeruje: wszystkie inne kawałki znikają i zostaje tylko jego licznik."
+        },
+        {
+          "t": "math",
+          "tex": "A = \\Big[s \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=0} = \\frac{2}{2} = 1, \\qquad B = \\Big[(s+2) \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=-2} = \\frac{-2}{-2} = 1"
+        },
+        {
+          "t": "p",
+          "text": "Mianownik kwadratowy potrzebuje jeszcze jednego ruchu, zanim tabelka go odczyta: wciśnij go w kształt $(s + \\sigma)^2 + \\omega^2$ przez **dopełnianie do kwadratu**, czyli weź połowę środkowej liczby i podnieś ją do kwadratu. Tak więc $s^2 + 2s + 5 = (s + 1)^2 + 4$: gasnący cosinus i sinus z $\\sigma = 1$ i $\\omega = 2$."
+        },
+        {
+          "t": "callout",
+          "title": "Zespolone kawałki chodzą w parach bliźniaków",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Rozłóż trójmian kwadratowy dalej, a spotkasz jego dwa pierwiastki, lustrzaną parę $p$ i $\\bar p$. Ich liczniki też są lustrzanymi bliźniakami, $B$ i $\\bar B$. Z powrotem w czasie to bliźniaki z rozdziału 6, więc części boczne się znoszą: suma to jeden rzeczywisty, gasnący cosinus, który startuje pod kątem $B$ (strzałki z rozdziału 7)."
             },
             {
               "t": "math",
-              "tex": "\\frac{d}{dt}\\!\\int\\!\\err e\\,dt = \\err e \\approx \\frac{\\dis{mg} - K_i\\!\\int\\!\\err e\\,dt}{K_p} \\;\\Longrightarrow\\; \\tau_I \\approx \\frac{K_p}{K_i}"
+              "tex": "\\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\;\\Longrightarrow\\; B\\,e^{pt} + \\bar B\\,e^{\\bar p t} = 2|B|\\,e^{\\sigma t}\\cos\\!\\big(\\omega t + \\angle B\\big)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "solve",
+      "title": "Rozwiązujemy drona algebrą",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Oto dron z rozdziału 2 ze sterowaniem P, tym razem bez darmowego ciągu na wiszenie, początkowo na **półce o wysokości 1 m**. W chwili $t=0$ puszczamy go i żądamy 2 m. W obliczeniu od tej chwili nowa wartość zadana i stała siła grawitacji transformują się jak skoki:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\,\\out{h}'' + c\\,\\out{h}' = \\eff{K_p}\\,(\\sp{2} - \\out{h}) - \\dis{m g}"
+        },
+        {
+          "t": "p",
+          "text": "**Krok 1:** przetransformuj każdy składnik. Ponieważ pola skalują się i dodają (część o tabelce), każdy składnik możemy transformować osobno. Skok o wielkości $r$ staje się $r/s$, a nachylenia stają się mnożeniem przez $s$. Oto, co napisaliśmy:"
+        },
+        {
+          "t": "math",
+          "on": "ch7:ic",
+          "tex": "m\\,s^2\\out{H} + c\\,s\\,\\out{H} = \\eff{K_p}\\Big(\\frac{\\sp{2}}{s} - \\out{H}\\Big) - \\frac{\\dis{m g}}{s}",
+          "alt": "\\begin{aligned} & m\\big(s^2\\out{H} - s\\,h(0) - h'(0)\\big) \\\\ &\\quad + c\\big(s\\,\\out{H} - h(0)\\big) \\\\ &= \\eff{K_p}\\Big(\\frac{\\sp{2}}{s} - \\out{H}\\Big) - \\frac{\\dis{m g}}{s} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "**Krok 2:** teraz to algebra. Zbierz $\\out{H}$ po jednej stronie, a potem podziel:"
+        },
+        {
+          "t": "math",
+          "on": "ch7:ic",
+          "tex": "\\begin{gathered} \\begin{aligned} &(m s^2 + c s + \\eff{K_p})\\,\\out{H} \\\\ &\\quad = \\frac{\\eff{K_p}\\,\\sp{2} - \\dis{m g}}{s} \\end{aligned} \\\\[8pt] \\out{H}(s) = \\frac{N(s)}{s\\,\\big(m s^2 + c s + \\eff{K_p}\\big)} \\\\[8pt] N(s) = \\eff{K_p}\\,\\sp{2} - \\dis{m g} \\end{gathered}",
+          "alt": "\\begin{gathered} \\begin{aligned} &(m s^2 + c s + \\eff{K_p})\\,\\out{H} \\\\ &\\quad = m\\,h(0)\\,s + m\\,h'(0) + c\\,h(0) \\\\ &\\qquad + \\frac{\\eff{K_p}\\,\\sp{2} - \\dis{m g}}{s} \\end{aligned} \\\\[8pt] \\out{H}(s) = \\frac{N(s)}{s\\,\\big(m s^2 + c s + \\eff{K_p}\\big)} \\\\[8pt] \\begin{aligned} N(s) &= m\\,h(0)\\,s^2 \\\\ &\\quad + \\big(m\\,h'(0) + c\\,h(0)\\big)\\,s \\\\ &\\quad + (\\eff{K_p}\\,\\sp{2} - \\dis{m g}) \\end{aligned} \\end{gathered}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Popatrzcie. Żadnych nachyleń, tylko przestawianie liter. Theo, twój zeszyt przestał dymić."
+        },
+        {
+          "t": "p",
+          "text": "**Krok 3:** rozbij to na kawałki z tabelki, jak w części powyżej: jedna liczba w liczniku kawałka z $s$ i $B s + C$ w liczniku kawałka kwadratowego:"
+        },
+        {
+          "t": "math",
+          "tex": "\\out{H}(s) = \\frac{A}{s} + \\frac{B s + C}{m s^2 + c s + \\eff{K_p}}"
+        },
+        {
+          "t": "p",
+          "text": "Jak znaleźć $A$, $B$ i $C$? Pomnóż obie strony przez wspólny mianownik $s\\,(m s^2 + c s + \\eff{K_p})$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} N(s) &= A\\,(ms^2+cs+\\eff{K_p}) \\\\ &\\quad + s\\,(Bs+C) \\end{aligned}"
+        },
+        {
+          "t": "callout",
+          "title": "Sztuczka z zakrywaniem",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Dla $A$ jest skrót. Pomnóż $\\out{H}$ przez $s$, a każdy kawałek oprócz $A/s$ nadal ma $s$ w liczniku. Wstaw $s = 0$ i wszystkie znikają. Zostaje tylko $A$:"
+            },
+            {
+              "t": "math",
+              "tex": "A = \\Big[s\\,\\out{H}(s)\\Big]_{s=0} = \\frac{N(0)}{\\eff{K_p}} = \\sp{2} - \\frac{\\dis{mg}}{\\eff{K_p}}"
+            },
+            {
+              "t": "p",
+              "text": "A $s\\,\\out{H}$ blisko $s = 0$ mówi, gdzie dron znajdzie się na dłuższą metę, o ile w ogóle się ustali. Końcowa wysokość wypada prosto z algebry, bez żadnej symulacji."
             },
             {
               "t": "say",
               "who": "mika",
-              "mood": "happy",
-              "text": "Rośnie proporcjonalnie do tego, ile jeszcze zostało. Rozdział 3!"
+              "mood": "surprised",
+              "text": "Chwila. Możemy odczytać, gdzie się *ustali*, niczego nie rozwiązując? To wygląda na oszustwo."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "To jest oszustwo, chyba że cała reszta wygasa. Tutaj pozostałe kawałki to własne kołysanie drona, a ono zanika, więc zostaje $A$. Gdyby mianownik miał pierwiastek w prawej połowie, $A/s$ nadal siedziałoby w ułamku, ale rosnący kawałek by je zagłuszył i dron nigdy by się nigdzie nie ustalił. Rozdział 10 pokazuje, jak to sprawdzić."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Potem porównaj obie strony, potęga $s$ po potędze. Same liczby dają $A$, składniki z $s^2$ dają $B$, a składniki z $s$ dają $C$:"
+        },
+        {
+          "t": "math",
+          "on": "ch7:ic",
+          "tex": "\\begin{gathered} A = \\sp{2} - \\frac{\\dis{mg}}{\\eff{K_p}} \\\\ B = -m\\,A, \\qquad C = -c\\,A \\end{gathered}",
+          "alt": "\\begin{gathered} A = \\sp{2} - \\frac{\\dis{mg}}{\\eff{K_p}} \\\\ B = m\\,\\big(h(0) - A\\big) \\\\ C = m\\,h'(0) + c\\,\\big(h(0) - A\\big) \\end{gathered}"
+        },
+        {
+          "t": "p",
+          "text": "Nie pojawia się tu żadna nowa fizyka: po prostu cofnęliśmy sprowadzanie do wspólnego mianownika, żeby dostać kawałki, które nasza tabelka umie przenieść z powrotem w czas. Zauważ, że $A$ nie obchodzi, skąd dron wystartował."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "I ani razu nie musieliśmy zgadywać $e^{st}$. Tabelka zgadła za nas."
+        },
+        {
+          "t": "p",
+          "text": "**Krok 4:** znajdź każdy kawałek w tabelce, którą właśnie wyprowadziliśmy: $A/s$ to skok, a drugi kawałek to gasnący cosinus plus gasnący sinus (dygresja poniżej pokazuje, jak pasuje do tych wierszy). Odczytaj $h(t)$."
+        },
+        {
+          "t": "callout",
+          "title": "Dopełnianie do kwadratu: rozdział 7 chował się w mianowniku",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Drugiego kawałka nie ma jeszcze w tabelce: jego mianownik to zwykły trójmian kwadratowy. Wciśnij go w kształt $(s+\\sigma)^2 + \\omega^2$ (dopełnianie do kwadratu, jak w części powyżej), a będzie dokładnie pasował do wierszy z gasnącym sinusem. Licznik dzieli się tak samo, jedna część na wiersz z cosinusem, druga na wiersz z sinusem:"
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{gathered} 0{,}5\\,s^2 + s + \\eff{K_p} = 0{,}5\\,\\big((s+1)^2 + \\omega_d^2\\big) \\\\ \\omega_d^2 = 2\\eff{K_p} - 1 \\\\[6pt] B\\,s + C = B\\,(s+1) + (C - B) \\end{gathered}"
             },
             {
               "t": "p",
-              "text": "Czyli zwis gaśnie jak stygnąca kawa, ze stałą czasową całkowania około $K_p/K_i$ = 2 s przy naszych wzmocnieniach. Na mapie z rozdziału 8 to wolny biegun w pobliżu $-K_i/K_p = -0{,}5$. (Tylko „około”: szybkie kołysanie potrzebuje chwili, żeby zgasnąć, a przy dużym $K_i$ jedno miesza się z drugim. Dlatego liczba powyżej sięga najwyżej 12)."
+              "text": "Czyli $\\sigma = 1$, co dla naszego drona jest wielkością $\\zeta\\omega_n$ z rozdziału 7, a $\\omega$ to tłumione kołysanie $\\omega_d$."
+            },
+            {
+              "t": "play",
+              "id": "square",
+              "text": "Przy $\\eff{K_p}$ = {scrub|kp|eff} N/m mamy $\\omega_d^2$ = {calc|wd2}, więc mianownik zeruje się w s = {calc|roots}."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "surprised",
+              "text": "Zaraz. Mianownik zeruje się dokładnie w tych dwóch kropkach, które w rozdziale 7 postawiliśmy na mapie! Zapamiętajcie to."
             }
           ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Sprawdźmy to z symulacją!"
         },
         {
           "t": "predict",
-          "id": "ch9-bigki",
+          "id": "ch7-ledge",
           "gate": true,
-          "q": "Mika chce się pozbyć zwisu *szybko*, więc planuje mocno podkręcić $K_i$. Co się stanie?",
+          "q": "Stawiamy drona na półce o wysokości 1 m i puszczamy nasz wzór obok symulacji. Co zobaczymy?",
           "options": [
             {
-              "text": "Zwis zniknie szybko i czysto",
-              "sketch": "smooth",
-              "why": "Taka jest nadzieja. Ale stos ma bezwładność: zanim uchyb dojdzie do zera, zbierze się w nim *za dużo* pchnięcia."
+              "text": "Zgadzają się od pierwszej chwili",
+              "why": "Będą się zgadzać, gdy wzór dowie się o półce. Nasza pierwsza próba o niej nie wie: spójrz, co napisaliśmy w kroku 1."
             },
             {
-              "text": "Zwis zniknie, ale dron będzie się bardziej kołysał, a przy przesadzie rozhuśta się na kawałki",
-              "sketch": "growing-wiggle",
+              "text": "Zaczynają w różnych miejscach, ale kończą na tej samej wysokości",
               "correct": true,
-              "why": "Stos pamięta przeszłość, więc pcha dalej, gdy dron już dotarł: przeregulowanie. Przy zbyt dużym $K_i$ każde przeregulowanie jest większe od poprzedniego."
+              "why": "Tak. Zgubiliśmy składniki z $h(0)$, więc wzór zaczyna od 0 m, a dron od 1 m. Oba i tak ustalają się na tych samych 1,755 m, bo kawałek $A$ nie zależy od półki."
             },
             {
-              "text": "Nic się nie zmieni, bo $K_i$ ma znaczenie dopiero na samym końcu",
-              "sketch": "droop",
-              "why": "Stos zaczyna rosnąć od pierwszej chwili, w której pojawia się uchyb, więc $K_i$ kształtuje cały lot."
+              "text": "Nigdy się nie zgadzają, nawet na końcu",
+              "why": "Końcowa wysokość pochodzi z kawałka $A = 2 - mg/K_p$, który nie zależy od $h(0)$. Czyli na końcu się spotykają; źle jest tylko na początku."
             }
           ]
         },
         {
-          "t": "p",
-          "text": "Widżet startuje z $K_i$ = 10 N/(m·s). Obserwuj trzy rzeczy: {err|czerwone zacieniowane pole} (uchyb, który się gromadzi), {eff|przerywaną pomarańczową} część całkującą ciągu, która wspina się do {dis|fioletowej linii grawitacji}, oraz odczyt zwisu. Przesuń $K_i$ do 0, a wróci zwis z rozdziału 2, potem spróbuj większych wartości. $K_p$ jest ustalone na 20 N/m."
-        },
-        {
-          "t": "play",
-          "id": "area",
-          "text": "W spoczynku P i D nie pchają wcale (nie ma uchybu ani prędkości), więc stos sam trzyma cały ciężar. Przy $K_i$ = {scrub|ki|eff} N/(m·s) wypadkowe {err|czerwone pole} musi wynieść dokładnie $mg/K_i$ = {calc|area} m·s. Porównaj z odczytem w widżecie."
-        },
-        {
           "t": "widget",
-          "id": "integral"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "Podkręcaj! $K_i = 50$! Spalić to ogniem!"
+          "id": "solve"
         },
         {
           "t": "say",
           "who": "mika",
           "mood": "worried",
-          "text": "…czemu to się nie zatrzymuje? Podskoki rosły i rosły, a teraz dron jeździ w górę i w dół jak jojo o pół metra, bez końca!"
+          "text": "Ojej. Wzór zaczyna od **zera**, a dron startuje z półki na 1 m. Algebra kłamie?"
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "think",
-          "text": "Przy 50 przekroczyłaś jakąś krawędź. Sprawdziłem kilka wartości: poniżej mniej więcej 40 się ustala, powyżej nie (a jedno wahnięcie jojo trwa około sekundy). Zaraz zobaczymy dlaczego. Stos jest *zawsze trochę spóźniony*: pcha w górę jeszcze po tym, jak dron minął 2 m."
+          "text": "Z algebrą wszystko w porządku. To *my* skłamaliśmy. Spójrz na krok 1: napisaliśmy $\\mathcal{L}\\{h''\\} = s^2 H$ i $\\mathcal{L}\\{h'\\} = s\\,H$ i zgubiliśmy każde $h(0)$. A to dokładnie ta część, która pamięta półkę."
         },
         {
           "t": "p",
-          "text": "To błąd Miki i to bardzo częsty: całka naprawia zwis, ale dodaje **opóźnienie**, a opóźnienie powoduje wahania (nauczył nas tego prysznic). Potrzebujemy czegoś, co odpycha się od *prędkości*. (Według matematyki wahania jej drona powinny rosnąć w nieskończoność. Zatrzymują się na mniej więcej pół metra tylko dlatego, że przy każdym wahnięciu ciąg spada do 0 N: śmigła nie potrafią ciągnąć w dół, to ograniczenie z rozdziału 8.)"
-        }
-      ]
-    },
-    {
-      "id": "derivative",
-      "title": "D: wirtualny amortyzator",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "W rozdziale 6 to tłumik uspokajał sprężynę. A gdyby regulator **udawał** tłumik?"
-        },
-        {
-          "t": "p",
-          "text": "Tłumik działa przeciwnie do prędkości. Więc dodajmy składnik, który działa przeciwnie do tego, jak szybko porusza się dron:"
-        },
-        {
-          "t": "math",
-          "tex": "\\eff{T_D} = -K_d\\,\\frac{d\\out{h}}{dt}"
-        },
-        {
-          "t": "p",
-          "text": "Spójrz na równanie drona: opór już daje $-c\\,\\dot h$. Składnik D dodaje do tego $-K_d\\,\\dot h$, więc dron zachowuje się tak, jakby jego opór wynosił $c + K_d$. Dodajemy opór powietrza **w oprogramowaniu**."
+          "text": "Przełącz przełącznik, żeby przywrócić składniki z wysokością początkową, i patrz, jak zmieniają się razem z nim kroki 1 i 2 oraz współczynniki powyżej. Przerywany wzór i niebieska symulacja leżą teraz dokładnie jedno na drugim: największa różnica jest mniejsza niż milionowa część metra, to zwykłe zaokrąglenia. Zmień $\\eff{K_p}$ albo wysokość półki, a nadal się zgadzają."
         },
         {
           "t": "play",
-          "id": "zeta",
-          "text": "Przy $K_p$ = 20 N/m i $K_d$ = {scrub|kd|eff} N·s/m dron czuje opór {calc|damp|eff} N·s/m, więc współczynnik tłumienia z rozdziału 6 wynosi $\\zeta = (c+K_d)/(2\\sqrt{m K_p})$ = {calc|zeta}: {calc|regime}. (Z włączonym I jest jeszcze trzeci, wolny biegun, więc traktuj to jako charakter szybkiej pary)."
-        },
-        {
-          "t": "note",
-          "text": "Ściśle mówiąc, D w PID to nachylenie *uchybu*, $K_d\\,\\dot e$. Gdy wartość zadana stoi w miejscu, $\\dot e = -\\dot h$, czyli to samo. Za chwilę zobaczymy, dlaczego ta różnica ma znaczenie."
-        },
-        {
-          "t": "widget",
-          "id": "damper"
-        },
-        {
-          "t": "p",
-          "text": "Włącz **duże wzmocnienie I Miki**, a potem dodaj tłumienia. Nawet $K_d = 0{,}5$ N·s/m przywraca stabilność (przesuwa krawędź do $K_i = 60$): niekończące się jojo zamienia się w podskakiwanie, które wygasa. Ale przeregulowanie wciąż wynosi co najmniej jedną czwartą, ile D byś nie dodała. Ten ogromny stos po prostu za dużo pamięta. Teraz wyłącz $K_i$ Miki (z powrotem na 10) i spróbuj $K_d \\approx 3$–5: spokój. **I i D coś za coś**: D daje miejsce na I, ale nie nieograniczone."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Skoro 4 jest dobre, to 10 musi być lepsze. Maksymalny amortyzator!"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "surprised",
-          "text": "Pełznie w górę tak powoli… a potem i tak *przelatuje* 2 m? Z opóźnieniem?"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "June, to znowu twój miodowy dron z rozdziału 6! Powyżej $K_d \\approx 5{,}3$ szybka para jest przetłumiona. Ale teraz jest jeszcze stos, a powolny dron daje stosowi czas, żeby się przepełnił."
-        },
-        {
-          "t": "p",
-          "text": "Tłumienie krytyczne to ζ = 1: $K_d = 2\\sqrt{m K_p} - c \\approx 5{,}3$ N·s/m przy $K_p$ = 20. Przy $K_i$ = 10 przejście z $K_d$ = 4 na 10 podnosi przeregulowanie z 0 do około 8 %, a czas ustalania z poniżej sekundy do około 5 s. Więcej D nie zawsze znaczy lepiej; widżet mówi to teraz, gdy przesadzisz."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "happy",
-          "text": "Czyli D **przewiduje przyszłość**! Widzi, dokąd dron leci, i jest tam pierwszy."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Nie do końca. Zna tylko nachylenie *w tej chwili*. To jak zgadywanie, gdzie wyląduje piłka, przy założeniu, że poleci prosto. Zwykle niezły strzał, ale to nie magia. Poczekaj, aż podłączymy mu rozedrgany czujnik."
-        }
-      ]
-    },
-    {
-      "id": "poles",
-      "title": "Co każde pokrętło robi z biegunami",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Czas użyć mapy z rozdziału 8. Zapiszmy całą pętlę, z $\\err{e} = \\sp{r} - \\out{h}$:"
-        },
-        {
-          "t": "math",
-          "tex": "m\\ddot{\\out h} + c\\dot{\\out h} = \\underbrace{K_p\\,\\err e + K_i\\!\\int\\!\\err e\\,dt - K_d\\,\\dot{\\out h}}_{\\eff{T}} - \\dis{mg}"
-        },
-        {
-          "t": "p",
-          "text": "Całka jest niewygodna, więc weźmy nachylenie obu stron. Nachylenie i pole znoszą się nawzajem (rozdział 3), więc nachylenie $\\int \\err e\\,dt$ to po prostu $\\err e$. Grawitacja jest stała, więc jej nachylenie wynosi **zero**: po prostu wypada. Przy stałej wartości zadanej $\\dot{\\err e} = -\\dot{\\out h}$. Składnik po składniku:"
-        },
-        {
-          "t": "math",
-          "tex": "\\begin{aligned} \\tfrac{d}{dt}\\big(K_p\\,\\err e\\big) &= -K_p\\,\\dot{\\out h} \\\\ \\tfrac{d}{dt}\\Big(K_i\\!\\int\\!\\err e\\,dt\\Big) &= K_i\\,(\\sp r - \\out h) \\\\ \\tfrac{d}{dt}\\big(-K_d\\,\\dot{\\out h}\\big) &= -K_d\\,\\ddot{\\out h} \\end{aligned}"
-        },
-        {
-          "t": "p",
-          "text": "Złóżmy je z powrotem i przenieśmy wszystko z $\\out h$ na lewo. Trzy kropki nad $\\dddot{\\out h}$ oznaczają nachylenie nachylenia nachylenia:"
-        },
-        {
-          "t": "math",
-          "tex": "\\begin{aligned} m\\dddot{\\out h} + (c + K_d)\\,\\ddot{\\out h} &+ K_p\\,\\dot{\\out h} + K_i\\,\\out h \\\\ &= K_i\\,\\sp r \\end{aligned}"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "surprised",
-          "text": "Grawitacja *zniknęła* z równania. To zabójca zwisu w wersji algebraicznej: końcowa wysokość w ogóle nie przejmuje się $mg$. O ile w ogóle się ustala. Dron Miki z $K_i = 50$ nigdy się nie ustalił."
-        },
-        {
-          "t": "p",
-          "text": "Znów zgadujemy $e^{st}$. **Przy aktywnym I** równanie jest trzeciego stopnia, więc są trzy bieguny. Jeśli $K_i=0$, nie ma całkowania: branie nachylenia dodało fałszywy pierwiastek w $s = 0$, wspólny czynnik $s$ się skraca i dron z PD ma dwa bieguny."
-        },
-        {
-          "t": "math",
-          "tex": "m s^3 + (c + K_d)\\,s^2 + K_p\\,s + K_i = 0"
-        },
-        {
-          "t": "callout",
-          "title": "I to dzielenie przez s",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "W rozdziale 7 nachylenie stało się „× s”. Pole to odwrotność, więc staje się „÷ s”. Zapisz tak regulator, weź przepis samego drona $P(s) = 1/(ms^2+cs)$ (na wejściu ciąg, na wyjściu wysokość) i znajdź bieguny regułą pętli z rozdziału 8, $1 + C\\,P = 0$. Pozbądź się ułamków, a wyjdzie to samo równanie trzeciego stopnia, bez brania ani jednego nachylenia:"
-            },
-            {
-              "t": "math",
-              "tex": "\\begin{gathered} C(s) = K_p + \\frac{K_i}{s} + K_d\\,s \\\\ 1 + C(s)\\,\\frac{1}{ms^2+cs} = 0 \\\\ ms^3 + (c+K_d)\\,s^2 + K_p\\,s + K_i = 0 \\end{gathered}"
-            },
-            {
-              "t": "say",
-              "who": "mika",
-              "mood": "excited",
-              "text": "Czyli to ÷ s *jest* tym dodatkowym biegunem!"
-            },
-            {
-              "t": "say",
-              "who": "june",
-              "mood": "think",
-              "text": "A licznik ułamka dostaje $K_p s + K_i$: **zero** w $-K_i/K_p$. (Nasze D działa tylko na $\\out h$, więc nie dodaje zera). Miej je na oku."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Dla wielomianu trzeciego stopnia o samych dodatnich współczynnikach $a_3 s^3 + a_2 s^2 + a_1 s + a_0$ istnieje klasyczny test (**kryterium Routha–Hurwitza**), który mówi, że wszystkie trzy bieguny leżą w lewej połowie dokładnie wtedy, gdy $a_2 a_1 > a_3 a_0$. Dla naszego drona to krawędź urwiska:"
-        },
-        {
-          "t": "math",
-          "tex": "(c + K_d)\\,K_p > m\\,K_i \\quad\\Longleftrightarrow\\quad K_i < \\frac{(c+K_d)\\,K_p}{m}"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "Reguła z nazwiskami dwóch osób. Mamy po prostu w nią uwierzyć?"
+          "id": "residues",
+          "text": "Przy $\\eff{K_p}$ = {scrub|kp|eff} N/m i półce {scrub|h0|out} m: A = {calc|A|out} m, więc dron ustala się {calc|droop|err} m poniżej celu 2 m. To zwis z rozdziału 2, $\\dis{mg}/\\eff{K_p}$, i półka go nie zmienia. Reszta to $e^{-t}$ × ({calc|wiggle}), kołysanie, które wygasa."
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "happy",
-          "text": "Nie. Sami możemy znaleźć tę krawędź."
-        },
-        {
-          "t": "p",
-          "text": "W chwili, gdy kołysząca się para dociera do osi pionowej, jej część rzeczywista jest zerowa, więc wstawmy $s=i\\omega$ do równania trzeciego stopnia. Ponieważ $i^2 = -1$ i $i^3 = -i$, części rzeczywiste i części „w bok” muszą osobno sumować się do zera:"
-        },
-        {
-          "t": "math",
-          "tex": "K_i - (c+K_d)\\,\\omega^2 = 0, \\qquad \\omega\\,\\big(K_p - m\\,\\omega^2\\big) = 0"
-        },
-        {
-          "t": "p",
-          "text": "Drugie mówi, że $\\omega^2 = K_p/m$. Wstawmy to do pierwszego:"
-        },
-        {
-          "t": "math",
-          "tex": "\\omega^2=\\frac{K_p}{m},\\qquad K_i=(c+K_d)\\omega^2=\\frac{(c+K_d)K_p}{m}"
-        },
-        {
-          "t": "callout",
-          "title": "Dlaczego pod linią jest bezpiecznie",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Zacznij od malutkiego $K_i$. Para z PD siedzi bezpiecznie po lewej, a nowy biegun tuż na lewo od zera, w pobliżu $-K_i/K_p$. Gdy $K_i$ rośnie, bieguny płynnie się przesuwają. Żeby dotrzeć do prawej połowy, któryś musi przeciąć oś pionową. W 0 może to zrobić tylko przy $K_i = 0$ (wstaw $s = 0$ do równania: zostaje samo $K_i$), a w $\\pm i\\omega$ tylko na krawędzi, którą właśnie znaleźliśmy. Więc poniżej krawędzi żaden biegun nie mógł przejść na drugą stronę."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "happy",
-              "text": "Czyli kryterium Routha–Hurwitza to po prostu „nie przejdziesz na drugą stronę, nie dotykając ściany”."
-            }
-          ]
-        },
-        {
-          "t": "play",
-          "id": "cliff",
-          "text": "Przy $K_p$ = {scrub|kp|eff} N/m i $K_d$ = {scrub|kd|eff} N·s/m wzmocnienie $K_i$ musi zostać poniżej $(c+K_d)K_p/m$ = {calc|lim} N/(m·s). Dokładnie na krawędzi dron kołysze się z $\\omega = \\sqrt{K_p/m}$ = {calc|w} rad/s: jedno wahnięcie co {calc|T} s."
-        },
-        {
-          "t": "p",
-          "text": "Przy wartościach startowych ($K_p$ = 20, bez D) krawędź leży na 40. Dokładnie tam dron Miki oszalał, a jego jojo robiło mniej więcej jedno wahnięcie na sekundę: 6,32 rad/s to własne ωn drona z P z rozdziału 6. Dodanie $K_d = 4$ przesuwa krawędź do 200. Nie wierz nam na słowo: zmieniaj liczby powyżej albo suwaki poniżej i obserwuj bieguny, minimapę i odpowiedź skokową."
-        },
-        {
-          "t": "widget",
-          "id": "poles"
-        },
-        {
-          "t": "callout",
-          "title": "Czemu wolny biegun nie robi drona wolnym?",
-          "blocks": [
-            {
-              "t": "say",
-              "who": "mika",
-              "mood": "surprised",
-              "text": "Na starcie status mówi, że najwolniejszy biegun jest w −0,54. Według rozdziału 8 to około 4/0,54 ≈ 7 s. A odpowiedź skokowa ustala się w niecałe 3!"
-            },
-            {
-              "t": "say",
-              "who": "june",
-              "mood": "think",
-              "text": "Poszukaj zera. I wnosi jedno w $-K_i/K_p = -0{,}5$, tuż obok tego bieguna. Biegun i zero tak blisko siebie prawie się skracają, więc ten mod ledwo widać, gdy przestawiamy wartość zadaną."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "think",
-              "text": "Ledwo to nie wcale. Sama szybka para, z ζ = 0,47, dałaby przeregulowanie około 19 %. Pozostały wolny mod podbija je prawie do 30 %."
-            }
-          ]
-        },
-        {
-          "t": "list",
-          "items": [
-            "**Pokrętło I** ($K_i$) dodaje do pętli trzeci biegun i może pchać parę w prawo. Przy zbyt dużym I para przekracza granicę.",
-            "**Pokrętło D** ($K_d$) przez dodatkowe tłumienie podnosi granicę stabilnego wzmocnienia I. Tory biegunów mogą zawracać: większe D nie przesuwa każdego bieguna w lewo.",
-            "**Pokrętło P** ($K_p$) głównie rozsuwa oscylującą parę w górę i w dół: szybciej, ale bardziej chwiejnie, jeśli D nie nadąża."
-          ]
-        }
-      ]
-    },
-    {
-      "id": "playground",
-      "title": "Poligon do strojenia",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Teraz na serio: start z ziemi na 2 m z prawdziwymi silnikami (0–20 N). Zdobądź wszystkie cztery gwiazdki. Za każdym razem, gdy zmienisz wzmocnienie, ostatni lot zostaje jako blady duch."
-        },
-        {
-          "t": "widget",
-          "id": "playground"
+          "text": "W rozdziale 2 musieliśmy polatać dronem, żeby znaleźć zwis. Tutaj po prostu wypadł z ułamka."
         },
         {
           "t": "note",
-          "aside": true,
-          "text": "Nie idzie? Zacznij od $K_d$ w okolicach 4 (to ζ ≈ 0,8, w złotym środku 0,7–1 z rozdziału 6), potem podnoś $K_i$, aż zniknie zwis, a na koniec delikatnie popraw $K_p$."
-        },
-        {
-          "t": "note",
-          "text": "**Nasycenie całkowania (windup):** kiedy silniki są przyklejone do 20 N, stos uchybu dalej rośnie, choć dodatkowe pchnięcie nie może nastąpić. Później całe to zmagazynowane pchnięcie wychodzi jako przeregulowanie. „Anti-windup” po prostu wstrzymuje stos, dopóki silniki są na maksimum, i każdy dron w tym rozdziale miał go do tej pory włączonego. (Silnik na ograniczeniu nie ma już zapasu, żeby cokolwiek poprawić, dlatego gwiazdki liczą czas spędzony na ograniczeniu). Przy $K_p$ = 20, $K_i$ = 20, $K_d$ = 4: około 7 % przeregulowania z anti-windupem, 17 % bez. Przełącz i porównaj."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "surprised",
-          "text": "Wyłączyłam anti-windup, ustawiłam $K_p$ = 30, $K_i$ = 60, $K_d$ = 2… i dron wystrzelił na 4 m, prosto poza swój obrazek!"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Stos rósł przez cały czas, gdy silniki szły na maksa. Z włączonym anti-windupem te same wzmocnienia dają szczyt na 2,8 m. Te same pokrętła, zupełnie inna pamięć."
-        }
-      ]
-    },
-    {
-      "id": "warnings",
-      "title": "Dwa ostrzeżenia w sprawie D",
-      "blocks": [
-        {
-          "t": "h3",
-          "text": "Ostrzeżenie 1: szarpnięcie różniczkujące"
-        },
-        {
-          "t": "p",
-          "text": "Dron wisi na 1 m. W chwili $t = 1$ s przestawiamy wartość zadaną na 1,5 m. Jeśli D używa nachylenia *uchybu*, to uchyb w jednej chwili **skacze** o pół metra. Jego nachylenie jest ogromne, a pchnięcie również."
-        },
-        {
-          "t": "play",
-          "id": "kick",
-          "text": "Skok o {scrub|dr} m widziany przez filtr {scrub|tf} s wygląda jak prędkość około {calc|slope} m/s, więc przy $K_d$ = 4 składnik D żąda mniej więcej {calc|spike|eff} N. Silniki dają najwyżej 20."
-        },
-        {
-          "t": "widget",
-          "id": "kick"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "surprised",
-          "text": "Na uchybie żąda ponad 200 N? Od silników, które dają najwyżej 20?"
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "worried",
-          "text": "A one nie umieją grzecznie odmówić. Na chwilę walą na maksa, a dron dostaje kopa w tyłek."
-        },
-        {
-          "t": "p",
-          "text": "Branie nachylenia **zmierzonej wysokości** rozwiązuje problem: dron nie potrafi się teleportować, więc jego wysokość nie ma skoków. To samo tłumienie, bez szarpnięcia. Robi tak prawie każdy prawdziwy PID."
-        },
-        {
-          "t": "h3",
-          "text": "Ostrzeżenie 2: szum"
-        },
-        {
-          "t": "p",
-          "text": "Prawdziwe czujniki wysokości drżą o kilka centymetrów. Kilka centymetrów drżenia, tysiąc razy na sekundę, ma **ogromne nachylenie**. D wzmacnia je prosto w silniki. Rozwiązaniem jest wygładzenie pomiaru przed wzięciem nachylenia (filtr ze stałą czasową $\\tau_f$), kosztem nieco późniejszej reakcji."
-        },
-        {
-          "t": "play",
-          "id": "jitter",
-          "text": "Odczytywane co milisekundę 2 cm drżenia wyglądają jak prędkość 20 m/s. Przez filtr o $\\tau_f$ = {scrub|tf} s wzmocnienie $K_d$ = 4 zamienia $\\sigma_n$ = 2 cm szumu w około $K_d\\sigma_n/\\tau_f$ = {calc|d|eff} N drżenia ciągu; P dokłada tylko $K_p\\sigma_n$ = 0,3 N (tu $K_p$ = 15)."
-        },
-        {
-          "t": "widget",
-          "id": "noise"
-        },
-        {
-          "t": "callout",
-          "title": "Filtr to kawa z rozdziału 3",
-          "blocks": [
-            {
-              "t": "math",
-              "tex": "\\frac{d\\,h_f}{dt} = \\frac{h_m - h_f}{\\tau_f}"
-            },
-            {
-              "t": "p",
-              "text": "Filtr wygładzający to prawo stygnięcia Newtona skierowane na czujnik: wygładzona wysokość $h_f$ goni rozedrgany odczyt $h_m$ ze stałą czasową $\\tau_f$, tak jak kawa goniła temperaturę pokoju. Szybkie drżenie nie ma szans jej ruszyć. Prawdziwy ruch owszem, mniej więcej jedno $\\tau_f$ później. To jest cena, w sekundach."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "surprised",
-              "text": "Czyli lekarstwem na nerwowe D jest… trochę opóźnienia? To samo, przez co stos się huśtał?"
-            },
-            {
-              "t": "say",
-              "who": "june",
-              "mood": "happy",
-              "text": "Jakaś dziesiąta część sekundy. Opóźnienie nie jest złe. To cena, a tutaj niewysoka."
-            }
-          ]
-        },
-        {
-          "t": "note",
-          "text": "Widać było, jak dron przy krótkim filtrze **dryfuje w górę**? (Patrz na odczyt średniej wysokości). Terkoczący ciąg dużo częściej obcina się na 0 N niż na 20 N (mniej więcej 55 % czasu wobec 5 %: do wiszenia wystarczy 4,9 N), więc obcięta średnia wychodzi *powyżej* ciężaru. Szum razem z ograniczeniami potrafi nawet przesunąć średnią. Prawdziwy sprzęt jest pełen takich niespodzianek."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "surprised",
-          "text": "Dobra, D *nie* przewiduje przyszłości. Przewiduje to, jak szum się czuł milisekundę temu."
+          "text": "Wciąż udajemy, że silniki nie mają limitu ciągu, więc liniowa matematyka jest dokładna. Prawdziwe ograniczenia przyjdą w rozdziale 10."
         }
       ]
     },
     {
       "id": "wrap",
-      "title": "Co naprawiliśmy",
+      "title": "Co teraz wiemy",
       "blocks": [
         {
           "t": "recap",
           "items": [
-            "**P** pcha proporcjonalnie do uchybu, ale musi zostawić zwis, żeby utrzymać drona w górze.",
-            "**I** gromadzi dawny uchyb; jedynym punktem spoczynku jest zerowy uchyb, więc eliminuje zwis, który gaśnie ze stałą czasową około $K_p/K_i$. Dodaje opóźnienie, więc przy przesadzie powoduje wahania.",
-            "**D** działa przeciwnie do prędkości: wirtualny tłumik, który dodaje się do oporu $c$, więc $\\zeta = (c+K_d)/(2\\sqrt{mK_p})$. Więcej D nie zawsze znaczy lepiej: przetłumiony dron pełznie, a stos się przepełnia.",
-            "Układ zamknięty to $m s^3 + (c + K_d)s^2 + K_p s + K_i$; jest stabilny dokładnie wtedy, gdy $(c+K_d)K_p > mK_i$.",
-            "Licz D z pomiaru (bez szarpnięcia) i go filtruj (mniej szumu)."
+            "Nachylenia stają się mnożeniem: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. $f(0)$ pamięta, gdzie sygnał się zaczął. Zapomnij o nim, a odpowiedź zacznie w złym miejscu.",
+            "Wyprowadziliśmy własną tabelkę: $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$ i przesuniętą wersję dla gasnących sinusów. Pola skalują się i dodają, więc równanie możemy transformować składnik po składniku.",
+            "Wielkie ułamki rozkładają się na **ułamki proste**: jedna niewiadoma na każdą potęgę $s$ w każdym mianowniku, znaleziona sztuczką z zakrywaniem. Mianownik kwadratowy staje się gasnącym cosinusem i sinusem.",
+            "Transformuj, zrób algebrę, rozbij na kawałki z tabelki, odczytaj odpowiedź. Kawałek $A/s$ mówi, gdzie dron się ustali, razem ze zwisem. Zgadza się z symulacją dokładnie, **pod warunkiem, że zachowasz wartości początkowe**."
           ]
         },
         {
           "t": "quiz",
           "items": [
             {
-              "id": "ch9-q1",
-              "q": "Który składnik usuwa stały zwis pod wpływem grawitacji?",
+              "id": "ch7-q1",
+              "q": "Ile wynosi transformata Laplace'a sygnału $3e^{-2t}$?",
               "options": [
                 {
-                  "text": "Składnik całkujący",
+                  "text": "$\\dfrac{3}{s+2}$",
                   "correct": true,
-                  "why": "Jego stos uchybu zmienia się, dopóki uchyb nie jest dokładnie zerowy, a wtedy sam utrzymuje potrzebne 4,9 N."
+                  "why": "Wiersz wykładniczy z $a = -2$ daje $1/(s+2)$, a transformata 3 razy sygnału to 3 razy jego transformata (pola się skalują)."
                 },
                 {
-                  "text": "Składnik różniczkujący",
-                  "why": "D reaguje na prędkość. Gdy dron wisi nieruchomo, prędkość wynosi zero i D nic nie wnosi, więc niczego nie utrzyma."
+                  "text": "$\\dfrac{3}{s-2}$",
+                  "why": "To dla $e^{+2t}$. Wiersz to $1/(s-a)$ z $a = -2$, więc $s - (-2) = s+2$."
                 },
                 {
-                  "text": "Większe wzmocnienie proporcjonalne",
-                  "why": "Większe $K_p$ zmniejsza zwis ($mg/K_p$), ale nigdy do zera, a do tego dron bardziej się kołysze."
+                  "text": "$\\dfrac{1}{3(s+2)}$",
+                  "why": "Pomnożenie sygnału przez 3 mnoży pole przez 3, a nie je dzieli."
                 }
               ]
             },
             {
-              "id": "ch9-q3",
-              "q": "Przy $K_p = 10$ N/m i $K_d = 1$ N·s/m (dron: $m = 0{,}5$ kg, $c = 1$ N·s/m) jakie jest największe $K_i$ przed utratą stabilności?",
+              "id": "ch7-q5",
+              "q": "$f(t) = e^{-t}$, więc $F(s) = \\frac{1}{s+1}$ i $f(0) = 1$. Jaka jest transformata jej nachylenia $f'$?",
               "options": [
                 {
-                  "text": "20 N/(m·s)",
-                  "why": "Sprawdź wzór: $(c + K_d)K_p/m = (1+1)\\cdot 10 / 0{,}5$. Może umknęło dzielenie przez $m$."
-                },
-                {
-                  "text": "40 N/(m·s)",
+                  "text": "$\\frac{s}{s+1} - 1 = -\\frac{1}{s+1}$",
                   "correct": true,
-                  "why": "$(1 + 1)\\cdot 10 / 0{,}5 = 40$. Powyżej tej wartości dwa bieguny przechodzą do prawej półpłaszczyzny."
+                  "why": "$s\\,F - f(0)$. I to się zgadza: nachylenie $e^{-t}$ to $-e^{-t}$, a jego transformata to $-\\frac{1}{s+1}$."
                 },
                 {
-                  "text": "80 N/(m·s)",
-                  "why": "Za dużo. Pamiętaj, że opór $c$ i $K_d$ najpierw się dodają: $(1+1) = 2$, a nie 4."
+                  "text": "$\\frac{s}{s+1}$",
+                  "why": "To $s\\,F$ z zapomnianą wartością początkową: znowu błąd z półką."
+                },
+                {
+                  "text": "$\\frac{1}{(s+1)^2}$",
+                  "why": "Nachylenia zamieniają się w *mnożenie* przez $s$, a nie w dzielenie przez kolejne $(s+1)$."
                 }
               ]
             },
             {
-              "id": "ch9-q4",
-              "q": "Dlaczego różniczkuje się **pomiar**, a nie uchyb?",
+              "id": "ch7-q6",
+              "q": "Przy $\\eff{K_p}$ = 10 N/m: gdzie według kawałka $A/s$ ustali się dron (cel 2 m, $\\dis{mg} \\approx 4{,}9$ N)?",
               "options": [
                 {
-                  "text": "Kiedy wartość zadana skacze, uchyb też skacze, a jego nachylenie jest ogromne: szpilka ciągu",
+                  "text": "Około 1,51 m",
                   "correct": true,
-                  "why": "Wysokość nie może skakać, więc jej nachylenie pozostaje rozsądne. To samo tłumienie, bez szarpnięcia."
+                  "why": "$A = 2 - 4{,}9/10 \\approx 1{,}51$ m. Dron wisi 0,49 m za nisko: zwis z rozdziału 2."
                 },
                 {
-                  "text": "Bo pomiar jest mniej zaszumiony niż uchyb",
-                  "why": "Mają dokładnie ten sam szum; uchyb to wartość zadana minus pomiar."
+                  "text": "Dokładnie 2 m",
+                  "why": "Tylko bez grawitacji. Składnik $-\\dis{mg}/s$ ściąga $A$ w dół o $\\dis{mg}/\\eff{K_p}$."
                 },
                 {
-                  "text": "Bo regulator staje się bardziej agresywny",
-                  "why": "Wręcz przeciwnie: usuwa agresywną szpilkę przy zmianach wartości zadanej."
-                }
-              ]
-            },
-            {
-              "id": "ch9-q5",
-              "q": "$K_p$ = 20, $K_i$ = 10. Która zmiana **zwiększa** przeregulowanie przy starcie?",
-              "options": [
-                {
-                  "text": "Podniesienie $K_d$ z 4 do 10",
-                  "correct": true,
-                  "why": "Za dużo tłumienia sprawia, że dron pełznie, a stos rośnie przez cały czas pełzania: przeregulowanie rośnie z 0 % do około 8 %."
-                },
-                {
-                  "text": "Podniesienie $K_d$ z 0 do 4",
-                  "why": "To dobry kierunek: przeregulowanie spada z około 54 % do 0 %."
-                },
-                {
-                  "text": "Obniżenie $K_i$ z 10 do 5",
-                  "why": "Mniejszy stos mniej pamięta, więc przeregulowanie jest mniejsze (0 % przy $K_d$ = 4). Tyle że zwis znika wolniej."
+                  "text": "Około 0,49 m",
+                  "why": "To sam zwis, czyli odstęp poniżej celu, a nie wysokość."
                 }
               ]
             }
@@ -618,159 +528,135 @@
         },
         {
           "t": "cliff",
-          "text": "June wypróbowała nasz dronowy PID na prysznicu… i kołysało się dokładnie tak jak nam w rozdziale 0. **O co chodzi z tym opóźnieniem?**"
+          "text": "June: „Za każdym razem, gdy coś rozwiązywaliśmy, odpowiedź miała postać *(coś)* ÷ *(wielomian od s)*, a zachowanie drona brało się z miejsc, gdzie mianownik jest zerem. A co, jeśli ten ułamek **jest** dronem?”"
         }
       ]
     }
   ],
   "widgets": {
-    "integral": {
-      "title": "Stos uchybu",
-      "slider": "Wzmocnienie całkujące $K_i$",
-      "gravity": "ciężar mg",
-      "iterm": "pchnięcie całkujące Ki·∫e",
-      "readout": {
-        "droop": "zwis po 12 s",
-        "pile": "pchnięcie całkujące",
-        "area": "wypadkowe czerwone pole"
+    "derivRule": {
+      "title": "Czy reguła przetrwa bazgroły?",
+      "f": "twój sygnał f(t)",
+      "df": "jego nachylenie f′(t)",
+      "plotAria": "Narysowany sygnał i jego nachylenie w ciągu 8 sekund.",
+      "sAria": "Obie strony reguły dla pochodnej w zależności od s.",
+      "lhs": "pole pod f′·e^(−st)",
+      "rhs": "s·F(s) − f(0)",
+      "lhsShort": "transformata nachylenia",
+      "rhsShort": "s F(s) − f(0)",
+      "s": "Sonda $s$",
+      "draw": "Narysuj własny sygnał",
+      "preset": "Wypróbuj inny gotowy",
+      "help": "Wybierz gotowy sygnał (wygodne z klawiatury) albo naciśnij „Narysuj własny sygnał” i przeciągnij po wykresie sygnału od lewej do prawej. Po 8 s sygnał zostaje płaski.",
+      "drawing": "Przeciągnij po wykresie sygnału od lewej do prawej…",
+      "tooShort": "Narysuj trochę dalej (co najmniej 3 sekundy).",
+      "drawn": "Mamy to! Obie strony zostały przeliczone z twojego rysunku. Przeciągnij jeszcze raz, żeby go zastąpić.",
+      "match": "Przy s = {s} obie strony wynoszą {v}. Reguła działa dla twojego sygnału.",
+      "nomatch": "Tu trochę się różnią. To zaokrąglenia numeryczne przy bardzo ostrym rysunku.",
+      "describe": "Transformata nachylenia {l}, s F minus f od zera {r}.",
+      "stopDraw": "Przestań rysować",
+      "presetLabel": "Albo wybierz sygnał",
+      "presets": {
+        "0": "chybotanie",
+        "1": "skok",
+        "2": "zanik"
       },
-      "status": {
-        "none": "Bez całki: dron zwisa, tak jak w rozdziale 2.",
-        "slow": "Zwis maleje, ale powoli. Stos potrzebuje czasu, żeby urosnąć.",
-        "ringing": "Stabilny, ale ledwo: po 12 s wciąż się kołysze (dzwonienie). Im bliżej Ki do {lim}, tym wolniej gasną wahania.",
-        "gone": "Zwis zniknął! Stos utrzymuje teraz cały ciężar.",
-        "unstable": "Za krawędzią (Ki > {lim}): podskoki rosną, aż silniki dojdą do ograniczeń, i nigdy się nie ustala."
-      },
-      "describe": "Wzmocnienie całkujące {ki}. Zwis po 12 sekundach: {droop} cm."
+      "rhsBrace": "co przewiduje reguła"
     },
-    "damper": {
-      "title": "Dodajemy wirtualny tłumik",
-      "slider": "Wzmocnienie różniczkujące $K_d$",
-      "bigKi": "Duże $K_i$ Miki = 50",
-      "bigKiName": "Duże Ki Miki = 50",
-      "readout": {
-        "damping": "całkowite tłumienie c + Kd",
-        "overshoot": "przeregulowanie",
-        "zeta": "współczynnik tłumienia ζ"
+    "table": {
+      "title": "Tabelka, wyprowadzona",
+      "caption": "Tabelka transformat Laplace'a wyprowadzona w tym rozdziale",
+      "colSignal": "sygnał f(t)",
+      "colF": "transformata F(s)",
+      "derive": "Wyprowadź",
+      "show": "Pokaż",
+      "unknown": "jeszcze niewyprowadzone",
+      "f": "sygnał",
+      "product": "sygnał × sonda",
+      "plotAria": "Wybrany sygnał z tabelki i jego iloczyn z sondą, z zacieniowanym polem.",
+      "numeric": "zmierzone pole",
+      "formulaVal": "wzór",
+      "s": "Sonda $s$",
+      "how": "Jak do tego doszliśmy",
+      "agree": "Zmierzone pole zgadza się ze wzorem.",
+      "twinCheck": "Jego bliźniak (cosinus) też się zgadza: zmierzone {n}, wzór {f}.",
+      "describe": "Zmierzone pole {n}, wzór {f}.",
+      "rows": {
+        "0": {
+          "f": "1\\ \\ (\\text{skok})",
+          "F": "\\dfrac{1}{s}",
+          "steps": "\\text{krzywa, której nachyleniem jest } e^{-st}\\text{, to } -\\tfrac{1}{s}e^{-st}||\\begin{aligned} \\int_0^\\infty e^{-st}\\,dt &=\\Big[-\\tfrac{1}{s}e^{-st}\\Big]_0^\\infty \\\\ &= 0-\\big(-\\tfrac{1}{s}\\big)=\\frac{1}{s}\\quad (s>0) \\end{aligned}"
+        },
+        "1": {
+          "f": "e^{at}",
+          "F": "\\dfrac{1}{s-a}",
+          "steps": "e^{at}\\,e^{-st}=e^{-(s-a)t}||\\text{to wiersz skoku z } s \\text{ zastąpionym przez } s-a||\\begin{gathered} \\int_0^\\infty e^{-(s-a)t}\\,dt=\\frac{1}{s-a} \\\\ (s>a;\\ \\text{tutaj } a=-1) \\end{gathered}"
+        },
+        "2": {
+          "f": "\\sin\\omega t,\\ \\cos\\omega t",
+          "F": "\\dfrac{\\omega}{s^2+\\omega^2},\\ \\dfrac{s}{s^2+\\omega^2}",
+          "steps": "\\begin{gathered} \\sin\\omega t=\\frac{e^{i\\omega t}-e^{-i\\omega t}}{2i} \\\\ \\text{(bliźniacze bączki)} \\end{gathered}||\\begin{gathered} \\mathcal{L}\\{e^{\\pm i\\omega t}\\}=\\frac{1}{s\\mp i\\omega} \\\\ \\text{(wiersz wykładniczy, } a=\\pm i\\omega) \\end{gathered}||\\begin{aligned} &\\frac{1}{2i}\\Big(\\frac{1}{s-i\\omega}-\\frac{1}{s+i\\omega}\\Big) \\\\ &=\\frac{1}{2i}\\cdot\\frac{2i\\omega}{s^2+\\omega^2}=\\frac{\\omega}{s^2+\\omega^2} \\end{aligned}||\\begin{gathered} \\cos\\omega t=\\frac{e^{i\\omega t}+e^{-i\\omega t}}{2}\\ \\Rightarrow\\ \\frac{s}{s^2+\\omega^2} \\\\ (\\text{tutaj }\\omega=2) \\end{gathered}"
+        },
+        "3": {
+          "f": "\\begin{gathered} e^{-\\sigma t}\\sin\\omega t \\\\ e^{-\\sigma t}\\cos\\omega t \\end{gathered}",
+          "F": "\\begin{gathered} \\dfrac{\\omega}{(s+\\sigma)^2+\\omega^2} \\\\[4pt] \\dfrac{s+\\sigma}{(s+\\sigma)^2+\\omega^2} \\end{gathered}",
+          "steps": "e^{-\\sigma t}\\sin\\omega t\\cdot e^{-st}=\\sin\\omega t\\cdot e^{-(s+\\sigma)t}||\\text{więc weź wiersz sinusa i zastąp } s \\text{ przez } s+\\sigma||\\begin{gathered} \\frac{\\omega}{(s+\\sigma)^2+\\omega^2}\\quad\\text{oraz}\\quad\\frac{s+\\sigma}{(s+\\sigma)^2+\\omega^2} \\\\ (\\text{tutaj }\\sigma=0{,}5,\\ \\omega=2) \\end{gathered}"
+        }
       },
-      "status": {
-        "unstable": "Wciąż niestabilny: potrzeba więcej tłumienia.",
-        "bouncy": "Stabilny, ale skoczny. Dodaj więcej Kd.",
-        "calm": "Spokój! Tłumik pochłania podskoki.",
-        "tooMuch": "Więcej D pogorszyło sprawę! Teraz pełznie w górę tak powoli, że stos się przepełnia i przeregulowanie przychodzi późno. Zmniejsz Kd.",
-        "bigPile": "Stabilny, ale duży stos Miki wciąż daje przeregulowanie {os} %. Żadne D tego nie naprawi: wyłącz Ki Miki."
-      }
+      "colCheck": "Sprawdzone ze zmierzonym polem",
+      "differ": "Zmierzone pole i wzór tutaj się nie zgadzają. Spróbuj większego s."
     },
-    "poles": {
-      "title": "Trzy pokrętła, trzy bieguny",
-      "splane": "Płaszczyzna s z trzema biegunami układu zamkniętego drona z regulatorem PID",
-      "kp": "$K_p$",
-      "ki": "$K_i$",
-      "kd": "$K_d$",
-      "map": {
-        "x": "Kd (N·s/m)",
-        "y": "Ki (N/(m·s))",
-        "edge": "krawędź urwiska Ki = (c+Kd)Kp/m",
-        "you": "ty",
-        "aria": "Mapa Ki w zależności od Kd z linią granicy stabilności; poniżej linii układ jest stabilny."
-      },
-      "stepAria": "Odpowiedź skokowa od 1,5 m do 2 m dla bieżących wzmocnień",
-      "status": {
-        "stable": "Stabilny: Ki musi zostać poniżej {lim}. Najwolniejszy biegun siedzi w σ = {s}.",
-        "unstable": "Niestabilny! Ki jest powyżej krawędzi ({lim}). Dwa bieguny przeszły do prawej połowy.",
-        "cancel": "(Zero w {z} prawie go skraca, więc ledwo widać go w odpowiedzi skokowej)."
-      },
-      "help": "W odpowiedzi skokowej dron zaczyna, wisząc na 1,5 m, a w t = 1 s dostaje polecenie 2 m, z prawdziwymi silnikami 20 N (więc przy dużym $K_p$ może odbiegać od obrazka biegunów). Bieguny poza ramką stają się strzałkami na jej krawędzi. ○ to zero.",
-      "reShort": "σ",
-      "imShort": "ω",
-      "readout": {
-        "overshoot": "przeregulowanie skoku",
-        "settling": "czas ustalania (2 %)"
-      },
-      "never": "nie w ciągu 14 s",
-      "zero": "zero"
+    "solve": {
+      "title": "Wzór kontra symulacja",
+      "sim": "symulacja (drobne kroki)",
+      "formula": "nasz wzór z Laplace'a",
+      "target": "cel",
+      "plotAria": "Wysokość drona w czasie z symulacji i ze wzoru Laplace'a.",
+      "gap": "największa różnica",
+      "atZero": "w t = 0: symulacja / wzór",
+      "kp": "Wzmocnienie $K_p$",
+      "h0": "Wysokość początkowa (półka) $h(0)$",
+      "toggle": "Uwzględnij składniki z wysokością początkową $-h(0)$",
+      "mismatch": "Nie zgadzają się! Symulacja startuje z półki na {h} m, a wzór od 0.",
+      "odd": "Wciąż jest różnica. Sprawdź liczby.",
+      "match": "Idealna zgodność: wzór i symulacja różnią się o mniej niż milionową część metra.",
+      "settle": "ustala się na A",
+      "droop": "zwis mg/Kp = {d} m",
+      "hidden": "Przy starcie z ziemi brakujące składniki są zerowe, więc błąd się chowa. Postaw drona na półce, żeby go przyłapać.",
+      "fixed": "Składniki z −h(0) wróciły do kroków 1 i 2 powyżej.",
+      "rk4": "Symulacja robi kroki co 1 ms, jak drobne kroki z rozdziału 4, ale w każdym kroku zagląda cztery razy, żeby lepiej celować. Ten przepis nazywa się RK4 (metoda Rungego–Kutty)."
     },
-    "playground": {
-      "title": "Plac zabaw strojenia: start na 2 m",
-      "kp": "$K_p$",
-      "ki": "$K_i$",
-      "kd": "$K_d$",
-      "antiWindup": "Anti-windup",
-      "targets": "Gwiazdki za: przeregulowanie poniżej {os} %, czas ustalania (w granicach 2 %) poniżej {ts} s, brak zwisu (poniżej 1 cm) oraz silniki przyklejone do ograniczenia krócej niż {sat} s.",
-      "readout": {
-        "overshoot": "przeregulowanie",
-        "settling": "czas ustalania",
-        "sse": "zwis",
-        "saturated": "silniki na ograniczeniu"
-      },
-      "never": "nigdy",
-      "allStars": "Wszystkie cztery gwiazdki! To jest prawdziwe strojenie.",
-      "someStars": "Gwiazdki: {n} z 4.",
-      "starsAria": "Zdobyte gwiazdki: {n} z 4",
-      "hit": {
-        "back": "Bum! Uderzył w to, co jest nad nim, ale silniki dalej pracują, a sprzężenie zwrotne sprowadza go z powrotem na 2 m.",
-        "wild": "Bum! Uderzył w to, co jest nad nim. Silniki dalej pracują, ale przy tych wzmocnieniach nigdy się nie ustala.",
-        "mark": "bum!"
-      },
-      "crash": "Rozbił się po {t} s! Uderzył w ziemię szybciej niż 1,5 m/s, a rozbity dron już nie wstaje.",
-      "neverDroop": "nigdy (zwis)"
-    },
-    "kick": {
-      "title": "Skok wartości zadanej: 1 m → 1,5 m",
-      "mode": "Różniczkuj…",
-      "onError": "uchyb",
-      "onMeasurement": "zmierzoną wysokość",
-      "asked": "szczyt żądanego ciągu",
-      "peak": "szczyt dostarczonego ciągu",
-      "kickMark": "szarp!",
-      "status": {
-        "error": "Uchyb skacze, więc jego nachylenie jest ogromne: regulator żąda {req} N! Silniki mogą walnąć najwyżej na 20 N. To szarpnięcie różniczkujące.",
-        "measurement": "Wysokość nie może skakać, więc nie ma szarpnięcia: żądanie nigdy nie przekracza {req} N, a wznoszenie jest płynne."
-      }
-    },
-    "noise": {
-      "title": "Rozedrgany czujnik wysokości",
-      "toggle": "Szum czujnika (około 2 cm)",
-      "filter": "Filtr różniczkowania $\\tau_f$",
-      "filterName": "stała czasowa filtra D τf",
-      "measured": "odczyt czujnika",
-      "jitter": "drżenie ciągu",
-      "status": {
-        "off": "Idealny czujnik: spokojne silniki.",
-        "chatter": "Silniki terkoczą! D wzmacnia szum. Spróbuj dłuższego filtra.",
-        "calm": "Dużo spokojniej. Z pozostałych ±{j} N około {p} N przepuszcza wprost P; reszta to wciąż D. Cena: D reaguje teraz około {tau} s później.",
-        "noD": "Bez D nie ma czego wzmacniać szumu: pozostałe ±{j} N to P, który przepuszcza go wprost. Silniki spokojne, ale teraz drona tłumi już tylko opór powietrza."
-      },
-      "kd": "Wzmocnienie różniczkujące $K_d$",
-      "mean": "średnia wysokość",
-      "help": "Spróbuj $K_d$ = 0: drżenie spada do około 0,3 N (samo P), ale wtedy drona tłumi tylko opór powietrza. Więcej D, więcej szumu."
-    },
-    "gains": {
-      "kp": "wzmocnienie proporcjonalne Kp",
-      "ki": "wzmocnienie całkujące Ki",
-      "kd": "wzmocnienie różniczkujące Kd"
+    "pieces": {
+      "title": "Kawałki i ich suma",
+      "y": "wartość",
+      "stepPiece": "kawałek A/s: skok",
+      "wigglePiece": "kawałek (Bs + C)/(s² + 2s + 5): gasnące kołysanie",
+      "sum": "ich suma",
+      "plotAria": "Kawałek skoku, kawałek gasnącego kołysania i ich suma w czasie.",
+      "A": "Licznik kawałka z s, A",
+      "B": "Część z s w liczniku kawałka kwadratowego, B",
+      "C": "Stała część licznika kawałka kwadratowego, C",
+      "status": "Ustala się na A = {A}: kawałek z s to jedyny, który zostaje na stałe. Licznik wielkiego ułamka ma liczby {top}.",
+      "describe": "A = {A}, B = {B}, C = {C}.",
+      "help": "Przesuwaj A, B i C. Każdy kawałek to jeden wiersz naszej tabelki, a suma to cała odpowiedź."
     }
   },
   "plays": {
-    "pile": {
-      "ki": "wzmocnienie całkujące Ki, niutony na metr i sekundę"
+    "ruleExp": {
+      "a": "tempo sygnału a, na sekundę",
+      "s": "tempo sondy s, na sekundę"
     },
-    "area": {
-      "ki": "wzmocnienie całkujące Ki, niutony na metr i sekundę"
+    "scale": {
+      "k": "ile razy wyższy, k",
+      "r": "tempo zanikania r, na sekundę",
+      "s": "tempo sondy s, na sekundę"
     },
-    "zeta": {
-      "kd": "wzmocnienie różniczkujące Kd, niutonosekundy na metr"
+    "square": {
+      "kp": "wzmocnienie Kp, niutony na metr"
     },
-    "cliff": {
-      "kp": "wzmocnienie proporcjonalne Kp, niutony na metr",
-      "kd": "wzmocnienie różniczkujące Kd, niutonosekundy na metr"
-    },
-    "kick": {
-      "dr": "skok wartości zadanej, metry",
-      "tf": "stała czasowa filtra, sekundy"
-    },
-    "jitter": {
-      "tf": "stała czasowa filtra, sekundy"
+    "residues": {
+      "kp": "wzmocnienie Kp, niutony na metr",
+      "h0": "wysokość półki, metry"
     }
   }
 }

@@ -197,152 +197,6 @@
       ]
     },
     {
-      "id": "twins",
-      "title": "Zurück zur Feder (und ein neuer Fehler)",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Die Feder brauchte $a^2 = -k/m = -4$. Probier $a = 2i$: $(2i)^2 = 4\\,i^2 = -4$. ✓ Und $a = -2i$ klappt auch."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "Gut, ich lag falsch. Der Exponential-Rate-Trick überlebt. Die Feder ist $e^{2it}$, ein Dreher, der alle… 2π Sekunden zweimal herumläuft."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "Die Position der Feder ist also $e^{2it}$? Gerade ist sie bei… $0{,}4 + 0{,}9i$ Metern?"
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "worried",
-          "text": "Eine Feder kann nicht 0,9 Meter *seitlich* sein. Sie bewegt sich nur hoch und runter."
-        },
-        {
-          "t": "p",
-          "text": "Mika hat die andere Lösung vergessen. Wir haben **zwei** gefunden, $e^{2it}$ und $e^{-2it}$: einen Dreher und seinen **Spiegelzwilling**, der andersherum läuft. Zähl sie zusammen:"
-        },
-        {
-          "t": "widget",
-          "id": "twins"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "surprised",
-          "text": "Die seitlichen Teile heben sich perfekt auf! Die Summe gleitet nur auf der reellen Achse hin und her."
-        },
-        {
-          "t": "math",
-          "tex": "x(t) = \\tfrac12\\left(e^{i\\omega t} + e^{-i\\omega t}\\right) = \\cos(\\omega t),\\qquad \\omega = \\sqrt{k/m}"
-        },
-        {
-          "t": "note",
-          "text": "Das ½ steht da, weil jeder Zwilling die Hälfte beiträgt: Das Bild oben zählt zwei Dreher in voller Größe zusammen, also schwingt seine Summe bis 2. Und dieses Paar startet in Ruhe, losgelassen bei 1 m. Gib ihm Schwung, dann starten die beiden Zwillinge einfach mit entgegengesetzter Neigung; ihre Summe bleibt trotzdem auf der reellen Achse."
-        },
-        {
-          "t": "p",
-          "text": "Warum ist der Zwilling immer da? In der Regel der Feder stehen nur reelle Zahlen ($m$ und $k$, kein $i$). Spiegle eine Lösung von oben nach unten, sodass aus jedem $i$ ein $-i$ wird, und die Regel merkt keinen Unterschied: Das Spiegelbild ist auch eine Lösung. Bei allem Echten kommen die Dreher also in **Spiegelpaaren**. Zusammen heben sich ihre seitlichen Teile auf, und übrig bleibt ein echtes Wackeln, das wir messen können."
-        }
-      ]
-    },
-    {
-      "id": "map",
-      "title": "Die Karte von s",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Kapitel 4 hat uns Exponentialfunktionen gegeben, die **wachsen oder schrumpfen**. Jetzt haben wir Dreher, die **wackeln**. Bauen wir beides zusammen: $e^{st}$ mit $s = \\sigma + i\\omega$."
-        },
-        {
-          "t": "math",
-          "tex": "e^{st} = e^{(\\sigma + i\\omega)t} = \\underbrace{e^{\\sigma t}}_{\\text{wachsen/schrumpfen}}\\cdot\\underbrace{e^{i\\omega t}}_{\\text{drehen}}"
-        },
-        {
-          "t": "p",
-          "text": "Jede Zahl s ist also ein Rezept: **σ** (der Teil entlang) sagt, wie schnell es wächst oder schrumpft, **ω** (der seitliche Teil) sagt, wie schnell es sich dreht. Zusammen zeichnen sie eine **Spirale**, und der Schatten der Spirale ist das Signal, das wir sehen würden."
-        },
-        {
-          "t": "predict",
-          "id": "ch5-shadow",
-          "gate": true,
-          "q": "Setz s auf $-0{,}5 + 3i$. Wie sieht der Schatten von $e^{st}$ aus?",
-          "options": [
-            {
-              "text": "Ein Wackeln, das wächst",
-              "sketch": "growing-wiggle",
-              "why": "Wachstum braucht σ > 0. Hier ist σ = −0,5 negativ."
-            },
-            {
-              "text": "Ein Wackeln, das abklingt",
-              "sketch": "decaying-wiggle",
-              "correct": true,
-              "why": "ω = 3 lässt es drehen (ungefähr alle 2 s ein Wackler), und σ = −0,5 schrumpft es jede Sekunde um den Faktor $e^{-0{,}5} \\approx 0{,}61$."
-            },
-            {
-              "text": "Ein sanfter Abfall, ohne Wackeln",
-              "sketch": "decaying-plain",
-              "why": "Das käme bei ω = 0 heraus (s auf der waagerechten Achse). Hier ist ω = 3, also dreht es sich."
-            }
-          ]
-        },
-        {
-          "t": "widget",
-          "id": "smap"
-        },
-        {
-          "t": "p",
-          "text": "Mach einen Rundgang über die Karte, indem du s ziehst (oder die Pfeiltasten nimmst):"
-        },
-        {
-          "t": "list",
-          "items": [
-            "**Linke Hälfte** (σ < 0): Die Spirale schrumpft, das Wackeln klingt ab.",
-            "**Rechte Hälfte** (σ > 0): Die Spirale wächst, das Wackeln explodiert.",
-            "**Auf der senkrechten Linie** (σ = 0): ein perfekter Kreis, ein Wackeln, das ewig weitergeht.",
-            "**Auf der waagerechten Linie** (ω = 0): überhaupt kein Drehen, nur die schlichten Exponentialfunktionen aus Kapitel 4.",
-            "**Weiter weg von der waagerechten Linie** (nach oben oder unten): schnelleres Drehen, schnelleres Wackeln. **Weiter links**: schnelleres Abklingen."
-          ]
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Ein einziger Punkt auf dieser Karte ist also ein ganzer Charakter: wie schnell es wackelt und ob es sich beruhigt oder explodiert."
-        },
-        {
-          "t": "note",
-          "text": "Diese Karte wird unser wichtigstes Bild. Ihren offiziellen Namen bekommt sie in Kapitel 7."
-        }
-      ]
-    },
-    {
-      "id": "fourier",
-      "title": "Ein kurzer Abstecher: Alles besteht aus Drehern",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Eine letzte Überraschung. Nimm Dreher mit verschiedenen Tempi (1-, 3-, 5-, 7-mal so schnell…), schrumpf jeden genau richtig, lass ihn beim genau richtigen Winkel starten und zähl dann ihre Schatten zusammen. Mit genug davon kannst du eine riesige Vielfalt an Formen bauen, sogar eine Rechteckwelle mit scharfen Ecken."
-        },
-        {
-          "t": "widget",
-          "id": "fourier"
-        },
-        {
-          "t": "p",
-          "text": "**Fourier** zeigte, wie sich viele periodische Signale aus drehenden Teilen zusammensetzen lassen. Die Rechteckwelle ist ein Beispiel: Mehr Teile machen die flachen Abschnitte und scharfen Kanten deutlicher. Diese Beschreibung ist mächtig, hat aber Bedingungen und Grenzen, die wir später erkunden können."
-        },
-        {
-          "t": "note",
-          "text": "Ehrlichkeitskasten: Direkt neben jedem Sprung schießt die Summe immer um etwa 9 % der Sprunghöhe über, egal wie viele Teile du dazunimmst. Der Buckel wird schmaler, verschwindet aber nie."
-        }
-      ]
-    },
-    {
       "id": "wrap",
       "title": "Was wir bis jetzt wissen",
       "blocks": [
@@ -351,11 +205,9 @@
           "items": [
             "Zahlen sind Pfeile. Multiplizieren dreht und streckt sie. **i** ist eine Vierteldrehung, also $i^2 = -1$.",
             "Ein **Radiant** ist der Winkel, dessen Bogen einen Radius lang ist: Eine volle Umdrehung sind $2\\pi$. **cos θ** und **sin θ** sind die Schatten eines gedrehten Pfeils.",
-            "$e^{i\\omega t}$ ist ein Punkt, der sich im Kreis dreht. Sein Schatten ist eine Kosinuswelle.",
             "$e^{i\\theta}$, gebaut aus winzigen Schritten seitwärts $\\left(1 + \\frac{i\\theta}{n}\\right)^n$, ist der Punkt auf dem Kreis beim Winkel θ.",
-            "Echtes Wackeln kommt von **Spiegelzwilling-Drehern**, deren seitliche Teile sich aufheben.",
-            "$e^{st}$ mit $s = \\sigma + i\\omega$ dreht sich *und* wächst oder schrumpft: eine Spirale. Ihr Schatten ist ein wachsendes oder abklingendes Wackeln.",
-            "Die **Karte von s**: links beruhigt sich alles, rechts explodiert es, weiter oben wackelt es schneller."
+            "$e^{i\\omega t}$ ist ein Punkt, der sich im Kreis dreht. Sein Schatten ist eine Kosinuswelle.",
+            "Die Geschwindigkeit eines Drehers ist immer eine Vierteldrehung vor seiner Position: Geschwindigkeit $= i\\omega \\times$ Position. Das ist die exponentielle Eigenschaft mit $a = i\\omega$."
           ]
         },
         {
@@ -381,62 +233,40 @@
               ]
             },
             {
-              "id": "ch5-q2",
-              "q": "Setz s genau auf die senkrechte Linie, bei $s = 2i$. Wie sieht der Schatten von $e^{st}$ aus?",
+              "id": "ch5-q5",
+              "q": "Ein Dreher dreht sich mit ω = π Radiant pro Sekunde. Wie lange dauert eine volle Umdrehung?",
               "options": [
                 {
-                  "text": "Ein Wackeln, das ewig weitergeht",
-                  "sketch": "steady-wiggle",
+                  "text": "2 Sekunden",
                   "correct": true,
-                  "why": "σ = 0 heißt kein Wachsen oder Schrumpfen: ein perfekter Kreis, und sein Schatten ist ein gleichmäßiger Kosinus."
+                  "why": "Eine volle Umdrehung sind 2π Radiant. Bei π Radiant pro Sekunde dauert das 2π ÷ π = 2 Sekunden."
                 },
                 {
-                  "text": "Ein Wackeln, das abklingt",
-                  "sketch": "decaying-wiggle",
-                  "why": "Abklingen braucht σ < 0 (links der senkrechten Linie)."
+                  "text": "π Sekunden",
+                  "why": "π ist, wie viele Radiant er pro Sekunde schafft, nicht, wie lange eine Umdrehung dauert."
                 },
                 {
-                  "text": "Explosives Wachstum",
-                  "sketch": "growing-plain",
-                  "why": "Wachstum ohne Wackeln ist die rechte Hälfte der *waagerechten* Linie: σ > 0, ω = 0."
+                  "text": "1 Sekunde",
+                  "why": "In einer Sekunde schafft er π Radiant: nur eine halbe Drehung."
                 }
               ]
             },
             {
-              "id": "ch5-q3",
-              "q": "Eine Gitarrensaite klingt mit einem klaren Ton und verklingt langsam. Wo auf der Karte von s wohnt sie?",
+              "id": "ch5-q6",
+              "q": "In welche Richtung zeigt die Geschwindigkeit des Drehers $e^{i\\omega t}$?",
               "options": [
                 {
-                  "text": "Knapp links der senkrechten Linie, weit über der waagerechten",
+                  "text": "Eine Vierteldrehung vor seinem Positionspfeil, am Kreis entlang",
                   "correct": true,
-                  "why": "Langsames Verklingen heißt σ leicht negativ, und ein klarer Ton heißt großes ω (viele Wackler pro Sekunde)."
+                  "why": "Geschwindigkeit $= i\\omega \\times$ Position, und $\\times i$ ist eine Vierteldrehung. Der Stups geht immer seitwärts, also kommt der Punkt dem Mittelpunkt nie näher und entfernt sich auch nie: Er läuft einfach herum."
                 },
                 {
-                  "text": "In der rechten Hälfte",
-                  "why": "Die rechte Hälfte *wächst*. Eine Saite, die von selbst lauter wird, wäre beunruhigend."
+                  "text": "Gerade nach innen, zum Mittelpunkt",
+                  "why": "Dann würde der Punkt nach innen fallen, und der Pfeil würde schrumpfen. Ein Stups, der eine Vierteldrehung versetzt ist, hält ihn auf dem Kreis."
                 },
                 {
-                  "text": "Auf der waagerechten Linie, weit links",
-                  "why": "Kein ω heißt kein Wackeln (kein Ton), und weit links heißt, es stirbt sofort. Das ist ein dumpfer Plumps."
-                }
-              ]
-            },
-            {
-              "id": "ch5-q4",
-              "q": "Warum kommen die Dreher eines echten, physikalischen Wackelns immer in Spiegelpaaren?",
-              "options": [
-                {
-                  "text": "In der Regel stehen nur reelle Zahlen, also löst auch das Spiegelbild eines Drehers sie",
-                  "correct": true,
-                  "why": "Spiegle $e^{i\\omega t}$ von oben nach unten, und du bekommst $e^{-i\\omega t}$. Eine Regel ohne $i$ kann die beiden nicht unterscheiden, also sind beide Lösungen, und eine echte Bewegung nutzt beide: Ihre seitlichen Teile heben sich auf."
-                },
-                {
-                  "text": "Weil $i^2 = -1$",
-                  "why": "Stimmt zwar, aber das erklärt, warum es die Dreher *gibt*, nicht, warum sie Paare bilden."
-                },
-                {
-                  "text": "Weil eine Feder zwei Enden hat",
-                  "why": "Süß, aber nein. Ein einzelnes schwingendes Pendel hat auch Zwillingsdreher."
+                  "text": "Gerade nach außen, entlang des Positionspfeils",
+                  "why": "Das ist $e^{at}$ mit einem reellen, positiven $a$: Es wächst. Mit $a = i\\omega$ geht der Stups seitwärts."
                 }
               ]
             }
@@ -447,7 +277,7 @@
         },
         {
           "t": "cliff",
-          "text": "June: „Und **wo auf dieser Karte wohnt unsere Drohne?**“"
+          "text": "Mika: „Die rätselhafte Zahl der Feder gibt es also doch: Sie ist 2i. Heißt das, eine echte Feder schwingt **seitwärts**?“"
         }
       ]
     }
@@ -467,68 +297,6 @@
       },
       "aria": "Eine Ebene mit einem Pfeil vom Ursprung. Knöpfe multiplizieren den Pfeil mit 2, einhalb, minus eins oder i und drehen oder strecken ihn.",
       "trail": "Die bisherigen Pfeile"
-    },
-    "spinner": {
-      "title": "Der Dreher und sein Schatten",
-      "re": "entlang",
-      "im": "seitlich",
-      "position": "Position",
-      "velocity": "Geschwindigkeit",
-      "shadow": "Schatten auf der reellen Achse",
-      "shadowAxis": "Schatten",
-      "omega": "Drehtempo ω",
-      "help": "Der Geschwindigkeitspfeil (kürzer gezeichnet, damit er passt) zeigt immer eine Vierteldrehung vor dem Positionspfeil. Der blaue Punkt auf der reellen Achse ist der Schatten.",
-      "aria": "Ein Punkt, der sich im Kreis dreht, mit seinem Positionspfeil, einem Geschwindigkeitspfeil eine Vierteldrehung voraus und seinem Schatten auf der reellen Achse.",
-      "plotAria": "Der Schatten des Drehers über die Zeit: eine Kosinuswelle."
-    },
-    "twins": {
-      "title": "Ein Dreher und sein Spiegelzwilling",
-      "re": "entlang",
-      "im": "seitlich",
-      "sum": "Summe",
-      "spinnerLabel": "Dreher",
-      "twinLabel": "Zwilling",
-      "toggle": "Spiegelzwilling dazunehmen",
-      "axis": "Wert",
-      "realPart": "Teil der Summe entlang",
-      "sidePart": "seitlicher Teil der Summe",
-      "alone": "Ein Dreher allein: Die Summe wandert seitlich weg (gestrichelte Kurve).",
-      "withTwin": "Mit dem Zwilling Spitze an Ende angehängt heben sich die seitlichen Teile auf. Die Summe bleibt auf der reellen Achse: 2·cos(ωt).",
-      "aria": "Zwei Pfeile, die sich in entgegengesetzte Richtungen drehen, Spitze an Ende aneinandergehängt. Ihre Summe ist mit einem Ring markiert.",
-      "plotAria": "Der Teil entlang und der seitliche Teil der Summe über die Zeit."
-    },
-    "smap": {
-      "title": "Die Karte von s",
-      "re": "σ: schrumpfen ← → wachsen",
-      "im": "ω: drehen",
-      "reShort": "entlang",
-      "imShort": "seitlich",
-      "time": "Zeit →",
-      "shadow": "Schatten von e^(st)",
-      "shadowAxis": "Schatten",
-      "mirror": "Spiegelzwilling zeigen",
-      "readS": "s",
-      "readTurns": "Umdrehungen",
-      "readSize": "Größenänderung",
-      "spins": "Dreht sich {n}-mal pro Sekunde",
-      "noSpin": "Dreht sich überhaupt nicht",
-      "grows": "und wächst.",
-      "shrinks": "und schrumpft.",
-      "steady": "und behält seine Größe.",
-      "help": "Zieh den Punkt s auf der Karte (oder wähl ihn aus und nimm die Pfeiltasten). Rechts: die Spirale e^(st) in 3-D, die Zeit läuft nach rechts. Ihr blauer Schatten ist darunter aufgezeichnet.",
-      "mapAria": "Die Karte von s: Zieh den Punkt, um Sigma und Omega zu wählen.",
-      "spiralAria": "Dreidimensionale Spirale von e hoch s t, die Zeit läuft nach rechts, mit ihrem Schatten auf der Rückwand.",
-      "plotAria": "Schatten von e hoch s t über die Zeit."
-    },
-    "fourier": {
-      "title": "Eine Rechteckwelle aus Drehern bauen",
-      "axis": "Wert",
-      "target": "Rechteckwelle",
-      "sum": "Summe der Dreherschatten",
-      "pieces": "Anzahl der Dreher",
-      "status": "{n} Dreher zusammengezählt. Der schnellste dreht sich {f}-mal so schnell wie der erste.",
-      "aria": "Eine Rechteckwelle und die Summe einer gewählten Anzahl von Dreherschatten, die sich ihr annähern.",
-      "statusOne": "Nur ein Dreher: ein schlichtes Wackeln, noch gar nichts Eckiges daran."
     },
     "turns": {
       "title": "Drehungen in Radien messen",
@@ -568,6 +336,19 @@
       "one": "Ein Riesenschritt: 1 + iθ, weit weg vom Kreis (Länge {len}).",
       "many": "{n} Schritte: Länge {len}, Winkel {ang} rad. Mehr Schritte: Die Länge kriecht gegen 1 und der Winkel gegen θ = {th}.",
       "help": "Zieh n, um die Drehung in mehr, kleinere Stupse zu teilen; zieh θ, um das Ziel der Drehung zu ändern."
+    },
+    "spinner": {
+      "title": "Der Dreher und sein Schatten",
+      "re": "entlang",
+      "im": "seitlich",
+      "position": "Position",
+      "velocity": "Geschwindigkeit",
+      "shadow": "Schatten auf der reellen Achse",
+      "shadowAxis": "Schatten",
+      "omega": "Drehtempo ω",
+      "help": "Der Geschwindigkeitspfeil (kürzer gezeichnet, damit er passt) zeigt immer eine Vierteldrehung vor dem Positionspfeil. Der blaue Punkt auf der reellen Achse ist der Schatten.",
+      "aria": "Ein Punkt, der sich im Kreis dreht, mit seinem Positionspfeil, einem Geschwindigkeitspfeil eine Vierteldrehung voraus und seinem Schatten auf der reellen Achse.",
+      "plotAria": "Der Schatten des Drehers über die Zeit: eine Kosinuswelle."
     }
   }
 }

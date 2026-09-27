@@ -27,7 +27,7 @@ describe('DroneView label placement', () => {
     expect(pickSpot([null, a], [], 0)).toBe(1);
   });
 
-  it('never leaves "target" under the drone when it hovers near the line (the Chapter 8 "targe…" bug)', () => {
+  it('never leaves "target" under the drone when it hovers near the line (the Chapter 10 "targe…" bug)', () => {
     const r = 2;
     const fs = 16;
     for (const word of ['target', 'obiettivo', 'wysokość', '目標値']) {

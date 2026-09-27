@@ -1,650 +1,512 @@
 {
   "kicker": "Capitolo 7",
-  "title": "La trasformata di Laplace",
-  "question": "Possiamo trasformare l'analisi in algebra?",
+  "title": "La vera personalità del drone",
+  "question": "Perché il drone rimbalza come una molla?",
   "sections": [
     {
-      "id": "probe",
-      "title": "Una sonda per i segnali",
+      "id": "spring",
+      "title": "Il controllore è una molla",
       "blocks": [
         {
           "t": "say",
-          "who": "theo",
-          "mood": "worried",
-          "text": "Ogni volta che abbiamo risolto qualcosa, abbiamo *tirato a indovinare* $e^{st}$, l'abbiamo sostituito e abbiamo pregato. Ora aggiungi la gravità, un'altezza di partenza, un controllore… il mio quaderno sta andando a fuoco."
+          "who": "mika",
+          "mood": "think",
+          "text": "June ha chiesto dove vive il nostro drone sulla mappa. Indizio: vi ricordate il drone saltellante del Capitolo 2? Più alzavamo $\\eff{K_p}$, più faceva boing. Sembrava proprio un peso appeso a una molla."
         },
         {
           "t": "say",
-          "who": "june",
+          "who": "theo",
           "mood": "think",
-          "text": "Quando costruisco cose, il trucco è sempre trasformare un lavoro difficile in uno facile. Difficile: analisi con pendenze di pendenze. Facile: semplice algebra con $+$, $-$, $\\times$, $\\div$."
+          "text": "\"Sembrava\" non è una prova. Mettiamoli uno accanto all'altro e scriviamo tutte e due le equazioni."
+        },
+        {
+          "t": "p",
+          "text": "A sinistra: una massa di 0,5 kg appesa a una molla con uno smorzatore (un pistoncino pieno d'olio che si oppone al movimento). A destra: il nostro drone, stessa massa, stesso attrito, con controllo proporzionale."
+        },
+        {
+          "t": "p",
+          "text": "Prima di tutto, scriviamo ogni forza che agisce sulla massa, una alla volta. Misuriamo la sua posizione $x$ dal punto di riposo, con l'alto come verso positivo."
+        },
+        {
+          "t": "list",
+          "items": [
+            "**La molla** tira indietro verso il riposo, tanto più forte quanto più è allungata: $-\\eff{k}\\,x$. Allungala il doppio e tira il doppio.",
+            "**Lo smorzatore** si oppone al *movimento*, non alla posizione: $-c\\,\\dot{x}$. Da fermo non fa niente. Se si muove veloce, spinge indietro forte. ($\\dot{x}$ è la velocità del Capitolo 3.)",
+            "**La gravità** sposta solo un po' più in basso il punto di riposo. Misurando dal riposo, ce ne liberiamo."
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Forza = massa × accelerazione, e l'accelerazione è la pendenza della pendenza (Capitolo 3). Sommiamo le forze e portiamo tutto da una parte:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\,\\ddot{x} = -\\eff{k}\\,x - c\\,\\dot{x} \\quad\\Longrightarrow\\quad m\\,\\ddot{x} + c\\,\\dot{x} + \\eff{k}\\,x = 0"
         },
         {
           "t": "say",
           "who": "mika",
-          "mood": "excited",
-          "text": "Quindi ci serve una macchina che mangi una curva e sputi fuori qualcosa in cui le pendenze diventano moltiplicazioni? Esiste?"
+          "mood": "think",
+          "text": "Quindi lo smorzatore è aria che odia la velocità?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Più o meno. E per il nostro drone lo smorzatore *è* l'aria."
         },
         {
           "t": "p",
-          "text": "Esiste, e possiamo costruirla con cose che abbiamo già. L'idea è questa. Prendi un **segnale** qualsiasi, cioè una curva che cambia nel tempo, $f(t)$. Moltiplicalo per una **sonda**, l'esponenziale $e^{-st}$ del Capitolo 4 (per $s$ positiva si restringe). Poi misura l'**area totale** sotto il prodotto (l'area accumulata del Capitolo 3), fino in fondo, a $t = \\infty$."
-        },
-        {
-          "t": "math",
-          "tex": "F(s) = \\int_0^\\infty \\out{f(t)}\\; e^{-st}\\,dt"
-        },
-        {
-          "t": "p",
-          "text": "Tutto qui. Entra un numero $s$, esce un'area. Prova valori di $s$ diversi e ottieni una curva tutta nuova $F(s)$. Quella curva è la **trasformata di Laplace** di $f$: un'impronta digitale del segnale. Due segnali diversi (ragionevoli) non hanno mai la stessa $F(s)$, ed è per questo che più avanti potremo cercare le risposte al contrario."
-        },
-        {
-          "t": "callout",
-          "title": "Perché proprio questa sonda?",
-          "blocks": [
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "think",
-              "text": "Perché *quella* curva? Perché non una gobba, o un seno?"
-            },
-            {
-              "t": "say",
-              "who": "june",
-              "mood": "happy",
-              "text": "Due motivi, e li conto sulle dita. Uno: è la curva speciale del Capitolo 4. La sua pendenza è solo $-s$ volte sé stessa, quindi quando compariranno le pendenze diventeranno moltiplicazioni per $s$. Due: è l'esatto opposto dell'$e^{st}$ che continuavamo a tirare a indovinare. Mettila accanto a $e^{at}$ e le due si annullano quando $s = a$."
-            },
-            {
-              "t": "math",
-              "tex": "\\frac{d}{dt}\\,e^{-st} = -s\\,e^{-st} \\qquad e^{at}\\cdot e^{-st} = e^{(a-s)t}"
-            },
-            {
-              "t": "p",
-              "text": "Vedremo entrambi i lavori su questa pagina: l'annullamento nella prossima sezione, le pendenze in quella dopo."
-            }
-          ]
-        },
-        {
-          "t": "predict",
-          "id": "ch7-step",
-          "gate": true,
-          "q": "Prendi il segnale più semplice, un gradino: $f(t) = 1$ per sempre. Se rendiamo $s$ **più grande**, cosa succede all'area sotto $1 \\cdot e^{-st}$?",
-          "options": [
-            {
-              "text": "Cresce",
-              "why": "Una $s$ più grande fa spegnere la sonda *più in fretta*, quindi ce n'è di meno."
-            },
-            {
-              "text": "Si riduce",
-              "correct": true,
-              "why": "Esatto. Una $s$ più grande schiaccia la sonda più in fretta, quindi c'è meno area. Anzi, l'area vale esattamente $1/s$ (lo dimostreremo quando costruiremo la nostra tabella)."
-            },
-            {
-              "text": "Resta uguale",
-              "why": "La forma della sonda dipende da $s$: $s$ più grande vuol dire una discesa più rapida, quindi un'area più piccola."
-            }
-          ]
-        },
-        {
-          "t": "widget",
-          "id": "probe"
-        },
-        {
-          "t": "play",
-          "id": "stepArea",
-          "text": "Sonda il gradino con s = {scrub|s}: l'area è 1 ÷ {calc|s} = {calc|F}. Raddoppia s e l'area si dimezza."
-        },
-        {
-          "t": "p",
-          "text": "Fai scorrere $s$ nel widget e i punti disegnano esattamente quel $1/s$. Prova anche gli altri segnali. Un segnale che cresce $e^{0{,}5t}$ ha un'area finita solo quando la sonda si restringe **più in fretta** di quanto cresca il segnale, cioè quando $s > 0{,}5$. Sotto quel valore, l'area scappa all'infinito. L'oscillazione $\\sin 2t$ fallisce in un altro modo: con $s = 0$ la sua area fa solo avanti e indietro tra 0 e 1 (l'area negativa del Capitolo 3 che annulla quella positiva) e non si ferma mai su un numero solo."
-        },
-        {
-          "t": "callout",
-          "title": "Un'area infinita che smette di crescere",
-          "blocks": [
-            {
-              "t": "say",
-              "who": "mika",
-              "mood": "worried",
-              "text": "Un attimo. La sonda va avanti per sempre. Come fa \"per sempre\" ad avere un'area finita?"
-            },
-            {
-              "t": "p",
-              "text": "Perché quasi tutto il \"per sempre\" è quasi niente. Ogni secondo in più aggiunge meno di quello prima. Dopo un secondo l'area sotto $e^{-t}$ è già il 63% del totale (di nuovo il righello τ del Capitolo 3). Dopo cinque, supera il 99%."
-            },
-            {
-              "t": "math",
-              "tex": "\\int_0^{T} e^{-t}\\,dt = 1 - e^{-T} \\;\\to\\; 1"
-            },
-            {
-              "t": "play",
-              "id": "longArea",
-              "text": "Smetti di sommare l'area di $e^{-t}$ a t = {scrub|T} s e hai già {calc|A}. Tutto quello che viene dopo aggiunge solo {calc|left}."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "happy",
-              "text": "Quindi \"per sempre\" va benissimo, purché la coda si assottigli abbastanza in fretta. È proprio a questo che serve la sonda."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "L'area totale deve stabilizzarsi su un valore finito, così ogni $s$ riceve un numero solo. Se la sonda cala troppo lentamente, l'area continua a crescere e quella $s$ non ha risposta."
+          "text": "Nella simulazione, la {eff|freccia arancione} sulla massa è la trazione della molla e quella grigia è la spinta dello smorzatore. Guarda come la freccia dello smorzatore sparisce ogni volta che la massa si ferma per un istante in cima o in fondo a un'oscillazione."
         },
         {
           "t": "note",
-          "text": "Per ora usiamo solo $s$ reali. Le $s$ complesse arrivano tra un minuto, ed è lì che sta la magia.",
-          "aside": true
+          "text": "Per non farci distrarre dalla gravità, qui regaliamo al drone la sua spinta necessaria per restare in volo stazionario (4,9 N), così non si abbassa. Ce la guadagneremo onestamente nel Capitolo 11."
+        },
+        {
+          "t": "widget",
+          "id": "twins"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Le curve sono **una sopra l'altra**. Non simili. *Identiche.*"
+        },
+        {
+          "t": "p",
+          "text": "Guarda le due equazioni. La molla spinge indietro con una forza $\\eff{k}\\,x$: più è allungata, più tira forte. Il nostro controllore spinge con $\\eff{K_p}(\\sp{2} - \\out{h})$: più è lontano dall'obiettivo, più spinge forte. **Stessa regola.** Il controllore *è* una molla: una molla invisibile, che tira il drone verso i 2 m."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Quindi un controllore P è una molla virtuale, e l'attrito dell'aria $c$ è uno smorzatore virtuale. Tutto quello che impariamo sulle molle ce lo ritroviamo gratis."
+        },
+        {
+          "t": "callout",
+          "title": "Controllo delle unità",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "La rigidezza $\\eff{k}$ di una molla si misura in **newton al metro**: newton di trazione per ogni metro di allungamento. Il nostro guadagno $\\eff{K_p}$ trasforma metri di errore in newton di spinta, quindi anche lui è in newton al metro. Il controllore non è solo *simile* a una molla. Unità alla mano, *è* una molla."
+            },
+            {
+              "t": "play",
+              "id": "units",
+              "text": "Con $\\eff{K_p}$ = {scrub|kp|eff} N/m, un drone {scrub|e} m troppo in basso riceve {calc|f|eff} N di spinta in più."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "Smorzatori veri",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Gli ammortizzatori di un'auto sono smorzatori: olio spremuto attraverso piccoli fori, così combattono i movimenti rapidi e quasi non si accorgono di quelli lenti. Lo sono anche le cerniere a chiusura ammortizzata di un pensile della cucina e il chiudiporta in cima a una porta pesante. Togli gli ammortizzatori a un'auto e ogni buca la fa rimbalzare. Rendili troppo rigidi e ogni buca ti arriva dritta addosso."
+            }
+          ]
         }
       ]
     },
     {
-      "id": "explode",
-      "title": "La trasformata urla dove vive il segnale",
+      "id": "knobs",
+      "title": "Due manopole della personalità",
       "blocks": [
         {
           "t": "p",
-          "text": "Guardiamo più da vicino $f(t) = e^{at}$. Sondalo con $e^{-st}$ e il prodotto è $e^{(a-s)t}$, un semplice esponenziale. Finché $s > a$ si spegne, e la sua area è $\\frac{1}{s-a}$ (lo ricaveremo per bene nella tabella qui sotto)."
+          "text": "Ogni sistema massa-molla-smorzatore, e quindi ogni drone con controllo P, è descritto da soli **due numeri**. Guadagniamoceli uno alla volta."
         },
         {
-          "t": "widget",
-          "id": "explode"
+          "t": "h3",
+          "text": "Quanto è rapido: la pulsazione naturale"
+        },
+        {
+          "t": "p",
+          "text": "Togli lo smorzatore e siamo di nuovo nel Capitolo 6: la molla oscilla come $\\cos(\\omega t)$ con $\\omega = \\sqrt{k/m}$. Chiamiamo quella velocità **pulsazione naturale** $\\omega_n$: quanto in fretta il sistema *vuole* oscillare quando niente lo frena."
+        },
+        {
+          "t": "math",
+          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{k}}{m}} \\qquad\\qquad \\text{un'oscillazione completa ogni } \\frac{2\\pi}{\\omega_n} \\text{ s}"
+        },
+        {
+          "t": "play",
+          "id": "wn",
+          "text": "Con k = {scrub|k|eff} N/m e m = 0,5 kg, $\\omega_n$ ≈ {calc|wn} rad/s: un'oscillazione completa ogni {calc|period} s."
         },
         {
           "t": "say",
           "who": "mika",
-          "mood": "surprised",
-          "text": "Quando $s$ si avvicina ad $a$ il numero diventa **enorme**! Con $s = a$ la sonda annulla esattamente la crescita, il prodotto resta piatto per sempre, e l'area è infinita."
+          "mood": "excited",
+          "text": "Molla più rigida, oscillazione più veloce. Allora alzo $\\eff{k}$ al massimo e migliora tutto!"
+        },
+        {
+          "t": "p",
+          "text": "Una molla più rigida tira più forte, quindi oscilla più in fretta. Una massa più pesante è più difficile da spostare, quindi oscilla più lentamente. (I radianti al secondo sono la velocità di rotazione del Capitolo 5: un giro completo è 2π radianti, un bordo lungo 2π raggi.)"
         },
         {
           "t": "say",
           "who": "theo",
-          "mood": "excited",
-          "text": "Quindi la trasformata **esplode esattamente nella** $s$ **dove vive il segnale**. Se mi dessi solo $F(s)$, potrei trovare la $a$ del segnale cercando dove esplode."
+          "mood": "worried",
+          "text": "Piano. Nel capitolo 2 alzare $\\eff{K_p}$ ha reso il drone più veloce *e* più rimbalzante. Sentiamo prima cosa ne pensa lo smorzatore."
         },
         {
-          "t": "play",
-          "id": "scream",
-          "text": "Segnale $e^{at}$ con a = {scrub|a|out}, sonda s = {scrub|s}: il prodotto si spegne a s − a = {calc|gap} al secondo, quindi la sua area è {calc|F}. {calc|verdict}"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "happy",
-          "text": "È come un rilevatore di fumo. Avvicina $s$ ad $a$ e suona sempre più forte. Mettiti proprio su $a$ e non smette più."
+          "t": "h3",
+          "text": "Quanto rimbalza: il coefficiente di smorzamento"
         },
         {
           "t": "p",
-          "text": "Ora rendiamo $s$ complessa, $s = \\sigma + i\\omega$, proprio come i numeri che girano del Capitolo 5. Come segnale prendi la trottola della molla del Capitolo 5, $e^{2it}$ (metà della sua coppia di gemelle). La sonda $e^{-st}$ la restringe (quella è la parte sinistra-destra, $\\sigma$) **e la fa girare all'indietro** (quella è la parte su-giù, $\\omega$). Qui sotto, i pezzettini di area del prodotto vengono sommati in fila, testa-coda, come frecce: una freccia per ogni quarto di secondo. Guarda il totale progressivo."
+          "text": "Ora rimettiamo lo smorzatore. Quanto smorzamento è \"tanto\"? Dipende dalla molla: uno smorzatore che doma una molla morbida rallenta appena una molla rigida. Quindi facciamo il confronto con una quantità speciale, lo **smorzamento critico** $c_{\\text{crit}}$: lo smorzamento più piccolo che elimina del tutto la sovraelongazione."
         },
         {
-          "t": "widget",
-          "id": "unspin"
+          "t": "math",
+          "tex": "c_{\\text{crit}} = 2\\sqrt{m\\,\\eff{k}} \\qquad\\qquad \\zeta = \\frac{c}{c_{\\text{crit}}} = \\frac{c}{2\\sqrt{m\\,\\eff{k}}}"
+        },
+        {
+          "t": "p",
+          "text": "Il **coefficiente di smorzamento** ζ (la lettera greca zeta) è il nostro smorzamento come frazione di quello critico. È un numero puro, senza unità. ζ = 0 oscilla per sempre, ζ = 1 è esattamente critico, e ζ = 0,5 ha metà dello smorzamento che servirebbe per eliminare la sovraelongazione."
+        },
+        {
+          "t": "play",
+          "id": "zeta",
+          "text": "Con c = {scrub|c} N·s/m su una molla da k = 20 N/m, $c_{\\text{crit}}$ = {calc|ccrit} N·s/m, quindi ζ = {calc|zeta}: {calc|regime}."
         },
         {
           "t": "say",
           "who": "june",
-          "mood": "excited",
-          "text": "Quando la sonda gira esattamente a 2, il segnale smette di girare, tutti i pezzi puntano nella stessa direzione e il totale è il più grande possibile: $1/\\sigma$, che schizza all'infinito quando σ si riduce a 0. Quando non coincidono, le frecce si arricciano e si annullano."
+          "mood": "surprised",
+          "text": "Aspetta. 0,16? È proprio lo ζ del drone nel primo widget!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Stessa massa, stesso attrito, stessa rigidezza: stesso ζ. La molla e il drone sono davvero gemelli."
+        },
+        {
+          "t": "h3",
+          "text": "I due puntini sulla mappa"
         },
         {
           "t": "p",
-          "text": "Stessa lezione, una dimensione in più: la trasformata esplode nella $s$ complessa dove vive il segnale. Ecco perché d'ora in poi disegneremo ogni $s$ su una mappa con $\\sigma$ in orizzontale e $\\omega$ in verticale. La nostra \"mappa di $s$\" del Capitolo 5 riceve finalmente il suo nome da adulta: il **piano s**."
+          "text": "Ora torniamo alla mappa di $s$. Provando $x = e^{st}$, come nei Capitoli 4 e 6, l'equazione diventa $m s^2 + c s + k = 0$. Dividiamo per $m$, poi scriviamo i due coefficienti con le nostre manopole:"
+        },
+        {
+          "t": "math",
+          "tex": "s^2 + \\underbrace{\\frac{c}{m}}_{2\\zeta\\omega_n}\\, s + \\underbrace{\\frac{\\eff{k}}{m}}_{\\omega_n^2} = 0"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Un momento. Da dove salta fuori quel $2\\zeta\\omega_n$? Sembra inventato."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Fai il conto: $2\\zeta\\omega_n = 2 \\cdot \\frac{c}{2\\sqrt{mk}} \\cdot \\sqrt{\\frac{k}{m}} = \\frac{c}{m}$. È lo stesso numero, solo con un altro nome, così le nostre due manopole compaiono nell'equazione."
+        },
+        {
+          "t": "p",
+          "text": "Risolviamola con la formula dell'equazione di secondo grado ed ecco i due valori di $s$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} & s^2 + 2\\zeta\\omega_n\\, s + \\omega_n^2 = 0 \\\\ \\Longrightarrow\\quad & s = -\\zeta\\omega_n \\pm \\omega_n\\sqrt{\\zeta^2 - 1} \\end{aligned}"
+        },
+        {
+          "t": "callout",
+          "title": "Da dove viene il ±",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Qualsiasi equazione $s^2 + b\\,s + q = 0$ si risolve completando il quadrato: $(s + b/2)^2 = b^2/4 - q$. Una radice quadrata ha due risposte, una con + e una con −, quindi ci sono sempre **due** valori di $s$:"
+            },
+            {
+              "t": "math",
+              "tex": "s = -\\frac{b}{2} \\pm \\sqrt{\\frac{b^2}{4} - q}"
+            },
+            {
+              "t": "p",
+              "text": "Con $b = 2\\zeta\\omega_n$ e $q = \\omega_n^2$, la parte sotto la radice è $\\omega_n^2(\\zeta^2 - 1)$. Quando ζ < 1 è negativa, e ci serve la $i$ del Capitolo 5: le due risposte diventano una coppia speculare, $-\\zeta\\omega_n \\pm i\\,\\omega_n\\sqrt{1-\\zeta^2}$. A ζ = 1 la radice è esattamente zero e le due risposte si incontrano. Ecco da dove viene $c_{\\text{crit}} = 2\\sqrt{mk}$: è lo smorzamento che fa sparire la radice."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Il segno ± dà due risposte, una per ogni punto. La posizione orizzontale di un punto è **σ** (sigma): quanto in fretta quella parte del moto si riduce. La sua altezza è **ω**: quanto in fretta gira. Quando lo smorzamento è sotto 1, i punti hanno la stessa posizione orizzontale ma altezze opposte. A 1 si incontrano; sopra 1 sono entrambi sull’asse orizzontale."
         },
         {
           "t": "vocab",
           "items": [
             {
-              "term": "Il piano s",
-              "def": "La mappa dei numeri complessi $s = \\sigma + i\\omega$. A sinistra vuol dire restringersi, a destra crescere, su e giù girare. Ogni segnale $e^{st}$ vive in un punto di questa mappa, e lì la sua trasformata esplode."
+              "term": "Risposta al gradino",
+              "def": "Come risponde un sistema a un salto improvviso del suo obiettivo, qui da 0 a 1 m. È il modo classico per mostrare una personalità."
+            },
+            {
+              "term": "Tempo di assestamento (2%)",
+              "def": "Quanto ci vuole perché la risposta resti per sempre entro il 2% dall'obiettivo."
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "rule",
-      "title": "Le pendenze diventano moltiplicazioni",
-      "blocks": [
+        },
         {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "Ti ricordi il post-it del Capitolo 4? Per $e^{at}$, prendere una pendenza era solo $\\times\\, a$. Ora guarda cosa fa la sonda con una pendenza."
+          "t": "p",
+          "text": "Gioca con le due manopole. Guarda i {out|puntini blu} sulla mappa: sono i due valori di $s$, e oltre all'altezza a cui si assesta, il moto è un miscuglio di $e^{s_1 t}$ ed $e^{s_2 t}$. (Con ζ = 1 esatto i due puntini diventano uno solo, e il secondo ingrediente diventa $t\\,e^{s_1 t}$.)"
+        },
+        {
+          "t": "widget",
+          "id": "personality"
         },
         {
           "t": "vocab",
-          "title": "Abbreviazioni per questo capitolo",
+          "title": "Tre personalità",
           "items": [
             {
-              "term": "$f'$ e $f''$",
-              "def": "Abbreviazioni di $\\frac{df}{dt}$, la pendenza di $f$, e della pendenza di quella pendenza. Il Capitolo 6 le scriveva con i puntini, $\\dot x$ e $\\ddot x$."
+              "term": "Sottosmorzato ($\\zeta < 1$)",
+              "def": "I due valori di $s$ sono una coppia speculare fuori dall'asse reale, su un cerchio di raggio $\\omega_n$. La risposta va oltre e oscilla mentre si assesta."
             },
             {
-              "term": "$\\mathcal{L}\\{f\\}$",
-              "def": "\"La trasformata di $f$\": la stessa cosa di $F(s)$, comoda quando $f$ è un'espressione intera."
+              "term": "Smorzamento critico ($\\zeta = 1$)",
+              "def": "La coppia si incontra sull'asse reale in un unico puntino doppio, quindi il moto è $(A + B\\,t)\\,e^{-\\omega_n t}$. La risposta più rapida senza sovraelongazione."
             },
             {
-              "term": "Lettere maiuscole",
-              "def": "Una lettera maiuscola è la trasformata della sua minuscola: $F$ per $f$, $H$ per l'altezza $h$, $X$ per $x$."
+              "term": "Sovrasmorzato ($\\zeta > 1$)",
+              "def": "La coppia si separa lungo l'asse reale: uno va a sinistra, l'altro si avvicina piano piano allo zero. Niente sovraelongazione, ma lento."
             }
           ]
         },
         {
           "t": "p",
-          "text": "Ecco la proprietà che rende tutto questo utile. Cosa succede alla trasformata quando prendiamo la **pendenza** del segnale? Proviamo con $f = e^{at}$. La sua pendenza è $a e^{at}$ (Capitolo 4), quindi"
+          "text": "Nei puntini sottosmorzati si nasconde un altro dettaglio: la loro altezza è $\\omega_n\\sqrt{1-\\zeta^2}$, un po' **meno** di $\\omega_n$. Lo smorzamento non si limita a ridurre l'oscillazione, la rallenta anche un pochino. È la **pulsazione smorzata** $\\omega_d$, e la simulazione la mostra."
         },
         {
           "t": "math",
-          "tex": "\\begin{aligned} \\mathcal{L}\\{f'\\} &= \\frac{a}{s-a} = \\frac{s}{s-a} - 1 \\\\ &= s\\,F(s) - f(0) \\end{aligned}"
-        },
-        {
-          "t": "p",
-          "text": "La pendenza è diventata **moltiplicare per** $s$, meno il valore di partenza $f(0)$. L'analisi è diventata algebra!"
-        },
-        {
-          "t": "play",
-          "id": "ruleExp",
-          "text": "Con a = {scrub|a} e s = {scrub|s}: l'area della pendenza è {calc|lhs}, e s·F − f(0) = {calc|rhs}. Stesso numero."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Un attimo. È un trucco che funziona per $e^{at}$ perché $e^{at}$ è speciale. Tra poco mi dirai che è una regola da tabella da imparare a memoria. Non ci credo che valga per *qualsiasi* curva."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "Allora proviamola sulla curva più brutta che riesci a disegnare."
-        },
-        {
-          "t": "p",
-          "text": "Disegna un segnale qualsiasi nel primo grafico (o scegline uno pronto). Calcoliamo la sua pendenza, poi ricaviamo **entrambi i lati** della regola con la macchina delle aree: la trasformata della pendenza, e $s\\,F(s) - f(0)$. Il secondo grafico mostra quei due lati per ogni $s$."
-        },
-        {
-          "t": "widget",
-          "id": "derivRule"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "surprised",
-          "text": "Coincidono, persino per il mio scarabocchio traballante. Altro che regola da tabella: è quello che la macchina delle aree fa a qualsiasi pendenza."
+          "tex": "\\omega_d = \\omega_n\\sqrt{1 - \\zeta^2}"
         },
         {
           "t": "callout",
-          "title": "E un salto?",
-          "blocks": [
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "surprised",
-              "text": "Ho premuto \"salto\" e coincide *ancora*. Ma un salto non è liscio. Su un gradino a picco non c'è pendenza!"
-            },
-            {
-              "t": "p",
-              "text": "Guarda la pendenza nel primo grafico: a $t = 2$ c'è un picco alto e sottile. La pendenza calcolata dal computer ha visto il salto come una salita ripidissima. Togli quel picco e i due lati differiscono di $1{,}4\\,e^{-2s}$ (il salto è alto 1,4, a $t = 2$), circa 0,19 con $s = 1$."
-            },
-            {
-              "t": "math",
-              "tex": "\\text{scarto senza il picco} = 1{,}4\\,e^{-2s}"
-            },
-            {
-              "t": "say",
-              "who": "june",
-              "mood": "think",
-              "text": "Quindi un salto improvviso è pur sempre un cambiamento, solo schiacciato in un istante, e la regola conta ogni cambiamento. Ho la sensazione che quel picco tornerà."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Ecco il calcolo mancante, come immagine. Un prodotto cambia per due motivi. $f$ cambia mentre la sonda sta ferma, e la sonda cambia mentre $f$ sta ferma. Immagina un rettangolo con lati $f$ ed $e^{-st}$: cresce lungo un lato, poi lungo l'altro. Questa mossa ha un nome: **integrazione per parti**."
-        },
-        {
-          "t": "math",
-          "tex": "\\big(f\\,e^{-st}\\big)' = f'\\,e^{-st} - s\\,f\\,e^{-st}"
-        },
-        {
-          "t": "p",
-          "text": "Somma quei cambiamenti da 0 a ∞ (Capitolo 3: l'area disfa la pendenza) e ottieni il valore alla fine meno il valore all'inizio. È questo che vuol dire la parentesi $\\big[\\,\\cdot\\,\\big]_0^\\infty$:"
-        },
-        {
-          "t": "math",
-          "tex": "\\big[f\\,e^{-st}\\big]_0^\\infty = \\int_0^\\infty f'\\,e^{-st}\\,dt - s\\,F(s)"
-        },
-        {
-          "t": "p",
-          "text": "All'estremo lontano la sonda ha schiacciato tutto a zero (purché $s$ batta la crescita del segnale), quindi il lato sinistro è solo $0 - f(0)$. Porta $s\\,F(s)$ dall'altra parte ed ecco la regola."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "Quindi $f(0)$ non è un trucchetto. È il rettangolo da cui siamo partiti."
-        },
-        {
-          "t": "p",
-          "text": "Applica la stessa regola ancora una volta, stavolta a $f'$, il cui valore di partenza è $f'(0)$, la **velocità di partenza**:"
-        },
-        {
-          "t": "math",
-          "tex": "\\begin{aligned} \\mathcal{L}\\{f''\\} &= s\\,\\mathcal{L}\\{f'\\} - f'(0) \\\\ &= s\\big(s\\,F(s) - f(0)\\big) - f'(0) \\\\ &= s^2 F(s) - s\\,f(0) - f'(0) \\end{aligned}"
-        },
-        {
-          "t": "note",
-          "text": "I termini $f(0)$ ricordano da dove è **partito** il segnale. Tienili d'occhio. Tra poco qualcuno se li dimenticherà."
-        }
-      ]
-    },
-    {
-      "id": "table",
-      "title": "La nostra tabella",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "I libri stampano una \"tavola delle trasformate di Laplace\" come se fosse caduta dal cielo. Noi la nostra ce la guadagniamo, una riga alla volta. Ogni riga è solo la macchina sonda-e-area applicata a un segnale, con un controllo che la formula coincida con l'area vera."
-        },
-        {
-          "t": "widget",
-          "id": "table"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "happy",
-          "text": "La riga del seno è la mia preferita. Un seno è solo due trottole gemelle, e la trasformata di ogni trottola è la riga dell'esponenziale con $a = \\pm i\\omega$. Il Capitolo 5 *sommava* le gemelle per ottenere un coseno. *Sottraile* invece, e le parti in avanti si annullano, lasciando $2i\\sin\\omega t$. Ecco da dove viene il $2i$! E moltiplicare i denominatori delle gemelle è il prodotto allo specchio del Capitolo 6, $(s - i\\omega)(s + i\\omega) = s^2 + \\omega^2$."
-        },
-        {
-          "t": "p",
-          "text": "(Per una $a$ complessa, la riga dell'esponenziale funziona ancora, purché la parte sinistra-destra di $s$ batta la parte sinistra-destra di $a$. Per le gemelle vuol dire semplicemente $\\sigma > 0$.)"
-        },
-        {
-          "t": "p",
-          "text": "E l'ultima riga non ha richiesto nessun lavoro nuovo: moltiplicare per $e^{-\\sigma t}$ semplicemente **sposta** $s$ in $s+\\sigma$. Quattro righe, tutte ricavate, tutte controllate."
-        },
-        {
-          "t": "note",
-          "text": "Un avvertimento onesto. L'area esiste solo a destra del tasso più lento del segnale: per $e^{-t} + e^{-5t}$ si arrende in $s = -1$, molto prima di $-5$. La frazione $\\frac{1}{s+1} + \\frac{1}{s+5}$ va avanti tranquilla ed esplode comunque in entrambi i punti. D'ora in poi ci fidiamo della frazione ovunque, anche dove la macchina delle aree si è arresa. I matematici hanno controllato che si può fare."
-        },
-        {
-          "t": "p",
-          "text": "C'è un'altra regola che usiamo in silenzio. La macchina delle aree è onesta: rendi un segnale 3 volte più alto e ogni fettina della sua area diventa 3 volte più alta, quindi anche l'area intera. Somma due segnali e le loro aree si sommano. I matematici la chiamano **linearità**."
-        },
-        {
-          "t": "play",
-          "id": "scale",
-          "text": "Prendi {scrub|k} volte $e^{-rt}$ con r = {scrub|r}, sondato con s = {scrub|s}: la sua area è k ÷ (s + r) = {calc|eq}."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "È questo che ci permette di trasformare un'equazione un termine alla volta, numeri davanti compresi. E l'equazione del drone è proprio una somma di questo tipo. Usiamo la tabella!"
-        }
-      ]
-    },
-    {
-      "id": "pieces",
-      "title": "Sciogliere un denominatore comune",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Ogni risposta che otterremo uscirà come una frazione grande. Ma la nostra tabella conosce solo quelle piccole: $\\frac1s$, $\\frac{1}{s-a}$, i seni. Come spezziamo una frazione grande in pezzi della tabella?"
-        },
-        {
-          "t": "p",
-          "text": "A scuola sommavi le frazioni trovando un denominatore comune. Qui andiamo **all'indietro**: partiamo da una frazione sola e cerchiamo i pezzi piccoli che sommati la danno. Si chiama scomporre in **fratti semplici**:"
-        },
-        {
-          "t": "math",
-          "tex": "\\frac{1}{s} + \\frac{1}{s+2} = \\frac{2s + 2}{s\\,(s+2)} \\qquad\\text{so}\\qquad \\frac{2s+2}{s\\,(s+2)} = \\frac{A}{s} + \\frac{B}{s+2}"
-        },
-        {
-          "t": "p",
-          "text": "Cosa va al numeratore di ogni pezzo? **Un'incognita per ogni potenza di $s$ nel suo denominatore.** Un denominatore come $s$ o $s + 2$ riceve un semplice numero. Un denominatore di secondo grado come $s^2 + 2s + 5$ riceve $B\\,s + C$: due incognite, perché un polinomio di secondo grado ha posto per due."
-        },
-        {
-          "t": "widget",
-          "id": "pieces"
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Ogni cursore muove un pezzo, e i pezzi si sommano anche nel tempo. Il pezzo $A$ è un gradino; il pezzo di secondo grado è un'oscillazione che si spegne. E la frazione grande a destra è la loro somma."
-        },
-        {
-          "t": "p",
-          "text": "Per trovare i numeri dei pezzi di primo grado c'è una scorciatoia, il **trucco del coprire**. Moltiplica per il denominatore del pezzo, poi dai a $s$ il valore che lo annulla: tutti gli altri pezzi spariscono e resta solo il suo numeratore."
-        },
-        {
-          "t": "math",
-          "tex": "A = \\Big[s \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=0} = \\frac{2}{2} = 1, \\qquad B = \\Big[(s+2) \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=-2} = \\frac{-2}{-2} = 1"
-        },
-        {
-          "t": "p",
-          "text": "Un denominatore di secondo grado ha bisogno di un'ultima mossa prima che la tabella sappia leggerlo: portalo nella forma $(s + \\sigma)^2 + \\omega^2$ **completando il quadrato**, cioè dimezzando il numero di mezzo ed elevandolo al quadrato. Così $s^2 + 2s + 5 = (s + 1)^2 + 4$: un coseno e un seno smorzati con $\\sigma = 1$ e $\\omega = 2$."
-        },
-        {
-          "t": "callout",
-          "title": "I pezzi complessi arrivano in coppia",
+          "title": "Perché un cerchio?",
           "blocks": [
             {
               "t": "p",
-              "text": "Spezza ancora il polinomio di secondo grado e trovi le sue due radici, una coppia allo specchio $p$ e $\\bar p$. Anche i loro numeratori sono gemelli allo specchio, $B$ e $\\bar B$. Riportati nel tempo sono le gemelle del Capitolo 5, quindi le parti di lato si annullano: la somma è un unico coseno reale che si restringe e parte dall'angolo di $B$ (le frecce del Capitolo 6)."
+              "text": "Il cerchio tratteggiato nella simulazione non è una decorazione. Per ζ < 1 i puntini stanno a $\\sigma = -\\zeta\\omega_n$ e $\\omega = \\pm\\omega_n\\sqrt{1-\\zeta^2}$. Per Pitagora, la loro distanza da 0 è"
             },
             {
               "t": "math",
-              "tex": "\\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\;\\Longrightarrow\\; B\\,e^{pt} + \\bar B\\,e^{\\bar p t} = 2|B|\\,e^{\\sigma t}\\cos\\!\\big(\\omega t + \\angle B\\big)"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "solve",
-      "title": "Risolvere il drone con l'algebra",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Ecco il drone del Capitolo 2 con controllo P, stavolta senza spinta di hovering gratuita, che parte da una **mensola alta 1 m**. A $t=0$ lo lasciamo andare e chiediamo 2 m. Nel calcolo da quell'istante in poi, il nuovo riferimento e la forza di gravità costante si trasformano ciascuno come un gradino:"
-        },
-        {
-          "t": "math",
-          "tex": "m\\,\\out{h}'' + c\\,\\out{h}' = \\eff{K_p}\\,(\\sp{2} - \\out{h}) - \\dis{m g}"
-        },
-        {
-          "t": "p",
-          "text": "**Passo 1:** trasforma ogni termine. Siccome le aree si scalano e si sommano (la sezione della tabella), possiamo trasformare ogni termine per conto suo. Un gradino di ampiezza $r$ diventa $r/s$, e le pendenze diventano moltiplicazioni per $s$. Ecco cosa abbiamo scritto:"
-        },
-        {
-          "t": "math",
-          "on": "ch7:ic",
-          "tex": "m\\,s^2\\out{H} + c\\,s\\,\\out{H} = \\eff{K_p}\\Big(\\frac{\\sp{2}}{s} - \\out{H}\\Big) - \\frac{\\dis{m g}}{s}",
-          "alt": "\\begin{aligned} & m\\big(s^2\\out{H} - s\\,h(0) - h'(0)\\big) \\\\ &\\quad + c\\big(s\\,\\out{H} - h(0)\\big) \\\\ &= \\eff{K_p}\\Big(\\frac{\\sp{2}}{s} - \\out{H}\\Big) - \\frac{\\dis{m g}}{s} \\end{aligned}"
-        },
-        {
-          "t": "p",
-          "text": "**Passo 2:** ora è algebra. Raccogli $\\out{H}$ da una parte, poi dividi:"
-        },
-        {
-          "t": "math",
-          "on": "ch7:ic",
-          "tex": "\\begin{gathered} \\begin{aligned} &(m s^2 + c s + \\eff{K_p})\\,\\out{H} \\\\ &\\quad = \\frac{\\eff{K_p}\\,\\sp{2} - \\dis{m g}}{s} \\end{aligned} \\\\[8pt] \\out{H}(s) = \\frac{N(s)}{s\\,\\big(m s^2 + c s + \\eff{K_p}\\big)} \\\\[8pt] N(s) = \\eff{K_p}\\,\\sp{2} - \\dis{m g} \\end{gathered}",
-          "alt": "\\begin{gathered} \\begin{aligned} &(m s^2 + c s + \\eff{K_p})\\,\\out{H} \\\\ &\\quad = m\\,h(0)\\,s + m\\,h'(0) + c\\,h(0) \\\\ &\\qquad + \\frac{\\eff{K_p}\\,\\sp{2} - \\dis{m g}}{s} \\end{aligned} \\\\[8pt] \\out{H}(s) = \\frac{N(s)}{s\\,\\big(m s^2 + c s + \\eff{K_p}\\big)} \\\\[8pt] \\begin{aligned} N(s) &= m\\,h(0)\\,s^2 \\\\ &\\quad + \\big(m\\,h'(0) + c\\,h(0)\\big)\\,s \\\\ &\\quad + (\\eff{K_p}\\,\\sp{2} - \\dis{m g}) \\end{aligned} \\end{gathered}"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "happy",
-          "text": "Guarda un po'. Niente più pendenze, solo lettere spostate qua e là. Theo, il tuo quaderno ha smesso di fumare."
-        },
-        {
-          "t": "p",
-          "text": "**Passo 3:** spezzalo in pezzi della tabella, come nella sezione qui sopra: un numero al numeratore del pezzo in $s$, e $B s + C$ al numeratore di quello di secondo grado:"
-        },
-        {
-          "t": "math",
-          "tex": "\\out{H}(s) = \\frac{A}{s} + \\frac{B s + C}{m s^2 + c s + \\eff{K_p}}"
-        },
-        {
-          "t": "p",
-          "text": "Come troviamo $A$, $B$ e $C$? Moltiplica entrambi i lati per il denominatore comune $s\\,(m s^2 + c s + \\eff{K_p})$:"
-        },
-        {
-          "t": "math",
-          "tex": "\\begin{aligned} N(s) &= A\\,(ms^2+cs+\\eff{K_p}) \\\\ &\\quad + s\\,(Bs+C) \\end{aligned}"
-        },
-        {
-          "t": "callout",
-          "title": "Il trucco del coprire",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Per $A$ c'è una scorciatoia. Moltiplica $\\out{H}$ per $s$ e ogni pezzo tranne $A/s$ ha ancora una $s$ al numeratore. Metti $s = 0$ e spariscono tutti. Sopravvive solo $A$:"
-            },
-            {
-              "t": "math",
-              "tex": "A = \\Big[s\\,\\out{H}(s)\\Big]_{s=0} = \\frac{N(0)}{\\eff{K_p}} = \\sp{2} - \\frac{\\dis{mg}}{\\eff{K_p}}"
-            },
-            {
-              "t": "p",
-              "text": "E $s\\,\\out{H}$ vicino a $s = 0$ è dove finisce il drone a lungo andare, se mai si assesta. L'altezza finale salta fuori direttamente dall'algebra, senza bisogno di simulazioni."
-            },
-            {
-              "t": "say",
-              "who": "mika",
-              "mood": "surprised",
-              "text": "Aspetta. Possiamo leggere dove si *assesta* senza risolvere niente? Sembra di barare."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "think",
-              "text": "È barare, a meno che tutto il resto non si spenga. Qui gli altri pezzi sono l'oscillazione propria del drone, e si spengono, quindi resta $A$. Se il denominatore avesse una radice nella metà destra, $A/s$ starebbe ancora nella frazione, ma un pezzo che cresce lo sommergerebbe e il drone non si assesterebbe mai da nessuna parte. Il Capitolo 8 mostra come controllare."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Poi confronta i due lati, una potenza di $s$ alla volta. I numeri semplici danno $A$, i termini in $s^2$ danno $B$ e i termini in $s$ danno $C$:"
-        },
-        {
-          "t": "math",
-          "on": "ch7:ic",
-          "tex": "\\begin{gathered} A = \\sp{2} - \\frac{\\dis{mg}}{\\eff{K_p}} \\\\ B = -m\\,A, \\qquad C = -c\\,A \\end{gathered}",
-          "alt": "\\begin{gathered} A = \\sp{2} - \\frac{\\dis{mg}}{\\eff{K_p}} \\\\ B = m\\,\\big(h(0) - A\\big) \\\\ C = m\\,h'(0) + c\\,\\big(h(0) - A\\big) \\end{gathered}"
-        },
-        {
-          "t": "p",
-          "text": "Non compare nuova fisica: abbiamo solo sciolto un denominatore comune per arrivare a pezzi che la nostra tabella sa riportare nel tempo. Nota che ad $A$ non importa da dove è partito il drone."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "excited",
-          "text": "E non abbiamo mai dovuto tirare a indovinare $e^{st}$, nemmeno una volta. Ha indovinato la tabella per noi."
-        },
-        {
-          "t": "p",
-          "text": "**Passo 4:** cerca ogni pezzo nella tabella che abbiamo appena ricavato: $A/s$ è un gradino, e il secondo pezzo è un coseno smorzato più un seno smorzato (la deviazione qui sotto mostra come si adatta a quelle righe). Leggi $h(t)$."
-        },
-        {
-          "t": "callout",
-          "title": "Completare il quadrato: il Capitolo 6 si nascondeva al denominatore",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Il secondo pezzo non è ancora nella nostra tabella: il suo denominatore è un semplice polinomio di secondo grado. Portalo nella forma $(s+\\sigma)^2 + \\omega^2$ (completando il quadrato, come nella sezione qui sopra) e coincide esattamente con le righe del seno smorzato. Il numeratore si divide allo stesso modo, una parte per la riga del coseno e una per quella del seno:"
-            },
-            {
-              "t": "math",
-              "tex": "\\begin{gathered} 0{,}5\\,s^2 + s + \\eff{K_p} = 0{,}5\\,\\big((s+1)^2 + \\omega_d^2\\big) \\\\ \\omega_d^2 = 2\\eff{K_p} - 1 \\\\[6pt] B\\,s + C = B\\,(s+1) + (C - B) \\end{gathered}"
-            },
-            {
-              "t": "p",
-              "text": "Quindi $\\sigma = 1$, che è lo $\\zeta\\omega_n$ del Capitolo 6 per il nostro drone, e $\\omega$ è l'oscillazione smorzata $\\omega_d$."
+              "tex": "\\sqrt{\\sigma^2 + \\omega^2} = \\sqrt{\\zeta^2\\omega_n^2 + \\omega_n^2\\,(1 - \\zeta^2)} = \\omega_n"
             },
             {
               "t": "play",
-              "id": "square",
-              "text": "Con $\\eff{K_p}$ = {scrub|kp|eff} N/m, $\\omega_d^2$ = {calc|wd2}, quindi il denominatore si annulla in s = {calc|roots}."
+              "id": "circle",
+              "text": "Con $\\omega_n$ = 3 e ζ = {scrub|z}, i puntini stanno in {calc|roots}, a una distanza {calc|r} da 0."
             },
             {
-              "t": "say",
-              "who": "theo",
-              "mood": "surprised",
-              "text": "Aspetta. Il denominatore si annulla esattamente nei due punti che abbiamo messo sulla mappa nel Capitolo 6! Tieniti stretto questo pensiero."
+              "t": "p",
+              "text": "Quindi cambiare ζ fa solo scorrere i puntini lungo il cerchio, e cambiare $\\omega_n$ cambia la grandezza del cerchio."
             }
           ]
         },
         {
           "t": "say",
-          "who": "june",
+          "who": "mika",
           "mood": "excited",
-          "text": "Confrontiamolo con la simulazione!"
+          "text": "Quindi le spirali del Capitolo 6 erano la personalità del drone fin dall'inizio. Girare = oscillare, stringersi = assestarsi!"
+        }
+      ]
+    },
+    {
+      "id": "damping",
+      "title": "Più smorzamento è sempre meglio?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "happy",
+          "text": "Facile. Le oscillazioni sono brutte e lo smorzamento le uccide. Quindi metto $\\zeta = 5$ per sicurezza. Il drone più sicuro di sempre."
         },
         {
           "t": "predict",
-          "id": "ch7-ledge",
+          "id": "ch6-damping",
           "gate": true,
-          "q": "Facciamo partire il drone da una mensola di 1 m e facciamo girare la nostra formula accanto alla simulazione. Cosa vedremo?",
+          "q": "Stessa molla, stessa $\\omega_n$. Alziamo lo smorzamento da $\\zeta = 1$ a $\\zeta = 3$. Raggiunge l'obiettivo **più in fretta** o **più lentamente**?",
           "options": [
             {
-              "text": "Coincidono fin dal primo istante",
-              "why": "Succederà, quando la formula saprà della mensola. Il nostro primo tentativo non lo sa: guarda cosa abbiamo scritto nel Passo 1."
+              "text": "Più in fretta: più smorzamento, meno movimento sprecato",
+              "sketch": "smooth",
+              "why": "È vero che non c'è sovraelongazione. Ma lo smorzatore denso si oppone anche al movimento *verso* l'obiettivo."
             },
             {
-              "text": "Partono separate, ma finiscono alla stessa altezza",
+              "text": "Più o meno uguale",
+              "sketch": "overshoot",
+              "why": "Oltre $\\zeta = 1$ non resta niente da calmare, e lo smorzamento in più rallenta e basta."
+            },
+            {
+              "text": "Più lentamente: striscia",
+              "sketch": "sluggish",
               "correct": true,
-              "why": "Esatto. Abbiamo buttato via i termini $h(0)$, quindi la formula parte da 0 m mentre il drone parte da 1 m. Entrambi si assestano comunque agli stessi 1,755 m, perché il pezzo $A$ non dipende dalla mensola."
-            },
-            {
-              "text": "Non vanno mai d'accordo, nemmeno alla fine",
-              "why": "L'altezza finale viene dal pezzo $A = 2 - mg/K_p$, che non dipende da $h(0)$. Quindi alla fine si incontrano; è sbagliato solo l'inizio."
+              "why": "Esatto. Lo smorzatore si oppone a **tutto** il movimento, anche a quello che vuoi. Con $\\zeta = 3$ ci mette circa quattro volte tanto."
             }
           ]
         },
         {
           "t": "widget",
-          "id": "solve"
+          "id": "race"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Il mio drone \"sicuro\" ci mette una vita. È come muoversi nel miele."
         },
         {
           "t": "say",
           "who": "mika",
+          "mood": "think",
+          "text": "Guarda la mappa! Un puntino è scappato a sinistra, velocissimo. Ma l'altro è lì, vicinissimo allo zero."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "E $e^{st}$ con $s$ vicino a zero si spegne **molto** lentamente. Quello veloce sparisce in un lampo. Quello lento comanda."
+        },
+        {
+          "t": "p",
+          "text": "Ogni ingrediente $e^{st}$ del moto si chiama **modo**. Il moto è un miscuglio di modi, e quando quelli veloci si sono spenti resta solo il più lento. Quindi, per questa risposta al gradino, è il **modo più lento che compare davvero** a decidere la lunga attesa."
+        },
+        {
+          "t": "callout",
+          "title": "Quanto ci vuole per \"assestarsi\"?",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Un modo $e^{-at}$ si è ridotto al 2% quando $e^{-at} = 0{,}02$, cioè dopo $t = \\ln 50 / a \\approx 3{,}9/a$. Con una costante di tempo $\\tau = 1/a$, sono circa quattro costanti di tempo: di nuovo il righello del Capitolo 3. Dopo 4τ resta solo $e^{-4} \\approx 1{,}8\\%$."
+            },
+            {
+              "t": "play",
+              "id": "settle",
+              "text": "Un modo che si riduce con a = {scrub|a} al secondo è entro il 2% dopo circa {calc|ts} s."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Troppo poco smorzamento fa oscillare; troppo fa strisciare. Nel mezzo c'è un punto ideale. Scegli ζ = 0,7 nella gara: va oltre di meno del 5%, ma arriva **entro il 5% dall'obiettivo** molto prima di ζ = 1. Molti progetti puntano a ζ tra circa 0,7 e 1, scambiando una piccola sovraelongazione con la rapidità. Altri compiti possono preferire un equilibrio diverso."
+        }
+      ]
+    },
+    {
+      "id": "drone",
+      "title": "Torniamo al drone",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Ora il Capitolo 2 ha finalmente senso. Per il nostro drone, la costante della molla *è* il guadagno:"
+        },
+        {
+          "t": "math",
+          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{K_p}}{m}}, \\qquad \\zeta = \\frac{c}{2\\sqrt{m\\,\\eff{K_p}}}"
+        },
+        {
+          "t": "p",
+          "text": "$\\eff{K_p}$ sta al *denominatore* della formula dello smorzamento. Alzare il guadagno rende il drone più rapido ($\\omega_n$ più grande), ma **meno smorzato**. Con $\\eff{K_p} = 20$ N/m: $\\zeta = 1/(2\\sqrt{0{,}5 \\times 20}) \\approx 0{,}16$. Molto saltellante, proprio come abbiamo visto. Sulla mappa, i suoi due valori di $s$ stanno molto in alto e solo un po' a sinistra dell'asse verticale. È lì che vive il nostro drone."
+        },
+        {
+          "t": "say",
+          "who": "theo",
           "mood": "worried",
-          "text": "Oh-oh. La formula parte da **zero**, ma il drone parte dalla mensola a 1 m. L'algebra mente?"
+          "text": "E non possiamo avere più smorzamento senza abbassare parecchio $\\eff{K_p}$, che fa tornare l'abbassamento. Ci serve un modo per aggiungere smorzamento *apposta*."
+        },
+        {
+          "t": "p",
+          "text": "Trascina il guadagno e guarda il compromesso in una sola frase:"
+        },
+        {
+          "t": "play",
+          "id": "drone",
+          "text": "Con $\\eff{K_p}$ = {scrub|kp|eff} N/m: ζ = {calc|zeta}, $\\omega_n$ = {calc|wn} rad/s, e senza la spinta di volo stazionario regalata si abbasserebbe di {calc|droop} m."
+        }
+      ]
+    },
+    {
+      "id": "arrows",
+      "title": "Le frecce hanno una lunghezza e un angolo",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Aspetta. I puntini stanno su un cerchio di raggio $\\omega_n$, e ζ li fa solo scorrere lungo il cerchio. Quindi un puntino è in realtà due cose: **quanto è lontano** da 0, e **da che parte**."
+        },
+        {
+          "t": "p",
+          "text": "Ogni freccia $z = a + b\\,i$ si può raccontare anche al contrario: con la sua **lunghezza** $|z|$ e il suo **angolo**. La lunghezza ce la dà Pitagora. Per una freccia che punta a destra ($a > 0$), l'angolo è quello la cui pendenza (quanto sale fratto quanto avanza) vale $b/a$. Si chiama **arcotangente**, $\\arctan$: il tasto \"annulla\" della tangente."
+        },
+        {
+          "t": "math",
+          "tex": "|z| = \\sqrt{a^2 + b^2}, \\qquad \\angle z = \\arctan\\frac{b}{a} \\quad (a > 0)"
+        },
+        {
+          "t": "play",
+          "id": "arrowRead",
+          "text": "La freccia {scrub|a} + {scrub|b}i è lunga {calc|len} e punta a {calc|ang}° dall'asse reale."
+        },
+        {
+          "t": "p",
+          "text": "Il Capitolo 5 ha scoperto che moltiplicare le frecce **moltiplica le loro lunghezze e somma i loro angoli**. Dividere deve annullare tutto questo, quindi divide le lunghezze e **sottrae** gli angoli."
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "think",
-          "text": "L'algebra va benissimo. Abbiamo mentito *noi*. Guarda il Passo 1: abbiamo scritto $\\mathcal{L}\\{h''\\} = s^2 H$ e $\\mathcal{L}\\{h'\\} = s\\,H$, e abbiamo buttato via ogni $h(0)$. È proprio il pezzo che si ricorda della mensola."
-        },
-        {
-          "t": "p",
-          "text": "Attiva l'interruttore per rimettere i termini dell'altezza di partenza, e guarda i Passi 1 e 2 e i coefficienti qui sopra cambiare insieme. Ora la formula tratteggiata e la simulazione blu sono esattamente una sopra l'altra: lo scarto massimo è meno di un milionesimo di metro, solo arrotondamenti. Cambia $\\eff{K_p}$ o l'altezza della mensola e continuano a coincidere."
-        },
-        {
-          "t": "play",
-          "id": "residues",
-          "text": "Con $\\eff{K_p}$ = {scrub|kp|eff} N/m da una mensola di {scrub|h0|out} m: A = {calc|A|out} m, quindi il drone si assesta {calc|droop|err} m sotto l'obiettivo di 2 m. È l'abbassamento del Capitolo 2, $\\dis{mg}/\\eff{K_p}$, e la mensola non lo cambia. Il resto è $e^{-t}$ × ({calc|wiggle}), un'oscillazione che si spegne."
+          "text": "Quindi $1/(1+i)$: lunghezza $1/\\sqrt 2$, e l'angolo è 45° più 45°, quindi 90°? Mmh. Rimoltiplicala per $1+i$ e punta a 135°, lontanissimo da 1."
         },
         {
           "t": "say",
-          "who": "theo",
+          "who": "june",
           "mood": "happy",
-          "text": "Nel Capitolo 2 abbiamo dovuto far volare il drone per trovare il suo abbassamento. Qui è saltato fuori da una frazione."
+          "text": "Allora meno. Lunga $1/\\sqrt 2$ a −45°. Per $\\sqrt 2$ a +45°, e viene lunghezza 1 a 0°: esattamente 1. Torna."
         },
         {
-          "t": "note",
-          "text": "Facciamo ancora finta che i motori non abbiano limiti di spinta, così la matematica lineare è esatta. I limiti veri arrivano nel Capitolo 8."
+          "t": "widget",
+          "id": "arrows"
+        },
+        {
+          "t": "p",
+          "text": "La freccia tratteggiata e sbiadita è la **gemella allo specchio** $\\bar z = a - b\\,i$ del Capitolo 6 (i matematici la chiamano *complesso coniugato*): stessa lunghezza, angolo opposto. Moltiplica una freccia per la sua gemella e gli angoli si annullano, lasciando un semplice numero positivo, la lunghezza al quadrato. La tabella del Capitolo 9 avrà bisogno proprio di questo:"
+        },
+        {
+          "t": "math",
+          "tex": "z\\,\\bar z = |z|^2 = a^2 + b^2, \\qquad (s - i\\omega)(s + i\\omega) = s^2 + \\omega^2"
+        },
+        {
+          "t": "p",
+          "text": "E il cerchio? Un polo in $-\\zeta\\omega_n + i\\,\\omega_n\\sqrt{1-\\zeta^2}$ ha lunghezza $\\omega_n$. Misura il suo angolo θ dall'asse reale *negativo*, e la parte verso sinistra è $\\omega_n\\cos\\theta$. Quindi $\\zeta = \\cos\\theta$: lo smorzamento è l'angolo."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Prova la seconda impostazione del widget: 1 + iωτ. È la regola del caffè del Capitolo 3 che incontra un'oscillazione. Dividere per lei rimpicciolisce e gira all'indietro, sempre di più man mano che l'oscillazione accelera, ma mai oltre un quarto di giro. Scommetto che alla doccia interessa."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Lunghezza $|z|$",
+              "def": "Quanto è lunga una freccia: $\\sqrt{a^2+b^2}$ per $z = a + b\\,i$. Moltiplicare le frecce moltiplica le loro lunghezze."
+            },
+            {
+              "term": "Angolo $\\angle z$",
+              "def": "Da che parte punta una freccia, misurato dall'asse reale positivo. $\\arctan(b/a)$ per una freccia che punta a destra. Moltiplicare somma gli angoli, dividere li sottrae."
+            },
+            {
+              "term": "Gemella allo specchio $\\bar z$",
+              "def": "La freccia ribaltata rispetto all'asse reale, $a - b\\,i$ (il complesso coniugato). $z\\,\\bar z = |z|^2$."
+            }
+          ]
         }
       ]
     },
@@ -655,93 +517,114 @@
         {
           "t": "recap",
           "items": [
-            "La trasformata di Laplace è una **sonda**: moltiplica per $e^{-st}$ e misura l'area totale. $F(s) = \\int_0^\\infty f(t)e^{-st}dt$.",
-            "**Esplode esattamente dove vive il segnale**: $e^{at}$ dà $1/(s-a)$, che esplode in $s = a$. Per $s$ complesse la sonda ferma la rotazione dei segnali che girano. Disegniamo tutto questo sul **piano s**.",
-            "Le pendenze diventano moltiplicazioni: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. Lo $f(0)$ ricorda da dove è partito il segnale. Dimenticalo e la tua risposta parte dal posto sbagliato.",
-            "Abbiamo ricavato la nostra tabella: $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$, e la versione spostata per i seni smorzati. Le aree si scalano e si sommano, quindi possiamo trasformare un'equazione termine per termine.",
-            "Le frazioni grandi si spezzano in **fratti semplici**: un'incognita per ogni potenza di $s$ in ciascun denominatore, trovata con il trucco del coprire. Un denominatore di secondo grado diventa un coseno e un seno che si restringono.",
-            "Trasforma, fai l'algebra, spezza in pezzi della tabella, leggi la risposta. Il pezzo $A/s$ è dove si assesta il drone, abbassamento compreso. Coincide esattamente con la simulazione, **purché tu tenga i valori di partenza**."
+            "Un drone con controllo P segue **esattamente** la stessa equazione di una massa su una molla: il controllore è una molla virtuale.",
+            "Due numeri ne catturano la personalità: $\\omega_n$ (quanto è rapido) e $\\zeta$ (quanto è saltellante).",
+            "$\\omega_n = \\sqrt{k/m}$ è la velocità di oscillazione senza smorzatore. $\\zeta = c/c_{\\text{crit}}$ confronta lo smorzamento con lo smorzamento critico $2\\sqrt{mk}$, quello che elimina appena la sovraelongazione.",
+            "Il moto è un miscuglio di due termini $e^{st}$. I due valori di $s$ stanno su un cerchio di raggio $\\omega_n$ quando è sottosmorzato, e si separano lungo l'asse reale quando è sovrasmorzato.",
+            "Una freccia ha una **lunghezza** e un **angolo** ($\\arctan$). Moltiplicare moltiplica le lunghezze e somma gli angoli; dividere divide e sottrae. $\\zeta = \\cos\\theta$.",
+            "Lo smorzamento rallenta anche un po' l'oscillazione: $\\omega_d = \\omega_n\\sqrt{1-\\zeta^2}$.",
+            "Più smorzamento non è sempre meglio: oltre $\\zeta = 1$ il valore di $s$ lento si avvicina allo zero e tutto rallenta.",
+            "Per il drone, più $K_p$ vuol dire meno smorzamento. Ecco perché ballava di più."
           ]
         },
         {
           "t": "quiz",
           "items": [
             {
-              "id": "ch7-q1",
-              "q": "Qual è la trasformata di Laplace di $3e^{-2t}$?",
+              "id": "ch6-q1",
+              "q": "I due valori di $s$ di un sistema sono $-1 \\pm 4i$. Qual è la sua risposta?",
               "options": [
                 {
-                  "text": "$\\dfrac{3}{s+2}$",
+                  "text": "Va oltre e oscilla",
+                  "sketch": "overshoot",
                   "correct": true,
-                  "why": "La riga dell'esponenziale con $a = -2$ dà $1/(s+2)$, e la trasformata di 3 volte un segnale è 3 volte la sua trasformata (le aree si scalano)."
+                  "why": "Una parte immaginaria (±4) vuol dire rotazione, quindi oscillazione. Una parte reale negativa (−1) vuol dire che le oscillazioni si riducono."
                 },
                 {
-                  "text": "$\\dfrac{3}{s-2}$",
-                  "why": "Quella è per $e^{+2t}$. La riga è $1/(s-a)$ con $a = -2$, quindi $s - (-2) = s+2$."
+                  "text": "Sale dolcemente, senza sovraelongazione",
+                  "sketch": "smooth",
+                  "why": "Le salite dolci vengono da valori di $s$ sull'asse reale (niente rotazione). Questi hanno parte immaginaria ±4."
                 },
                 {
-                  "text": "$\\dfrac{1}{3(s+2)}$",
-                  "why": "Moltiplicare il segnale per 3 moltiplica l'area per 3; non la divide."
+                  "text": "Sale strisciando lentamente",
+                  "sketch": "sluggish",
+                  "why": "Una salita lenta senza oscillazioni corrisponde a un valore reale negativo di $s$ molto vicino a zero. Qui i valori hanno parti immaginarie (±4), quindi la risposta oscilla."
                 }
               ]
             },
             {
-              "id": "ch7-q2",
-              "q": "$F(s) = \\dfrac{5}{s+4}$. Quale segnale è?",
+              "id": "ch6-q2",
+              "q": "Il nostro drone ($m = 0{,}5$ kg, $c = 1$ N·s/m) con $K_p = 20$ N/m è…",
               "options": [
                 {
-                  "text": "$5e^{-4t}$: parte da 5 e decade",
-                  "sketch": "decaying-plain",
+                  "text": "Sottosmorzato, $\\zeta \\approx 0{,}16$",
                   "correct": true,
-                  "why": "Esplode in $s = -4$, quindi il segnale vive in $e^{-4t}$. Il 5 sopra è la sua ampiezza."
+                  "why": "$\\zeta = 1/(2\\sqrt{0{,}5\\cdot 20}) = 1/(2\\sqrt{10}) \\approx 0{,}158$. Ben sotto 1, quindi saltellante."
                 },
                 {
-                  "text": "$5e^{4t}$: cresce",
-                  "sketch": "growing-plain",
-                  "why": "Un $e^{4t}$ che cresce esploderebbe in $s = +4$. Questo esplode in $s = -4$."
+                  "text": "Con smorzamento critico, $\\zeta = 1$",
+                  "why": "Servirebbe $c = 2\\sqrt{m K_p} \\approx 6{,}3$ N·s/m, più di sei volte l'attrito che abbiamo."
                 },
                 {
-                  "text": "Un'oscillazione",
-                  "sketch": "decaying-wiggle",
-                  "why": "Le oscillazioni hanno bisogno di una coppia di punti di esplosione complessi (come $s^2+\\omega^2$ nella nostra tabella). Qui ce n'è uno solo, reale, in $-4$."
+                  "text": "Sovrasmorzato, $\\zeta > 1$",
+                  "why": "Per essere sovrasmorzato serve tanto smorzamento rispetto alla rigidezza. Il nostro guadagno è alto e l'attrito piccolo: l'opposto."
                 }
               ]
             },
             {
-              "id": "ch7-q5",
-              "q": "$f(t) = e^{-t}$, quindi $F(s) = \\frac{1}{s+1}$ e $f(0) = 1$. Qual è la trasformata della sua pendenza $f'$?",
+              "id": "ch6-q5",
+              "q": "Una molla con $k = 8$ N/m regge una massa di 0,5 kg. Quanto smorzamento $c$ la rende a smorzamento critico?",
               "options": [
                 {
-                  "text": "$\\frac{s}{s+1} - 1 = -\\frac{1}{s+1}$",
+                  "text": "$c = 4$ N·s/m",
                   "correct": true,
-                  "why": "$s\\,F - f(0)$. E torna: la pendenza di $e^{-t}$ è $-e^{-t}$, la cui trasformata è $-\\frac{1}{s+1}$."
+                  "why": "$c_{\\text{crit}} = 2\\sqrt{m k} = 2\\sqrt{0{,}5 \\cdot 8} = 2\\sqrt{4} = 4$ N·s/m."
                 },
                 {
-                  "text": "$\\frac{s}{s+1}$",
-                  "why": "Quello è $s\\,F$ con il valore di partenza dimenticato: di nuovo l'errore della mensola."
+                  "text": "$c = 16$ N·s/m",
+                  "why": "Quello è $2k$. Lo smorzamento critico usa la radice quadrata di massa × rigidezza: $2\\sqrt{mk}$."
                 },
                 {
-                  "text": "$\\frac{1}{(s+1)^2}$",
-                  "why": "Le pendenze diventano *moltiplicazioni* per $s$, non divisioni per un altro $(s+1)$."
+                  "text": "$c = 1$ N·s/m",
+                  "why": "È l'attrito dell'aria del nostro drone, che qui dà $\\zeta = 0{,}25$: sottosmorzato."
                 }
               ]
             },
             {
-              "id": "ch7-q6",
-              "q": "Con $\\eff{K_p}$ = 10 N/m, dove dice il pezzo $A/s$ che si assesta il drone (obiettivo 2 m, $\\dis{mg} \\approx 4{,}9$ N)?",
+              "id": "ch6-q3",
+              "q": "Usando solo il controllo P, quale $K_p$ renderebbe il drone a smorzamento critico ($\\zeta = 1$)?",
               "options": [
                 {
-                  "text": "Circa 1,51 m",
+                  "text": "$K_p = 0{,}5$ N/m",
                   "correct": true,
-                  "why": "$A = 2 - 4{,}9/10 \\approx 1{,}51$ m. Il drone resta 0,49 m più in basso: l'abbassamento del Capitolo 2."
+                  "why": "Poni $c/(2\\sqrt{m K_p}) = 1$ e ottieni $K_p = c^2/(4m) = 0{,}5$ N/m. Ma con una molla così debole il drone dovrebbe stare 9,8 m *sotto* l'obiettivo solo per reggersi, quindi non decolla mai. Il controllo P da solo non ci dà entrambe le cose."
                 },
                 {
-                  "text": "Esattamente 2 m",
-                  "why": "Solo senza gravità. Il termine $-\\dis{mg}/s$ tira giù $A$ di $\\dis{mg}/\\eff{K_p}$."
+                  "text": "$K_p = 20$ N/m",
+                  "why": "È il nostro valore saltellante di default, con $\\zeta \\approx 0{,}16$. Più guadagno vuol dire *meno* smorzamento."
                 },
                 {
-                  "text": "Circa 0,49 m",
-                  "why": "Quello è l'abbassamento stesso, lo scarto sotto l'obiettivo, non l'altezza."
+                  "text": "$K_p = 200$ N/m",
+                  "why": "Più guadagno abbassa $\\zeta$ ancora di più (a circa 0,05). Il guadagno sta al denominatore."
+                }
+              ]
+            },
+            {
+              "id": "ch6-q4",
+              "q": "Un sistema sovrasmorzato ha valori di $s$ pari a $-0{,}2$ e $-10$. Quale dei due decide quanto aspetti?",
+              "options": [
+                {
+                  "text": "$-0{,}2$",
+                  "correct": true,
+                  "why": "$e^{-0{,}2t}$ ci mette circa 20 s a scendere al 2%, mentre $e^{-10t}$ sparisce in 0,4 s. Comanda quello più vicino all'asse verticale."
+                },
+                {
+                  "text": "$-10$",
+                  "why": "$e^{-10t}$ svanisce in una frazione di secondo. È la parte veloce, finita prima che te ne accorga."
+                },
+                {
+                  "text": "Tutti e due allo stesso modo",
+                  "why": "Si spengono a velocità molto diverse, quindi quello lento domina quello che vedi."
                 }
               ]
             }
@@ -752,207 +635,130 @@
         },
         {
           "t": "cliff",
-          "text": "June: \"Ogni volta che abbiamo risolto qualcosa, la risposta era *(qualcosa)* ÷ *(un polinomio in s)*, e il comportamento del drone veniva da dove si annulla il denominatore. E se quella frazione **fosse** il drone?\""
+          "text": "Theo: \"Siamo arrivati a questi valori di $s$ *tirando a indovinare*. Aggiungi gravità, vento, pacchi e un controllore più furbo, e indovinare diventa un incubo. Esiste una macchina che trasformi quest'analisi in **semplice algebra**?\""
         }
       ]
     }
   ],
   "widgets": {
-    "probe": {
-      "title": "La sonda",
-      "signal": "Segnale",
-      "sig": {
-        "step": "$\\text{gradino } 1$",
-        "decay": "$e^{-t}$",
-        "grow": "$e^{0{,}5t}$",
-        "wiggle": "$\\sin 2t$"
+    "twins": {
+      "title": "Molla contro drone",
+      "spring": "massa su una molla",
+      "drone": "drone con controllo P",
+      "msdAria": "Una massa appesa a una molla e a uno smorzatore, che rimbalza attorno alla posizione di riposo.",
+      "plotY": "distanza dall'obiettivo (m)",
+      "plotAria": "Distanza dall'obiettivo nel tempo per il drone e per la molla. Le due curve sono una sopra l'altra.",
+      "target": "obiettivo / riposo",
+      "kp": "Rigidezza: molla $k$ = guadagno del drone $K_p$",
+      "personality": "personalità",
+      "help": "Entrambi partono 1 m sotto il loro obiettivo e vengono lasciati andare. Il cursore imposta la rigidezza della molla e il guadagno del drone allo stesso numero.",
+      "describe": "Il drone è a {d} m dall'obiettivo, la massa della molla a {s} m dal riposo.",
+      "together": "tutti e due, in un solo grafico",
+      "forceSpring": "trazione della molla",
+      "forceDamper": "spinta dello smorzatore"
+    },
+    "personality": {
+      "title": "Due manopole, due puntini, una personalità",
+      "response": "risposta a un gradino di 1 m",
+      "target": "obiettivo",
+      "plotAria": "Risposta al gradino di un sistema del secondo ordine per la pulsazione naturale e il coefficiente di smorzamento scelti.",
+      "planeAria": "La mappa di s, con i due valori di s del sistema e un cerchio tratteggiato di raggio omega n.",
+      "msdAria": "Una massa su una molla che ripete la risposta al gradino.",
+      "panelAria": "Piccola risposta al gradino con coefficiente di smorzamento {z}.",
+      "panel": {
+        "0": "sottosmorzato (ζ = {z})",
+        "1": "critico (ζ = {z})",
+        "2": "sovrasmorzato (ζ = {z})"
       },
-      "f": "segnale f(t)",
-      "probe": "sonda e^(−st)",
-      "product": "f(t)·e^(−st)",
-      "plotAria": "Il segnale, la sonda e il loro prodotto nel tempo, con l'area sotto il prodotto ombreggiata.",
-      "fAria": "Valori tracciati dell'area totale F in funzione di s, un punto per ogni s che hai provato.",
-      "formula": "formula",
-      "traced": "le tue misure",
-      "area": "area fin qui",
-      "total": "area totale F(s)",
-      "s": "Tasso della sonda $s$",
-      "sweep": "Rimisura l'area",
-      "showFormula": "Mostra la curva della formula",
-      "help": "Sposta s e lascia andare (o fermati dopo aver usato le frecce): l'area viene misurata e un punto si aggiunge al grafico di F(s). Dopo 5 punti, sparsi su valori di s diversi, puoi svelare la formula.",
-      "finite": "Con s = {s} l'area totale è {F}.",
-      "infinite": "Qui la sonda non si restringe più in fretta del segnale. L'area non si stabilizza mai: è infinita.",
-      "describe": "Tasso della sonda s = {s}; area totale {A}.",
-      "sloshes": "Qui l'area non si stabilizza mai. Continua a fare avanti e indietro, quindi questa s non ha una risposta sola.",
-      "window": "L'immagine mostra i primi 8 s; il resto aggiunge {rest}.",
-      "noArea": "nessuna area finita"
+      "radius": "raggio ωn = {w}",
+      "wn": "Pulsazione naturale $\\omega_n$",
+      "zeta": "Coefficiente di smorzamento $\\zeta$",
+      "overshoot": "sovraelongazione",
+      "settle": "si assesta (2%)",
+      "roots": "i due valori di s",
+      "personality": "personalità",
+      "never": "mai",
+      "playSpring": "Rivedi sulla molla",
+      "stopSpring": "Metti in pausa la molla",
+      "describe": "Coefficiente di smorzamento {z}, pulsazione naturale {w} radianti al secondo, valori di s {r}.",
+      "planeCap": "i due valori di s",
+      "springCap": "guardalo su una molla",
+      "re": "σ",
+      "im": "ω",
+      "offMap": "{v} è fuori dalla mappa ←",
+      "wd": "pulsazione smorzata ωd",
+      "noWiggle": "nessuna oscillazione"
     },
-    "explode": {
-      "title": "Dove esplode?",
-      "product": "e^(at)·e^(−st)",
-      "prodAria": "Il prodotto di e elevato ad a t per la sonda, con la sua area ombreggiata.",
-      "fAria": "La trasformata 1 su s meno a, con una linea verticale dove esplode.",
-      "noArea": "nessuna area finita",
-      "a": "Tasso del segnale $a$ in $e^{at}$",
-      "s": "Sonda $s$",
-      "never": "s è uguale o minore di a: il prodotto non si restringe mai, quindi l'area è infinita.",
-      "close": "Ci stiamo avvicinando ad a: l'area è {F} e continua a salire!",
-      "calm": "Lontano da a: un'area finita e tranquilla.",
-      "window": "L'immagine mostra solo i primi 10 s; manca ancora il {pct}% dell'area.",
-      "readF": "F(s)",
-      "curve": "1/(s − a)"
+    "race": {
+      "title": "La gara dello smorzamento",
+      "choose": "Il tuo smorzamento",
+      "ref": "ζ = 1 (critico)",
+      "yours": "la tua ζ",
+      "yoursZ": "ζ = {z}",
+      "msdAria": "Una massa su una molla che si muove verso la posizione di riposo.",
+      "plotAria": "Risposte al gradino con smorzamento critico e con il coefficiente di smorzamento scelto.",
+      "planeAria": "I due valori di s per il coefficiente di smorzamento scelto.",
+      "settleRef": "ζ = 1 si assesta",
+      "settleYours": "la tua ζ si assesta",
+      "slow": "quello lento",
+      "fast": "quello veloce",
+      "never": "non entro 12 s",
+      "same": "Questo è proprio il riferimento: la risposta più rapida senza sovraelongazione.",
+      "slower": "Il tuo smorzamento in più l'ha reso circa {k}× più lento.",
+      "replay": "Rifai la gara",
+      "planeCap": "i due valori di s",
+      "re": "σ",
+      "im": "ω",
+      "fastOff": "← quello veloce a {v} (fuori dalla mappa)",
+      "double": "tutti e due qui",
+      "band5": "entro il 5%",
+      "sweet": "ζ = 0,7 va oltre del {os}%, ma è entro il 5% dall'obiettivo dopo {y5} s. A ζ = 1 servono {r5} s."
     },
-    "unspin": {
-      "title": "Una sonda che ferma la rotazione",
+    "arrows": {
+      "title": "Lunghezza, angolo e 1 ÷ una freccia",
+      "aria": "Un piano con il cerchio unitario, una freccia z, la sua gemella allo specchio tratteggiata e la freccia 1 diviso z, con i loro angoli segnati.",
       "re": "parte reale",
       "im": "parte immaginaria",
-      "path": "totale progressivo (una freccia ogni ¼ s)",
-      "plotAria": "Il totale progressivo dell'area complessa disegnato come un percorso nel piano, diretto verso il suo valore finale.",
-      "limit": "totale finale",
-      "mag": "ampiezza del totale |F|",
-      "spin": "rotazione residua",
-      "sigma": "Restringimento della sonda $\\sigma$",
-      "omega": "Rotazione della sonda $\\omega$ (il segnale gira a 2)",
-      "again": "Rivedi",
-      "matched": "Rotazioni allineate! Ogni pezzo punta nella stessa direzione. Il totale è {m} = 1/⁠σ e va all'infinito quando σ → 0.",
-      "spinning": "I pezzi si arricciano e per lo più si annullano. Il totale resta piccolo."
-    },
-    "derivRule": {
-      "title": "La regola sopravvive a uno scarabocchio?",
-      "f": "il tuo segnale f(t)",
-      "df": "la sua pendenza f′(t)",
-      "plotAria": "Il segnale disegnato e la sua pendenza in 8 secondi.",
-      "sAria": "Entrambi i lati della regola della derivata in funzione di s.",
-      "lhs": "area di f′·e^(−st)",
-      "rhs": "s·F(s) − f(0)",
-      "lhsShort": "trasformata della pendenza",
-      "rhsShort": "s F(s) − f(0)",
-      "s": "Sonda $s$",
-      "draw": "Disegna il tuo segnale",
-      "preset": "Prova un altro segnale pronto",
-      "help": "Scegli un segnale pronto (il modo comodo da tastiera), oppure premi \"Disegna il tuo segnale\" e trascina sul grafico del segnale da sinistra a destra. Dopo 8 s il segnale resta piatto.",
-      "drawing": "Trascina sul grafico del segnale da sinistra a destra…",
-      "tooShort": "Disegna un po' più in là (almeno 3 secondi).",
-      "drawn": "Fatto! Entrambi i lati sono stati ricalcolati dal tuo disegno. Trascina di nuovo per sostituirlo.",
-      "match": "Con s = {s} entrambi i lati valgono {v}. La regola vale per il tuo segnale.",
-      "nomatch": "Qui differiscono un pochino. Arrotondamenti numerici su un disegno molto spigoloso.",
-      "describe": "Trasformata della pendenza {l}, s F meno f di zero {r}.",
-      "stopDraw": "Smetti di disegnare",
-      "presetLabel": "Oppure scegli un segnale",
-      "presets": {
-        "0": "ondulazione",
-        "1": "salto",
-        "2": "decadimento"
-      },
-      "rhsBrace": "quello che prevede la regola"
-    },
-    "table": {
-      "title": "La tabella, ricavata",
-      "caption": "Tabella delle trasformate di Laplace ricavata in questo capitolo",
-      "colSignal": "segnale f(t)",
-      "colF": "trasformata F(s)",
-      "derive": "Ricava",
-      "show": "Mostra",
-      "unknown": "non ancora ricavata",
-      "f": "segnale",
-      "product": "segnale × sonda",
-      "plotAria": "Il segnale scelto dalla tabella e il suo prodotto con la sonda, con l'area ombreggiata.",
-      "numeric": "area misurata",
-      "formulaVal": "formula",
-      "s": "Sonda $s$",
-      "how": "Come ci siamo arrivati",
-      "agree": "L'area misurata coincide con la formula.",
-      "twinCheck": "Anche il suo gemello (coseno) torna: misurato {n}, formula {f}.",
-      "describe": "Area misurata {n}, formula {f}.",
-      "rows": {
-        "0": {
-          "f": "1\\ \\ (\\text{gradino})",
-          "F": "\\dfrac{1}{s}",
-          "steps": "\\text{la curva la cui pendenza è } e^{-st} \\text{ è } -\\tfrac{1}{s}e^{-st}||\\begin{aligned} \\int_0^\\infty e^{-st}\\,dt &=\\Big[-\\tfrac{1}{s}e^{-st}\\Big]_0^\\infty \\\\ &= 0-\\big(-\\tfrac{1}{s}\\big)=\\frac{1}{s}\\quad (s>0) \\end{aligned}"
-        },
-        "1": {
-          "f": "e^{at}",
-          "F": "\\dfrac{1}{s-a}",
-          "steps": "e^{at}\\,e^{-st}=e^{-(s-a)t}||\\text{è la riga del gradino con } s \\text{ sostituito da } s-a||\\begin{gathered} \\int_0^\\infty e^{-(s-a)t}\\,dt=\\frac{1}{s-a} \\\\ (s>a;\\ \\text{qui } a=-1) \\end{gathered}"
-        },
-        "2": {
-          "f": "\\sin\\omega t,\\ \\cos\\omega t",
-          "F": "\\dfrac{\\omega}{s^2+\\omega^2},\\ \\dfrac{s}{s^2+\\omega^2}",
-          "steps": "\\begin{gathered} \\sin\\omega t=\\frac{e^{i\\omega t}-e^{-i\\omega t}}{2i} \\\\ \\text{(trottole gemelle)} \\end{gathered}||\\begin{gathered} \\mathcal{L}\\{e^{\\pm i\\omega t}\\}=\\frac{1}{s\\mp i\\omega} \\\\ \\text{(riga dell'esponenziale, } a=\\pm i\\omega) \\end{gathered}||\\begin{aligned} &\\frac{1}{2i}\\Big(\\frac{1}{s-i\\omega}-\\frac{1}{s+i\\omega}\\Big) \\\\ &=\\frac{1}{2i}\\cdot\\frac{2i\\omega}{s^2+\\omega^2}=\\frac{\\omega}{s^2+\\omega^2} \\end{aligned}||\\begin{gathered} \\cos\\omega t=\\frac{e^{i\\omega t}+e^{-i\\omega t}}{2}\\ \\Rightarrow\\ \\frac{s}{s^2+\\omega^2} \\\\ (\\text{qui }\\omega=2) \\end{gathered}"
-        },
-        "3": {
-          "f": "\\begin{gathered} e^{-\\sigma t}\\sin\\omega t \\\\ e^{-\\sigma t}\\cos\\omega t \\end{gathered}",
-          "F": "\\begin{gathered} \\dfrac{\\omega}{(s+\\sigma)^2+\\omega^2} \\\\[4pt] \\dfrac{s+\\sigma}{(s+\\sigma)^2+\\omega^2} \\end{gathered}",
-          "steps": "e^{-\\sigma t}\\sin\\omega t\\cdot e^{-st}=\\sin\\omega t\\cdot e^{-(s+\\sigma)t}||\\text{quindi prendi la riga del seno e sostituisci } s \\text{ con } s+\\sigma||\\begin{gathered} \\frac{\\omega}{(s+\\sigma)^2+\\omega^2}\\quad\\text{ e }\\quad\\frac{s+\\sigma}{(s+\\sigma)^2+\\omega^2} \\\\ (\\text{qui }\\sigma=0{,}5,\\ \\omega=2) \\end{gathered}"
-        }
-      },
-      "colCheck": "Controllata con l'area misurata",
-      "differ": "Qui l'area misurata e la formula non vanno d'accordo. Prova una s più grande."
-    },
-    "solve": {
-      "title": "Formula contro simulazione",
-      "sim": "simulazione (passettini)",
-      "formula": "la nostra formula di Laplace",
-      "target": "obiettivo",
-      "plotAria": "Altezza del drone nel tempo secondo la simulazione e secondo la formula di Laplace.",
-      "gap": "scarto massimo",
-      "atZero": "a t = 0: sim / formula",
-      "kp": "Guadagno $K_p$",
-      "h0": "Altezza di partenza (mensola) $h(0)$",
-      "toggle": "Includi i termini dell'altezza di partenza $-h(0)$",
-      "mismatch": "Non coincidono! La simulazione parte dalla mensola a {h} m, la formula parte da 0.",
-      "odd": "C'è ancora uno scarto. Controlla i numeri.",
-      "match": "Coincidenza perfetta: formula e simulazione concordano a meno di un milionesimo di metro.",
-      "settle": "si assesta in A",
-      "droop": "abbassamento mg/Kp = {d} m",
-      "hidden": "Partendo da terra i termini mancanti valgono zero, quindi l'errore si nasconde. Metti il drone su una mensola per scoprirlo.",
-      "fixed": "I termini −h(0) sono tornati nei Passi 1 e 2 qui sopra.",
-      "rk4": "La simulazione fa passi da 1 ms, come i passettini del Capitolo 4, ma a ogni passo dà quattro sbirciate per mirare meglio. Questa ricetta si chiama RK4."
-    },
-    "pieces": {
-      "title": "I pezzi e la loro somma",
-      "y": "valore",
-      "stepPiece": "pezzo A/s: un gradino",
-      "wigglePiece": "pezzo (Bs + C)/(s² + 2s + 5): un'oscillazione che si spegne",
-      "sum": "la loro somma",
-      "plotAria": "Il pezzo gradino, il pezzo oscillazione che si spegne e la loro somma nel tempo.",
-      "A": "Numeratore del pezzo in s, A",
-      "B": "La parte in s del numeratore di secondo grado, B",
-      "C": "La parte semplice del numeratore di secondo grado, C",
-      "status": "Si assesta su A = {A}: il pezzo in s è l'unico che dura. Il numeratore della frazione grande ha i numeri {top}.",
-      "describe": "A = {A}, B = {B}, C = {C}.",
-      "help": "Sposta A, B e C. Ogni pezzo è una riga della nostra tabella; la somma è la risposta intera."
+      "mode": "Quale freccia?",
+      "modeFree": "una freccia z qualsiasi",
+      "modeSmoother": "lo smussatore, 1 + iωτ",
+      "a": "parte reale a",
+      "b": "parte immaginaria b",
+      "wt": "velocità dell'oscillazione × τ (ωτ)",
+      "mirror": "gemella",
+      "out": "1 ÷ (1 + iωτ)",
+      "len": "lunghezza |z|",
+      "ang": "angolo di z",
+      "ilen": "lunghezza di 1/z",
+      "iang": "angolo di 1/z",
+      "free": "1/z è lunga {ilen} (1 ÷ {len}) e girata dall'altra parte, a {iang}. Moltiplica le due frecce e ottieni lunghezza {back} a 0°: esattamente 1.",
+      "smooth": "Con ωτ = {wt}, 1 ÷ (1 + iωτ) conserva {ilen} della grandezza e resta indietro di {lag}. Oscillazioni più rapide: più piccola e più in ritardo, ma mai oltre 90°.",
+      "help": "Fai scorrere a e b per spostare z (oppure passa allo smussatore e fai scorrere ωτ). L'arco blu è l'angolo di z, l'arco grigio l'angolo di 1/z."
     }
   },
   "plays": {
-    "stepArea": {
-      "s": "tasso della sonda s"
+    "units": {
+      "kp": "guadagno Kp, newton al metro",
+      "e": "errore, metri"
     },
-    "longArea": {
-      "T": "tempo di arresto T, in secondi"
+    "wn": {
+      "k": "rigidezza della molla k, newton al metro"
     },
-    "scream": {
-      "a": "tasso del segnale a, al secondo",
-      "s": "tasso della sonda s, al secondo",
-      "none": "Non si spegne mai, quindi non c'è nessuna area finita.",
-      "loud": "Sta urlando!",
-      "calm": "Un'area tranquilla e finita."
+    "zeta": {
+      "c": "smorzamento c, newton secondo al metro"
     },
-    "ruleExp": {
-      "a": "tasso del segnale a, al secondo",
-      "s": "tasso della sonda s, al secondo"
+    "circle": {
+      "z": "coefficiente di smorzamento zeta"
     },
-    "scale": {
-      "k": "quante volte più alto, k",
-      "r": "tasso di restringimento r, al secondo",
-      "s": "tasso della sonda s, al secondo"
+    "settle": {
+      "a": "tasso di riduzione a, al secondo"
     },
-    "square": {
-      "kp": "guadagno Kp, in newton al metro"
+    "drone": {
+      "kp": "guadagno Kp, newton al metro"
     },
-    "residues": {
-      "kp": "guadagno Kp, in newton al metro",
-      "h0": "altezza della mensola, in metri"
+    "arrowRead": {
+      "a": "parte reale a",
+      "b": "parte immaginaria b"
     }
   }
 }

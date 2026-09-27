@@ -1,93 +1,71 @@
-import { fmt } from '../../core/i18n';
-import { DRONE } from '../../sim/drone-model';
+import { fmt, tc } from '../../core/i18n';
+import { DRONE, HOVER_THRUST } from '../../sim/drone-model';
 import type { PlayModel } from '../../story/play';
-import { solveDrone } from './tools';
+import { regime, secondOrderRoots } from './helpers';
 
-/** Enough decimals that a small leftover never reads as a flat 0.000. */
-const small = (v: number) => fmt(v, Math.abs(v) >= 0.01 ? 3 : 5);
+const { m, c } = DRONE;
+/** The spring used in the ωn and ζ sentences: k = 20 N/m, like the default gain. */
+const K = 20;
 
-/** The solve widget's drone: target 2 m, released at rest from `h0`. */
-const droneSolve = (kp: number, h0: number) => solveDrone({ m: DRONE.m, c: DRONE.c, g: DRONE.g, kp, r: 2, h0, v0: 0 });
-const kp = { min: 5, max: 60, step: 1, value: 20, unit: 'N/m' };
+const kp = { min: 2, max: 60, step: 1, value: 20, unit: 'N/m' };
 
-/** Models behind Chapter 7's playable sentences (`{ t: 'play', id }` blocks); pure maths, tested in Node. */
 export const plays: Record<string, PlayModel> = {
-  // "Probe the step at s = {s}: the area is 1 ÷ {s} = {F}. Double s and the area halves."
-  stepArea: {
-    inputs: { s: { min: 0.25, max: 4, step: 0.25, value: 2 } },
+  // "At Kp = {kp} N/m, a drone {e} m too low gets {f} N of extra thrust."
+  units: {
+    inputs: { kp, e: { min: 0.1, max: 2, step: 0.1, value: 0.5, unit: 'm' } },
+    outputs: { f: (v) => fmt(v.kp * v.e, 1) },
+  },
+  // "With k = {k} N/m and m = 0.5 kg: ωn ≈ {wn} rad/s, one full swing every {period} s."
+  wn: {
+    inputs: { k: { ...kp, value: K } },
     outputs: {
-      s: ({ s }) => fmt(s, 2),
-      F: ({ s }) => fmt(1 / s, 3),
+      wn: ({ k }) => fmt(Math.sqrt(k / m), 2),
+      period: ({ k }) => fmt((2 * Math.PI) / Math.sqrt(k / m), 2),
     },
   },
-  // "Stop adding the area of e^{−t} at t = {T} s and you already have {A}. Everything after that adds only {left}."
-  longArea: {
-    inputs: { T: { min: 0.5, max: 10, step: 0.5, value: 3, unit: 's' } },
+  // "With c = {c} N·s/m on the k = 20 N/m spring, c_crit = {ccrit}, so ζ = {zeta}: {regime}."
+  zeta: {
+    inputs: { c: { min: 0.2, max: 12, step: 0.1, value: 1, unit: 'N·s/m' } },
     outputs: {
-      A: ({ T }) => fmt(1 - Math.exp(-T), 3),
-      left: ({ T }) => small(Math.exp(-T)),
+      ccrit: () => fmt(2 * Math.sqrt(m * K), 2),
+      zeta: ({ c: cc }) => fmt(cc / (2 * Math.sqrt(m * K)), 2),
+      regime: ({ c: cc }, _t, common = tc) => common(`regime.${regime(cc / (2 * Math.sqrt(m * K)))}`),
     },
   },
-  // "Signal e^{at} with a = {a}, probe s = {s}: the product fades at s − a = {gap} per second, so its area is {F}{verdict}"
-  scream: {
-    inputs: {
-      a: { min: -2, max: 1, step: 0.1, value: 0.5, unit: '1/s' },
-      s: { min: -1, max: 3, step: 0.05, value: 1, unit: '1/s' },
-    },
+  // "With ωn = 3 and ζ = {z}, the dots sit at {roots}: distance {r} from 0."
+  circle: {
+    inputs: { z: { min: 0, max: 1, step: 0.05, value: 0.4 } },
     outputs: {
-      gap: ({ a, s }) => fmt(s - a, 2),
-      F: ({ a, s }) => (s - a > 1e-9 ? fmt(1 / (s - a), 2) : '∞'),
-      verdict: ({ a, s }, t) => t(s - a <= 1e-9 ? 'none' : s - a < 0.3 - 1e-9 ? 'loud' : 'calm'),
+      roots: ({ z }) => {
+        const [r] = secondOrderRoots(3, z);
+        return Math.abs(r.im) < 1e-9 ? fmt(r.re, 2) : `${fmt(r.re, 2)} ± ${fmt(Math.abs(r.im), 2)}i`;
+      },
+      r: ({ z }) => {
+        const [r] = secondOrderRoots(3, z);
+        return fmt(Math.hypot(r.re, r.im), 2);
+      },
     },
   },
-  // "With a = {a} and s = {s}: the slope's area is {lhs}, and s·F − f(0) = {rhs}. Same number."
-  ruleExp: {
-    inputs: {
-      a: { min: -2, max: 0, step: 0.5, value: -1, unit: '1/s' },
-      s: { min: 0.5, max: 3, step: 0.5, value: 1, unit: '1/s' },
-    },
-    outputs: {
-      lhs: ({ a, s }) => fmt(a / (s - a), 3),
-      // one output, so "0.500 − 1 = −0.500" stays in reading order in right-to-left text
-      rhs: ({ a, s }) => `${fmt(s / (s - a), 3)} − 1 = ${fmt(s / (s - a) - 1, 3)}`,
-    },
+  // "A mode that shrinks at a = {a} per second is within 2% after about {ts} s."
+  settle: {
+    inputs: { a: { min: 0.1, max: 10, step: 0.1, value: 1, unit: '1/s' } },
+    outputs: { ts: ({ a }) => fmt(Math.log(50) / a, 2) },
   },
-  // "Take {k} times e^{−rt} with r = {r}, probed at s = {s}: its area is k ÷ (s + r) = {eq}."
-  scale: {
-    inputs: {
-      k: { min: 1, max: 5, step: 1, value: 3 },
-      r: { min: 0, max: 4, step: 0.5, value: 2, unit: '1/s' },
-      s: { min: 0.5, max: 3, step: 0.5, value: 1, unit: '1/s' },
-    },
-    outputs: {
-      // the whole little sum in one output keeps its reading order in right-to-left text
-      eq: ({ k, r, s }) => `${fmt(k, 0)} ÷ (${fmt(s, 1)} + ${fmt(r, 1)}) = ${fmt(k / (s + r), 3)}`,
-    },
-  },
-  // "With Kp = {kp} N/m, ωd² = {wd2}, so the bottom is zero at s = {roots}."
-  square: {
+  // "Kp = {kp} N/m: ζ = {zeta}, ωn = {wn} rad/s, droop {droop} m."
+  drone: {
     inputs: { kp },
     outputs: {
-      wd2: (v) => fmt(droneSolve(v.kp, 0).wd ** 2, 0),
-      roots: (v) => {
-        const { sigma, wd } = droneSolve(v.kp, 0);
-        return `−${fmt(sigma, 0)} ± ${fmt(wd, 2)}i`;
-      },
+      zeta: (v) => fmt(c / (2 * Math.sqrt(m * v.kp)), 2),
+      wn: (v) => fmt(Math.sqrt(v.kp / m), 2),
+      droop: (v) => fmt(HOVER_THRUST / v.kp, 2),
     },
   },
-  // "With Kp = {kp} N/m from a {h0} m ledge: A = {A} m, so the drone settles {droop} m below the 2 m target. …
-  //  The rest is e^{−t} × ({wiggle}), a wiggle that fades away."
-  residues: {
-    inputs: { kp, h0: { min: 0, max: 3, step: 0.1, value: 1, unit: 'm' } },
+  // "The arrow {a} + {b}i is {len} long and points at {ang}° from the real axis." (a > 0, so arctan is the angle)
+  arrowRead: {
+    inputs: { a: { min: 0.1, max: 3, step: 0.1, value: 1, digits: 1 }, b: { min: 0, max: 3, step: 0.1, value: 1, digits: 1 } },
     outputs: {
-      A: (v) => fmt(droneSolve(v.kp, v.h0).A, 3),
-      droop: (v) => fmt(2 - droneSolve(v.kp, v.h0).A, 3),
-      // one output, so the little sum keeps its reading order in right-to-left text
-      wiggle: (v) => {
-        const { K1, K2, wd } = droneSolve(v.kp, v.h0);
-        const w = fmt(wd, 2);
-        return `${fmt(K1, 3)} cos ${w}t ${K2 < 0 ? '−' : '+'} ${fmt(Math.abs(K2), 3)} sin ${w}t`;
-      },
+      len: ({ a, b }) => fmt(Math.hypot(a, b), 2),
+      ang: ({ a, b }) => fmt((Math.atan(b / a) * 180) / Math.PI, 0),
     },
   },
 };

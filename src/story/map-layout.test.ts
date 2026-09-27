@@ -10,7 +10,7 @@ const common = (code: string) => JSON.parse(readFileSync(join(process.cwd(), 'pu
 describe('concept map layout', () => {
   it('every chapter owns at least one idea, and the finale more than just "you"', () => {
     for (let ch = 0; ch < CHAPTER_COUNT; ch++) expect(Object.values(NODES).filter(([c]) => c === ch).length, `chapter ${ch}`).toBeGreaterThan(0);
-    const finale = Object.keys(NODES).filter((id) => NODES[id][0] === 11 && id !== 'you');
+    const finale = Object.keys(NODES).filter((id) => NODES[id][0] === CHAPTER_COUNT - 1 && id !== 'you');
     expect(finale.length).toBeGreaterThanOrEqual(2);
     expect(Object.keys(NODES)).toEqual(expect.arrayContaining(['limits', 'motorlag', 'tradeoff']));
   });
@@ -27,7 +27,7 @@ describe('concept map layout', () => {
     }
   });
 
-  it('the grit ideas link back to Chapters 3, 8, 9 and 10', () => {
+  it('the grit ideas link back to Chapters 3, 10, 11 and 12', () => {
     const linked = (x: string, y: string) => EDGES.some(([a, b]) => (a === x && b === y) || (a === y && b === x));
     expect(linked('firstorder', 'motorlag')).toBe(true);
     expect(linked('motorlag', 'phaselag')).toBe(true);

@@ -1,701 +1,776 @@
 {
   "kicker": "Chapter 11",
-  "title": "The Drone Challenge",
-  "question": "Can *you* keep the drone at 2 m through everything?",
+  "title": "PID: Fixing Everything",
+  "question": "How do we kill the droop *and* stop the wiggle?",
   "sections": [
     {
-      "id": "briefing",
-      "title": "Mission briefing",
+      "id": "stuck",
+      "title": "The droop that won't die",
       "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Remember Chapter 2? Our P controller left the drone **hanging below 2 m**, and no $K_p$ could fix it. Time to find out what can."
+        },
+        {
+          "t": "p",
+          "text": "To hold the drone up, the motors must push $mg \\approx 4.9$ N, forever. A P controller only pushes when there's an error: $\\eff{T} = K_p\\,\\err{e}$. So to push 4.9 N it *needs* an error of $\\err{e} = mg/K_p$. With $K_p$ = 20 N/m that's $\\err e$ = 4.9/20 ≈ 24.5 cm, forever. The droop isn't a bug in our tuning. It's the price P charges for holding anything up."
+        },
         {
           "t": "say",
           "who": "june",
           "mood": "excited",
-          "text": "Okay. Real drone, real delivery. It takes off with a package, rides out a gust, drops the package, and holds 2 m the whole time. Twenty seconds."
+          "text": "So we need a part of the controller that can push 4.9 N **with zero error**. Something with a memory."
         },
         {
-          "t": "say",
-          "who": "mika",
-          "mood": "worried",
-          "text": "And we're not allowed to touch anything while it flies?"
+          "t": "note",
+          "text": "Since Chapter 10 the motors are real: they can push between 0 and 20 N, no more, and they can't pull down. The orange thrust curves will flatten out when they hit a limit."
+        }
+      ]
+    },
+    {
+      "id": "integral",
+      "title": "I: a pile of past error",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Here's the idea. Keep a running total of the error, the **area under the error curve**, exactly the \"accumulating area\" from [Chapter 3](#/ch/3). Push in proportion to that pile:"
+        },
+        {
+          "t": "math",
+          "tex": "\\eff{T_I} = K_i \\int_0^t \\err{e}\\,dt"
+        },
+        {
+          "t": "p",
+          "text": "While the drone is below 2 m, the error is positive and the pile keeps growing, so the push keeps growing. The pile only stops growing when the error is **exactly zero**. At that point it simply *stays*, holding whatever thrust it has built up. That's the memory June wanted."
         },
         {
           "t": "say",
           "who": "theo",
-          "mood": "happy",
-          "text": "That's the whole point. The controller has to do it alone. We just pick three numbers. Well, four: the filter too."
-        },
-        {
-          "t": "p",
-          "text": "The mission, second by second:"
-        },
-        {
-          "t": "list",
-          "ordered": true,
-          "items": [
-            "**0 s:** take off from the ground carrying a 0.2 kg {dis|package} (0.7 kg in total).",
-            "**6–9 s:** a downward {dis|gust} pushes with 1.5 N.",
-            "**12 s:** the {dis|package drops}. Suddenly the drone is 0.2 kg lighter.",
-            "**20 s:** mission over."
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Our drone model gets a little more honest for the finale. Each of these is something real drones have to live with, and each one is an old friend from an earlier chapter:"
-        },
-        {
-          "t": "list",
-          "items": [
-            "**Motor lag (τ ≈ 0.05 s):** a propeller can't change speed instantly. Its thrust follows the command like Chapter 3's cooling coffee, a first-order lag: 63% of the way after 0.05 s. A late push is Chapter 10's phase lag in disguise.",
-            "**A noisy sensor ($\\sigma_n$ ≈ 2 cm, n for noise; not a pole's σ):** every height reading is off by about 2 cm, randomly, a thousand times a second. Chapter 9 warned us: D turns that jitter into big thrust spikes.",
-            "**Limited motors (0 to 20 N):** Chapter 8's limit stays on. With the package the drone weighs 6.9 N, so 20 N is only about three times its weight, and the motors can never pull down. While they are pinned, the pile pauses (Chapter 9's anti-windup).",
-            "**D is filtered:** Chapter 9's fix. D takes the slope of a smoothed sensor reading, a first-order lag with the time constant $\\tau_f$ you choose. Longer $\\tau_f$ means calmer, but later."
-          ]
+          "mood": "surprised",
+          "text": "Oh, that's sneaky. The drone can't settle *anywhere* except 2 m, because anywhere else the pile would still be changing."
         },
         {
           "t": "play",
-          "id": "limit",
-          "text": "At take-off, $\\eff{K_p}$ = {scrub|kp|eff} N/m times the 2 m error asks for {calc|ask} N{calc|clip}. With the package the drone weighs {calc|w} N, so 20 N is only {calc|ratio}× its weight."
+          "id": "pile",
+          "text": "Stuck 24.5 cm low, the pile grows by 0.245 m·s every second. With $K_i$ = {scrub|ki|eff} N/(m·s) that adds {calc|rate|eff} N of push per second: at that pace, the whole 4.9 N would be there after {calc|tau} s. It never goes quite that fast. As the drone rises, the error shrinks and the pile slows down. After {calc|tau} s it's about 63% of the way; after about {calc|ts} s, 98%."
         },
         {
           "t": "callout",
-          "title": "A short lag is almost a delay",
+          "title": "Why the pile slows down",
           "blocks": [
             {
               "t": "say",
               "who": "theo",
               "mood": "think",
-              "text": "A motor that needs 0.05 s to spin up… isn't that just a tiny delay?"
-            },
-            {
-              "t": "math",
-              "tex": "\\angle \\frac{1}{1 + i\\omega\\tau_m} = -\\arctan(\\omega\\tau_m) \\approx -\\omega\\tau_m \\qquad (\\omega\\tau_m \\ll 1)"
+              "text": "Hang on. 63% after one time constant? That's the coffee from Chapter 3!"
             },
             {
               "t": "say",
               "who": "june",
               "mood": "excited",
-              "text": "Almost! Take a tune that earns all six stars (no spoilers). Its loop gain is exactly 1 at about 10 rad/s, where Chapter 10 reads the phase margin. There a 0.05 s delay would cost 28°. The lag costs 26°."
+              "text": "Because it *is* the coffee. Once the fast wiggle is gone, P pushes whatever the pile doesn't. So the error is the missing push divided by $K_p$, and the pile grows by that error."
+            },
+            {
+              "t": "math",
+              "tex": "\\frac{d}{dt}\\!\\int\\!\\err e\\,dt = \\err e \\approx \\frac{\\dis{mg} - K_i\\!\\int\\!\\err e\\,dt}{K_p} \\;\\Longrightarrow\\; \\tau_I \\approx \\frac{K_p}{K_i}"
             },
             {
               "t": "say",
               "who": "mika",
               "mood": "happy",
-              "text": "So it's Chapter 10 all over again, only smaller."
-            },
-            {
-              "t": "play",
-              "id": "lag",
-              "text": "That six-star tune's loop gain is 1 at about {calc|wc} rad/s. A motor lag of $\\tau_m$ = {scrub|tm} s holds that wiggle back by {calc|lag}°, so the phase margin drops from 59° to {calc|pm}°."
+              "text": "It grows in proportion to how far it still has to go. Chapter 3!"
             },
             {
               "t": "p",
-              "text": "With the real motors, about 25° of margin is gone before the noise or the limits even start. That's why the finale's winners are gentler than Chapter 9's."
+              "text": "So the droop dies like cooling coffee, with a time constant of about $K_p/K_i$ = 2 s at our gains. On Chapter 10's map that's a slow pole near $-K_i/K_p = -0.5$. (Only \"about\": the fast wiggle needs a moment to fade, and with a big $K_i$ the two get mixed up. That's why the number above only goes up to 12.)"
+            }
+          ]
+        },
+        {
+          "t": "predict",
+          "id": "ch9-bigki",
+          "gate": true,
+          "q": "Mika wants the droop gone *fast*, so plans to crank $K_i$ way up. What will happen?",
+          "options": [
+            {
+              "text": "The droop vanishes quickly and cleanly",
+              "sketch": "smooth",
+              "why": "That's the hope. But the pile has momentum: by the time the error reaches zero, it has built up *too much* push."
+            },
+            {
+              "text": "The droop vanishes, but the drone wiggles more, and too much makes it shake itself apart",
+              "sketch": "growing-wiggle",
+              "correct": true,
+              "why": "The pile remembers the past, so it keeps pushing after the drone arrives: overshoot. Too big a $K_i$ and each overshoot is bigger than the last."
+            },
+            {
+              "text": "Nothing changes, because $K_i$ only matters at the very end",
+              "sketch": "droop",
+              "why": "The pile starts growing from the first moment there's an error, so $K_i$ shapes the whole flight."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "The widget starts at $K_i$ = 10 N/(m·s). Watch three things: the {err|red shaded area} (the error being piled up), the {eff|dashed orange} integral part of the thrust climbing up to the {dis|purple gravity line}, and the droop read-out. Drag $K_i$ to 0 to get Chapter 2's droop back, then try bigger values. $K_p$ is fixed at 20 N/m."
+        },
+        {
+          "t": "play",
+          "id": "area",
+          "text": "At rest, P and D push nothing (no error, no speed), so the pile holds the whole weight by itself. With $K_i$ = {scrub|ki|eff} N/(m·s), the net {err|red area} must add up to exactly $mg/K_i$ = {calc|area} m·s. Check it against the widget's read-out."
+        },
+        {
+          "t": "widget",
+          "id": "integral"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Crank it! $K_i = 50$! Kill it with fire!"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "…why won't it stop? The bounces grew and grew, and now it's yo-yoing up and down by half a metre, forever!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "At 50 you went past some kind of edge. I tried a few values: below about 40 it settles, above it doesn't (and the yo-yo takes about one second per swing). We'll see why in a moment. The pile is *always a little behind*: it keeps pushing up after the drone has passed 2 m."
+        },
+        {
+          "t": "p",
+          "text": "That's Mika's mistake, and it's a very common one: the integral fixes the droop, but it adds **lag**, and lag makes things swing (the shower taught us that). We need something that pushes back against *speed*. (By the maths her swings should grow for ever. They stop at about half a metre only because the thrust hits 0 N on every swing: propellers can't pull down, Chapter 10's limit.)"
+        }
+      ]
+    },
+    {
+      "id": "derivative",
+      "title": "D: a virtual shock absorber",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "In Chapter 7 the damper was what calmed the spring down. What if the controller **pretends** to be a damper?"
+        },
+        {
+          "t": "p",
+          "text": "A damper pushes against velocity. So add a term that pushes against how fast the drone is moving:"
+        },
+        {
+          "t": "math",
+          "tex": "\\eff{T_D} = -K_d\\,\\frac{d\\out{h}}{dt}"
+        },
+        {
+          "t": "p",
+          "text": "Look at the drone's equation: drag already gives $-c\\,\\dot h$. The D term adds $-K_d\\,\\dot h$ on top, so the drone behaves as if its drag were $c + K_d$. We're adding air resistance **in software**."
+        },
+        {
+          "t": "play",
+          "id": "zeta",
+          "text": "With $K_p$ = 20 N/m and $K_d$ = {scrub|kd|eff} N·s/m, the drone feels a drag of {calc|damp|eff} N·s/m, so Chapter 7's damping ratio becomes $\\zeta = (c+K_d)/(2\\sqrt{m K_p})$ = {calc|zeta}: {calc|regime}. (With I switched on there is a third, slow pole too, so think of this as the personality of the fast pair.)"
+        },
+        {
+          "t": "note",
+          "text": "Strictly, the D in PID is the slope of the *error*, $K_d\\,\\dot e$. When the setpoint is still, $\\dot e = -\\dot h$, the same thing. We'll see in a moment why the difference matters."
+        },
+        {
+          "t": "widget",
+          "id": "damper"
+        },
+        {
+          "t": "p",
+          "text": "Flip on **Mika's big I gain** and then add damping. Even $K_d = 0.5$ N·s/m tips it back to stable (it moves the edge out to $K_i = 60$): the endless yo-yo becomes a bounce that dies away. But it still overshoots by at least a quarter, however much D you add. That huge pile simply remembers too much. Now switch Mika's $K_i$ off (back to 10) and try $K_d \\approx 3$–5: calm. **I and D trade off**: D buys you room for I, but not unlimited room."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "If 4 is good, 10 must be better. Maximum shock absorber!"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "It creeps up so slowly… and then it goes *past* 2 m anyway? Late?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "June, that's your honey drone from Chapter 7 again! Past $K_d \\approx 5.3$ the fast pair is overdamped. But now there's a pile too, and a slow drone gives the pile time to overfill."
+        },
+        {
+          "t": "p",
+          "text": "Critical damping is where ζ = 1: $K_d = 2\\sqrt{m K_p} - c \\approx 5.3$ N·s/m at $K_p$ = 20. With $K_i$ = 10, going from $K_d$ = 4 to 10 takes the overshoot from 0 to about 8 %, and the settling time from under a second to about 5 s. More D is not always better; the widget now says so when you overdo it."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "So D **predicts the future**! It sees where the drone is going and gets there first."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Not really. It only knows the slope *right now*. It's like guessing where a ball will land by assuming it keeps going straight. Usually a decent guess, but it's not magic. Wait until we feed it a jumpy sensor."
+        }
+      ]
+    },
+    {
+      "id": "poles",
+      "title": "What each knob does to the poles",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Time to use Chapter 10's map. Write the whole loop down, with $\\err{e} = \\sp{r} - \\out{h}$:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\ddot{\\out h} + c\\dot{\\out h} = \\underbrace{K_p\\,\\err e + K_i\\!\\int\\!\\err e\\,dt - K_d\\,\\dot{\\out h}}_{\\eff{T}} - \\dis{mg}"
+        },
+        {
+          "t": "p",
+          "text": "The integral is awkward, so take the slope of both sides. Slope and area undo each other (Chapter 3), so the slope of $\\int \\err e\\,dt$ is just $\\err e$. Gravity is constant, so its slope is **zero**: it simply falls out. With a fixed setpoint, $\\dot{\\err e} = -\\dot{\\out h}$. Term by term:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\tfrac{d}{dt}\\big(K_p\\,\\err e\\big) &= -K_p\\,\\dot{\\out h} \\\\ \\tfrac{d}{dt}\\Big(K_i\\!\\int\\!\\err e\\,dt\\Big) &= K_i\\,(\\sp r - \\out h) \\\\ \\tfrac{d}{dt}\\big(-K_d\\,\\dot{\\out h}\\big) &= -K_d\\,\\ddot{\\out h} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "Put them back together and move everything with $\\out h$ to the left. The three dots on $\\dddot{\\out h}$ mean the slope of the slope of the slope:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} m\\dddot{\\out h} + (c + K_d)\\,\\ddot{\\out h} &+ K_p\\,\\dot{\\out h} + K_i\\,\\out h \\\\ &= K_i\\,\\sp r \\end{aligned}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Gravity *disappeared* from the equation. That's the droop-killer in algebra form: the final height doesn't care about $mg$ at all. As long as it settles at all, that is. Mika's $K_i = 50$ drone never did."
+        },
+        {
+          "t": "p",
+          "text": "Guess $e^{st}$ again. **With I active**, the equation is cubic, so there are three poles. If $K_i=0$, there is no integrator: taking the slope added a fake root at $s = 0$, the common factor $s$ cancels, and the PD drone has two poles."
+        },
+        {
+          "t": "math",
+          "tex": "m s^3 + (c + K_d)\\,s^2 + K_p\\,s + K_i = 0"
+        },
+        {
+          "t": "callout",
+          "title": "I is a divide-by-s",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "In Chapter 9 a slope became \"× s\". An area is the opposite, so it becomes \"÷ s\". Write the controller that way, use the drone's own recipe $P(s) = 1/(ms^2+cs)$ (thrust in, height out), and find the poles with Chapter 10's loop rule, $1 + C\\,P = 0$. Clear the fractions and out comes the same cubic, without taking a single slope:"
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{gathered} C(s) = K_p + \\frac{K_i}{s} + K_d\\,s \\\\ 1 + C(s)\\,\\frac{1}{ms^2+cs} = 0 \\\\ ms^3 + (c+K_d)\\,s^2 + K_p\\,s + K_i = 0 \\end{gathered}"
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "excited",
+              "text": "So the ÷ s *is* the extra pole!"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "think",
+              "text": "And the top of the fraction gets $K_p s + K_i$: a **zero**, at $-K_i/K_p$. (Our D works on $\\out h$ only, so it adds no zero.) Keep an eye on it."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "For a cubic with all-positive coefficients $a_3 s^3 + a_2 s^2 + a_1 s + a_0$, there's a classic test (the **Routh–Hurwitz** criterion) that says all three poles are in the left half exactly when $a_2 a_1 > a_3 a_0$. For our drone that's the cliff edge:"
+        },
+        {
+          "t": "math",
+          "tex": "(c + K_d)\\,K_p > m\\,K_i \\quad\\Longleftrightarrow\\quad K_i < \\frac{(c+K_d)\\,K_p}{m}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "A rule with two people's names on it. Do we just have to believe it?"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Nope. We can find the edge ourselves."
+        },
+        {
+          "t": "p",
+          "text": "At the instant a wiggly pair reaches the vertical axis, its real part is zero, so try $s=i\\omega$ in the cubic. Since $i^2 = -1$ and $i^3 = -i$, the real parts and the sideways parts must each add up to zero:"
+        },
+        {
+          "t": "math",
+          "tex": "K_i - (c+K_d)\\,\\omega^2 = 0, \\qquad \\omega\\,\\big(K_p - m\\,\\omega^2\\big) = 0"
+        },
+        {
+          "t": "p",
+          "text": "The second one says $\\omega^2 = K_p/m$. Put that into the first:"
+        },
+        {
+          "t": "math",
+          "tex": "\\omega^2=\\frac{K_p}{m},\\qquad K_i=(c+K_d)\\omega^2=\\frac{(c+K_d)K_p}{m}"
+        },
+        {
+          "t": "callout",
+          "title": "Why below the line is the safe side",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Start with a tiny $K_i$. The PD pair sits safely on the left, and the new pole sits just left of zero, near $-K_i/K_p$. As $K_i$ grows, the poles slide smoothly. To reach the right half, one of them must cross the vertical axis. It can cross at 0 only if $K_i = 0$ (put $s = 0$ into the cubic: only $K_i$ is left), and at $\\pm i\\omega$ only at the edge we just found. So below the edge, no pole can have crossed."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "happy",
+              "text": "So the Routh–Hurwitz rule is just \"you can't get to the other side without touching the wall\"."
+            }
+          ]
+        },
+        {
+          "t": "play",
+          "id": "cliff",
+          "text": "With $K_p$ = {scrub|kp|eff} N/m and $K_d$ = {scrub|kd|eff} N·s/m, $K_i$ must stay below $(c+K_d)K_p/m$ = {calc|lim} N/(m·s). Right at the edge the drone swings at $\\omega = \\sqrt{K_p/m}$ = {calc|w} rad/s: one swing every {calc|T} s."
+        },
+        {
+          "t": "p",
+          "text": "At the starting values ($K_p$ = 20, no D) the edge is 40. That's exactly where Mika's drone went wild, and its yo-yo took about a second per swing: 6.32 rad/s is the P drone's own ωn from Chapter 7. Adding $K_d = 4$ moves the edge out to 200. Don't trust us: change the numbers above, or the sliders below, and watch the poles, the mini-map and the step response."
+        },
+        {
+          "t": "widget",
+          "id": "poles"
+        },
+        {
+          "t": "callout",
+          "title": "Why doesn't the slow pole make it slow?",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "surprised",
+              "text": "At the start the status says the slowest pole is at −0.54. Chapter 10 said that means about 4/0.54 ≈ 7 s. But the step settles in under 3!"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "think",
+              "text": "Look for the zero. The I brings one at $-K_i/K_p = -0.5$, right next to that pole. A pole and a zero that close nearly cancel, so that mode hardly shows up when we move the setpoint."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Hardly isn't never. The fast pair alone, with ζ = 0.47, would overshoot about 19 %. The leftover slow mode pushes that to almost 30 %."
+            }
+          ]
+        },
+        {
+          "t": "list",
+          "items": [
+            "**The I knob** ($K_i$) brings a third pole into the loop and can push a pair towards the right. Too much and it crosses the line.",
+            "**The D knob** ($K_d$) raises the I-gain stability limit by adding damping. Pole paths can turn: more D does not move every pole left.",
+            "**The P knob** ($K_p$) mostly spreads the wiggly pair up and down: faster, but more wiggly, unless D keeps up."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "playground",
+      "title": "The tuning playground",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Now the real thing: take off from the ground to 2 m with real motors (0–20 N). Earn all four stars. Every time you change a gain, the last flight stays as a faint ghost."
+        },
+        {
+          "t": "widget",
+          "id": "playground"
+        },
+        {
+          "t": "note",
+          "aside": true,
+          "text": "Stuck? Start with $K_d$ around 4 (that's ζ ≈ 0.8, inside Chapter 7's 0.7–1 sweet spot), then raise $K_i$ until the droop goes, then nudge $K_p$."
+        },
+        {
+          "t": "note",
+          "text": "**Integrator windup:** while the motors are pinned at 20 N, the error pile keeps growing even though the extra push can't happen. Later, all that stored-up push comes out as overshoot. \"Anti-windup\" simply pauses the pile while the motors are maxed out, and every drone so far in this chapter had it switched on. (A pinned motor has no room left to correct anything, which is why the stars count the time spent pinned.) At $K_p$ = 20, $K_i$ = 20, $K_d$ = 4: about 7 % overshoot with anti-windup, 17 % without. Toggle it and compare."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "I switched anti-windup off, set $K_p$ = 30, $K_i$ = 60, $K_d$ = 2… and the drone shot up to 4 m, right out of its picture!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "The pile kept growing the whole time the motors were flat out. With anti-windup on, the same gains peak at 2.8 m. Same knobs, very different memory."
+        }
+      ]
+    },
+    {
+      "id": "warnings",
+      "title": "Two warnings about D",
+      "blocks": [
+        {
+          "t": "h3",
+          "text": "Warning 1: the derivative kick"
+        },
+        {
+          "t": "p",
+          "text": "The drone hovers at 1 m. At $t = 1$ s we move the setpoint to 1.5 m. If D uses the slope of the *error*, then the error **jumps** by half a metre in an instant. Its slope is enormous, and so is the push."
+        },
+        {
+          "t": "play",
+          "id": "kick",
+          "text": "A jump of {scrub|dr} m seen through a {scrub|tf} s filter looks like a speed of about {calc|slope} m/s, so with $K_d$ = 4 the D term asks for roughly {calc|spike|eff} N. The motors top out at 20."
+        },
+        {
+          "t": "widget",
+          "id": "kick"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "On the error it asks for over 200 N? From motors that top out at 20?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "And they can't say no politely. They slam flat out for a moment, and the drone gets a kick in the pants."
+        },
+        {
+          "t": "p",
+          "text": "Taking the slope of the **measured height** instead fixes it: the drone can't teleport, so its height has no jumps. Same damping, no kick. Almost every real PID does this."
+        },
+        {
+          "t": "h3",
+          "text": "Warning 2: noise"
+        },
+        {
+          "t": "p",
+          "text": "Real height sensors jitter by a couple of centimetres. A couple of centimetres of jitter, a thousand times a second, has a **huge slope**. D amplifies it straight into the motors. The fix is to smooth the measurement before taking its slope (a filter with time constant $\\tau_f$), at the cost of reacting a bit later."
+        },
+        {
+          "t": "play",
+          "id": "jitter",
+          "text": "Read every millisecond, 2 cm of jitter looks like a speed of 20 m/s. Through a filter of $\\tau_f$ = {scrub|tf} s, $K_d$ = 4 turns $\\sigma_n$ = 2 cm of noise into about $K_d\\sigma_n/\\tau_f$ = {calc|d|eff} N of thrust jitter; P adds only $K_p\\sigma_n$ = 0.3 N (here $K_p$ = 15)."
+        },
+        {
+          "t": "widget",
+          "id": "noise"
+        },
+        {
+          "t": "callout",
+          "title": "The filter is Chapter 3's coffee",
+          "blocks": [
+            {
+              "t": "math",
+              "tex": "\\frac{d\\,h_f}{dt} = \\frac{h_m - h_f}{\\tau_f}"
+            },
+            {
+              "t": "p",
+              "text": "The smoothing filter is Newton's cooling rule pointed at the sensor: the smoothed height $h_f$ chases the jittery reading $h_m$ with time constant $\\tau_f$, the way the coffee chased room temperature. Fast jitter never gets a chance to move it. Real motion does, about one $\\tau_f$ late. That's the price, in seconds."
             },
             {
               "t": "say",
               "who": "theo",
               "mood": "surprised",
-              "text": "Only 33°? Chapter 10's margin-and-ζ pairs say that's a bouncy ζ of about 0.3. So how does it earn the overshoot star?"
+              "text": "So the cure for a jumpy D is… a little lag? The same thing that made the pile swing?"
             },
-            {
-              "t": "p",
-              "text": "Its wiggly pair of poles really is that bouncy (ζ ≈ 0.33: on its own it would overshoot about 33 %). But most of the climb rides on two slow, calm poles near −1.1 and −2.7, and the wiggly pair only gets a small share. Even with unlimited motors the take-off overshoots only about 7 %. Chapter 10's pairs are for its simple loop. This one has more parts, so read its margin as a safety distance, not as a promise about overshoot."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Chapter 10 would draw this. Here is the drone's own loop, the six-star tune once around: controller, motors, drone. Slide the motor lag and watch the phase bend down."
-        },
-        {
-          "t": "widget",
-          "id": "droneBode"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "surprised",
-          "text": "Without the lag the phase never gets to −180°, so there's no cliff at all: however far you turned the gain up, the loop could never reach Chapter 8's −1. The motors' tiny lag is what builds the cliff."
-        },
-        {
-          "t": "note",
-          "text": "We still ignore tilting, sideways wind, batteries sagging and a hundred other things. A real drone's altitude loop looks a lot like this one, though."
-        },
-        {
-          "t": "predict",
-          "id": "ch11-drop",
-          "gate": true,
-          "q": "When the package drops at 12 s, which term does the heavy lifting to get the drone back to exactly 2 m?",
-          "options": [
-            {
-              "text": "P: it reacts to the error right away",
-              "why": "P reacts first, but P alone would just settle at a *different* droop, because the hover thrust changed: with $K_p$ = 20, about 10 cm too high."
-            },
-            {
-              "text": "I: the pile has to find the new hover thrust",
-              "correct": true,
-              "why": "The drone now needs about 4.9 N instead of 6.9 N. At rest the error is 0 and D is 0, so the pile alone must hold the new weight. Only the integral can hunt down a new constant push and still end with zero error."
-            },
-            {
-              "text": "D: it stops the jump",
-              "why": "D damps the jump, which is useful, but it goes quiet once the drone is still, so it can't hold the new equilibrium."
-            }
-          ]
-        },
-        {
-          "t": "play",
-          "id": "drop",
-          "text": "When a {scrub|pkg} kg package drops, the hover push must fall by {calc|dN|eff} N. Only the integral can hold that for good: at $\\eff{K_i}$ = {scrub|ki|eff} N/(m·s) it has to pile up {calc|area} m·s of error, which at an average error of {scrub|e} cm takes about {calc|time} s."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "surprised",
-          "text": "Wait. So after the drop the drone *has* to float a little too high for a while? That's the error the pile unlearns from!"
-        }
-      ]
-    },
-    {
-      "id": "mission",
-      "title": "Fly the mission",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Each change of a slider restarts the mission, and the previous flight stays as a ghost. The small s-plane shows the **nominal** poles: the motor lag and the filter are in, and only the noise, the package and the limits are left out. So you can see the linear picture while the real, messy flight happens next to it. Earn all six stars for gold."
-        },
-        {
-          "t": "p",
-          "text": "The limits are what a delivery customer would notice: settled within 3 s, never more than 10% too high, not blown more than a hand's width (20 cm) by the gust, back in 2 s after the drop, never scraping the ground, and motors that don't buzz (under 0.5 N of chatter)."
-        },
-        {
-          "t": "p",
-          "text": "The arrival star means the **true height stays** within ±5 cm from its arrival until the gust at 6 s; merely crossing 2 m once does not count. The calm-motors star uses the **standard deviation** of thrust from 3 to 6 s, after the take-off and before the gust: its typical variation around its average, including late settling and sensor chatter. Point at a line of the checklist (or tab to it) to shade the seconds it judges."
-        },
-        {
-          "t": "widget",
-          "id": "mission"
-        },
-        {
-          "t": "note",
-          "text": "The sensor's jitter is random, but it's the *same* random every flight, so when the ghost and the new run differ, you did that. A real drone gets new noise every day, and good tunes win with any noise: we flew a six-star tune through 30 different jitters, and it earned six stars every time."
-        },
-        {
-          "t": "note",
-          "aside": true,
-          "text": "Stuck? Start from a calm Chapter 9 tune such as $K_p$ = 20, $K_i$ = 10, $K_d$ = 4 with $\\tau_f$ = 0.04 s. That's five stars. Then nudge $K_i$ up until the arrival star lights."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "I tuned the perfect controller in my head: huge $K_d$, the tiniest filter so D reacts instantly. It's flawless in calm air! Watch…"
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "surprised",
-          "text": "…why are the motors screaming? The orange line is all fuzz, and now it overshoots too!"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Chapter 9, warning 2. Big $K_d$ times a tiny filter turns every 2 cm of sensor jitter into a thrust spike. And the spikes get clipped at 0 N far more often than at 20 N (the faint orange line shows what the controller *asked* for: see how often it hits 0 N), so they add a lopsided extra push. That's the overshoot, the same upward drift Chapter 9 caught. It was only flawless because your imaginary calm air came with a perfect sensor."
-        },
-        {
-          "t": "play",
-          "id": "spike",
-          "text": "With $\\eff{K_d}$ = {scrub|kd|eff} N·s/m and a filter of $\\tau_f$ = {scrub|tf} s, every 2 cm wobble of the sensor asks the motors for about {calc|spike|eff} N ($K_d\\sigma_n/\\tau_f$). Hovering needs only 6.9 N."
-        },
-        {
-          "t": "callout",
-          "title": "Why not just more D?",
-          "blocks": [
             {
               "t": "say",
               "who": "june",
-              "mood": "think",
-              "text": "The motors are twitchy, so they need more damping. More D!"
-            },
-            {
-              "t": "p",
-              "text": "Theo tries it with $K_p$ = 20, $K_i$ = 15 and $\\tau_f$ = 0.04 s. The fuzz gets *worse*: 0.22 N of chatter at $K_d$ = 5, 0.41 N at $K_d$ = 10. Without the noise, the same $K_d$ = 10 is nearly silent."
-            },
-            {
-              "t": "say",
-              "who": "mika",
               "mood": "happy",
-              "text": "So D doesn't calm noise, it amplifies it. Damping calms *motion*, and the noise isn't motion: it's the sensor fibbing."
+              "text": "About a tenth of a second of it. Lag isn't evil. It's a price, and here it's a cheap one."
             }
           ]
         },
         {
-          "t": "p",
-          "text": "Try **June's calm-air tune** and watch the \"motors calm\" star fail. Then lengthen the filter to 0.04 s and bring $K_d$ down to about 7. At $K_d$ = 7 it arrives in about 1.9 s instead of June's dream of 1.3 s: that's the price of calm motors. That trade, speed against noise and against robustness, *is* control engineering."
+          "t": "note",
+          "text": "Did you spot the drone **drifting upwards** with the short filter? (Watch the average-height read-out.) The chattering thrust gets clipped at 0 N far more often than at 20 N (about 55 % of the time against 5 %: hovering needs only 4.9 N), so the clipped average comes out *above* the weight. Noise plus limits can even move the average. Real hardware is full of surprises like that."
         },
         {
           "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "A little slower, and the motors stop screaming. Deal. In my head the air was calm *and* the sensor was perfect."
-        },
-        {
-          "t": "callout",
-          "title": "The gust is a job for P",
-          "blocks": [
-            {
-              "t": "play",
-              "id": "gust",
-              "text": "A steady push of {scrub|F|dis} N against a P gain of $\\eff{K_p}$ = {scrub|kp|eff} N/m moves the drone by $F/K_p$ = {calc|dev} cm, once a little D has let it settle."
-            },
-            {
-              "t": "p",
-              "text": "The mission's gust lasts only 3 s, so the integral hardly gets a say: a six-star tune with $K_p$ = 20 still dips about 7 cm. And with no D at all, P keeps wobbling on the lagging motors instead of settling."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "happy",
-              "text": "So if the gust star fails, don't reach for $K_i$. Stiffen the spring: more $K_p$."
-            }
-          ]
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Okay, D does *not* predict the future. It predicts whatever the noise felt like a millisecond ago."
         }
       ]
     },
     {
-      "id": "reflect",
-      "title": "Looking back",
+      "id": "wrap",
+      "title": "What we fixed",
       "blocks": [
         {
-          "t": "say",
-          "who": "mika",
-          "mood": "happy",
-          "text": "I started out thinking \"push harder\" fixes everything. It's the opposite, isn't it? Most of the trouble came from pushing too hard on old or noisy information. I'm glad I asked all the dumb questions. None of them were dumb."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "I finally believe the Laplace transform. It's not a lookup table: it's a probe that asks a signal \"how much of $e^{st}$ are you?\" And because slopes turn into multiplying by $s$, the calculus turns into algebra. The poles are where the answer blows up: the $e^{st}$ the system is built from."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "And I learned \"more\" isn't \"better\": more gain, more damping, more $K_i$, more speed. There's always a cliff, and the good designs keep a margin from it. Also: always try it on the drone."
-        },
-        {
-          "t": "p",
-          "text": "Here's everything we built, from the shower to the finale. Every bubble links back to where it was born."
-        },
-        {
           "t": "recap",
-          "title": "The whole journey, in one breath",
           "items": [
-            "**Feedback**: measure what happened, compare with the goal, act on the error (Ch 0–1).",
-            "**P control** pushes in proportion to the error, but leaves a droop and wiggles when it's strong (Ch 2).",
-            "**Derivatives, exponentials and spinning numbers** describe how things change: $e^{st}$ with $s = \\sigma + i\\omega$ grows or shrinks *and* wiggles (Ch 3–6).",
-            "The **Laplace transform** turns slopes into multiplication by $s$, so calculus becomes algebra (Ch 7).",
-            "A transfer function’s **uncanceled poles** mark natural motions visible from its chosen input to output: left-half motions fade, right-half motions grow (Ch 8).",
-            "**PID**: I kills the droop, D adds damping, and each one moves the poles (Ch 9).",
-            "**Delay** adds phase lag; **margins** tell you how far you are from the cliff edge (Ch 10).",
-            "Real hardware adds **limits** (Ch 8), **lag** that costs phase margin (Ch 3 + Ch 10) and **noise** that D amplifies (Ch 9), so good controllers are calm as well as fast (Ch 11)."
+            "**P** pushes in proportion to the error, but must leave a droop to hold the drone up.",
+            "**I** piles up past error; the only resting point is zero error, so it kills the droop, which dies with a time constant of about $K_p/K_i$. It adds lag, so too much makes things swing.",
+            "**D** pushes against speed: a virtual damper that adds to the drag $c$, so $\\zeta = (c+K_d)/(2\\sqrt{mK_p})$. More D is not always better: overdamped, the drone creeps and the pile overfills.",
+            "The closed loop is $m s^3 + (c + K_d)s^2 + K_p s + K_i$; it's stable exactly when $(c+K_d)K_p > mK_i$.",
+            "Take D from the measurement (no kick) and filter it (less noise)."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch9-q1",
+              "q": "Which term removes the steady droop under gravity?",
+              "options": [
+                {
+                  "text": "The integral term",
+                  "correct": true,
+                  "why": "Its pile of error keeps changing until the error is exactly zero, and then it holds the needed 4.9 N by itself."
+                },
+                {
+                  "text": "The derivative term",
+                  "why": "D reacts to speed. When the drone hovers still, speed is zero and D contributes nothing, so it can't hold anything up."
+                },
+                {
+                  "text": "A bigger proportional gain",
+                  "why": "Bigger $K_p$ shrinks the droop ($mg/K_p$) but never to zero, and it makes the drone wigglier."
+                }
+              ]
+            },
+            {
+              "id": "ch9-q3",
+              "q": "With $K_p = 10$ N/m and $K_d = 1$ N·s/m (drone: $m = 0.5$ kg, $c = 1$ N·s/m), what's the largest $K_i$ before instability?",
+              "options": [
+                {
+                  "text": "20 N/(m·s)",
+                  "why": "Check the formula: $(c + K_d)K_p/m = (1+1)\\cdot 10 / 0.5$. You may have forgotten to divide by $m$."
+                },
+                {
+                  "text": "40 N/(m·s)",
+                  "correct": true,
+                  "why": "$(1 + 1)\\cdot 10 / 0.5 = 40$. Above that, two poles cross into the right half-plane."
+                },
+                {
+                  "text": "80 N/(m·s)",
+                  "why": "Too high. Remember the drag $c$ and the $K_d$ add together first: $(1+1) = 2$, not 4."
+                }
+              ]
+            },
+            {
+              "id": "ch9-q4",
+              "q": "Why take the derivative of the **measurement** rather than of the error?",
+              "options": [
+                {
+                  "text": "When the setpoint jumps, the error jumps too, and its slope is huge: a thrust spike",
+                  "correct": true,
+                  "why": "Height can't jump, so its slope stays sensible. Same damping, no kick."
+                },
+                {
+                  "text": "Because the measurement is less noisy than the error",
+                  "why": "They have exactly the same noise; the error is setpoint minus measurement."
+                },
+                {
+                  "text": "It makes the controller more aggressive",
+                  "why": "It's the opposite: it removes the aggressive spike on setpoint changes."
+                }
+              ]
+            },
+            {
+              "id": "ch9-q5",
+              "q": "$K_p$ = 20, $K_i$ = 10. Which change makes the take-off overshoot **bigger**?",
+              "options": [
+                {
+                  "text": "Raising $K_d$ from 4 to 10",
+                  "correct": true,
+                  "why": "Too much damping makes the drone creep, and the pile keeps filling while it creeps: the overshoot goes from 0 % to about 8 %."
+                },
+                {
+                  "text": "Raising $K_d$ from 0 to 4",
+                  "why": "That's the good direction: the overshoot drops from about 54 % to 0 %."
+                },
+                {
+                  "text": "Lowering $K_i$ from 10 to 5",
+                  "why": "A smaller pile remembers less, so it overshoots less (0 % at $K_d$ = 4). It just takes longer to kill the droop."
+                }
+              ]
+            }
           ]
         },
         {
           "t": "map"
-        }
-      ]
-    },
-    {
-      "id": "final-check",
-      "title": "Explain it to a friend",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "First, your mission: how many stars did you earn, and which one was hardest? Say *why* out loud before you read on."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "happy",
-          "text": "Mine was the calm star. I kept adding D to calm the motors down, and they only got louder."
-        },
-        {
-          "t": "p",
-          "text": "The best test of understanding is explaining. Before each answer, try saying *your* version out loud. Then pick the explanation that best matches it."
-        },
-        {
-          "t": "quiz",
-          "title": "Final check",
-          "items": [
-            {
-              "id": "ch11-q1",
-              "q": "A friend asks: \"Why does the Laplace transform even exist?\"",
-              "options": [
-                {
-                  "text": "It turns slopes into multiplication by $s$, so equations about change become algebra, and the answer's poles show which $e^{st}$ behaviours the system is made of",
-                  "correct": true,
-                  "why": "That's the heart of it: calculus to algebra, plus a map (the s-plane) that shows the personality at a glance."
-                },
-                {
-                  "text": "It's a table of formulas engineers memorise to look up answers",
-                  "why": "The table is a *result*. We derived every row by probing signals with $e^{-st}$ and measuring the area."
-                },
-                {
-                  "text": "It converts signals into sound frequencies",
-                  "why": "That's closer to the Fourier transform, which only uses the spinning part ($s = i\\omega$). Laplace also allows growth and decay ($\\sigma$)."
-                }
-              ]
-            },
-            {
-              "id": "ch11-q2",
-              "q": "\"What is a pole, really?\"",
-              "options": [
-                {
-                  "text": "A value of $s$ where the transfer function blows up: one of the $e^{st}$ motions the system naturally makes, with its real part telling growth/decay and its imaginary part telling wiggle",
-                  "correct": true,
-                  "why": "Left half = dies out, right half = explodes, height = wiggle speed. The whole personality on one map."
-                },
-                {
-                  "text": "A physical part of the drone, like a motor",
-                  "why": "Poles belong to the *whole loop*: change a gain and they move, even though no part of the drone changed."
-                },
-                {
-                  "text": "The point where the system becomes unstable",
-                  "why": "Every system has poles, stable ones too. Instability is when a pole sits in the right half-plane."
-                }
-              ]
-            },
-            {
-              "id": "ch11-q4",
-              "q": "Your friend's drone hovers, but its motors buzz and get hot. The height sensor jitters by 2 cm. What's the first thing to try?",
-              "options": [
-                {
-                  "text": "Lengthen the derivative filter or lower $K_d$",
-                  "correct": true,
-                  "why": "D turns sensor jitter into about $K_d\\sigma_n/\\tau_f$ newtons of command: 40 N for $K_d$ = 10 and $\\tau_f$ = 0.005 s, only 3.5 N for $K_d$ = 7 and $\\tau_f$ = 0.04 s. You give up a little arrival speed."
-                },
-                {
-                  "text": "More $K_d$, for more damping",
-                  "why": "Damping calms *motion*, not sensor fibs. At $\\tau_f$ = 0.04 s the chatter grows from 0.22 N at $K_d$ = 5 to 0.41 N at $K_d$ = 10."
-                },
-                {
-                  "text": "Turn off the integral",
-                  "why": "I adds up the error slowly, so it barely passes the jitter on. Without it the drone droops and can't undo a package drop."
-                },
-                {
-                  "text": "More $K_p$",
-                  "why": "P passes the jitter straight through ($K_p\\sigma_n$: 0.4 N at $K_p$ = 20), so more P means a bit *more* buzz, not less."
-                }
-              ]
-            },
-            {
-              "id": "ch11-q5",
-              "q": "The motors get slower: their lag goes from 0.05 s to 0.1 s. What happens to the six-star tune from the side trip?",
-              "options": [
-                {
-                  "text": "Its phase margin shrinks, from about 33° to about 21°, so it wobbles more",
-                  "correct": true,
-                  "why": "A lag holds each wiggle back by $\\arctan(\\omega\\tau)$: Chapter 10's phase lag, the same thing that made the shower overshoot. A longer lag leaves less margin before −180°."
-                },
-                {
-                  "text": "Nothing: 0.1 s is tiny next to the 20 s mission",
-                  "why": "What matters is the lag compared with the loop's wiggle, about 10 rad/s (a swing every 0.6 s), not the length of the mission."
-                },
-                {
-                  "text": "It droops more",
-                  "why": "With I on there is no droop at all, and a lag changes *timing*, not the final balance of forces."
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "state",
-      "title": "One more picture: the state plane",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Every plot in this course showed height over time. But height alone can't tell you what happens next: at 2 m and climbing is not at 2 m and falling."
-        },
-        {
-          "t": "p",
-          "text": "Two numbers pin down the future: the height measured from the target, $\\Delta h$, and the speed $v$. Together they are the drone's **state**. Put them on one plane, height across and speed up, and the whole flight becomes the path of one moving point."
-        },
-        {
-          "t": "p",
-          "text": "Its rules are Chapter 3's slopes, one for each number: the height changes at the speed, and the speed changes at the acceleration from Chapter 1's equation. With the hover thrust handled and PD control $T = -K_p\\,\\Delta h - K_d\\,v$ on top, both rules fit in one table:"
-        },
-        {
-          "t": "math",
-          "tex": "\\frac{d}{dt}\\begin{pmatrix}\\Delta h\\\\ v\\end{pmatrix} = \\underbrace{\\begin{pmatrix}0 & 1\\\\ -\\frac{K_p}{m} & -\\frac{c+K_d}{m}\\end{pmatrix}}_{A}\\begin{pmatrix}\\Delta h\\\\ v\\end{pmatrix}"
-        },
-        {
-          "t": "p",
-          "text": "That table $A$ is a **matrix**: multiply it into the state and out comes the state's velocity. Its top row says the height changes at the speed; its bottom row is Newton's law."
-        },
-        {
-          "t": "predict",
-          "id": "ch11-state",
-          "gate": true,
-          "q": "With $K_p$ = 20 N/m and no D, the drone starts 1 m low and still. What path does its state trace?",
-          "options": [
-            {
-              "text": "Straight into the middle",
-              "why": "A straight slide needs real poles. With ζ ≈ 0.16 the drone overshoots and swings, so the path has to curl."
-            },
-            {
-              "text": "A spiral into the middle",
-              "correct": true,
-              "why": "Right. Each swing trades height for speed and back, and the drag shrinks it every turn: Chapter 5's shrinking spiral, drawn in height and speed."
-            },
-            {
-              "text": "A circle, forever",
-              "why": "That needs no damping at all. The drag takes a little out of every swing, so the circle shrinks into a spiral."
-            }
-          ]
-        },
-        {
-          "t": "widget",
-          "id": "statePlane"
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "It's Chapter 5's spiral! And when I push $K_d$ past about 5.3, the spiral straightens out and slides in along two dashed lines."
-        },
-        {
-          "t": "p",
-          "text": "Those straight lines are the **modes**: start exactly on one and the state slides straight in at that mode's own rate. The rates are the matrix's special numbers, its **eigenvalues**, found where $\\det(sI - A) = 0$:"
-        },
-        {
-          "t": "math",
-          "tex": "\\det(sI - A) = s^2 + \\frac{c + K_d}{m}\\,s + \\frac{K_p}{m} = 0"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "surprised",
-          "text": "That's Chapter 6's equation! The eigenvalues are the poles. Same drone, new picture."
-        },
-        {
-          "t": "p",
-          "text": "And Chapter 8's pole playground was quietly doing **state feedback** all along: $T = -K_p\\,\\Delta h - K_d\\,v$ pushes on both numbers of the state, and choosing the two gains placed both poles. Give the state more numbers (tilt, spin, sideways position) and the matrix grows, but the idea stays: the eigenvalues are the poles, and feeding back the whole state can place them all."
-        },
-        {
-          "t": "p",
-          "text": "One more confession. Every rule in this course is a straight-line rule, but real things curve. A propeller's thrust grows with the *square* of its spin, $T = k\\,w^2$. Near hover the curve is almost straight, so we swap it for its tangent at the hover, Chapter 3's ruler:"
-        },
-        {
-          "t": "math",
-          "tex": "T \\approx T_0 + 2k\\,w_0\\,\\Delta w"
-        },
-        {
-          "t": "play",
-          "id": "linear",
-          "text": "Hovering at $w_0$ = 700 rad/s, spin the propellers {scrub|dw} rad/s faster: the true extra thrust is {calc|exact|eff} N, the tangent says {calc|lin|eff} N, {calc|err} too little."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "So the straight lines were never a lie. They're a zoomed-in picture: honest near the hover, worse the further you stray. That's why our maths needed the drone near 2 m."
-        },
-        {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "State",
-              "def": "The numbers that pin down the future: for our drone, height and speed. One point on the state plane."
-            },
-            {
-              "term": "Matrix $A$",
-              "def": "A table of numbers that turns the state into its velocity."
-            },
-            {
-              "term": "Eigenvalues",
-              "def": "The special rates of a matrix, where $\\det(sI - A) = 0$. For a drone's $A$ they are its poles."
-            },
-            {
-              "term": "Linearising",
-              "def": "Replacing a curved rule by its tangent near the point you care about (here, the hover)."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "next",
-      "title": "Where to go next",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "You now know more control theory than most people ever meet. Here's where the road goes on, each one a new notebook:"
-        },
-        {
-          "t": "list",
-          "items": [
-            "**Root locus:** instead of dragging poles, drag the *gain* and watch the poles trace paths. You'd see at a glance which $K_p$ is too much.",
-            "**State-space control:** you've had a first taste above. Next come many sensors and motors at once. A real drone must hold tilt, spin and position together, and one-knob-at-a-time tuning stops working.",
-            "**Digital control:** real controllers run on computers that sample every few milliseconds. Sampling is a small delay too, and the s-plane gets a cousin, the z-plane.",
-            "**Kalman filters:** blend what a model predicts with what the sensor says, so you can use a noisy sensor without a slow filter.",
-            "**Smith predictors and model predictive control:** controllers that carry a little simulation inside them to see around delays, the shower's real cure.",
-            "**Nonlinear and robust control:** what to do when drag isn't linear or the drone flies in 3-D, and how to *prove* you still have margin."
-          ]
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "excited",
-          "text": "Root locus first. I want to *watch* the poles move while I turn one knob."
         },
         {
           "t": "cliff",
-          "text": "Next time a shower makes you dance between scalding and freezing, you'll know exactly what's happening. And you'll know it's not your fault. **It's the phase margin.**"
+          "text": "June tried our drone-style PID on the shower… and it wiggled exactly like we did in Chapter 0. **What is it about delay?**"
         }
       ]
     }
   ],
   "widgets": {
-    "mission": {
-      "title": "Mission control",
-      "measured": "sensor reading",
-      "hAria": "Height over the 20 second mission with the target band; gust and package-drop moments marked.",
-      "tAria": "Thrust over the mission: what the controller asked for (clipped to the motors' 0 to 20 N) and what the lagging motors delivered.",
-      "gust": "gust",
-      "drop": "drop",
-      "max": "20 N max",
-      "min": "0 N: can't pull down",
-      "asked": "asked for",
-      "delivered": "delivered",
-      "splane": "Nominal closed-loop poles of the drone with motor lag and filtered derivative.",
-      "filter": "D filter $\\tau_f$",
-      "presetJune": "June's calm-air tune",
-      "instant": "Fly instantly",
-      "checklist": "Mission checklist",
-      "crit": {
-        "rise": "Reach and stay at 2 m (± {bandCm} cm) by {rise} s, until the gust",
-        "overshoot": "Overshoot under {overshoot} % on take-off",
-        "gust": "Stay within {gustCm} cm from gust onset until the package drop",
-        "recover": "Back within ± {bandCm} cm less than {recover} s after the drop",
-        "ground": "Never touch the ground after take-off",
-        "calm": "Thrust standard deviation under {calm} N from 3 to 6 s",
-        "neverRise": "not settled by {s} s",
-        "neverBack": "not back by {s} s"
+    "integral": {
+      "title": "The error pile",
+      "slider": "Integral gain $K_i$",
+      "gravity": "weight mg",
+      "iterm": "integral push Ki·∫e",
+      "readout": {
+        "droop": "droop at 12 s",
+        "pile": "integral push",
+        "area": "net red area"
       },
-      "touched": "touched!",
-      "clear": "clear",
-      "ready": "Ready. Adjust the gains, then press Play (or Fly instantly).",
-      "flying": "Flying…",
-      "hitPage": "Bonk! It climbed out of its picture and hit what is above it. The motors stalled and it fell. In a real room, overshoot hits the ceiling.",
-      "hitNoise": "It was the sensor noise that lifted it: the clipped chatter pushes up more than down.",
-      "gold": "GOLD! All six stars. You're a control engineer.",
-      "stars": "{n} of 6 stars. Keep tuning!",
-      "hint": {
-        "ground": "It sat on the ground or fell back to it. Start with more Kp: that's what lifts it.",
-        "noise": "The motors chatter: D turns the sensor's jitter into thrust spikes. Lengthen τf or lower Kd.",
-        "droop": "It hangs below 2 m: that's droop. Some Ki will fix it.",
-        "overshoot": "It overshoots on take-off. More Kd, or less Ki.",
-        "rise": "It creeps up too slowly: it hasn't settled by 3 s. Try a little more Ki.",
-        "gust": "The gust pushes it too far. More Kp stiffens it.",
-        "recover": "The drop takes too long to undo. That's the integral's job: try more Ki.",
-        "swing": "The thrust is still swinging from 3 to 6 s: the drone hasn't settled. A little more Kd calms the motion."
+      "status": {
+        "none": "No integral: the drone droops, just like in Chapter 2.",
+        "slow": "The droop is shrinking, but slowly. The pile takes time to build.",
+        "ringing": "Stable, but only just: at 12 s it is still swinging. The closer Ki gets to {lim}, the slower the swings die.",
+        "gone": "Droop gone! The pile now holds up the whole weight.",
+        "unstable": "Past the edge (Ki > {lim}): the bounces grow until the motors hit their limits, and it never settles."
       },
-      "best": "Your best so far: {n} of 6 stars (Kp {kp}, Ki {ki}, Kd {kd}, τf {tf} s).",
-      "phase": {
-        "takeoff": "{s} s: take-off with the package",
-        "gust": "{s} s: gust pushing down!",
-        "hover": "{s} s: hovering, package aboard",
-        "drop": "{s} s: package dropped!",
-        "done": "Mission complete."
+      "describe": "Integral gain {ki}. Droop after 12 seconds: {droop} centimetres."
+    },
+    "damper": {
+      "title": "Adding a virtual damper",
+      "slider": "Derivative gain $K_d$",
+      "bigKi": "Mika's big $K_i$ = 50",
+      "bigKiName": "Mika's big Ki = 50",
+      "readout": {
+        "damping": "total damping c + Kd",
+        "overshoot": "overshoot",
+        "zeta": "damping ratio ζ"
       },
-      "poles": {
-        "stable": "Nominal poles: all in the left half.",
-        "unstable": "A nominal pole is in the right half: this tune can't hold!",
-        "off_one": "(1 fast pole off the left edge.)",
-        "off_other": "({n} fast poles off the left edge.)",
-        "marginal": "Nominal poles: a pole is on the stability boundary."
-      },
-      "state": {
-        "pass": "passed",
-        "fail": "failed",
-        "pending": "not decided yet"
+      "status": {
+        "unstable": "Still unstable: needs more damping.",
+        "bouncy": "Stable, but bouncy. Add more Kd.",
+        "calm": "Calm! The damper soaks up the bounce.",
+        "tooMuch": "More D made it worse! Now it creeps up so slowly that the pile overfills, and it overshoots late. Try less Kd.",
+        "bigPile": "Stable, but Mika's big pile still overshoots by {os} %. No amount of D fixes that: switch Mika's Ki off."
       }
     },
-    "droneBode": {
-      "title": "The drone's own Bode plot",
-      "w": "wiggle speed ω (rad/s)",
-      "gain": "loop gain",
-      "phase": "phase (°)",
-      "loop": "once around the loop",
-      "gainAria": "Loop gain of the drone's six-star tune against wiggle speed, logarithmic axes, with the loop without motor lag as a faint ghost.",
-      "phaseAria": "Phase of the drone's loop against wiggle speed, with the −180° cliff and the phase margin at the gain-of-1 speed.",
-      "one": "gain 1",
-      "cliff": "−180°",
-      "atCross": "phase margin",
-      "gm": "gain margin",
-      "tm": "Motor lag $\\tau_m$",
-      "wc": "gain-of-1 speed",
-      "pm": "phase margin",
-      "lag": "lag there",
-      "noCliff": "no cliff",
-      "noLag": "No motor lag: the loop is at gain 1 near {wc} rad/s with {pm}° of margin, and its phase never reaches −180°.",
-      "withLag": "At {wc} rad/s, where the loop gain is 1, the motors hold the wiggle back {lag}°: {pm}° of margin is left (it was {pm0}° without them), and now a cliff appears, × {gm} away.",
-      "describe": "Phase margin {pm} degrees at {wc} radians per second.",
-      "help": "Slide the motor lag. The faint ghost is the same loop with instant motors."
+    "poles": {
+      "title": "Three knobs, three poles",
+      "splane": "s-plane showing the three closed-loop poles of the drone with PID control",
+      "kp": "$K_p$",
+      "ki": "$K_i$",
+      "kd": "$K_d$",
+      "map": {
+        "x": "Kd (N·s/m)",
+        "y": "Ki (N/(m·s))",
+        "edge": "cliff edge Ki = (c+Kd)Kp/m",
+        "you": "you",
+        "aria": "Map of Ki against Kd with the stability boundary line; below the line is stable."
+      },
+      "stepAria": "Step response from 1.5 m to 2 m for the current gains",
+      "status": {
+        "stable": "Stable: Ki must stay below {lim}. The slowest pole sits at σ = {s}.",
+        "unstable": "Unstable! Ki is above the edge ({lim}). Two poles crossed into the right half.",
+        "cancel": "(A zero at {z} nearly cancels it, so it barely shows in the step.)"
+      },
+      "help": "The step response starts the drone hovering at 1.5 m and asks for 2 m at t = 1 s, with real 20 N motors (so for big $K_p$ it can differ from the pole picture). Poles beyond the frame become arrows at its edge. ○ is the zero.",
+      "reShort": "σ",
+      "imShort": "ω",
+      "readout": {
+        "overshoot": "step overshoot",
+        "settling": "settling time (2 %)"
+      },
+      "never": "not within 14 s",
+      "zero": "zero"
     },
-    "statePlane": {
-      "title": "The drone as a moving point",
-      "dh": "height error Δh (m)",
-      "v": "speed v (m/s)",
-      "mode": "mode lines (real poles)",
-      "path": "path of the state",
-      "height": "height error",
-      "target": "on target",
-      "planeAria": "The state plane: height error across, speed up, with the path of the drone from 1 m low and the mode lines when the poles are real.",
-      "timeAria": "The same flight as height error over time.",
-      "poles": "poles (eigenvalues of A)",
-      "state": "state at the cursor",
-      "kp": "Gain $K_p$",
-      "kd": "Gain $K_d$",
-      "at": "Time cursor",
-      "spiral": "Poles {p}: the state spirals in, trading height for speed on every swing.",
-      "real": "Real poles {p}: no swinging. The path bends onto the slower mode line and slides in along it.",
-      "describe": "Kp {kp}, Kd {kd}: at {t} seconds the height error is {h} metres and the speed {v} metres per second.",
-      "help": "Slide the gains to change the matrix and the path; slide the time cursor to move the dot along the path and the time plot together."
+    "playground": {
+      "title": "Tuning playground: take off to 2 m",
+      "kp": "$K_p$",
+      "ki": "$K_i$",
+      "kd": "$K_d$",
+      "antiWindup": "Anti-windup",
+      "targets": "Stars for: overshoot under {os} %, settling (within 2 %) under {ts} s, no droop (under 1 cm), and motors pinned at a limit for under {sat} s.",
+      "readout": {
+        "overshoot": "overshoot",
+        "settling": "settling time",
+        "sse": "droop",
+        "saturated": "motors pinned"
+      },
+      "never": "never",
+      "allStars": "All four stars! That's a real tuning.",
+      "someStars": "{n} of 4 stars.",
+      "starsAria": "{n} of 4 stars earned",
+      "hit": {
+        "back": "Bump! It hit what is above it, but the motors keep running, and feedback brings it back to 2 m.",
+        "wild": "Bump! It hit what is above it. The motors keep running, but with these gains it never settles.",
+        "mark": "bump!"
+      },
+      "crash": "Crash at {t} s! It hit the ground faster than 1.5 m/s, and a crashed drone stays down.",
+      "neverDroop": "never (droops)"
+    },
+    "kick": {
+      "title": "Setpoint jump: 1 m → 1.5 m",
+      "mode": "Take the derivative of…",
+      "onError": "the error",
+      "onMeasurement": "the measured height",
+      "asked": "peak asked for",
+      "peak": "peak delivered",
+      "kickMark": "kick!",
+      "status": {
+        "error": "The error jumps, so its slope is huge: the controller asks for {req} N! The motors can only slam to 20 N. That's a derivative kick.",
+        "measurement": "Height can't jump, so no kick: the most it ever asks for is {req} N, and the climb is smooth."
+      }
+    },
+    "noise": {
+      "title": "A jittery height sensor",
+      "toggle": "Sensor noise (about 2 cm)",
+      "filter": "Derivative filter $\\tau_f$",
+      "filterName": "derivative filter time constant τf",
+      "measured": "sensor reading",
+      "jitter": "thrust jitter",
+      "status": {
+        "off": "A perfect sensor: calm motors.",
+        "chatter": "The motors chatter! D is amplifying the noise. Try a longer filter.",
+        "calm": "Much calmer. Of the ±{j} N left, P passes about {p} N straight through; the rest is still D. The price: D now reacts about {tau} s later.",
+        "noD": "No D, nothing to amplify the noise: the ±{j} N left is P passing it straight through. Calm motors, but now only the drag damps the drone."
+      },
+      "kd": "Derivative gain $K_d$",
+      "mean": "average height",
+      "help": "Try $K_d$ = 0: the jitter drops to about 0.3 N (P alone), but then only the drag damps the drone. More D, more noise."
+    },
+    "gains": {
+      "kp": "proportional gain Kp",
+      "ki": "integral gain Ki",
+      "kd": "derivative gain Kd"
     }
   },
   "plays": {
-    "limit": {
-      "kp": "gain Kp, newtons per metre",
-      "clipped": ", and the motors give 20"
+    "pile": {
+      "ki": "integral gain Ki, newtons per metre-second"
     },
-    "lag": {
-      "tm": "motor lag, seconds"
+    "area": {
+      "ki": "integral gain Ki, newtons per metre-second"
     },
-    "drop": {
-      "pkg": "package mass, kilograms",
-      "ki": "gain Ki, newtons per metre-second",
-      "e": "average error, centimetres"
+    "zeta": {
+      "kd": "derivative gain Kd, newton-seconds per metre"
     },
-    "spike": {
-      "kd": "gain Kd, newton-seconds per metre",
+    "cliff": {
+      "kp": "proportional gain Kp, newtons per metre",
+      "kd": "derivative gain Kd, newton-seconds per metre"
+    },
+    "kick": {
+      "dr": "setpoint jump, metres",
       "tf": "filter time constant, seconds"
     },
-    "gust": {
-      "F": "steady push, newtons",
-      "kp": "gain Kp, newtons per metre"
-    },
-    "linear": {
-      "dw": "extra spin, radians per second",
-      "pct": "{v}%"
+    "jitter": {
+      "tf": "filter time constant, seconds"
     }
   }
 }

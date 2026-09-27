@@ -1,67 +1,43 @@
 {
   "kicker": "Kapitel 6",
-  "title": "Der wahre Charakter der Drohne",
-  "question": "Warum federt die Drohne wie eine Sprungfeder?",
+  "title": "Die Karte von s",
+  "question": "Wie wird aus einer drehenden Zahl ein echtes Wackeln, und wie sieht jedes s aus?",
   "sections": [
     {
-      "id": "spring",
-      "title": "Der Regler ist eine Feder",
+      "id": "twins",
+      "title": "Zurück zur Feder (und ein neuer Fehler)",
       "blocks": [
         {
           "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "June hat gefragt, wo unsere Drohne auf der Karte wohnt. Ein Hinweis: Erinnert ihr euch an die hüpfende Drohne aus Kapitel 2? Je weiter wir $\\eff{K_p}$ aufgedreht haben, desto mehr hat sie gewippt. Sah genau aus wie ein Gewicht an einer Feder."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "„Sah aus wie“ ist kein Beweis. Stellen wir beide nebeneinander und schreiben beide Gleichungen auf."
+          "who": "june",
+          "mood": "excited",
+          "text": "Letztes Mal haben wir eine Zahl gebaut, die sich dreht. Geben wir sie der Feder und schauen wir, ob sie sich benimmt."
         },
         {
           "t": "p",
-          "text": "Links: eine Masse von 0,5 kg an einer Feder mit Dämpfer (ein kleiner ölgefüllter Kolben, der sich gegen Bewegung sträubt). Rechts: unsere Drohne, gleiche Masse, gleicher Luftwiderstand, mit Proportionalregelung."
-        },
-        {
-          "t": "p",
-          "text": "Schreiben wir zuerst jede Kraft auf die Masse auf, eine nach der anderen. Wir messen ihre Position $x$ ab der Ruhelage, nach oben positiv."
-        },
-        {
-          "t": "list",
-          "items": [
-            "**Die Feder** zieht zurück Richtung Ruhelage, umso stärker, je weiter sie gedehnt ist: $-\\eff{k}\\,x$. Doppelt so weit gedehnt heißt doppelt so starker Zug.",
-            "**Der Dämpfer** drückt gegen die *Bewegung*, nicht gegen die Position: $-c\\,\\dot{x}$. Im Stillstand tut er nichts. Bei schneller Bewegung drückt er kräftig zurück. ($\\dot{x}$ ist das Tempo aus Kapitel 3.)",
-            "**Die Schwerkraft** verschiebt nur die Ruhelage ein bisschen nach unten. Wenn wir ab der Ruhelage messen, ist sie erledigt."
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Kraft = Masse × Beschleunigung, und Beschleunigung ist die Steigung der Steigung (Kapitel 3). Zähl die Kräfte zusammen und bring alles auf eine Seite:"
-        },
-        {
-          "t": "math",
-          "tex": "m\\,\\ddot{x} = -\\eff{k}\\,x - c\\,\\dot{x} \\quad\\Longrightarrow\\quad m\\,\\ddot{x} + c\\,\\dot{x} + \\eff{k}\\,x = 0"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "Der Dämpfer ist also im Grunde Luft, die Tempo hasst?"
+          "text": "Die Feder brauchte $a^2 = -k/m = -4$. Probier $a = 2i$: $(2i)^2 = 4\\,i^2 = -4$. ✓ Und $a = -2i$ klappt auch."
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "happy",
-          "text": "Ziemlich genau. Und bei unserer Drohne *ist* der Dämpfer die Luft."
+          "text": "Gut, ich lag falsch. Der Exponential-Rate-Trick überlebt. Die Feder ist $e^{2it}$, ein Dreher, der alle… 2π Sekunden zweimal herumläuft."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Die Position der Feder ist also $e^{2it}$? Gerade ist sie bei… $0{,}4 + 0{,}9i$ Metern?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Eine Feder kann nicht 0,9 Meter *seitlich* sein. Sie bewegt sich nur hoch und runter."
         },
         {
           "t": "p",
-          "text": "Im Widget ist der {eff|orange Pfeil} an der Masse der Zug der Feder, der graue der Druck des Dämpfers. Schau, wie der Pfeil des Dämpfers verschwindet, sobald die Masse oben oder unten beim Schwingen kurz stillsteht."
-        },
-        {
-          "t": "note",
-          "text": "Damit uns die Schwerkraft nicht ablenkt, schenken wir der Drohne hier ihren Schwebeschub (4,9 N), sodass sie nicht durchhängt. In Kapitel 9 verdienen wir ihn uns ehrlich."
+          "text": "Mika hat die andere Lösung vergessen. Wir haben **zwei** gefunden, $e^{2it}$ und $e^{-2it}$: einen Dreher und seinen **Spiegelzwilling**, der andersherum läuft. Zähl sie zusammen:"
         },
         {
           "t": "widget",
@@ -69,562 +45,189 @@
         },
         {
           "t": "say",
-          "who": "june",
+          "who": "mika",
           "mood": "surprised",
-          "text": "Die Kurven liegen **genau übereinander**. Nicht ähnlich. *Identisch.*"
+          "text": "Die seitlichen Teile heben sich perfekt auf! Die Summe gleitet nur auf der reellen Achse hin und her."
+        },
+        {
+          "t": "math",
+          "tex": "x(t) = \\tfrac12\\left(e^{i\\omega t} + e^{-i\\omega t}\\right) = \\cos(\\omega t),\\qquad \\omega = \\sqrt{k/m}"
+        },
+        {
+          "t": "note",
+          "text": "Das ½ steht da, weil jeder Zwilling die Hälfte beiträgt: Das Bild oben zählt zwei Dreher in voller Größe zusammen, also schwingt seine Summe bis 2. Und dieses Paar startet in Ruhe, losgelassen bei 1 m. Gib ihm Schwung, dann starten die beiden Zwillinge einfach mit entgegengesetzter Neigung; ihre Summe bleibt trotzdem auf der reellen Achse."
         },
         {
           "t": "p",
-          "text": "Schau dir die zwei Gleichungen an. Die Feder drückt mit der Kraft $\\eff{k}\\,x$ zurück: Je weiter sie gedehnt ist, desto stärker zieht sie. Unser Regler drückt mit $\\eff{K_p}(\\sp{2} - \\out{h})$: Je weiter vom Ziel weg, desto stärker drückt er. **Dieselbe Regel.** Der Regler *ist* eine Feder: eine unsichtbare, die die Drohne Richtung 2 m zieht."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "Ein P-Regler ist also eine virtuelle Feder, und der Luftwiderstand $c$ ist ein virtueller Dämpfer. Alles, was wir über Federn lernen, gibt’s gratis dazu."
-        },
-        {
-          "t": "callout",
-          "title": "Einheiten-Check",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Die Steifigkeit $\\eff{k}$ einer Feder misst man in **Newton pro Meter**: Newton Zug für jeden Meter Dehnung. Unsere Verstärkung $\\eff{K_p}$ macht aus Metern Fehler Newton Schub, also ist sie auch Newton pro Meter. Der Regler ist nicht bloß *wie* eine Feder. Laut den Einheiten *ist* er eine."
-            },
-            {
-              "t": "play",
-              "id": "units",
-              "text": "Bei $\\eff{K_p}$ = {scrub|kp|eff} N/m bekommt eine Drohne, die {scrub|e} m zu tief ist, {calc|f|eff} N zusätzlichen Schub."
-            }
-          ]
-        },
-        {
-          "t": "callout",
-          "title": "Echte Dämpfer",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Die Stoßdämpfer eines Autos sind Dämpfer: Öl wird durch kleine Löcher gepresst, also wehren sie sich gegen schnelle Bewegung und merken langsame kaum. Genauso die Soft-Close-Scharniere am Küchenschrank und der Türschließer oben an einer schweren Tür. Bau die Dämpfer aus einem Auto aus, und bei jeder Bodenwelle schaukelt es los. Mach sie viel zu hart, und jede Bodenwelle kommt direkt bei dir an."
-            }
-          ]
+          "text": "Warum ist der Zwilling immer da? In der Regel der Feder stehen nur reelle Zahlen ($m$ und $k$, kein $i$). Spiegle eine Lösung von oben nach unten, sodass aus jedem $i$ ein $-i$ wird, und die Regel merkt keinen Unterschied: Das Spiegelbild ist auch eine Lösung. Bei allem Echten kommen die Dreher also in **Spiegelpaaren**. Zusammen heben sich ihre seitlichen Teile auf, und übrig bleibt ein echtes Wackeln, das wir messen können."
         }
       ]
     },
     {
-      "id": "knobs",
-      "title": "Zwei Charakterknöpfe",
+      "id": "map",
+      "title": "Die Karte von s",
       "blocks": [
         {
           "t": "p",
-          "text": "Jedes Feder-Masse-Dämpfer-System, und damit jede Drohne mit P-Regler, wird durch nur **zwei Zahlen** beschrieben. Erarbeiten wir sie uns eine nach der anderen."
-        },
-        {
-          "t": "h3",
-          "text": "Wie schnell: die Eigenkreisfrequenz"
-        },
-        {
-          "t": "p",
-          "text": "Nimm den Dämpfer weg, und wir sind zurück in Kapitel 5: Die Feder schwingt wie $\\cos(\\omega t)$ mit $\\omega = \\sqrt{k/m}$. Dieses Tempo nennen wir die **Eigenkreisfrequenz** $\\omega_n$: wie schnell das System schwingen *will*, wenn nichts es bremst."
+          "text": "Kapitel 4 hat uns Exponentialfunktionen gegeben, die **wachsen oder schrumpfen**. Jetzt haben wir Dreher, die **wackeln**. Bauen wir beides zusammen: $e^{st}$ mit $s = \\sigma + i\\omega$."
         },
         {
           "t": "math",
-          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{k}}{m}} \\qquad\\qquad \\text{eine volle Schwingung alle } \\frac{2\\pi}{\\omega_n} \\text{ s}"
-        },
-        {
-          "t": "play",
-          "id": "wn",
-          "text": "Mit k = {scrub|k|eff} N/m und m = 0,5 kg ist $\\omega_n$ ≈ {calc|wn} rad/s: eine volle Schwingung alle {calc|period} s."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "Steifere Feder, schnelleres Schwingen. Dann dreh ich $\\eff{k}$ einfach voll auf, und alles wird besser!"
+          "tex": "e^{st} = e^{(\\sigma + i\\omega)t} = \\underbrace{e^{\\sigma t}}_{\\text{wachsen/schrumpfen}}\\cdot\\underbrace{e^{i\\omega t}}_{\\text{drehen}}"
         },
         {
           "t": "p",
-          "text": "Eine steifere Feder zieht stärker, also schwingt sie schneller. Eine schwerere Masse lässt sich schwerer herumschubsen, also schwingt sie langsamer. (Radiant pro Sekunde ist das Drehtempo aus Kapitel 5: Eine volle Umdrehung sind 2π Radiant, ein Rand von 2π Radien Länge.)"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "worried",
-          "text": "Vorsicht. In Kapitel 2 hat mehr $\\eff{K_p}$ die Drohne schneller *und* hüpfiger gemacht. Hören wir erst, was der Dämpfer dazu sagt."
-        },
-        {
-          "t": "h3",
-          "text": "Wie federnd: der Dämpfungsgrad"
-        },
-        {
-          "t": "p",
-          "text": "Jetzt bauen wir den Dämpfer wieder ein. Wie viel Dämpfung ist „viel“? Das hängt von der Feder ab: Ein Dämpfer, der eine weiche Feder bändigt, bremst eine steife kaum. Also vergleichen wir mit einer besonderen Menge, der **kritischen Dämpfung** $c_{\\text{krit}}$: der kleinsten Dämpfung, die das Überschwingen ganz verhindert."
-        },
-        {
-          "t": "math",
-          "tex": "c_{\\text{krit}} = 2\\sqrt{m\\,\\eff{k}} \\qquad\\qquad \\zeta = \\frac{c}{c_{\\text{krit}}} = \\frac{c}{2\\sqrt{m\\,\\eff{k}}}"
-        },
-        {
-          "t": "p",
-          "text": "Der **Dämpfungsgrad** ζ (der griechische Buchstabe Zeta) ist unsere Dämpfung als Bruchteil davon. Eine reine Zahl, ohne Einheit. ζ = 0 schwingt ewig, ζ = 1 ist genau kritisch, und ζ = 0,5 hat halb so viel Dämpfung, wie nötig wäre, um das Überschwingen zu verhindern."
-        },
-        {
-          "t": "play",
-          "id": "zeta",
-          "text": "Mit c = {scrub|c} N·s/m an einer Feder mit k = 20 N/m ist $c_{\\text{krit}}$ = {calc|ccrit} N·s/m, also ζ = {calc|zeta}: {calc|regime}."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "surprised",
-          "text": "Moment. 0,16? Das ist genau das ζ der Drohne aus dem ersten Widget!"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "Gleiche Masse, gleicher Luftwiderstand, gleiche Steifigkeit, also gleiches ζ. Feder und Drohne sind wirklich Zwillinge."
-        },
-        {
-          "t": "h3",
-          "text": "Die zwei Punkte auf der Karte"
-        },
-        {
-          "t": "p",
-          "text": "Jetzt zurück zur Karte von $s$. Raten wir wie in Kapitel 4 und 5 $x = e^{st}$, dann wird aus der Gleichung $m s^2 + c s + k = 0$. Teil durch $m$ und schreib die zwei Koeffizienten mit unseren Knöpfen:"
-        },
-        {
-          "t": "math",
-          "tex": "s^2 + \\underbrace{\\frac{c}{m}}_{2\\zeta\\omega_n}\\, s + \\underbrace{\\frac{\\eff{k}}{m}}_{\\omega_n^2} = 0"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Moment mal. Wo kommt dieses $2\\zeta\\omega_n$ her? Das sieht ausgedacht aus."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "Rechne es aus: $2\\zeta\\omega_n = 2 \\cdot \\frac{c}{2\\sqrt{mk}} \\cdot \\sqrt{\\frac{k}{m}} = \\frac{c}{m}$. Es ist dieselbe Zahl, nur umbenannt, damit unsere zwei Knöpfe in der Gleichung auftauchen."
-        },
-        {
-          "t": "p",
-          "text": "Löse sie mit der Mitternachtsformel, und heraus kommen die zwei Werte von $s$:"
-        },
-        {
-          "t": "math",
-          "tex": "\\begin{aligned} & s^2 + 2\\zeta\\omega_n\\, s + \\omega_n^2 = 0 \\\\ \\Longrightarrow\\quad & s = -\\zeta\\omega_n \\pm \\omega_n\\sqrt{\\zeta^2 - 1} \\end{aligned}"
-        },
-        {
-          "t": "callout",
-          "title": "Woher das ± kommt",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Jede Gleichung $s^2 + b\\,s + q = 0$ lässt sich per quadratischer Ergänzung lösen: $(s + b/2)^2 = b^2/4 - q$. Eine Quadratwurzel hat zwei Antworten, eine mit + und eine mit −, also gibt es immer **zwei** Werte von $s$:"
-            },
-            {
-              "t": "math",
-              "tex": "s = -\\frac{b}{2} \\pm \\sqrt{\\frac{b^2}{4} - q}"
-            },
-            {
-              "t": "p",
-              "text": "Mit $b = 2\\zeta\\omega_n$ und $q = \\omega_n^2$ steht unter der Wurzel $\\omega_n^2(\\zeta^2 - 1)$. Für ζ < 1 ist das negativ, und wir brauchen das $i$ aus Kapitel 5: Die zwei Antworten werden ein Spiegelpaar, $-\\zeta\\omega_n \\pm i\\,\\omega_n\\sqrt{1-\\zeta^2}$. Bei ζ = 1 ist die Wurzel genau null, und die zwei Antworten treffen sich. Daher kommt $c_{\\text{krit}} = 2\\sqrt{mk}$: Das ist die Dämpfung, bei der die Wurzel verschwindet."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Das ±-Zeichen liefert zwei Antworten, eine für jeden Punkt. Die Links-rechts-Lage eines Punkts ist **σ** (Sigma): wie schnell dieser Teil der Bewegung schrumpft. Seine Höhe ist **ω**: wie schnell er sich dreht. Bei einer Dämpfung unter 1 liegen die Punkte waagerecht gleich, aber auf entgegengesetzten Höhen. Bei 1 treffen sie sich; darüber liegen beide auf der waagerechten Achse."
-        },
-        {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Sprungantwort",
-              "def": "Wie ein System auf einen plötzlichen Sprung seines Ziels antwortet, hier von 0 auf 1 m. Die übliche Art, einen Charakter zu zeigen."
-            },
-            {
-              "term": "Einschwingzeit (2 %)",
-              "def": "Wie lange es dauert, bis die Antwort für immer innerhalb von 2 % um das Ziel bleibt."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Spiel mit den zwei Knöpfen. Achte auf die {out|blauen Punkte} auf der Karte: Das sind die zwei Werte von $s$, und zusätzlich zu der Höhe, auf der sie zur Ruhe kommt, ist die Bewegung eine Mischung aus $e^{s_1 t}$ und $e^{s_2 t}$. (Bei genau ζ = 1 sind die zwei Punkte einer, und die zweite Zutat wird zu $t\\,e^{s_1 t}$.)"
-        },
-        {
-          "t": "widget",
-          "id": "personality"
-        },
-        {
-          "t": "vocab",
-          "title": "Drei Charaktere",
-          "items": [
-            {
-              "term": "Unterdämpft ($\\zeta < 1$)",
-              "def": "Die zwei $s$-Werte sind ein Spiegelpaar abseits der reellen Achse und sitzen auf einem Kreis mit Radius $\\omega_n$. Die Antwort schwingt über und wackelt, während sie zur Ruhe kommt."
-            },
-            {
-              "term": "Kritisch gedämpft ($\\zeta = 1$)",
-              "def": "Das Paar trifft sich auf der reellen Achse als ein doppelter Punkt, also ist die Bewegung $(A + B\\,t)\\,e^{-\\omega_n t}$. Die schnellste Antwort ohne Überschwingen."
-            },
-            {
-              "term": "Überdämpft ($\\zeta > 1$)",
-              "def": "Das Paar teilt sich auf der reellen Achse auf: Einer wandert nach links, einer kriecht Richtung null. Kein Überschwingen, aber träge."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "In den unterdämpften Punkten steckt noch ein Detail: Ihre Höhe ist $\\omega_n\\sqrt{1-\\zeta^2}$, ein bisschen **weniger** als $\\omega_n$. Dämpfung lässt das Wackeln nicht nur schrumpfen, sie bremst es auch ein wenig. Das ist die **gedämpfte Eigenkreisfrequenz** $\\omega_d$, und das Widget zeigt sie an."
-        },
-        {
-          "t": "math",
-          "tex": "\\omega_d = \\omega_n\\sqrt{1 - \\zeta^2}"
-        },
-        {
-          "t": "callout",
-          "title": "Warum ein Kreis?",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Der gestrichelte Kreis im Widget ist keine Deko. Für ζ < 1 sitzen die Punkte bei $\\sigma = -\\zeta\\omega_n$ und $\\omega = \\pm\\omega_n\\sqrt{1-\\zeta^2}$. Nach Pythagoras ist ihr Abstand von 0"
-            },
-            {
-              "t": "math",
-              "tex": "\\sqrt{\\sigma^2 + \\omega^2} = \\sqrt{\\zeta^2\\omega_n^2 + \\omega_n^2\\,(1 - \\zeta^2)} = \\omega_n"
-            },
-            {
-              "t": "play",
-              "id": "circle",
-              "text": "Mit $\\omega_n$ = 3 und ζ = {scrub|z} sitzen die Punkte bei {calc|roots}, im Abstand {calc|r} von 0."
-            },
-            {
-              "t": "p",
-              "text": "Wer ζ ändert, schiebt die Punkte also nur auf dem Kreis herum, und wer $\\omega_n$ ändert, ändert die Größe des Kreises."
-            }
-          ]
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "Die Spiralen aus Kapitel 5 waren also die ganze Zeit der Charakter der Drohne. Drehen = Wackeln, Schrumpfen = zur Ruhe kommen!"
-        }
-      ]
-    },
-    {
-      "id": "damping",
-      "title": "Ist mehr Dämpfung immer besser?",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "Einfach. Wackeln ist schlecht, und Dämpfung killt Wackeln. Also stell ich sicherheitshalber $\\zeta = 5$ ein. Sicherste Drohne aller Zeiten."
+          "text": "Jede Zahl s ist also ein Rezept: **σ** (der Teil entlang) sagt, wie schnell es wächst oder schrumpft, **ω** (der seitliche Teil) sagt, wie schnell es sich dreht. Zusammen zeichnen sie eine **Spirale**, und der Schatten der Spirale ist das Signal, das wir sehen würden."
         },
         {
           "t": "predict",
-          "id": "ch6-damping",
+          "id": "ch5-shadow",
           "gate": true,
-          "q": "Gleiche Feder, gleiches $\\omega_n$. Wir erhöhen die Dämpfung von $\\zeta = 1$ auf $\\zeta = 3$. Erreicht sie das Ziel **schneller** oder **langsamer**?",
+          "q": "Setz s auf $-0{,}5 + 3i$. Wie sieht der Schatten von $e^{st}$ aus?",
           "options": [
             {
-              "text": "Schneller: mehr Dämpfung, weniger verschwendete Bewegung",
-              "sketch": "smooth",
-              "why": "Stimmt, es gibt kein Überschwingen. Aber der dicke Dämpfer sträubt sich auch gegen die Bewegung *zum* Ziel."
+              "text": "Ein Wackeln, das wächst",
+              "sketch": "growing-wiggle",
+              "why": "Wachstum braucht σ > 0. Hier ist σ = −0,5 negativ."
             },
             {
-              "text": "Ungefähr gleich schnell",
-              "sketch": "overshoot",
-              "why": "Ab $\\zeta = 1$ gibt es nichts mehr zu beruhigen, und die zusätzliche Dämpfung bremst einfach alles."
-            },
-            {
-              "text": "Langsamer: Sie kriecht",
-              "sketch": "sluggish",
+              "text": "Ein Wackeln, das abklingt",
+              "sketch": "decaying-wiggle",
               "correct": true,
-              "why": "Richtig. Der Dämpfer sträubt sich gegen **jede** Bewegung, auch gegen die, die du willst. Mit $\\zeta = 3$ dauert es etwa viermal so lange."
-            }
-          ]
-        },
-        {
-          "t": "widget",
-          "id": "race"
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "worried",
-          "text": "Meine „sichere“ Drohne braucht ewig. Als würde sie sich durch Honig bewegen."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "Schaut auf die Karte! Ein Punkt ist nach links abgehauen, superschnell. Aber der andere sitzt ganz nah bei null."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "excited",
-          "text": "Und $e^{st}$ mit $s$ nah bei null klingt **sehr** langsam ab. Der schnelle ist im Nu weg. Der langsame hat das Sagen."
-        },
-        {
-          "t": "p",
-          "text": "Jede $e^{st}$-Zutat der Bewegung heißt **Modus** (Mehrzahl: Modi). Die Bewegung ist eine Mischung aus Modi, und sobald die schnellen abgeklungen sind, bleibt nur der langsamste übrig. Bei dieser Sprungantwort bestimmt also der **langsamste Modus, der tatsächlich vorkommt**, die lange Wartezeit."
-        },
-        {
-          "t": "callout",
-          "title": "Wie lange dauert „eingeschwungen“?",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Ein Modus $e^{-at}$ ist auf 2 % geschrumpft, wenn $e^{-at} = 0{,}02$ ist, und das dauert $t = \\ln 50 / a \\approx 3{,}9/a$. Mit einer Zeitkonstante $\\tau = 1/a$ sind das etwa vier Zeitkonstanten: schon wieder das Lineal aus Kapitel 3. Nach 4τ ist nur noch $e^{-4} \\approx 1{,}8\\%$ übrig."
+              "why": "ω = 3 lässt es drehen (ungefähr alle 2 s ein Wackler), und σ = −0,5 schrumpft es jede Sekunde um den Faktor $e^{-0{,}5} \\approx 0{,}61$."
             },
             {
-              "t": "play",
-              "id": "settle",
-              "text": "Ein Modus, der mit a = {scrub|a} pro Sekunde schrumpft, ist nach etwa {calc|ts} s innerhalb von 2 %."
+              "text": "Ein sanfter Abfall, ohne Wackeln",
+              "sketch": "decaying-plain",
+              "why": "Das käme bei ω = 0 heraus (s auf der waagerechten Achse). Hier ist ω = 3, also dreht es sich."
             }
           ]
         },
         {
-          "t": "p",
-          "text": "Zu wenig Dämpfung heißt Wackeln, zu viel heißt Kriechen. Dazwischen liegt ein Sweet Spot. Nimm im Rennen ζ = 0,7: Es schwingt um weniger als 5 % über, kommt aber viel früher **auf 5 % ans Ziel heran** als ζ = 1. Viele Entwürfe zielen auf ζ zwischen etwa 0,7 und 1 und tauschen ein kleines Überschwingen gegen Tempo. Andere Aufgaben bevorzugen vielleicht eine andere Balance."
-        }
-      ]
-    },
-    {
-      "id": "drone",
-      "title": "Zurück zur Drohne",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Jetzt ergibt Kapitel 2 endlich Sinn. Bei unserer Drohne *ist* die Federkonstante die Verstärkung:"
-        },
-        {
-          "t": "math",
-          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{K_p}}{m}}, \\qquad \\zeta = \\frac{c}{2\\sqrt{m\\,\\eff{K_p}}}"
-        },
-        {
-          "t": "p",
-          "text": "$\\eff{K_p}$ steht *unten* in der Dämpfungsformel. Mehr Verstärkung macht die Drohne schneller (größeres $\\omega_n$), aber **weniger gedämpft**. Mit $\\eff{K_p} = 20$ N/m: $\\zeta = 1/(2\\sqrt{0{,}5 \\times 20}) \\approx 0{,}16$. Sehr hüpfig, genau wie wir gesehen haben. Auf der Karte sitzen ihre zwei $s$-Werte weit oben und nur ein kleines Stück links der senkrechten Achse. Dort wohnt unsere Drohne."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "worried",
-          "text": "Und mehr Dämpfung kriegen wir nur, wenn wir $\\eff{K_p}$ stark runterdrehen, und dann ist das Durchhängen wieder da. Wir brauchen einen Weg, Dämpfung *absichtlich* hinzuzufügen."
-        },
-        {
-          "t": "p",
-          "text": "Zieh an der Verstärkung und sieh den Zielkonflikt in einem Satz:"
-        },
-        {
-          "t": "play",
-          "id": "drone",
-          "text": "Mit $\\eff{K_p}$ = {scrub|kp|eff} N/m: ζ = {calc|zeta}, $\\omega_n$ = {calc|wn} rad/s, und ohne den geschenkten Schwebeschub würde sie {calc|droop} m durchhängen."
-        }
-      ]
-    },
-    {
-      "id": "arrows",
-      "title": "Pfeile haben eine Länge und einen Winkel",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "Moment. Die Punkte sitzen auf einem Kreis mit Radius $\\omega_n$, und ζ schiebt sie nur darauf herum. Ein Punkt ist also eigentlich zwei Dinge: **wie weit** von 0 weg und **in welche Richtung**."
-        },
-        {
-          "t": "p",
-          "text": "Jeden Pfeil $z = a + b\\,i$ (Realteil entlang, Imaginärteil seitlich) kann man auch andersherum beschreiben: durch seine **Länge** $|z|$ und seinen **Winkel**. Die Länge liefert Pythagoras. Bei einem Pfeil nach rechts ($a > 0$) ist der Winkel derjenige, dessen Steigung (hoch durch rüber) $b/a$ ist. Er heißt **Arkustangens**, $\\arctan$: der Rückgängig-Knopf des Tangens."
-        },
-        {
-          "t": "math",
-          "tex": "|z| = \\sqrt{a^2 + b^2}, \\qquad \\angle z = \\arctan\\frac{b}{a} \\quad (a > 0)"
-        },
-        {
-          "t": "play",
-          "id": "arrowRead",
-          "text": "Der Pfeil {scrub|a} + {scrub|b}i ist {calc|len} lang und zeigt im Winkel {calc|ang}° zur reellen Achse."
-        },
-        {
-          "t": "p",
-          "text": "Kapitel 5 hat gezeigt: Pfeile multiplizieren heißt **ihre Längen multiplizieren und ihre Winkel addieren**. Teilen muss das rückgängig machen, also teilt es die Längen und **subtrahiert** die Winkel."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Also $1/(1+i)$: Länge $1/\\sqrt 2$, und der Winkel ist 45° plus 45°, also 90°? Hm. Multiplizier das zurück mit $1+i$, und es zeigt auf 135°, meilenweit von 1 entfernt."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "Dann eben minus. $1/\\sqrt 2$ lang bei −45°. Mal $\\sqrt 2$ bei +45°, und heraus kommt Länge 1 bei 0°: genau 1. Passt."
-        },
-        {
           "t": "widget",
-          "id": "arrows"
+          "id": "smap"
         },
         {
           "t": "p",
-          "text": "Der blasse gestrichelte Pfeil ist der **Spiegelzwilling** $\\bar z = a - b\\,i$ aus Kapitel 5 (in der Mathematik heißt er die *konjugiert komplexe Zahl*): gleiche Länge, entgegengesetzter Winkel. Multiplizier einen Pfeil mit seinem Zwilling, und die Winkel heben sich auf. Übrig bleibt eine schlichte positive Zahl, die Länge zum Quadrat. Genau das braucht die Tabelle in Kapitel 7:"
+          "text": "Mach einen Rundgang über die Karte, indem du s ziehst (oder die Pfeiltasten nimmst):"
         },
         {
-          "t": "math",
-          "tex": "z\\,\\bar z = |z|^2 = a^2 + b^2, \\qquad (s - i\\omega)(s + i\\omega) = s^2 + \\omega^2"
-        },
-        {
-          "t": "p",
-          "text": "Und der Kreis? Ein Pol bei $-\\zeta\\omega_n + i\\,\\omega_n\\sqrt{1-\\zeta^2}$ hat die Länge $\\omega_n$. Miss seinen Winkel θ zur *negativen* reellen Achse, dann ist der Teil nach links $\\omega_n\\cos\\theta$. Also $\\zeta = \\cos\\theta$: Die Dämpfung ist der Winkel."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Probiert die zweite Einstellung im Widget: 1 + iωτ. Das ist die Kaffeeregel aus Kapitel 3, die auf ein Wackeln trifft. Teilen dadurch staucht und dreht zurück, immer stärker, je schneller das Wackeln wird, aber nie über eine Vierteldrehung hinaus. Wetten, dass das die Dusche interessiert?"
-        },
-        {
-          "t": "vocab",
+          "t": "list",
           "items": [
-            {
-              "term": "Länge (Betrag) $|z|$",
-              "def": "Wie lang ein Pfeil ist: $\\sqrt{a^2+b^2}$ für $z = a + b\\,i$. Pfeile multiplizieren multipliziert ihre Längen."
-            },
-            {
-              "term": "Winkel $\\angle z$",
-              "def": "In welche Richtung ein Pfeil zeigt, gemessen von der positiven reellen Achse. $\\arctan(b/a)$ für einen Pfeil nach rechts. Multiplizieren addiert Winkel, Teilen subtrahiert sie."
-            },
-            {
-              "term": "Spiegelzwilling $\\bar z$",
-              "def": "Der Pfeil, an der reellen Achse gespiegelt: $a - b\\,i$ (die konjugiert komplexe Zahl). $z\\,\\bar z = |z|^2$."
-            }
+            "**Linke Hälfte** (σ < 0): Die Spirale schrumpft, das Wackeln klingt ab.",
+            "**Rechte Hälfte** (σ > 0): Die Spirale wächst, das Wackeln explodiert.",
+            "**Auf der senkrechten Linie** (σ = 0): ein perfekter Kreis, ein Wackeln, das ewig weitergeht.",
+            "**Auf der waagerechten Linie** (ω = 0): überhaupt kein Drehen, nur die schlichten Exponentialfunktionen aus Kapitel 4.",
+            "**Weiter weg von der waagerechten Linie** (nach oben oder unten): schnelleres Drehen, schnelleres Wackeln. **Weiter links**: schnelleres Abklingen."
           ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Ein einziger Punkt auf dieser Karte ist also ein ganzer Charakter: wie schnell es wackelt und ob es sich beruhigt oder explodiert."
+        },
+        {
+          "t": "note",
+          "text": "Diese Karte wird unser wichtigstes Bild. Ihren offiziellen Namen bekommt sie in Kapitel 8."
+        }
+      ]
+    },
+    {
+      "id": "fourier",
+      "title": "Ein kurzer Abstecher: Alles besteht aus Drehern",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Eine letzte Überraschung. Nimm Dreher mit verschiedenen Tempi (1-, 3-, 5-, 7-mal so schnell…), schrumpf jeden genau richtig, lass ihn beim genau richtigen Winkel starten und zähl dann ihre Schatten zusammen. Mit genug davon kannst du eine riesige Vielfalt an Formen bauen, sogar eine Rechteckwelle mit scharfen Ecken."
+        },
+        {
+          "t": "widget",
+          "id": "fourier"
+        },
+        {
+          "t": "p",
+          "text": "**Fourier** zeigte, wie sich viele periodische Signale aus drehenden Teilen zusammensetzen lassen. Die Rechteckwelle ist ein Beispiel: Mehr Teile machen die flachen Abschnitte und scharfen Kanten deutlicher. Diese Beschreibung ist mächtig, hat aber Bedingungen und Grenzen, die wir später erkunden können."
+        },
+        {
+          "t": "note",
+          "text": "Ehrlichkeitskasten: Direkt neben jedem Sprung schießt die Summe immer um etwa 9 % der Sprunghöhe über, egal wie viele Teile du dazunimmst. Der Buckel wird schmaler, verschwindet aber nie."
         }
       ]
     },
     {
       "id": "wrap",
-      "title": "Was wir jetzt wissen",
+      "title": "Was wir bis jetzt wissen",
       "blocks": [
         {
           "t": "recap",
           "items": [
-            "Eine Drohne mit P-Regler gehorcht **genau** derselben Gleichung wie eine Masse an einer Feder: Der Regler ist eine virtuelle Feder.",
-            "Zwei Zahlen fassen ihren Charakter zusammen: $\\omega_n$ (wie schnell) und $\\zeta$ (wie hüpfig).",
-            "$\\omega_n = \\sqrt{k/m}$ ist das Schwingtempo ohne Dämpfer. $\\zeta = c/c_{\\text{krit}}$ vergleicht die Dämpfung mit der kritischen Dämpfung $2\\sqrt{mk}$, die das Überschwingen gerade verhindert.",
-            "Die Bewegung ist eine Mischung aus zwei $e^{st}$-Termen. Die zwei $s$-Werte sitzen bei Unterdämpfung auf einem Kreis mit Radius $\\omega_n$ und teilen sich bei Überdämpfung auf der reellen Achse auf.",
-            "Ein Pfeil hat eine **Länge** und einen **Winkel** ($\\arctan$). Multiplizieren multipliziert die Längen und addiert die Winkel; Teilen teilt und subtrahiert. $\\zeta = \\cos\\theta$.",
-            "Dämpfung bremst das Wackeln auch ein wenig: $\\omega_d = \\omega_n\\sqrt{1-\\zeta^2}$.",
-            "Mehr Dämpfung ist nicht immer besser: Ab $\\zeta = 1$ kriecht der langsame $s$-Wert Richtung null, und alles wird langsamer.",
-            "Bei der Drohne heißt mehr $K_p$ weniger Dämpfung. Deshalb wurde sie wackeliger."
+            "Echtes Wackeln kommt von **Spiegelzwilling-Drehern**, deren seitliche Teile sich aufheben.",
+            "$e^{st}$ mit $s = \\sigma + i\\omega$ dreht sich *und* wächst oder schrumpft: eine Spirale. Ihr Schatten ist ein wachsendes oder abklingendes Wackeln.",
+            "Die **Karte von s**: links beruhigt sich alles, rechts explodiert es, weiter oben wackelt es schneller.",
+            "Viele periodische Signale, sogar eine Rechteckwelle, lassen sich durch Zusammenzählen von Drehern mit verschiedenen Tempi bauen (Fourier). Direkt neben einem Sprung schießt die Summe immer um etwa 9 % über."
           ]
         },
         {
           "t": "quiz",
           "items": [
             {
-              "id": "ch6-q1",
-              "q": "Die zwei $s$-Werte eines Systems sind $-1 \\pm 4i$. Welche Antwort ist es?",
+              "id": "ch5-q2",
+              "q": "Setz s genau auf die senkrechte Linie, bei $s = 2i$. Wie sieht der Schatten von $e^{st}$ aus?",
               "options": [
                 {
-                  "text": "Schwingt über und wackelt",
-                  "sketch": "overshoot",
+                  "text": "Ein Wackeln, das ewig weitergeht",
+                  "sketch": "steady-wiggle",
                   "correct": true,
-                  "why": "Ein imaginärer Teil (±4) heißt Drehen, also Wackeln. Ein negativer Realteil (−1) heißt, die Wackler werden kleiner."
+                  "why": "σ = 0 heißt kein Wachsen oder Schrumpfen: ein perfekter Kreis, und sein Schatten ist ein gleichmäßiger Kosinus."
                 },
                 {
-                  "text": "Steigt sanft, ohne Überschwingen",
-                  "sketch": "smooth",
-                  "why": "Sanftes Ansteigen kommt von $s$-Werten auf der reellen Achse (kein Drehen). Diese haben einen imaginären Teil von ±4."
+                  "text": "Ein Wackeln, das abklingt",
+                  "sketch": "decaying-wiggle",
+                  "why": "Abklingen braucht σ < 0 (links der senkrechten Linie)."
                 },
                 {
-                  "text": "Kriecht langsam hoch",
-                  "sketch": "sluggish",
-                  "why": "Langsames Kriechen kommt von einem reellen $s$ sehr nah bei null. Die hier gegebenen Werte haben dagegen Imaginärteile, also schwingt die Antwort."
+                  "text": "Explosives Wachstum",
+                  "sketch": "growing-plain",
+                  "why": "Wachstum ohne Wackeln ist die rechte Hälfte der *waagerechten* Linie: σ > 0, ω = 0."
                 }
               ]
             },
             {
-              "id": "ch6-q2",
-              "q": "Unsere Drohne ($m = 0{,}5$ kg, $c = 1$ N·s/m) mit $K_p = 20$ N/m ist…",
+              "id": "ch5-q3",
+              "q": "Eine Gitarrensaite klingt mit einem klaren Ton und verklingt langsam. Wo auf der Karte von s wohnt sie?",
               "options": [
                 {
-                  "text": "Unterdämpft, $\\zeta \\approx 0{,}16$",
+                  "text": "Knapp links der senkrechten Linie, weit über der waagerechten",
                   "correct": true,
-                  "why": "$\\zeta = 1/(2\\sqrt{0{,}5\\cdot 20}) = 1/(2\\sqrt{10}) \\approx 0{,}158$. Weit unter 1, also hüpfig."
+                  "why": "Langsames Verklingen heißt σ leicht negativ, und ein klarer Ton heißt großes ω (viele Wackler pro Sekunde)."
                 },
                 {
-                  "text": "Kritisch gedämpft, $\\zeta = 1$",
-                  "why": "Dafür bräuchte es $c = 2\\sqrt{m K_p} \\approx 6{,}3$ N·s/m, mehr als sechsmal so viel Luftwiderstand, wie wir haben."
+                  "text": "In der rechten Hälfte",
+                  "why": "Die rechte Hälfte *wächst*. Eine Saite, die von selbst lauter wird, wäre beunruhigend."
                 },
                 {
-                  "text": "Überdämpft, $\\zeta > 1$",
-                  "why": "Überdämpfung braucht viel Dämpfung im Vergleich zur Steifigkeit. Unsere Verstärkung ist hoch und unser Luftwiderstand klein, also genau umgekehrt."
+                  "text": "Auf der waagerechten Linie, weit links",
+                  "why": "Kein ω heißt kein Wackeln (kein Ton), und weit links heißt, es stirbt sofort. Das ist ein dumpfer Plumps."
                 }
               ]
             },
             {
-              "id": "ch6-q5",
-              "q": "Eine Feder mit $k = 8$ N/m hält eine Masse von 0,5 kg. Wie viel Dämpfung $c$ macht sie kritisch gedämpft?",
+              "id": "ch5-q4",
+              "q": "Warum kommen die Dreher eines echten, physikalischen Wackelns immer in Spiegelpaaren?",
               "options": [
                 {
-                  "text": "$c = 4$ N·s/m",
+                  "text": "In der Regel stehen nur reelle Zahlen, also löst auch das Spiegelbild eines Drehers sie",
                   "correct": true,
-                  "why": "$c_{\\text{krit}} = 2\\sqrt{m k} = 2\\sqrt{0{,}5 \\cdot 8} = 2\\sqrt{4} = 4$ N·s/m."
+                  "why": "Spiegle $e^{i\\omega t}$ von oben nach unten, und du bekommst $e^{-i\\omega t}$. Eine Regel ohne $i$ kann die beiden nicht unterscheiden, also sind beide Lösungen, und eine echte Bewegung nutzt beide: Ihre seitlichen Teile heben sich auf."
                 },
                 {
-                  "text": "$c = 16$ N·s/m",
-                  "why": "Das ist $2k$. Die kritische Dämpfung nimmt die Wurzel aus Masse × Steifigkeit: $2\\sqrt{mk}$."
+                  "text": "Weil $i^2 = -1$",
+                  "why": "Stimmt zwar, aber das erklärt, warum es die Dreher *gibt*, nicht, warum sie Paare bilden."
                 },
                 {
-                  "text": "$c = 1$ N·s/m",
-                  "why": "Das ist der Luftwiderstand unserer Drohne, und der ergibt hier $\\zeta = 0{,}25$: unterdämpft."
-                }
-              ]
-            },
-            {
-              "id": "ch6-q3",
-              "q": "Welches $K_p$ würde die Drohne mit reinem P-Regler kritisch dämpfen ($\\zeta = 1$)?",
-              "options": [
-                {
-                  "text": "$K_p = 0{,}5$ N/m",
-                  "correct": true,
-                  "why": "Setz $c/(2\\sqrt{m K_p}) = 1$, dann ist $K_p = c^2/(4m) = 0{,}5$ N/m. Aber mit so einer schwachen Feder müsste die Drohne 9,8 m *unter* dem Ziel sein, nur um sich zu halten. Sie hebt also nie ab. Ein P-Regler allein kann uns nicht beides geben."
-                },
-                {
-                  "text": "$K_p = 20$ N/m",
-                  "why": "Das ist unsere hüpfige Standardeinstellung mit $\\zeta \\approx 0{,}16$. Mehr Verstärkung heißt *weniger* Dämpfung."
-                },
-                {
-                  "text": "$K_p = 200$ N/m",
-                  "why": "Mehr Verstärkung senkt $\\zeta$ noch weiter (auf etwa 0,05). Die Verstärkung steht im Nenner."
-                }
-              ]
-            },
-            {
-              "id": "ch6-q4",
-              "q": "Ein überdämpftes System hat die $s$-Werte $-0{,}2$ und $-10$. Welcher entscheidet, wie lange du wartest?",
-              "options": [
-                {
-                  "text": "$-0{,}2$",
-                  "correct": true,
-                  "why": "$e^{-0{,}2t}$ braucht etwa 20 s, um auf 2 % abzuklingen, $e^{-10t}$ ist nach 0,4 s weg. Der, der der senkrechten Achse am nächsten liegt, hat das Sagen."
-                },
-                {
-                  "text": "$-10$",
-                  "why": "$e^{-10t}$ verschwindet in Bruchteilen einer Sekunde. Das ist der schnelle Teil, der vorbei ist, bevor du ihn bemerkst."
-                },
-                {
-                  "text": "Beide gleich",
-                  "why": "Sie klingen sehr unterschiedlich schnell ab, also bestimmt der langsame, was du siehst."
+                  "text": "Weil eine Feder zwei Enden hat",
+                  "why": "Süß, aber nein. Ein einzelnes schwingendes Pendel hat auch Zwillingsdreher."
                 }
               ]
             }
@@ -635,130 +238,60 @@
         },
         {
           "t": "cliff",
-          "text": "Theo: „Wir haben uns zu diesen $s$-Werten *durchgeraten*. Nimm Schwerkraft, Wind, Pakete und einen schlaueren Regler dazu, und das Raten wird hässlich. Gibt es eine Maschine, die diese Analysis in **schlichte Algebra** verwandelt?“"
+          "text": "June: „Und **wo auf dieser Karte wohnt unsere Drohne?**“"
         }
       ]
     }
   ],
   "widgets": {
     "twins": {
-      "title": "Feder gegen Drohne",
-      "spring": "Masse an einer Feder",
-      "drone": "Drohne mit P-Regler",
-      "msdAria": "Eine Masse an einer Feder und einem Dämpfer, die um ihre Ruhelage federt.",
-      "plotY": "Abstand zum Ziel (m)",
-      "plotAria": "Abstand zum Ziel über die Zeit für die Drohne und für die Feder. Die zwei Kurven liegen übereinander.",
-      "target": "Ziel / Ruhelage",
-      "kp": "Steifigkeit: Feder $k$ = Drohnenverstärkung $K_p$",
-      "personality": "Charakter",
-      "help": "Beide starten 1 m unter ihrem Ziel und werden losgelassen. Der Schieberegler setzt die Steifigkeit der Feder und die Verstärkung der Drohne auf dieselbe Zahl.",
-      "describe": "Drohne ist {d} m vom Ziel entfernt, Federmasse {s} m von der Ruhelage.",
-      "together": "beide in einem Diagramm",
-      "forceSpring": "Zug der Feder",
-      "forceDamper": "Druck des Dämpfers"
+      "title": "Ein Dreher und sein Spiegelzwilling",
+      "re": "entlang",
+      "im": "seitlich",
+      "sum": "Summe",
+      "spinnerLabel": "Dreher",
+      "twinLabel": "Zwilling",
+      "toggle": "Spiegelzwilling dazunehmen",
+      "axis": "Wert",
+      "realPart": "Teil der Summe entlang",
+      "sidePart": "seitlicher Teil der Summe",
+      "alone": "Ein Dreher allein: Die Summe wandert seitlich weg (gestrichelte Kurve).",
+      "withTwin": "Mit dem Zwilling Spitze an Ende angehängt heben sich die seitlichen Teile auf. Die Summe bleibt auf der reellen Achse: 2·cos(ωt).",
+      "aria": "Zwei Pfeile, die sich in entgegengesetzte Richtungen drehen, Spitze an Ende aneinandergehängt. Ihre Summe ist mit einem Ring markiert.",
+      "plotAria": "Der Teil entlang und der seitliche Teil der Summe über die Zeit."
     },
-    "personality": {
-      "title": "Zwei Knöpfe, zwei Punkte, ein Charakter",
-      "response": "Antwort auf einen Sprung um 1 m",
-      "target": "Ziel",
-      "plotAria": "Sprungantwort eines Systems 2. Ordnung für die gewählte Eigenkreisfrequenz und den gewählten Dämpfungsgrad.",
-      "planeAria": "Die Karte von s mit den zwei s-Werten des Systems und einem gestrichelten Kreis mit Radius Omega n.",
-      "msdAria": "Eine Masse an einer Feder, die die Sprungantwort nachspielt.",
-      "panelAria": "Kleine Sprungantwort mit Dämpfungsgrad {z}.",
-      "panel": {
-        "0": "unterdämpft (ζ = {z})",
-        "1": "kritisch (ζ = {z})",
-        "2": "überdämpft (ζ = {z})"
-      },
-      "radius": "Radius ωn = {w}",
-      "wn": "Eigenkreisfrequenz $\\omega_n$",
-      "zeta": "Dämpfungsgrad $\\zeta$",
-      "overshoot": "Überschwingen",
-      "settle": "eingeschwungen (2 %)",
-      "roots": "die zwei s-Werte",
-      "personality": "Charakter",
-      "never": "nie",
-      "playSpring": "An der Feder nachspielen",
-      "stopSpring": "Feder anhalten",
-      "describe": "Dämpfungsgrad {z}, Eigenkreisfrequenz {w} Radiant pro Sekunde, s-Werte {r}.",
-      "planeCap": "die zwei s-Werte",
-      "springCap": "an einer Feder zuschauen",
-      "re": "σ",
-      "im": "ω",
-      "offMap": "{v} liegt außerhalb der Karte ←",
-      "wd": "Wackeltempo ωd",
-      "noWiggle": "kein Wackeln"
+    "smap": {
+      "title": "Die Karte von s",
+      "re": "σ: schrumpfen ← → wachsen",
+      "im": "ω: drehen",
+      "reShort": "entlang",
+      "imShort": "seitlich",
+      "time": "Zeit →",
+      "shadow": "Schatten von e^(st)",
+      "shadowAxis": "Schatten",
+      "mirror": "Spiegelzwilling zeigen",
+      "readS": "s",
+      "readTurns": "Umdrehungen",
+      "readSize": "Größenänderung",
+      "spins": "Dreht sich {n}-mal pro Sekunde",
+      "noSpin": "Dreht sich überhaupt nicht",
+      "grows": "und wächst.",
+      "shrinks": "und schrumpft.",
+      "steady": "und behält seine Größe.",
+      "help": "Zieh den Punkt s auf der Karte (oder wähl ihn aus und nimm die Pfeiltasten). Rechts: die Spirale e^(st) in 3-D, die Zeit läuft nach rechts. Ihr blauer Schatten ist darunter aufgezeichnet.",
+      "mapAria": "Die Karte von s: Zieh den Punkt, um Sigma und Omega zu wählen.",
+      "spiralAria": "Dreidimensionale Spirale von e hoch s t, die Zeit läuft nach rechts, mit ihrem Schatten auf der Rückwand.",
+      "plotAria": "Schatten von e hoch s t über die Zeit."
     },
-    "race": {
-      "title": "Das Dämpfungsrennen",
-      "choose": "Deine Dämpfung",
-      "ref": "ζ = 1 (kritisch)",
-      "yours": "dein ζ",
-      "yoursZ": "ζ = {z}",
-      "msdAria": "Eine Masse an einer Feder, die sich auf ihre Ruhelage zubewegt.",
-      "plotAria": "Sprungantworten für kritische Dämpfung und für den gewählten Dämpfungsgrad.",
-      "planeAria": "Die zwei s-Werte für den gewählten Dämpfungsgrad.",
-      "settleRef": "ζ = 1 eingeschwungen",
-      "settleYours": "dein ζ eingeschwungen",
-      "slow": "der langsame",
-      "fast": "der schnelle",
-      "never": "nicht innerhalb von 12 s",
-      "same": "Das ist die Referenz selbst: die schnellste Antwort ohne Überschwingen.",
-      "slower": "Deine zusätzliche Dämpfung hat sie etwa {k}-mal langsamer gemacht.",
-      "replay": "Nochmal rennen",
-      "planeCap": "die zwei s-Werte",
-      "re": "σ",
-      "im": "ω",
-      "fastOff": "← der schnelle bei {v} (außerhalb der Karte)",
-      "double": "beide hier",
-      "band5": "innerhalb von 5 %",
-      "sweet": "ζ = 0,7 schwingt um {os} % über, ist aber nach {y5} s innerhalb von 5 % um das Ziel. ζ = 1 braucht {r5} s."
-    },
-    "arrows": {
-      "title": "Länge, Winkel und 1 ÷ ein Pfeil",
-      "aria": "Eine Ebene mit dem Einheitskreis, einem Pfeil z, seinem gestrichelten Spiegelzwilling und dem Pfeil 1 geteilt durch z, mit eingezeichneten Winkeln.",
-      "re": "Realteil",
-      "im": "Imaginärteil",
-      "mode": "Welcher Pfeil?",
-      "modeFree": "beliebiger Pfeil z",
-      "modeSmoother": "der Glätter, 1 + iωτ",
-      "a": "Realteil a",
-      "b": "Imaginärteil b",
-      "wt": "Wackeltempo × τ (ωτ)",
-      "mirror": "Zwilling",
-      "out": "1 ÷ (1 + iωτ)",
-      "len": "Länge |z|",
-      "ang": "Winkel von z",
-      "ilen": "Länge von 1/z",
-      "iang": "Winkel von 1/z",
-      "free": "1/z ist {ilen} lang (1 ÷ {len}) und andersherum gedreht, auf {iang}. Multiplizier die beiden, und du bekommst Länge {back} bei 0°: genau 1.",
-      "smooth": "Bei ωτ = {wt} behält 1 ÷ (1 + iωτ) {ilen} der Größe und hinkt {lag} hinterher. Schnellere Wackler: kleiner und später, aber nie über 90° hinaus.",
-      "help": "Schieb a und b, um z zu bewegen (oder schalte auf den Glätter um und schieb ωτ). Der blaue Bogen ist der Winkel von z, der graue Bogen der Winkel von 1/z."
-    }
-  },
-  "plays": {
-    "units": {
-      "kp": "Verstärkung Kp, Newton pro Meter",
-      "e": "Fehler, Meter"
-    },
-    "wn": {
-      "k": "Federsteifigkeit k, Newton pro Meter"
-    },
-    "zeta": {
-      "c": "Dämpfung c, Newtonsekunden pro Meter"
-    },
-    "circle": {
-      "z": "Dämpfungsgrad Zeta"
-    },
-    "settle": {
-      "a": "Schrumpfrate a, pro Sekunde"
-    },
-    "drone": {
-      "kp": "Verstärkung Kp, Newton pro Meter"
-    },
-    "arrowRead": {
-      "a": "Realteil a",
-      "b": "Imaginärteil b"
+    "fourier": {
+      "title": "Eine Rechteckwelle aus Drehern bauen",
+      "axis": "Wert",
+      "target": "Rechteckwelle",
+      "sum": "Summe der Dreherschatten",
+      "pieces": "Anzahl der Dreher",
+      "status": "{n} Dreher zusammengezählt. Der schnellste dreht sich {f}-mal so schnell wie der erste.",
+      "aria": "Eine Rechteckwelle und die Summe einer gewählten Anzahl von Dreherschatten, die sich ihr annähern.",
+      "statusOne": "Nur ein Dreher: ein schlichtes Wackeln, noch gar nichts Eckiges daran."
     }
   }
 }

@@ -41,7 +41,7 @@ describe('SPlane placement: off-edge points keep their true value', () => {
 });
 
 describe('SPlane describe(): true values', () => {
-  it('reports the real pole, not the edge it is drawn at (Chapter 11 default tune)', () => {
+  it('reports the real pole, not the edge it is drawn at (Chapter 13 default tune)', () => {
     expect(describePoint({ kind: 'pole', re: -51.3, im: 0 }, range)).toBe('Pole: −51.30 (off the map)');
     expect(describePoint({ kind: 'pole', re: -202, im: 0 }, range)).toBe('Pole: −202.00 (off the map)');
     expect(describePoint({ kind: 'pole', re: -3, im: 4, mirror: true }, range)).toBe('Pole: −3.00 ± 4.00i');
@@ -56,7 +56,7 @@ describe('SPlane describe(): true values', () => {
 
 describe('SPlane keyboard snapping', () => {
   it('lands on the next grid line in the direction of travel first', () => {
-    // Chapter 8's default pole: ω = √39 ≈ 6.245
+    // Chapter 10's default pole: ω = √39 ≈ 6.245
     expect(snapStep(Math.sqrt(39), -0.1, 0.1)).toBe(6.2);
     expect(snapStep(Math.sqrt(39), 0.1, 0.1)).toBe(6.3);
     expect(snapStep(6.2, -0.1, 0.1)).toBe(6.1);
@@ -101,7 +101,7 @@ describe('SPlane values and wording', () => {
     expect(formatS(-51.3, 0, false, 1)).toBe('−51.3');
   });
 
-  it('labels rays with the overshoot a ζ gives (Chapter 8: 53 %, 16 %, 5 %)', () => {
+  it('labels rays with the overshoot a ζ gives (Chapter 10: 53 %, 16 %, 5 %)', () => {
     expect(overshootOf(0.2)).toBeCloseTo(52.66, 2);
     expect(overshootOf(0.5)).toBeCloseTo(16.3, 1);
     expect(overshootOf(0.7)).toBeCloseTo(4.6, 1);

@@ -3,7 +3,7 @@
  * (`concept-map.ts`) and its overlap test, so the test measures exactly what is drawn.
  */
 
-/** Chapter cluster centres (serpentine layout on a 1200×930 sheet; rows 320 apart leave room for 2-line bubbles). */
+/** Chapter cluster centres (serpentine layout on a 1200×1250 sheet; rows 320 apart leave room for 2-line bubbles). */
 export const CENTRES: [number, number][] = [
   [150, 120],
   [450, 130],
@@ -17,6 +17,8 @@ export const CENTRES: [number, number][] = [
   [450, 760],
   [750, 760],
   [1050, 760],
+  [1050, 1080],
+  [750, 1080],
 ];
 
 /** node id → [chapter, dx, dy] from the chapter's centre */
@@ -40,37 +42,37 @@ export const NODES: Record<string, [number, number, number]> = {
   euler: [4, 45, -10],
   exponential: [4, -75, 35],
   guess: [4, 40, 90],
-  complex: [5, -50, -62],
-  spin: [5, 40, 0],
-  spiral: [5, -50, 65],
-  smap: [5, 55, 130],
-  second: [6, -50, -50],
-  wnzeta: [6, 80, -15],
-  critical: [6, -50, 30],
-  mode: [6, 90, 55],
-  sum: [6, -45, 130],
-  laplace: [7, -50, -70],
-  dtos: [7, 70, -25],
-  table: [7, -40, 50],
-  splane: [7, 50, 95],
-  tf: [8, -35, 20],
-  poles: [8, 95, -25],
-  limits: [8, -30, -60],
-  zeros: [8, -70, 105],
-  stability: [8, 65, 75],
-  closedloop: [8, 50, 150],
-  integralaction: [9, -45, -60],
-  derivativeaction: [9, 55, 0],
-  pid: [9, -35, 70],
-  noise: [9, 30, 135],
-  phaselag: [10, -45, -60],
-  bode: [10, 40, 20],
-  margins: [10, -45, 105],
-  robust: [10, 85, 150],
-  motorlag: [11, -50, -60],
-  you: [11, 10, 15],
-  tradeoff: [11, 40, 115],
-  statespace: [11, -120, 80],
+  complex: [5, -50, -55],
+  spin: [5, 45, 40],
+  spiral: [6, -50, -45],
+  smap: [6, 50, 45],
+  second: [7, -50, -50],
+  wnzeta: [7, 80, -15],
+  critical: [7, -50, 30],
+  mode: [7, 90, 55],
+  sum: [7, -45, 130],
+  laplace: [8, -50, -45],
+  dtos: [9, -50, -45],
+  table: [9, 50, 45],
+  splane: [8, 50, 45],
+  tf: [10, -35, 20],
+  poles: [10, 95, -25],
+  limits: [10, -30, -60],
+  zeros: [10, -70, 105],
+  stability: [10, 65, 75],
+  closedloop: [10, 50, 150],
+  integralaction: [11, -45, -60],
+  derivativeaction: [11, 55, 0],
+  pid: [11, -35, 70],
+  noise: [11, 30, 135],
+  phaselag: [12, -45, -60],
+  bode: [12, 40, 20],
+  margins: [12, -45, 105],
+  robust: [12, 85, 150],
+  motorlag: [13, -50, -60],
+  you: [13, 10, 15],
+  tradeoff: [13, 40, 115],
+  statespace: [13, -120, 80],
 };
 
 export const EDGES: [string, string][] = [
@@ -106,7 +108,7 @@ export const EDGES: [string, string][] = [
   // Ch 5's spinners are what the probe "unspins"
   ['spin', 'laplace'],
   ['laplace', 'dtos'],
-  // Ch 4's sticky note ("in Chapter 7 this grows up")
+  // Ch 4's sticky note ("in Chapter 9 this grows up")
   ['guess', 'dtos'],
   ['laplace', 'table'],
   ['smap', 'splane'],
@@ -138,10 +140,10 @@ export const EDGES: [string, string][] = [
   ['spin', 'bode'],
   ['phaselag', 'bode'],
   ['bode', 'margins'],
-  // the state plane: the poles are the eigenvalues, and Ch 8's pole placement was state feedback
+  // the state plane: the poles are the eigenvalues, and Ch 10's pole placement was state feedback
   ['poles', 'statespace'],
   ['statespace', 'you'],
-  // one lap round the loop, C·P = −1: Ch 8's closed loop is Ch 10's cliff
+  // one lap round the loop, C·P = −1: Ch 10's closed loop is Ch 12's cliff
   ['blockdiagram', 'closedloop'],
   ['closedloop', 'tf'],
   ['closedloop', 'margins'],
@@ -160,7 +162,7 @@ export const EDGES: [string, string][] = [
 ];
 
 /** The SVG viewBox: x, y, width, height. */
-export const VIEWBOX = [-50, -40, 1300, 1000] as const;
+export const VIEWBOX = [-50, -40, 1300, 1320] as const;
 
 /** Node label font size (px in viewBox units, `.concept-map text`) and line step for 2-line labels. */
 export const NODE_FONT = 19;

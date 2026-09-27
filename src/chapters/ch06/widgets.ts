@@ -1,473 +1,280 @@
 import { h } from '../../core/dom';
-import { fmt, tc, percent } from '../../core/i18n';
-import { type C, c as cx, mul } from '../../math/complex';
-import { tex } from '../../core/rich-text';
-import { overshootFormula, secondOrderSolution } from '../../math/second-order';
-import { DRONE, DroneSim, HOVER_THRUST, P_ONLY, defaultDroneConfig } from '../../sim/drone-model';
-import { MassSpringDamper } from '../../sim/msd-model';
+import { fmt, tc } from '../../core/i18n';
+import { c } from '../../math/complex';
 import type { WidgetFactory } from '../../story/types';
-import { color, withAlpha } from '../../ui/colors';
-import { readout, segmented, slider, transport } from '../../ui/controls';
-import { DroneView } from '../../ui/drone-view';
+import { readout, slider, toggle, transport } from '../../ui/controls';
 import { Loop } from '../../ui/loop';
-import { MsdView } from '../../ui/msd-view';
-import { PlaneCanvas } from '../../ui/plane-canvas';
 import { Plot } from '../../ui/plot';
 import { SPlane } from '../../ui/s-plane';
-import './ch06.css';
-import { angleOf, inverse, lengthOf } from './arrows';
-import {
-  caption,
-  clampToPlane,
-  eqRow,
-  fmtC,
-  iconButton,
-  mark,
-  onInteractStart,
-  planeLabel,
-  regime,
-  sample,
-  secondOrderRoots,
-  setIconLabel,
-  settling,
-  within,
-} from './helpers';
+import { type Item, PlaneCanvas } from '../../ui/plane-canvas';
+import { SpiralCanvas } from './canvases';
+import '../ch03/polish.css';
+import { shadow, spiralDuration, spiralPoint, squareWave, squareWavePartial } from '../ch05/models';
 
-const { m, c } = DRONE;
-const RUN = 6;
-
-/** The drone under P control (with hover thrust given for free) next to a mass on a spring. */
+/** 6a: a spinner plus its mirror twin always lands on the real axis. */
 const twins: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
-  mark(host);
-  let kp = 20;
-  type Trace = { t: number[]; drone: number[]; thrust: number[]; spring: number[]; vel: number[] };
-  /** Whole 6 s run for both systems, so a slider drag redraws instantly. */
-  const compute = (): Trace => {
-    const msd = new MassSpringDamper(m, c, kp, () => 0, -1, 0);
-    const drone = new DroneSim(defaultDroneConfig({ pid: { ...P_ONLY(kp), ff: HOVER_THRUST }, h0: 1 }));
-    const tr: Trace = { t: [0], drone: [drone.h - 2], thrust: [drone.thrust], spring: [msd.pos], vel: [msd.x[1]] };
-    for (let i = 1; i <= RUN * 1000; i++) {
-      msd.step();
-      drone.step();
-      if (i % 10 === 0) {
-        tr.t.push(drone.t);
-        tr.drone.push(drone.h - 2);
-        tr.thrust.push(drone.thrust);
-        tr.spring.push(msd.pos);
-        tr.vel.push(msd.x[1]);
-      }
-    }
-    return tr;
-  };
-  let tr = compute();
-  const grid = h('div', { class: 'twins-grid' });
-  const a = h('div');
-  const b = h('div');
-  const pl = h('div', { class: 'twins-plot' });
-  grid.append(a, b, pl);
+  const w = 1.2;
+  let time = 0;
+  let twin = false;
+  const WIN = 10;
+  const grid = h('div', { class: 'w-grid side' });
+  const left = h('div');
+  const right = h('div');
+  grid.append(left, right);
   host.append(h('p', { class: 'w-title' }, t('title')), grid);
-  a.append(caption(t('spring')));
-  const msdView = new MsdView(a, t('msdAria'), 60);
-  msdView.el.style.maxWidth = '200px';
-  // the two forces on the mass, so each term of the equation has a picture
-  a.append(
-    h(
-      'p',
-      { class: 'force-key' },
-      h('span', null, h('span', { class: 'force-swatch spring', 'aria-hidden': 'true' }), t('forceSpring')),
-      h('span', null, h('span', { class: 'force-swatch damper', 'aria-hidden': 'true' }), t('forceDamper')),
-    ),
-  );
-  b.append(caption(t('drone')));
-  const droneView = new DroneView(b, { hMax: 3, width: 230 }, ctx.onCleanup);
-  pl.append(caption(t('together')));
-  const plot = new Plot(pl, {
-    x: { label: tc('plots.time'), min: 0, max: RUN },
-    y: { label: t('plotY'), min: -1.3, max: 1.3 },
+  const plane = new PlaneCanvas(left, { extent: 2.3, label: t('aria'), reLabel: t('re'), imLabel: t('im') });
+  const plot = new Plot(right, {
+    x: { label: tc('plots.time'), min: 0, max: WIN },
+    y: { label: t('axis'), min: -2.3, max: 2.3 },
     series: [
-      { id: 'drone', color: 'out', label: t('drone'), ghost: true, width: 3.4 },
-      { id: 'spring', color: 'ink', label: t('spring'), dash: [5, 5], width: 1.8 },
+      { id: 're', color: 'out', label: t('realPart') },
+      { id: 'im', color: 'ink2', label: t('sidePart'), dash: [5, 4], width: 2 },
     ],
-    height: 250,
+    height: 220,
     label: t('plotAria'),
   }, ctx.onCleanup);
-  plot.setLines([{ kind: 'h', at: 0, color: 'sp', label: t('target') }]);
-  const eqSpring = h('div', { class: 'math-block' });
-  const eqDrone = h('div', { class: 'math-block' });
-  const zetaEq = h('div', { class: 'math-block', style: { marginTop: '0' } });
-  const rZ = readout('ζ');
-  const rW = readout('ωn');
-  const rR = readout(t('personality'));
-  const syncEq = () => {
-    const z = c / (2 * Math.sqrt(m * kp));
-    eqSpring.innerHTML = tex(`\\underbrace{m\\ddot{x} + c\\dot{x} + \\eff{k}\\,x = 0}_{\\text{${t('spring')}}}`, true);
-    eqDrone.innerHTML = tex(`\\underbrace{m\\ddot{\\out{h}} + c\\dot{\\out{h}} + \\eff{K_p}(\\out{h} - \\sp{2}) = 0}_{\\text{${t('drone')}}}`, true);
-    zetaEq.innerHTML = tex(`\\zeta = \\frac{c}{2\\sqrt{m\\,\\eff{K_p}}} = \\frac{${fmt(c, 1)}}{2\\sqrt{${fmt(m, 1)}\\cdot \\eff{${fmt(kp, 0)}}}} = ${fmt(z, 3)}`, true);
-    rZ.set(fmt(z, 3));
-    rW.set(`${fmt(Math.sqrt(kp / m), 2)} rad/s`);
-    rR.set(tc(`regime.${regime(z)}`));
+  const status = h('p', { class: 'w-status steady', 'aria-live': 'polite' });
+  const draw = () => {
+    const a = spiralPoint(0, w, time);
+    const b = spiralPoint(0, -w, time);
+    const items: Item[] = [
+      { kind: 'circle', r: 1, color: 'ink3' },
+      { kind: 'arrow', to: [a.re, a.im], color: 'out', width: 3, label: t('spinnerLabel') },
+    ];
+    const sum = twin ? c(a.re + b.re, a.im + b.im) : a;
+    if (twin) items.push({ kind: 'arrow', from: [a.re, a.im], to: [sum.re, sum.im], color: 'eff', width: 3, label: t('twinLabel') });
+    // alone, the sum *is* the spinner tip, so only label it once the twin joins
+    items.push({ kind: 'dot', at: [sum.re, sum.im], color: 'ink', r: 6, ring: true, label: twin ? t('sum') : undefined, labelAt: 'below' });
+    plane.draw(items);
+    const msg = twin ? t('withTwin') : t('alone');
+    if (status.textContent !== msg) status.textContent = msg;
   };
-  let playT = 0;
-  /** Shows both systems at time `tt`; the curves are drawn up to the same moment. */
-  const show = (tt: number) => {
-    const n = Math.min(tr.t.length - 1, Math.round(tt / 0.01));
-    msdView.update(tr.spring[n], 0);
-    msdView.forces(-kp * tr.spring[n], -c * tr.vel[n]);
-    droneView.update({ h: tr.drone[n] + 2, r: 2, thrust: tr.thrust[n] });
-    plot.set('drone', tr.t.slice(0, n + 1), tr.drone.slice(0, n + 1));
-    plot.set('spring', tr.t.slice(0, n + 1), tr.spring.slice(0, n + 1));
-    plot.describe(t('describe', { d: fmt(tr.drone[n], 2), s: fmt(tr.spring[n], 2) }));
+  const sample = () => {
+    const a = spiralPoint(0, w, time);
+    const b = spiralPoint(0, -w, time);
+    const sum = twin ? c(a.re + b.re, a.im + b.im) : a;
+    plot.push('re', time, sum.re);
+    plot.push('im', time, sum.im);
   };
+  let filled = false;
   const loop = new Loop((dt) => {
-    playT = Math.min(RUN, playT + dt);
-    show(playT);
-    if (playT >= RUN) loop.pause();
+    if (filled) {
+      filled = false;
+      time = 0;
+      plot.clear(false);
+    }
+    time += dt;
+    if (time > WIN) {
+      time = 0;
+      plot.clear(false);
+    }
+    sample();
+    draw();
   }, host);
-  // pressing Play at the end starts the run again from the beginning
-  loop.onChange((on) => {
-    if (on && playT >= RUN) playT = 0;
-  });
-  const reset = () => {
-    loop.pause();
-    playT = 0;
-    if (Loop.autoplay) {
-      show(0);
-      loop.play();
-    } else show(RUN);
+  const fill = () => {
+    plot.clear(false);
+    for (let k = 0; k <= 400; k++) {
+      const tt = (k / 400) * WIN;
+      const a = spiralPoint(0, w, tt);
+      const b = spiralPoint(0, -w, tt);
+      plot.push('re', tt, twin ? a.re + b.re : a.re);
+      plot.push('im', tt, twin ? a.im + b.im : a.im);
+    }
+    filled = true;
   };
-  const sl = slider({
-    label: t('kp'),
-    min: 2,
-    max: 60,
-    step: 1,
-    value: kp,
-    unit: 'N/m',
-    color: 'eff',
-    onInput: (v) => {
-      kp = v;
-      tr = compute();
-      syncEq();
-      // while dragging, show the whole new run at once; release replays it
-      loop.pause();
-      playT = RUN;
-      show(RUN);
+  const tg = toggle(t('toggle'), false, (v) => {
+    twin = v;
+    time = 0;
+    plot.clear(false);
+    if (!loop.playing) fill();
+    draw();
+  });
+  right.append(tg.el, transport({ loop, onReset: () => (loop.pause(), (time = 0), fill(), draw()), onStep: () => ((time += 0.1), sample(), draw()) }), status);
+  if (Loop.autoplay) loop.play();
+  else fill();
+  draw();
+  return () => {
+    loop.destroy();
+    plane.destroy();
+  };
+};
+
+/** 6b: the map of s. Drag s, watch e^(st) spiral and its shadow. */
+const smap: WidgetFactory = (host, ctx) => {
+  const { t } = ctx;
+  let sigma = -0.3;
+  let omega = 2;
+  let mirror = false;
+  let time = 0;
+  const grid = h('div', { class: 'smap-grid' });
+  const left = h('div');
+  const right = h('div');
+  grid.append(left, right);
+  host.append(h('p', { class: 'w-title' }, t('title')), grid);
+  // a wide, short map so it fits beside (or just above) the spiral on a phone
+  const plane = new SPlane(left, {
+    reMin: -4,
+    reMax: 1.5,
+    imMax: 3.2,
+    label: t('mapAria'),
+    reLabel: t('re'),
+    imLabel: t('im'),
+    regions: false,
+    step: 0.1,
+    onChange: (p) => {
+      sigma = Math.round(p.re * 100) / 100;
+      omega = Math.round(p.im * 100) / 100;
+      restart();
     },
+  }, ctx.onCleanup);
+  const spiral = new SpiralCanvas(right, { aria: t('spiralAria'), time: t('time'), re: t('reShort'), im: t('imShort'), shadow: t('shadow') });
+  const plot = new Plot(right, {
+    x: { label: tc('plots.time'), min: 0, max: 8 },
+    y: { label: t('shadowAxis'), min: -3, max: 3 },
+    series: [{ id: 'sh', color: 'out', label: t('shadow'), ghost: true }],
+    height: 170,
+    label: t('plotAria'),
+  }, ctx.onCleanup);
+  const rS = readout(t('readS'));
+  const rTurns = readout(t('readTurns'));
+  const rSize = readout(t('readSize'));
+  const status = h('p', { class: 'w-status steady', 'aria-live': 'polite' });
+  const place = (rebuild = false) => {
+    // the twin marker is created with the point, so rebuild it when the mirror toggles
+    if (rebuild) plane.set([]);
+    plane.set([{ id: 's', re: sigma, im: omega, kind: 'point', color: 'output', draggable: true, label: 's', mirror }]);
+  };
+
+  const curves = (upTo: number) => {
+    const n = 300;
+    const main: [number, number, number][] = [];
+    const twinPts: [number, number, number][] = [];
+    const wall: [number, number, number][] = [];
+    for (let k = 0; k <= n; k++) {
+      const tt = (k / n) * upTo;
+      const z = spiralPoint(sigma, omega, tt);
+      main.push([tt, z.re, z.im]);
+      twinPts.push([tt, z.re, -z.im]);
+      wall.push([tt, z.re, 0]);
+    }
+    const list = [
+      { pts: wall, color: 'out', width: 2.2, alpha: 0.9 },
+      { pts: main, color: 'ink', width: 2 },
+    ];
+    if (mirror) list.push({ pts: twinPts, color: 'eff', width: 1.6, alpha: 0.7 });
+    return list;
+  };
+  const tMaxFor = () => spiralDuration(sigma);
+  const drawAll = (upTo: number, dot: boolean) => {
+    const z = spiralPoint(sigma, omega, upTo);
+    spiral.draw(curves(upTo), 8, dot ? [upTo, z.re, z.im] : undefined);
+  };
+  const describe = () => {
+    const turns = Math.abs(omega) / (2 * Math.PI);
+    rS.set(`${fmt(sigma, 2)} ${omega < 0 ? '−' : '+'} ${fmt(Math.abs(omega), 2)}i`);
+    rTurns.set(`${fmt(turns, 2)} /s`);
+    rSize.set(`× ${fmt(Math.exp(sigma), 2)} /s`);
+    const grow = sigma > 0.02 ? t('grows') : sigma < -0.02 ? t('shrinks') : t('steady');
+    const spin = Math.abs(omega) < 0.02 ? t('noSpin') : t('spins', { n: fmt(turns, 2) });
+    const text = `${spin} ${grow}`;
+    if (status.textContent !== text) status.textContent = text;
+    plot.describe(text);
+  };
+  const restart = () => {
+    time = 0;
+    plot.clear();
+    const T = tMaxFor();
+    if (!loop.playing) {
+      plot.fn('sh', (x) => (x <= T ? shadow(sigma, omega, x) : NaN));
+      filled = true;
+      drawAll(T, false);
+    }
+    describe();
+  };
+  let filled = false;
+  const loop = new Loop((dt) => {
+    const T = tMaxFor();
+    if (filled) {
+      filled = false;
+      time = 0;
+      plot.clear(false);
+    }
+    time += dt;
+    if (time > T) {
+      time = 0;
+      plot.clear(false);
+    }
+    plot.push('sh', time, shadow(sigma, omega, time));
+    drawAll(time, true);
+  }, host);
+  const tg = toggle(t('mirror'), false, (v) => {
+    mirror = v;
+    place(true);
+    if (!loop.playing) drawAll(tMaxFor(), false);
   });
-  onInteractStart(sl.input, () => plot.clear(true));
-  // replay after a pointer drag; keyboard steps stay still (no motion on key presses)
-  let byPointer = false;
-  sl.input.addEventListener('pointerdown', () => (byPointer = true));
-  sl.input.addEventListener('keydown', () => (byPointer = false));
-  sl.input.addEventListener('change', () => {
-    if (byPointer) reset();
-  });
+  left.append(h('div', { style: { marginTop: '8px' } }, tg.el));
   host.append(
-    eqRow(eqSpring, eqDrone),
-    zetaEq,
-    h('div', { class: 'w-controls' }, sl.el),
-    h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rZ.el, rW.el, rR.el), transport({ loop, onReset: reset, onStep: () => ((playT = Math.min(RUN, playT + 0.1)), show(playT)) })),
+    h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rS.el, rTurns.el, rSize.el), transport({ loop, onReset: () => (loop.pause(), restart()), onStep: () => ((time += 0.1), plot.push('sh', time, shadow(sigma, omega, time)), drawAll(time, true)) })),
+    status,
     h('p', { class: 'w-help' }, t('help')),
   );
-  syncEq();
-  reset();
-  return () => loop.destroy();
-};
-
-/** ωn and ζ sliders driving a step response, the two s values, three regime panels and a spring. */
-const personality: WidgetFactory = (host, ctx) => {
-  const { t } = ctx;
-  mark(host);
-  let wn = 3;
-  let zeta = 0.3;
-  const T1 = 10;
-  host.append(h('p', { class: 'w-title' }, t('title')));
-  const top = h('div', { class: 'w-grid side-r' });
-  const plotCell = h('div');
-  const planeCell = h('div');
-  top.append(plotCell, planeCell);
-  const bottom = h('div', { class: 'w-grid side-r' });
-  const ctrlCell = h('div');
-  const springCell = h('div', { class: 'spring-cell' });
-  bottom.append(ctrlCell, springCell);
-  host.append(top, bottom);
-  const plot = new Plot(plotCell, {
-    x: { label: tc('plots.time'), min: 0, max: T1 },
-    y: { label: tc('plots.height'), min: 0, max: 2 },
-    series: [{ id: 'y', color: 'out', label: t('response'), ghost: true }],
-    height: 320,
-    label: t('plotAria'),
-  }, ctx.onCleanup);
-  plot.setLines([{ kind: 'h', at: 1, color: 'sp', label: t('target') }]);
-  planeCell.append(caption(t('planeCap')));
-  const plane = new SPlane(planeCell, { reMin: -10, reMax: 2, imMax: 6, label: t('planeAria'), reLabel: t('re'), imLabel: t('im'), maxWidth: 360 }, ctx.onCleanup);
-  plane.svg.style.overflow = 'hidden';
-  const offLabel = planeLabel(plane, 'pt-note');
-  springCell.append(caption(t('springCap')));
-  const msd = new MsdView(springCell, t('msdAria'), 50);
-  msd.el.style.maxWidth = '140px';
-  const play = iconButton('play', t('playSpring'));
-  springCell.append(play);
-  const panels = h('div', { class: 'w-grid three', style: { marginTop: '18px' } });
-  const panelZ = [0.2, 1, 2.5];
-  const panelPlots = panelZ.map((z, i) => {
-    const box = h('div', { class: 'panel', dataset: { regime: ['under', 'critical', 'over'][i] } });
-    box.append(caption(t(`panel.${i}`, { z: fmt(z, 1) })));
-    panels.append(box);
-    const p = new Plot(box, {
-      x: { label: tc('plots.time'), min: 0, max: T1 },
-      y: { label: '', min: 0, max: 2 },
-      series: [{ id: 'y', color: 'out' }],
-      height: 120,
-      label: t('panelAria', { z: fmt(z, 1) }),
-      legend: false,
-    }, ctx.onCleanup);
-    p.setLines([{ kind: 'h', at: 1, color: 'sp' }]);
-    return { box, p };
-  });
-  const rOS = readout(t('overshoot'));
-  const rTs = readout(t('settle'));
-  const rRoots = readout(t('roots'));
-  rRoots.el.style.flex = '2 1 9.5rem';
-  const rWd = readout(t('wd'));
-  const rReg = readout(t('personality'));
-  let resp = sample(() => 0, T1);
-  let playT = 0;
-  const loop = new Loop((dt) => {
-    playT += dt;
-    if (playT > T1) playT = 0;
-    const i = Math.min(resp.ys.length - 1, Math.round((playT / T1) * (resp.ys.length - 1)));
-    msd.update(resp.ys[i] - 1, 0);
-    plot.setCursor(playT);
-  }, host);
-  loop.onChange((on) => {
-    setIconLabel(play, on ? 'pause' : 'play', on ? t('stopSpring') : t('playSpring'));
-    if (!on) plot.setCursor(null);
-  });
-  play.addEventListener('click', () => loop.toggle());
-  const update = () => {
-    const k = m * wn * wn;
-    const cc = 2 * zeta * wn * m;
-    resp = sample(secondOrderSolution(m, cc, k, k, 0, 0), T1, 500);
-    plot.set('y', resp.xs, resp.ys);
-    const roots = secondOrderRoots(wn, zeta);
-    let off = '';
-    plane.set(
-      roots.map((r, i) => {
-        const p = clampToPlane(plane, r.re, r.im);
-        if (p.off) off = t('offMap', { v: fmtC(r, 1) });
-        return { id: `r${i}`, re: p.re, im: p.im, kind: 'point' as const, color: 'output' };
-      }),
-    );
-    offLabel(off, plane.o.reMin, 0, 6, -12, 'start');
-    // every point on this circle has the same ωn
-    plane.setCircle(wn, t('radius', { w: fmt(wn, 1) }));
-    panelZ.forEach((z, i) => {
-      const d = sample(secondOrderSolution(m, 2 * z * wn * m, k, k, 0, 0), T1, 300);
-      panelPlots[i].p.set('y', d.xs, d.ys);
-      panelPlots[i].box.classList.toggle('active', regime(zeta) === ['under', 'critical', 'over'][i]);
-    });
-    const ts = settling(resp.xs, resp.ys, 1, 1);
-    rOS.set(percent(zeta < 1 ? overshootFormula(zeta) : 0, 1));
-    rTs.set(Number.isNaN(ts) ? t('never') : `${fmt(ts, 2)} s`);
-    const rootsText = roots[0].im !== 0 ? `${fmt(roots[0].re, 2)} ± ${fmt(Math.abs(roots[0].im), 2)}i` : `${fmtC(roots[0])}, ${fmtC(roots[1])}`;
-    rRoots.set(rootsText);
-    // the wiggle is a little slower than ωn: ωd = ωn√(1 − ζ²)
-    rWd.set(zeta < 1 ? `${fmt(wn * Math.sqrt(1 - zeta * zeta), 2)} rad/s` : t('noWiggle'));
-    rReg.set(tc(`regime.${regime(zeta)}`));
-    plot.describe(t('describe', { z: fmt(zeta, 2), w: fmt(wn, 1), r: rootsText }));
-  };
-  const sw = slider({ label: t('wn'), min: 0.5, max: 6, step: 0.1, value: wn, unit: 'rad/s', onInput: (v) => ((wn = v), update()) });
-  const sz = slider({ label: t('zeta'), min: 0, max: 3, step: 0.01, value: zeta, onInput: (v) => ((zeta = v), update()) });
-  onInteractStart(sw.input, () => plot.clear(true));
-  onInteractStart(sz.input, () => plot.clear(true));
-  ctrlCell.append(h('div', { class: 'w-controls', style: { marginTop: '4px' } }, sw.el, sz.el), h('div', { class: 'readouts', style: { marginTop: '14px' } }, rOS.el, rTs.el, rRoots.el, rWd.el, rReg.el));
-  host.append(panels);
-  update();
-  if (Loop.autoplay) loop.play();
-  return () => loop.destroy();
-};
-
-/** June's "more damping is safer": race ζ = 1 against a heavier damper (and a lighter one). */
-const race: WidgetFactory = (host, ctx) => {
-  const { t } = ctx;
-  mark(host);
-  const wn = 3;
-  const T1 = 12;
-  let zeta = 3;
-  host.append(h('p', { class: 'w-title' }, t('title')));
-  const grid = h('div', { class: 'w-grid side-r' });
-  const left = h('div');
-  const right = h('div');
-  grid.append(left, right);
-  const plot = new Plot(left, {
-    x: { label: tc('plots.time'), min: 0, max: T1 },
-    y: { label: tc('plots.height'), min: 0, max: 1.2 },
-    series: [
-      { id: 'ref', color: 'pencil', label: t('ref'), dash: [6, 4], width: 2 },
-      { id: 'y', color: 'out', label: t('yours'), ghost: true },
-    ],
-    height: 240,
-    label: t('plotAria'),
-  }, ctx.onCleanup);
-  plot.setLines([{ kind: 'h', at: 1, color: 'sp' }]);
-  const views = h('div', { class: 'pair-grid', style: { marginTop: '12px' } });
-  const va = h('div');
-  const vb = h('div');
-  views.append(va, vb);
-  va.append(caption(t('ref')));
-  const labelB = caption('');
-  vb.append(labelB);
-  const msdA = new MsdView(va, t('msdAria'), 60);
-  const msdB = new MsdView(vb, t('msdAria'), 60);
-  msdA.el.style.maxWidth = msdB.el.style.maxWidth = '150px';
-  right.append(caption(t('planeCap')));
-  const plane = new SPlane(right, { reMin: -18, reMax: 2, imMax: 5, label: t('planeAria'), reLabel: t('re'), imLabel: t('im'), maxWidth: 420 }, ctx.onCleanup);
-  const slowLabel = planeLabel(plane);
-  const fastLabel = planeLabel(plane);
-  const rA = readout(t('settleRef'));
-  const rB = readout(t('settleYours'));
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite', style: { minHeight: '2.6em' } });
-  let ref = sample(secondOrderSolution(m, 2 * wn * m, m * wn * wn, m * wn * wn, 0, 0), T1, 600);
-  let yours = ref;
-  let playT = 0;
-  const loop = new Loop((dt) => {
-    playT = Math.min(T1, playT + dt);
-    const i = Math.round((playT / T1) * 600);
-    msdA.update(ref.ys[i] - 1, 0);
-    msdB.update(yours.ys[i] - 1, 0);
-    plot.setCursor(playT);
-    if (playT >= T1) loop.pause();
-  }, host);
-  const showEnd = () => {
-    msdA.update(ref.ys[600] - 1, 0);
-    msdB.update(yours.ys[600] - 1, 0);
-  };
-  const update = () => {
-    plot.clear(true);
-    const k = m * wn * wn;
-    ref = sample(secondOrderSolution(m, 2 * wn * m, k, k, 0, 0), T1, 600);
-    yours = sample(secondOrderSolution(m, 2 * zeta * wn * m, k, k, 0, 0), T1, 600);
-    plot.set('ref', ref.xs, ref.ys);
-    plot.set('y', yours.xs, yours.ys);
-    labelB.textContent = t('yoursZ', { z: fmt(zeta, zeta < 1 ? 1 : 0) });
-    // the sweet spot is judged on getting close (within 5%), so show that band for it
-    plot.setBands(zeta < 1 ? [{ kind: 'h', from: 0.95, to: 1.05, color: withAlpha(color('good'), 0.14), label: t('band5') }] : []);
-    const roots = secondOrderRoots(wn, zeta);
-    plane.set(
-      roots.map((r, i) => {
-        const p = clampToPlane(plane, r.re, r.im);
-        return { id: `r${i}`, re: p.re, im: p.im, kind: 'point' as const, color: 'output' };
-      }),
-    );
-    if (zeta > 1) {
-      // roots[0] is the slow one (closer to 0)
-      slowLabel(t('slow'), roots[0].re, 0, -8, -12, 'end');
-      const fast = clampToPlane(plane, roots[1].re, 0);
-      fastLabel(fast.off ? t('fastOff', { v: fmt(roots[1].re, 1) }) : t('fast'), fast.re, 0, fast.off ? -4 : 0, -14, fast.off ? 'start' : 'middle');
-    } else {
-      // a double root at ζ = 1; a complex pair needs no label
-      slowLabel(zeta === 1 ? t('double') : '', roots[0].re, 0, 0, -14);
-      fastLabel('', 0, 0);
-    }
-    const sa = settling(ref.xs, ref.ys, 1, 1);
-    const sb = settling(yours.xs, yours.ys, 1, 1);
-    rA.set(`${fmt(sa, 2)} s`);
-    rB.set(Number.isNaN(sb) ? t('never') : `${fmt(sb, 2)} s`, zeta <= 1 ? '' : sb > sa || Number.isNaN(sb) ? 'bad' : 'good');
-    if (zeta < 1) {
-      status.textContent = t('sweet', { os: fmt(overshootFormula(zeta), 1), y5: fmt(within(yours, 0.05), 2), r5: fmt(within(ref, 0.05), 2) });
-    } else status.textContent = zeta === 1 ? t('same') : t('slower', { k: fmt((Number.isNaN(sb) ? T1 : sb) / sa, 1) });
-    playT = 0;
+  place();
+  const off = ctx.bus.on('predict:ch5-shadow', () => {
+    sigma = -0.5;
+    omega = 3;
+    place();
+    restart();
     if (Loop.autoplay) loop.play();
-    else showEnd();
-  };
-  const seg = segmented(
-    t('choose'),
-    ['0.7', '1', '3', '5'].map((v) => ({ value: v, label: `ζ = ${fmt(Number(v), v === '0.7' ? 1 : 0)}` })),
-    '3',
-    (v) => {
-      zeta = Number(v);
-      update();
-    },
-  );
-  const replay = iconButton('play', t('replay'));
-  replay.addEventListener('click', () => {
-    playT = 0;
-    loop.play();
   });
-  left.append(views);
-  right.append(h('div', { class: 'readouts', style: { marginTop: '12px' } }, rA.el, rB.el), status, replay);
-  host.append(seg.el, h('div', { style: { height: '12px' } }), grid);
-  update();
-  return () => loop.destroy();
+  restart();
+  if (Loop.autoplay) loop.play();
+  return () => {
+    off();
+    loop.destroy();
+    spiral.destroy();
+  };
 };
 
-/** 6e: an arrow's length and angle; dividing divides the lengths and subtracts the angles. */
-const arrows: WidgetFactory = (host, ctx) => {
+/** 6c: adding spinning pieces builds a square wave. */
+const fourier: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
-  let mode: 'free' | 'smoother' = 'free';
-  // 1/z always points along the twin (it is z̄ ÷ |z|²): start where the two lengths differ clearly
-  let a = 1.5;
-  let b = 1;
-  let wt = 1;
-  host.append(h('p', { class: 'w-title' }, t('title')));
-  const grid = h('div', { class: 'w-grid two' });
-  const left = h('div');
-  const right = h('div');
-  grid.append(left, right);
-  host.append(grid);
-  const plane = new PlaneCanvas(left, { extent: 2.4, label: t('aria'), reLabel: t('re'), imLabel: t('im') });
-  ctx.onCleanup(() => plane.destroy());
-  const rL = readout(t('len'), 'out');
-  const rA = readout(t('ang'), 'out');
-  const rIL = readout(t('ilen'));
-  const rIA = readout(t('iang'));
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
-  right.append(h('div', { class: 'readouts' }, rL.el, rA.el, rIL.el, rIA.el), status);
-  const arrow = (): C => (mode === 'free' ? cx(a, b) : cx(1, wt));
-  const deg = (v: number) => `${fmt(v, 0)}°`;
-  const say = () => {
-    const z = arrow();
-    const iz = inverse(z);
-    const text =
-      mode === 'free'
-        ? t('free', { ilen: fmt(lengthOf(iz), 2), len: fmt(lengthOf(z), 2), iang: deg(angleOf(iz)), back: fmt(lengthOf(mul(z, iz)), 2) })
-        : t('smooth', { wt: fmt(wt, 1), ilen: fmt(lengthOf(iz), 2), lag: deg(-angleOf(iz)) });
-    if (status.textContent !== text) status.textContent = text;
-  };
+  let n = 1;
+  const plot = new Plot(host, {
+    x: { label: tc('plots.time'), min: 0, max: 4 * Math.PI },
+    y: { label: t('axis'), min: -1.5, max: 1.5 },
+    series: [
+      { id: 'target', color: 'sp', label: t('target'), dash: [6, 5], width: 2 },
+      { id: 'sum', color: 'out', label: t('sum'), ghost: true },
+    ],
+    height: 220,
+    label: t('aria'),
+  }, ctx.onCleanup);
+  plot.fn('target', squareWave, 800);
+  const status = h('p', { class: 'w-status steady', 'aria-live': 'polite' });
   const draw = () => {
-    const z = arrow();
-    const iz = inverse(z);
-    const tooSmall = lengthOf(z) < 0.15;
-    plane.draw([
-      { kind: 'circle', r: 1, color: 'ink3' },
-      { kind: 'arc', r: 0.45, from: 0, to: Math.atan2(z.im, z.re), color: 'out' },
-      { kind: 'arc', r: 0.3, from: 0, to: Math.atan2(iz.im, iz.re), color: 'ink2' },
-      // the twin belongs to "any arrow"; beside the smoother it only clutters the picture
-      ...(mode === 'free' ? [{ kind: 'arrow' as const, to: [z.re, -z.im] as [number, number], color: 'ink3', width: 2, dash: [4, 4], label: t('mirror') }] : []),
-      { kind: 'arrow', to: [z.re, z.im], color: 'out', width: 3.5, label: mode === 'free' ? 'z' : '1 + iωτ' },
-      ...(tooSmall ? [] : [{ kind: 'arrow' as const, to: [iz.re, iz.im] as [number, number], color: 'ink', width: 3, label: mode === 'free' ? '1/z' : t('out') }]),
-    ]);
-    rL.set(fmt(lengthOf(z), 2));
-    rA.set(deg(angleOf(z)));
-    rIL.set(tooSmall ? '—' : fmt(lengthOf(iz), 2));
-    rIA.set(tooSmall ? '—' : deg(angleOf(iz)));
+    plot.fn('sum', (x) => squareWavePartial(x, n), 800);
+    status.textContent = n === 1 ? t('statusOne') : t('status', { n, f: 2 * n - 1 });
+    plot.describe(status.textContent);
   };
-  const sA = slider({ label: t('a'), min: -2, max: 2, step: 0.1, value: a, onInput: (v) => ((a = v), draw()), onSettle: say });
-  const sB = slider({ label: t('b'), min: -2, max: 2, step: 0.1, value: b, onInput: (v) => ((b = v), draw()), onSettle: say });
-  const sW = slider({ label: t('wt'), min: 0, max: 2.4, step: 0.1, value: wt, onInput: (v) => ((wt = v), draw()), onSettle: say });
-  const free = h('div', { class: 'w-controls' }, sA.el, sB.el);
-  const smooth = h('div', { class: 'w-controls', style: { display: 'none' } }, sW.el);
-  const seg = segmented(t('mode'), [{ value: 'free', label: t('modeFree') }, { value: 'smoother', label: t('modeSmoother') }], mode, (v) => {
-    mode = v;
-    free.style.display = v === 'free' ? '' : 'none';
-    smooth.style.display = v === 'smoother' ? '' : 'none';
-    draw();
-    say();
+  const sl = slider({
+    label: t('pieces'),
+    min: 1,
+    max: 30,
+    step: 1,
+    value: n,
+    onInput: (v) => {
+      n = v;
+      draw();
+    },
   });
-  host.append(seg.el, free, smooth, h('p', { class: 'w-help' }, t('help')));
+  sl.input.addEventListener('change', () => {
+    plot.clear();
+    draw();
+  });
+  host.prepend(h('p', { class: 'w-title' }, t('title')));
+  host.append(h('div', { class: 'w-controls' }, sl.el), status);
   draw();
-  say();
 };
 
-export const widgets: Record<string, WidgetFactory> = { twins, personality, race, arrows };
+export const widgets: Record<string, WidgetFactory> = { twins, smap, fourier };

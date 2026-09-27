@@ -3,13 +3,19 @@
 The terms each locale uses for the course's concepts. Read it before translating anything, and add
 every new term in the same commit as the translation that introduces it.
 
+> **Chapter numbers** in this file follow the 14-chapter course (2026-09-27): Chapters 5 and 7
+> were each split in two (old 5 → 5 Spinning Numbers + 6 The Map of s; old 6 → 7; old 7 → 8 The
+> Laplace Probe + 9 Calculus into Algebra; old 8–11 → 10–13). Plan names ("Chapters 7–11 pass")
+> keep their historical numbers, and so does the terminology review log from
+> "Terminology review (2026-09-27)" on, which describes the files as they were then.
+
 ## How to record a term
 
 For each important term record: the English definition (one line, as the course means it), the
 chosen term per locale, rejected alternatives and why, the source that settled it (see the
 per-locale source table in `AGENTS.md`), and the first chapter that uses it. Add a note when the
-student-friendly word differs from the textbook one (e.g. "map of s" before Chapter 7, "s-plane"
-from Chapter 7 on).
+student-friendly word differs from the textbook one (e.g. "map of s" before Chapter 8, "s-plane"
+from Chapter 8 on).
 
 When a locale has two words for one concept, pick one, fix every string, and record the decision
 in the latest terminology review below. If the difference is deliberate (a label vs. a friendlier
@@ -39,24 +45,24 @@ appears only where ch02 names both and in the map node `sserror`.
 | block diagram | ch01 | schéma-bloc | diagrama de bloques | schema a blocchi | Blockschaltbild | schemat blokowy | diagrama de blocos | ブロック線図 | 框图 | المخطط الكتلي |
 | gain | ch02 | gain | ganancia | guadagno | Verstärkung | wzmocnienie | ganho | ゲイン | 增益 | الكسب |
 | proportional (P) | ch02 | commande / gain proportionnel(le) | control proporcional | controllo proporzionale | Proportionalregelung / -verstärkung | regulacja proporcjonalna | controle proporcional | 比例制御 | 比例控制 | التحكم التناسبي |
-| integral gain Ki | ch03 (maths), ch09 | gain intégral | ganancia integral | guadagno integrale | Integralverstärkung | wzmocnienie całkujące | ganho integral | 積分ゲイン | 积分增益 | كسب التكامل |
-| derivative gain Kd | ch03 (maths), ch09 | gain dérivé | ganancia derivativa | guadagno derivativo | Differenzialverstärkung | wzmocnienie różniczkujące | ganho derivativo | 微分ゲイン | 微分增益 | كسب المشتقة |
+| integral gain Ki | ch03 (maths), ch11 | gain intégral | ganancia integral | guadagno integrale | Integralverstärkung | wzmocnienie całkujące | ganho integral | 積分ゲイン | 积分增益 | كسب التكامل |
+| derivative gain Kd | ch03 (maths), ch11 | gain dérivé | ganancia derivativa | guadagno derivativo | Differenzialverstärkung | wzmocnienie różniczkujące | ganho derivativo | 微分ゲイン | 微分增益 | كسب المشتقة |
 | droop | ch02 | affaissement | caída | abbassamento | Durchhängen | zwis | desvio residual | ドループ | 静差 | الانخفاض المستمر |
 | steady-state error | ch02 | erreur statique | error en estado estacionario | errore a regime | bleibende Regelabweichung | uchyb ustalony | erro em regime permanente | 定常偏差 | 稳态误差 | خطأ الحالة المستقرة |
 | overshoot | ch02 | dépassement | sobreimpulso | sovraelongazione | Überschwingen | przeregulowanie (verb in prose: przestrzeliwać) | sobressinal | オーバーシュート | 超调 | التجاوز |
-| damping | ch06 | amortissement | amortiguamiento | smorzamento | Dämpfung | tłumienie | amortecimento | 減衰 | 阻尼 | التخميد |
-| damping ratio ζ | ch06 | taux d'amortissement | coeficiente de amortiguamiento | coefficiente di smorzamento | Dämpfungsgrad | współczynnik tłumienia | razão de amortecimento | 減衰比 | 阻尼比 | نسبة التخميد |
-| natural frequency ωn | ch06 | pulsation propre | frecuencia natural | pulsazione naturale | Eigenkreisfrequenz | pulsacja własna | frequência natural | 固有振動数 | 自然频率 | التردد الطبيعي |
-| "map of s" (before ch07) | ch05 | la carte de s | el mapa de s | la mappa di s | die Karte von s | mapa s | o mapa de s | sの地図 | s 的地图 | خريطة s |
-| Laplace transform | ch07 | transformée de Laplace | transformada de Laplace | trasformata di Laplace | Laplace-Transformation | transformata Laplace'a | transformada de Laplace | ラプラス変換 | 拉普拉斯变换 | تحويل لابلاس |
-| s-plane (from ch07) | ch07 | plan s | plano s | piano s | s-Ebene | płaszczyzna s | plano s | s平面 | s 平面 | المستوى s |
-| transfer function | ch08 | fonction de transfert | función de transferencia | funzione di trasferimento | Übertragungsfunktion | transmitancja | função de transferência | 伝達関数 | 传递函数 | دالة النقل |
-| pole | ch08 | pôle | polo | polo | Pol | biegun | polo | 極 | 极点 | القطب |
-| zero | ch08 | zéro | cero | zero | Nullstelle | zero | zero | 零点 | 零点 | الصفر |
-| stable / unstable | ch08 | stable / instable | estable / inestable | stabile / instabile | stabil / instabil | stabilny / niestabilny | estável / instável | 安定 / 不安定 | 稳定 / 不稳定 | مستقر / غير مستقر |
-| sensor noise | ch09 | bruit du capteur | ruido del sensor | rumore del sensore | Sensorrauschen | szum czujnika | ruído do sensor | センサーノイズ | 传感器噪声 | ضوضاء المستشعر |
-| phase margin | ch10 | marge de phase | margen de fase | margine di fase | Phasenreserve | zapas fazy | margem de fase | 位相余裕 | 相位裕度 | هامش الطور |
-| gain margin | ch10 | marge de gain | margen de ganancia | margine di guadagno | Amplitudenreserve | zapas wzmocnienia | margem de ganho | ゲイン余裕 | 增益裕度 | هامش الكسب |
+| damping | ch07 | amortissement | amortiguamiento | smorzamento | Dämpfung | tłumienie | amortecimento | 減衰 | 阻尼 | التخميد |
+| damping ratio ζ | ch07 | taux d'amortissement | coeficiente de amortiguamiento | coefficiente di smorzamento | Dämpfungsgrad | współczynnik tłumienia | razão de amortecimento | 減衰比 | 阻尼比 | نسبة التخميد |
+| natural frequency ωn | ch07 | pulsation propre | frecuencia natural | pulsazione naturale | Eigenkreisfrequenz | pulsacja własna | frequência natural | 固有振動数 | 自然频率 | التردد الطبيعي |
+| "map of s" (before ch08) | ch06 | la carte de s | el mapa de s | la mappa di s | die Karte von s | mapa s | o mapa de s | sの地図 | s 的地图 | خريطة s |
+| Laplace transform | ch08 | transformée de Laplace | transformada de Laplace | trasformata di Laplace | Laplace-Transformation | transformata Laplace'a | transformada de Laplace | ラプラス変換 | 拉普拉斯变换 | تحويل لابلاس |
+| s-plane (from ch08) | ch08 | plan s | plano s | piano s | s-Ebene | płaszczyzna s | plano s | s平面 | s 平面 | المستوى s |
+| transfer function | ch10 | fonction de transfert | función de transferencia | funzione di trasferimento | Übertragungsfunktion | transmitancja | função de transferência | 伝達関数 | 传递函数 | دالة النقل |
+| pole | ch10 | pôle | polo | polo | Pol | biegun | polo | 極 | 极点 | القطب |
+| zero | ch10 | zéro | cero | zero | Nullstelle | zero | zero | 零点 | 零点 | الصفر |
+| stable / unstable | ch10 | stable / instable | estable / inestable | stabile / instabile | stabil / instabil | stabilny / niestabilny | estável / instável | 安定 / 不安定 | 稳定 / 不稳定 | مستقر / غير مستقر |
+| sensor noise | ch11 | bruit du capteur | ruido del sensor | rumore del sensore | Sensorrauschen | szum czujnika | ruído do sensor | センサーノイズ | 传感器噪声 | ضوضاء المستشعر |
+| phase margin | ch12 | marge de phase | margen de fase | margine di fase | Phasenreserve | zapas fazy | margem de fase | 位相余裕 | 相位裕度 | هامش الطور |
+| gain margin | ch12 | marge de gain | margen de ganancia | margine di guadagno | Amplitudenreserve | zapas wzmocnienia | margem de ganho | ゲイン余裕 | 增益裕度 | هامش الكسب |
 
 Settling time is listed with the Chapter 4 and 6 terms below.
 
@@ -76,7 +82,7 @@ Chosen during the Chapter 4/6 extension (`docs/plans/ch04-06-extension.md`).
 
 ## Shared s-plane labels (Chapters 7–11 extension, Phase 1)
 
-Short labels the s-plane draws or announces itself (`common:splane.*`), used from Chapter 8 on.
+Short labels the s-plane draws or announces itself (`common:splane.*`), used from Chapter 10 on.
 
 | Term | Definition | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -96,7 +102,7 @@ transform, s-plane, transfer function, pole, zero, stable, sensor noise, phase/g
 repeated. Sources and rejected alternatives per locale are in the translator reports
 (`scratch/ch07-11-evidence/glossary/<lang>.md`); the main sources are the ones in `AGENTS.md`.
 
-### Chapter 7: the Laplace transform
+### Chapters 8–9: the Laplace transform
 
 | Term (definition) | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
 |---|---|---|---|---|---|---|---|---|---|
@@ -106,14 +112,14 @@ repeated. Sources and rejected alternatives per locale are in the translator rep
 | integration by parts: moving the slope from f onto the probe, so a derivative becomes s·F − f(0) | intégration par parties | integración por partes | integrazione per parti | partielle Integration | całkowanie przez części | integração por partes | 部分積分 | 分部积分 | التكامل بالتجزئة |
 | partial fractions: splitting a fraction into pieces that are in the table | décomposition en éléments simples | fracciones simples (glossed once: fracciones parciales) | fratti semplici | Partialbruchzerlegung | ułamki proste | frações parciais | 部分分数分解 | 部分分式 | الكسور الجزئية |
 | cover-up trick: a piece's coefficient is [s·H] at its pole (A = [s·H] at s = 0) | l'astuce du cache | el truco de tapar | il trucco del coprire | Zuhalte-Trick | sztuczka z zakrywaniem (glossed once: metoda przesłaniania) | truque do encobrimento (de Heaviside) | 指で隠す技（カバーアップ法） | 掩盖法 (first use: 赫维赛德掩盖法) | حيلة التغطية |
-| completing the square: rewriting the bottom as (s + σ)² + ω² to find Chapter 6's wave | compléter le carré | completar el cuadrado | completare il quadrato | quadratische Ergänzung | dopełnianie do kwadratu | completar o quadrado | 平方完成 | 配方 | إكمال المربع |
+| completing the square: rewriting the bottom as (s + σ)² + ω² to find Chapter 7's wave | compléter le carré | completar el cuadrado | completare il quadrato | quadratische Ergänzung | dopełnianie do kwadratu | completar o quadrado | 平方完成 | 配方 | إكمال المربع |
 | starting value f(0) / starting speed f′(0) | valeur de départ / vitesse de départ | valor inicial / velocidad inicial | valore di partenza / velocità di partenza | Anfangswert / Anfangsgeschwindigkeit (h(0): Anfangshöhe) | wartość początkowa / prędkość początkowa | valor inicial / velocidade inicial | 初期値 / 初速度 | 初始值 (once 起始值) / 初始速度 | القيمة الابتدائية / السرعة الابتدائية |
 | "sloshes": an area that swings back and forth and never settles (no transform there) | clapoter | ir y venir (phrase) | fare avanti e indietro (phrase) | schwappt hin und her | przelewa się tam i z powrotem | fica balançando | 行ったり来たりする | 来回晃荡 | تتأرجح ذهابًا وإيابًا |
 
 RK4 (the simulator's 1 ms steps that "peek four times") stays "RK4" everywhere; pl/ja add the
 Runge–Kutta name in brackets.
 
-### Chapter 8: poles and zeros
+### Chapter 10: poles and zeros
 
 | Term (definition) | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
 |---|---|---|---|---|---|---|---|---|---|
@@ -127,7 +133,7 @@ Runge–Kutta name in brackets.
 | rule of thumb 4/\|σ\|: settling time from the slowest pole's real part | règle empirique | regla práctica | regola pratica | Faustregel | praktyczna reguła | regra prática | 目安 | 经验法则 | قاعدة تقريبية |
 | motor limits: the motors can only push between 0 and 20 N; a command outside is cut off (map `limits`; vocab "motor limit (saturation)") | limites des moteurs | límites del motor | limiti dei motori | Motorgrenzen | ograniczenia silników | limites do motor | モーター限界 | 电机限制 | حدود المحرك |
 
-### Chapter 9: PID
+### Chapter 11: PID
 
 | Term (definition) | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
 |---|---|---|---|---|---|---|---|---|---|
@@ -141,9 +147,9 @@ Runge–Kutta name in brackets.
 | motors pinned (saturated): the command sitting at 0 N or 20 N, with no room left to correct | moteurs en butée | motores clavados | motori inchiodati | Motoren am Anschlag | silniki na ograniczeniu | motores no limite | （限界に）張り付く | 电机顶在极限上 | المحركات مثبتة عند حد |
 | (near) pole–zero cancellation: a zero close to a pole, so that mode barely shows | un zéro qui compense presque un pôle | casi se cancelan | quasi si cancellano | heben sich fast auf | prawie się skracają | quase se cancelam | 極零相殺 | 零极点对消 | يكاد يلغي أحدهما الآخر |
 | ringing: still swinging (stable, but the swings die slowly) | il oscille encore | todavía oscila | oscilla ancora | schwingt immer noch | wciąż się kołysze (dzwonienie) | ainda está balançando | まだ揺れている | 还在摆 | لا تزال تتأرجح |
-| chatter / jitter: thrust shaking from noise through D / the sensor reading's random wobble (ch11 says "jitter", not "seed") | crépitement / tremblement | vibración / temblor | vibrazione (thrust, N) / tremolio (sensor, cm) | Rattern / Zittern | terkot / drżenie | tremedeira / tremor | ばたつき（ばたつく） / ゆらぎ（ゆらぐ） | 抖动 / 抖动 (one word for noise; ordinary wiggle is 晃动) | الارتجاف / الاهتزاز |
+| chatter / jitter: thrust shaking from noise through D / the sensor reading's random wobble (ch13 says "jitter", not "seed") | crépitement / tremblement | vibración / temblor | vibrazione (thrust, N) / tremolio (sensor, cm) | Rattern / Zittern | terkot / drżenie | tremedeira / tremor | ばたつき（ばたつく） / ゆらぎ（ゆらぐ） | 抖动 / 抖动 (one word for noise; ordinary wiggle is 晃动) | الارتجاف / الاهتزاز |
 
-### Chapter 10: frequency response
+### Chapter 12: frequency response
 
 | Term (definition) | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
 |---|---|---|---|---|---|---|---|---|---|
@@ -151,14 +157,14 @@ Runge–Kutta name in brackets.
 | Bode plot: the frequency response drawn as gain and phase against wiggle speed | diagramme de Bode | diagrama de Bode | diagramma di Bode | Bode-Diagramm | charakterystyki Bodego (map: wykres Bodego) | diagrama de Bode | ボード線図 | 伯德图 (first use: 也常写作波特图) | مخطط بود |
 | Map `bode`: "frequency response (Bode plot)" | réponse en fréquence (diagramme de Bode) | respuesta en frecuencia (diagrama de Bode) | risposta in frequenza (diagramma di Bode) | Frequenzgang (Bode-Diagramm) | charakterystyka częstotliwościowa (wykres Bodego) | resposta em frequência (diagrama de Bode) | 周波数応答（ボード線図） | 频率响应（伯德图） | الاستجابة الترددية (مخطط بود) |
 | wiggle speed ω | vitesse d'oscillation | velocidad de oscilación | velocità di oscillazione | Wackeltempo | prędkość wahań | velocidade da oscilação | 揺れの速さ | 摆动速度 | سرعة التذبذب |
-| smoother: the shower's first-order lag (τ = 1 s); shrinks and delays fast wiggles, never past 90°. The one Ch 10 word (replaces "thermal response/lag", "mixing") | lisseur (glossed once: « système du premier ordre ») | suavizador | smussatore (glossed once: "nei libri, un sistema del primo ordine") | Glätter (glossed once: PT1-Glied) | wygładzacz | suavizador | なまし（一次遅れ） | 平滑器 | المُنعِّم |
-| pure delay: the pipe's travel time, same shape later | retard pur | retardo puro | ritardo puro | (reine) Totzeit | czyste opóźnienie | atraso puro (ch11: tempo morto) | むだ時間 | 纯延迟 | التأخير الزمني الخالص |
+| smoother: the shower's first-order lag (τ = 1 s); shrinks and delays fast wiggles, never past 90°. The one Ch 12 word (replaces "thermal response/lag", "mixing") | lisseur (glossed once: « système du premier ordre ») | suavizador | smussatore (glossed once: "nei libri, un sistema del primo ordine") | Glätter (glossed once: PT1-Glied) | wygładzacz | suavizador | なまし（一次遅れ） | 平滑器 | المُنعِّم |
+| pure delay: the pipe's travel time, same shape later | retard pur | retardo puro | ritardo puro | (reine) Totzeit | czyste opóźnienie | atraso puro (ch13: tempo morto) | むだ時間 | 纯延迟 | التأخير الزمني الخالص |
 | share of a wiggle $L/T$: the fraction of one period a delay covers; × 360° gives the phase lag | fraction d'une oscillation | fracción de oscilación | frazione di oscillazione | Anteil eines Wacklers | ułamek wahnięcia | fração da oscilação | 揺れ1回に占める割合 | 占一次摆动的比例 | حصة من التذبذبة |
 | pile of a wiggle: what an I controller does to a wiggle: lags it 90°, 1/ω as big | le tas d'une oscillation | el montón de una oscilación | la pila di un'oscillazione | der Haufen eines Wacklers | stos z wahnięcia | a pilha de uma oscilação | 揺れの積み重ね | 摆动的那堆面积 | كومة التذبذبة |
 | speed hand / position hand: knob turned at a speed ∝ error (I) vs. put at a spot ∝ error (P) | main vitesse / main position | mano de velocidad / mano de posición | mano a velocità / mano a posizione | Tempo-Hand / Stellungs-Hand | ręka prędkościowa / ręka położeniowa | mão de velocidade / mão de posição | 速さの手 / 位置の手 | 速度手 / 位置手 | يد السرعة / يد الموضع |
 | squashed ruler: the course's word for a logarithmic axis (each ×10 is one equal step) | la règle écrasée (glossed once: échelle logarithmique) | la regla aplastada | il righello schiacciato | das gestauchte Lineal | ściśnięta linijka (glossed once: skala logarytmiczna) | régua espremida | つぶしたものさし | 压扁的尺子 | المسطرة المضغوطة |
 | loop gain: size out ÷ size in once around the loop (same "gain" word as the controller's gain) | gain de boucle | ganancia del lazo | guadagno d'anello | Kreisverstärkung | wzmocnienie pętli | ganho de malha | ループゲイン | 回路增益 | كسب الحلقة |
-| −180° speed / gain-of-1 speed: where the loop phase is −180° / where the loop gain is 1 (phase and gain crossover; ch11 phrases crossover this way too, never names it) | vitesse à −180° / vitesse à gain 1 | velocidad de −180° / velocidad de ganancia 1 | velocità dei −180° / velocità di guadagno 1 | −180°-Tempo / Tempo mit Kreisverstärkung 1 | prędkość −180° / prędkość wzmocnienia 1 | velocidade de −180° / velocidade de ganho 1 | −180°の速さ / ゲイン1の速さ | −180° 摆动速度 / 增益为 1 的摆动速度 | سرعة −180° / سرعة الكسب 1 |
+| −180° speed / gain-of-1 speed: where the loop phase is −180° / where the loop gain is 1 (phase and gain crossover; ch13 phrases crossover this way too, never names it) | vitesse à −180° / vitesse à gain 1 | velocidad de −180° / velocidad de ganancia 1 | velocità dei −180° / velocità di guadagno 1 | −180°-Tempo / Tempo mit Kreisverstärkung 1 | prędkość −180° / prędkość wzmocnienia 1 | velocidade de −180° / velocidade de ganho 1 | −180°の速さ / ゲイン1の速さ | −180° 摆动速度 / 增益为 1 的摆动速度 | سرعة −180° / سرعة الكسب 1 |
 | hunting: a steady self-sustained oscillation of a loop at its edge (HUD: "hunting period") | pompage, pomper (période de pompage) | oscilar sin parar (HUD: periodo en el borde) | pendolamento, pendolare (periodo del pendolamento; glossed once: oscillazione permanente) | pendeln (Pendelperiode) | huśtanie się (okres huśtania) | oscilar sem parar (período da oscilação) | ハンチング | 等幅振荡 (等幅振荡周期) | التذبذب الذاتي (فترة التذبذب الذاتي) |
 | phase lead: reacting earlier (P or D mixed into I) gives back phase | avance de phase | adelanto de fase | anticipo di fase | Phasenvorsprung | wyprzedzenie fazowe | avanço de fase | 位相進み | 相位超前 | تقدّم الطور |
 | delay margin: how many seconds longer the delay could get before the loop hunts | marge de retard | margen de retardo | margine di ritardo | Totzeitreserve | zapas opóźnienia | margem de atraso | 遅れ余裕 | 延迟裕度 | هامش التأخير |
@@ -166,7 +172,7 @@ Runge–Kutta name in brackets.
 Loop symbol $G_{\circ}(s)$ (the trip once around the loop, controller × shower; chosen over $L(s)$
 because $L$ is the delay): maths identical in every locale.
 
-### Chapter 11: the final mission
+### Chapter 13: the final mission
 
 | Term (definition) | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
 |---|---|---|---|---|---|---|---|---|---|
@@ -179,13 +185,13 @@ because $L$ is the delay): maths identical in every locale.
 | state-space control (what's next) | représentation d'état | control en el espacio de estados | controllo nello spazio degli stati | Zustandsraumregelung | sterowanie w przestrzeni stanów | controle no espaço de estados | 状態空間制御 | 状态空间控制 | التحكم في فضاء الحالة |
 
 Notes:
-- Keep "gain" in Ch 10 the same word as the controller's gain (the chapter says so: size out ÷
+- Keep "gain" in Ch 12 the same word as the controller's gain (the chapter says so: size out ÷
   size in).
-- The map labels were taken from the words the chapters already use (Ch 8's "motor limits"
-  captions, Ch 10's "frequency response"/"Bode plot" sentence, Ch 11's "Motor lag" item and its
+- The map labels were taken from the words the chapters already use (Ch 10's "motor limits"
+  captions, Ch 12's "frequency response"/"Bode plot" sentence, Ch 13's "Motor lag" item and its
   "motors calm" star), so the map and the prose agree. pl keeps "bezwładność silników" because
-  Ch 11 uses it and a first-order lag is "człon inercyjny"; the Bode-plot map label says
-  "wykres Bodego" where the Ch 10 prose says "charakterystyki Bodego" (shorter in a bubble, same
+  Ch 13 uses it and a first-order lag is "człon inercyjny"; the Bode-plot map label says
+  "wykres Bodego" where the Ch 12 prose says "charakterystyki Bodego" (shorter in a bubble, same
   meaning).
 - "Motor lag" is a first-order lag, not a pure delay: es keeps "retardo" for the pure delay and
   "retraso" for the motors; pt-BR keeps "atraso do motor" apart from "tempo morto"; zh-CN uses 滞后
@@ -194,11 +200,11 @@ Notes:
   "a smorzamento critico") so it reads right both as a readout and inside a sentence.
 - Long map labels wrap by themselves at spaces (and after "-" or "/"). Japanese and Chinese
   labels have no spaces, so they carry an explicit "\n" where a break is needed.
-- `poles.off_one` / `off_other` (ch11): pl, ar, es, it word `off_other` as "(fast poles past the
+- `poles.off_one` / `off_other` (ch13): pl, ar, es, it word `off_other` as "(fast poles past the
   left edge: {n}.)" so it works for any count.
 
 Shared underdamped / critically damped / overdamped labels (`common:regime.*`, since the Ch 7–11
-pass; first used in ch06):
+pass; first used in ch07):
 
 | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
 |---|---|---|---|---|---|---|---|---|
@@ -209,19 +215,19 @@ pass; first used in ch06):
 Terms added by `docs/plans/maths-explanations.md`, phase by phase. The open points from the
 translators' reports were settled in "Terminology review (2026-09-27)" below.
 
-### Phase 2: closing the loop (ch08), delay and margins (ch10)
+### Phase 2: closing the loop (ch10), delay and margins (ch12)
 
 | Term (definition) | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
 |---|---|---|---|---|---|---|---|---|---|
-| lap: one trip round the feedback loop, $C\,P$ (the loop gain's everyday name) | un tour de boucle (short « le tour ») | una vuelta (al lazo); ch10 "viaje alrededor del lazo" | giro (dell'anello); ch08 vocab: "nei libri: funzione d'anello" | Runde (durch den Kreis); glossed once: Übertragungsfunktion des offenen Kreises | okrążenie (pętli) | uma volta (pela malha) | 1周（ループ1周）; glossed once: 一巡伝達関数 | 绕回路一圈 / 一圈 | لفّة |
-| Map `closedloop` / ch08 section "Closing the loop on paper" | fermer la boucle | cerrar el lazo | chiudere l'anello | den Kreis schließen | zamykanie pętli | fechando a malha | ループを閉じる | 回路闭合 (prose keeps the verb 把回路闭合) | إغلاق الحلقة |
+| lap: one trip round the feedback loop, $C\,P$ (the loop gain's everyday name) | un tour de boucle (short « le tour ») | una vuelta (al lazo); ch12 "viaje alrededor del lazo" | giro (dell'anello); ch10 vocab: "nei libri: funzione d'anello" | Runde (durch den Kreis); glossed once: Übertragungsfunktion des offenen Kreises | okrążenie (pętli) | uma volta (pela malha) | 1周（ループ1周）; glossed once: 一巡伝達関数 | 绕回路一圈 / 一圈 | لفّة |
+| Map `closedloop` / ch10 section "Closing the loop on paper" | fermer la boucle | cerrar el lazo | chiudere l'anello | den Kreis schließen | zamykanie pętli | fechando a malha | ループを閉じる | 回路闭合 (prose keeps the verb 把回路闭合) | إغلاق الحلقة |
 | "P for plant": why the drone's own recipe is $P(s)$ | P comme **procédé** (ch01's « système ») | P de **planta** | P come *plant*, **impianto** | P für die Regelstrecke (englisch **plant**) | P od ang. *plant*, czyli **obiekt** | P de **planta** | 制御対象（プラント）のP | P（被控对象） | P من الكلمة الإنجليزية plant |
-| double dot: the two poles met at ζ = 1 (ch06) | point double | punto doble | puntino doppio | doppelter Punkt (not "Doppelpunkt") | podwójna kropka | ponto duplo | 1つの点に重なる（重根） | 重根点 | نقطة مزدوجة |
+| double dot: the two poles met at ζ = 1 (ch07) | point double | punto doble | puntino doppio | doppelter Punkt (not "Doppelpunkt") | podwójna kropka | ponto duplo | 1つの点に重なる（重根） | 重根点 | نقطة مزدوجة |
 | reservoir feeding the ch03 tank (the tank keeps its old word) | grand bassin | gran reserva de agua | serbatoio (vasca = tank) | Becken | rezerwuar | reservatório | 大きな貯水槽 | 大水库 | حوض كبير |
 
-Loop gain keeps its Chapter 10 term everywhere (see "Chapter 10" above); ch08 now introduces it.
+Loop gain keeps its Chapter 12 term everywhere (see "Chapter 12" above); ch10 now introduces it.
 
-### Phase 3: arrows have a length and an angle (ch06)
+### Phase 3: arrows have a length and an angle (ch07)
 
 | Term (definition) | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
 |---|---|---|---|---|---|---|---|---|---|
@@ -250,32 +256,32 @@ Loop gain keeps its Chapter 10 term everywhere (see "Chapter 10" above); ch08 no
 | arc / rim (of the radius-1 wheel) | arc / bord | arco / borde | arco / bordo | Bogen / Rand | łuk / obręcz | arco / aro | 弧 / 縁 | 弧 / 边缘（轮子边缘） | القوس / الحافة |
 | nudge: one tiny sideways step of (1 + iθ/n) | petite poussée | empujoncito | spintarella | Stups (not "Schubs": thrust) | pchnięcie w bok | empurrãozinho | 横向きのひと押し | 轻轻推一下 | دفعة خفيفة |
 
-### Phase 6: undoing a common denominator (ch07)
+### Phase 6: undoing a common denominator (ch09)
 
 | Term (definition) | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
 |---|---|---|---|---|---|---|---|---|---|
 | section "Undoing a common denominator" | Défaire un dénominateur commun | Deshacer un denominador común | Sciogliere un denominatore comune | Einen Hauptnenner rückgängig machen | Cofamy sprowadzanie do wspólnego mianownika | Desfazendo um denominador comum | 通分を元に戻す | 把通分倒过来 | عكس توحيد المقامات |
-| partial fractions (ch07's existing word) | décomposition en éléments simples | fracciones simples (glossed once: fracciones parciales) | fratti semplici | Partialbruchzerlegung | ułamki proste | frações parciais | 部分分数分解 | 部分分式 | الكسور الجزئية |
+| partial fractions (ch09's existing word) | décomposition en éléments simples | fracciones simples (glossed once: fracciones parciales) | fratti semplici | Partialbruchzerlegung | ułamki proste | frações parciais | 部分分数分解 | 部分分式 | الكسور الجزئية |
 | cover-up trick | astuce du cache | truco de tapar | trucco del coprire | Zuhalte-Trick | sztuczka z zakrywaniem (glossed once: metoda przesłaniania) | truque do encobrimento | 指で隠す技（カバーアップ法） | 掩盖法 (first use: 赫维赛德掩盖法) | حيلة التغطية |
 | integration by parts (named again in §2) | intégration par parties | integración por partes | integrazione per parti | partielle Integration | całkowanie przez części | integração por partes | 部分積分 | 分部积分 | التكامل بالتجزئة |
 
 "Bottom / top" of a fraction is denominator / numerator in every locale except English (as
-ch07 already did); the new section follows that.
+ch09 already did); the new section follows that.
 
 ### Phase 7: the squashed ruler adds, and the wording sweep
 
 | Term (definition) | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
 |---|---|---|---|---|---|---|---|---|---|
-| "multiplying becomes adding" (the squashed ruler, ch10; logarithms, ch04) | multiplier devient additionner | multiplicar se convierte en sumar | moltiplicare diventa sommare | Multiplizieren wird zu Addieren | mnożenie staje się dodawaniem | multiplicar vira somar | 掛け算が足し算になる | 乘法变成加法 | يصبح الضرب جمعًا |
-| decibel (dB): 20 × base-10 log of a gain (named once, ch10) | décibel | decibelio | decibel | Dezibel | decybel | decibel | デシベル | 分贝 | الديسيبل |
+| "multiplying becomes adding" (the squashed ruler, ch12; logarithms, ch04) | multiplier devient additionner | multiplicar se convierte en sumar | moltiplicare diventa sommare | Multiplizieren wird zu Addieren | mnożenie staje się dodawaniem | multiplicar vira somar | 掛け算が足し算になる | 乘法变成加法 | يصبح الضرب جمعًا |
+| decibel (dB): 20 × base-10 log of a gain (named once, ch12) | décibel | decibelio | decibel | Dezibel | decybel | decibel | デシベル | 分贝 | الديسيبل |
 | $\sigma_n$: the sensor-noise size ("n for noise"; never a pole's σ) | n comme *noise*, le mot anglais pour « bruit » | n de *noise*, que en inglés significa ruido | la n sta per l'inglese *noise*, rumore | n für engl. *noise*, Rauschen | n od ang. *noise*, czyli szum | n do inglês *noise*, ruído | nはノイズ（noise）のn | n 取自英文 noise（噪声） | n من noise أي الضوضاء |
 
-Symbols decided in this pass: the drone's own recipe stays $P(s)$ ("P for plant"); ch10's arrow is
+Symbols decided in this pass: the drone's own recipe stays $P(s)$ ("P for plant"); ch12's arrow is
 $Y$ (was $A$, which clashed with the partial-fraction constant); the noise size is $\sigma_n$.
-$T$ (thrust, temperature, period) and $k$ (spring, hand speed) stay: each use is local and ch10
+$T$ (thrust, temperature, period) and $k$ (spring, hand speed) stay: each use is local and ch12
 already flags $T$ as a period.
 
-### Chapter 11 additions: the drone's Bode plot and the state plane
+### Chapter 13 additions: the drone's Bode plot and the state plane
 
 | Term (definition) | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
 |---|---|---|---|---|---|---|---|---|---|
@@ -287,16 +293,39 @@ already flags $T$ as a period.
 | state feedback | retour d'état | realimentación del estado | retroazione dello stato | Zustandsrückführung | sprzężenie zwrotne od stanu | realimentação de estados | 状態フィードバック | 状态反馈 | التغذية الراجعة للحالة |
 | linearising: a curve replaced by its tangent near hover | linéarisation | linealizar | linearizzazione | Linearisieren | linearyzacja | linearização | 線形化 | 线性化 | الخطْيَنة (التقريب الخطي) |
 
-The drone's Bode widget reuses Chapter 10's loop-gain, margin and "cliff" terms unchanged.
+The drone's Bode widget reuses Chapter 12's loop-gain, margin and "cliff" terms unchanged.
 "The state's velocity" is rephrased as "the rate of change of the state" in pl, pt-BR, zh-CN and
 ar so it never reads as the drone's speed v. Still for a native reviewer: "state plane" against
 the textbook "phase plane" in every locale; es "valores propios" vs. "autovalores"; ar الخطْيَنة.
+
+### Splitting Chapters 5 and 7 (2026-09-27)
+
+The new chapters' names (`common:chapters.N`, also the concept-map chapter labels). Everything
+else in the new chapter endings reuses the terms above (spinner, mirror twin, map of s, probe,
+explode, slope, table); ch08's closing quiz already says "s-plane", as the chapter has named it.
+
+| Term | fr | es | it | de | pl | pt-BR | ja | zh-CN | ar |
+|---|---|---|---|---|---|---|---|---|---|
+| ch06 title: The Map of s | La carte de s | El mapa de s | La mappa di s | Die Karte von s | Mapa s | O mapa de s | sの地図 | s 的地图 | خريطة s |
+| ch06 short: Map of s | Carte de s | Mapa de s | Mappa di s | Karte von s | Mapa s | Mapa de s | sの地図 | s 的地图 | خريطة s |
+| ch08 title: The Laplace Probe | La sonde de Laplace | La sonda de Laplace | La sonda di Laplace | Die Laplace-Sonde | Sonda Laplace'a | A sonda de Laplace | ラプラスのプローブ | 拉普拉斯探针 | مسبار لابلاس |
+| ch08 short: Probe | Sonde | Sonda | Sonda | Sonde | Sonda | Sonda | プローブ | 探针 | المسبار |
+| ch09 title: Calculus into Algebra | Du calcul différentiel à l'algèbre | Del cálculo al álgebra | L'analisi diventa algebra | Aus Analysis wird Algebra | Od analizy do algebry | Cálculo vira álgebra | 微積分を代数に | 把微积分变成代数 | من التفاضل والتكامل إلى الجبر |
+| ch09 short: Algebra | Algèbre | Álgebra | Algebra | Algebra | Algebra | Álgebra | 代数 | 代数 | الجبر |
+
+Noted by the translators for native review (not changed in this pass): zh-CN has two words for
+"spinner" (旋转器 in ch05–06, 旋转子 in ch08, ch09, ch12); es has "resorte" and "muelle" for the
+spring; fr "signal carré" / "onde carrée" and "table" / "tableau"; de "Fehler" for a mistake in the
+ch06 section title (the glossary reserves it for control error); ar ch13 recap "(الفصل 0–1)"
+should be a dual; the new titles themselves (de „Die Laplace-Sonde", ja ラプラスのプローブ,
+zh-CN 拉普拉斯探针, ar مسبار لابلاس). Arabic chapter kickers now all use ordinal words (ch00 keeps
+"الفصل 0").
 
 ## Cast gender and address
 
 | Locale | Mika | June | Theo | Reader |
 |---|---|---|---|---|
-| fr | neutral phrasing (no gendered first-person adjective in ch10–11) | neutral phrasing | neutral phrasing | tu; « ·e » only where earlier chapters use it |
+| fr | neutral phrasing (no gendered first-person adjective in ch12–11) | neutral phrasing | neutral phrasing | tu; « ·e » only where earlier chapters use it |
 | es | neutral phrasing | neutral phrasing | masculine | tú, neutral where possible ("¿Te has atascado?") |
 | it | masculine | feminine | masculine | tu, masculine default where agreement is unavoidable |
 | de | not needed (first-person past has no gender; no pronouns added) | same | er | du |
@@ -313,29 +342,29 @@ Deliberate splits are marked; don't "fix" them.
 
 - **Droop vs. steady-state error.** ja: droop ドループ everywhere; 定常偏差 only for the general
   concept (map `sserror`, the two ch02 lines naming both). zh-CN: droop 静差 everywhere (稳态偏差
-  gone); 稳态误差 only for the concept. pt-BR: "desvio residual" everywhere (ch09 "queda residual"
+  gone); 稳态误差 only for the concept. pt-BR: "desvio residual" everywhere (ch11 "queda residual"
   fixed). ar: map `integralaction` now uses الانخفاض المستمر; خطأ الحالة المستقرة only as the formal
   name.
 - **Settling time.** fr: noun « temps de réponse à 2 % » (short « temps de réponse »); « temps de
   stabilisation » gone. *Deliberate:* the verb « se stabiliser » / « stabilisé » stays in prose,
   status lines and `common:splane.settles`. es: noun "tiempo de establecimiento"; "estabilización"
   and "asentamiento" gone. *Deliberate:* the verb "estabilizarse / se estabiliza" stays (prose,
-  `common:splane.settles`, ch11 "sin estabilizar"). zh-CN: 调节时间 everywhere; casual 稳定下来 is
+  `common:splane.settles`, ch13 "sin estabilizar"). zh-CN: 调节时间 everywhere; casual 稳定下来 is
   deliberate. pt-BR: "tempo de acomodação" and acomodar(-se) for settling labels, including
   `common:splane.settles` "acomoda ≈ {t} s" (was "estabiliza", revised in the 2026-09-27 review);
   "estabilizar" for plain calming down.
 - **Overshoot (pt-BR):** "sobressinal"; the noun "ultrapassagem" is gone; the verb "ultrapassa o
   alvo" stays in prose where English uses the verb.
-- **"Map of s" before Ch 7:** zh-CN s 的地图 (ch05 `widgets.smap.title`, early s 平面 fixed);
-  pt-BR "o mapa de s" in ch05/ch06; ja sの地図 (マップ → 地図, including `common:splane.offMap`
+- **"Map of s" before Ch 8:** zh-CN s 的地图 (ch06 `widgets.smap.title`, early s 平面 fixed);
+  pt-BR "o mapa de s" in ch06/ch07; ja sの地図 (マップ → 地図, including `common:splane.offMap`
   地図の外).
 - **Error.** de *deliberate:* "Regelabweichung" in vocabulary, legends, map and `common.json`,
   "Fehler" in prose and dialogue (ch01 introduces "Regelabweichung … kurz: der Fehler"); "Fehler"
-  never means "mistake" (ch09 rephrased in the 2026-09-27 review). ja: 偏差 for control error;
-  誤差 only for numerical rounding (ch07).
+  never means "mistake" (ch11 rephrased in the 2026-09-27 review). ja: 偏差 for control error;
+  誤差 only for numerical rounding (ch08–09).
 - **ja:** controller コントローラー, sensor センサー, motor モーター (long-vowel forms); block
   diagram ブロック線図; knob ノブ in every chapter and plain style everywhere (both widened from
-  ch10 / ch06 in the 2026-09-27 review: ハンドル, つまみ and the last です/ます are gone).
+  ch12 / ch07 in the 2026-09-27 review: ハンドル, つまみ and the last です/ます are gone).
 - **ar:** block diagram المخطط الكتلي (المخطط الصندوقي gone); sensor المستشعر (الحساس gone); gain
   الكسب (الربح gone); Bernoulli ياكوب (only spelling left); mirror pair الزوج المرآتي (المرآوي unified).
 - **fr *deliberate:*** « régulateur de vitesse » in the ch01 cruise-control diagram (the everyday
@@ -346,9 +375,9 @@ Deliberate splits are marked; don't "fix" them.
   Regelkreis"; ch01 and its chapter title read „Steuerung vs. Regelung", map `openloop`
   „Steuerung"; "Plan ohne Rückkopplung" stays as the ch01 prose paraphrase for "open-loop plan".
   *Revised in the 2026-09-27 review:* this replaces the earlier deliberate "offener
-  Regelkreis", which clashes with the textbook *offener Kreis* (the opened loop C·P, ch08's lap).
+  Regelkreis", which clashes with the textbook *offener Kreis* (the opened loop C·P, ch10's lap).
 - **pl:** asked-for thrust „żądany" (not „zadany", which clashes with „wartość zadana").
-- **One Ch 10 word for the smoother** in every locale; "thermal response/lag" and "mixing" are gone.
+- **One Ch 12 word for the smoother** in every locale; "thermal response/lag" and "mixing" are gone.
 - **Cast gender:** recorded per locale in "Cast gender and address" above.
 
 ## Terminology review (2026-09-27)

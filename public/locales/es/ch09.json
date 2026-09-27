@@ -1,613 +1,523 @@
 {
   "kicker": "Capítulo 9",
-  "title": "PID: arreglándolo todo",
-  "question": "¿Cómo eliminamos la caída *y* paramos la oscilación?",
+  "title": "Del cálculo al álgebra",
+  "question": "¿Podemos convertir el cálculo en álgebra?",
   "sections": [
     {
-      "id": "stuck",
-      "title": "La caída que no desaparece",
+      "id": "rule",
+      "title": "Las pendientes se convierten en multiplicaciones",
       "blocks": [
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "¿Te acuerdas del pósit del capítulo 4? Para $e^{at}$, tomar una pendiente era simplemente $\\times\\, a$. Ahora mira lo que hace la sonda con una pendiente."
+        },
+        {
+          "t": "vocab",
+          "title": "Abreviaturas de este capítulo",
+          "items": [
+            {
+              "term": "$f'$ y $f''$",
+              "def": "Abreviatura de $\\frac{df}{dt}$, la pendiente de $f$, y de la pendiente de esa pendiente. El capítulo 7 las escribía con puntos, $\\dot x$ y $\\ddot x$."
+            },
+            {
+              "term": "$\\mathcal{L}\\{f\\}$",
+              "def": "«La transformada de $f$»: lo mismo que $F(s)$, práctico cuando $f$ es una expresión entera."
+            },
+            {
+              "term": "Mayúsculas",
+              "def": "Una mayúscula es la transformada de su minúscula: $F$ para $f$, $H$ para la altura $h$, $X$ para $x$."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Aquí está la propiedad que hace que todo esto merezca la pena. ¿Qué le pasa a la transformada cuando calculamos la **pendiente** de la señal? Pruébalo con $f = e^{at}$. Su pendiente es $a e^{at}$ (capítulo 4), así que"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\mathcal{L}\\{f'\\} &= \\frac{a}{s-a} = \\frac{s}{s-a} - 1 \\\\ &= s\\,F(s) - f(0) \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "La pendiente se ha convertido en **multiplicar por** $s$, menos el valor inicial $f(0)$. ¡El cálculo se ha vuelto álgebra!"
+        },
+        {
+          "t": "play",
+          "id": "ruleExp",
+          "text": "Con a = {scrub|a} y s = {scrub|s}: el área de la pendiente es {calc|lhs}, y s·F − f(0) = {calc|rhs}. El mismo número."
+        },
         {
           "t": "say",
           "who": "theo",
           "mood": "think",
-          "text": "¿Recuerdas el capítulo 2? Nuestro controlador P dejaba el dron **colgando por debajo de 2 m**, y ninguna $K_p$ lo arreglaba. Hora de averiguar qué puede arreglarlo."
-        },
-        {
-          "t": "p",
-          "text": "Para sostener el dron, los motores tienen que empujar $mg \\approx 4{,}9$ N, para siempre. Un controlador P solo empuja cuando hay error: $\\eff{T} = K_p\\,\\err{e}$. Así que, para empujar 4,9 N, *necesita* un error de $\\err{e} = mg/K_p$. Con $K_p$ = 20 N/m eso es $\\err e$ = 4,9/20 ≈ 24,5 cm, para siempre. La caída no es un fallo de nuestro ajuste. Es el precio que cobra P por sostener cualquier cosa."
+          "text": "Un momento. Eso es un truco que funciona para $e^{at}$ porque $e^{at}$ es especial. Lo siguiente será decirme que es una regla que hay que memorizar. No me lo creo para *cualquier* curva."
         },
         {
           "t": "say",
           "who": "june",
-          "mood": "excited",
-          "text": "Entonces necesitamos una parte del controlador que pueda empujar 4,9 N **con error cero**. Algo con memoria."
-        },
-        {
-          "t": "note",
-          "text": "Desde el capítulo 8 los motores son reales: pueden empujar entre 0 y 20 N, ni uno más, y no pueden tirar hacia abajo. Las curvas naranjas de empuje se aplanarán cuando toquen un límite."
-        }
-      ]
-    },
-    {
-      "id": "integral",
-      "title": "I: un montón de error pasado",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Esta es la idea. Lleva la cuenta acumulada del error, el **área bajo la curva del error**, exactamente el \"área acumulada\" del [capítulo 3](#/ch/3). Empuja en proporción a ese montón:"
-        },
-        {
-          "t": "math",
-          "tex": "\\eff{T_I} = K_i \\int_0^t \\err{e}\\,dt"
+          "mood": "happy",
+          "text": "Pues probémoslo con la curva más fea que sepas dibujar."
         },
         {
           "t": "p",
-          "text": "Mientras el dron está por debajo de 2 m, el error es positivo y el montón no para de crecer, así que el empuje tampoco. El montón solo deja de crecer cuando el error es **exactamente cero**. En ese momento simplemente *se queda* como está, manteniendo el empuje que haya acumulado. Esa es la memoria que quería June."
+          "text": "Dibuja la señal que quieras en la primera gráfica (o elige una predefinida). Calculamos su pendiente y luego obtenemos **los dos lados** de la regla con la máquina de áreas: la transformada de la pendiente y $s\\,F(s) - f(0)$. La segunda gráfica muestra esos dos lados para cada $s$."
+        },
+        {
+          "t": "widget",
+          "id": "derivRule"
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "surprised",
-          "text": "Qué astuto. El dron no puede quedarse quieto en *ningún* sitio que no sea 2 m, porque en cualquier otro el montón seguiría cambiando."
-        },
-        {
-          "t": "play",
-          "id": "pile",
-          "text": "Atascado 24,5 cm por debajo, el montón crece 0,245 m·s cada segundo. Con $K_i$ = {scrub|ki|eff} N/(m·s) eso añade {calc|rate|eff} N de empuje por segundo: a ese ritmo, los 4,9 N enteros estarían ahí tras {calc|tau} s. Nunca va tan rápido. A medida que el dron sube, el error se encoge y el montón crece más despacio. Tras {calc|tau} s lleva un 63 % del camino; tras unos {calc|ts} s, el 98 %."
+          "text": "Coinciden, incluso con mi garabato tembloroso. Al final no es una regla para buscar en una tabla: es lo que la máquina de áreas le hace a cualquier pendiente."
         },
         {
           "t": "callout",
-          "title": "Por qué el montón crece cada vez más despacio",
+          "title": "¿Y un salto?",
           "blocks": [
             {
               "t": "say",
               "who": "theo",
-              "mood": "think",
-              "text": "Un momento. ¿El 63 % tras una constante de tiempo? ¡Eso es el café del capítulo 3!"
+              "mood": "surprised",
+              "text": "Pulsé «salto» y *sigue* coincidiendo. Pero un salto no es suave. ¡En un acantilado no hay pendiente!"
+            },
+            {
+              "t": "p",
+              "text": "Mira la pendiente en la primera gráfica: en $t = 2$ hay un pico alto y estrecho. La pendiente que calcula el ordenador vio el salto como una subida muy empinada. Quita ese pico y los dos lados difieren en $1{,}4\\,e^{-2s}$ (el salto mide 1,4 de alto, en $t = 2$), unos 0,19 en $s = 1$."
+            },
+            {
+              "t": "math",
+              "tex": "\\text{diferencia sin el pico} = 1{,}4\\,e^{-2s}"
             },
             {
               "t": "say",
               "who": "june",
-              "mood": "excited",
-              "text": "Porque *es* el café. Cuando la oscilación rápida desaparece, P empuja lo que el montón no empuja. Así que el error es el empuje que falta dividido por $K_p$, y el montón crece en ese error."
+              "mood": "think",
+              "text": "Así que un salto repentino sigue siendo un cambio, solo que apretado en un instante, y la regla cuenta todos los cambios. Me da que ese pico va a volver."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Aquí está el álgebra que faltaba, en forma de dibujo. Un producto cambia por dos razones: $f$ cambia mientras la sonda se queda quieta, y la sonda cambia mientras $f$ se queda quieta. Imagina un rectángulo de lados $f$ y $e^{-st}$: crece por un lado y luego por el otro. Este paso tiene nombre: **integración por partes**."
+        },
+        {
+          "t": "math",
+          "tex": "\\big(f\\,e^{-st}\\big)' = f'\\,e^{-st} - s\\,f\\,e^{-st}"
+        },
+        {
+          "t": "p",
+          "text": "Suma esos cambios de 0 a ∞ (capítulo 3: el área deshace la pendiente) y obtienes el valor del final menos el valor del principio. Eso es lo que significa el corchete $\\big[\\,\\cdot\\,\\big]_0^\\infty$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\big[f\\,e^{-st}\\big]_0^\\infty = \\int_0^\\infty f'\\,e^{-st}\\,dt - s\\,F(s)"
+        },
+        {
+          "t": "p",
+          "text": "En el extremo lejano la sonda lo ha aplastado todo hasta cero (siempre que $s$ le gane al crecimiento de la señal), así que el lado izquierdo es simplemente $0 - f(0)$. Pasa $s\\,F(s)$ al otro lado y ahí tienes la regla."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Así que $f(0)$ no es ningún apaño. Es el rectángulo con el que empezamos."
+        },
+        {
+          "t": "p",
+          "text": "Aplica la misma regla una vez más, ahora a $f'$, cuyo valor inicial es $f'(0)$, la **velocidad inicial**:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\mathcal{L}\\{f''\\} &= s\\,\\mathcal{L}\\{f'\\} - f'(0) \\\\ &= s\\big(s\\,F(s) - f(0)\\big) - f'(0) \\\\ &= s^2 F(s) - s\\,f(0) - f'(0) \\end{aligned}"
+        },
+        {
+          "t": "note",
+          "text": "Los términos $f(0)$ recuerdan dónde **empezó** la señal. No les quites ojo. Alguien se va a olvidar de ellos pronto."
+        }
+      ]
+    },
+    {
+      "id": "table",
+      "title": "Nuestra propia tabla",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Los libros imprimen una \"tabla de transformadas de Laplace\" como si hubiera caído del cielo. Nosotros nos vamos a ganar la nuestra, fila a fila. Cada fila es simplemente la máquina de sonda y área aplicada a una señal, con una comprobación de que la fórmula coincide con el área real."
+        },
+        {
+          "t": "widget",
+          "id": "table"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "La fila del seno es mi favorita. Un seno no es más que dos giradores gemelos, y la transformada de cada girador es la fila exponencial con $a = \\pm i\\omega$. En el capítulo 6 *sumamos* los gemelos para obtener un coseno. *Réstalos* en su lugar y las partes a lo largo se cancelan, y queda $2i\\sin\\omega t$. ¡De ahí sale el $2i$! Y multiplicar los denominadores de los gemelos es el producto por el reflejado del capítulo 7, $(s - i\\omega)(s + i\\omega) = s^2 + \\omega^2$."
+        },
+        {
+          "t": "p",
+          "text": "(Para una $a$ compleja, la fila exponencial sigue funcionando siempre que la parte izquierda-derecha de $s$ le gane a la parte izquierda-derecha de $a$. Para los gemelos eso es simplemente $\\sigma > 0$.)"
+        },
+        {
+          "t": "p",
+          "text": "Y la última fila no necesitó trabajo nuevo: multiplicar por $e^{-\\sigma t}$ simplemente **desplaza** $s$ a $s+\\sigma$. Cuatro filas, todas deducidas, todas comprobadas."
+        },
+        {
+          "t": "note",
+          "text": "Un aviso honesto. El área solo existe a la derecha del ritmo más lento de la señal: para $e^{-t} + e^{-5t}$ se rinde en $s = -1$, mucho antes de $-5$. La fracción $\\frac{1}{s+1} + \\frac{1}{s+5}$ sigue tan tranquila y aun así explota en los dos puntos. A partir de aquí nos fiamos de la fracción en todas partes, incluso donde la máquina de áreas se rindió. Los matemáticos han comprobado que es seguro."
+        },
+        {
+          "t": "p",
+          "text": "Una regla más que hemos usado sin decirlo. La máquina de áreas es justa: haz una señal 3 veces más alta y cada rebanada de su área es 3 veces más alta, así que el área entera también. Suma dos señales y sus áreas se suman. Los matemáticos llaman a esto **linealidad**."
+        },
+        {
+          "t": "play",
+          "id": "scale",
+          "text": "Toma {scrub|k} veces $e^{-rt}$ con r = {scrub|r}, sondeada en s = {scrub|s}: su área es k ÷ (s + r) = {calc|eq}."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Eso es lo que nos deja transformar una ecuación término a término, con los números de delante incluidos. Y la ecuación del dron es justo ese tipo de suma. ¡Usemos la tabla!"
+        }
+      ]
+    },
+    {
+      "id": "pieces",
+      "title": "Deshacer un denominador común",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Todas las respuestas que saquemos van a salir como una fracción grande. Pero nuestra tabla solo conoce fracciones pequeñas: $\\frac1s$, $\\frac{1}{s-a}$, los senos. ¿Cómo partimos una fracción grande en trozos de la tabla?"
+        },
+        {
+          "t": "p",
+          "text": "En el colegio sumabas fracciones buscando un denominador común. Aquí vamos **al revés**: empezamos con una sola fracción y buscamos los trozos pequeños que suman eso. Se llama descomponer en **fracciones simples** (en muchos países, **fracciones parciales**):"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{1}{s} + \\frac{1}{s+2} = \\frac{2s + 2}{s\\,(s+2)} \\qquad\\text{así que}\\qquad \\frac{2s+2}{s\\,(s+2)} = \\frac{A}{s} + \\frac{B}{s+2}"
+        },
+        {
+          "t": "p",
+          "text": "¿Qué va en el numerador de cada trozo? **Una incógnita por cada potencia de $s$ de su denominador.** Un denominador como $s$ o $s + 2$ recibe un número sin más. Un denominador cuadrático como $s^2 + 2s + 5$ recibe $B\\,s + C$: dos incógnitas, porque en una cuadrática caben dos."
+        },
+        {
+          "t": "widget",
+          "id": "pieces"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Cada deslizador mueve un trozo, y los trozos también se suman sin más en el tiempo. El trozo $A$ es un escalón; el trozo cuadrático es una oscilación que se apaga. Y la fracción grande de la derecha es lo que suman entre todos."
+        },
+        {
+          "t": "p",
+          "text": "Para encontrar los números de los trozos con denominador de primer grado hay un atajo, el **truco de tapar**. Multiplica por el denominador del trozo y luego pon en $s$ el valor que lo anula: todos los demás trozos desaparecen y solo queda su numerador."
+        },
+        {
+          "t": "math",
+          "tex": "A = \\Big[s \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=0} = \\frac{2}{2} = 1, \\qquad B = \\Big[(s+2) \\cdot \\frac{2s+2}{s\\,(s+2)}\\Big]_{s=-2} = \\frac{-2}{-2} = 1"
+        },
+        {
+          "t": "p",
+          "text": "Un denominador cuadrático necesita un paso más antes de que la tabla pueda leerlo: llevarlo a la forma $(s + \\sigma)^2 + \\omega^2$ **completando el cuadrado**, tomando la mitad del número del medio y elevándola al cuadrado. Así, $s^2 + 2s + 5 = (s + 1)^2 + 4$: un coseno y un seno amortiguados con $\\sigma = 1$ y $\\omega = 2$."
+        },
+        {
+          "t": "callout",
+          "title": "Los trozos complejos vienen en gemelos",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Parte la cuadrática un poco más y te encuentras con sus dos raíces, una pareja reflejada $p$ y $\\bar p$. Sus numeradores también son gemelos reflejados, $B$ y $\\bar B$. De vuelta en el tiempo son los gemelos del capítulo 6, así que las partes de lado se cancelan: la suma es un único coseno real que se encoge y que empieza en el ángulo de $B$ (las flechas del capítulo 7)."
             },
             {
               "t": "math",
-              "tex": "\\frac{d}{dt}\\!\\int\\!\\err e\\,dt = \\err e \\approx \\frac{\\dis{mg} - K_i\\!\\int\\!\\err e\\,dt}{K_p} \\;\\Longrightarrow\\; \\tau_I \\approx \\frac{K_p}{K_i}"
+              "tex": "\\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\;\\Longrightarrow\\; B\\,e^{pt} + \\bar B\\,e^{\\bar p t} = 2|B|\\,e^{\\sigma t}\\cos\\!\\big(\\omega t + \\angle B\\big)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "solve",
+      "title": "Resolver el dron con álgebra",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Aquí está el dron del capítulo 2 con control P, esta vez sin empuje de vuelo estacionario gratis, empezando sobre una **repisa de 1 m**. En $t=0$ lo soltamos y le pedimos 2 m. En el cálculo desde ese instante en adelante, la nueva consigna y la gravedad constante se transforman cada una como un escalón:"
+        },
+        {
+          "t": "math",
+          "tex": "m\\,\\out{h}'' + c\\,\\out{h}' = \\eff{K_p}\\,(\\sp{2} - \\out{h}) - \\dis{m g}"
+        },
+        {
+          "t": "p",
+          "text": "**Paso 1:** transforma cada término. Como las áreas se escalan y se suman (la sección de la tabla), podemos transformar cada término por separado. Un escalón de tamaño $r$ se convierte en $r/s$, y las pendientes se convierten en multiplicar por $s$. Esto es lo que escribimos:"
+        },
+        {
+          "t": "math",
+          "on": "ch7:ic",
+          "tex": "m\\,s^2\\out{H} + c\\,s\\,\\out{H} = \\eff{K_p}\\Big(\\frac{\\sp{2}}{s} - \\out{H}\\Big) - \\frac{\\dis{m g}}{s}",
+          "alt": "\\begin{aligned} & m\\big(s^2\\out{H} - s\\,h(0) - h'(0)\\big) \\\\ &\\quad + c\\big(s\\,\\out{H} - h(0)\\big) \\\\ &= \\eff{K_p}\\Big(\\frac{\\sp{2}}{s} - \\out{H}\\Big) - \\frac{\\dis{m g}}{s} \\end{aligned}"
+        },
+        {
+          "t": "p",
+          "text": "**Paso 2:** ahora es álgebra. Junta $\\out{H}$ en un lado y luego divide:"
+        },
+        {
+          "t": "math",
+          "on": "ch7:ic",
+          "tex": "\\begin{gathered} \\begin{aligned} &(m s^2 + c s + \\eff{K_p})\\,\\out{H} \\\\ &\\quad = \\frac{\\eff{K_p}\\,\\sp{2} - \\dis{m g}}{s} \\end{aligned} \\\\[8pt] \\out{H}(s) = \\frac{N(s)}{s\\,\\big(m s^2 + c s + \\eff{K_p}\\big)} \\\\[8pt] N(s) = \\eff{K_p}\\,\\sp{2} - \\dis{m g} \\end{gathered}",
+          "alt": "\\begin{gathered} \\begin{aligned} &(m s^2 + c s + \\eff{K_p})\\,\\out{H} \\\\ &\\quad = m\\,h(0)\\,s + m\\,h'(0) + c\\,h(0) \\\\ &\\qquad + \\frac{\\eff{K_p}\\,\\sp{2} - \\dis{m g}}{s} \\end{aligned} \\\\[8pt] \\out{H}(s) = \\frac{N(s)}{s\\,\\big(m s^2 + c s + \\eff{K_p}\\big)} \\\\[8pt] \\begin{aligned} N(s) &= m\\,h(0)\\,s^2 \\\\ &\\quad + \\big(m\\,h'(0) + c\\,h(0)\\big)\\,s \\\\ &\\quad + (\\eff{K_p}\\,\\sp{2} - \\dis{m g}) \\end{aligned} \\end{gathered}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Mira eso. Ni una pendiente, solo letras que se van moviendo. Theo, tu cuaderno ya no echa humo."
+        },
+        {
+          "t": "p",
+          "text": "**Paso 3:** pártelo en trozos de la tabla, como en la sección anterior: un número en el numerador del trozo en $s$, y $B s + C$ en el numerador del cuadrático:"
+        },
+        {
+          "t": "math",
+          "tex": "\\out{H}(s) = \\frac{A}{s} + \\frac{B s + C}{m s^2 + c s + \\eff{K_p}}"
+        },
+        {
+          "t": "p",
+          "text": "¿Cómo encontramos $A$, $B$ y $C$? Multiplica los dos lados por el denominador común $s\\,(m s^2 + c s + \\eff{K_p})$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} N(s) &= A\\,(ms^2+cs+\\eff{K_p}) \\\\ &\\quad + s\\,(Bs+C) \\end{aligned}"
+        },
+        {
+          "t": "callout",
+          "title": "El truco de tapar",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Hay un atajo para $A$. Multiplica $\\out{H}$ por $s$ y todos los trozos salvo $A/s$ siguen teniendo una $s$ arriba. Pon $s = 0$ y todos desaparecen. Solo sobrevive $A$:"
+            },
+            {
+              "t": "math",
+              "tex": "A = \\Big[s\\,\\out{H}(s)\\Big]_{s=0} = \\frac{N(0)}{\\eff{K_p}} = \\sp{2} - \\frac{\\dis{mg}}{\\eff{K_p}}"
+            },
+            {
+              "t": "p",
+              "text": "Y $s\\,\\out{H}$ cerca de $s = 0$ es donde acaba el dron a la larga, si es que llega a estabilizarse. La altura final sale directamente del álgebra, sin necesidad de simular."
             },
             {
               "t": "say",
               "who": "mika",
-              "mood": "happy",
-              "text": "Crece en proporción a lo que todavía le falta. ¡El capítulo 3!"
+              "mood": "surprised",
+              "text": "Un momento. ¿Podemos leer dónde se *queda* sin resolver nada? Esto parece hacer trampa."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Es hacer trampa, salvo que todo lo demás se apague. Aquí los otros trozos son la oscilación propia del dron, y se extinguen, así que lo que queda es $A$. Si el denominador tuviera una raíz en la mitad derecha, $A/s$ seguiría estando en la fracción, pero un trozo que crece lo taparía y el dron nunca se estabilizaría en ningún sitio. El capítulo 10 enseña cómo comprobarlo."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Luego compara los dos lados, una potencia de $s$ cada vez. Los números sueltos dan $A$, los términos en $s^2$ dan $B$ y los términos en $s$ dan $C$:"
+        },
+        {
+          "t": "math",
+          "on": "ch7:ic",
+          "tex": "\\begin{gathered} A = \\sp{2} - \\frac{\\dis{mg}}{\\eff{K_p}} \\\\ B = -m\\,A, \\qquad C = -c\\,A \\end{gathered}",
+          "alt": "\\begin{gathered} A = \\sp{2} - \\frac{\\dis{mg}}{\\eff{K_p}} \\\\ B = m\\,\\big(h(0) - A\\big) \\\\ C = m\\,h'(0) + c\\,\\big(h(0) - A\\big) \\end{gathered}"
+        },
+        {
+          "t": "p",
+          "text": "Aquí no aparece física nueva: solo hemos deshecho un denominador común para llegar a trozos que nuestra tabla puede devolver al tiempo. Fíjate en que a $A$ le da igual dónde empezó el dron."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "excited",
+          "text": "Y no tuvimos que suponer $e^{st}$ ni una sola vez. La tabla adivinó por nosotros."
+        },
+        {
+          "t": "p",
+          "text": "**Paso 4:** busca cada trozo en la tabla que acabamos de deducir: $A/s$ es un escalón, y el segundo trozo es un coseno amortiguado más un seno amortiguado (el desvío de abajo muestra cómo encaja en esas filas). Lee $h(t)$."
+        },
+        {
+          "t": "callout",
+          "title": "Completar el cuadrado: el capítulo 7 se escondía en el denominador",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "El segundo trozo todavía no está en nuestra tabla: su denominador es una cuadrática normal. Llévala a la forma $(s+\\sigma)^2 + \\omega^2$ (completar el cuadrado, como en la sección anterior) y encaja exactamente con las filas del seno amortiguado. El numerador se reparte igual, una parte para la fila del coseno y otra para la del seno:"
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{gathered} 0{,}5\\,s^2 + s + \\eff{K_p} = 0{,}5\\,\\big((s+1)^2 + \\omega_d^2\\big) \\\\ \\omega_d^2 = 2\\eff{K_p} - 1 \\\\[6pt] B\\,s + C = B\\,(s+1) + (C - B) \\end{gathered}"
             },
             {
               "t": "p",
-              "text": "Así que la caída se extingue como un café que se enfría, con una constante de tiempo de unos $K_p/K_i$ = 2 s con nuestras ganancias. En el mapa del capítulo 8 eso es un polo lento cerca de $-K_i/K_p = -0{,}5$. (Solo «unos»: la oscilación rápida necesita un momento para apagarse, y con una $K_i$ grande las dos se mezclan. Por eso el número de arriba solo llega hasta 12.)"
+              "text": "Así que $\\sigma = 1$, que es el $\\zeta\\omega_n$ del capítulo 7 para nuestro dron, y $\\omega$ es la oscilación amortiguada $\\omega_d$."
+            },
+            {
+              "t": "play",
+              "id": "square",
+              "text": "Con $\\eff{K_p}$ = {scrub|kp|eff} N/m, $\\omega_d^2$ = {calc|wd2}, así que el denominador se anula en s = {calc|roots}."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "surprised",
+              "text": "Un momento. ¡El denominador se anula justo en los dos puntos que pusimos en el mapa en el capítulo 7! Que no se nos olvide."
             }
           ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "¡Comparémoslo con la simulación!"
         },
         {
           "t": "predict",
-          "id": "ch9-bigki",
+          "id": "ch7-ledge",
           "gate": true,
-          "q": "Mika quiere que la caída desaparezca *rápido*, así que planea subir muchísimo $K_i$. ¿Qué pasará?",
+          "q": "Ponemos el dron sobre una repisa de 1 m y ejecutamos nuestra fórmula junto a la simulación. ¿Qué veremos?",
           "options": [
             {
-              "text": "La caída desaparece rápido y limpiamente",
-              "sketch": "smooth",
-              "why": "Esa es la esperanza. Pero el montón tiene inercia: para cuando el error llega a cero, ha acumulado *demasiado* empuje."
+              "text": "Coinciden desde el primer momento",
+              "why": "Coincidirán cuando la fórmula sepa lo de la repisa. Nuestro primer intento no lo sabe: mira lo que escribimos en el paso 1."
             },
             {
-              "text": "La caída desaparece, pero el dron oscila más, y si te pasas se sacude hasta romperse",
-              "sketch": "growing-wiggle",
+              "text": "Empiezan separadas, pero acaban a la misma altura",
               "correct": true,
-              "why": "El montón recuerda el pasado, así que sigue empujando después de que el dron llegue: sobreimpulso. Con una $K_i$ demasiado grande, cada sobreimpulso es mayor que el anterior."
+              "why": "Exacto. Quitamos los términos con $h(0)$, así que la fórmula empieza en 0 m mientras que el dron empieza en 1 m. Las dos se quedan en los mismos 1,755 m, porque el trozo $A$ no depende de la repisa."
             },
             {
-              "text": "Nada cambia, porque $K_i$ solo importa al final del todo",
-              "sketch": "droop",
-              "why": "El montón empieza a crecer desde el primer momento en que hay error, así que $K_i$ da forma a todo el vuelo."
+              "text": "No coinciden nunca, ni siquiera al final",
+              "why": "La altura final sale del trozo $A = 2 - mg/K_p$, que no depende de $h(0)$. Así que al final se encuentran; solo el principio está mal."
             }
           ]
         },
         {
-          "t": "p",
-          "text": "El widget empieza con $K_i$ = 10 N/(m·s). Fíjate en tres cosas: el {err|área sombreada en rojo} (el error que se va amontonando), la parte integral del empuje, en {eff|naranja discontinuo}, subiendo hasta la {dis|línea morada de la gravedad}, y la lectura de la caída. Lleva $K_i$ a 0 para recuperar la caída del capítulo 2 y luego prueba valores más grandes. $K_p$ está fijo en 20 N/m."
-        },
-        {
-          "t": "play",
-          "id": "area",
-          "text": "En reposo, P y D no empujan nada (ni error ni velocidad), así que el montón sostiene todo el peso por sí solo. Con $K_i$ = {scrub|ki|eff} N/(m·s), el {err|área roja} neta tiene que sumar exactamente $mg/K_i$ = {calc|area} m·s. Compruébalo con la lectura del widget."
-        },
-        {
           "t": "widget",
-          "id": "integral"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "¡A tope! ¡$K_i = 50$! ¡Fuego contra la caída!"
+          "id": "solve"
         },
         {
           "t": "say",
           "who": "mika",
           "mood": "worried",
-          "text": "…¿por qué no para? Los rebotes han ido creciendo y creciendo, ¡y ahora sube y baja como un yoyó medio metro, para siempre!"
+          "text": "Ay, ay. La fórmula empieza en **cero**, pero el dron empieza en la repisa, a 1 m. ¿El álgebra miente?"
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "think",
-          "text": "Con 50 te pasaste de algún tipo de borde. Probé unos cuantos valores: por debajo de unos 40 se estabiliza, por encima no (y el yoyó tarda más o menos un segundo por oscilación). Enseguida veremos por qué. El montón siempre va *un poco retrasado*: sigue empujando hacia arriba cuando el dron ya ha pasado los 2 m."
+          "text": "El álgebra está bien. Los que mentimos fuimos *nosotros*. Mira el paso 1: escribimos $\\mathcal{L}\\{h''\\} = s^2 H$ y $\\mathcal{L}\\{h'\\} = s\\,H$, y quitamos todos los $h(0)$. Justo el trozo que recuerda la repisa."
         },
         {
           "t": "p",
-          "text": "Ese es el error de Mika, y es muy común: la integral arregla la caída, pero añade **retraso**, y el retraso hace oscilar las cosas (eso nos lo enseñó la ducha). Necesitamos algo que empuje en contra de la *velocidad*. (Según las matemáticas, sus oscilaciones deberían crecer para siempre. Se frenan en torno al medio metro solo porque el empuje llega a 0 N en cada oscilación: las hélices no pueden tirar hacia abajo, el límite del capítulo 8.)"
-        }
-      ]
-    },
-    {
-      "id": "derivative",
-      "title": "D: un amortiguador virtual",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "En el capítulo 6, el amortiguador era lo que calmaba al resorte. ¿Y si el controlador **finge** ser un amortiguador?"
-        },
-        {
-          "t": "p",
-          "text": "Un amortiguador empuja en contra de la velocidad. Así que añadamos un término que empuje en contra de lo rápido que se mueve el dron:"
-        },
-        {
-          "t": "math",
-          "tex": "\\eff{T_D} = -K_d\\,\\frac{d\\out{h}}{dt}"
-        },
-        {
-          "t": "p",
-          "text": "Mira la ecuación del dron: el rozamiento ya aporta $-c\\,\\dot h$. El término D añade $-K_d\\,\\dot h$ encima, así que el dron se comporta como si su rozamiento fuera $c + K_d$. Estamos añadiendo resistencia del aire **por software**."
+          "text": "Activa el interruptor para devolver los términos de la altura inicial y mira cómo cambian con él los pasos 1 y 2 y los coeficientes de arriba. La fórmula discontinua y la simulación azul quedan ahora exactamente una encima de la otra: la mayor diferencia es de menos de una millonésima de metro, puro redondeo. Cambia $\\eff{K_p}$ o la altura de la repisa y siguen coincidiendo."
         },
         {
           "t": "play",
-          "id": "zeta",
-          "text": "Con $K_p$ = 20 N/m y $K_d$ = {scrub|kd|eff} N·s/m, el dron nota un rozamiento de {calc|damp|eff} N·s/m, así que el coeficiente de amortiguamiento del capítulo 6 pasa a ser $\\zeta = (c+K_d)/(2\\sqrt{m K_p})$ = {calc|zeta}: {calc|regime}. (Con I activada también hay un tercer polo, lento, así que piensa en esto como la personalidad de la pareja rápida.)"
-        },
-        {
-          "t": "note",
-          "text": "En sentido estricto, la D de PID es la pendiente del *error*, $K_d\\,\\dot e$. Cuando la consigna está quieta, $\\dot e = -\\dot h$, que es lo mismo. En un momento veremos por qué importa la diferencia."
-        },
-        {
-          "t": "widget",
-          "id": "damper"
-        },
-        {
-          "t": "p",
-          "text": "Activa la **gran ganancia I de Mika** y luego añade amortiguamiento. Incluso $K_d = 0{,}5$ N·s/m lo devuelve a estable (lleva el borde hasta $K_i = 60$): el yoyó sin fin se convierte en un rebote que se apaga. Pero sigue pasándose al menos una cuarta parte, añadas la D que añadas. Ese montón enorme simplemente recuerda demasiado. Ahora quita la $K_i$ de Mika (vuelve a 10) y prueba $K_d \\approx 3$–5: calma. **I y D se compensan**: D te da margen para I, pero no un margen ilimitado."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Si 4 va bien, 10 tiene que ir mejor. ¡Amortiguador a tope!"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "surprised",
-          "text": "Sube tan despacito… ¿y luego se pasa de los 2 m igualmente? ¿Tarde?"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "June, ¡es otra vez tu dron de miel del capítulo 6! Pasado $K_d \\approx 5{,}3$, la pareja rápida está sobreamortiguada. Pero ahora también hay un montón, y un dron lento le da al montón tiempo de llenarse de más."
-        },
-        {
-          "t": "p",
-          "text": "El amortiguamiento crítico está donde ζ = 1: $K_d = 2\\sqrt{m K_p} - c \\approx 5{,}3$ N·s/m con $K_p$ = 20. Con $K_i$ = 10, pasar de $K_d$ = 4 a 10 lleva el sobreimpulso de 0 a un 8 %, y el tiempo de establecimiento de menos de un segundo a unos 5 s. Más D no siempre es mejor; ahora el widget te lo dice cuando te pasas."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "happy",
-          "text": "¡O sea que D **predice el futuro**! Ve adónde va el dron y llega antes."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "No exactamente. Solo conoce la pendiente *ahora mismo*. Es como adivinar dónde caerá una pelota suponiendo que sigue en línea recta. Normalmente es una suposición decente, pero no es magia. Espera a que le demos un sensor nervioso."
-        }
-      ]
-    },
-    {
-      "id": "poles",
-      "title": "Lo que hace cada mando a los polos",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Hora de usar el mapa del capítulo 8. Escribamos el lazo entero, con $\\err{e} = \\sp{r} - \\out{h}$:"
-        },
-        {
-          "t": "math",
-          "tex": "m\\ddot{\\out h} + c\\dot{\\out h} = \\underbrace{K_p\\,\\err e + K_i\\!\\int\\!\\err e\\,dt - K_d\\,\\dot{\\out h}}_{\\eff{T}} - \\dis{mg}"
-        },
-        {
-          "t": "p",
-          "text": "La integral es incómoda, así que toma la pendiente de los dos lados. Pendiente y área se deshacen mutuamente (capítulo 3), así que la pendiente de $\\int \\err e\\,dt$ es simplemente $\\err e$. La gravedad es constante, así que su pendiente es **cero**: simplemente desaparece. Con una consigna fija, $\\dot{\\err e} = -\\dot{\\out h}$. Término a término:"
-        },
-        {
-          "t": "math",
-          "tex": "\\begin{aligned} \\tfrac{d}{dt}\\big(K_p\\,\\err e\\big) &= -K_p\\,\\dot{\\out h} \\\\ \\tfrac{d}{dt}\\Big(K_i\\!\\int\\!\\err e\\,dt\\Big) &= K_i\\,(\\sp r - \\out h) \\\\ \\tfrac{d}{dt}\\big(-K_d\\,\\dot{\\out h}\\big) &= -K_d\\,\\ddot{\\out h} \\end{aligned}"
-        },
-        {
-          "t": "p",
-          "text": "Vuelve a juntarlos y pasa a la izquierda todo lo que lleva $\\out h$. Los tres puntos de $\\dddot{\\out h}$ significan la pendiente de la pendiente de la pendiente:"
-        },
-        {
-          "t": "math",
-          "tex": "\\begin{aligned} m\\dddot{\\out h} + (c + K_d)\\,\\ddot{\\out h} &+ K_p\\,\\dot{\\out h} + K_i\\,\\out h \\\\ &= K_i\\,\\sp r \\end{aligned}"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "surprised",
-          "text": "La gravedad ha *desaparecido* de la ecuación. Ese es el mata-caídas en forma de álgebra: a la altura final le da igual $mg$. Siempre que llegue a estabilizarse, claro. El dron de Mika con $K_i = 50$ nunca lo hizo."
-        },
-        {
-          "t": "p",
-          "text": "Vuelve a suponer $e^{st}$. **Con I activa**, la ecuación es cúbica, así que hay tres polos. Si $K_i=0$, no hay integrador: tomar la pendiente añadió una raíz falsa en $s = 0$, el factor común $s$ se cancela y el dron PD tiene dos polos."
-        },
-        {
-          "t": "math",
-          "tex": "m s^3 + (c + K_d)\\,s^2 + K_p\\,s + K_i = 0"
-        },
-        {
-          "t": "callout",
-          "title": "I es un dividir entre s",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "En el capítulo 7 una pendiente se convertía en «× s». Un área es lo contrario, así que se convierte en «÷ s». Escribe así el controlador, usa la propia receta del dron $P(s) = 1/(ms^2+cs)$ (entra empuje, sale altura) y busca los polos con la regla del lazo del capítulo 8, $1 + C\\,P = 0$. Quita los denominadores y sale la misma cúbica, sin tomar ni una sola pendiente:"
-            },
-            {
-              "t": "math",
-              "tex": "\\begin{gathered} C(s) = K_p + \\frac{K_i}{s} + K_d\\,s \\\\ 1 + C(s)\\,\\frac{1}{ms^2+cs} = 0 \\\\ ms^3 + (c+K_d)\\,s^2 + K_p\\,s + K_i = 0 \\end{gathered}"
-            },
-            {
-              "t": "say",
-              "who": "mika",
-              "mood": "excited",
-              "text": "¡O sea que el ÷ s *es* el polo extra!"
-            },
-            {
-              "t": "say",
-              "who": "june",
-              "mood": "think",
-              "text": "Y el numerador de la fracción recibe $K_p s + K_i$: un **cero**, en $-K_i/K_p$. (Nuestra D solo actúa sobre $\\out h$, así que no añade ningún cero.) No lo pierdas de vista."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Para una cúbica con todos los coeficientes positivos, $a_3 s^3 + a_2 s^2 + a_1 s + a_0$, hay una prueba clásica (el criterio de **Routh–Hurwitz**) que dice que los tres polos están en la mitad izquierda justo cuando $a_2 a_1 > a_3 a_0$. Para nuestro dron, ese es el borde del abismo:"
-        },
-        {
-          "t": "math",
-          "tex": "(c + K_d)\\,K_p > m\\,K_i \\quad\\Longleftrightarrow\\quad K_i < \\frac{(c+K_d)\\,K_p}{m}"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "Una regla con el nombre de dos personas. ¿Nos la tenemos que creer sin más?"
+          "id": "residues",
+          "text": "Con $\\eff{K_p}$ = {scrub|kp|eff} N/m desde una repisa de {scrub|h0|out} m: A = {calc|A|out} m, así que el dron se queda {calc|droop|err} m por debajo del objetivo de 2 m. Es la caída del capítulo 2, $\\dis{mg}/\\eff{K_p}$, y la repisa no la cambia. El resto es $e^{-t}$ × ({calc|wiggle}), una oscilación que se apaga."
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "happy",
-          "text": "Para nada. Podemos encontrar el borde nosotros mismos."
-        },
-        {
-          "t": "p",
-          "text": "En el instante en que una pareja oscilante llega al eje vertical, su parte real es cero, así que prueba $s=i\\omega$ en la cúbica. Como $i^2 = -1$ e $i^3 = -i$, las partes reales y las partes laterales tienen que sumar cero cada una por su lado:"
-        },
-        {
-          "t": "math",
-          "tex": "K_i - (c+K_d)\\,\\omega^2 = 0, \\qquad \\omega\\,\\big(K_p - m\\,\\omega^2\\big) = 0"
-        },
-        {
-          "t": "p",
-          "text": "La segunda dice que $\\omega^2 = K_p/m$. Métela en la primera:"
-        },
-        {
-          "t": "math",
-          "tex": "\\omega^2=\\frac{K_p}{m},\\qquad K_i=(c+K_d)\\omega^2=\\frac{(c+K_d)K_p}{m}"
-        },
-        {
-          "t": "callout",
-          "title": "Por qué debajo de la línea es el lado seguro",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Empieza con una $K_i$ diminuta. La pareja PD está a salvo a la izquierda, y el polo nuevo está justo a la izquierda de cero, cerca de $-K_i/K_p$. Cuando $K_i$ crece, los polos se deslizan suavemente. Para llegar a la mitad derecha, uno de ellos tiene que cruzar el eje vertical. Solo puede cruzar en 0 si $K_i = 0$ (mete $s = 0$ en la cúbica: solo queda $K_i$), y en $\\pm i\\omega$ solo en el borde que acabamos de encontrar. Así que por debajo del borde ningún polo puede haber cruzado."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "happy",
-              "text": "O sea que la regla de Routh–Hurwitz es simplemente «no puedes llegar al otro lado sin tocar la pared»."
-            }
-          ]
-        },
-        {
-          "t": "play",
-          "id": "cliff",
-          "text": "Con $K_p$ = {scrub|kp|eff} N/m y $K_d$ = {scrub|kd|eff} N·s/m, $K_i$ tiene que quedarse por debajo de $(c+K_d)K_p/m$ = {calc|lim} N/(m·s). Justo en el borde, el dron oscila a $\\omega = \\sqrt{K_p/m}$ = {calc|w} rad/s: una oscilación cada {calc|T} s."
-        },
-        {
-          "t": "p",
-          "text": "Con los valores iniciales ($K_p$ = 20, sin D) el borde está en 40. Justo ahí es donde el dron de Mika se volvió loco, y su yoyó tardaba más o menos un segundo por oscilación: 6,32 rad/s es la propia ωn del dron P del capítulo 6. Añadir $K_d = 4$ lleva el borde hasta 200. No te fíes de nosotros: cambia los números de arriba, o los deslizadores de abajo, y mira los polos, el minimapa y la respuesta al escalón."
-        },
-        {
-          "t": "widget",
-          "id": "poles"
-        },
-        {
-          "t": "callout",
-          "title": "¿Por qué el polo lento no lo hace lento?",
-          "blocks": [
-            {
-              "t": "say",
-              "who": "mika",
-              "mood": "surprised",
-              "text": "Al principio el estado dice que el polo más lento está en −0,54. El capítulo 8 decía que eso significa unos 4/0,54 ≈ 7 s. ¡Pero el escalón se estabiliza en menos de 3!"
-            },
-            {
-              "t": "say",
-              "who": "june",
-              "mood": "think",
-              "text": "Busca el cero. La I trae uno en $-K_i/K_p = -0{,}5$, justo al lado de ese polo. Un polo y un cero tan cercanos casi se cancelan, así que ese modo apenas aparece cuando movemos la consigna."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "think",
-              "text": "Apenas no es nunca. La pareja rápida sola, con ζ = 0,47, se pasaría alrededor de un 19 %. El modo lento que queda lo lleva casi al 30 %."
-            }
-          ]
-        },
-        {
-          "t": "list",
-          "items": [
-            "**El mando I** ($K_i$) añade un tercer polo al lazo y puede empujar una pareja a la derecha. Si te pasas, cruza la línea.",
-            "**El mando D** ($K_d$) eleva el límite estable de ganancia I al añadir amortiguamiento. Las trayectorias pueden girar: más D no mueve todos los polos a la izquierda.",
-            "**El mando P** ($K_p$) sobre todo separa la pareja oscilante hacia arriba y abajo: más rápido, pero más oscilante si D no acompaña."
-          ]
-        }
-      ]
-    },
-    {
-      "id": "playground",
-      "title": "El patio de ajuste",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Ahora lo de verdad: despegar del suelo hasta 2 m con motores reales (0–20 N). Consigue las cuatro estrellas. Cada vez que cambias una ganancia, el último vuelo se queda como un fantasma tenue."
-        },
-        {
-          "t": "widget",
-          "id": "playground"
+          "text": "En el capítulo 2 tuvimos que hacer volar el dron para encontrar su caída. Aquí ha salido sola de una fracción."
         },
         {
           "t": "note",
-          "aside": true,
-          "text": "¿Atascado? Empieza con $K_d$ en torno a 4 (eso es ζ ≈ 0,8, dentro del punto ideal 0,7–1 del capítulo 6), luego sube $K_i$ hasta que desaparezca la caída y después retoca $K_p$."
-        },
-        {
-          "t": "note",
-          "text": "**Windup del integrador:** mientras los motores están clavados en 20 N, el montón de error sigue creciendo aunque el empuje extra no pueda darse. Más tarde, todo ese empuje almacenado sale en forma de sobreimpulso. El «anti-windup» simplemente pausa el montón mientras los motores están al máximo, y todos los drones de este capítulo hasta ahora lo tenían activado. (Un motor clavado no tiene margen para corregir nada; por eso las estrellas cuentan el tiempo que pasa clavado.) Con $K_p$ = 20, $K_i$ = 20, $K_d$ = 4: un 7 % de sobreimpulso con anti-windup y un 17 % sin él. Actívalo y desactívalo y compara."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "surprised",
-          "text": "Quité el anti-windup, puse $K_p$ = 30, $K_i$ = 60, $K_d$ = 2… ¡y el dron salió disparado hasta 4 m, fuera de su dibujo!"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "El montón siguió creciendo todo el tiempo que los motores iban a tope. Con el anti-windup activado, las mismas ganancias tienen su pico en 2,8 m. Los mismos mandos, una memoria muy distinta."
-        }
-      ]
-    },
-    {
-      "id": "warnings",
-      "title": "Dos avisos sobre D",
-      "blocks": [
-        {
-          "t": "h3",
-          "text": "Aviso 1: la patada derivativa"
-        },
-        {
-          "t": "p",
-          "text": "El dron flota a 1 m. En $t = 1$ s movemos la consigna a 1,5 m. Si D usa la pendiente del *error*, el error **salta** medio metro en un instante. Su pendiente es enorme, y el empuje también."
-        },
-        {
-          "t": "play",
-          "id": "kick",
-          "text": "Un salto de {scrub|dr} m visto a través de un filtro de {scrub|tf} s parece una velocidad de unos {calc|slope} m/s, así que con $K_d$ = 4 el término D pide aproximadamente {calc|spike|eff} N. Los motores no pasan de 20."
-        },
-        {
-          "t": "widget",
-          "id": "kick"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "surprised",
-          "text": "¿Con el error pide más de 200 N? ¿A unos motores que no pasan de 20?"
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "worried",
-          "text": "Y no pueden decir que no con educación. Se ponen a tope un instante y el dron se lleva una buena patada."
-        },
-        {
-          "t": "p",
-          "text": "Usar en su lugar la pendiente de la **altura medida** lo arregla: el dron no puede teletransportarse, así que su altura no tiene saltos. El mismo amortiguamiento, sin patada. Casi todos los PID reales lo hacen así."
-        },
-        {
-          "t": "h3",
-          "text": "Aviso 2: el ruido"
-        },
-        {
-          "t": "p",
-          "text": "Los sensores de altura reales tiemblan un par de centímetros. Un par de centímetros de temblor, mil veces por segundo, tiene una **pendiente enorme**. D lo amplifica y lo manda directo a los motores. La solución es suavizar la medida antes de calcular su pendiente (un filtro con constante de tiempo $\\tau_f$), a costa de reaccionar un poco más tarde."
-        },
-        {
-          "t": "play",
-          "id": "jitter",
-          "text": "Leído cada milisegundo, un temblor de 2 cm parece una velocidad de 20 m/s. A través de un filtro de $\\tau_f$ = {scrub|tf} s, $K_d$ = 4 convierte $\\sigma_n$ = 2 cm de ruido en unos $K_d\\sigma_n/\\tau_f$ = {calc|d|eff} N de temblor del empuje; P solo añade $K_p\\sigma_n$ = 0,3 N (aquí $K_p$ = 15)."
-        },
-        {
-          "t": "widget",
-          "id": "noise"
-        },
-        {
-          "t": "callout",
-          "title": "El filtro es el café del capítulo 3",
-          "blocks": [
-            {
-              "t": "math",
-              "tex": "\\frac{d\\,h_f}{dt} = \\frac{h_m - h_f}{\\tau_f}"
-            },
-            {
-              "t": "p",
-              "text": "El filtro suavizador es la ley de enfriamiento de Newton apuntando al sensor: la altura suavizada $h_f$ persigue a la lectura temblorosa $h_m$ con constante de tiempo $\\tau_f$, igual que el café perseguía la temperatura de la habitación. El temblor rápido nunca tiene ocasión de moverla. El movimiento real sí, con un retraso de un $\\tau_f$ más o menos. Ese es el precio, en segundos."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "surprised",
-              "text": "¿Así que la cura para una D nerviosa es… un poco de retraso? ¿Lo mismo que hacía oscilar el montón?"
-            },
-            {
-              "t": "say",
-              "who": "june",
-              "mood": "happy",
-              "text": "Una décima de segundo, más o menos. El retraso no es malvado. Es un precio, y aquí es barato."
-            }
-          ]
-        },
-        {
-          "t": "note",
-          "text": "¿Viste el dron **ir subiendo** con el filtro corto? (Mira la lectura de la altura media.) El empuje traqueteante se recorta en 0 N muchas más veces que en 20 N (alrededor del 55 % del tiempo frente al 5 %: para flotar solo hacen falta 4,9 N), así que la media recortada sale *por encima* del peso. Ruido más límites pueden llegar a mover la media. El hardware real está lleno de sorpresas así."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "surprised",
-          "text": "Vale, D *no* predice el futuro. Predice lo que le apeteció al ruido hace un milisegundo."
+          "text": "Seguimos fingiendo que los motores no tienen límite de empuje, así que las matemáticas lineales son exactas. Los límites reales llegan en el capítulo 10."
         }
       ]
     },
     {
       "id": "wrap",
-      "title": "Lo que hemos arreglado",
+      "title": "Lo que sabemos ahora",
       "blocks": [
         {
           "t": "recap",
           "items": [
-            "**P** empuja en proporción al error, pero tiene que dejar una caída para sostener el dron.",
-            "**I** amontona el error pasado; el único punto de reposo es error cero, así que elimina la caída, que se extingue con una constante de tiempo de unos $K_p/K_i$. Añade retraso, así que demasiada hace oscilar.",
-            "**D** empuja contra la velocidad: un amortiguador virtual que se suma al rozamiento $c$, así que $\\zeta = (c+K_d)/(2\\sqrt{mK_p})$. Más D no siempre es mejor: sobreamortiguado, el dron se arrastra y el montón se llena de más.",
-            "El lazo cerrado es $m s^3 + (c + K_d)s^2 + K_p s + K_i$; es estable justo cuando $(c+K_d)K_p > mK_i$.",
-            "Calcula D a partir de la medida (sin patada) y fíltrala (menos ruido)."
+            "Las pendientes se convierten en multiplicaciones: $\\mathcal{L}\\{f'\\} = sF(s) - f(0)$. El $f(0)$ recuerda dónde empezó la señal. Olvídalo y tu respuesta empieza en el sitio equivocado.",
+            "Dedujimos nuestra propia tabla: $1/s$, $1/(s-a)$, $\\omega/(s^2+\\omega^2)$ y la versión desplazada para senos amortiguados. Las áreas se escalan y se suman, así que podemos transformar una ecuación término a término.",
+            "Las fracciones grandes se descomponen en **fracciones simples**: una incógnita por cada potencia de $s$ de cada denominador, que se encuentran con el truco de tapar. Un denominador cuadrático se convierte en un coseno y un seno que se encogen.",
+            "Transforma, haz álgebra, divide en trozos de la tabla, lee la respuesta. El trozo $A/s$ es donde se queda el dron, caída incluida. Coincide exactamente con la simulación, **siempre que conserves los valores iniciales**."
           ]
         },
         {
           "t": "quiz",
           "items": [
             {
-              "id": "ch9-q1",
-              "q": "¿Qué término elimina la caída constante bajo la gravedad?",
+              "id": "ch7-q1",
+              "q": "¿Cuál es la transformada de Laplace de $3e^{-2t}$?",
               "options": [
                 {
-                  "text": "El término integral",
+                  "text": "$\\dfrac{3}{s+2}$",
                   "correct": true,
-                  "why": "Su montón de error sigue cambiando hasta que el error es exactamente cero, y entonces mantiene por sí solo los 4,9 N necesarios."
+                  "why": "La fila exponencial con $a = -2$ da $1/(s+2)$, y la transformada de 3 veces una señal es 3 veces su transformada (las áreas escalan)."
                 },
                 {
-                  "text": "El término derivativo",
-                  "why": "D reacciona a la velocidad. Cuando el dron flota quieto, la velocidad es cero y D no aporta nada, así que no puede sostener nada."
+                  "text": "$\\dfrac{3}{s-2}$",
+                  "why": "Esa es la de $e^{+2t}$. La fila es $1/(s-a)$ con $a = -2$, así que $s - (-2) = s+2$."
                 },
                 {
-                  "text": "Una ganancia proporcional más grande",
-                  "why": "Una $K_p$ más grande reduce la caída ($mg/K_p$) pero nunca a cero, y hace el dron más oscilante."
+                  "text": "$\\dfrac{1}{3(s+2)}$",
+                  "why": "Multiplicar la señal por 3 multiplica el área por 3; no la divide."
                 }
               ]
             },
             {
-              "id": "ch9-q3",
-              "q": "Con $K_p = 10$ N/m y $K_d = 1$ N·s/m (dron: $m = 0{,}5$ kg, $c = 1$ N·s/m), ¿cuál es la mayor $K_i$ antes de la inestabilidad?",
+              "id": "ch7-q5",
+              "q": "$f(t) = e^{-t}$, así que $F(s) = \\frac{1}{s+1}$ y $f(0) = 1$. ¿Cuál es la transformada de su pendiente $f'$?",
               "options": [
                 {
-                  "text": "20 N/(m·s)",
-                  "why": "Revisa la fórmula: $(c + K_d)K_p/m = (1+1)\\cdot 10 / 0{,}5$. Quizá se te olvidó dividir entre $m$."
-                },
-                {
-                  "text": "40 N/(m·s)",
+                  "text": "$\\frac{s}{s+1} - 1 = -\\frac{1}{s+1}$",
                   "correct": true,
-                  "why": "$(1 + 1)\\cdot 10 / 0{,}5 = 40$. Por encima de eso, dos polos cruzan al semiplano derecho."
+                  "why": "$s\\,F - f(0)$. Y cuadra: la pendiente de $e^{-t}$ es $-e^{-t}$, cuya transformada es $-\\frac{1}{s+1}$."
                 },
                 {
-                  "text": "80 N/(m·s)",
-                  "why": "Demasiado alto. Recuerda que el rozamiento $c$ y $K_d$ se suman primero: $(1+1) = 2$, no 4."
+                  "text": "$\\frac{s}{s+1}$",
+                  "why": "Eso es $s\\,F$ olvidando el valor inicial: otra vez el error de la repisa."
+                },
+                {
+                  "text": "$\\frac{1}{(s+1)^2}$",
+                  "why": "Las pendientes se convierten en *multiplicar* por $s$, no en dividir por otro $(s+1)$."
                 }
               ]
             },
             {
-              "id": "ch9-q4",
-              "q": "¿Por qué calcular la derivada de la **medida** en vez de la del error?",
+              "id": "ch7-q6",
+              "q": "Con $\\eff{K_p}$ = 10 N/m, ¿dónde dice el trozo $A/s$ que se queda el dron (objetivo 2 m, $\\dis{mg} \\approx 4{,}9$ N)?",
               "options": [
                 {
-                  "text": "Cuando la consigna salta, el error también salta, y su pendiente es enorme: un pico de empuje",
+                  "text": "Unos 1,51 m",
                   "correct": true,
-                  "why": "La altura no puede saltar, así que su pendiente se mantiene razonable. El mismo amortiguamiento, sin patada."
+                  "why": "$A = 2 - 4{,}9/10 \\approx 1{,}51$ m. El dron se queda 0,49 m por debajo: la caída del capítulo 2."
                 },
                 {
-                  "text": "Porque la medida tiene menos ruido que el error",
-                  "why": "Tienen exactamente el mismo ruido; el error es la consigna menos la medida."
+                  "text": "Exactamente 2 m",
+                  "why": "Solo sin gravedad. El término $-\\dis{mg}/s$ baja $A$ en $\\dis{mg}/\\eff{K_p}$."
                 },
                 {
-                  "text": "Hace que el controlador sea más agresivo",
-                  "why": "Es al revés: elimina el pico agresivo en los cambios de consigna."
-                }
-              ]
-            },
-            {
-              "id": "ch9-q5",
-              "q": "$K_p$ = 20, $K_i$ = 10. ¿Qué cambio hace **más grande** el sobreimpulso del despegue?",
-              "options": [
-                {
-                  "text": "Subir $K_d$ de 4 a 10",
-                  "correct": true,
-                  "why": "Demasiado amortiguamiento hace que el dron se arrastre, y el montón se sigue llenando mientras tanto: el sobreimpulso pasa del 0 % a un 8 %."
-                },
-                {
-                  "text": "Subir $K_d$ de 0 a 4",
-                  "why": "Esa es la dirección buena: el sobreimpulso baja de un 54 % al 0 %."
-                },
-                {
-                  "text": "Bajar $K_i$ de 10 a 5",
-                  "why": "Un montón más pequeño recuerda menos, así que se pasa menos (0 % con $K_d$ = 4). Solo tarda más en eliminar la caída."
+                  "text": "Unos 0,49 m",
+                  "why": "Esa es la propia caída, lo que falta hasta el objetivo, no la altura."
                 }
               ]
             }
@@ -618,159 +528,135 @@
         },
         {
           "t": "cliff",
-          "text": "June probó nuestro PID de dron en la ducha… y oscilaba exactamente igual que nosotros en el capítulo 0. **¿Qué tiene el retardo?**"
+          "text": "June: \"Cada vez que resolvíamos algo, la respuesta era *(algo)* ÷ *(un polinomio en s)*, y el comportamiento del dron salía de donde el denominador vale cero. ¿Y si esa fracción **es** el dron?\""
         }
       ]
     }
   ],
   "widgets": {
-    "integral": {
-      "title": "El montón de error",
-      "slider": "Ganancia integral $K_i$",
-      "gravity": "peso mg",
-      "iterm": "empuje integral Ki·∫e",
-      "readout": {
-        "droop": "caída a los 12 s",
-        "pile": "empuje integral",
-        "area": "área roja neta"
+    "derivRule": {
+      "title": "¿Sobrevive la regla a un garabato?",
+      "f": "tu señal f(t)",
+      "df": "su pendiente f′(t)",
+      "plotAria": "La señal dibujada y su pendiente durante 8 segundos.",
+      "sAria": "Los dos lados de la regla de la derivada frente a s.",
+      "lhs": "área de f′·e^(−st)",
+      "rhs": "s·F(s) − f(0)",
+      "lhsShort": "transformada de la pendiente",
+      "rhsShort": "s F(s) − f(0)",
+      "s": "Sonda $s$",
+      "draw": "Dibuja tu propia señal",
+      "preset": "Probar otra predefinida",
+      "help": "Elige una señal predefinida (lo más cómodo con el teclado), o pulsa «Dibuja tu propia señal» y arrastra por la gráfica de la señal de izquierda a derecha. Pasados 8 s, la señal se queda plana.",
+      "drawing": "Arrastra por la gráfica de la señal, de izquierda a derecha…",
+      "tooShort": "Dibuja un poco más largo (al menos 3 segundos).",
+      "drawn": "¡Listo! Los dos lados se han recalculado a partir de tu dibujo. Vuelve a arrastrar para sustituirlo.",
+      "match": "En s = {s} los dos lados valen {v}. La regla se cumple para tu señal.",
+      "nomatch": "Aquí difieren un poco. Redondeo numérico con un dibujo muy afilado.",
+      "describe": "Transformada de la pendiente {l}; s F menos f de cero {r}.",
+      "stopDraw": "Dejar de dibujar",
+      "presetLabel": "O elige una señal",
+      "presets": {
+        "0": "tembleque",
+        "1": "salto",
+        "2": "decaimiento"
       },
-      "status": {
-        "none": "Sin integral: el dron cae, igual que en el capítulo 2.",
-        "slow": "La caída se está encogiendo, pero despacio. El montón tarda en acumularse.",
-        "ringing": "Estable, pero por poco: a los 12 s todavía oscila. Cuanto más se acerca Ki a {lim}, más despacio se apagan las oscilaciones.",
-        "gone": "¡Adiós a la caída! Ahora el montón sostiene todo el peso.",
-        "unstable": "Pasado el borde (Ki > {lim}): los rebotes crecen hasta que los motores tocan sus límites, y nunca se estabiliza."
-      },
-      "describe": "Ganancia integral {ki}. Caída tras 12 segundos: {droop} centímetros."
+      "rhsBrace": "lo que predice la regla"
     },
-    "damper": {
-      "title": "Añadir un amortiguador virtual",
-      "slider": "Ganancia derivativa $K_d$",
-      "bigKi": "La gran $K_i$ de Mika = 50",
-      "bigKiName": "La gran Ki de Mika = 50",
-      "readout": {
-        "damping": "amortiguamiento total c + Kd",
-        "overshoot": "sobreimpulso",
-        "zeta": "coeficiente de amortiguamiento ζ"
+    "table": {
+      "title": "La tabla, deducida",
+      "caption": "Tabla de transformadas de Laplace deducida en este capítulo",
+      "colSignal": "señal f(t)",
+      "colF": "transformada F(s)",
+      "derive": "Deducir",
+      "show": "Mostrar",
+      "unknown": "aún sin deducir",
+      "f": "señal",
+      "product": "señal × sonda",
+      "plotAria": "La señal elegida de la tabla y su producto con la sonda, con el área sombreada.",
+      "numeric": "área medida",
+      "formulaVal": "fórmula",
+      "s": "Sonda $s$",
+      "how": "Cómo lo obtuvimos",
+      "agree": "El área medida coincide con la fórmula.",
+      "twinCheck": "Su gemelo (el coseno) también cuadra: medido {n}, fórmula {f}.",
+      "describe": "Área medida {n}, fórmula {f}.",
+      "rows": {
+        "0": {
+          "f": "1\\ \\ (\\text{escalón})",
+          "F": "\\dfrac{1}{s}",
+          "steps": "\\text{la curva cuya pendiente es } e^{-st} \\text{ es } -\\tfrac{1}{s}e^{-st}||\\begin{aligned} \\int_0^\\infty e^{-st}\\,dt &=\\Big[-\\tfrac{1}{s}e^{-st}\\Big]_0^\\infty \\\\ &= 0-\\big(-\\tfrac{1}{s}\\big)=\\frac{1}{s}\\quad (s>0) \\end{aligned}"
+        },
+        "1": {
+          "f": "e^{at}",
+          "F": "\\dfrac{1}{s-a}",
+          "steps": "e^{at}\\,e^{-st}=e^{-(s-a)t}||\\text{es la fila del escalón con } s \\text{ sustituida por } s-a||\\begin{gathered} \\int_0^\\infty e^{-(s-a)t}\\,dt=\\frac{1}{s-a} \\\\ (s>a;\\ \\text{aquí } a=-1) \\end{gathered}"
+        },
+        "2": {
+          "f": "\\sin\\omega t,\\ \\cos\\omega t",
+          "F": "\\dfrac{\\omega}{s^2+\\omega^2},\\ \\dfrac{s}{s^2+\\omega^2}",
+          "steps": "\\begin{gathered} \\sin\\omega t=\\frac{e^{i\\omega t}-e^{-i\\omega t}}{2i} \\\\ \\text{(giradores gemelos)} \\end{gathered}||\\begin{gathered} \\mathcal{L}\\{e^{\\pm i\\omega t}\\}=\\frac{1}{s\\mp i\\omega} \\\\ \\text{(fila exponencial, } a=\\pm i\\omega) \\end{gathered}||\\begin{aligned} &\\frac{1}{2i}\\Big(\\frac{1}{s-i\\omega}-\\frac{1}{s+i\\omega}\\Big) \\\\ &=\\frac{1}{2i}\\cdot\\frac{2i\\omega}{s^2+\\omega^2}=\\frac{\\omega}{s^2+\\omega^2} \\end{aligned}||\\begin{gathered} \\cos\\omega t=\\frac{e^{i\\omega t}+e^{-i\\omega t}}{2}\\ \\Rightarrow\\ \\frac{s}{s^2+\\omega^2} \\\\ (\\text{aquí }\\omega=2) \\end{gathered}"
+        },
+        "3": {
+          "f": "\\begin{gathered} e^{-\\sigma t}\\sin\\omega t \\\\ e^{-\\sigma t}\\cos\\omega t \\end{gathered}",
+          "F": "\\begin{gathered} \\dfrac{\\omega}{(s+\\sigma)^2+\\omega^2} \\\\[4pt] \\dfrac{s+\\sigma}{(s+\\sigma)^2+\\omega^2} \\end{gathered}",
+          "steps": "e^{-\\sigma t}\\sin\\omega t\\cdot e^{-st}=\\sin\\omega t\\cdot e^{-(s+\\sigma)t}||\\text{así que toma la fila del seno y sustituye } s \\text{ por } s+\\sigma||\\begin{gathered} \\frac{\\omega}{(s+\\sigma)^2+\\omega^2}\\quad\\text{ y }\\quad\\frac{s+\\sigma}{(s+\\sigma)^2+\\omega^2} \\\\ (\\text{aquí }\\sigma=0.5,\\ \\omega=2) \\end{gathered}"
+        }
       },
-      "status": {
-        "unstable": "Sigue siendo inestable: necesita más amortiguamiento.",
-        "bouncy": "Estable, pero saltarín. Añade más Kd.",
-        "calm": "¡Calma! El amortiguador absorbe el rebote.",
-        "tooMuch": "¡Más D lo empeoró! Ahora sube tan despacio que el montón se llena de más, y se pasa tarde. Prueba con menos Kd.",
-        "bigPile": "Estable, pero el gran montón de Mika todavía se pasa un {os} %. Ninguna cantidad de D lo arregla: quita la Ki de Mika."
-      }
+      "colCheck": "Comprobado con el área medida",
+      "differ": "Aquí el área medida y la fórmula no coinciden. Prueba una s más grande."
     },
-    "poles": {
-      "title": "Tres mandos, tres polos",
-      "splane": "Plano s con los tres polos en lazo cerrado del dron con control PID",
-      "kp": "$K_p$",
-      "ki": "$K_i$",
-      "kd": "$K_d$",
-      "map": {
-        "x": "Kd (N·s/m)",
-        "y": "Ki (N/(m·s))",
-        "edge": "borde del abismo Ki = (c+Kd)Kp/m",
-        "you": "tú",
-        "aria": "Mapa de Ki frente a Kd con la línea del límite de estabilidad; por debajo de la línea es estable."
-      },
-      "stepAria": "Respuesta al escalón de 1,5 m a 2 m con las ganancias actuales",
-      "status": {
-        "stable": "Estable: Ki tiene que quedarse por debajo de {lim}. El polo más lento está en σ = {s}.",
-        "unstable": "¡Inestable! Ki está por encima del borde ({lim}). Dos polos han cruzado a la mitad derecha.",
-        "cancel": "(Un cero en {z} casi lo cancela, así que apenas se nota en el escalón.)"
-      },
-      "help": "La respuesta al escalón empieza con el dron flotando a 1,5 m y pide 2 m en t = 1 s, con motores reales de 20 N (así que con $K_p$ grande puede diferir de lo que dicen los polos). Los polos que se salen del marco se convierten en flechas en su borde. ○ es el cero.",
-      "reShort": "σ",
-      "imShort": "ω",
-      "readout": {
-        "overshoot": "sobreimpulso del escalón",
-        "settling": "tiempo de establecimiento (2 %)"
-      },
-      "never": "no en 14 s",
-      "zero": "cero"
+    "solve": {
+      "title": "Fórmula vs. simulación",
+      "sim": "simulación (pasos diminutos)",
+      "formula": "nuestra fórmula de Laplace",
+      "target": "objetivo",
+      "plotAria": "Altura del dron a lo largo del tiempo según la simulación y según la fórmula de Laplace.",
+      "gap": "mayor diferencia",
+      "atZero": "en t = 0: sim. / fórmula",
+      "kp": "Ganancia $K_p$",
+      "h0": "Altura inicial (repisa) $h(0)$",
+      "toggle": "Incluir los términos de la altura inicial $-h(0)$",
+      "mismatch": "¡No coinciden! La simulación empieza en la repisa de {h} m y la fórmula empieza en 0.",
+      "odd": "Sigue habiendo diferencia. Revisa los números.",
+      "match": "Coincidencia perfecta: la fórmula y la simulación coinciden con un error menor que una millonésima de metro.",
+      "settle": "se queda en A",
+      "droop": "caída mg/Kp = {d} m",
+      "hidden": "Desde el suelo los términos que faltan valen cero, así que el error se esconde. Pon el dron sobre una repisa para pillarlo.",
+      "fixed": "Los términos −h(0) han vuelto a los pasos 1 y 2 de arriba.",
+      "rk4": "La simulación da pasos de 1 ms, como los pasos diminutos del capítulo 4, pero en cada paso echa cuatro vistazos para apuntar mejor. A esa receta se le llama RK4."
     },
-    "playground": {
-      "title": "Patio de ajuste: despega hasta 2 m",
-      "kp": "$K_p$",
-      "ki": "$K_i$",
-      "kd": "$K_d$",
-      "antiWindup": "Anti-windup",
-      "targets": "Estrellas por: sobreimpulso menor del {os} %, tiempo de establecimiento (banda del 2 %) de menos de {ts} s, sin caída (menos de 1 cm) y motores clavados en un límite menos de {sat} s.",
-      "readout": {
-        "overshoot": "sobreimpulso",
-        "settling": "tiempo de establecimiento",
-        "sse": "caída",
-        "saturated": "motores clavados"
-      },
-      "never": "nunca",
-      "allStars": "¡Las cuatro estrellas! Eso es un ajuste de verdad.",
-      "someStars": "{n} de 4 estrellas.",
-      "starsAria": "{n} de 4 estrellas conseguidas",
-      "hit": {
-        "back": "¡Toc! Chocó con lo que tiene encima, pero los motores siguen girando y la realimentación lo devuelve a 2 m.",
-        "wild": "¡Toc! Chocó con lo que tiene encima. Los motores siguen girando, pero con estas ganancias nunca se estabiliza.",
-        "mark": "¡toc!"
-      },
-      "crash": "¡Choque a los {t} s! Llegó al suelo a más de 1,5 m/s, y un dron estrellado se queda en el suelo.",
-      "neverDroop": "nunca (cae)"
-    },
-    "kick": {
-      "title": "Salto de consigna: 1 m → 1,5 m",
-      "mode": "Calcular la derivada de…",
-      "onError": "el error",
-      "onMeasurement": "la altura medida",
-      "asked": "pico pedido",
-      "peak": "pico entregado",
-      "kickMark": "¡patada!",
-      "status": {
-        "error": "El error salta, así que su pendiente es enorme: ¡el controlador pide {req} N! Los motores solo pueden ponerse de golpe a 20 N. Eso es una patada derivativa.",
-        "measurement": "La altura no puede saltar, así que no hay patada: lo máximo que llega a pedir son {req} N, y la subida es suave."
-      }
-    },
-    "noise": {
-      "title": "Un sensor de altura nervioso",
-      "toggle": "Ruido del sensor (unos 2 cm)",
-      "filter": "Filtro de la derivada $\\tau_f$",
-      "filterName": "constante de tiempo del filtro de la derivada τf",
-      "measured": "lectura del sensor",
-      "jitter": "temblor del empuje",
-      "status": {
-        "off": "Un sensor perfecto: motores tranquilos.",
-        "chatter": "¡Los motores traquetean! D está amplificando el ruido. Prueba un filtro más largo.",
-        "calm": "Mucho más tranquilo. De los ±{j} N que quedan, P deja pasar unos {p} N tal cual; el resto sigue siendo D. El precio: ahora D reacciona unos {tau} s más tarde.",
-        "noD": "Sin D, nada amplifica el ruido: los ±{j} N que quedan son P dejándolo pasar tal cual. Motores tranquilos, pero ahora solo el rozamiento amortigua el dron."
-      },
-      "kd": "Ganancia derivativa $K_d$",
-      "mean": "altura media",
-      "help": "Prueba $K_d$ = 0: el temblor baja a unos 0,3 N (solo P), pero entonces solo el rozamiento amortigua el dron. Más D, más ruido."
-    },
-    "gains": {
-      "kp": "ganancia proporcional Kp",
-      "ki": "ganancia integral Ki",
-      "kd": "ganancia derivativa Kd"
+    "pieces": {
+      "title": "Los trozos y su suma",
+      "y": "valor",
+      "stepPiece": "Trozo A/s: un escalón",
+      "wigglePiece": "Trozo (Bs + C)/(s² + 2s + 5): una oscilación que se apaga",
+      "sum": "su suma",
+      "plotAria": "El trozo escalón, el trozo de la oscilación que se apaga y su suma a lo largo del tiempo.",
+      "A": "Numerador del trozo en s, A",
+      "B": "La parte en s del numerador cuadrático, B",
+      "C": "La parte suelta del numerador cuadrático, C",
+      "status": "Se asienta en A = {A}: el trozo en s es el único que perdura. El numerador de la fracción grande tiene los números {top}.",
+      "describe": "A = {A}, B = {B}, C = {C}.",
+      "help": "Mueve A, B y C. Cada trozo es una fila de nuestra tabla; la suma es la respuesta completa."
     }
   },
   "plays": {
-    "pile": {
-      "ki": "ganancia integral Ki, en newtons por metro-segundo"
+    "ruleExp": {
+      "a": "ritmo de la señal a, por segundo",
+      "s": "ritmo de la sonda s, por segundo"
     },
-    "area": {
-      "ki": "ganancia integral Ki, en newtons por metro-segundo"
+    "scale": {
+      "k": "cuántas veces más alta, k",
+      "r": "ritmo de encogimiento r, por segundo",
+      "s": "ritmo de la sonda s, por segundo"
     },
-    "zeta": {
-      "kd": "ganancia derivativa Kd, en newtons-segundo por metro"
+    "square": {
+      "kp": "ganancia Kp, en newtons por metro"
     },
-    "cliff": {
-      "kp": "ganancia proporcional Kp, en newtons por metro",
-      "kd": "ganancia derivativa Kd, en newtons-segundo por metro"
-    },
-    "kick": {
-      "dr": "salto de consigna, en metros",
-      "tf": "constante de tiempo del filtro, en segundos"
-    },
-    "jitter": {
-      "tf": "constante de tiempo del filtro, en segundos"
+    "residues": {
+      "kp": "ganancia Kp, en newtons por metro",
+      "h0": "altura de la repisa, en metros"
     }
   }
 }

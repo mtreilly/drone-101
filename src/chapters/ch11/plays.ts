@@ -1,84 +1,75 @@
-import { fmt } from '../../core/i18n';
-import { DRONE } from '../../sim/drone-model';
+import { fmt, tc } from '../../core/i18n';
+import { DRONE, HOVER_THRUST as MG } from '../../sim/drone-model';
 import type { PlayModel } from '../../story/play';
-import { pid } from '../ch09/pid-tools';
-import { MISSION, missionMargins } from './mission';
-import { extraThrust, tangentThrust } from './state';
+import { kiLimit } from './pid-tools';
+import { regime, zetaPD } from './status';
 
-/** Loaded weight: the drone plus its package, N. */
-const LOADED = (DRONE.m + MISSION.pkgMass) * DRONE.g;
+const { m } = DRONE;
+/** the chapter's P gain, N/m */
+const KP = 20;
+/** the D gain in the kick and noise widgets, N·s/m */
+const KD = 4;
+/** sensor noise σ in the noise widget, m */
+const SIGMA = 0.02;
 
-/** A tune that earns six stars on every noise seed (the S1 side trip keeps its numbers secret). */
-export const SIX_STAR = pid(20, 15, 5, { dTau: 0.04 });
+/** filter times shown with as few decimals as they need: 0.005, 0.01, 0.1 */
+const seconds = (v: number): string => fmt(v, v < 0.01 ? 3 : v < 0.1 ? 2 : 1);
 
 /** Models behind Chapter 11's playable sentences (`{ t: 'play', id }` blocks); pure maths, tested in Node. */
 export const plays: Record<string, PlayModel> = {
-  // "With the package the drone weighs {w} N, so 20 N is only {ratio}× its weight. At take-off, Kp = {kp} N/m
-  //  times the 2 m error asks for {ask} N{clip}."
-  limit: {
-    inputs: { kp: { min: 1, max: 50, step: 1, value: 20, unit: 'N/m' } },
+  // "Stuck 24.5 cm low … With Ki = {ki} that adds {rate} N of push per second, enough for the whole
+  // 4.9 N after {tau} s … after {tau} s about 63 %; after about {ts} s, 98 %."
+  // Capped at Ki = 12: above that the fast pair interferes and τ ≈ Kp/Ki drifts.
+  pile: {
+    inputs: { ki: { min: 2, max: 12, step: 1, value: 10, unit: 'N/(m·s)' } },
     outputs: {
-      w: () => fmt(LOADED, 2),
-      ratio: () => fmt(DRONE.tMax / LOADED, 1),
-      ask: ({ kp }) => fmt(kp * MISSION.setpoint, 0),
-      clip: ({ kp }, t) => (kp * MISSION.setpoint > DRONE.tMax ? t('clipped') : ''),
+      rate: ({ ki }) => fmt((ki * MG) / KP, 2),
+      tau: ({ ki }) => fmt(KP / ki, 1),
+      ts: ({ ki }) => fmt((4 * KP) / ki, 1),
     },
   },
-  // "That six-star tune's loop gain is 1 at about {wc} rad/s. A motor lag of τm = {tm} s holds that wiggle back
-  //  by {lag}°, so the phase margin drops from 59° to {pm}°."
-  lag: {
-    inputs: { tm: { min: 0, max: 0.1, step: 0.01, value: MISSION.motorTau, unit: 's' } },
+  // "With Ki = {ki} the net red area must add up to exactly mg/Ki = {area} m·s."
+  area: {
+    inputs: { ki: { min: 2, max: 40, step: 1, value: 10, unit: 'N/(m·s)' } },
+    outputs: { area: ({ ki }) => fmt(MG / ki, 2) },
+  },
+  // "With Kp = 20 and Kd = {kd}: drag {damp} N·s/m, ζ = (c+Kd)/(2√(m Kp)) = {zeta}: {regime}."
+  zeta: {
+    inputs: { kd: { min: 0, max: 10, step: 0.5, value: 4, unit: 'N·s/m' } },
     outputs: {
-      wc: ({ tm }) => fmt(missionMargins(SIX_STAR, tm).wc, 1),
-      lag: ({ tm }) => fmt(missionMargins(SIX_STAR, tm).lag, 0),
-      pm: ({ tm }) => fmt(missionMargins(SIX_STAR, tm).pm, 0),
+      damp: ({ kd }) => fmt(DRONE.c + kd, 1),
+      zeta: ({ kd }) => fmt(zetaPD(KP, kd), 2),
+      regime: ({ kd }, _t, common = tc) => common(`regime.${regime(zetaPD(KP, kd))}`),
     },
   },
-  // "When a {pkg} kg package drops, the hover push must fall by {dN} N. … at Ki = {ki} N/(m·s) it has to pile
-  //  up {area} m·s of error, which at an average error of {e} cm takes about {time} s."
-  drop: {
+  // "With Kp = {kp} and Kd = {kd}, Ki must stay below (c+Kd)Kp/m = {lim}. At the edge: ω = √(Kp/m)
+  // = {w} rad/s, one swing every {T} s." The poles widget follows it (play:cliff).
+  cliff: {
     inputs: {
-      pkg: { min: 0.05, max: 0.4, step: 0.05, value: MISSION.pkgMass, unit: 'kg' },
-      ki: { min: 1, max: 50, step: 1, value: 15, unit: 'N/(m·s)' },
-      e: { min: 1, max: 20, step: 1, value: 5, unit: 'cm' },
+      kp: { min: 2, max: 40, step: 1, value: KP, unit: 'N/m' },
+      kd: { min: 0, max: 10, step: 0.5, value: 0, unit: 'N·s/m' },
     },
     outputs: {
-      dN: ({ pkg }) => fmt(pkg * DRONE.g, 2),
-      area: ({ pkg, ki }) => fmt((pkg * DRONE.g) / ki, 3),
-      time: ({ pkg, ki, e }) => fmt((pkg * DRONE.g) / ki / (e / 100), 1),
+      lim: ({ kp, kd }) => fmt(kiLimit(kp, kd), 0),
+      w: ({ kp }) => fmt(Math.sqrt(kp / m), 2),
+      T: ({ kp }) => fmt((2 * Math.PI) / Math.sqrt(kp / m), 2),
     },
   },
-  // "With Kd = {kd} N·s/m and a filter of τf = {tf} s, every 2 cm wobble of the sensor asks the motors for about
-  //  {spike} N (Kd·σ/τf)." The 1 ms noise hold makes the sim about 15 % lower at τf 0.005 ("about").
-  spike: {
+  // "A jump of {dr} m through a {tf} s filter looks like {slope} m/s; with Kd = 4 the D term asks for
+  // roughly {spike} N."
+  kick: {
     inputs: {
-      kd: { min: 0, max: 12, step: 0.5, value: 10, unit: 'N·s/m' },
-      tf: { min: 0.005, max: 0.2, step: 0.005, value: 0.005, digits: 3, unit: 's' },
+      dr: { min: 0.1, max: 1, step: 0.1, value: 0.5, unit: 'm' },
+      tf: { min: 0.005, max: 0.05, step: 0.005, value: 0.01, values: [0.005, 0.01, 0.02, 0.05], unit: 's', format: seconds },
     },
     outputs: {
-      spike: ({ kd, tf }) => {
-        const s = (kd * MISSION.noiseStd) / tf;
-        return fmt(s, s >= 10 ? 0 : 1);
-      },
+      slope: ({ dr, tf }) => fmt(dr / tf, 0),
+      spike: ({ dr, tf }) => fmt((KD * dr) / tf, 0),
     },
   },
-  // "A steady push of {F} N against a P gain of Kp = {kp} N/m moves the drone by F/Kp = {dev} cm, once a little
-  //  D has let it settle."
-  gust: {
-    inputs: {
-      F: { min: 0.5, max: 3, step: 0.5, value: -MISSION.gust.force, unit: 'N' },
-      kp: { min: 5, max: 50, step: 1, value: 20, unit: 'N/m' },
-    },
-    outputs: { dev: ({ F, kp }) => fmt((F / kp) * 100, 1) },
-  },
-  // "Hovering at w0 = 700 rad/s, spin the propellers {dw} rad/s faster: the true extra thrust is {exact} N, the
-  //  tangent says {lin} N, {err} too little." (T = k w², tangent at the hover)
-  linear: {
-    inputs: { dw: { min: 10, max: 300, step: 10, value: 50, unit: 'rad/s' } },
-    outputs: {
-      exact: ({ dw }) => fmt(extraThrust(dw), 2),
-      lin: ({ dw }) => fmt(tangentThrust(dw), 2),
-      err: ({ dw }, t) => t('pct', { v: fmt((100 * (extraThrust(dw) - tangentThrust(dw))) / extraThrust(dw), 1) }),
-    },
+  // "Through a filter of τf = {tf} s, Kd = 4 turns σ = 2 cm into about Kd σ/τf = {d} N of jitter."
+  jitter: {
+    inputs: { tf: { min: 0.005, max: 0.2, step: 0.005, value: 0.1, values: [0.005, 0.01, 0.02, 0.05, 0.1, 0.2], unit: 's', format: seconds } },
+    outputs: { d: ({ tf }) => fmt((KD * SIGMA) / tf, 1) },
   },
 };

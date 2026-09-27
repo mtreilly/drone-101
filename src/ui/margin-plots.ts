@@ -19,7 +19,7 @@ export interface MarginPlotOptions {
 /**
  * Bode plots of an open loop with both margins drawn as distances to the cliff: an arrow from the
  * loop gain at the −180° speed up to gain 1 (× gain margin), and one from the phase at the
- * gain-of-1 speed down to −180° (phase margin). Shared by Chapter 10's shower loops and Chapter
+ * gain-of-1 speed down to −180° (phase margin). Shared by Chapter 12's shower loops and Chapter
  * 11's drone loop. `withGain: false` draws the phase plot only. Strings from the widget's own
  * subtree: w, gain, phase, loop, gainAria, phaseAria, one, cliff, atCross, gm.
  */

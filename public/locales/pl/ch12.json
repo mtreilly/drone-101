@@ -1,0 +1,750 @@
+{
+  "kicker": "Rozdział 12",
+  "title": "Powrót pod prysznic",
+  "question": "Dlaczego oscylowaliśmy i jak blisko krawędzi jesteśmy?",
+  "sections": [
+    {
+      "id": "again",
+      "title": "Nowe spojrzenie na prysznic",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Podłączyłam nasz dronowy PID do prysznica (ta sama żwawość, tylko przeliczona na jednostki kurka). Huśtało go: gorąco, zimno, gorąco… zupełnie jak Mikę w rozdziale 0. Dron nigdy tak nie robił!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Dron nie ma dużego opóźnienia. Prysznic ma 2,5 sekundy rury. Wreszcie ustalmy, co właściwie *robi* opóźnienie."
+        },
+        {
+          "t": "p",
+          "text": "Prysznic ma dwie powolne części: **rurę**, czyste opóźnienie 2,5 s, oraz **wygładzacz**, czyli nagrzewające się słuchawkę i ścianki rury, ze stałą czasową z rozdziału 3, $\\tau = 1$ s (po 1 s zamyka 63 % różnicy do nowej temperatury)."
+        },
+        {
+          "t": "p",
+          "text": "Najpierw wyznanie w sprawie „zwykłej ręki” z rozdziału 0. Kręciła kurkiem z **prędkością** proporcjonalną do tego, jak bardzo woda odbiegała od celu: prędkość kurka $= k\\cdot\\err{e}$, gdzie $k = 0{,}8\\,\\%$ zakresu kurka na sekundę na każdy °C. Prędkość proporcjonalna do uchybu oznacza, że *położenie* kurka to stos dawnego uchybu. To **regulator I**, z $K_i = k$."
+        },
+        {
+          "t": "note",
+          "text": "W obliczeniach zakres kurka wynosi od 0 do 1, więc 0,8 % tego zakresu to 0,008 jednostki kurka. Poniższy wzór pętli używa 0,008; suwaki pokazują 0,8 %. Pilnuj jednostek przy liczbie."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Chwila, czyli w rozdziale 0 byłam regulatorem PID? No, regulatorem I. Nadgorliwym."
+        }
+      ]
+    },
+    {
+      "id": "lag",
+      "title": "Opóźnienie to przesunięcie w kołysaniu",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "neutral",
+          "text": "Dalej uważam, że opóźnienie tylko wszystko *spowalnia*. Nie powinno móc niczego zdestabilizować."
+        },
+        {
+          "t": "p",
+          "text": "Najpierw oddzielmy **czyste opóźnienie** rury od reszty. Wyobraź sobie falę sinusoidalną, która przechodzi od wejścia rury do słuchawki bez wygładzania: na wyjściu ma ten sam kształt, tylko pojawia się 2,5 s później. Jak duże to opóźnienie *w porównaniu z jednym pełnym wahnięciem*?"
+        },
+        {
+          "t": "widget",
+          "id": "phase"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Chwila. Przy wahnięciu co 5 sekund gorąca woda przychodzi dokładnie wtedy, gdy kurek prosi o zimną. To nie jest *wolniej*. To jest *na odwrót*."
+        },
+        {
+          "t": "p",
+          "text": "Opóźnienie rury nadal wynosi 2,5 s, ale wywołane nim **opóźnienie fazowe** zależy od szybkości wahań. Oznaczmy kąt opóźnienia przez $\\phi$, a samo opóźnienie przez $L$. Jeśli jedno wahnięcie trwa $T$ sekund (tutaj $T$ to czas, nie temperatura), częstość kołowa wynosi $\\omega=2\\pi/T$ radianów na sekundę. Dodatnie opóźnienie oznacza, że wyjście wlecze się za wejściem. Inżynierowie zapisują opóźnienie jako kąt ujemny, dlatego wykresy poniżej idą w dół."
+        },
+        {
+          "t": "p",
+          "text": "Jedno całe wahnięcie to jeden pełny obrót wirującej strzałki z rozdziału 5: 360°, czyli 2π radianów. Liczy się więc to, **jaki ułamek wahnięcia** obejmuje opóźnienie: $L/T$."
+        },
+        {
+          "t": "math",
+          "tex": "\\phi = \\underbrace{\\frac{L}{T}}_{\\text{ułamek wahnięcia}}\\cdot 360^\\circ = \\omega L \\text{ radianów},\\qquad \\omega = \\frac{2\\pi}{T}"
+        },
+        {
+          "t": "play",
+          "id": "delaylag",
+          "text": "Opóźnienie {scrub|L|dis} s przy wahnięciu powtarzającym się co {scrub|T} s obejmuje {calc|frac} wahnięcia, więc wyjście jest spóźnione o {calc|deg}°, czyli {calc|rad} radianu."
+        },
+        {
+          "t": "p",
+          "text": "Przy wahnięciu co 5 sekund 2,5 s to pół wahnięcia: 180°. W tym modelu czystego opóźnienia każdy szczyt na wyjściu wypada naprzeciw doliny na wejściu. Wygładzacz prysznica dodatkowo zmniejsza szybkie wahania; zaraz go dodamy."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "Czyli te same 2,5 s to lekkie szturchnięcie dla leniwego wahnięcia i pełne odwrócenie dla szybkiego. Rura się nie zmienia. Zmienia się wahnięcie!"
+        },
+        {
+          "t": "note",
+          "text": "To wirująca strzałka z rozdziału 5. Opóźnienie strzałki o $L$ daje $e^{i\\omega(t-L)} = e^{-i\\omega L}\\,e^{i\\omega t}$: ta sama strzałka, obrócona wstecz o kąt $\\omega L$."
+        },
+        {
+          "t": "callout",
+          "title": "Sonda widzi opóźnienie",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Sonda z rozdziału 8 daje ten sam czynnik dla **dowolnego** sygnału, nie tylko dla wirującej strzałki. Sygnał, który przychodzi $L$ sekund później, zaczyna zbierać pole $L$ sekund później, a do tego czasu sonda zmalała już o czynnik $e^{-sL}$. Zanim sygnał przyjdzie, jest zerem, więc podstaw $u = t - L$:"
+            },
+            {
+              "t": "math",
+              "tex": "\\int_0^\\infty f(t-L)\\,e^{-st}\\,dt = \\int_0^\\infty f(u)\\,e^{-s(u+L)}\\,du = e^{-sL}\\,F(s)"
+            },
+            {
+              "t": "p",
+              "text": "Czyste opóźnienie mnoży więc każdą transformatę przez $e^{-sL}$. To jego transmitancja, a na prostej $s = i\\omega$ to dokładnie obrót wstecz o $\\omega L$ opisany wyżej."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Ale $e^{-sL}$ nie jest ilorazem wielomianów. Gdzie są jego bieguny?"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "think",
+              "text": "Nigdzie, gdzie dałoby się je wypisać. Włóż je do pętli, a $1 + C\\,P = 0$ ma nieskończenie wiele rozwiązań. Dlatego ten rozdział przestaje rysować mapy biegunów i zamiast tego mierzy wahania."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bode",
+      "title": "Mierzymy prysznic, wahnięcie po wahnięciu",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Dodajmy teraz do opóźnienia rury wygładzacz. Słuchawka i ścianki rury potrzebują czasu, żeby się nagrzać, więc cały prysznic zarówno opóźnia, jak i wygładza zmiany ustawienia kurka. Plan jest taki: poruszaj kurkiem w jednym rytmie, poczekaj na ustalone wahania i zmierz dwie liczby:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Wzmocnienie** (to samo słowo co wzmocnienie regulatora: wielkość na wyjściu ÷ wielkość na wejściu): jak duże jest wahanie temperatury w porównaniu z wahaniem mieszanki wody, o które prosiliśmy.",
+            "**Faza:** jak bardzo jest spóźnione, wyrażone jako kąt: jego ułamek całego wahnięcia razy 360°."
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Każdy pomiar stawia kropkę na dwóch wykresach. Zmierz co najmniej pięć prędkości, powolnych i szybkich."
+        },
+        {
+          "t": "widget",
+          "id": "bode"
+        },
+        {
+          "t": "callout",
+          "title": "Ściśnięta linijka",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Na tych wykresach każde ×10 to jeden równy krok wzdłuż osi: od 0,1 do 1 zajmuje tyle miejsca co od 1 do 10. Połowa drogi między 0,1 a 1 to około 0,3, a nie 0,55. Linijka jest ściśnięta (w podręcznikach to **skala logarytmiczna**), żeby wahnięcie trwające 100 sekund i takie trwające 3 sekundy zmieściły się na jednym wykresie. Spójrz na tej linijce na wzmocnienie wygładzacza: płaskie dla powolnych wahań, a dla szybkich zjeżdża w dół prawie prostą linią, z zakrętem w pobliżu $\\omega = 1/\\tau$."
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "excited",
+              "text": "Równe kroki to równe *razy*, a nie równe *plusy*. Jak oktawy na pianinie!"
+            },
+            {
+              "t": "p",
+              "text": "Ściśnięta linijka ma drugi dar: na niej **mnożenie staje się dodawaniem**. ×10 to zawsze jeden krok w górę, niezależnie od tego, skąd zaczynasz, a ×0,1 jeden krok w dół. Dlatego oś *wzmocnienia* też jest ściśnięta. W pętli wzmocnienia się mnożą (ręka × wygładzacz × rura), więc na tej linijce ich wysokości po prostu się dodają, tak jak ich opóźnienia fazowe. To logarytm z rozdziału 4 w akcji: $\\ln(a\\,b) = \\ln a + \\ln b$."
+            },
+            {
+              "t": "note",
+              "text": "Inżynierowie często zapisują wzmocnienia w **decybelach** (dB): 20 × logarytm dziesiętny wzmocnienia, więc ×10 to +20 dB, ×1 to 0 dB, a ×0,1 to −20 dB. Ta sama ściśnięta linijka, inne podpisy. My zostajemy przy zwykłym ×."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Wygładzacz zmniejsza szybkie wahania, a rura nadal dodaje opóźnienie fazowe. Wykresy wzmocnienia i fazy w zależności od szybkości wahań tworzą **charakterystyki Bodego**. Razem opisują **charakterystykę częstotliwościową** prysznica: jak traktuje każdą prędkość wahań. Tutaj wejściem jest **temperatura zmieszanej wody**, więc powolne wahania mają wzmocnienie 1. Gdyby wejściem było ustawienie kurka, wzmocnienie byłoby 45 razy większe. Żeby dostać charakterystykę częstotliwościową ze wzoru, wstaw $s = i\\omega$: ten sam trik, który znalazł krawędź w rozdziale 11. (Działa to, bo sam prysznic jest stabilny, więc jego wahania ustalają się w równym rytmie, który możemy zmierzyć.)"
+        },
+        {
+          "t": "callout",
+          "title": "Co wygładzacz robi z wirującą strzałką",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Znowu trik z rozdziału 4: zgadnij, że odpowiedź to ta sama wirująca strzałka, tylko o innej długości i pod innym kątem."
+            },
+            {
+              "t": "math",
+              "tex": "\\tau\\,\\dot y + y = u,\\quad u = e^{i\\omega t},\\ y = Y\\,e^{i\\omega t} \\;\\Rightarrow\\; (1 + i\\omega\\tau)\\,Y = 1 \\;\\Rightarrow\\; Y = \\frac{1}{1+i\\omega\\tau}"
+            },
+            {
+              "t": "p",
+              "text": "Wstaw wirującą strzałkę $e^{i\\omega t}$ do reguły wygładzacza, a strzałka $Y$ musi spełniać $(1 + i\\omega\\tau)\\,Y = 1$. Strzałki z rozdziału 7: $1 + i\\omega\\tau$ ma długość $\\sqrt{1+\\omega^2\\tau^2}$ i jest skierowana w górę pod kątem $\\arctan(\\omega\\tau)$. Dzielenie przez nią skraca o tę długość i obraca wstecz o ten kąt. Powolne wahania prawie tego nie zauważają. Szybkie zostają zgniecione i spóźniają się coraz bliżej ćwierć obrotu, ale nigdy więcej."
+            },
+            {
+              "t": "play",
+              "id": "smoother",
+              "text": "Przy ω = {scrub|w} rad/s wygładzacz (τ = 1 s) zostawia {calc|g} wahnięcia i opóźnia je o {calc|lag}°."
+            }
+          ]
+        },
+        {
+          "t": "math",
+          "tex": "G(i\\omega) = \\frac{e^{-i\\omega L}}{1 + i\\omega\\tau}, \\qquad |G| = \\frac{1}{\\sqrt{1+\\omega^2\\tau^2}}, \\qquad \\angle G = -\\arctan(\\omega\\tau) - \\omega L"
+        },
+        {
+          "t": "play",
+          "id": "total",
+          "text": "Przy ω = {scrub|w} rad/s rura opóźnia o {calc|pipe}°, a wygładzacz o {calc|lag}°: razem {calc|total}°. {calc|verdict}"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Mam! W okolicy 0,95 rad/s sam prysznic odwraca wahnięcie do góry nogami. Zapamiętajcie tę prędkość."
+        },
+        {
+          "t": "note",
+          "text": "Jedna uczciwa podpowiedź: pojedynczy pomiar nie odróżni przesunięcia 90° od 450° (fale wyglądają tak samo). Dodatkowe pełne cykle liczymy, podążając za krzywą od powolnych do szybkich wahań, jak przy śledzeniu jednego grzbietu fali przez rurę."
+        }
+      ]
+    },
+    {
+      "id": "margins",
+      "title": "Jak blisko urwiska?",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Teraz zamknijmy pętlę: ręka → kurek → rura → skóra → ręka. Prześledź wahnięcie przez całe okrążenie. Dla ręki z rozdziału 0 podróż dookoła pętli to $G_{\\circ}$ (kółeczko od *pętli*, bo $L$ oznacza już opóźnienie):"
+        },
+        {
+          "t": "math",
+          "tex": "G_{\\circ}(s) = \\underbrace{\\frac{k}{s}}_{\\text{ręka}}\\cdot\\underbrace{\\frac{45\\,e^{-2{,}5s}}{s+1}}_{\\text{prysznic}}"
+        },
+        {
+          "t": "callout",
+          "title": "Stos z wahnięcia",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "think",
+              "text": "Moja ręka zbiera uchyb na stos. Co stos robi z wahnięciem?"
+            },
+            {
+              "t": "math",
+              "tex": "\\int \\cos(\\omega t)\\,dt = \\frac{\\sin(\\omega t)}{\\omega} \\qquad\\Longleftrightarrow\\qquad \\frac{1}{i\\omega}:\\ \\text{ćwierć obrotu wstecz, } \\tfrac{1}{\\omega}\\text{ wielkości}"
+            },
+            {
+              "t": "p",
+              "text": "Pole pod cosinusem to sinus, spóźniony o ćwierć wahnięcia: 90° opóźnienia przy *każdej* prędkości. A przy powolnych wahaniach stos jest większy, bo każdy garb trwa dłużej, zanim się zniesie: wielkość zachowuje się jak $1/\\omega$. Rozdział 5 mówił, że prędkość to $i\\omega$ razy położenie. Zbieranie na stos to odwrotność: dzielenie przez $i\\omega$. To właśnie $k/s$ w pętli."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Sprzężenie zwrotne odejmuje (uchyb = cel − temperatura). To ×(−1), pół obrotu z rozdziału 5, więc fala odwraca się raz. Jeśli podróż dookoła pętli *dodatkowo* opóźnia ją dokładnie o 180°, oba odwrócenia się znoszą i każda korekta przychodzi **idealnie w rytm** z wahaniem, jak pchanie huśtawki na placu zabaw w samą porę. Jeśli pętla oddaje falę w pełnej wielkości (wzmocnienie 1), huśtanie samo się podtrzymuje; przy wzmocnieniu większym niż 1 rośnie. To znowu $1 + C\\,P = 0$ z rozdziału 10, na prostej $s = i\\omega$: okrążenie, które wraca odwrócone i w pełnej wielkości, to $G_{\\circ}(i\\omega) = -1$."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "W tej prostej pętli prysznica faza przechodzi przez −180° przy jednej istotnej prędkości wahań. Znajdź ją na wykresie fazy, a potem odczytaj wzmocnienie pętli przy tej samej prędkości. Czy jest mniejsze, czy większe od 1?"
+        },
+        {
+          "t": "play",
+          "id": "handloop",
+          "text": "Przy ω = {scrub|w} rad/s stos ręki opóźnia o 90°, wygładzacz o {calc|lag}°, rura o {calc|pipe}°: razem {calc|total}°. Pętla zwykłej ręki oddaje tam wahanie pomnożone przez {calc|g}."
+        },
+        {
+          "t": "p",
+          "text": "Przesuwaj, aż suma przekroczy 180°, między 0,45 a 0,46 rad/s. W samym punkcie przejścia, około 0,457 rad/s, wahanie wraca pomnożone przez 0,72, więc ręka mogłaby być około 1 ÷ 0,72 ≈ 1,4 raza mocniejsza, zanim dojdzie do krawędzi."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Zapas wzmocnienia",
+              "def": "Ile razy można pomnożyć wzmocnienie regulatora, zanim wzmocnienie pętli przy prędkości −180° dojdzie do 1. Poniżej 1 = za urwiskiem."
+            },
+            {
+              "term": "Zapas fazy",
+              "def": "Przy prędkości, przy której wzmocnienie pętli wynosi dokładnie 1: ile *dodatkowego* opóźnienia trzeba, żeby dojść do −180°. Więcej znaczy bezpieczniej; 45°–60° to częsty cel (dygresja poniżej mówi dlaczego)."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "Zapas fazy to tłumienie w przebraniu",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "think",
+              "text": "Dlaczego 45° do 60°? Kto to wybrał?"
+            },
+            {
+              "t": "p",
+              "text": "W prostych pętlach z rozdziału 7 zapas fazy i współczynnik tłumienia idą w parze. Mniej więcej 43° odpowiada ζ = 0,4 (25 % przeregulowania), 52° odpowiada ζ = 0,5 (16 %), a 59° odpowiada ζ = 0,6 (poniżej 10 %). Te pary są dokładne dla najprostszej pętli z rozdziału 7, $\\omega_n^2/\\big(s(s+2\\zeta\\omega_n)\\big)$. Zapas 45°–60° oznacza więc ζ ≈ 0,4–0,6: więcej podskakiwania niż przy 0,7–1 z rozdziału 7. Mimo to jest to częsty cel, bo zapas to także bezpieczna odległość od urwiska (na ile model może się mylić), a nie tylko obietnica co do przeregulowania. Gdy w pętli jest rura, to dobra wskazówka, a nie ścisłe prawo."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Dla naszego prysznica faza $G_{\\circ}$ dochodzi do −180° przy $\\omega \\approx 0{,}457$ rad/s, czyli przy okresie wahań około **13,8 s**. Zwykła ręka ($k = 0{,}008$) ma zapas wzmocnienia tylko około **1,4** i zapas fazy około 22° (tam, gdzie jej wzmocnienie pętli wynosi 1, przy 0,34 rad/s, faza wynosi −158°). Blisko krawędzi! Mocniejsza ręka podwaja wzmocnienie: 1,4 ÷ 2 = 0,7, **za urwiskiem**. Właśnie dlatego nigdy się nie uspokajała."
+        },
+        {
+          "t": "predict",
+          "id": "ch10-delay",
+          "gate": true,
+          "q": "Załóżmy, że rura byłaby dwa razy dłuższa (opóźnienie 5 s). Co stanie się z największym wzmocnieniem ręki, przy którym układ jest jeszcze stabilny?",
+          "options": [
+            {
+              "text": "**Wzrośnie**: możesz reagować mocniej, bo masz więcej czasu",
+              "why": "Więcej czasu na reakcję brzmi nieźle, ale reagujesz na *starsze* wiadomości. Przesunięcie rośnie przy każdej prędkości."
+            },
+            {
+              "text": "**Zmaleje**: musisz reagować łagodniej",
+              "correct": true,
+              "why": "Faza dochodzi do −180° przy wolniejszym wahaniu, a przy małych prędkościach stos ręki ($k/s$) jest duży. Wzmocnienie pętli jest tam większe, więc $k$ musi zmaleć: z około 1,12 do 0,60 %/(°C·s)."
+            },
+            {
+              "text": "Zostanie takie samo: opóźnienie zmienia czas, a nie wzmocnienie",
+              "why": "To prawda, że opóźnienie nie zmienia wielkości fali, ale zmienia to, *która* prędkość dochodzi do −180°, a tam wzmocnienie jest inne."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "margins"
+        },
+        {
+          "t": "play",
+          "id": "double",
+          "text": "Przy rurze {scrub|L|dis} s krawędź ręki prędkościowej to k = {calc|k} %/(°C·s), a na krawędzi huśta się co {calc|T} s."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "Dwa razy dłuższa rura, mniej więcej o połowę słabsza ręka. A wahania na krawędzi też robią się wolniejsze: prawie 24 sekundy!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Dobra, odszczekuję. Opóźnienie nie tylko wszystko spowalnia: zjada zapas fazy, a zapas fazy to jedyne, co dzieli cię od oscylacji."
+        }
+      ]
+    },
+    {
+      "id": "replay",
+      "title": "Twój prysznic z rozdziału 0, wyjaśniony",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Oto twój własny przebieg z rozdziału 0. Jeśli twoje wahania były blisko krawędzi, ich okres powinien być bliski temu, co przewiduje pętla. Jest pewien haczyk: nie wszyscy ludzie są tym samym rodzajem regulatora."
+        },
+        {
+          "t": "widget",
+          "id": "replay"
+        },
+        {
+          "t": "p",
+          "text": "**Ręka prędkościowa** (kręci kurkiem, dopóki woda jest nie taka) to regulator I: jej krawędź to wahania co 13,8 s. **Ręka położeniowa** („jest za gorąco, ustaw kurek *tutaj*”) działa jak regulator P: $G_{\\circ}(s) = 45K\\,e^{-2{,}5s}/(s+1)$. Ręka położeniowa nie ma stosu, więc nie ma własnych 90°: sama rura i wygładzacz muszą dojść do 180°, a to dzieje się przy szybszym wahnięciu, $\\omega \\approx 0{,}95$ rad/s (prędkość „do góry nogami” June). To daje wahania co **6,6 s**, dla każdego $K$ powyżej około 0,031 kurka na °C. Większość ludzi to mieszanka. (Zwykła robotyczna ręka waha się nieco wolniej niż co 13,8 s, mniej więcej co 15,5 s, bo siedzi tuż przed krawędzią; wahania mocniejszej ręki, mniej więcej co 11,6 s, są spłaszczone przez kurek dochodzący do oporu.)"
+        },
+        {
+          "t": "play",
+          "id": "pgain",
+          "text": "Ręka położeniowa z K = {scrub|K|eff} kurka na °C: przy prędkości −180° (0,95 rad/s) jej pętla oddaje wahanie pomnożone przez {calc|g}. {calc|verdict}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Czyli kiedy szarpałam kurek prosto w jedno miejsce, byłam ręką położeniową. Moje sześciosekundowe wahania to była rura i wygładzacz, a nie niezdarne palce."
+        }
+      ]
+    },
+    {
+      "id": "design",
+      "title": "Zaprojektuj automatyczny prysznic",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Teraz pobijmy własne ręce. Robot używa PI: **P reaguje na bieżący uchyb temperatury**, a **I pamięta nagromadzony uchyb**. Dzięki temu kurek reaguje szybko, a I znajduje właściwe trwałe położenie."
+        },
+        {
+          "t": "note",
+          "text": "Cel: **zapas fazy powyżej 45°** oraz **10 sekund w pasie komfortu, zaczynające się przed 12 s**. Liczby na suwakach to procenty pełnego zakresu kurka: $K_p$ w % na °C bieżącego uchybu, $K_i$ w % na °C-sekundę nagromadzonego uchybu. Równania pętli używają ułamka zakresu kurka, więc podziel wyświetlone liczby przez 100."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Proste. Dam duże wzmocnienia, jak w dronie: szybko i żwawo. Już są ustawione. Patrzcie!"
+        },
+        {
+          "t": "widget",
+          "id": "designer"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "…huśta się, gorąco–zimno–gorąco, co 6 sekund, jak ręka położeniowa w rozdziale 0. Duże wzmocnienia przesunęły prędkość wzmocnienia 1 za prędkość −180°. Zero zapasu fazy."
+        },
+        {
+          "t": "callout",
+          "title": "Na papierze 10 s, pod prysznicem 6 s",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Wzmocnienia June mają $K_i/K_p = 1$ na sekundę, czyli dokładnie $1/\\tau$. Zero regulatora PI leży na biegunie wygładzacza i go skraca, zostawiając $2{,}25\\,e^{-2{,}5s}/s$. Na papierze ta pętla dochodzi do −180° przy $\\omega = \\pi/5$, czyli wahanie co 10 s. Ale jej pętla jest daleko za krawędzią, więc kurek łomocze od oporu do oporu, a te łomoczące wahania przychodzą mniej więcej co 6,3 s: blisko 6,6 s ręki położeniowej."
+            }
+          ]
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Dron znosił duże wzmocnienia, bo prawie nie miał opóźnienia. Tutaj **odporny** znaczy łagodny: zostaw zapas na opóźnienie. Spróbuj moich łagodnych wzmocnień, mniej więcej $K_p \\approx 1$ i $K_i \\approx 0{,}6$."
+        },
+        {
+          "t": "p",
+          "text": "P reaguje na *teraz*, I na stos. Dodanie odrobiny *teraz* rusza kurkiem odrobinę wcześniej, a to oddaje fazę: **wyprzedzenie fazowe**, około 37° przy dawnej prędkości −180° z wzmocnieniami Theo."
+        },
+        {
+          "t": "p",
+          "text": "PI z dobrym zapasem osiąga komfort w około 9,4 sekundy, bez powtarzających się dużych wahań. To lepiej niż zwykła ręka (która przez większą część minuty się huśtała, zanim się uspokoiła) i niż większość ludzi. Fizyki jednak nie pobije: nic nie zareaguje na wodę, która jeszcze nie dopłynęła. Inżynierowie mają co prawda trik na długie opóźnienia, **predyktor Smitha**, który w środku regulatora uruchamia małą symulację rury. Ale to opowieść na inny zeszyt."
+        },
+        {
+          "t": "p",
+          "text": "Prawdziwa lekcja to odporność. Twój model prysznica nigdy nie jest idealny: rura może być dłuższa, grzałka słabsza. Zapas mówi, jak bardzo model może się mylić, liczbą, którą da się poczuć. Zapas fazy (w radianach) podzielony przez prędkość wzmocnienia 1 to **zapas opóźnienia**: ile sekund dodatkowej rury pętla wytrzyma."
+        },
+        {
+          "t": "play",
+          "id": "delaymargin",
+          "text": "Przy $K_p$ = {scrub|kp|eff} %/°C i $K_i$ = {scrub|ki|eff} %/(°C·s) {calc|verdict}"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "Zwykła ręka wytrzymuje tylko około 1,1 s dodatkowej rury. Mój łagodny robot wytrzymuje 3,5 s. To właśnie znaczy odporny."
+        },
+        {
+          "t": "callout",
+          "title": "Krótsza rura czy szybsza grzałka?",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "excited",
+              "text": "A nie możemy po prostu kupić szybszej grzałki?"
+            },
+            {
+              "t": "p",
+              "text": "Skrócenie o połowę czasu wygładzania (τ = 0,5 s) podnosi krawędź ręki prędkościowej tylko z 1,12 do 1,21 %/(°C·s). Skrócenie o połowę rury (1,25 s) podnosi ją do 2,06. Dla ręki położeniowej szybsza grzałka jest nawet *gorsza*: jej krawędź spada z 0,031 do 0,025 kurka na °C, bo wygładzacz po cichu zmniejszał szybkie wahania. Wrogiem jest opóźnienie, a nie ociężałość."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "Jak robot naprawdę kręci kurkiem",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "W kodzie robota PI jest zapisane jako **prędkość** kurka: I porusza nim dalej, dopóki jest uchyb, a P reaguje na *zmianę* uchybu. Na początku P daje też pierwszy ruch zależny od bieżącego uchybu. Odpowiada to regule położenia, chyba że kurek dojdzie do ogranicznika."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wrap",
+      "title": "Co teraz rozumiemy",
+      "blocks": [
+        {
+          "t": "recap",
+          "items": [
+            "Opóźnienie $L$ przesuwa wahnięcie o $\\omega L$: nic dla powolnych wahań, dużo dla szybkich.",
+            "Stos (I) opóźnia każde wahnięcie o 90°; wygładzacz o najwyżej 90°; rura o $\\omega L$, bez ograniczenia.",
+            "Podawanie sinusoid i mierzenie wzmocnienia i fazy daje **charakterystykę częstotliwościową**; narysowana to **charakterystyki Bodego**, i to po prostu $G(i\\omega)$.",
+            "W tej prostej pętli prysznica trwałe wahania zaczynają się, gdy faza pętli osiąga −180° przy wzmocnieniu 1; większe wzmocnienie powiększa wahania, aż zadziałają ograniczenia.",
+            "**Zapas wzmocnienia i zapas fazy** mierzą odległość od tego urwiska. Dłuższe opóźnienie to mniejszy zapas, więc potrzeba łagodniejszego sterowania.",
+            "Nasze wahania z rozdziału 0 to był regulator (my) ze zbyt małym zapasem."
+          ]
+        },
+        {
+          "t": "quiz",
+          "items": [
+            {
+              "id": "ch10-q1",
+              "q": "Opóźnienie 2 s i wahanie o okresie 8 s. Ile opóźnienia fazowego dodaje opóźnienie?",
+              "options": [
+                {
+                  "text": "90°",
+                  "correct": true,
+                  "why": "2 s to ćwierć z 8 s, a ćwierć z 360° to 90°."
+                },
+                {
+                  "text": "45°",
+                  "why": "To byłoby opóźnienie 1 s. 2 s to ćwierć okresu, a nie jedna ósma."
+                },
+                {
+                  "text": "180°",
+                  "why": "To wymagałoby opóźnienia równego połowie okresu, czyli 4 s."
+                }
+              ]
+            },
+            {
+              "id": "ch10-q2b",
+              "q": "Na charakterystykach Bodego pętli faza dochodzi do −180° przy 0,5 rad/s, gdzie wzmocnienie pętli wynosi 0,25. Przy prędkości, przy której wzmocnienie pętli wynosi 1, faza wynosi −130°. Ile wynoszą zapas wzmocnienia i zapas fazy?",
+              "options": [
+                {
+                  "text": "× 4 i 50°",
+                  "correct": true,
+                  "why": "Wzmocnienie mogłoby wzrosnąć 1 ÷ 0,25 = 4 razy, zanim dojdzie do 1 przy −180°, a od −130° do −180° brakuje 50°."
+                },
+                {
+                  "text": "× 0,25 i 130°",
+                  "why": "To surowe odczyty. Zapasy to *odległości* od urwiska: 1 ÷ 0,25 oraz 180° − 130°."
+                },
+                {
+                  "text": "× 4 i 130°",
+                  "why": "Zapas wzmocnienia się zgadza, ale zapas fazy to dodatkowe opóźnienie, które można by dodać, zanim dojdzie się do −180°: 180° − 130° = 50°."
+                }
+              ]
+            },
+            {
+              "id": "ch10-q3",
+              "q": "Dlaczego dłuższa rura wymusza łagodniejszy regulator?",
+              "options": [
+                {
+                  "text": "Dodatkowe opóźnienie dochodzi do −180° przy wolniejszym wahaniu, gdzie wzmocnienie pętli jest większe, więc wzmocnienie trzeba zmniejszyć",
+                  "correct": true,
+                  "why": "Zgadza się. W ręce całkującej powolne wahania dostają największe wzmocnienie, więc urwisko się przybliża."
+                },
+                {
+                  "text": "W dłuższej rurze woda bardziej stygnie",
+                  "why": "Założyliśmy brak strat ciepła. Efekt dotyczy wyłącznie czasu."
+                },
+                {
+                  "text": "Nie wymusza: możesz reagować mocniej, bo masz więcej czasu",
+                  "why": "Nie masz więcej czasu. Masz starsze informacje. To pułapka z rozdziału 0."
+                }
+              ]
+            },
+            {
+              "id": "ch10-q4",
+              "q": "Zwykła ręka ma zapas wzmocnienia około 1,4. Co się stanie, jeśli zaczniesz reagować 1,5 raza mocniej?",
+              "options": [
+                {
+                  "text": "Wahania będą rosnąć, zamiast wygasać",
+                  "correct": true,
+                  "why": "1,5 to więcej niż zapas 1,4, więc wzmocnienie pętli przy −180° przekracza 1: za urwiskiem."
+                },
+                {
+                  "text": "Szybciej się ustali",
+                  "why": "Większe wzmocnienie pomogłoby tylko przy dużym zapasie. Przy 1,4 go nie ma."
+                },
+                {
+                  "text": "Nic się nie zmieni",
+                  "why": "Zapas wzmocnienia mierzy właśnie wzmocnienie, więc ono zdecydowanie ma znaczenie."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "map"
+        },
+        {
+          "t": "cliff",
+          "text": "Mamy już wszystkie narzędzia: sprzężenie zwrotne, PID, bieguny, zapasy. Czas na prawdziwy test: wiatr, zrzut paczki i zaszumiony czujnik. **Czy utrzymasz drona na 2 m?**"
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "phase": {
+      "title": "To samo opóźnienie 2,5 s, różne wahania",
+      "y": "wahanie",
+      "in": "czego żąda kurek",
+      "out": "co dociera, 2,5 s później",
+      "aria": "Dwie sinusoidy: wejście i ta sama fala opóźniona o 2,5 sekundy.",
+      "slider": "Okres wahań",
+      "lag": "opóźnienie fazowe",
+      "status": {
+        "small": "Malutkie przesunięcie: przy powolnych wahaniach opóźnienie prawie nie ma znaczenia.",
+        "middle": "Przesunięcie o {d}°: woda spóźnia się o {f} wahnięcia.",
+        "flipped": "Do góry nogami! Gorąca przychodzi dokładnie wtedy, gdy kurek mówi „zimna”.",
+        "full": "Ponad całe wahnięcie w tyle: znowu wygląda na zgodne w rytmie, ale jest spóźnione o pełny cykl.",
+        "over": "Przesunięcie o {d}°: spóźnienie o więcej niż całe wahnięcie."
+      },
+      "describe": "Okres wahań {p} s; opóźnienie 2,5 sekundy przesuwa je o {d} stopni.",
+      "w": "prędkość wahań ω",
+      "share": "ułamek wahnięcia"
+    },
+    "bode": {
+      "title": "Zbuduj charakterystyki Bodego, wahnięcie po wahnięciu",
+      "mix": "mieszanka, o którą prosiliśmy",
+      "head": "temperatura przy słuchawce",
+      "timeAria": "Ostatni pomiar: falująca temperatura mieszanki i temperatura przy słuchawce.",
+      "w": "prędkość wahań ω (rad/s)",
+      "gain": "wzmocnienie",
+      "phase": "faza (°)",
+      "formula": "wzór",
+      "measured": "twoje pomiary",
+      "gainAria": "Zmierzone wzmocnienie w zależności od prędkości wahań, osie logarytmiczne.",
+      "phaseAria": "Zmierzone opóźnienie fazowe w zależności od prędkości wahań.",
+      "flip": "−180°: do góry nogami",
+      "slider": "Prędkość wahań",
+      "period": "okres",
+      "measure": "Zmierz",
+      "sweep": "Zmierz 8 prędkości",
+      "clear": "Wyczyść",
+      "showFormula": "Pokaż krzywą ze wzoru (potrzeba 5 kropek)",
+      "status": {
+        "start": "Wybierz prędkość wahań i naciśnij Zmierz.",
+        "measured": "Przy ω = {w} rad/s (wahanie co {p} s): wzmocnienie {g}, faza {ph}°.",
+        "formula": "Wzór przechodzi dokładnie przez twoje kropki. Przecina −180° przy {w} rad/s: wahnięcie co {p} s wraca do góry nogami."
+      },
+      "describe": "Naniesione pomiary: {n}.",
+      "cross": "do góry nogami przy {w} rad/s",
+      "help": "Puść suwak albo zatrzymaj się na klawiszach strzałek, a zmierzy tę prędkość. Ponowny pomiar tej samej prędkości zastępuje jej kropkę."
+    },
+    "margins": {
+      "title": "Ręka i krawędź urwiska",
+      "w": "prędkość wahań ω (rad/s)",
+      "gain": "wzmocnienie pętli",
+      "phase": "faza pętli (°)",
+      "loop": "pętla ręka + prysznic",
+      "gainAria": "Charakterystyka amplitudowa Bodego pętli ręka plus prysznic z linią wzmocnienia równego jeden.",
+      "phaseAria": "Charakterystyka fazowa Bodego pętli z linią minus 180 stopni.",
+      "timeAria": "Temperatura w ciągu 60 sekund z tą ręką.",
+      "temp": "temperatura przy słuchawce",
+      "one": "wzmocnienie = 1",
+      "cliff": "−180°: urwisko",
+      "atCross": "zapas fazy",
+      "gm": "zapas wzmocnienia",
+      "pm": "zapas fazy",
+      "crit": "krawędź (największe k)",
+      "k": "Prędkość ręki k",
+      "delay": "Opóźnienie rury",
+      "status": {
+        "safe": "Spokojnie bezpiecznie: mnóstwo zapasu.",
+        "edge": "Blisko krawędzi: zapas fazy {p}°, zapas wzmocnienia × {g}. Spodziewaj się długich, leniwych wahań mniej więcej co {T} s.",
+        "over": "Za urwiskiem (zapas wzmocnienia × {g}): wahania rosną, aż kurek dojdzie do oporu."
+      },
+      "describe": "Zapas wzmocnienia {gm}, zapas fazy {pm} stopni.",
+      "w180": "prędkość −180°",
+      "period": "okres huśtania"
+    },
+    "replay": {
+      "title": "Twoje wahania z rozdziału 0",
+      "yours": "To twój własny przebieg z rozdziału 0.",
+      "robot": "Gra z rozdziału 0 jeszcze nie została rozegrana, więc to zwykła robotyczna ręka. (Zagraj i wróć!)",
+      "aria": "Temperatura z przebiegu prysznica z rozdziału 0, z mieszanką żądaną przez kurek.",
+      "temp": "temperatura przy słuchawce",
+      "mix": "czego żądał kurek",
+      "periodYours": "okres twoich wahań",
+      "periodRobot": "okres wahań robota",
+      "predSpeed": "krawędź: ręka prędkościowa",
+      "predPos": "krawędź: ręka położeniowa",
+      "verdict": {
+        "calm": "Za mało wahań, żeby je zmierzyć: cierpliwość (albo szczęście) się opłaciła!",
+        "speed": "Wahania co {p} s: to zachowanie ręki prędkościowej, regulatora I blisko krawędzi.",
+        "position": "Wahania co {p} s: to zachowanie ręki położeniowej, regulatora P blisko krawędzi.",
+        "robot": "Robotyczna ręka waha się co {p} s. To trochę wolniej niż {e} s na krawędzi, bo siedzi tuż przed nią: ręka prędkościowa (regulator I)."
+      }
+    },
+    "designer": {
+      "title": "Robotyczny prysznic: regulator PI",
+      "aria": "Temperatura w ciągu 40 sekund z regulatorem PI robota; poprzedni projekt jako duch.",
+      "temp": "temperatura przy słuchawce",
+      "mix": "czego żąda kurek",
+      "view": {
+        "aria": "Prysznic sterowany przez robota. Kurek obraca się sam.",
+        "knob": "Kurek prysznica (sterowany przez robota)",
+        "pipe": "rura (2,5 s przepływu)",
+        "head": "słuchawka",
+        "thermo": "termometr"
+      },
+      "kp": "Wzmocnienie P $K_p$",
+      "ki": "Wzmocnienie I $K_i$",
+      "presetHand": "Zwykła ręka",
+      "presetJune": "Dronowe wzmocnienia June",
+      "goal": "Cel: zapas fazy powyżej 45° i komfort (10 s bez przerwy w pasie) w ciągu 12 s. Na start ustawione są wzmocnienia June.",
+      "pm": "zapas fazy",
+      "gm": "zapas wzmocnienia",
+      "comfort": "komfort po",
+      "yours": "ty (rozdział 0)",
+      "never": "nigdy",
+      "notPlayed": "nie zagrano",
+      "status": {
+        "unstable": "Za urwiskiem (zapas wzmocnienia × {g}): niekończące się wahania, mniej więcej co {p} s.",
+        "edge": "Stabilny, ale zapas fazy to tylko {pm}°: poproszę więcej zapasu.",
+        "slow": "Bezpiecznie, ale powoli. Da się szybciej dojść do komfortu?",
+        "win": "Odporny i szybki! Ten robot bije twoje ręce z rozdziału 0.",
+        "winButYou": "Odporny i szybki! (W rozdziale 0 udało ci się szybciej. Imponujące! Ale robot nigdy się nie męczy.)",
+        "unstableSlow": "Za urwiskiem (zapas wzmocnienia × {g}): zero zapasu, niekończące się wahania."
+      },
+      "presetTheo": "Łagodne wzmocnienia Theo",
+      "w": "prędkość wahań ω (rad/s)",
+      "phase": "faza pętli (°)",
+      "loop": "pętla robot + prysznic",
+      "phaseAria": "Charakterystyka fazowa Bodego pętli robot plus prysznic, z linią minus 180 stopni i zapasem fazy.",
+      "cliff": "−180°: urwisko",
+      "atCross": "zapas fazy"
+    }
+  },
+  "plays": {
+    "delaylag": {
+      "L": "opóźnienie rury",
+      "T": "okres wahnięcia"
+    },
+    "smoother": {
+      "w": "prędkość wahań ω"
+    },
+    "total": {
+      "w": "prędkość wahań ω",
+      "before": "Jeszcze nie do góry nogami.",
+      "flip": "Do góry nogami: szczyt wychodzi jako dolina.",
+      "past": "Już za „do góry nogami”."
+    },
+    "handloop": {
+      "w": "prędkość wahań ω"
+    },
+    "pgain": {
+      "K": "siła ręki położeniowej K",
+      "dies": "Wahania wygasają.",
+      "edge": "Dokładnie na krawędzi: wahania ani nie rosną, ani nie maleją.",
+      "grows": "Wahania rosną."
+    },
+    "double": {
+      "L": "opóźnienie rury"
+    },
+    "delaymargin": {
+      "kp": "wzmocnienie P Kp",
+      "ki": "wzmocnienie I Ki",
+      "margin": "zapas fazy wynosi {pm}° przy {wc} rad/s, więc rura mogłaby się wydłużyć o {dm} s, zanim ten robot zacznie się huśtać.",
+      "none": "zapasu fazy nie ma wcale: ten robot już się huśta."
+    }
+  }
+}

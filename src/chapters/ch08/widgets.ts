@@ -1,649 +1,444 @@
-import { h, s as svg } from '../../core/dom';
+import { h } from '../../core/dom';
+import { canvasHandFont } from '../../core/font';
 import { fmt, tc, unitLabel } from '../../core/i18n';
-import { setRich, tex } from '../../core/rich-text';
-import { regionPath } from '../../math/region';
-import { stepMetrics } from '../../math/metrics';
-import { DRONE, DroneSim, defaultDroneConfig } from '../../sim/drone-model';
-import { followPlay } from '../../story/play';
+import { tex } from '../../core/rich-text';
+import { c as cx } from '../../math/complex';
+import { laplaceReal } from '../../math/laplace';
 import type { WidgetFactory } from '../../story/types';
-import { readout, segmented, slider, toggle } from '../../ui/controls';
-import { DroneView } from '../../ui/drone-view';
+import './ch08.css';
+import { PROBE_T, shadeOverlay } from './area-plot';
+import { color, withAlpha } from '../../ui/colors';
+import { onSettle, readout, segmented, slider } from '../../ui/controls';
 import { Loop } from '../../ui/loop';
 import { Plot } from '../../ui/plot';
-import { PlaneCanvas } from '../../ui/plane-canvas';
-import { SPlane, formatS } from '../../ui/s-plane';
-import { caption, mark, sample } from '../ch06/helpers';
-import './ch08.css';
-import { fallSim, fallTrace } from './fall';
-import { LIMIT_T, bestRealSettling, limitRun, pd } from './limit';
-import { LOOP_W, closest, lap, lapAngle, lapCurve, loopZeta, toCliff } from './loop';
-import {
-  CHALLENGE,
-  PLAY_T,
-  budgetRadius,
-  challengeOk,
-  challengeZone,
-  firstPush,
-  gainsFromPoles,
-  measuredMetrics,
-  noZeroResponse,
-  noZeroSlope,
-  overshootOf,
-  playgroundTrace,
-  recipeGain,
-  settleOf,
-  stateAt,
-  verdictOf,
-  zeroResponse,
-  zetaOf,
-} from './poles';
+import { iconButton, mark, nameMathOptions, sample } from '../ch07/helpers';
+import { spreadCount, unspinExtent, unspinIntegral, unspinLimit } from './tools';
 
-const { m, c } = DRONE;
+/** `osc`: the signal swings both ways, so for s ≤ a its area sloshes back and forth instead of running off. */
+type Sig = { f: (t: number) => number; F: (s: number) => number; a: number; yMin: number; yMax: number; osc?: boolean };
 
-/** 8a — G(s) maps setpoint changes to height changes around the 1 m hover. */
-const recipe: WidgetFactory = (host, ctx) => {
-  const { t } = ctx;
-  mark(host);
-  const KP = 20;
-  const T1 = 8;
-  type In = 'step' | 'pulse' | 'wave';
-  let input: In = 'step';
-  const setpoints: Record<In, (tt: number) => number> = {
-    step: () => 2,
-    pulse: (tt) => 2 - Math.exp(-2 * tt),
-    wave: (tt) => 1 + 0.5 * Math.sin(2 * tt),
-  };
-  // each input's change from the 1 m hover, in time and in s-land (Chapter 7's table)
-  const R: Record<In, string> = {
-    step: '\\frac{1}{s}',
-    pulse: '\\frac{1}{s} - \\frac{1}{s+2}',
-    wave: `\\frac{${fmt(0.5, 1)}\\cdot 2}{s^2 + 4}`,
-  };
-  const r: Record<In, string> = {
-    step: '1',
-    pulse: '1 - e^{-2t}',
-    wave: `${fmt(0.5, 1)}\\sin 2t`,
-  };
-  host.append(h('p', { class: 'w-title' }, t('title')));
-  const seg = segmented(
-    t('choose'),
-    (['step', 'pulse', 'wave'] as In[]).map((v) => ({ value: v, label: t(`in.${v}`) })),
-    input,
-    (v) => {
-      input = v;
-      run();
-    },
-  );
-  const grid = h('div', { class: 'w-grid side-r' });
-  const left = h('div');
-  const right = h('div');
-  grid.append(left, right);
-  host.append(seg.el, grid);
-  const plot = new Plot(left, {
-    x: { label: tc('plots.time'), min: 0, max: T1 },
-    y: { label: tc('plots.height'), min: 0, max: 3 },
-    series: [
-      { id: 'r', color: 'sp', label: t('input'), dash: [6, 4], width: 2 },
-      { id: 'h', color: 'out', label: t('output'), ghost: true },
-    ],
-    height: 240,
-    label: t('plotAria'),
-  }, ctx.onCleanup);
-  right.append(caption(t('droneCap')));
-  const view = new DroneView(right, { hMax: 3, width: 200 }, ctx.onCleanup);
-  const eq = h('div', { class: 'math-block' });
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
-  host.append(eq, status);
-  let hs: number[] = [];
-  let rs: number[] = [];
-  let ts: number[] = [];
-  let thr: number[] = [];
-  let playT = 0;
-  const loop = new Loop((dt) => {
-    playT += dt;
-    if (playT > T1 + 1) playT = 0;
-    const i = Math.min(ts.length - 1, Math.round((Math.min(playT, T1) / T1) * (ts.length - 1)));
-    view.update({ h: hs[i], r: rs[i], thrust: thr[i] });
-    plot.setCursor(Math.min(playT, T1));
-  }, host);
-  const run = () => {
-    plot.clear(true);
-    const sp = setpoints[input];
-    const sim = new DroneSim(defaultDroneConfig({ pid: pd(KP, 0), h0: 1, setpoint: sp }));
-    ts = [0];
-    hs = [sim.h];
-    rs = [sp(0)];
-    thr = [sim.thrust];
-    let peak = sim.h;
-    let k = 0;
-    sim.advance(T1, () => {
-      peak = Math.max(peak, sim.h);
-      if (++k % 20) return;
-      ts.push(sim.t);
-      hs.push(sim.h);
-      rs.push(sp(sim.t));
-      thr.push(sim.thrust);
-    }, 1);
-    plot.set('r', ts, rs);
-    plot.set('h', ts, hs);
-    const under = `\\substack{\\Delta\\sp{R}(s)\\ \\text{${t('changes')}} \\\\ \\Delta\\sp{r}(t) = ${r[input]}}`;
-    eq.innerHTML = tex(`\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{20}}{${fmt(0.5, 1)}s^2 + s + \\eff{20}}}_{G(s)\\ \\text{${t('same')}}} \\cdot \\underbrace{${R[input]}}_{${under}}`, true);
-    // the wave's steady output amplitude is 0.5·|G(2i)|; the steps report their measured peak
-    status.textContent = input === 'wave' ? t('status.wave', { a: fmt(0.5, 2), b: fmt(0.5 * recipeGain(2), 2) }) : t(`status.${input}`, { p: fmt(peak, 2) });
-    plot.describe(`${t(`describe.${input}`)} ${status.textContent}`);
-    playT = 0;
-    if (Loop.autoplay) loop.play();
-    else view.update({ h: hs[hs.length - 1], r: rs[rs.length - 1], thrust: thr[thr.length - 1] });
-  };
-  run();
-  return () => loop.destroy();
+/** Signals used by the probe. `a` = the abscissa of convergence (area is finite only for s > a). */
+const SIGNALS: Record<string, Sig> = {
+  step: { f: () => 1, F: (s) => 1 / s, a: 0, yMin: -0.2, yMax: 1.6 },
+  decay: { f: (t) => Math.exp(-t), F: (s) => 1 / (s + 1), a: -1, yMin: -0.2, yMax: 1.6 },
+  grow: { f: (t) => Math.exp(0.5 * t), F: (s) => 1 / (s - 0.5), a: 0.5, yMin: -0.2, yMax: 4 },
+  wiggle: { f: (t) => Math.sin(2 * t), F: (s) => 2 / (s * s + 4), a: 0, yMin: -1.3, yMax: 1.6, osc: true },
 };
 
-let zoneCache: string | null = null;
-
-/**
- * Where the ωn circle's label goes (degrees, for `SPlane.setCircle`): the first spot that stays on the
- * playground's map (σ −10…4, ω ±8) and keeps well away from both poles, which ride the circle.
- * Below the positive real axis first (the right half is otherwise empty), then above the negative
- * one; `undefined` puts it under the circle's lowest point. 195° is the budget circle's label.
- */
-function circleLabelAt(r: number, re: number, im: number): number | undefined {
-  const pole = (Math.atan2(im, re) * 180) / Math.PI;
-  const far = (a: number) => [pole, -pole].every((p) => Math.abs(((a - p + 540) % 360) - 180) > 35);
-  const room = 2.4; // label width in plane units, roughly
-  const fits = (a: number) => {
-    const x = r * Math.cos((a * Math.PI) / 180);
-    const y = r * Math.sin((a * Math.PI) / 180);
-    // anchored away from the circle: to the right of the point on the right, to the left on the left
-    const x0 = x > 0 ? x : x - room;
-    const x1 = x > 0 ? x + room : x;
-    return x0 > -10 && x1 < 4 && Math.abs(y) < 7.2;
-  };
-  // 205° is below the budget circle's label (195°): skip it when the two circles nearly meet
-  const spots = [-25, 155, 205, 135].filter((a) => a !== 205 || Math.abs(r - budgetRadius(1)) > 1);
-  return spots.find((a) => far(a) && fits(a));
+function runningAreaAt(g: (t: number) => number, tEnd: number): number {
+  const n = Math.max(20, Math.round(tEnd * 60));
+  let acc = 0;
+  for (let i = 1; i <= n; i++) {
+    const a = (tEnd * (i - 1)) / n;
+    const b = (tEnd * i) / n;
+    acc += ((b - a) * (g(a) + g(b))) / 2;
+  }
+  return acc;
 }
 
-/** 8b — the centrepiece: drag the poles, everything else follows. */
-const playground: WidgetFactory = (host, ctx) => {
+/** 8a — the probe: multiply by e^(−st), measure the area, trace F(s). */
+const probe: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
   mark(host);
-  const T1 = PLAY_T;
-  let re = -1;
-  let im = Math.sqrt(39);
+  let key = 'step';
+  let s = 1;
+  let tc0 = PROBE_T;
   host.append(h('p', { class: 'w-title' }, t('title')));
-  const grid = h('div', { class: 'w-grid two' });
-  const left = h('div');
-  const right = h('div');
-  grid.append(left, right);
-  host.append(grid);
-  const plane = new SPlane(left, {
-    reMin: -10,
-    reMax: 4,
-    imMax: 8,
-    label: t('planeAria'),
-    reLabel: t('re'),
-    imLabel: t('im'),
-    regions: true,
-    step: 0.1,
-    onChange: (p) => {
-      re = p.re;
-      im = Math.max(0, p.im);
-      pushTrail(re, im);
-      if (Math.hypot(re, im) < 0.15) {
-        re = -0.15;
-        plane.move('p', re, im);
-      }
-      update();
+  const seg = segmented(
+    t('signal'),
+    Object.keys(SIGNALS).map((k) => ({ value: k, label: t(`sig.${k}`) })),
+    key,
+    (v) => {
+      key = v;
+      trace.xs = [];
+      trace.ys = [];
+      fplot.set('trace', [], []);
+      restart();
     },
-  }, ctx.onCleanup);
-  // built-in guides (locale-aware labels): settling lines, constant-ζ rays with their overshoot
-  plane.setSettleLines([1, 2, 4]);
-  plane.setRays([0.2, 0.5, 0.7]);
-  // our own guides: the challenge zone, the 20 N budget circle, the wiggle line and the trail
-  const zone = svg('path', { class: 'challenge-zone', 'fill-rule': 'evenodd' });
-  const R20 = budgetRadius(1);
-  const budget = svg('circle', { class: 'budget', cx: plane.sx(0), cy: plane.sy(0), r: plane.sx(R20) - plane.sx(0) });
-  // its label sits just outside it, below the negative real axis (the wiggle line only lives above)
-  const ba = (195 * Math.PI) / 180;
-  const budgetLabel = svg('text', { class: 'guide-label budget-label', x: plane.sx(R20 * Math.cos(ba)) - 5, y: plane.sy(R20 * Math.sin(ba)), dy: '0.9em', 'text-anchor': 'end' }, t('budget'));
-  plane.deco.append(zone, budget, budgetLabel);
-  {
-    // keep guides inside the plane
-    const clipId = `clip-${Math.random().toString(36).slice(2, 8)}`;
-    const box = plane.svg.viewBox.baseVal;
-    plane.svg.prepend(svg('defs', null, svg('clipPath', { id: clipId }, svg('rect', { x: 0, y: 0, width: box.width, height: box.height }))));
-    plane.deco.setAttribute('clip-path', `url(#${clipId})`);
-  }
-  const wLine = svg('line', { class: 'guide wiggle' });
-  const wLabel = svg('text', { class: 'guide-label wiggle-label', 'text-anchor': 'start' });
-  // a faint trail of where the poles have just been; it fades once you let go
-  const trail = svg('polyline', { class: 'pole-trail' });
-  const trailTwin = svg('polyline', { class: 'pole-trail' });
-  plane.deco.append(wLine, wLabel, trail, trailTwin);
-  let trailPts: [number, number][] = [];
-  let trailTimer = 0;
-  function pushTrail(r: number, i: number): void {
-    trailPts.push([r, i]);
-    if (trailPts.length > 40) trailPts.shift();
-    trail.setAttribute('points', trailPts.map(([x, y]) => `${plane.sx(x)},${plane.sy(y)}`).join(' '));
-    trailTwin.setAttribute('points', trailPts.map(([x, y]) => `${plane.sx(x)},${plane.sy(-y)}`).join(' '));
-    trail.classList.add('on');
-    trailTwin.classList.add('on');
-    clearTimeout(trailTimer);
-    trailTimer = window.setTimeout(() => {
-      trail.classList.remove('on');
-      trailTwin.classList.remove('on');
-      trailPts = [];
-    }, 900);
-  }
-  plane.set([{ id: 'p', re, im, kind: 'pole', mirror: true, draggable: true }]);
-
-  const top = h('div', { class: 'pair-grid map-pair' });
-  const vbox = h('div');
-  const rbox = h('div');
-  top.append(vbox, rbox);
-  right.append(top);
-  // an unstable drone can fly out of its picture into the page; the hit stalls it and it falls (see fall.ts)
-  const view = new DroneView(vbox, { hMax: 3, width: 180, onCeiling: () => hitPage() }, ctx.onCleanup);
-  const rP = readout(t('poles'));
-  const rZ = readout(t('zeta'));
-  const rW = readout(t('wn'));
-  const rOs = readout(t('overshoot'));
-  const rTs = readout(t('settle'));
-  const rTm = readout(t('settleReal'));
-  const rKp = readout('Kp', 'eff');
-  const rKd = readout('Kd', 'eff');
-  const rPush = readout(t('push'), 'eff');
-  rbox.append(h('div', { class: 'readouts map-readouts' }, rP.el, rZ.el, rW.el, rOs.el, rTs.el, rTm.el));
-  const plot = new Plot(right, {
-    x: { label: tc('plots.time'), min: 0, max: T1 },
-    y: { label: tc('plots.height'), min: -0.5, max: 4 },
-    series: [{ id: 'h', color: 'out', label: t('response'), ghost: true }],
-    height: 210,
-    label: t('plotAria'),
-  }, ctx.onCleanup);
-  plot.setLines([{ kind: 'h', at: 2, color: 'sp', label: t('target') }]);
-  const eq = h('div', { class: 'math-block' });
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
-  const challengeStatus = h('p', { class: 'w-status', 'aria-live': 'polite' });
-  host.append(h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rKp.el, rKd.el, rPush.el)), eq, status);
-  const chal = toggle(t('challenge'), false, (v) => {
-    zone.style.display = v ? '' : 'none';
-    challengeStatus.hidden = !v;
-    if (v && !zoneCache) {
-      // worked out once, the first time the challenge is switched on (a fraction of a second)
-      zoneCache = regionPath(challengeZone(0.1), (x) => plane.sx(x), (y) => plane.sy(y));
-    }
-    if (zoneCache) zone.setAttribute('d', zoneCache);
-    update(false);
-  });
-  host.append(h('div', { class: 'w-row fix-row' }, chal.el), challengeStatus, h('p', { class: 'w-help' }, t('help')));
-  zone.style.display = 'none';
-  challengeStatus.hidden = true;
-  let trace = playgroundTrace(re, im);
-  let playT = 0;
-  // the state at the latest frame, and (after hitting the page) the stalled fall that replaces the formula
-  let now = { t: 0, h: 0, v: 0 };
-  let fall: { sim: DroneSim; t0: number; carry: number } | null = null;
-  let verdict = verdictOf(re);
-  function hitPage(): void {
-    if (fall) return;
-    fall = { sim: fallSim(now.h, now.v), t0: now.t, carry: 0 };
-    // the plot shows what really happened: the formula up to the hit, then the fall
-    const tr = fallTrace(now.h, now.v);
-    const keep = trace.xs.findIndex((x) => x > now.t);
-    const xs = [...trace.xs.slice(0, keep < 0 ? undefined : keep), ...tr.t.map((x) => now.t + x)];
-    const ys = [...trace.ys.slice(0, keep < 0 ? undefined : keep), ...tr.h];
-    plot.set('h', xs, ys);
-    status.textContent = `${t(`verdict.${verdict}`)} ${t(verdict === 'marginal' ? 'verdict.hitPageMarginal' : 'verdict.hitPage')}`;
-    status.className = 'w-status bad';
-    plot.describe(status.textContent);
-  }
-  const loop = new Loop((dt) => {
-    if (fall) {
-      fall.carry += dt;
-      const n = Math.floor(fall.carry / fall.sim.dt + 1e-9);
-      fall.carry -= n * fall.sim.dt;
-      for (let i = 0; i < n && !fall.sim.landed; i++) fall.sim.step();
-      view.update({ h: fall.sim.h, r: 2, thrust: 0, crashed: fall.sim.crashed });
-      plot.setCursor(Math.min(T1, fall.t0 + fall.sim.t));
-      // it stays where it fell until you move the poles
-      if (fall.sim.landed) loop.pause();
-      return;
-    }
-    playT += dt;
-    if (playT > T1 + 1) playT = 0;
-    const tt = Math.min(playT, T1);
-    // down on the ground from the touchdown on (the plot is cut there too), until the replay restarts
-    const st = stateAt(trace, tt, re, im);
-    now = { t: tt, h: st.h, v: st.v };
-    view.update({ h: st.h, r: 2, thrust: st.thrust, crashed: st.crashed });
-    plot.setCursor(tt);
-  }, host);
-  const svgEl = plane.svg;
-  svgEl.addEventListener('pointerdown', () => plot.clear(true));
-  let lastKey = 0;
-  svgEl.addEventListener('keydown', () => {
-    if (performance.now() - lastKey > 700) plot.clear(true);
-    lastKey = performance.now();
-  });
-  /** `restart` false: only the words change (the challenge switched), the replay keeps going */
-  function update(restart = true): void {
-    if (restart) {
-      fall = null;
-      if (Loop.autoplay && !loop.playing) loop.play();
-      trace = playgroundTrace(re, im);
-      plot.set('h', trace.xs, trace.ys);
-      playT = 0;
-    }
-    const { kp, kd } = gainsFromPoles(re, im);
-    const ts = settleOf(re);
-    const os = overshootOf(re, im);
-    const zeta = zetaOf(re, im);
-    const wn = Math.hypot(re, im);
-    const mm = measuredMetrics(re, im);
-    const push = firstPush(re, im);
-    verdict = verdictOf(re);
-    rP.set(formatS(re, im, true));
-    rZ.set(fmt(zeta, 2));
-    rW.set(fmt(wn, 2));
-    rTs.set(Number.isFinite(ts) ? `≈ ${fmt(ts, 1)} s` : t('never'));
-    rTm.set(verdict !== 'stable' ? t('never') : Number.isNaN(mm.settlingTime) ? t('notIn', { T: fmt(T1, 0) }) : `${fmt(mm.settlingTime, 2)} s`);
-    rOs.set(Number.isFinite(os) ? t('pct', { v: fmt(os, 0) }) : '∞');
-    rKp.set(`${fmt(kp, 1)} N/m`);
-    rKd.set(`${fmt(kd, 2)} N·s/m`);
-    rPush.set(`${fmt(push, 1)} N`, push > 20 ? 'bad' : '');
-    // the ωn circle through the pole (Chapter 6): every point on it has the same |p|
-    plane.setCircle(wn > 0.3 ? wn : null, t('wnCircle', { w: fmt(wn, 2) }), circleLabelAt(wn, re, im));
-    const cd = c + kd;
-    const lhs = `\\frac{\\Delta\\out{H}(s)}{\\Delta\\sp{R}(s)}`;
-    const general = `\\frac{\\eff{K_p}}{m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p}}`;
-    const numeric = `\\frac{\\eff{${fmt(kp, 1)}}}{${fmt(m, 1)}s^2 ${cd >= 0 ? '+' : '-'} ${fmt(Math.abs(cd), 2)}s + \\eff{${fmt(kp, 1)}}}`;
-    const factored = `\\frac{${fmt(kp / m, 1)}}{(s - p)(s - \\bar p)},\\quad p = ${formatS(re, im).replace('i', '\\,i')}`;
-    // wide screens: one line; narrow screens: aligned steps instead of a sideways scroll
-    eq.innerHTML = tex(
-      host.clientWidth < 760
-        ? `\\begin{aligned} ${lhs} &= ${general} \\\\[4pt] &= ${numeric} \\\\[4pt] &= ${factored} \\end{aligned}`
-        : `${lhs} = ${general} = ${numeric} = ${factored}`,
-      true,
-    );
-    const w = im;
-    wLine.setAttribute('x1', String(plane.sx(-10)));
-    wLine.setAttribute('x2', String(plane.sx(4)));
-    wLine.setAttribute('y1', String(plane.sy(w)));
-    wLine.setAttribute('y2', String(plane.sy(w)));
-    wLine.style.display = w > 0.05 ? '' : 'none';
-    // sit the label at the left edge, clear of the pole marker and axis names; high up it hangs
-    // under the line, out of the ray labels along the top edge
-    wLabel.setAttribute('x', String(plane.sx(-10) + 6));
-    // (and never inside the band the ray labels hang in along the top edge)
-    wLabel.setAttribute('y', String(w > 5.2 ? Math.max(plane.sy(w) + 16, plane.sy(8) + 62) : plane.sy(w) - 6));
-    wLabel.textContent = w > 0.05 ? t('wiggle', { T: fmt((2 * Math.PI) / w, 2) }) : '';
-    // the status tells the whole story of this replay: where it lives, the ground, odd gains, thrust
-    const words = [t(`verdict.${verdict}`)];
-    if (trace.at !== null) words.push(t('verdict.hitGround'));
-    if (kd < -1e-9) words.push(t('negKd'));
-    if (push > 20) words.push(t('pushWarn'));
-    if (!fall) {
-      status.textContent = words.join(' ');
-      status.className = `w-status${verdict === 'stable' ? ' good' : verdict === 'unstable' ? ' bad' : ''}`;
-    }
-    if (!challengeStatus.hidden) {
-      const ok = challengeOk(re, im);
-      const s = Number.isNaN(mm.settlingTime) ? '—' : fmt(mm.settlingTime, 2);
-      challengeStatus.textContent = ok ? t('chalOk', { o: fmt(mm.overshoot, 1), s }) : t('chalNo', { o: fmt(mm.overshoot, 0), s, O: fmt(CHALLENGE.os, 0), S: fmt(CHALLENGE.ts, 0) });
-      challengeStatus.className = `w-status${ok ? ' good' : ''}`;
-    }
-    plane.describe();
-    plot.describe(t('describe', { p: formatS(re, im, true), s: Number.isFinite(ts) ? fmt(ts, 1) : '∞', o: Number.isFinite(os) ? fmt(os, 0) : '∞', z: fmt(zeta, 2) }));
-    // reduced motion: no replay, so the picture pins the state at the end of the plotted window
-    // (clipped to its frame, the readout still true) and agrees with the plot's last point
-    if (!Loop.autoplay) {
-      const st = stateAt(trace, T1, re, im);
-      view.update({ h: st.h, r: 2, thrust: st.thrust, crashed: st.crashed });
-    }
-  }
-  update();
-  if (Loop.autoplay) loop.play();
-  const moveTo = (r: number, i: number) => {
-    plane.move('p', r, i);
-    re = r;
-    im = i;
-    update();
-  };
-  const offs = [
-    ctx.bus.on('predict:ch8-rhp', () => {
-      plot.clear(true);
-      moveTo(0.6, 3);
-    }),
-    // "straight up": the pair at σ = 2 moves from ±4i to ±8i, the old one stays as a ghost
-    ctx.bus.on('predict:ch8-up', () => {
-      moveTo(-2, 4);
-      plane.ghost();
-      plot.clear(true);
-      moveTo(-2, 8);
-    }),
-    // the "gains" sentence moves the poles it talks about
-    followPlay(ctx.bus, 'gains', ({ sig, w }) => {
-      plot.clear(true);
-      moveTo(-sig, w);
-    }),
-  ];
-  return () => {
-    offs.forEach((off) => off());
-    clearTimeout(trailTimer);
-    loop.destroy();
-  };
-};
-
-/** 8c — a zero: same poles, extra kick. */
-const zero: WidgetFactory = (host, ctx) => {
-  const { t } = ctx;
-  mark(host);
-  const T1 = 4;
-  let z = -3;
-  host.append(h('p', { class: 'w-title' }, t('title')));
-  const grid = h('div', { class: 'w-grid two' });
-  const left = h('div');
-  const right = h('div');
-  grid.append(left, right);
-  host.append(grid);
-  const plane = new SPlane(left, {
-    reMin: -12,
-    reMax: 2,
-    imMax: 5,
-    label: t('planeAria'),
-    reLabel: t('re'),
-    imLabel: t('im'),
-    step: 0.1,
-    onChange: (p) => {
-      z = Math.min(-0.3, p.re);
-      if (p.re > -0.3) plane.move('z', z, 0);
-      update();
-    },
-  }, ctx.onCleanup);
-  plane.set([
-    { id: 'p', re: -2, im: 3, kind: 'pole', mirror: true },
-    { id: 'z', re: z, im: 0, kind: 'zero', draggable: true, realOnly: true },
-  ]);
-  // the y-axis grows to fit the kick (a zero near 0 overshoots over 500 %), so the curve never leaves its plot
-  const plot = new Plot(right, {
-    x: { label: tc('plots.time'), min: 0, max: T1 },
-    y: { label: t('y'), min: 0, max: 2.5, autoMax: true, autoMin: true },
-    series: [
-      { id: 'ref', color: 'pencil', label: t('noZero'), dash: [6, 4], width: 2 },
-      { id: 'slope', color: 'out', label: t('slope', { g: fmt(1 / 3, 2) }), dash: [1, 5], width: 2 },
-      { id: 'y', color: 'out', label: t('withZero'), ghost: true },
-    ],
-    height: 240,
-    label: t('plotAria'),
-  }, ctx.onCleanup);
-  plot.setLines([{ kind: 'h', at: 1, color: 'sp' }]);
-  const slopeLegend = plot.el.querySelectorAll('.plot-legend-item')[1]?.lastChild ?? null;
-  const ref = sample(noZeroResponse, T1, 400);
-  plot.set('ref', ref.xs, ref.ys);
-  const rA = readout(t('osNo'));
-  const rB = readout(t('osYes'));
-  const eq = h('div', { class: 'math-block zero-eq' });
-  const note = h('p', { class: 'w-cap zero-note' });
-  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
-  right.append(h('div', { class: 'readouts' }, rA.el, rB.el), status);
-  host.append(eq, note, h('p', { class: 'w-help' }, t('help')));
-  const osNo = stepMetrics(ref.xs, ref.ys, 0, 1).overshoot;
-  rA.set(t('pct', { v: fmt(osNo, 1) }));
-  plane.svg.addEventListener('pointerdown', () => plot.clear(true));
-  const trim = (v: number) => fmt(v, Math.abs(v * 10 - Math.round(v * 10)) < 1e-9 ? (Number.isInteger(v) ? 0 : 1) : 2);
-  function update(): void {
-    const g = -1 / z;
-    const d = sample(zeroResponse(z), T1, 400);
-    plot.set('y', d.xs, d.ys);
-    // the with-zero curve is the no-zero curve plus (1/|z|) × its slope: draw that slope part
-    const sl = sample((tt) => g * noZeroSlope(tt), T1, 400);
-    plot.set('slope', sl.xs, sl.ys);
-    if (slopeLegend) slopeLegend.textContent = t('slope', { g: fmt(g, 2) });
-    const os = stepMetrics(d.xs, d.ys, 0, 1).overshoot;
-    rB.set(t('pct', { v: fmt(os, 1) }), os > osNo + 1 ? 'bad' : '');
-    const zz = trim(-z);
-    eq.innerHTML = tex(`G(s) = \\frac{13}{${zz}}\\cdot\\frac{s + ${zz}}{s^2 + 4s + 13}`, true);
-    // the words live outside the formula, so they wrap on a phone and read in the page's direction
-    setRich(note, t('note', { z: `$s = ${trim(z)}$` }));
-    status.textContent = t(z > -1.5 ? 'near' : z < -8 ? 'far' : 'mid', { g: fmt(g, 2) });
-    plot.describe(t('describe', { z: fmt(z, 2), o: fmt(os, 0) }));
-  }
-  update();
-};
-
-/** 8d — "further left is always better?" — not with real motors. */
-const limit: WidgetFactory = (host, ctx) => {
-  const { t } = ctx;
-  mark(host);
-  const T1 = LIMIT_T;
-  let sig = 2;
-  let real = true;
-  host.append(h('p', { class: 'w-title' }, t('title')));
+  );
+  nameMathOptions(seg.el);
+  host.append(seg.el);
   const grid = h('div', { class: 'w-grid two' });
   const a = h('div');
   const b = h('div');
   grid.append(a, b);
   host.append(grid);
-  const hp = new Plot(a, {
-    x: { label: tc('plots.time'), min: 0, max: T1 },
-    y: { label: tc('plots.height'), min: 0.5, max: 2.8 },
+  const plot = new Plot(a, {
+    x: { label: tc('plots.time'), min: 0, max: PROBE_T },
+    y: { label: '', min: -0.2, max: 1.6 },
     series: [
-      { id: 'ideal', color: 'pencil', label: t('ideal'), dash: [6, 4], width: 2 },
-      { id: 'real', color: 'out', label: t('real') },
+      { id: 'f', color: 'out', label: t('f') },
+      { id: 'prod', color: 'ink', label: t('product'), width: 2.6 },
+      // drawn on top: for the step the probe and the product are the same curve
+      { id: 'probe', color: 'ink3', label: t('probe'), dash: [6, 4], width: 1.8 },
     ],
-    height: 230,
-    label: t('hAria'),
+    height: 240,
+    label: t('plotAria'),
   }, ctx.onCleanup);
-  hp.setLines([{ kind: 'h', at: 2, color: 'sp' }]);
-  const tp = new Plot(b, {
-    x: { label: tc('plots.time'), min: 0, max: T1 },
-    y: { label: tc('plots.thrust'), min: -40, max: 80, extraTicks: [20] },
+  const fplot = new Plot(b, {
+    x: { label: 's', min: -1, max: 4 },
+    y: { label: 'F(s)', min: 0, max: 4 },
     series: [
-      { id: 'ideal', color: 'pencil', label: t('idealT'), dash: [6, 4], width: 2 },
-      { id: 'real', color: 'eff', label: t('realT') },
+      { id: 'formula', color: 'ink3', label: t('formula'), dash: [4, 4], width: 1.6 },
+      { id: 'trace', color: 'ink', label: t('traced'), dots: true },
     ],
-    height: 230,
-    label: t('tAria'),
+    height: 240,
+    label: t('fAria'),
   }, ctx.onCleanup);
-  // "can't pull down" sits under the 0 N line, in the band no curve reaches unless the maths goes negative
-  tp.setLines([
-    { kind: 'h', at: 20, color: 'ink3', label: t('max'), avoid: ['real', 'ideal'] },
-    { kind: 'h', at: 0, color: 'ink3', label: t('min'), labelAt: 'start', labelSide: 'below', avoid: ['real', 'ideal'] },
-  ]);
-  const rPeak = readout(t('peak'), 'eff');
-  const rTsI = readout(t('tsIdeal'));
-  const rTsR = readout(t('tsReal'));
-  const rOsR = readout(t('osReal'));
+  const trace = { xs: [] as number[], ys: [] as number[] };
+  const rArea = readout(t('area'));
+  const rTotal = readout(t('total'));
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
-  const update = () => {
-    const I = limitRun(sig, false);
-    const R = limitRun(sig, real);
-    hp.set('ideal', I.xs, I.hs);
-    hp.set('real', R.xs, R.hs);
-    tp.set('ideal', I.xs, I.th);
-    tp.set('real', R.xs, R.th);
-    const peak = Math.max(...I.th);
-    rPeak.set(`${fmt(peak, 0)} N`, peak > 20 ? 'bad' : 'good');
-    rTsI.set(Number.isNaN(I.m.settlingTime) ? '—' : `${fmt(I.m.settlingTime, 2)} s`);
-    rTsR.set(Number.isNaN(R.m.settlingTime) ? t('notYet') : `${fmt(R.m.settlingTime, 2)} s`);
-    rOsR.set(t('pct', { v: fmt(R.m.overshoot, 1) }), R.m.overshoot > I.m.overshoot + 1 ? 'bad' : '');
-    const best = bestRealSettling();
-    status.textContent =
-      real && peak > 20
-        ? t('capped', { p: fmt(peak, 0), s: fmt(R.m.settlingTime, 2), b: fmt(best.ts, 2) })
-        : peak > 20
-          ? t('fantasy', { p: fmt(peak, 0) })
-          : t('fine');
-    status.className = `w-status${real && peak > 20 ? ' bad' : ''}`;
-    hp.describe(status.textContent);
+  const product = () => {
+    const sig = SIGNALS[key];
+    return (tt: number) => sig.f(tt) * Math.exp(-s * tt);
   };
-  const sl = slider({ label: t('sigma'), min: 1, max: 8, step: 0.5, value: sig, unit: '', format: (v) => `−${fmt(v, 1)} ± ${fmt(v, 1)}i`, onInput: (v) => ((sig = v), update()) });
-  const tg = toggle(t('toggle'), real, (v) => ((real = v), update()));
-  host.append(h('div', { class: 'w-controls limit-controls' }, sl.el, tg.el), h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rPeak.el, rTsI.el, rTsR.el, rOsR.el)), status);
-  update();
+  shadeOverlay(plot, product, () => tc0);
+  const total = (): number => {
+    const sig = SIGNALS[key];
+    if (s <= sig.a + 1e-9) return Infinity;
+    // long enough window for the integrand to die out
+    const T1 = Math.min(400, 30 / (s - sig.a));
+    return laplaceReal(sig.f, s, T1, 20000);
+  };
+  const addTrace = () => {
+    const v = total();
+    if (!Number.isFinite(v) || v > 4) return;
+    const i = trace.xs.findIndex((x) => Math.abs(x - s) < 0.02);
+    if (i >= 0) trace.ys[i] = v;
+    else {
+      trace.xs.push(s);
+      trace.ys.push(v);
+    }
+    fplot.set('trace', trace.xs, trace.ys);
+    if (spreadCount(trace.xs) >= 5) showFormula.disabled = false;
+  };
+  const draw = () => {
+    const sig = SIGNALS[key];
+    plot.setY(sig.yMin, sig.yMax);
+    const d = sample(sig.f, PROBE_T, 300);
+    plot.set('f', d.xs, d.ys);
+    const p = sample((tt) => Math.exp(-s * tt), PROBE_T, 300);
+    plot.set('probe', p.xs, p.ys);
+    const q = sample(product(), PROBE_T, 300);
+    plot.set('prod', q.xs, q.ys);
+    rArea.set(fmt(runningAreaAt(product(), tc0), 3));
+    const tot = total();
+    const fin = Number.isFinite(tot);
+    // an oscillating signal has no single answer at s ≤ a: its area sloshes, it doesn't run off
+    const none = sig.osc ? '—' : '∞';
+    rTotal.set(fin ? fmt(tot, 3) : none);
+    const rest = fin ? tot - runningAreaAt(product(), PROBE_T) : 0;
+    status.textContent = fin
+      ? t('finite', { s: fmt(s, 2), F: fmt(tot, 3) }) + (Math.abs(rest) >= 0.0005 ? ` ${t('window', { rest: fmt(rest, 3) })}` : '')
+      : sig.osc
+        ? t('sloshes')
+        : t('infinite');
+    fplot.setLines([{ kind: 'v', at: s, color: 'ink3', dash: [2, 3] }]);
+    fplot.setBands(sig.a > -1 ? [{ kind: 'v', from: -1, to: sig.a, color: withAlpha(color('ink3'), 0.12), label: t('noArea') }] : []);
+    fplot.setMarkers(fin ? [{ x: s, y: tot, color: 'ink', shape: 'diamond', clamp: true, offLabel: `↑ ${fmt(tot, 2)}` }] : []);
+    plot.describe(t('describe', { s: fmt(s, 2), A: fin ? fmt(tot, 3) : none }));
+  };
+  const loop = new Loop((dt) => {
+    tc0 = Math.min(PROBE_T, tc0 + dt * 3);
+    plot.setCursor(tc0 < PROBE_T ? tc0 : null);
+    plot.invalidate();
+    rArea.set(fmt(runningAreaAt(product(), tc0), 3));
+    if (tc0 >= PROBE_T) {
+      loop.pause();
+      addTrace();
+    }
+  }, host);
+  const restart = () => {
+    draw();
+    if (Loop.autoplay) {
+      tc0 = 0;
+      loop.play();
+    } else {
+      tc0 = PROBE_T;
+      plot.invalidate();
+      addTrace();
+    }
+  };
+  const sl = slider({
+    label: t('s'),
+    min: -1,
+    max: 4,
+    step: 0.05,
+    value: s,
+    onInput: (v) => {
+      s = v;
+      tc0 = PROBE_T;
+      loop.pause();
+      plot.setCursor(null);
+      draw();
+    },
+  });
+  // one dot per deliberate choice: on release, or after a pause in arrow presses (not one per key)
+  const offSettle = onSettle(sl.input, () => addTrace());
+  const sweep = iconButton('play', t('sweep'));
+  sweep.addEventListener('click', () => {
+    tc0 = 0;
+    loop.play();
+  });
+  const showFormula = h('button', { class: 'btn small', type: 'button', disabled: true }, t('showFormula'));
+  showFormula.addEventListener('click', () => {
+    const sig = SIGNALS[key];
+    const xs: number[] = [];
+    const ys: number[] = [];
+    for (let v = sig.a + 0.01; v <= 4; v += 0.01) {
+      xs.push(v);
+      ys.push(sig.F(v));
+    }
+    fplot.set('formula', xs, ys);
+  });
+  host.append(
+    h('div', { class: 'w-controls' }, sl.el),
+    h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rArea.el, rTotal.el), h('div', { class: 'w-row' }, sweep, showFormula)),
+    status,
+    h('p', { class: 'w-help' }, t('help')),
+  );
+  restart();
+  const off = ctx.bus.on('predict:ch7-step', () => {
+    key = 'step';
+    seg.set('step');
+    restart();
+  });
+  return () => {
+    off();
+    offSettle();
+    loop.destroy();
+  };
 };
 
-/** 8e: one lap round the loop, C(iω)·P(iω), and the point −1 where a lap would feed itself. */
-const loop: WidgetFactory = (host, ctx) => {
+/** 8b — the transform of e^(at) explodes as s approaches a. */
+const explode: WidgetFactory = (host, ctx) => {
   const { t } = ctx;
   mark(host);
-  // frame the corner the lap lives in: left of 0 and below the real axis, with −1 in view
-  const EXTENT = 1.6;
-  const CENTER: [number, number] = [-0.75, -0.65];
-  let kp = 20;
-  let u = Math.log10(6.5);
+  let a = -0.5;
+  let s = 1.5;
   host.append(h('p', { class: 'w-title' }, t('title')));
   const grid = h('div', { class: 'w-grid two' });
   const left = h('div');
   const right = h('div');
   grid.append(left, right);
   host.append(grid);
-  const plane = new PlaneCanvas(left, { extent: EXTENT, center: CENTER, label: t('aria'), reLabel: t('re'), imLabel: t('im') });
-  ctx.onCleanup(() => plane.destroy());
-  const rG = readout(t('size'), 'out');
-  const rA = readout(t('angle'), 'out');
-  const rD = readout(t('distance'));
-  const rZ = readout(t('zeta'));
+  const prod = new Plot(left, {
+    x: { label: tc('plots.time'), min: 0, max: 10 },
+    y: { label: '', min: 0, max: 1.3 },
+    series: [{ id: 'p', color: 'ink', label: t('product') }],
+    height: 220,
+    label: t('prodAria'),
+  }, ctx.onCleanup);
+  shadeOverlay(prod, () => (tt) => Math.exp((a - s) * tt), () => 10);
+  const F = new Plot(right, {
+    x: { label: 's', min: -2.5, max: 4 },
+    y: { label: 'F(s)', min: 0, max: 6 },
+    series: [{ id: 'F', color: 'ink', label: t('curve') }],
+    height: 220,
+    label: t('fAria'),
+  }, ctx.onCleanup);
+  const rF = readout(t('readF'));
   const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
-  right.append(h('div', { class: 'readouts' }, rG.el, rA.el, rD.el, rZ.el), status);
-  const say = () => {
-    const near = closest(kp);
-    const text = t('status', { d: fmt(near.d, 2), w: fmt(near.w, 1), z: fmt(loopZeta(kp), 2) });
-    if (status.textContent !== text) status.textContent = text;
+  const eq = h('div', { class: 'math-block' });
+  const update = () => {
+    const d = sample((tt) => Math.exp((a - s) * tt), 10, 300);
+    prod.set('p', d.xs, d.ys);
+    const xs: number[] = [];
+    const ys: number[] = [];
+    for (let v = a + 0.005; v <= 4; v += 0.01) {
+      xs.push(v);
+      ys.push(1 / (v - a));
+    }
+    F.set('F', xs, ys);
+    F.setBands([{ kind: 'v', from: -2.5, to: a, color: withAlpha(color('ink3'), 0.12), label: t('noArea') }]);
+    // the curve hugs the line's right side all the way up, so its short label sits in the band on the left
+    F.setLines([{ kind: 'v', at: a, color: 'ink', dash: [5, 4], label: `a = ${fmt(a, 2)}`, labelSide: 'left', labelAt: 'middle', avoid: ['F'] }]);
+    const val = s > a ? 1 / (s - a) : Infinity;
+    // near a the value leaves the frame: pin it to the top edge with an arrow and the number
+    F.setMarkers(Number.isFinite(val) ? [{ x: s, y: val, color: 'ink', label: `s = ${fmt(s, 2)}`, clamp: true, offLabel: `↑ ${fmt(val, 2)}` }] : []);
+    rF.set(Number.isFinite(val) ? fmt(val, 2) : '∞');
+    // the product plot stops at 10 s; say how much of the area is still to come beyond it
+    const later = Number.isFinite(val) ? Math.exp(-10 * (s - a)) : 0;
+    const main = s <= a ? t('never') : s - a < 0.3 ? t('close', { F: fmt(val, 2) }) : t('calm');
+    status.textContent = later >= 0.01 ? `${main} ${t('window', { pct: fmt(100 * later, 0) })}` : main;
+    eq.innerHTML = tex(`\\int_0^\\infty e^{${fmt(a, 2)}t}\\,e^{-st}\\,dt = \\frac{1}{s - (${fmt(a, 2)})} ${Number.isFinite(val) ? `= ${fmt(val, 2)}` : '\\to \\infty'}`, true);
+    F.describe(status.textContent);
   };
-  const draw = () => {
-    const w = 10 ** u;
-    const z = lap(kp, w);
-    const near = closest(kp);
-    const nz = lap(kp, near.w);
-    plane.draw([
-      { kind: 'path', pts: lapCurve(kp, EXTENT, CENTER), color: 'ink2', width: 2 },
-      { kind: 'dot', at: [nz.re, nz.im], color: 'ink3', r: 3.5 },
-      { kind: 'line', from: [-1, 0], to: [z.re, z.im], color: 'ink2', dash: [4, 4], width: 1.5 },
-      { kind: 'dot', at: [-1, 0], color: 'bad', r: 7, ring: true, label: t('cliff'), labelAt: 'above' },
-      { kind: 'arrow', to: [z.re, z.im], color: 'out', width: 3, label: t('lap') },
-    ]);
-    rG.set(fmt(Math.hypot(z.re, z.im), 2));
-    rA.set(`${fmt(lapAngle(kp, w), 0)}°`);
-    rD.set(fmt(toCliff(kp, w), 2), toCliff(kp, w) < 0.35 ? 'bad' : '');
-    rZ.set(fmt(loopZeta(kp), 2));
-  };
-  const sK = slider({ label: t('kp'), min: 1, max: 80, step: 1, value: kp, unit: 'N/m', color: 'eff', onInput: (v) => ((kp = v), draw()), onSettle: say });
-  const sW = slider({
-    label: t('w'),
-    min: Math.log10(LOOP_W.min),
-    max: Math.log10(LOOP_W.max),
-    step: 0.01,
-    value: u,
-    format: (v) => `${fmt(10 ** v, 10 ** v < 10 ? 1 : 0)} ${unitLabel('rad/s')}`,
-    onInput: (v) => ((u = v), draw()),
-  });
-  host.append(h('div', { class: 'w-controls' }, sK.el, sW.el), h('p', { class: 'w-help' }, t('help')));
-  draw();
-  say();
+  const sa = slider({ label: t('a'), min: -2, max: 1, step: 0.05, value: a, color: 'out', onInput: (v) => ((a = v), update()) });
+  const ss = slider({ label: t('s'), min: -2.5, max: 4, step: 0.05, value: s, onInput: (v) => ((s = v), update()) });
+  host.append(eq, h('div', { class: 'w-controls' }, sa.el, ss.el), h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rF.el)), status);
+  update();
 };
 
-export const widgets: Record<string, WidgetFactory> = { recipe, playground, zero, limit, loop };
+/** 8b (part 2) — a complex s can unspin a spinning signal. */
+const unspin: WidgetFactory = (host, ctx) => {
+  const { t } = ctx;
+  mark(host);
+  const W0 = 2;
+  let sig = 0.4;
+  let om = 0.5;
+  let tNow = 0;
+  const T1 = 25;
+  host.append(h('p', { class: 'w-title' }, t('title')));
+  const grid = h('div', { class: 'w-grid side-r' });
+  const pbox = h('div', { style: { maxWidth: '540px', width: '100%', margin: '0 auto' } });
+  const side = h('div');
+  grid.append(pbox, side);
+  host.append(grid);
+  // the frame grows to fit the whole run and its final total (up to 1/σ = 20 when the spins match),
+  // snapping after keyboard steps and easing after a drag; `extent` is an invisible stand-in for it
+  const plot = new Plot(pbox, {
+    x: { label: t('re'), min: -0.5, max: 1.5, autoMin: -24, autoMax: 24 },
+    y: { label: t('im'), min: -1, max: 1, autoMin: -24, autoMax: 24 },
+    series: [
+      { id: 'path', color: 'ink', label: t('path'), width: 3.6 },
+      { id: 'extent', color: 'transparent', width: 0 },
+    ],
+    height: 360,
+    label: t('plotAria'),
+  }, ctx.onCleanup);
+  // each quarter second of area is one arrow, laid head to tail along the path (Chapter 5's arrows)
+  const PIECE = 0.25;
+  plot.overlay = (g, px, py) => {
+    const s = cx(sig, om);
+    const n = Math.floor(tNow / PIECE + 1e-9);
+    g.strokeStyle = color('ink');
+    g.lineWidth = 2;
+    g.lineCap = 'round';
+    g.setLineDash([]);
+    let prev = unspinIntegral(W0, s, 0);
+    for (let k = 1; k <= n; k++) {
+      const cur = unspinIntegral(W0, s, k * PIECE);
+      const x0 = px(prev.re);
+      const y0 = py(prev.im);
+      const x1 = px(cur.re);
+      const y1 = py(cur.im);
+      prev = cur;
+      const len = Math.hypot(x1 - x0, y1 - y0);
+      if (len < 6) continue;
+      const ux = (x1 - x0) / len;
+      const uy = (y1 - y0) / len;
+      const hd = Math.min(7, len * 0.6);
+      g.beginPath();
+      g.moveTo(x1 - hd * ux + hd * 0.6 * uy, y1 - hd * uy - hd * 0.6 * ux);
+      g.lineTo(x1, y1);
+      g.lineTo(x1 - hd * ux - hd * 0.6 * uy, y1 - hd * uy + hd * 0.6 * ux);
+      g.stroke();
+    }
+    labelOutside(g, px, py, s);
+  };
+  // When the spiral winds round its final total, every corner next to the diamond is on the path,
+  // so the label moves out beside the spiral with a short arrow pointing in at the diamond. The
+  // frame always holds the starting range [−0.5, 1.5], so the room measured against it is real.
+  let outside = false;
+  const labelOutside = (g: CanvasRenderingContext2D, px: (x: number) => number, py: (y: number) => number, s: ReturnType<typeof cx>) => {
+    const L = unspinLimit(W0, s);
+    const e = unspinExtent(W0, s, T1);
+    const X = px(L.re);
+    const Y = py(L.im);
+    const l = px(e.x[0]);
+    const r = px(e.x[1]);
+    const M = 14;
+    const wraps = X - l > M && r - X > M && Y - py(e.y[1]) > M && py(e.y[0]) - Y > M;
+    const text = t('limit');
+    g.font = canvasHandFont(15);
+    const need = g.measureText(text).width + 30;
+    const roomL = l - px(-0.5);
+    const roomR = px(1.5) - r;
+    const side = !wraps || Math.max(roomL, roomR) < need ? 0 : roomL >= roomR ? -1 : 1;
+    if ((side !== 0) !== outside) {
+      outside = side !== 0;
+      requestAnimationFrame(draw);
+    }
+    if (!side) return;
+    const edge = side < 0 ? l - 5 : r + 5;
+    const tail = edge + side * 14;
+    g.strokeStyle = g.fillStyle = color('ink');
+    g.lineWidth = 1.8;
+    g.beginPath();
+    g.moveTo(tail, Y);
+    g.lineTo(edge, Y);
+    g.moveTo(edge + side * 6, Y - 4);
+    g.lineTo(edge, Y);
+    g.lineTo(edge + side * 6, Y + 4);
+    g.stroke();
+    g.textAlign = side < 0 ? 'right' : 'left';
+    g.textBaseline = 'middle';
+    g.lineJoin = 'round';
+    g.strokeStyle = color('card');
+    g.lineWidth = 3;
+    g.strokeText(text, tail + side * 4, Y);
+    g.fillText(text, tail + side * 4, Y);
+  };
+  const rMag = readout(t('mag'));
+  const rSpin = readout(t('spin'));
+  const status = h('p', { class: 'w-status', 'aria-live': 'polite' });
+  let said = '';
+  const fit = () => {
+    // the whole run to T1 plus the final total, so the frame is settled before the path is drawn
+    const e = unspinExtent(W0, cx(sig, om), T1);
+    plot.set('extent', e.x, e.y);
+  };
+  const draw = () => {
+    const s = cx(sig, om);
+    const xs: number[] = [];
+    const ys: number[] = [];
+    const n = 500;
+    for (let i = 0; i <= n; i++) {
+      const I = unspinIntegral(W0, s, (tNow * i) / n);
+      xs.push(I.re);
+      ys.push(I.im);
+    }
+    plot.set('path', xs, ys);
+    const L = unspinLimit(W0, s);
+    const cur = unspinIntegral(W0, s, tNow);
+    plot.setMarkers([
+      // not a pole: × and ○ are kept for poles and zeros (Chapter 10)
+      { x: L.re, y: L.im, color: 'ink', shape: 'diamond', label: outside ? undefined : t('limit'), clamp: true, avoid: ['path'] },
+      { x: cur.re, y: cur.im, color: 'ink', shape: 'dot' },
+    ]);
+    const mag = Math.hypot(L.re, L.im);
+    rMag.set(fmt(mag, 2));
+    const rel = W0 - om;
+    rSpin.set(`${fmt(rel, 2)} ${unitLabel('rad/s')}`);
+    const text = Math.abs(rel) < 0.05 ? t('matched', { m: fmt(mag, 1) }) : t('spinning');
+    // drawn every frame while it runs; the live region only hears about real changes
+    if (text !== said) {
+      said = text;
+      status.textContent = text;
+      plot.describe(text);
+    }
+  };
+  const loop = new Loop((dt) => {
+    tNow = Math.min(T1, tNow + dt * 3);
+    draw();
+    if (tNow >= T1) loop.pause();
+  }, host);
+  const restart = () => {
+    fit();
+    if (Loop.autoplay) {
+      tNow = 0;
+      loop.play();
+    } else {
+      tNow = T1;
+      draw();
+    }
+  };
+  const ss = slider({ label: t('sigma'), min: 0.05, max: 2, step: 0.05, value: sig, onInput: (v) => ((sig = v), restart()) });
+  const so = slider({ label: t('omega'), min: 0, max: 4, step: 0.05, value: om, onInput: (v) => ((om = v), restart()) });
+  const again = iconButton('play', t('again'));
+  again.addEventListener('click', () => {
+    tNow = 0;
+    loop.play();
+  });
+  side.append(
+    h('div', { style: { display: 'grid', gap: '10px' } }, ss.el, so.el),
+    h('div', { class: 'w-hud' }, h('div', { class: 'readouts' }, rMag.el, rSpin.el), again),
+    status,
+  );
+  restart();
+  return () => loop.destroy();
+};
+
+export const widgets: Record<string, WidgetFactory> = { probe, explode, unspin };

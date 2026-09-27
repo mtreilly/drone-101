@@ -1,571 +1,203 @@
 {
   "kicker": "Capítulo 8",
-  "title": "Funciones de transferencia, polos y ceros",
-  "question": "¿Podemos leer toda la personalidad de un sistema en una sola fracción?",
+  "title": "La sonda de Laplace",
+  "question": "¿Puede una sola área medida decirnos dónde vive una señal?",
   "sections": [
     {
-      "id": "recipe",
-      "title": "La receta del sistema",
+      "id": "probe",
+      "title": "Una sonda para señales",
       "blocks": [
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "think",
-          "text": "Empecemos con el dron en vuelo estacionario a 1 m, con 4,9 N de empuje base que equilibran la gravedad. Midamos el cambio solicitado y el cambio real de altura desde esa referencia. Justo antes de una nueva orden, ambos cambios valen cero. En el ejemplo del escalón, la consigna salta a 2 m en $t=0$: su cambio pasa a ser 1 m mientras el dron sigue a 1 m."
-        },
         {
           "t": "say",
           "who": "theo",
-          "mood": "think",
-          "text": "Menos mal, porque en el capítulo anterior quitamos los trocitos $-h(0)$ y la fórmula mintió. Medidos desde el vuelo estacionario, esos valores iniciales **son** cero de verdad, así que esta vez desaparecen honradamente."
-        },
-        {
-          "t": "math",
-          "tex": "\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\Delta\\sp{R}(s)"
-        },
-        {
-          "t": "callout",
-          "title": "De dónde sale la receta",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "El empuje de vuelo estacionario anula la gravedad, así que en la ecuación del dron solo quedan los *cambios*. Ahora usa la regla del capítulo 7: cada pendiente se convierte en × $s$, menos su valor inicial. Desde el vuelo estacionario todos los valores iniciales son cero, así que no se resta nada:"
-            },
-            {
-              "t": "math",
-              "tex": "\\begin{gathered} m\\,\\Delta\\out{h}'' + c\\,\\Delta\\out{h}' = \\eff{K_p}\\,(\\Delta\\sp{r} - \\Delta\\out{h}) \\\\[2pt] \\Big\\downarrow\\ {\\scriptstyle \\Delta h(0)\\,=\\,\\Delta h'(0)\\,=\\,0} \\\\[2pt] (m s^2 + c s + \\eff{K_p})\\,\\Delta\\out{H}(s) = \\eff{K_p}\\,\\Delta\\sp{R}(s) \\end{gathered}"
-            },
-            {
-              "t": "p",
-              "text": "Divide por $m s^2 + c s + \\eff{K_p}$ y ahí está $G(s)$. Su denominador es la misma ecuación que obtuvimos en los capítulos 4 a 6 suponiendo $e^{st}$."
-            },
-            {
-              "t": "say",
-              "who": "mika",
-              "mood": "happy",
-              "text": "Así que no es magia. Es la propia ecuación del dron, con cada pendiente convertida en una $s$."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "$\\Delta\\sp{R}(s)$ es la transformada del **cambio pedido** desde 1 m; $\\Delta\\out{H}(s)$ es la del **cambio real** desde 1 m. $G(s)$ depende del dron y el controlador. Es la **función de transferencia**: cambio de salida dividido por cambio de entrada, con ambos cambios partiendo de cero."
-        },
-        {
-          "t": "p",
-          "text": "La gráfica sigue mostrando alturas sobre el suelo. Suma el metro inicial al cambio que predice la fórmula para obtener la altura azul de la gráfica."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "June tenía razón: la fracción **es** el dron. Es como su **receta**. ¡Le metes cualquier ingrediente y te dice lo que sale!"
-        },
-        {
-          "t": "p",
-          "text": "Prueba tres entradas distintas con el mismo dron. La receta nunca cambia; solo cambia $\\Delta\\sp{R}(s)$."
-        },
-        {
-          "t": "widget",
-          "id": "recipe"
-        },
-        {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Función de transferencia $G(s)$",
-              "def": "Cambio de salida transformado ÷ cambio de entrada transformado, partiendo del mismo estado de reposo. Para este dron lineal es un cociente de polinomios en $s$."
-            },
-            {
-              "term": "Partir del reposo (condiciones iniciales nulas)",
-              "def": "Todos los cambios y sus velocidades valen cero en $t = 0$, como cuando medimos desde el vuelo estacionario. Entonces los términos de valor inicial del capítulo 7, como $-h(0)$, también son cero, y $G(s)$ lo cuenta todo."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "poles",
-      "title": "Polos: donde el sistema quiere vivir",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "¿Dónde **explota** $G(s)$? Donde su denominador vale cero. Esos puntos son los **polos**, dibujados como ×. En este dron hay dos, uno por cada uno de los dos movimientos naturales $e^{st}$ del capítulo 6."
-        },
-        {
-          "t": "p",
-          "text": "En el capítulo 7, la transformada de $e^{at}$ chillaba en $s = a$. Léelo al revés: dondequiera que $G$ chille, se esconde un movimiento $e^{pt}$."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "¡O sea que los polos son los **modos** del capítulo 6, sentados en el mapa!"
-        },
-        {
-          "t": "callout",
-          "title": "Por qué los polos son los movimientos",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Una respuesta al escalón es $G(s)$ por el $\\frac{1}{s}$ del escalón. Divídela en trozos sencillos, las fracciones simples del capítulo 7 (una pareja reflejada de polos recibe numeradores gemelos reflejados): el propio polo del escalón en 0 da el cambio final $A$, y cada polo de $G$ da un trozo $\\frac{B}{s-p}$."
-            },
-            {
-              "t": "math",
-              "tex": "\\begin{aligned} \\Delta\\out{H}(s) = G(s)\\cdot\\frac{1}{s} &= \\frac{A}{s} + \\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\\\[4pt] \\Longrightarrow\\quad \\Delta\\out{h}(t) &= A + B e^{pt} + \\bar B e^{\\bar p t} \\end{aligned}"
-            },
-            {
-              "t": "p",
-              "text": "La tabla del capítulo 7 convierte cada trozo de nuevo en un movimiento. No puede aparecer nada más: los polos son todo el reparto."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "think",
-              "text": "Y un polo con $\\sigma > 0$ es un trozo que crece. Con razón la mitad derecha se dispara."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Ahora dale la vuelta. En lugar de elegir ganancias y buscar los polos, vamos a **arrastrar los polos** y ver qué dron sale. Para eso hace falta un segundo mando, $\\eff{K_d}$: un empuje contra la velocidad, que conoceremos como es debido en el capítulo 9. Se suma al rozamiento $c$, y las dos raíces son $p$ y su gemela reflejada $\\bar p$ (la barra cambia el signo de la parte imaginaria, como los gemelos del capítulo 5):"
-        },
-        {
-          "t": "math",
-          "tex": "\\begin{aligned} & m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p} = 0 \\\\ \\Longrightarrow\\quad & s = p,\\ \\bar p \\qquad \\text{(los polos)} \\end{aligned}"
-        },
-        {
-          "t": "play",
-          "id": "gains",
-          "text": "Para poner los polos en −{scrub|sig} ± {scrub|w}i, el controlador necesita $\\eff{K_p} = m(\\sigma^2+\\omega^2)$ = {calc|kp|eff} N/m y $c + \\eff{K_d} = 2m|\\sigma|$ = {calc|damp} N·s/m, así que $\\eff{K_d}$ = {calc|kd|eff} N·s/m. El patio de abajo sigue estos números. {calc|note}"
-        },
-        {
-          "t": "predict",
-          "id": "ch8-rhp",
-          "gate": true,
-          "q": "¿Qué hace el dron si arrastramos los polos a la **mitad derecha** del plano s?",
-          "options": [
-            {
-              "text": "Aterriza suavemente",
-              "sketch": "sluggish",
-              "why": "Para aterrizar hace falta que todo se calme, y los polos de la mitad derecha hacen lo contrario."
-            },
-            {
-              "text": "Flota, un poco tambaleante",
-              "sketch": "steady-wiggle",
-              "why": "Un tambaleo constante es lo que sale justo **sobre** el eje vertical. Un poco más allá, todo crece."
-            },
-            {
-              "text": "Oscila cada vez más fuerte hasta que se estrella o sale volando",
-              "sketch": "growing-wiggle",
-              "correct": true,
-              "why": "En la mitad derecha, $e^{st}$ tiene $\\sigma > 0$: una espiral que crece. Las oscilaciones aumentan en cada ciclo."
-            }
-          ]
-        },
-        {
-          "t": "widget",
-          "id": "playground"
-        },
-        {
-          "t": "h3",
-          "text": "Cómo leer el mapa"
-        },
-        {
-          "t": "p",
-          "text": "Juega con él. Saltan a la vista unas cuantas reglas, y cada una es una vieja amiga disfrazada:"
-        },
-        {
-          "t": "list",
-          "items": [
-            "**Mitad izquierda = se calma, mitad derecha = se dispara.** La parte real $\\sigma$ es el ritmo al que se encoge o crece $e^{\\sigma t}$.",
-            "**Más a la izquierda = más rápido.** Estabilizarse lleva unos $4/|\\sigma|$ segundos (las líneas verticales discontinuas): las cuatro constantes de tiempo del capítulo 6, ya que $e^{-|\\sigma| t}$ baja del 2 % tras $\\ln 50/|\\sigma| \\approx 3{,}9/|\\sigma|$ segundos.",
-            "**Más arriba = más oscilante.** La altura $\\omega$ es la frecuencia amortiguada del capítulo 6, así que una oscilación dura $2\\pi/\\omega$ segundos.",
-            "**El ángulo fija el sobreimpulso.** El ángulo $\\theta$ medido desde el eje real negativo da $\\zeta = \\cos\\theta$ (el círculo del capítulo 6), y el sobreimpulso es $e^{-\\pi|\\sigma|/\\omega}$ (los rayos discontinuos). Cerca del eje real apenas se pasa; cerca del eje vertical, muchísimo. (Es exacto para dos polos y ningún cero, partiendo del reposo. Un cero lo cambia: en la sección siguiente, uno convierte un 12 % en un 15 %.)"
-          ]
-        },
-        {
-          "t": "say",
-          "who": "mika",
           "mood": "worried",
-          "text": "Yo quería **un solo** polo arriba y otro abajo del todo. ¡No me deja! El de abajo no para de copiar al de arriba."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "¿Te acuerdas de los giradores gemelos del capítulo 5? Un dron real tiene un movimiento real, así que cada $e^{st}$ que gira necesita su gemelo reflejado para cancelar las partes imaginarias. Los polos complejos **siempre** vienen en parejas reflejadas."
-        },
-        {
-          "t": "callout",
-          "title": "Por qué el ángulo fija el sobreimpulso",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "El dron pasa el objetivo y da la vuelta tras media oscilación, en $t = \\pi/\\omega$. Para entonces el $e^{-|\\sigma| t}$ que se encoge lleva ese tiempo trabajando, y lo que queda de la oscilación es el sobreimpulso. Solo importa la razón $|\\sigma|/\\omega$, y esa razón es el *ángulo* del polo. En el círculo del capítulo 6, el coseno de ese ángulo es $\\zeta$."
-            },
-            {
-              "t": "math",
-              "tex": "\\begin{aligned} t_{\\text{pico}} &= \\frac{\\pi}{\\omega} \\\\[4pt] \\text{sobreimpulso} &= e^{-|\\sigma|\\,t_{\\text{pico}}} = e^{-\\pi|\\sigma|/\\omega} \\\\[4pt] &= e^{-\\pi\\zeta/\\sqrt{1-\\zeta^2}}, \\qquad \\zeta = \\cos\\theta \\end{aligned}"
-            },
-            {
-              "t": "play",
-              "id": "poleRead",
-              "text": "Polos en −{scrub|sig} ± {scrub|w}i: las oscilaciones se encogen como $e^{-|\\sigma| t}$, así que se estabiliza en unos {calc|ts} s. Una oscilación dura {calc|period} s. El primer pico llega tras media oscilación, en {calc|tp} s, y para entonces el encogimiento ha dejado un sobreimpulso de {calc|os}."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "happy",
-              "text": "Así que cada rayo que sale de 0 es un $\\zeta$, y un sobreimpulso."
-            }
-          ]
-        },
-        {
-          "t": "predict",
-          "id": "ch8-up",
-          "gate": true,
-          "q": "Mantén $\\sigma = -2$ y desliza los polos **en vertical hacia arriba**, de $\\pm 4i$ a $\\pm 8i$. ¿Qué cambia?",
-          "options": [
-            {
-              "text": "Se estabiliza el doble de rápido",
-              "why": "El tiempo de establecimiento sigue al ritmo de encogimiento $\\sigma$, que no se ha movido. Medido: 1,87 s pasa a 1,72 s, casi lo mismo."
-            },
-            {
-              "text": "Oscilaciones más rápidas y más sobreimpulso; el tiempo de establecimiento sigue más o menos igual",
-              "correct": true,
-              "why": "Una oscilación baja de 1,57 s a 0,79 s y el sobreimpulso sube del 21 % al 46 %, pero la envolvente $e^{-2t}$ no cambia, así que el tiempo de establecimiento se queda cerca de $4/2 = 2$ s."
-            },
-            {
-              "text": "Se vuelve inestable",
-              "why": "Eso solo lo decide la posición izquierda-derecha. Subir y bajar nunca cruza a la mitad derecha."
-            }
-          ]
+          "text": "Cada vez que resolvíamos algo, *suponíamos* $e^{st}$, lo sustituíamos y rezábamos. Ahora añade gravedad, una altura inicial, un controlador… mi cuaderno está ardiendo."
         },
         {
           "t": "say",
           "who": "june",
-          "mood": "excited",
-          "text": "El patio saltó cuando respondimos: la pareja fantasma está en $\\pm 4i$, la nueva en $\\pm 8i$. La misma envolvente, el doble de oscilaciones y una primera oscilación mucho más grande."
-        },
-        {
-          "t": "note",
-          "text": "Nuestro dron empezaba en $-1 \\pm 6.24i$: es el dron con $K_p = 20$ del capítulo 2. Muy arriba (muy oscilante) y cerca del eje (lento en estabilizarse). Ahora puedes *ver* por qué rebotaba."
+          "mood": "think",
+          "text": "Cuando construyo cosas, el truco siempre es convertir un trabajo difícil en uno fácil. Difícil: cálculo con pendientes de pendientes. Fácil: álgebra de toda la vida con $+$, $-$, $\\times$, $\\div$."
         },
         {
           "t": "say",
           "who": "mika",
-          "mood": "think",
-          "text": "¿Y si los dos polos están sobre el eje real, uno en $-0{,}2$ y otro en $-5$?"
+          "mood": "excited",
+          "text": "¿O sea que necesitamos una máquina que se coma una curva y escupa algo donde las pendientes se conviertan en multiplicaciones? ¿Eso existe?"
         },
         {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "El rápido desaparece en un segundo. El lento es el que manda."
+          "t": "p",
+          "text": "Existe, y podemos construirla con cosas que ya tenemos. Esta es la idea. Toma cualquier **señal**, cualquier curva que cambia con el tiempo, $f(t)$. Multiplícala por una **sonda**, la exponencial $e^{-st}$ del capítulo 4 (para $s$ positiva se encoge). Luego mide el **área total** bajo el producto (el área acumulada del capítulo 3), hasta llegar a $t = \\infty$."
         },
         {
-          "t": "play",
-          "id": "dominant",
-          "text": "Polos reales en −0,2 y −5. Tras {scrub|time} s, al movimiento rápido $e^{-5t}$ le queda {calc|fast} de su valor inicial, y al lento $e^{-0.2t}$ todavía le queda {calc|slow}. Así que decide el polo lento: estabilizarse lleva unos $4/0{,}2 = 20$ s."
+          "t": "math",
+          "tex": "F(s) = \\int_0^\\infty \\out{f(t)}\\; e^{-st}\\,dt"
         },
         {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Polo",
-              "def": "Un valor de $s$ donde la función de transferencia explota. Cada polo $p$ es un movimiento $e^{pt}$ del sistema."
-            },
-            {
-              "term": "Pareja reflejada $p,\\ \\bar p$",
-              "def": "Dos polos con la misma parte real y partes imaginarias opuestas. Los polos complejos de un sistema real siempre vienen así."
-            },
-            {
-              "term": "Polo dominante",
-              "def": "El polo más cercano al eje vertical. Su movimiento lento dura más que los demás, así que normalmente decide el tiempo de establecimiento, salvo que un cero esté casi encima de él (el capítulo 9 tiene uno)."
-            }
-          ]
+          "t": "p",
+          "text": "Ya está. Entra un número $s$ y sale un área. Prueba distintos valores de $s$ y obtienes una curva nueva entera, $F(s)$. Esa curva es la **transformada de Laplace** de $f$: una huella dactilar de la señal. Dos señales distintas (razonables) nunca comparten la misma $F(s)$, y por eso más adelante podremos buscar respuestas al revés."
         },
         {
           "t": "callout",
-          "title": "¿Qué tan buena es 4/|σ|?",
+          "title": "¿Por qué esta sonda?",
           "blocks": [
-            {
-              "t": "p",
-              "text": "El cuatro es el $\\ln 50 \\approx 3{,}9$ del capítulo 6, redondeado: el tiempo que tarda la *envolvente* en encogerse al 2 %. La curva real va por dentro de su envolvente, así que a menudo se estabiliza un poco antes. Se estabiliza más tarde cuando los polos están sobre el eje real o cerca de él, porque un polo doble tiene una parte $t\\,e^{-|\\sigma| t}$ que se entretiene."
-            },
-            {
-              "t": "math",
-              "tex": "\\begin{array}{c|ccccc} \\zeta & 0{,}3 & 0{,}5 & 0{,}8 & 0{,}95 & 1 \\\\ \\hline |\\sigma|\\,T_s & 3{,}37 & 4{,}04 & 3{,}01 & 5{,}00 & 5{,}83 \\end{array}"
-            },
             {
               "t": "say",
-              "who": "mika",
+              "who": "theo",
               "mood": "think",
-              "text": "Probé con $\\sigma = -1$: la regla decía 4 s, y los tiempos reales iban de 3,0 s a 5,8 s según $\\zeta$. Suficiente para apuntar, no para prometer."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "zeros",
-      "title": "Ceros: un vistazo rápido",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "El numerador también puede valer cero. Esos puntos son los **ceros**, dibujados como ○. Normalmente cambian **cuánto** del movimiento de cada polo aparece en la salida. Si un cero cae justo sobre un polo, el factor común se cancela y ese polo desaparece de esta receta de entrada a salida. Aun así, sigue dentro del sistema: empuja el dron de otra manera, con una ráfaga, y ese movimiento vuelve. Eso importa mucho si el polo escondido está a la derecha."
-        },
-        {
-          "t": "p",
-          "text": "Aquí tienes un sistema con polos fijos en $-2 \\pm 3i$ y un cero que puedes deslizar. (El $\\eff{K_d}$ de nuestro patio empuja contra la *velocidad* del dron, así que su receta no tiene cero. Empuja en cambio contra la velocidad del *error*, como hará el capítulo 9, y aparece un cero en $-\\eff{K_p}/\\eff{K_d}$: para estos polos eso es $-6{,}5$, con un sobreimpulso del 15 % en vez del 12 %.)"
-        },
-        {
-          "t": "widget",
-          "id": "zero"
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "surprised",
-          "text": "Mismos polos, pero cuando el cero se acerca al origen la respuesta sube muchísimo más rápido ¡y se pasa más!"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Mismos polos significa mismos movimientos. Así que el cero no puede añadir uno nuevo. Tiene que estar añadiendo un poco de algo que ya tenemos."
-        },
-        {
-          "t": "play",
-          "id": "zeroKick",
-          "text": "Con el cero en −{scrub|z}, la salida es la curva sin cero **más {calc|gain} × su pendiente**, y se pasa un {calc|os} (12 % sin el cero)."
-        },
-        {
-          "t": "p",
-          "text": "Multiplicar por $s$ toma la pendiente (capítulo 7), así que el factor $(1 + s/|z|)$ añade $1/|z|$ veces la pendiente. Por eso un cero cerca del origen hace que el sistema reaccione con tanta fuerza a los **cambios**: el sobreimpulso crece, aunque los polos no se hayan movido. Lejos, el cero apenas importa. Es todo lo que necesitamos saber de los ceros por ahora."
-        },
-        {
-          "t": "callout",
-          "title": "Lo que bloquea un cero",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Un polo es un movimiento que el sistema *hace*; un cero es un movimiento que *se niega a dejar pasar*. Alimenta este sistema (cero en $-3$) exactamente con $e^{-3t}$ y no sale nada de él: solo la oscilación propia del sistema, que se apaga. Sin el cero, $1{,}3\\,e^{-3t}$ pasaría directamente."
-            },
-            {
-              "t": "math",
-              "tex": "\\begin{aligned} G(s) &= \\tfrac{13}{3}\\,\\frac{s+3}{s^2+4s+13}, \\qquad u = e^{-3t} \\\\[4pt] Y(s) &= \\tfrac{13}{3}\\,\\frac{\\cancel{s+3}}{(s^2+4s+13)\\,\\cancel{(s+3)}} \\\\[4pt] \\Longrightarrow\\quad y(t) &= \\tfrac{13}{9}\\,e^{-2t}\\sin 3t \\end{aligned}"
+              "text": "¿Por qué *esa* curva? ¿Por qué no una joroba, o un seno?"
             },
             {
               "t": "say",
               "who": "june",
-              "mood": "excited",
-              "text": "Como unos auriculares con cancelación de ruido para un zumbido concreto."
-            }
-          ]
-        },
-        {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Cero",
-              "def": "Un valor de $s$ donde la función de transferencia vale cero: un movimiento $e^{zt}$ que el sistema no deja pasar."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "limits",
-      "title": "¿Más a la izquierda siempre es mejor?",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Fácil: arrastramos los polos *muy* a la izquierda. Se estabiliza en un pestañeo. ¡El mejor dron de la historia!"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Pero ¿qué empuje necesita eso? Hasta ahora hemos fingido que los motores pueden empujar todo lo que pidan las matemáticas."
-        },
-        {
-          "t": "p",
-          "text": "Hora de ser honestos. Nuestros motores pueden empujar entre **0 N** y **20 N** (unas cuatro veces el peso del dron). Abajo, los polos se mueven a la izquierda por una línea de 45° (eso es $\\zeta \\approx 0{,}71$, el punto ideal del capítulo 6). Las curvas discontinuas son las matemáticas con motores imaginarios e ilimitados; las continuas son motores reales."
-        },
-        {
-          "t": "widget",
-          "id": "limit"
-        },
-        {
-          "t": "play",
-          "id": "push",
-          "text": "En el primer instante de un escalón de 1 m, el error es el metro entero y el dron todavía no se mueve, así que las matemáticas piden el empuje de vuelo estacionario más $\\eff{K_p}$ × 1 m. Con los polos en {scrub|sig} eso son {calc|sum|eff} N: {calc|verdict}."
-        },
-        {
-          "t": "p",
-          "text": "Más allá de unos $-3{,}9 \\pm 3.9i$ las matemáticas piden más de 20 N. El {eff|empuje naranja} se aplasta contra el límite, y más allá de unos $-6 \\pm 6i$ las matemáticas llegan a querer tirar del dron *hacia abajo*, cosa que las hélices no pueden hacer. El dron real deja de seguir la bonita predicción lineal. Su tiempo de establecimiento deja de mejorar en unos 0,7 s, cerca de $-6{,}5 \\pm 6.5i$, y más a la izquierda *empeora*, con sobreimpulso extra."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "surprised",
-          "text": "Lo deslicé hasta $-8 \\pm 8i$. Las matemáticas dicen 0,53 s. El dron real tarda 0,77 s: ¡más lento que en $-6{,}5$!"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "Y su sobreimpulso pasó del 4 % al 16 %. Todo ese empuje extra nunca estuvo disponible."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "worried",
-          "text": "Así que \"más a la izquierda\" solo es mejor hasta que te quedas sin motor. Colocar polos es un compromiso, no una carrera."
-        },
-        {
-          "t": "callout",
-          "title": "Un presupuesto de empuje es un círculo",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "En el primerísimo instante el dron no se ha movido, así que solo empuja $\\eff{K_p}$, y $\\eff{K_p} = m|p|^2$: el cuadrado de la distancia de los polos a 0. Duplica la distancia y necesitas cuatro veces más empuje, vayas en la dirección que vayas. Para un escalón de 1 m, nuestros motores permiten polos hasta unos 5,5 de 0 (el círculo naranja tenue del patio). Pide un escalón de 2 m y el círculo se encoge a 3,9."
+              "mood": "happy",
+              "text": "Por dos razones, y las cuento con los dedos. Una: es la curva especial del capítulo 4. Su pendiente es simplemente $-s$ por ella misma, así que cuando aparezcan pendientes, se convertirán en multiplicar por $s$. Dos: es justo lo contrario del $e^{st}$ que no parábamos de suponer. Ponla frente a $e^{at}$ y las dos se cancelan cuando $s = a$."
             },
             {
               "t": "math",
-              "tex": "\\begin{aligned} T(0^+) &= mg + \\eff{K_p}\\,\\Delta\\sp{r} \\\\[4pt] &= mg + m\\,|p|^2\\,\\Delta\\sp{r} \\le 20\\ \\text{N} \\\\[4pt] \\Longrightarrow\\quad |p| &\\le \\sqrt{\\frac{20\\ \\text{N} - mg}{m\\,\\Delta\\sp{r}}} \\end{aligned}"
+              "tex": "\\frac{d}{dt}\\,e^{-st} = -s\\,e^{-st} \\qquad e^{at}\\cdot e^{-st} = e^{(a-s)t}"
+            },
+            {
+              "t": "p",
+              "text": "Veremos la cancelación en la sección siguiente, y las pendientes en el próximo capítulo."
+            }
+          ]
+        },
+        {
+          "t": "predict",
+          "id": "ch7-step",
+          "gate": true,
+          "q": "Toma la señal más sencilla, un escalón: $f(t) = 1$ para siempre. Al hacer $s$ **más grande**, ¿qué pasa con el área bajo $1 \\cdot e^{-st}$?",
+          "options": [
+            {
+              "text": "Crece",
+              "why": "Una $s$ más grande hace que la sonda se apague *más rápido*, así que hay menos de ella."
+            },
+            {
+              "text": "Se encoge",
+              "correct": true,
+              "why": "Exacto. Una $s$ más grande aplasta la sonda más rápido, así que hay menos área. De hecho, el área es exactamente $1/s$ (lo demostraremos cuando construyamos nuestra tabla)."
+            },
+            {
+              "text": "Se queda igual",
+              "why": "La forma de la sonda depende de $s$: una $s$ más grande significa una caída más rápida, y por tanto un área más pequeña."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "probe"
+        },
+        {
+          "t": "play",
+          "id": "stepArea",
+          "text": "Sondea el escalón con s = {scrub|s}: el área es 1 ÷ {calc|s} = {calc|F}. Duplica s y el área se reduce a la mitad."
+        },
+        {
+          "t": "p",
+          "text": "Barre $s$ en el widget y los puntos dibujan exactamente esa $1/s$. Prueba también las otras señales. Una señal creciente $e^{0.5t}$ solo tiene un área finita cuando la sonda se encoge **más rápido** de lo que crece la señal, es decir, cuando $s > 0{,}5$. Por debajo de eso, el área se va al infinito. La oscilación $\\sin 2t$ falla de otra manera: en $s = 0$ su área va y viene entre 0 y 1 (el área negativa del capítulo 3 cancelando la positiva) y nunca se queda en un solo número."
+        },
+        {
+          "t": "callout",
+          "title": "Un área sin fin que deja de crecer",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "worried",
+              "text": "Un momento. La sonda sigue para siempre. ¿Cómo puede tener «para siempre» un área finita?"
+            },
+            {
+              "t": "p",
+              "text": "Porque casi todo ese «para siempre» es casi nada. Cada segundo extra añade menos que el anterior. Tras un segundo, el área bajo $e^{-t}$ ya es el 63 % del total (otra vez la regla de τ del capítulo 3). Tras cinco, pasa del 99 %."
+            },
+            {
+              "t": "math",
+              "tex": "\\int_0^{T} e^{-t}\\,dt = 1 - e^{-T} \\;\\to\\; 1"
             },
             {
               "t": "play",
-              "id": "budget",
-              "text": "Para un escalón de {scrub|dr} m, el primer empujón se queda por debajo de 20 N solo si los polos están a menos de {calc|r} de 0, en cualquier dirección."
+              "id": "longArea",
+              "text": "Deja de sumar el área de $e^{-t}$ en t = {scrub|T} s y ya tienes {calc|A}. Todo lo que viene después solo añade {calc|left}."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "happy",
+              "text": "Así que «para siempre» no es problema, siempre que la cola adelgace lo bastante rápido. Justo para eso está la sonda."
             }
           ]
+        },
+        {
+          "t": "p",
+          "text": "El área total tiene que quedarse en un valor finito, para que cada $s$ reciba un solo número. Si la sonda se apaga demasiado despacio, el área sigue creciendo y esa $s$ no tiene respuesta."
         },
         {
           "t": "note",
-          "text": "A partir de ahora, el límite de 20 N se queda activado."
-        },
-        {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Primer empujón",
-              "def": "El empuje pedido en el primer instante de un escalón: $mg + \\eff{K_p}\\,\\Delta r$, antes de que el dron se haya movido."
-            },
-            {
-              "term": "Presupuesto de empuje",
-              "def": "Las posiciones de los polos que los motores pueden permitirse para un escalón dado: un círculo alrededor de 0."
-            },
-            {
-              "term": "Límite del motor (saturación)",
-              "def": "El empuje real se recorta a 0–20 N, pidan lo que pidan las matemáticas."
-            }
-          ]
+          "text": "De momento solo usamos $s$ reales. Las $s$ complejas llegan en un minuto, y ahí está la magia.",
+          "aside": true
         }
       ]
     },
     {
-      "id": "loop",
-      "title": "Cerrar el lazo sobre el papel",
+      "id": "explode",
+      "title": "La transformada delata dónde «vive» la señal",
       "blocks": [
         {
-          "t": "say",
-          "who": "june",
-          "mood": "think",
-          "text": "En el capítulo 1 dibujamos el lazo con cajas y flechas. En el mundo de s, cada caja solo **multiplica**. ¿Pueden las cajas hacernos el álgebra?"
-        },
-        {
           "t": "p",
-          "text": "Dale a cada caja su receta. El controlador es $C(s)$, por ahora simplemente $\\eff{K_p}$. El dron solo, con el cambio de empuje como entrada y el cambio de altura como salida, es $P(s) = \\frac{1}{ms^2 + cs}$: P de **planta**, la palabra del capítulo 1, no la P del control P. Sale directamente de la ecuación del dron, igual que la receta de arriba."
+          "text": "Miremos más de cerca $f(t) = e^{at}$. Sóndala con $e^{-st}$ y el producto es $e^{(a-s)t}$, una exponencial normal. Mientras $s > a$ se apaga, y su área es $\\frac{1}{s-a}$ (lo deduciremos como es debido cuando construyamos nuestra tabla, en el próximo capítulo)."
         },
         {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Fácil. La petición pasa por el controlador y luego por el dron. ¡Multiplica a lo largo de la línea!"
-        },
-        {
-          "t": "math",
-          "tex": "\\Delta\\out{H} \\overset{?}{=} C\\,P\\,\\Delta\\sp{R} = \\frac{\\eff{K_p}}{ms^2 + cs}\\,\\Delta\\sp{R}"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "¿Polos en 0 y −2? Nada de oscilación, y un polo en 0 que nunca se estabiliza. Eso es el lazo abierto del capítulo 1: decirle al dron qué hacer y no mirar nunca. El controlador no ve la petición, June. Ve el **error**."
-        },
-        {
-          "t": "p",
-          "text": "La flecha que vuelve desde el dron es toda la gracia de la realimentación. El controlador actúa sobre $\\Delta\\sp{R} - \\Delta\\out{H}$, así que la salida aparece a los dos lados. Júntala y divide:"
-        },
-        {
-          "t": "math",
-          "tex": "\\begin{aligned} \\Delta\\out{H} &= C\\,P\\,\\big(\\Delta\\sp{R} - \\Delta\\out{H}\\big) \\\\ \\Delta\\out{H}\\,\\big(1 + C\\,P\\big) &= C\\,P\\,\\Delta\\sp{R} \\\\ \\Delta\\out{H} &= \\frac{C\\,P}{1 + C\\,P}\\,\\Delta\\sp{R} \\end{aligned}"
-        },
-        {
-          "t": "p",
-          "text": "Sustituye $C = \\eff{K_p}$ y $P = 1/(ms^2+cs)$, y luego multiplica arriba y abajo por $ms^2 + cs$:"
-        },
-        {
-          "t": "math",
-          "tex": "\\frac{C\\,P}{1 + C\\,P} = \\frac{\\eff{K_p}/(ms^2+cs)}{1 + \\eff{K_p}/(ms^2+cs)} = \\frac{\\eff{K_p}}{ms^2 + cs + \\eff{K_p}}"
+          "t": "widget",
+          "id": "explode"
         },
         {
           "t": "say",
           "who": "mika",
           "mood": "surprised",
-          "text": "¡Es la receta del principio de este capítulo! La hemos sacado dos veces: una de la ecuación del dron y otra de las cajas."
-        },
-        {
-          "t": "p",
-          "text": "Así que los polos del lazo están donde el denominador, $1 + C(s)\\,P(s)$, vale cero. Es lo mismo que $C\\,P = -1$. Lee $C\\,P$ como **una vuelta** al lazo: lo que el controlador y luego el dron le hacen a una señal. En un polo, una vuelta devuelve la señal del mismo tamaño e invertida, y el signo menos del error la invierte otra vez. Así que se mantiene sola, sin ninguna petición."
-        },
-        {
-          "t": "math",
-          "tex": "1 + C(s)\\,P(s) = 0 \\quad\\Longleftrightarrow\\quad C(s)\\,P(s) = -1"
-        },
-        {
-          "t": "p",
-          "text": "Pruébalo con una oscilación constante, $s = i\\omega$. Una vuelta convierte la flecha de la oscilación en $C(i\\omega)\\,P(i\\omega)$: más corta o más larga, y girada hacia atrás. El dibujo de abajo traza esa flecha para cada velocidad de oscilación, y el punto −1 al que tendría que llegar."
-        },
-        {
-          "t": "widget",
-          "id": "loop"
+          "text": "¡Cuando $s$ se acerca a $a$ el número se hace **enorme**! En $s = a$ la sonda cancela exactamente el crecimiento, el producto es plano para siempre y el área es infinita."
         },
         {
           "t": "say",
           "who": "theo",
-          "mood": "surprised",
-          "text": "Por mucho que suba $\\eff{K_p}$, la curva se dobla hacia −1 pero nunca lo toca. Donde más se acerca es más o menos a la velocidad de oscilación propia del dron."
-        },
-        {
-          "t": "p",
-          "text": "Esta es la razón. El rozamiento retrasa la señal de cada vuelta hasta 90°, y la masa hasta otros 90°, pero juntos solo llegan a 180° con oscilaciones infinitamente rápidas. Así que el control P por sí solo nunca puede desestabilizar este dron. Un $\\eff{K_p}$ mayor solo hace que la vuelta pase **más cerca** de −1, y más cerca significa menos amortiguamiento: el «más $K_p$, más oscilación» del capítulo 2, ahora en forma de dibujo."
+          "mood": "excited",
+          "text": "Así que la transformada **explota justo en la** $s$ **donde vive la señal**. Si solo me dieras $F(s)$, podría encontrar la $a$ de la señal buscando dónde explota."
         },
         {
           "t": "play",
-          "id": "lap",
-          "text": "Con $\\eff{K_p}$ = {scrub|kp|eff} N/m, la vuelta pasa a {calc|d} de −1, a unos {calc|w} rad/s. El amortiguamiento del lazo es ζ = {calc|z}."
+          "id": "scream",
+          "text": "Señal $e^{at}$ con a = {scrub|a|out}, sonda s = {scrub|s}: el producto se apaga a un ritmo s − a = {calc|gap} por segundo, así que su área es {calc|F}. {calc|verdict}"
         },
         {
-          "t": "note",
-          "text": "Guarda esta imagen. En el capítulo 9, el mando I añade un montón, otros 90° de retraso, y la curva por fin puede llegar a −1. En el capítulo 10 la tubería de la ducha hace lo mismo, y la vuelta $C\\,P$ recibe su propio nombre."
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "Es como un detector de humo. Acerca $s$ hacia $a$ y suena cada vez más fuerte. Pisa $a$ y ya no se calla nunca."
+        },
+        {
+          "t": "p",
+          "text": "Ahora haz $s$ compleja, $s = \\sigma + i\\omega$, igual que nuestros números giratorios del capítulo 5. Toma como señal el girador del muelle del capítulo 6, $e^{2it}$ (la mitad de su pareja de gemelos). La sonda $e^{-st}$ lo encoge (esa es la parte izquierda-derecha, $\\sigma$) **y lo hace girar hacia atrás** (esa es la parte arriba-abajo, $\\omega$). Abajo, los trocitos de área del producto se suman uno tras otro como flechas, una flecha por cada cuarto de segundo. Mira el total acumulado."
+        },
+        {
+          "t": "widget",
+          "id": "unspin"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Cuando la sonda gira exactamente a 2, la señal deja de girar, todos los trocitos apuntan hacia el mismo lado y el total es lo más grande posible: $1/\\sigma$, que se dispara hacia el infinito cuando σ se encoge hasta 0. Cuando no coinciden, las flechas se enroscan y se cancelan."
+        },
+        {
+          "t": "p",
+          "text": "La misma lección, con una dimensión más: la transformada explota en la $s$ compleja donde vive la señal. Por eso a partir de ahora dibujaremos cada $s$ en un mapa con $\\sigma$ en horizontal y $\\omega$ en vertical. Nuestro \"mapa de $s$\" del capítulo 6 por fin recibe su nombre de mayor: el **plano s**."
         },
         {
           "t": "vocab",
           "items": [
             {
-              "term": "Lazo cerrado",
-              "def": "Un controlador que actúa sobre el error, de modo que la salida vuelve a entrar en su propia entrada: $\\Delta H = \\frac{C\\,P}{1 + C\\,P}\\,\\Delta R$."
-            },
-            {
-              "term": "Ganancia del lazo $C(s)\\,P(s)$",
-              "def": "Lo que una vuelta al lazo le hace a una señal. Los polos del lazo cerrado están donde vale −1."
+              "term": "El plano s",
+              "def": "El mapa de los números complejos $s = \\sigma + i\\omega$. La izquierda significa encoger, la derecha crecer, y arriba y abajo, girar. Cada señal $e^{st}$ vive en un punto de él, y su transformada explota ahí."
             }
           ]
         }
@@ -578,91 +210,71 @@
         {
           "t": "recap",
           "items": [
-            "Sí, basta con una fracción. La **función de transferencia** $G(s)$ = cambio de la salida ÷ cambio de la entrada en el mundo de s, partiendo del reposo. Es la receta del sistema, $\\Delta\\out{H} = G\\cdot\\Delta\\sp{R}$, y sale directamente de la ecuación del dron.",
-            "Los **polos** (×) son donde $G(s)$ explota: los modos $e^{pt}$ de los que está hecho el sistema.",
-            "Mitad izquierda = estable, mitad derecha = explota. Más a la izquierda = más rápido (se estabiliza en unos $4/|\\sigma|$ s, una regla práctica), más arriba = más oscilante (una oscilación = $2\\pi/\\omega$ s), ángulo = amortiguamiento $\\zeta$ = sobreimpulso $e^{-\\pi|\\sigma|/\\omega}$. El polo más cercano al eje es el que manda.",
-            "Los polos complejos siempre vienen en parejas reflejadas.",
-            "Los **ceros** (○) cambian cuánto obtienes de cada modo. Cerca del origen añaden un empujón: $1/|z|$ veces la pendiente.",
-            "Cierra el lazo sobre el papel y la receta es $\\frac{C\\,P}{1 + C\\,P}$. Los polos están donde una vuelta al lazo, $C\\,P$, vale −1.",
-            "El primer empujón es $mg + m|p|^2$ para un escalón de 1 m, así que los polos lejanos necesitan un empuje que los motores no tienen."
+            "La transformada de Laplace es una **sonda**: multiplica por $e^{-st}$ y mide el área total. $F(s) = \\int_0^\\infty f(t)e^{-st}dt$.",
+            "**Explota justo donde vive la señal**: $e^{at}$ da $1/(s-a)$, que se dispara en $s = a$. Con $s$ complejas, la sonda deshace el giro de las señales que giran. Todo esto lo dibujamos en el **plano s**.",
+            "Un área que dura *para siempre* puede seguir siendo finita, con tal de que la cola adelgace lo bastante rápido. Si la sonda se apaga más despacio de lo que crece la señal, esa $s$ no tiene transformada."
           ]
         },
         {
           "t": "quiz",
           "items": [
             {
-              "id": "ch8-q1",
-              "q": "¿Qué pareja de polos se estabiliza **más rápido**?",
+              "id": "ch7-q7",
+              "q": "La transformada de $e^{3t}$ es $\\frac{1}{s-3}$. Theo sustituye $s = 1$ y obtiene $-\\frac12$. ¿Qué ha fallado?",
               "options": [
                 {
-                  "text": "$-1 \\pm 2i$",
-                  "why": "Tiempo de establecimiento ≈ $4/1 = 4$ s. La altura (2) solo afecta a la oscilación, no al tiempo de establecimiento."
-                },
-                {
-                  "text": "$-4 \\pm 2i$",
+                  "text": "En $s = 1$ el área nunca se queda en un valor, así que ahí no hay transformada",
                   "correct": true,
-                  "why": "La que está más a la izquierda: tiempo de establecimiento ≈ $4/4 = 1$ s."
+                  "why": "El producto es $e^{3t}e^{-t} = e^{2t}$, que crece para siempre. La fórmula solo vale donde gana la sonda, para $s > 3$."
                 },
                 {
-                  "text": "$-0{,}5 \\pm 5i$",
-                  "why": "Muy arriba significa muchas oscilaciones rápidas, pero está cerca del eje, así que se apagan despacio (≈ 8 s)."
+                  "text": "Nada: el área de verdad es $-\\frac12$",
+                  "why": "Una señal positiva por una sonda positiva no puede tener un área negativa. Se está usando la fórmula donde no vale."
+                },
+                {
+                  "text": "Debería haber usado $\\frac{1}{s+3}$",
+                  "why": "$\\frac{1}{s+3}$ es la de $e^{-3t}$. La fórmula está bien; la $s$, no."
                 }
               ]
             },
             {
-              "id": "ch8-q2",
-              "q": "$G(s) = \\dfrac{3}{s^2 + 2s + 10}$. ¿Dónde están los polos y qué pinta tiene la respuesta?",
+              "id": "ch7-q2",
+              "q": "$F(s) = \\dfrac{5}{s+4}$. ¿Qué señal es?",
               "options": [
                 {
-                  "text": "$-1 \\pm 3i$: estable, y oscila",
+                  "text": "$5e^{-4t}$: empieza en 5 y decae",
+                  "sketch": "decaying-plain",
                   "correct": true,
-                  "why": "$s = \\frac{-2 \\pm \\sqrt{4 - 40}}{2} = -1 \\pm 3i$. Mitad izquierda significa estable; parte imaginaria significa oscilaciones."
+                  "why": "Explota en $s = -4$, así que la señal vive en $e^{-4t}$. El 5 de arriba es su tamaño."
                 },
                 {
-                  "text": "$+1 \\pm 3i$: inestable",
-                  "why": "Un despiste con el signo. Para $s^2 + bs + q$ la parte real es $-b/2 = -1$, que está en la mitad izquierda."
+                  "text": "$5e^{4t}$: crece",
+                  "sketch": "growing-plain",
+                  "why": "Una $e^{4t}$ creciente explotaría en $s = +4$. Esta explota en $s = -4$."
                 },
                 {
-                  "text": "$-2$ y $-10$: sin oscilaciones",
-                  "why": "Esos son solo coeficientes del polinomio. Los polos son sus raíces: $-1 \\pm 3i$."
+                  "text": "Una oscilación",
+                  "sketch": "decaying-wiggle",
+                  "why": "Las oscilaciones necesitan una pareja de puntos de explosión complejos: un girador y su gemelo reflejado. Aquí hay uno solo, real, en $-4$."
                 }
               ]
             },
             {
-              "id": "ch8-q3",
-              "q": "Quieres **menos sobreimpulso** pero el **mismo tiempo de establecimiento**. ¿Cómo mueves los polos?",
+              "id": "ch7-q8",
+              "q": "¿En qué parte del plano s explota la transformada del girador $e^{2it}$?",
               "options": [
                 {
-                  "text": "Directamente hacia el eje real (mantener σ, reducir ω)",
+                  "text": "En $s = 2i$, sobre la línea vertical",
                   "correct": true,
-                  "why": "La misma distancia al eje mantiene la misma *envolvente*, así que el tiempo de establecimiento sigue más o menos igual (la regla de $4/|\\sigma|$; es aproximada cerca del eje real). Un ángulo menor respecto al eje real significa más amortiguamiento, y por tanto menos sobreimpulso."
+                  "why": "El girador es $e^{st}$ con $s = 2i$, así que ahí es donde vive. Ahí la sonda deshace su giro exactamente."
                 },
                 {
-                  "text": "Directamente hacia arriba (ω más grande)",
-                  "why": "Eso gira el ángulo hacia el eje vertical: *más* sobreimpulso y oscilaciones más rápidas."
+                  "text": "En $s = 2$",
+                  "why": "Ahí vive $e^{2t}$: una señal que crece sin ningún giro."
                 },
                 {
-                  "text": "Hacia la derecha",
-                  "why": "Eso hace que se estabilice más despacio, y pasado el eje se vuelve inestable."
-                }
-              ]
-            },
-            {
-              "id": "ch8-q4",
-              "q": "Un sistema tiene polos reales en $-0{,}2$ y $-5$. Pasados dos segundos, ¿cuál sigue dando forma a la respuesta?",
-              "options": [
-                {
-                  "text": "El de $-0{,}2$, cerca del eje",
-                  "correct": true,
-                  "why": "$e^{-0.2t}$ sigue al 67 % tras 2 s; $e^{-5t}$ ha bajado al 0,005 %. Manda el polo lento, así que estabilizarse lleva unos $4/0{,}2 = 20$ s."
-                },
-                {
-                  "text": "El de $-5$, más a la izquierda",
-                  "why": "Más a la izquierda significa que se apaga *más rápido*. Tras solo 1 s ya está por debajo del 1 % de su valor inicial (0,67 %)."
-                },
-                {
-                  "text": "Los dos por igual",
-                  "why": "Uno se encoge 25 veces más rápido que el otro ($5 \\div 0{,}2$). Tras medio segundo el rápido está al 8 % y el lento todavía al 90 %."
+                  "text": "En $s = 0$",
+                  "why": "Esa es la casa del escalón. El punto de explosión del girador está más arriba, en $2i$."
                 }
               ]
             }
@@ -673,170 +285,85 @@
         },
         {
           "t": "cliff",
-          "text": "Theo: \"Los polos son preciosos. Pero un momento: hemos hecho trampa todo el capítulo regalándole al dron su empuje de vuelo estacionario. Sin él, la gravedad sigue haciéndolo **caer**. Nuestro mapa está bien. Lo que hay que arreglar es nuestro *controlador*\"."
+          "text": "Theo: \"Así que la sonda nos dice *dónde* vive una señal. Pero queríamos que las pendientes se convirtieran en multiplicaciones. **¿Qué le hace la sonda a una pendiente?**\""
         }
       ]
     }
   ],
   "widgets": {
-    "recipe": {
-      "title": "Una receta, tres entradas",
-      "choose": "¿Qué le pedimos?",
-      "in": {
-        "step": "un escalón hacia arriba",
-        "pulse": "un escalón suave",
-        "wave": "una onda"
+    "probe": {
+      "title": "La sonda",
+      "signal": "Señal",
+      "sig": {
+        "step": "$\\text{escalón } 1$",
+        "decay": "$e^{-t}$",
+        "grow": "$e^{0.5t}$",
+        "wiggle": "$\\sin 2t$"
       },
-      "input": "consigna (entrada)",
-      "output": "altura (salida)",
-      "plotAria": "Consigna y altura del dron a lo largo del tiempo para la entrada elegida.",
-      "same": "no cambia",
-      "changes": "cambia",
-      "describe": {
-        "step": "La consigna salta de 1 a 2 metros y el dron la sigue con un sobreimpulso saltarín.",
-        "pulse": "La consigna se desliza de 1 a 2 metros; el dron la sigue con un rebote más pequeño.",
-        "wave": "La consigna sube y baja como una onda; el dron sigue la onda."
-      },
-      "droneCap": "el dron siguiéndola",
-      "status": {
-        "step": "Se pasa hasta {p} m antes de quedarse en 2 m.",
-        "pulse": "Un arranque más suave: el pico solo llega a {p} m.",
-        "wave": "La receta convierte una onda de {a} m en una onda de {b} m."
-      }
+      "f": "señal f(t)",
+      "probe": "sonda e^(−st)",
+      "product": "f(t)·e^(−st)",
+      "plotAria": "La señal, la sonda y su producto a lo largo del tiempo, con el área bajo el producto sombreada.",
+      "fAria": "Valores medidos del área total F frente a s, un punto por cada s que probaste.",
+      "formula": "fórmula",
+      "traced": "tus medidas",
+      "area": "área hasta ahora",
+      "total": "área total F(s)",
+      "s": "Ritmo de la sonda $s$",
+      "sweep": "Volver a barrer el área",
+      "showFormula": "Mostrar la curva de la fórmula",
+      "help": "Mueve s y suelta (o haz una pausa tras usar las flechas): se mide el área y se añade un punto a la gráfica de F(s). Tras 5 puntos, repartidos en distintas s, puedes mostrar la fórmula.",
+      "finite": "En s = {s} el área total es {F}.",
+      "infinite": "Aquí la sonda no se encoge más rápido que la señal. El área nunca se asienta: es infinita.",
+      "describe": "Ritmo de la sonda s = {s}; área total {A}.",
+      "sloshes": "Aquí el área nunca se queda quieta. Sigue yendo y viniendo, así que esta s no tiene una única respuesta.",
+      "window": "El dibujo muestra los primeros 8 s; el resto añade {rest}.",
+      "noArea": "sin área finita"
     },
-    "playground": {
-      "title": "El patio de los polos",
-      "planeAria": "El plano s con una pareja de polos arrastrables. La mitad izquierda se calma, la mitad derecha se dispara. Usa las flechas para mover el polo seleccionado.",
-      "pole": "p",
-      "poles": "polos",
-      "zeta": "amortiguamiento ζ",
-      "wn": "ωn = |p|",
-      "settle": "se estabiliza, regla 4/σ",
-      "settleReal": "se estabiliza (medido)",
-      "overshoot": "sobreimpulso",
-      "push": "primer empujón (escalón de 1 m)",
-      "pct": "{v}%",
-      "response": "altura tras un escalón de 1 m",
-      "target": "objetivo",
-      "plotAria": "Respuesta al escalón del dron para los polos elegidos; la respuesta anterior aparece como fantasma.",
-      "over": "sobreimpulso",
-      "never": "nunca",
-      "notIn": "no en {T} s",
-      "wiggle": "una oscilación ≈ {T} s",
-      "wnCircle": "ωn = {w}",
-      "budget": "presupuesto de 20 N",
-      "verdict": {
-        "stable": "Mitad izquierda: se calma.",
-        "unstable": "Mitad derecha: ¡se dispara!",
-        "marginal": "Justo sobre el eje: oscila para siempre.",
-        "hitPage": "Salió volando del dibujo, chocó con la página y se cayó. Mueve un polo para volver a intentarlo.",
-        "hitGround": "Se estrelló contra el suelo. Mueve un polo para volver a intentarlo.",
-        "hitPageMarginal": "Cada oscilación llegaba a 3 m, justo lo necesario para tocar la página; los motores se pararon y se cayó."
-      },
-      "negKd": "Aquí Kd es negativa: el rozamiento ya amortigua más de lo que permiten estos polos, así que el controlador tiene que empujar a favor del movimiento.",
-      "pushWarn": "El primer empujón pasa de 20 N, más de lo que tienen los motores reales. Enseguida veremos lo que cuesta eso.",
-      "challenge": "Minidesafío: sobreimpulso menor del 10 % y estabilizado en 2 s",
-      "chalOk": "¡Desafío superado! Sobreimpulso del {o} %, estabilizado en {s} s.",
-      "chalNo": "Todavía no: sobreimpulso del {o} %, se estabiliza en {s} s. Apunta a la zona resaltada.",
-      "help": "Arrastra cualquiera de las × (o ve con Tab y usa las flechas; Mayús para pasos grandes). El dron repite su respuesta al escalón cada vez.",
-      "describe": "Polos en {p}. Coeficiente de amortiguamiento {z}. Se estabiliza en unos {s} segundos y se pasa alrededor de un {o} por ciento.",
-      "re": "σ",
-      "im": "ω"
+    "explode": {
+      "title": "¿Dónde se dispara?",
+      "product": "e^(at)·e^(−st)",
+      "prodAria": "El producto de e elevado a a por t y la sonda, con su área sombreada.",
+      "fAria": "La transformada 1 entre s menos a, con una línea vertical donde se dispara.",
+      "noArea": "sin área finita",
+      "a": "Ritmo de la señal $a$ en $e^{at}$",
+      "s": "Sonda $s$",
+      "never": "s está en a o por debajo: el producto nunca se encoge, así que el área es infinita.",
+      "close": "Acercándose a a: ¡el área es {F} y sigue subiendo!",
+      "calm": "Lejos de a: un área finita y tranquila.",
+      "window": "El dibujo muestra solo los primeros 10 s; todavía falta el {pct} % del área.",
+      "readF": "F(s)",
+      "curve": "1/(s − a)"
     },
-    "zero": {
-      "title": "Desliza el cero",
-      "planeAria": "El plano s con dos polos fijos en menos 2 más o menos 3 i y un cero arrastrable sobre el eje real.",
-      "zero": "cero",
-      "y": "salida",
-      "noZero": "sin cero (mismos polos)",
-      "withZero": "con el cero",
-      "slope": "+ {g} × su pendiente",
-      "plotAria": "Respuestas al escalón con y sin el cero.",
-      "osNo": "sobreimpulso sin cero",
-      "osYes": "sobreimpulso con cero",
-      "pct": "{v}%",
-      "note": "Cero en {z}; escalada para que siga terminando en 1.",
-      "near": "Cerca del origen: la parte de la pendiente es {g} × la pendiente de antes, así que el arranque da un buen empujón.",
-      "mid": "Un empujón moderado: {g} × la pendiente.",
-      "far": "Lejos: solo {g} × la pendiente. Apenas se nota.",
-      "describe": "Cero en {z}, sobreimpulso del {o} por ciento.",
-      "re": "σ",
-      "im": "ω",
-      "help": "Arrastra el ○ a lo largo del eje (o ve con Tab y usa ← →). Los polos × no se mueven."
-    },
-    "limit": {
-      "title": "Los motores reales tienen límites",
-      "ideal": "motores ilimitados (matemáticas)",
-      "real": "dron real",
-      "idealT": "empuje que piden las matemáticas",
-      "realT": "empuje que conseguimos",
-      "hAria": "Altura tras un escalón con motores ilimitados y con motores reales.",
-      "tAria": "Empuje a lo largo del tiempo, con los límites del motor de 0 y 20 newtons.",
-      "max": "máximo del motor 20 N",
-      "min": "los motores no pueden tirar hacia abajo",
-      "peak": "empuje máximo que piden las matemáticas",
-      "tsIdeal": "se estabiliza (matemáticas)",
-      "tsReal": "se estabiliza (real)",
-      "osReal": "sobreimpulso (real)",
-      "pct": "{v}%",
-      "notYet": "no en 3 s",
-      "sigma": "Posición de los polos (moviéndose a la izquierda a 45°)",
-      "toggle": "Motores reales: 0–20 N",
-      "capped": "Las matemáticas piden {p} N; los motores se quedan en 20 N. Tiempo de establecimiento real: {s} s, y por mucho que vayas «más a la izquierda» no baja de unos {b} s.",
-      "fantasy": "Los motores imaginarios dan {p} N tan tranquilos. Vuelve a activar los límites.",
-      "fine": "Dentro del rango de los motores: matemáticas y realidad coinciden."
-    },
-    "loop": {
-      "title": "Una vuelta al lazo",
-      "aria": "Un plano con el punto menos 1 marcado, la curva de una vuelta al lazo para cada velocidad de oscilación y una flecha hasta la vuelta a la velocidad elegida.",
+    "unspin": {
+      "title": "Una sonda que deshace el giro",
       "re": "parte real",
       "im": "parte imaginaria",
-      "kp": "$K_p$ del controlador",
-      "w": "Velocidad de oscilación ω",
-      "lap": "C·P",
-      "cliff": "−1",
-      "size": "tamaño de la vuelta |C·P|",
-      "angle": "ángulo de la vuelta",
-      "distance": "distancia a −1",
-      "zeta": "amortiguamiento ζ",
-      "status": "Lo más cerca de −1: {d}, a unos {w} rad/s. El ángulo se queda por encima de −180°, así que la vuelta nunca llega. Amortiguamiento ζ = {z}.",
-      "help": "Desliza ω para mover la flecha por la curva; desliza Kp para estirar toda la curva. La línea discontinua es la distancia a −1."
+      "path": "total acumulado (una flecha por cada ¼ s)",
+      "plotAria": "El total acumulado del área compleja dibujado como un camino en el plano, dirigiéndose a su valor final.",
+      "limit": "total final",
+      "mag": "tamaño del total |F|",
+      "spin": "giro sobrante",
+      "sigma": "Encogimiento de la sonda $\\sigma$",
+      "omega": "Giro de la sonda $\\omega$ (la señal gira a 2)",
+      "again": "Repetir",
+      "matched": "¡Giros igualados! Todos los trocitos apuntan hacia el mismo lado. El total es {m} = 1/⁠σ, y se va al infinito cuando σ → 0.",
+      "spinning": "Los trocitos se enroscan y casi se cancelan. El total se queda pequeño."
     }
   },
   "plays": {
-    "poleRead": {
-      "sig": "distancia de los polos a la izquierda del eje",
-      "w": "altura de los polos, omega",
-      "noWiggle": "nada (no oscila en absoluto)",
-      "never": "nunca",
-      "noOvershoot": "nada (sin sobreimpulso)",
-      "pct": "{v}%"
+    "stepArea": {
+      "s": "ritmo de la sonda s"
     },
-    "gains": {
-      "sig": "distancia de los polos a la izquierda del eje",
-      "w": "altura de los polos, omega",
-      "negKd": "Eso es una Kd *negativa*: el rozamiento por sí solo ya amortigua más de lo que quieren estos polos, así que el controlador tiene que empujar *a favor* del movimiento."
+    "longArea": {
+      "T": "instante de parada T, en segundos"
     },
-    "dominant": {
-      "time": "tiempo, en segundos",
-      "almostNothing": "casi nada",
-      "pct": "{v}%"
-    },
-    "push": {
-      "sig": "pareja de polos sobre la línea de 45°",
-      "canDo": "los motores pueden con eso",
-      "justOver": "justo por encima de los 20 N que tienen los motores",
-      "farBeyond": "muy por encima de lo que dan los motores"
-    },
-    "budget": {
-      "dr": "tamaño del escalón, en metros"
-    },
-    "zeroKick": {
-      "z": "distancia del cero a 0",
-      "pct": "{v}%"
-    },
-    "lap": {
-      "kp": "ganancia proporcional Kp, en newtons por metro"
+    "scream": {
+      "a": "ritmo de la señal a, por segundo",
+      "s": "ritmo de la sonda s, por segundo",
+      "none": "Nunca se apaga, así que no hay ningún área finita.",
+      "loud": "¡Está chillando!",
+      "calm": "Un área tranquila y finita."
     }
   }
 }

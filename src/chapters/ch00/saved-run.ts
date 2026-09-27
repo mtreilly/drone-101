@@ -1,4 +1,4 @@
-/** Chapter 0 owns the learner run replayed later in Chapter 10. */
+/** Chapter 0 owns the learner run replayed later in Chapter 12. */
 export interface SavedShowerRun {
   t: number[];
   T: number[];

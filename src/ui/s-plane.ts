@@ -368,7 +368,7 @@ export class SPlane {
 
   /**
    * A dashed circle of radius `r` around the origin: every point on it has the same ωn = |s|
-   * (Chapter 6). `label` sits just left of the ω axis, under the circle, or just outside the circle
+   * (Chapter 7). `label` sits just left of the ω axis, under the circle, or just outside the circle
    * at angle `at` (degrees, counter-clockwise from +σ; e.g. 200 keeps it clear of a pole pair that
    * rides the circle). `null` hides it.
    */

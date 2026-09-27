@@ -1,475 +1,571 @@
 {
   "kicker": "Capítulo 10",
-  "title": "De vuelta a la ducha",
-  "question": "¿Por qué oscilábamos, y a qué distancia estamos del abismo?",
+  "title": "Funciones de transferencia, polos y ceros",
+  "question": "¿Podemos leer toda la personalidad de un sistema en una sola fracción?",
   "sections": [
     {
-      "id": "again",
-      "title": "La ducha, con otros ojos",
+      "id": "recipe",
+      "title": "La receta del sistema",
       "blocks": [
         {
           "t": "say",
           "who": "june",
-          "mood": "worried",
-          "text": "Puse el PID de nuestro dron en la ducha (la misma respuesta ágil, escalada a unidades de mando). Osciló caliente, fría, caliente… igual que Mika en el capítulo 0. ¡El dron nunca hizo eso!"
+          "mood": "think",
+          "text": "Empecemos con el dron en vuelo estacionario a 1 m, con 4,9 N de empuje base que equilibran la gravedad. Midamos el cambio solicitado y el cambio real de altura desde esa referencia. Justo antes de una nueva orden, ambos cambios valen cero. En el ejemplo del escalón, la consigna salta a 2 m en $t=0$: su cambio pasa a ser 1 m mientras el dron sigue a 1 m."
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "think",
-          "text": "El dron no tiene un retardo grande. La ducha tiene 2,5 segundos de tubería. Averigüemos de una vez qué *hace* un retardo."
-        },
-        {
-          "t": "p",
-          "text": "La ducha tiene dos partes lentas: la **tubería**, un retardo puro de 2,5 s, y el **suavizador**, el cabezal y las paredes de la tubería calentándose con la constante de tiempo del capítulo 3, $\\tau = 1$ s (al cabo de 1 s ha cerrado el 63 % de la distancia hasta una temperatura nueva)."
-        },
-        {
-          "t": "p",
-          "text": "Primero, una confesión sobre la \"mano normal\" del capítulo 0. Giraba el mando a una **velocidad** proporcional a lo mal que se sentía el agua: velocidad del mando $= k\\cdot\\err{e}$, con $k = 0{,}8\\,\\%$ del mando por segundo y por °C. Una velocidad proporcional al error significa que la *posición* del mando es el montón de error pasado. Eso es un **controlador I**, con $K_i = k$."
-        },
-        {
-          "t": "note",
-          "text": "En los cálculos, el mando va de 0 a 1: el 0,8 % de su recorrido son 0,008 unidades de mando. La fórmula del lazo de abajo usa 0,008; los deslizadores muestran 0,8 %. Conserva las unidades junto al número."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "surprised",
-          "text": "Espera, ¿entonces en el capítulo 0 yo era un controlador PID? Bueno, un controlador I. Uno con demasiadas ganas."
-        }
-      ]
-    },
-    {
-      "id": "lag",
-      "title": "El retardo es un desfase en la oscilación",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "neutral",
-          "text": "Yo sigo pensando que un retardo solo lo hace todo más *lento*. No debería poder volver inestable nada."
-        },
-        {
-          "t": "p",
-          "text": "Primero aislemos el **retardo puro** de la tubería. Imagina una onda senoidal que va desde la entrada de la tubería hasta el cabezal sin suavizarse: la salida conserva la misma forma, pero llega 2,5 s tarde. ¿Cuánto representa ese retardo *respecto de una oscilación completa*?"
-        },
-        {
-          "t": "widget",
-          "id": "phase"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "surprised",
-          "text": "Espera. Con una oscilación de 5 segundos, el agua caliente llega justo cuando el mando pide fría. Eso no es *más lento*. Es *al revés*."
-        },
-        {
-          "t": "p",
-          "text": "El retardo de la tubería sigue siendo de 2,5 s, pero su **desfase** depende de lo rápido que oscile la onda. Llamemos $\\phi$ al desfase y $L$ al retardo. Si una oscilación dura $T$ segundos (aquí $T$ es un tiempo, no una temperatura), su velocidad angular es $\\omega=2\\pi/T$ radianes por segundo. Un desfase positivo significa que la salida va por detrás de la entrada. Los ingenieros escriben el desfase como un ángulo negativo, por eso las gráficas de abajo bajan."
-        },
-        {
-          "t": "p",
-          "text": "Una oscilación entera es una vuelta completa de la flecha giratoria del capítulo 5: 360°, o 2π radianes. Así que lo que importa es **qué fracción de una oscilación** cubre el retardo: $L/T$."
+          "text": "Menos mal, porque en el capítulo anterior quitamos los trocitos $-h(0)$ y la fórmula mintió. Medidos desde el vuelo estacionario, esos valores iniciales **son** cero de verdad, así que esta vez desaparecen honradamente."
         },
         {
           "t": "math",
-          "tex": "\\phi = \\underbrace{\\frac{L}{T}}_{\\text{fracción de oscilación}}\\cdot 360^\\circ = \\omega L \\text{ radianes},\\qquad \\omega = \\frac{2\\pi}{T}"
-        },
-        {
-          "t": "play",
-          "id": "delaylag",
-          "text": "Un retardo de {scrub|L|dis} s en una oscilación que se repite cada {scrub|T} s cubre {calc|frac} de oscilación, así que la salida va {calc|deg}° por detrás, o {calc|rad} radianes."
-        },
-        {
-          "t": "p",
-          "text": "Para una oscilación de 5 segundos, 2,5 s es media oscilación: 180°. En este modelo de retardo puro, cada cresta de la salida coincide con un valle de la entrada. El suavizador de la ducha además encoge las oscilaciones rápidas\\; eso lo añadimos enseguida."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "surprised",
-          "text": "O sea, los mismos 2,5 s son un empujoncito para una oscilación perezosa y una vuelta completa del revés para una rápida. La tubería no cambia nunca. ¡La que cambia es la oscilación!"
-        },
-        {
-          "t": "note",
-          "text": "Es la flecha giratoria del capítulo 5. Retrasarla en $L$ da $e^{i\\omega(t-L)} = e^{-i\\omega L}\\,e^{i\\omega t}$: la misma flecha, girada hacia atrás un ángulo $\\omega L$."
+          "tex": "\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\Delta\\sp{R}(s)"
         },
         {
           "t": "callout",
-          "title": "La sonda ve el retardo",
+          "title": "De dónde sale la receta",
           "blocks": [
             {
               "t": "p",
-              "text": "La sonda del capítulo 7 da el mismo factor para **cualquier** señal, no solo para un girador. Una señal que llega $L$ segundos tarde empieza a acumular área $L$ segundos tarde, y para entonces la sonda ya se ha encogido por un factor $e^{-sL}$. Antes de llegar, la señal que llega tarde vale cero, así que pon $u = t - L$:"
+              "text": "El empuje de vuelo estacionario anula la gravedad, así que en la ecuación del dron solo quedan los *cambios*. Ahora usa la regla del capítulo 9: cada pendiente se convierte en × $s$, menos su valor inicial. Desde el vuelo estacionario todos los valores iniciales son cero, así que no se resta nada:"
             },
             {
               "t": "math",
-              "tex": "\\int_0^\\infty f(t-L)\\,e^{-st}\\,dt = \\int_0^\\infty f(u)\\,e^{-s(u+L)}\\,du = e^{-sL}\\,F(s)"
+              "tex": "\\begin{gathered} m\\,\\Delta\\out{h}'' + c\\,\\Delta\\out{h}' = \\eff{K_p}\\,(\\Delta\\sp{r} - \\Delta\\out{h}) \\\\[2pt] \\Big\\downarrow\\ {\\scriptstyle \\Delta h(0)\\,=\\,\\Delta h'(0)\\,=\\,0} \\\\[2pt] (m s^2 + c s + \\eff{K_p})\\,\\Delta\\out{H}(s) = \\eff{K_p}\\,\\Delta\\sp{R}(s) \\end{gathered}"
             },
             {
               "t": "p",
-              "text": "Así que un retardo puro multiplica cada transformada por $e^{-sL}$. Esa es su función de transferencia, y sobre la recta $s = i\\omega$ es exactamente el giro hacia atrás de $\\omega L$ de arriba."
+              "text": "Divide por $m s^2 + c s + \\eff{K_p}$ y ahí está $G(s)$. Su denominador es la misma ecuación que obtuvimos en los capítulos 4 a 7 suponiendo $e^{st}$."
             },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "think",
-              "text": "Pero $e^{-sL}$ no es un cociente de polinomios. ¿Dónde están sus polos?"
-            },
-            {
-              "t": "say",
-              "who": "june",
-              "mood": "think",
-              "text": "En ningún sitio que se pueda apuntar en una lista. Mételo en un lazo y $1 + C\\,P = 0$ tiene infinitas soluciones. Por eso este capítulo deja de dibujar mapas de polos y mide oscilaciones."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "bode",
-      "title": "Midiendo la ducha oscilación a oscilación",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Ahora añade el suavizador al retardo de la tubería. El cabezal y las paredes de la tubería tardan en calentarse, así que la ducha completa retrasa *y* suaviza los cambios del mando. El plan: mover el mando en vaivén a una velocidad, esperar a que el ritmo se asiente y medir dos números:"
-        },
-        {
-          "t": "list",
-          "items": [
-            "**Ganancia** (la misma palabra que la ganancia del controlador: tamaño que sale ÷ tamaño que entra): lo grande que es la oscilación de temperatura comparada con la oscilación de la mezcla de agua que pedimos.",
-            "**Fase:** cuánto va por detrás, como ángulo: su fracción de una oscilación entera, por 360°."
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Cada medida pone un punto en dos gráficas. Mide al menos cinco velocidades, lentas y rápidas."
-        },
-        {
-          "t": "widget",
-          "id": "bode"
-        },
-        {
-          "t": "callout",
-          "title": "La regla aplastada",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "En estas gráficas, cada ×10 es un mismo paso a lo largo del eje: de 0,1 a 1 ocupa lo mismo que de 1 a 10. El punto medio entre 0,1 y 1 está en torno a 0,3, no en 0,55. La regla está aplastada para que una oscilación de 100 segundos y una de 3 quepan en la misma gráfica. Fíjate en la ganancia del suavizador en esta regla: plana para las oscilaciones lentas y luego bajando por una línea casi recta para las rápidas, con un codo cerca de $\\omega = 1/\\tau$."
-            },
-            {
-              "t": "say",
-              "who": "june",
-              "mood": "excited",
-              "text": "Pasos iguales son *veces* iguales, no *sumas* iguales. ¡Como las octavas de un piano!"
-            },
-            {
-              "t": "p",
-              "text": "La regla aplastada tiene un segundo regalo: en ella, **multiplicar se convierte en sumar**. ×10 es siempre un paso hacia arriba, empieces donde empieces, y ×0,1 un paso hacia abajo. Por eso el eje de la *ganancia* también está aplastado. Alrededor de un lazo las ganancias se multiplican (mano × suavizador × tubería), así que en esta regla sus alturas simplemente se suman, igual que sus desfases. Es el logaritmo del capítulo 4 en acción: $\\ln(a\\,b) = \\ln a + \\ln b$."
-            },
-            {
-              "t": "note",
-              "text": "Los ingenieros suelen escribir las ganancias en **decibelios** (dB): 20 × el logaritmo en base 10 de la ganancia, así que ×10 son +20 dB, ×1 son 0 dB y ×0,1 son −20 dB. La misma regla aplastada, con otras etiquetas. Nosotros nos quedamos con el × de siempre."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "El suavizador encoge las oscilaciones rápidas, mientras la tubería sigue añadiendo desfase. Estas curvas de ganancia y fase frente a la velocidad de oscilación forman un **diagrama de Bode**. Juntas son la **respuesta en frecuencia** de la ducha: cómo trata cada velocidad de oscilación. Aquí la entrada es la **temperatura del agua mezclada**, así que las oscilaciones lentas tienen ganancia 1. Si usáramos como entrada la fracción de mando, la ganancia sería 45 veces mayor. Para sacar la respuesta en frecuencia de la fórmula, pon $s = i\\omega$: el mismo truco que encontró el borde del capítulo 9. (Funciona porque la ducha, por sí sola, es estable, así que sus oscilaciones se asientan en un ritmo constante que podemos medir.)"
-        },
-        {
-          "t": "callout",
-          "title": "Lo que el suavizador le hace a una flecha giratoria",
-          "blocks": [
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "think",
-              "text": "Otra vez el truco del capítulo 4: supongamos que la respuesta es la misma flecha giratoria, solo que con otro tamaño y otro ángulo."
-            },
-            {
-              "t": "math",
-              "tex": "\\tau\\,\\dot y + y = u,\\quad u = e^{i\\omega t},\\ y = Y\\,e^{i\\omega t} \\;\\Rightarrow\\; (1 + i\\omega\\tau)\\,Y = 1 \\;\\Rightarrow\\; Y = \\frac{1}{1+i\\omega\\tau}"
-            },
-            {
-              "t": "p",
-              "text": "Mete la flecha giratoria $e^{i\\omega t}$ en la regla del suavizador y la flecha $Y$ tiene que cumplir $(1 + i\\omega\\tau)\\,Y = 1$. Con las flechas del capítulo 6: $1 + i\\omega\\tau$ mide $\\sqrt{1+\\omega^2\\tau^2}$ y apunta hacia arriba con el ángulo $\\arctan(\\omega\\tau)$. Dividir entre ella encoge en esa longitud y gira hacia atrás ese ángulo. Las oscilaciones lentas casi ni lo notan. Las rápidas quedan aplastadas y se retrasan hasta casi un cuarto de vuelta, pero nunca más."
-            },
-            {
-              "t": "play",
-              "id": "smoother",
-              "text": "Con ω = {scrub|w} rad/s, el suavizador (τ = 1 s) conserva {calc|g} de la oscilación y la retrasa {calc|lag}°."
-            }
-          ]
-        },
-        {
-          "t": "math",
-          "tex": "G(i\\omega) = \\frac{e^{-i\\omega L}}{1 + i\\omega\\tau}, \\qquad |G| = \\frac{1}{\\sqrt{1+\\omega^2\\tau^2}}, \\qquad \\angle G = -\\arctan(\\omega\\tau) - \\omega L"
-        },
-        {
-          "t": "play",
-          "id": "total",
-          "text": "Con ω = {scrub|w} rad/s, la tubería retrasa {calc|pipe}° y el suavizador {calc|lag}°: {calc|total}° en total. {calc|verdict}"
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "¡Lo encontré! Cerca de 0,95 rad/s, la ducha por sí sola pone una oscilación del revés. Hay que recordar esa velocidad."
-        },
-        {
-          "t": "note",
-          "text": "Una ayudita honesta: una sola medida no distingue un desfase de 90° de uno de 450° (las ondas se ven iguales). Contamos los ciclos extra enteros siguiendo la curva de lento a rápido, como quien sigue una cresta por la tubería."
-        }
-      ]
-    },
-    {
-      "id": "margins",
-      "title": "¿A qué distancia del abismo?",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Ahora cerremos el lazo: mano → mando → tubería → piel → mano. Sigue una oscilación por todo el lazo. Para la mano del capítulo 0, el viaje alrededor del lazo es $G_{\\circ}$ (un circulito por *lazo*, porque $L$ ya es el retardo):"
-        },
-        {
-          "t": "math",
-          "tex": "G_{\\circ}(s) = \\underbrace{\\frac{k}{s}}_{\\text{mano}}\\cdot\\underbrace{\\frac{45\\,e^{-2.5s}}{s+1}}_{\\text{ducha}}"
-        },
-        {
-          "t": "callout",
-          "title": "El montón de una oscilación",
-          "blocks": [
             {
               "t": "say",
               "who": "mika",
-              "mood": "think",
-              "text": "Mi mano va amontonando error. ¿Qué le hace un montón a una oscilación?"
-            },
-            {
-              "t": "math",
-              "tex": "\\int \\cos(\\omega t)\\,dt = \\frac{\\sin(\\omega t)}{\\omega} \\qquad\\Longleftrightarrow\\qquad \\frac{1}{i\\omega}:\\ \\text{un cuarto de vuelta atrás, } \\tfrac{1}{\\omega}\\text{ de tamaño}"
-            },
-            {
-              "t": "p",
-              "text": "El área bajo un coseno es un seno, un cuarto de oscilación por detrás: 90° de desfase, a *cualquier* velocidad. Y el montón es mayor para las oscilaciones lentas, porque cada joroba dura más antes de compensarse: el tamaño va como $1/\\omega$. El capítulo 5 decía que la velocidad es $i\\omega$ veces la posición. Amontonar es lo contrario: dividir entre $i\\omega$. Ese es el $k/s$ del lazo."
+              "mood": "happy",
+              "text": "Así que no es magia. Es la propia ecuación del dron, con cada pendiente convertida en una $s$."
             }
           ]
         },
         {
           "t": "p",
-          "text": "La realimentación resta (error = objetivo − temperatura). Eso es un ×(−1), la media vuelta del capítulo 5, así que la onda se invierte una vez. Si el viaje alrededor del lazo *además* la retrasa exactamente 180°, las dos inversiones se anulan y cada corrección llega **perfectamente a compás** con la oscilación, como cuando empujas un columpio justo en el momento adecuado. Si el lazo devuelve la onda a tamaño completo (ganancia 1), la oscilación se mantiene sola; con más de 1, crece. Es otra vez el $1 + C\\,P = 0$ del capítulo 8, sobre la recta $s = i\\omega$: un viaje que regresa invertido y a tamaño completo es $G_{\\circ}(i\\omega) = -1$."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "En este lazo sencillo de ducha, la fase cruza −180° a una velocidad de oscilación relevante. Busca esa velocidad en la gráfica de fase y lee la ganancia del lazo a la misma velocidad en la gráfica de ganancia. ¿Está por debajo o por encima de 1?"
-        },
-        {
-          "t": "play",
-          "id": "handloop",
-          "text": "Con ω = {scrub|w} rad/s, el montón de la mano retrasa 90°, el suavizador {calc|lag}° y la tubería {calc|pipe}°: {calc|total}° en total. Ahí el lazo de la mano normal devuelve una oscilación {calc|g} veces más grande."
+          "text": "$\\Delta\\sp{R}(s)$ es la transformada del **cambio pedido** desde 1 m; $\\Delta\\out{H}(s)$ es la del **cambio real** desde 1 m. $G(s)$ depende del dron y el controlador. Es la **función de transferencia**: cambio de salida dividido por cambio de entrada, con ambos cambios partiendo de cero."
         },
         {
           "t": "p",
-          "text": "Desliza hasta que el total pase de 180°, entre 0,45 y 0,46 rad/s. En el cruce exacto, hacia 0,457 rad/s, la oscilación vuelve 0,72 veces más grande, así que la mano podría ser unas 1 ÷ 0,72 ≈ 1,4 veces más fuerte antes de llegar al borde."
+          "text": "La gráfica sigue mostrando alturas sobre el suelo. Suma el metro inicial al cambio que predice la fórmula para obtener la altura azul de la gráfica."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "June tenía razón: la fracción **es** el dron. Es como su **receta**. ¡Le metes cualquier ingrediente y te dice lo que sale!"
+        },
+        {
+          "t": "p",
+          "text": "Prueba tres entradas distintas con el mismo dron. La receta nunca cambia; solo cambia $\\Delta\\sp{R}(s)$."
+        },
+        {
+          "t": "widget",
+          "id": "recipe"
         },
         {
           "t": "vocab",
           "items": [
             {
-              "term": "Margen de ganancia",
-              "def": "Cuántas veces podrías multiplicar la ganancia del controlador antes de que la ganancia del lazo llegue a 1 a la velocidad de −180°. Por debajo de 1 = has caído por el abismo."
+              "term": "Función de transferencia $G(s)$",
+              "def": "Cambio de salida transformado ÷ cambio de entrada transformado, partiendo del mismo estado de reposo. Para este dron lineal es un cociente de polinomios en $s$."
             },
             {
-              "term": "Margen de fase",
-              "def": "A la velocidad en que la ganancia del lazo vale exactamente 1, cuánto desfase *extra* haría falta para llegar a −180°. Más es más seguro\\; 45°–60° es un objetivo habitual (el desvío de abajo explica por qué)."
+              "term": "Partir del reposo (condiciones iniciales nulas)",
+              "def": "Todos los cambios y sus velocidades valen cero en $t = 0$, como cuando medimos desde el vuelo estacionario. Entonces los términos de valor inicial del capítulo 9, como $-h(0)$, también son cero, y $G(s)$ lo cuenta todo."
             }
           ]
-        },
-        {
-          "t": "callout",
-          "title": "El margen de fase es amortiguamiento disfrazado",
-          "blocks": [
-            {
-              "t": "say",
-              "who": "june",
-              "mood": "think",
-              "text": "¿Por qué de 45° a 60°? ¿Quién eligió eso?"
-            },
-            {
-              "t": "p",
-              "text": "En los lazos sencillos del capítulo 6, el margen de fase y el coeficiente de amortiguamiento van de la mano. Unos 43° corresponden a ζ = 0,4 (25 % de sobreimpulso), 52° a ζ = 0,5 (16 %) y 59° a ζ = 0,6 (menos del 10 %). Estas parejas son exactas para el lazo más sencillo del capítulo 6, $\\omega_n^2/\\big(s(s+2\\zeta\\omega_n)\\big)$. Así que un margen de 45°–60° significa ζ ≈ 0,4–0,6: más saltarín que el 0,7–1 del capítulo 6. Aun así es un objetivo habitual, porque un margen también es una distancia de seguridad al abismo (cuánto puede equivocarse el modelo), no solo una promesa sobre el sobreimpulso. Con una tubería en el lazo es una buena guía, no una ley exacta."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "En nuestra ducha, la fase de $G_{\\circ}$ llega a −180° en $\\omega \\approx 0{,}457$ rad/s, un periodo de oscilación de unos **13,8 s**. La mano normal ($k = 0{,}008$) tiene un margen de ganancia de solo unos **1,4**, y un margen de fase de unos 22° (donde su ganancia del lazo vale 1, a 0,34 rad/s, la fase es −158°). ¡Muy cerca del borde! La mano más brusca duplica la ganancia: 1,4 ÷ 2 = 0,7, **abismo abajo**. Justo por eso no se estabilizaba nunca."
-        },
-        {
-          "t": "predict",
-          "id": "ch10-delay",
-          "gate": true,
-          "q": "Supón que la tubería fuera el doble de larga (un retardo de 5 s). ¿Qué le pasa a la mayor ganancia de la mano que sigue siendo estable?",
-          "options": [
-            {
-              "text": "**Sube**: puedes reaccionar más fuerte, porque tienes más tiempo",
-              "why": "Tener más tiempo para reaccionar suena bien, pero estás reaccionando a noticias *más viejas*. El desfase crece a todas las velocidades."
-            },
-            {
-              "text": "**Baja**: tienes que reaccionar con más suavidad",
-              "correct": true,
-              "why": "La fase llega a −180° con una oscilación más lenta, y a velocidades lentas el montón de la mano ($k/s$) es grande. Ahí la ganancia del lazo es mayor, así que $k$ tiene que encogerse: de unos 1,12 a 0,60 %/(°C·s)."
-            },
-            {
-              "text": "Se queda igual: el retardo cambia los tiempos, no la ganancia",
-              "why": "Es verdad que un retardo no cambia el tamaño de una onda, pero cambia *qué* velocidad llega a −180°, y ahí la ganancia es distinta."
-            }
-          ]
-        },
-        {
-          "t": "widget",
-          "id": "margins"
-        },
-        {
-          "t": "play",
-          "id": "double",
-          "text": "Con una tubería de {scrub|L|dis} s, el borde de la mano de velocidad está en k = {calc|k} %/(°C·s), y en el borde oscila cada {calc|T} s."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "El doble de tubería, más o menos la mitad de mano. Y las oscilaciones en el borde también se vuelven más lentas: ¡casi 24 segundos!"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "surprised",
-          "text": "Vale, retiro lo dicho. Un retardo no solo hace las cosas más lentas: se come el margen de fase, y el margen de fase es lo único que hay entre tú y una oscilación."
         }
       ]
     },
     {
-      "id": "replay",
-      "title": "Tu ducha del capítulo 0, explicada",
+      "id": "poles",
+      "title": "Polos: donde el sistema quiere vivir",
       "blocks": [
         {
           "t": "p",
-          "text": "Aquí tienes tu propio intento del capítulo 0. Si tus oscilaciones estaban cerca del borde, su periodo debería parecerse a lo que predice el lazo. Pero hay un giro: no todas las personas son el mismo tipo de controlador."
-        },
-        {
-          "t": "widget",
-          "id": "replay"
+          "text": "¿Dónde **explota** $G(s)$? Donde su denominador vale cero. Esos puntos son los **polos**, dibujados como ×. En este dron hay dos, uno por cada uno de los dos movimientos naturales $e^{st}$ del capítulo 7."
         },
         {
           "t": "p",
-          "text": "Una **mano de velocidad** (girar el mando mientras el agua se sienta mal) es un controlador I: su borde está en oscilaciones de 13,8 s. Una **mano de posición** (\"está demasiado caliente, pon el mando *aquí*\") actúa como un controlador P: $G_{\\circ}(s) = 45K\\,e^{-2.5s}/(s+1)$. Una mano de posición no tiene montón, así que tampoco sus propios 90°: la tubería y el suavizador solos tienen que llegar a 180°, y eso ocurre con una oscilación más rápida, $\\omega \\approx 0{,}95$ rad/s (la velocidad del revés de June). Eso da oscilaciones de **6,6 s**, para cualquier $K$ por encima de unos 0,031 de mando por °C. La mayoría de la gente es una mezcla. (La mano robot normal oscila algo más despacio que 13,8 s, unos 15,5 s, porque está justo por dentro del borde\\; las oscilaciones de la mano brusca, de unos 11,6 s, quedan aplastadas porque el mando choca con sus topes.)"
+          "text": "En el capítulo 8, la transformada de $e^{at}$ chillaba en $s = a$. Léelo al revés: dondequiera que $G$ chille, se esconde un movimiento $e^{pt}$."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "¡O sea que los polos son los **modos** del capítulo 7, sentados en el mapa!"
+        },
+        {
+          "t": "callout",
+          "title": "Por qué los polos son los movimientos",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Una respuesta al escalón es $G(s)$ por el $\\frac{1}{s}$ del escalón. Divídela en trozos sencillos, las fracciones simples del capítulo 9 (una pareja reflejada de polos recibe numeradores gemelos reflejados): el propio polo del escalón en 0 da el cambio final $A$, y cada polo de $G$ da un trozo $\\frac{B}{s-p}$."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} \\Delta\\out{H}(s) = G(s)\\cdot\\frac{1}{s} &= \\frac{A}{s} + \\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\\\[4pt] \\Longrightarrow\\quad \\Delta\\out{h}(t) &= A + B e^{pt} + \\bar B e^{\\bar p t} \\end{aligned}"
+            },
+            {
+              "t": "p",
+              "text": "La tabla del capítulo 9 convierte cada trozo de nuevo en un movimiento. No puede aparecer nada más: los polos son todo el reparto."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "think",
+              "text": "Y un polo con $\\sigma > 0$ es un trozo que crece. Con razón la mitad derecha se dispara."
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Ahora dale la vuelta. En lugar de elegir ganancias y buscar los polos, vamos a **arrastrar los polos** y ver qué dron sale. Para eso hace falta un segundo mando, $\\eff{K_d}$: un empuje contra la velocidad, que conoceremos como es debido en el capítulo 11. Se suma al rozamiento $c$, y las dos raíces son $p$ y su gemela reflejada $\\bar p$ (la barra cambia el signo de la parte imaginaria, como los gemelos del capítulo 6):"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} & m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p} = 0 \\\\ \\Longrightarrow\\quad & s = p,\\ \\bar p \\qquad \\text{(los polos)} \\end{aligned}"
         },
         {
           "t": "play",
-          "id": "pgain",
-          "text": "Una mano de posición con K = {scrub|K|eff} de mando por °C: a la velocidad de −180° (0,95 rad/s) su lazo devuelve una oscilación {calc|g} veces más grande. {calc|verdict}"
+          "id": "gains",
+          "text": "Para poner los polos en −{scrub|sig} ± {scrub|w}i, el controlador necesita $\\eff{K_p} = m(\\sigma^2+\\omega^2)$ = {calc|kp|eff} N/m y $c + \\eff{K_d} = 2m|\\sigma|$ = {calc|damp} N·s/m, así que $\\eff{K_d}$ = {calc|kd|eff} N·s/m. El patio de abajo sigue estos números. {calc|note}"
+        },
+        {
+          "t": "predict",
+          "id": "ch8-rhp",
+          "gate": true,
+          "q": "¿Qué hace el dron si arrastramos los polos a la **mitad derecha** del plano s?",
+          "options": [
+            {
+              "text": "Aterriza suavemente",
+              "sketch": "sluggish",
+              "why": "Para aterrizar hace falta que todo se calme, y los polos de la mitad derecha hacen lo contrario."
+            },
+            {
+              "text": "Flota, un poco tambaleante",
+              "sketch": "steady-wiggle",
+              "why": "Un tambaleo constante es lo que sale justo **sobre** el eje vertical. Un poco más allá, todo crece."
+            },
+            {
+              "text": "Oscila cada vez más fuerte hasta que se estrella o sale volando",
+              "sketch": "growing-wiggle",
+              "correct": true,
+              "why": "En la mitad derecha, $e^{st}$ tiene $\\sigma > 0$: una espiral que crece. Las oscilaciones aumentan en cada ciclo."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "playground"
+        },
+        {
+          "t": "h3",
+          "text": "Cómo leer el mapa"
+        },
+        {
+          "t": "p",
+          "text": "Juega con él. Saltan a la vista unas cuantas reglas, y cada una es una vieja amiga disfrazada:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "**Mitad izquierda = se calma, mitad derecha = se dispara.** La parte real $\\sigma$ es el ritmo al que se encoge o crece $e^{\\sigma t}$.",
+            "**Más a la izquierda = más rápido.** Estabilizarse lleva unos $4/|\\sigma|$ segundos (las líneas verticales discontinuas): las cuatro constantes de tiempo del capítulo 7, ya que $e^{-|\\sigma| t}$ baja del 2 % tras $\\ln 50/|\\sigma| \\approx 3{,}9/|\\sigma|$ segundos.",
+            "**Más arriba = más oscilante.** La altura $\\omega$ es la frecuencia amortiguada del capítulo 7, así que una oscilación dura $2\\pi/\\omega$ segundos.",
+            "**El ángulo fija el sobreimpulso.** El ángulo $\\theta$ medido desde el eje real negativo da $\\zeta = \\cos\\theta$ (el círculo del capítulo 7), y el sobreimpulso es $e^{-\\pi|\\sigma|/\\omega}$ (los rayos discontinuos). Cerca del eje real apenas se pasa; cerca del eje vertical, muchísimo. (Es exacto para dos polos y ningún cero, partiendo del reposo. Un cero lo cambia: en la sección siguiente, uno convierte un 12 % en un 15 %.)"
+          ]
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "worried",
+          "text": "Yo quería **un solo** polo arriba y otro abajo del todo. ¡No me deja! El de abajo no para de copiar al de arriba."
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "happy",
+          "text": "¿Te acuerdas de los giradores gemelos del capítulo 6? Un dron real tiene un movimiento real, así que cada $e^{st}$ que gira necesita su gemelo reflejado para cancelar las partes imaginarias. Los polos complejos **siempre** vienen en parejas reflejadas."
+        },
+        {
+          "t": "callout",
+          "title": "Por qué el ángulo fija el sobreimpulso",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "El dron pasa el objetivo y da la vuelta tras media oscilación, en $t = \\pi/\\omega$. Para entonces el $e^{-|\\sigma| t}$ que se encoge lleva ese tiempo trabajando, y lo que queda de la oscilación es el sobreimpulso. Solo importa la razón $|\\sigma|/\\omega$, y esa razón es el *ángulo* del polo. En el círculo del capítulo 7, el coseno de ese ángulo es $\\zeta$."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} t_{\\text{pico}} &= \\frac{\\pi}{\\omega} \\\\[4pt] \\text{sobreimpulso} &= e^{-|\\sigma|\\,t_{\\text{pico}}} = e^{-\\pi|\\sigma|/\\omega} \\\\[4pt] &= e^{-\\pi\\zeta/\\sqrt{1-\\zeta^2}}, \\qquad \\zeta = \\cos\\theta \\end{aligned}"
+            },
+            {
+              "t": "play",
+              "id": "poleRead",
+              "text": "Polos en −{scrub|sig} ± {scrub|w}i: las oscilaciones se encogen como $e^{-|\\sigma| t}$, así que se estabiliza en unos {calc|ts} s. Una oscilación dura {calc|period} s. El primer pico llega tras media oscilación, en {calc|tp} s, y para entonces el encogimiento ha dejado un sobreimpulso de {calc|os}."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "happy",
+              "text": "Así que cada rayo que sale de 0 es un $\\zeta$, y un sobreimpulso."
+            }
+          ]
+        },
+        {
+          "t": "predict",
+          "id": "ch8-up",
+          "gate": true,
+          "q": "Mantén $\\sigma = -2$ y desliza los polos **en vertical hacia arriba**, de $\\pm 4i$ a $\\pm 8i$. ¿Qué cambia?",
+          "options": [
+            {
+              "text": "Se estabiliza el doble de rápido",
+              "why": "El tiempo de establecimiento sigue al ritmo de encogimiento $\\sigma$, que no se ha movido. Medido: 1,87 s pasa a 1,72 s, casi lo mismo."
+            },
+            {
+              "text": "Oscilaciones más rápidas y más sobreimpulso; el tiempo de establecimiento sigue más o menos igual",
+              "correct": true,
+              "why": "Una oscilación baja de 1,57 s a 0,79 s y el sobreimpulso sube del 21 % al 46 %, pero la envolvente $e^{-2t}$ no cambia, así que el tiempo de establecimiento se queda cerca de $4/2 = 2$ s."
+            },
+            {
+              "text": "Se vuelve inestable",
+              "why": "Eso solo lo decide la posición izquierda-derecha. Subir y bajar nunca cruza a la mitad derecha."
+            }
+          ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "El patio saltó cuando respondimos: la pareja fantasma está en $\\pm 4i$, la nueva en $\\pm 8i$. La misma envolvente, el doble de oscilaciones y una primera oscilación mucho más grande."
+        },
+        {
+          "t": "note",
+          "text": "Nuestro dron empezaba en $-1 \\pm 6.24i$: es el dron con $K_p = 20$ del capítulo 2. Muy arriba (muy oscilante) y cerca del eje (lento en estabilizarse). Ahora puedes *ver* por qué rebotaba."
         },
         {
           "t": "say",
           "who": "mika",
           "mood": "think",
-          "text": "Así que cuando daba tirones al mando directo a un punto, yo era una mano de posición. Mis oscilaciones de seis segundos eran la tubería y el suavizador, no unos dedos torpes."
-        }
-      ]
-    },
-    {
-      "id": "design",
-      "title": "Diseña una ducha robot",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Ahora vamos a ganarles a nuestras propias manos. El robot usa PI: **P reacciona al error de temperatura actual**, e **I recuerda el error acumulado**. Juntos dejan que el mando responda enseguida mientras I encuentra el ajuste duradero correcto."
-        },
-        {
-          "t": "note",
-          "text": "El objetivo: un **margen de fase por encima de 45°**, y **10 segundos en la franja de confort que empiecen antes de 12 s**. Los números de los deslizadores son porcentajes del recorrido completo del mando: $K_p$ en % por °C de error actual, $K_i$ en % por °C·segundo de error acumulado. Las ecuaciones del lazo usan fracciones de mando, así que divide entre 100 los números que ves."
+          "text": "¿Y si los dos polos están sobre el eje real, uno en $-0{,}2$ y otro en $-5$?"
         },
         {
           "t": "say",
           "who": "june",
-          "mood": "excited",
-          "text": "Fácil. Usaré ganancias grandes, como en el dron: rápido y ágil. Ya están puestas. ¡Mira esto!"
+          "mood": "happy",
+          "text": "El rápido desaparece en un segundo. El lento es el que manda."
+        },
+        {
+          "t": "play",
+          "id": "dominant",
+          "text": "Polos reales en −0,2 y −5. Tras {scrub|time} s, al movimiento rápido $e^{-5t}$ le queda {calc|fast} de su valor inicial, y al lento $e^{-0.2t}$ todavía le queda {calc|slow}. Así que decide el polo lento: estabilizarse lleva unos $4/0{,}2 = 20$ s."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Polo",
+              "def": "Un valor de $s$ donde la función de transferencia explota. Cada polo $p$ es un movimiento $e^{pt}$ del sistema."
+            },
+            {
+              "term": "Pareja reflejada $p,\\ \\bar p$",
+              "def": "Dos polos con la misma parte real y partes imaginarias opuestas. Los polos complejos de un sistema real siempre vienen así."
+            },
+            {
+              "term": "Polo dominante",
+              "def": "El polo más cercano al eje vertical. Su movimiento lento dura más que los demás, así que normalmente decide el tiempo de establecimiento, salvo que un cero esté casi encima de él (el capítulo 11 tiene uno)."
+            }
+          ]
+        },
+        {
+          "t": "callout",
+          "title": "¿Qué tan buena es 4/|σ|?",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "El cuatro es el $\\ln 50 \\approx 3{,}9$ del capítulo 7, redondeado: el tiempo que tarda la *envolvente* en encogerse al 2 %. La curva real va por dentro de su envolvente, así que a menudo se estabiliza un poco antes. Se estabiliza más tarde cuando los polos están sobre el eje real o cerca de él, porque un polo doble tiene una parte $t\\,e^{-|\\sigma| t}$ que se entretiene."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{array}{c|ccccc} \\zeta & 0{,}3 & 0{,}5 & 0{,}8 & 0{,}95 & 1 \\\\ \\hline |\\sigma|\\,T_s & 3{,}37 & 4{,}04 & 3{,}01 & 5{,}00 & 5{,}83 \\end{array}"
+            },
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "think",
+              "text": "Probé con $\\sigma = -1$: la regla decía 4 s, y los tiempos reales iban de 3,0 s a 5,8 s según $\\zeta$. Suficiente para apuntar, no para prometer."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zeros",
+      "title": "Ceros: un vistazo rápido",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "El numerador también puede valer cero. Esos puntos son los **ceros**, dibujados como ○. Normalmente cambian **cuánto** del movimiento de cada polo aparece en la salida. Si un cero cae justo sobre un polo, el factor común se cancela y ese polo desaparece de esta receta de entrada a salida. Aun así, sigue dentro del sistema: empuja el dron de otra manera, con una ráfaga, y ese movimiento vuelve. Eso importa mucho si el polo escondido está a la derecha."
+        },
+        {
+          "t": "p",
+          "text": "Aquí tienes un sistema con polos fijos en $-2 \\pm 3i$ y un cero que puedes deslizar. (El $\\eff{K_d}$ de nuestro patio empuja contra la *velocidad* del dron, así que su receta no tiene cero. Empuja en cambio contra la velocidad del *error*, como hará el capítulo 11, y aparece un cero en $-\\eff{K_p}/\\eff{K_d}$: para estos polos eso es $-6{,}5$, con un sobreimpulso del 15 % en vez del 12 %.)"
         },
         {
           "t": "widget",
-          "id": "designer"
+          "id": "zero"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Mismos polos, pero cuando el cero se acerca al origen la respuesta sube muchísimo más rápido ¡y se pasa más!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Mismos polos significa mismos movimientos. Así que el cero no puede añadir uno nuevo. Tiene que estar añadiendo un poco de algo que ya tenemos."
+        },
+        {
+          "t": "play",
+          "id": "zeroKick",
+          "text": "Con el cero en −{scrub|z}, la salida es la curva sin cero **más {calc|gain} × su pendiente**, y se pasa un {calc|os} (12 % sin el cero)."
+        },
+        {
+          "t": "p",
+          "text": "Multiplicar por $s$ toma la pendiente (capítulo 9), así que el factor $(1 + s/|z|)$ añade $1/|z|$ veces la pendiente. Por eso un cero cerca del origen hace que el sistema reaccione con tanta fuerza a los **cambios**: el sobreimpulso crece, aunque los polos no se hayan movido. Lejos, el cero apenas importa. Es todo lo que necesitamos saber de los ceros por ahora."
+        },
+        {
+          "t": "callout",
+          "title": "Lo que bloquea un cero",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Un polo es un movimiento que el sistema *hace*; un cero es un movimiento que *se niega a dejar pasar*. Alimenta este sistema (cero en $-3$) exactamente con $e^{-3t}$ y no sale nada de él: solo la oscilación propia del sistema, que se apaga. Sin el cero, $1{,}3\\,e^{-3t}$ pasaría directamente."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} G(s) &= \\tfrac{13}{3}\\,\\frac{s+3}{s^2+4s+13}, \\qquad u = e^{-3t} \\\\[4pt] Y(s) &= \\tfrac{13}{3}\\,\\frac{\\cancel{s+3}}{(s^2+4s+13)\\,\\cancel{(s+3)}} \\\\[4pt] \\Longrightarrow\\quad y(t) &= \\tfrac{13}{9}\\,e^{-2t}\\sin 3t \\end{aligned}"
+            },
+            {
+              "t": "say",
+              "who": "june",
+              "mood": "excited",
+              "text": "Como unos auriculares con cancelación de ruido para un zumbido concreto."
+            }
+          ]
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Cero",
+              "def": "Un valor de $s$ donde la función de transferencia vale cero: un movimiento $e^{zt}$ que el sistema no deja pasar."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "limits",
+      "title": "¿Más a la izquierda siempre es mejor?",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Fácil: arrastramos los polos *muy* a la izquierda. Se estabiliza en un pestañeo. ¡El mejor dron de la historia!"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "think",
+          "text": "Pero ¿qué empuje necesita eso? Hasta ahora hemos fingido que los motores pueden empujar todo lo que pidan las matemáticas."
+        },
+        {
+          "t": "p",
+          "text": "Hora de ser honestos. Nuestros motores pueden empujar entre **0 N** y **20 N** (unas cuatro veces el peso del dron). Abajo, los polos se mueven a la izquierda por una línea de 45° (eso es $\\zeta \\approx 0{,}71$, el punto ideal del capítulo 7). Las curvas discontinuas son las matemáticas con motores imaginarios e ilimitados; las continuas son motores reales."
+        },
+        {
+          "t": "widget",
+          "id": "limit"
+        },
+        {
+          "t": "play",
+          "id": "push",
+          "text": "En el primer instante de un escalón de 1 m, el error es el metro entero y el dron todavía no se mueve, así que las matemáticas piden el empuje de vuelo estacionario más $\\eff{K_p}$ × 1 m. Con los polos en {scrub|sig} eso son {calc|sum|eff} N: {calc|verdict}."
+        },
+        {
+          "t": "p",
+          "text": "Más allá de unos $-3{,}9 \\pm 3.9i$ las matemáticas piden más de 20 N. El {eff|empuje naranja} se aplasta contra el límite, y más allá de unos $-6 \\pm 6i$ las matemáticas llegan a querer tirar del dron *hacia abajo*, cosa que las hélices no pueden hacer. El dron real deja de seguir la bonita predicción lineal. Su tiempo de establecimiento deja de mejorar en unos 0,7 s, cerca de $-6{,}5 \\pm 6.5i$, y más a la izquierda *empeora*, con sobreimpulso extra."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "surprised",
+          "text": "Lo deslicé hasta $-8 \\pm 8i$. Las matemáticas dicen 0,53 s. El dron real tarda 0,77 s: ¡más lento que en $-6{,}5$!"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "think",
+          "text": "Y su sobreimpulso pasó del 4 % al 16 %. Todo ese empuje extra nunca estuvo disponible."
         },
         {
           "t": "say",
           "who": "june",
           "mood": "worried",
-          "text": "…oscila sin parar, caliente–fría–caliente, cada 6 segundos, como una mano de posición en el capítulo 0. Las ganancias grandes empujaron la velocidad de ganancia 1 más allá de la velocidad de −180°. Nada de margen de fase."
+          "text": "Así que \"más a la izquierda\" solo es mejor hasta que te quedas sin motor. Colocar polos es un compromiso, no una carrera."
         },
         {
           "t": "callout",
-          "title": "10 s en el papel, 6 s en la ducha",
+          "title": "Un presupuesto de empuje es un círculo",
           "blocks": [
             {
               "t": "p",
-              "text": "Las ganancias de June tienen $K_i/K_p = 1$ por segundo, que es justo $1/\\tau$. El cero del PI cae sobre el polo del suavizador y lo cancela, y queda $2{,}25\\,e^{-2.5s}/s$. En el papel, ese lazo llega a −180° en $\\omega = \\pi/5$, una oscilación de 10 s. Pero su lazo está muy pasado el borde, así que el mando va de tope a tope, y esas oscilaciones a golpes llegan cada 6,3 s más o menos: cerca de los 6,6 s de la mano de posición."
+              "text": "En el primerísimo instante el dron no se ha movido, así que solo empuja $\\eff{K_p}$, y $\\eff{K_p} = m|p|^2$: el cuadrado de la distancia de los polos a 0. Duplica la distancia y necesitas cuatro veces más empuje, vayas en la dirección que vayas. Para un escalón de 1 m, nuestros motores permiten polos hasta unos 5,5 de 0 (el círculo naranja tenue del patio). Pide un escalón de 2 m y el círculo se encoge a 3,9."
+            },
+            {
+              "t": "math",
+              "tex": "\\begin{aligned} T(0^+) &= mg + \\eff{K_p}\\,\\Delta\\sp{r} \\\\[4pt] &= mg + m\\,|p|^2\\,\\Delta\\sp{r} \\le 20\\ \\text{N} \\\\[4pt] \\Longrightarrow\\quad |p| &\\le \\sqrt{\\frac{20\\ \\text{N} - mg}{m\\,\\Delta\\sp{r}}} \\end{aligned}"
+            },
+            {
+              "t": "play",
+              "id": "budget",
+              "text": "Para un escalón de {scrub|dr} m, el primer empujón se queda por debajo de 20 N solo si los polos están a menos de {calc|r} de 0, en cualquier dirección."
             }
           ]
         },
         {
+          "t": "note",
+          "text": "A partir de ahora, el límite de 20 N se queda activado."
+        },
+        {
+          "t": "vocab",
+          "items": [
+            {
+              "term": "Primer empujón",
+              "def": "El empuje pedido en el primer instante de un escalón: $mg + \\eff{K_p}\\,\\Delta r$, antes de que el dron se haya movido."
+            },
+            {
+              "term": "Presupuesto de empuje",
+              "def": "Las posiciones de los polos que los motores pueden permitirse para un escalón dado: un círculo alrededor de 0."
+            },
+            {
+              "term": "Límite del motor (saturación)",
+              "def": "El empuje real se recorta a 0–20 N, pidan lo que pidan las matemáticas."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "loop",
+      "title": "Cerrar el lazo sobre el papel",
+      "blocks": [
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "think",
+          "text": "En el capítulo 1 dibujamos el lazo con cajas y flechas. En el mundo de s, cada caja solo **multiplica**. ¿Pueden las cajas hacernos el álgebra?"
+        },
+        {
+          "t": "p",
+          "text": "Dale a cada caja su receta. El controlador es $C(s)$, por ahora simplemente $\\eff{K_p}$. El dron solo, con el cambio de empuje como entrada y el cambio de altura como salida, es $P(s) = \\frac{1}{ms^2 + cs}$: P de **planta**, la palabra del capítulo 1, no la P del control P. Sale directamente de la ecuación del dron, igual que la receta de arriba."
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Fácil. La petición pasa por el controlador y luego por el dron. ¡Multiplica a lo largo de la línea!"
+        },
+        {
+          "t": "math",
+          "tex": "\\Delta\\out{H} \\overset{?}{=} C\\,P\\,\\Delta\\sp{R} = \\frac{\\eff{K_p}}{ms^2 + cs}\\,\\Delta\\sp{R}"
+        },
+        {
           "t": "say",
           "who": "theo",
-          "mood": "happy",
-          "text": "El dron aguantaba ganancias grandes porque casi no tenía retardo. Aquí, **robusto** significa suave: deja margen para el retardo. Prueba mis ganancias suaves, más o menos $K_p \\approx 1$ y $K_i \\approx 0{,}6$."
+          "mood": "think",
+          "text": "¿Polos en 0 y −2? Nada de oscilación, y un polo en 0 que nunca se estabiliza. Eso es el lazo abierto del capítulo 1: decirle al dron qué hacer y no mirar nunca. El controlador no ve la petición, June. Ve el **error**."
         },
         {
           "t": "p",
-          "text": "P reacciona al *ahora*\\; I, al montón. Añadir un poco de *ahora* mueve el mando un poco antes, y eso devuelve fase: **adelanto de fase**, unos 37° a la antigua velocidad de −180° con las ganancias de Theo."
+          "text": "La flecha que vuelve desde el dron es toda la gracia de la realimentación. El controlador actúa sobre $\\Delta\\sp{R} - \\Delta\\out{H}$, así que la salida aparece a los dos lados. Júntala y divide:"
+        },
+        {
+          "t": "math",
+          "tex": "\\begin{aligned} \\Delta\\out{H} &= C\\,P\\,\\big(\\Delta\\sp{R} - \\Delta\\out{H}\\big) \\\\ \\Delta\\out{H}\\,\\big(1 + C\\,P\\big) &= C\\,P\\,\\Delta\\sp{R} \\\\ \\Delta\\out{H} &= \\frac{C\\,P}{1 + C\\,P}\\,\\Delta\\sp{R} \\end{aligned}"
         },
         {
           "t": "p",
-          "text": "Un PI con buen margen se pone a gusto en unos 9,4 segundos, sin grandes oscilaciones repetidas. Eso le gana a la mano normal (que se pasó casi un minuto oscilando antes de calmarse) y a la mayoría de los humanos. Pero no puede ganarle a la física: nada puede reaccionar a un agua que aún no ha llegado. Los ingenieros sí tienen un truco para retardos largos, el **predictor de Smith**, que ejecuta una pequeña simulación de la tubería dentro del controlador. Pero eso es historia para otro cuaderno."
+          "text": "Sustituye $C = \\eff{K_p}$ y $P = 1/(ms^2+cs)$, y luego multiplica arriba y abajo por $ms^2 + cs$:"
+        },
+        {
+          "t": "math",
+          "tex": "\\frac{C\\,P}{1 + C\\,P} = \\frac{\\eff{K_p}/(ms^2+cs)}{1 + \\eff{K_p}/(ms^2+cs)} = \\frac{\\eff{K_p}}{ms^2 + cs + \\eff{K_p}}"
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "surprised",
+          "text": "¡Es la receta del principio de este capítulo! La hemos sacado dos veces: una de la ecuación del dron y otra de las cajas."
         },
         {
           "t": "p",
-          "text": "La robustez es la verdadera lección. Tu modelo de la ducha nunca es perfecto: la tubería podría ser más larga, el calentador más débil. Un margen dice cuánto puede equivocarse el modelo, con un número que se puede sentir. El margen de fase (en radianes) dividido entre la velocidad de ganancia 1 es un **margen de retardo**: cuántos segundos de tubería extra aguanta el lazo."
+          "text": "Así que los polos del lazo están donde el denominador, $1 + C(s)\\,P(s)$, vale cero. Es lo mismo que $C\\,P = -1$. Lee $C\\,P$ como **una vuelta** al lazo: lo que el controlador y luego el dron le hacen a una señal. En un polo, una vuelta devuelve la señal del mismo tamaño e invertida, y el signo menos del error la invierte otra vez. Así que se mantiene sola, sin ninguna petición."
+        },
+        {
+          "t": "math",
+          "tex": "1 + C(s)\\,P(s) = 0 \\quad\\Longleftrightarrow\\quad C(s)\\,P(s) = -1"
+        },
+        {
+          "t": "p",
+          "text": "Pruébalo con una oscilación constante, $s = i\\omega$. Una vuelta convierte la flecha de la oscilación en $C(i\\omega)\\,P(i\\omega)$: más corta o más larga, y girada hacia atrás. El dibujo de abajo traza esa flecha para cada velocidad de oscilación, y el punto −1 al que tendría que llegar."
+        },
+        {
+          "t": "widget",
+          "id": "loop"
+        },
+        {
+          "t": "say",
+          "who": "theo",
+          "mood": "surprised",
+          "text": "Por mucho que suba $\\eff{K_p}$, la curva se dobla hacia −1 pero nunca lo toca. Donde más se acerca es más o menos a la velocidad de oscilación propia del dron."
+        },
+        {
+          "t": "p",
+          "text": "Esta es la razón. El rozamiento retrasa la señal de cada vuelta hasta 90°, y la masa hasta otros 90°, pero juntos solo llegan a 180° con oscilaciones infinitamente rápidas. Así que el control P por sí solo nunca puede desestabilizar este dron. Un $\\eff{K_p}$ mayor solo hace que la vuelta pase **más cerca** de −1, y más cerca significa menos amortiguamiento: el «más $K_p$, más oscilación» del capítulo 2, ahora en forma de dibujo."
         },
         {
           "t": "play",
-          "id": "delaymargin",
-          "text": "Con $K_p$ = {scrub|kp|eff} %/°C y $K_i$ = {scrub|ki|eff} %/(°C·s), {calc|verdict}"
+          "id": "lap",
+          "text": "Con $\\eff{K_p}$ = {scrub|kp|eff} N/m, la vuelta pasa a {calc|d} de −1, a unos {calc|w} rad/s. El amortiguamiento del lazo es ζ = {calc|z}."
         },
         {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "La mano normal solo aguanta 1,1 s de tubería extra, más o menos. Mi robot suave aguanta 3,5 s. Eso es ser robusto."
+          "t": "note",
+          "text": "Guarda esta imagen. En el capítulo 11, el mando I añade un montón, otros 90° de retraso, y la curva por fin puede llegar a −1. En el capítulo 12 la tubería de la ducha hace lo mismo, y la vuelta $C\\,P$ recibe su propio nombre."
         },
         {
-          "t": "callout",
-          "title": "¿Tubería más corta o calentador más rápido?",
-          "blocks": [
+          "t": "vocab",
+          "items": [
             {
-              "t": "say",
-              "who": "mika",
-              "mood": "excited",
-              "text": "¿Y si compramos un calentador más rápido y ya?"
+              "term": "Lazo cerrado",
+              "def": "Un controlador que actúa sobre el error, de modo que la salida vuelve a entrar en su propia entrada: $\\Delta H = \\frac{C\\,P}{1 + C\\,P}\\,\\Delta R$."
             },
             {
-              "t": "p",
-              "text": "Reducir a la mitad el tiempo de suavizado (τ = 0,5 s) solo sube el borde de la mano de velocidad de 1,12 a 1,21 %/(°C·s). Reducir a la mitad la tubería (1,25 s) lo sube a 2,06. Para una mano de posición, el calentador más rápido es incluso *peor*: su borde baja de 0,031 a 0,025 de mando por °C, porque el suavizador estaba encogiendo en silencio las oscilaciones rápidas. El enemigo es el retardo, no la lentitud."
-            }
-          ]
-        },
-        {
-          "t": "callout",
-          "title": "Cómo gira de verdad el mando el robot",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "El código del robot escribe PI como **velocidad** del mando: I sigue moviéndolo mientras haya error y P responde a un *cambio* del error. Al arrancar, P también da un primer movimiento según el error actual. Esto coincide con la regla en posición, salvo cuando el mando llega a un tope."
+              "term": "Ganancia del lazo $C(s)\\,P(s)$",
+              "def": "Lo que una vuelta al lazo le hace a una señal. Los polos del lazo cerrado están donde vale −1."
             }
           ]
         }
@@ -477,95 +573,96 @@
     },
     {
       "id": "wrap",
-      "title": "Lo que entendemos ahora",
+      "title": "Lo que sabemos ahora",
       "blocks": [
         {
           "t": "recap",
           "items": [
-            "Un retardo $L$ desfasa una oscilación en $\\omega L$: nada para las oscilaciones lentas, mucho para las rápidas.",
-            "Un montón (I) retrasa cualquier oscilación 90°\\; un suavizador, hasta 90°\\; una tubería, $\\omega L$, sin límite.",
-            "Meter ondas senoidales y medir ganancia y fase da la **respuesta en frecuencia**; dibujada, es un **diagrama de Bode**, y no es más que $G(i\\omega)$.",
-            "En este lazo sencillo de ducha, una oscilación sostenida empieza cuando la fase del lazo llega a −180° con ganancia 1; con más ganancia, las oscilaciones crecen hasta que intervienen los límites.",
-            "Los **márgenes de ganancia y de fase** miden la distancia a ese abismo. Más retardo significa menos margen, así que necesitas un control más suave.",
-            "Nuestras oscilaciones del capítulo 0 eran un controlador (nosotros) con demasiado poco margen."
+            "Sí, basta con una fracción. La **función de transferencia** $G(s)$ = cambio de la salida ÷ cambio de la entrada en el mundo de s, partiendo del reposo. Es la receta del sistema, $\\Delta\\out{H} = G\\cdot\\Delta\\sp{R}$, y sale directamente de la ecuación del dron.",
+            "Los **polos** (×) son donde $G(s)$ explota: los modos $e^{pt}$ de los que está hecho el sistema.",
+            "Mitad izquierda = estable, mitad derecha = explota. Más a la izquierda = más rápido (se estabiliza en unos $4/|\\sigma|$ s, una regla práctica), más arriba = más oscilante (una oscilación = $2\\pi/\\omega$ s), ángulo = amortiguamiento $\\zeta$ = sobreimpulso $e^{-\\pi|\\sigma|/\\omega}$. El polo más cercano al eje es el que manda.",
+            "Los polos complejos siempre vienen en parejas reflejadas.",
+            "Los **ceros** (○) cambian cuánto obtienes de cada modo. Cerca del origen añaden un empujón: $1/|z|$ veces la pendiente.",
+            "Cierra el lazo sobre el papel y la receta es $\\frac{C\\,P}{1 + C\\,P}$. Los polos están donde una vuelta al lazo, $C\\,P$, vale −1.",
+            "El primer empujón es $mg + m|p|^2$ para un escalón de 1 m, así que los polos lejanos necesitan un empuje que los motores no tienen."
           ]
         },
         {
           "t": "quiz",
           "items": [
             {
-              "id": "ch10-q1",
-              "q": "Un retardo de 2 s y una oscilación con un periodo de 8 s. ¿Cuánto desfase añade el retardo?",
+              "id": "ch8-q1",
+              "q": "¿Qué pareja de polos se estabiliza **más rápido**?",
               "options": [
                 {
-                  "text": "90°",
+                  "text": "$-1 \\pm 2i$",
+                  "why": "Tiempo de establecimiento ≈ $4/1 = 4$ s. La altura (2) solo afecta a la oscilación, no al tiempo de establecimiento."
+                },
+                {
+                  "text": "$-4 \\pm 2i$",
                   "correct": true,
-                  "why": "2 s es un cuarto de 8 s, y un cuarto de 360° son 90°."
+                  "why": "La que está más a la izquierda: tiempo de establecimiento ≈ $4/4 = 1$ s."
                 },
                 {
-                  "text": "45°",
-                  "why": "Eso sería un retardo de 1 s. 2 s es un cuarto del periodo, no un octavo."
-                },
-                {
-                  "text": "180°",
-                  "why": "Para eso haría falta un retardo de medio periodo, 4 s."
+                  "text": "$-0{,}5 \\pm 5i$",
+                  "why": "Muy arriba significa muchas oscilaciones rápidas, pero está cerca del eje, así que se apagan despacio (≈ 8 s)."
                 }
               ]
             },
             {
-              "id": "ch10-q2b",
-              "q": "En el diagrama de Bode de un lazo, la fase llega a −180° a 0,5 rad/s, donde la ganancia del lazo es 0,25. A la velocidad en que la ganancia del lazo vale 1, la fase es −130°. ¿Cuáles son los márgenes de ganancia y de fase?",
+              "id": "ch8-q2",
+              "q": "$G(s) = \\dfrac{3}{s^2 + 2s + 10}$. ¿Dónde están los polos y qué pinta tiene la respuesta?",
               "options": [
                 {
-                  "text": "× 4 y 50°",
+                  "text": "$-1 \\pm 3i$: estable, y oscila",
                   "correct": true,
-                  "why": "La ganancia podría crecer 1 ÷ 0,25 = 4 veces antes de llegar a 1 en −180°, y a −130° le faltan 50° para −180°."
+                  "why": "$s = \\frac{-2 \\pm \\sqrt{4 - 40}}{2} = -1 \\pm 3i$. Mitad izquierda significa estable; parte imaginaria significa oscilaciones."
                 },
                 {
-                  "text": "× 0,25 y 130°",
-                  "why": "Esas son las lecturas en bruto. Los márgenes son las *distancias* al abismo: 1 ÷ 0,25 y 180° − 130°."
+                  "text": "$+1 \\pm 3i$: inestable",
+                  "why": "Un despiste con el signo. Para $s^2 + bs + q$ la parte real es $-b/2 = -1$, que está en la mitad izquierda."
                 },
                 {
-                  "text": "× 4 y 130°",
-                  "why": "El margen de ganancia está bien, pero el margen de fase es el desfase extra que podrías añadir antes de llegar a −180°: 180° − 130° = 50°."
+                  "text": "$-2$ y $-10$: sin oscilaciones",
+                  "why": "Esos son solo coeficientes del polinomio. Los polos son sus raíces: $-1 \\pm 3i$."
                 }
               ]
             },
             {
-              "id": "ch10-q3",
-              "q": "¿Por qué una tubería más larga obliga a usar un controlador más suave?",
+              "id": "ch8-q3",
+              "q": "Quieres **menos sobreimpulso** pero el **mismo tiempo de establecimiento**. ¿Cómo mueves los polos?",
               "options": [
                 {
-                  "text": "El desfase extra llega a −180° con una oscilación más lenta, donde la ganancia del lazo es mayor, así que la ganancia tiene que bajar",
+                  "text": "Directamente hacia el eje real (mantener σ, reducir ω)",
                   "correct": true,
-                  "why": "Exacto. Para una mano integradora, las oscilaciones lentas son las que más se amplifican, así que el abismo se acerca."
+                  "why": "La misma distancia al eje mantiene la misma *envolvente*, así que el tiempo de establecimiento sigue más o menos igual (la regla de $4/|\\sigma|$; es aproximada cerca del eje real). Un ángulo menor respecto al eje real significa más amortiguamiento, y por tanto menos sobreimpulso."
                 },
                 {
-                  "text": "El agua se enfría más en una tubería más larga",
-                  "why": "Supusimos que no había pérdidas de calor. El efecto es puramente de tiempos."
+                  "text": "Directamente hacia arriba (ω más grande)",
+                  "why": "Eso gira el ángulo hacia el eje vertical: *más* sobreimpulso y oscilaciones más rápidas."
                 },
                 {
-                  "text": "No obliga: puedes reaccionar más fuerte porque tienes más tiempo",
-                  "why": "No tienes más tiempo. Tienes información más vieja. Esa es la trampa del capítulo 0."
+                  "text": "Hacia la derecha",
+                  "why": "Eso hace que se estabilice más despacio, y pasado el eje se vuelve inestable."
                 }
               ]
             },
             {
-              "id": "ch10-q4",
-              "q": "La mano normal tiene un margen de ganancia de unos 1,4. ¿Qué pasa si reaccionas 1,5 veces más fuerte?",
+              "id": "ch8-q4",
+              "q": "Un sistema tiene polos reales en $-0{,}2$ y $-5$. Pasados dos segundos, ¿cuál sigue dando forma a la respuesta?",
               "options": [
                 {
-                  "text": "Las oscilaciones crecen en vez de apagarse",
+                  "text": "El de $-0{,}2$, cerca del eje",
                   "correct": true,
-                  "why": "1,5 es más que el margen de 1,4, así que la ganancia del lazo a −180° pasa de 1: abismo abajo."
+                  "why": "$e^{-0.2t}$ sigue al 67 % tras 2 s; $e^{-5t}$ ha bajado al 0,005 %. Manda el polo lento, así que estabilizarse lleva unos $4/0{,}2 = 20$ s."
                 },
                 {
-                  "text": "Se estabiliza más rápido",
-                  "why": "Más ganancia solo ayudaría si hubiera margen de sobra. Con 1,4, no lo hay."
+                  "text": "El de $-5$, más a la izquierda",
+                  "why": "Más a la izquierda significa que se apaga *más rápido*. Tras solo 1 s ya está por debajo del 1 % de su valor inicial (0,67 %)."
                 },
                 {
-                  "text": "No cambia nada",
-                  "why": "La ganancia es precisamente lo que mide el margen de ganancia, así que importa, y mucho."
+                  "text": "Los dos por igual",
+                  "why": "Uno se encoge 25 veces más rápido que el otro ($5 \\div 0{,}2$). Tras medio segundo el rápido está al 8 % y el lento todavía al 90 %."
                 }
               ]
             }
@@ -576,175 +673,170 @@
         },
         {
           "t": "cliff",
-          "text": "Ya tenemos todas las herramientas: realimentación, PID, polos, márgenes. Hora de la prueba de verdad: viento, un paquete que se suelta y un sensor con ruido. **¿Puedes mantener el dron a 2 m?**"
+          "text": "Theo: \"Los polos son preciosos. Pero un momento: hemos hecho trampa todo el capítulo regalándole al dron su empuje de vuelo estacionario. Sin él, la gravedad sigue haciéndolo **caer**. Nuestro mapa está bien. Lo que hay que arreglar es nuestro *controlador*\"."
         }
       ]
     }
   ],
   "widgets": {
-    "phase": {
-      "title": "El mismo retardo de 2,5 s, distintas oscilaciones",
-      "y": "oscilación",
-      "in": "lo que pide el mando",
-      "out": "lo que llega, 2,5 s después",
-      "aria": "Dos ondas senoidales: la entrada y la misma onda retrasada 2,5 segundos.",
-      "slider": "Periodo de oscilación",
-      "lag": "desfase",
-      "status": {
-        "small": "Un desfase diminuto: el retardo apenas importa para las oscilaciones lentas.",
-        "middle": "Un desfase de {d}°: el agua va {f} de oscilación por detrás.",
-        "flipped": "¡Al revés! Llega agua caliente justo cuando el mando dice fría.",
-        "full": "Más de una oscilación entera por detrás: parece que vuelve a ir a compás, pero llega un ciclo entero tarde.",
-        "over": "Un desfase de {d}°: más de una oscilación entera tarde."
+    "recipe": {
+      "title": "Una receta, tres entradas",
+      "choose": "¿Qué le pedimos?",
+      "in": {
+        "step": "un escalón hacia arriba",
+        "pulse": "un escalón suave",
+        "wave": "una onda"
       },
-      "describe": "Periodo de oscilación de {p} segundos; el retardo de 2,5 segundos la desfasa {d} grados.",
-      "w": "velocidad de oscilación ω",
-      "share": "fracción de oscilación"
-    },
-    "bode": {
-      "title": "Construye un diagrama de Bode, oscilación a oscilación",
-      "mix": "mezcla que pedimos",
-      "head": "temperatura en el cabezal",
-      "timeAria": "La última medida: la temperatura de la mezcla oscilando y la temperatura en el cabezal.",
-      "w": "velocidad de oscilación ω (rad/s)",
-      "gain": "ganancia",
-      "phase": "fase (°)",
-      "formula": "fórmula",
-      "measured": "tus medidas",
-      "gainAria": "Ganancia medida frente a la velocidad de oscilación, ejes logarítmicos.",
-      "phaseAria": "Desfase medido frente a la velocidad de oscilación.",
-      "flip": "−180°: al revés",
-      "slider": "Velocidad de oscilación",
-      "period": "periodo",
-      "measure": "Medir",
-      "sweep": "Medir 8 velocidades",
-      "clear": "Borrar",
-      "showFormula": "Mostrar la curva de la fórmula (necesita 5 puntos)",
-      "status": {
-        "start": "Elige una velocidad de oscilación y pulsa Medir.",
-        "measured": "En ω = {w} rad/s (una oscilación de {p} s): ganancia {g}, fase {ph}°.",
-        "formula": "La fórmula pasa justo por tus puntos. Cruza −180° en {w} rad/s: una oscilación de {p} s vuelve del revés."
+      "input": "consigna (entrada)",
+      "output": "altura (salida)",
+      "plotAria": "Consigna y altura del dron a lo largo del tiempo para la entrada elegida.",
+      "same": "no cambia",
+      "changes": "cambia",
+      "describe": {
+        "step": "La consigna salta de 1 a 2 metros y el dron la sigue con un sobreimpulso saltarín.",
+        "pulse": "La consigna se desliza de 1 a 2 metros; el dron la sigue con un rebote más pequeño.",
+        "wave": "La consigna sube y baja como una onda; el dron sigue la onda."
       },
-      "describe": "{n} medidas dibujadas.",
-      "cross": "del revés en {w} rad/s",
-      "help": "Suelta el deslizador, o haz una pausa con las flechas del teclado, y mide esa velocidad. Medir otra vez una velocidad sustituye su punto."
-    },
-    "margins": {
-      "title": "La mano y el borde del abismo",
-      "w": "velocidad de oscilación ω (rad/s)",
-      "gain": "ganancia del lazo",
-      "phase": "fase del lazo (°)",
-      "loop": "lazo mano + ducha",
-      "gainAria": "Diagrama de Bode de ganancia del lazo mano más ducha, con la línea de ganancia uno.",
-      "phaseAria": "Diagrama de Bode de fase del lazo, con la línea de −180 grados.",
-      "timeAria": "Temperatura durante 60 segundos con esta mano.",
-      "temp": "temperatura en el cabezal",
-      "one": "ganancia = 1",
-      "cliff": "−180°: el abismo",
-      "atCross": "margen de fase",
-      "gm": "margen de ganancia",
-      "pm": "margen de fase",
-      "crit": "borde (mayor k)",
-      "k": "Velocidad de la mano k",
-      "delay": "Retardo de la tubería",
+      "droneCap": "el dron siguiéndola",
       "status": {
-        "safe": "Segura de sobra: mucho margen.",
-        "edge": "Cerca del borde: margen de fase {p}°, margen de ganancia × {g}. Espera oscilaciones largas y perezosas cada {T} s más o menos.",
-        "over": "Abismo abajo (margen de ganancia × {g}): las oscilaciones crecen hasta que el mando choca con sus topes."
-      },
-      "describe": "Margen de ganancia {gm}, margen de fase {pm} grados.",
-      "w180": "velocidad de −180°",
-      "period": "periodo en el borde"
-    },
-    "replay": {
-      "title": "Tus oscilaciones del capítulo 0",
-      "yours": "Este es tu propio intento del capítulo 0.",
-      "robot": "Aún no has jugado al juego del capítulo 0, así que esta es la mano robótica normal. (¡Juega y vuelve!)",
-      "aria": "Temperatura del intento de la ducha del capítulo 0, con la mezcla que pedía el mando.",
-      "temp": "temperatura en el cabezal",
-      "mix": "lo que pedía el mando",
-      "periodYours": "tu periodo de oscilación",
-      "periodRobot": "periodo de oscilación del robot",
-      "predSpeed": "borde: mano de velocidad",
-      "predPos": "borde: mano de posición",
-      "verdict": {
-        "calm": "No hay suficientes oscilaciones para medir: ¡fuiste paciente (o tuviste suerte)!",
-        "speed": "Oscilaciones cada {p} s: te comportaste como una mano de velocidad, un controlador I cerca de su borde.",
-        "position": "Oscilaciones cada {p} s: te comportaste como una mano de posición, un controlador P cerca de su borde.",
-        "robot": "La mano robot oscila cada {p} s. Algo más despacio que el borde de {e} s, porque está justo por dentro: una mano de velocidad (un controlador I)."
+        "step": "Se pasa hasta {p} m antes de quedarse en 2 m.",
+        "pulse": "Un arranque más suave: el pico solo llega a {p} m.",
+        "wave": "La receta convierte una onda de {a} m en una onda de {b} m."
       }
     },
-    "designer": {
-      "title": "Ducha robot: controlador PI",
-      "aria": "Temperatura durante 40 segundos con el controlador PI del robot; el diseño anterior aparece como fantasma.",
-      "temp": "temperatura en el cabezal",
-      "mix": "lo que pide el mando",
-      "view": {
-        "aria": "Ducha controlada por el robot. El mando gira solo.",
-        "knob": "Mando de la ducha (controlado por el robot)",
-        "pipe": "tubería (2,5 s de recorrido)",
-        "head": "cabezal",
-        "thermo": "termómetro"
-      },
-      "kp": "Ganancia P $K_p$",
-      "ki": "Ganancia I $K_i$",
-      "presetHand": "La mano normal",
-      "presetJune": "Las ganancias de dron de June",
-      "goal": "Objetivo: margen de fase por encima de 45° y a gusto (10 s seguidos en la franja) antes de 12 s. Empieza con las ganancias de June.",
-      "pm": "margen de fase",
-      "gm": "margen de ganancia",
-      "comfort": "a gusto tras",
-      "yours": "tú (capítulo 0)",
+    "playground": {
+      "title": "El patio de los polos",
+      "planeAria": "El plano s con una pareja de polos arrastrables. La mitad izquierda se calma, la mitad derecha se dispara. Usa las flechas para mover el polo seleccionado.",
+      "pole": "p",
+      "poles": "polos",
+      "zeta": "amortiguamiento ζ",
+      "wn": "ωn = |p|",
+      "settle": "se estabiliza, regla 4/σ",
+      "settleReal": "se estabiliza (medido)",
+      "overshoot": "sobreimpulso",
+      "push": "primer empujón (escalón de 1 m)",
+      "pct": "{v}%",
+      "response": "altura tras un escalón de 1 m",
+      "target": "objetivo",
+      "plotAria": "Respuesta al escalón del dron para los polos elegidos; la respuesta anterior aparece como fantasma.",
+      "over": "sobreimpulso",
       "never": "nunca",
-      "notPlayed": "sin jugar",
-      "status": {
-        "unstable": "Abismo abajo (margen de ganancia × {g}): oscilaciones sin fin, cada {p} s más o menos.",
-        "edge": "Estable, pero con solo {pm}° de margen de fase: más margen, por favor.",
-        "slow": "Seguro, pero lento. ¿Puedes ponerte a gusto antes?",
-        "win": "¡Robusto y rápido! Este robot les gana a tus manos del capítulo 0.",
-        "winButYou": "¡Robusto y rápido! (Tú fuiste más rápido en el capítulo 0. ¡Impresionante! Pero el robot nunca se cansa.)",
-        "unstableSlow": "Abismo abajo (margen de ganancia × {g}): sin margen, oscilaciones sin fin."
+      "notIn": "no en {T} s",
+      "wiggle": "una oscilación ≈ {T} s",
+      "wnCircle": "ωn = {w}",
+      "budget": "presupuesto de 20 N",
+      "verdict": {
+        "stable": "Mitad izquierda: se calma.",
+        "unstable": "Mitad derecha: ¡se dispara!",
+        "marginal": "Justo sobre el eje: oscila para siempre.",
+        "hitPage": "Salió volando del dibujo, chocó con la página y se cayó. Mueve un polo para volver a intentarlo.",
+        "hitGround": "Se estrelló contra el suelo. Mueve un polo para volver a intentarlo.",
+        "hitPageMarginal": "Cada oscilación llegaba a 3 m, justo lo necesario para tocar la página; los motores se pararon y se cayó."
       },
-      "presetTheo": "Las ganancias suaves de Theo",
-      "w": "velocidad de oscilación ω (rad/s)",
-      "phase": "fase del lazo (°)",
-      "loop": "lazo robot + ducha",
-      "phaseAria": "Diagrama de Bode de fase del lazo robot más ducha, con la línea de −180 grados y el margen de fase.",
-      "cliff": "−180°: el abismo",
-      "atCross": "margen de fase"
+      "negKd": "Aquí Kd es negativa: el rozamiento ya amortigua más de lo que permiten estos polos, así que el controlador tiene que empujar a favor del movimiento.",
+      "pushWarn": "El primer empujón pasa de 20 N, más de lo que tienen los motores reales. Enseguida veremos lo que cuesta eso.",
+      "challenge": "Minidesafío: sobreimpulso menor del 10 % y estabilizado en 2 s",
+      "chalOk": "¡Desafío superado! Sobreimpulso del {o} %, estabilizado en {s} s.",
+      "chalNo": "Todavía no: sobreimpulso del {o} %, se estabiliza en {s} s. Apunta a la zona resaltada.",
+      "help": "Arrastra cualquiera de las × (o ve con Tab y usa las flechas; Mayús para pasos grandes). El dron repite su respuesta al escalón cada vez.",
+      "describe": "Polos en {p}. Coeficiente de amortiguamiento {z}. Se estabiliza en unos {s} segundos y se pasa alrededor de un {o} por ciento.",
+      "re": "σ",
+      "im": "ω"
+    },
+    "zero": {
+      "title": "Desliza el cero",
+      "planeAria": "El plano s con dos polos fijos en menos 2 más o menos 3 i y un cero arrastrable sobre el eje real.",
+      "zero": "cero",
+      "y": "salida",
+      "noZero": "sin cero (mismos polos)",
+      "withZero": "con el cero",
+      "slope": "+ {g} × su pendiente",
+      "plotAria": "Respuestas al escalón con y sin el cero.",
+      "osNo": "sobreimpulso sin cero",
+      "osYes": "sobreimpulso con cero",
+      "pct": "{v}%",
+      "note": "Cero en {z}; escalada para que siga terminando en 1.",
+      "near": "Cerca del origen: la parte de la pendiente es {g} × la pendiente de antes, así que el arranque da un buen empujón.",
+      "mid": "Un empujón moderado: {g} × la pendiente.",
+      "far": "Lejos: solo {g} × la pendiente. Apenas se nota.",
+      "describe": "Cero en {z}, sobreimpulso del {o} por ciento.",
+      "re": "σ",
+      "im": "ω",
+      "help": "Arrastra el ○ a lo largo del eje (o ve con Tab y usa ← →). Los polos × no se mueven."
+    },
+    "limit": {
+      "title": "Los motores reales tienen límites",
+      "ideal": "motores ilimitados (matemáticas)",
+      "real": "dron real",
+      "idealT": "empuje que piden las matemáticas",
+      "realT": "empuje que conseguimos",
+      "hAria": "Altura tras un escalón con motores ilimitados y con motores reales.",
+      "tAria": "Empuje a lo largo del tiempo, con los límites del motor de 0 y 20 newtons.",
+      "max": "máximo del motor 20 N",
+      "min": "los motores no pueden tirar hacia abajo",
+      "peak": "empuje máximo que piden las matemáticas",
+      "tsIdeal": "se estabiliza (matemáticas)",
+      "tsReal": "se estabiliza (real)",
+      "osReal": "sobreimpulso (real)",
+      "pct": "{v}%",
+      "notYet": "no en 3 s",
+      "sigma": "Posición de los polos (moviéndose a la izquierda a 45°)",
+      "toggle": "Motores reales: 0–20 N",
+      "capped": "Las matemáticas piden {p} N; los motores se quedan en 20 N. Tiempo de establecimiento real: {s} s, y por mucho que vayas «más a la izquierda» no baja de unos {b} s.",
+      "fantasy": "Los motores imaginarios dan {p} N tan tranquilos. Vuelve a activar los límites.",
+      "fine": "Dentro del rango de los motores: matemáticas y realidad coinciden."
+    },
+    "loop": {
+      "title": "Una vuelta al lazo",
+      "aria": "Un plano con el punto menos 1 marcado, la curva de una vuelta al lazo para cada velocidad de oscilación y una flecha hasta la vuelta a la velocidad elegida.",
+      "re": "parte real",
+      "im": "parte imaginaria",
+      "kp": "$K_p$ del controlador",
+      "w": "Velocidad de oscilación ω",
+      "lap": "C·P",
+      "cliff": "−1",
+      "size": "tamaño de la vuelta |C·P|",
+      "angle": "ángulo de la vuelta",
+      "distance": "distancia a −1",
+      "zeta": "amortiguamiento ζ",
+      "status": "Lo más cerca de −1: {d}, a unos {w} rad/s. El ángulo se queda por encima de −180°, así que la vuelta nunca llega. Amortiguamiento ζ = {z}.",
+      "help": "Desliza ω para mover la flecha por la curva; desliza Kp para estirar toda la curva. La línea discontinua es la distancia a −1."
     }
   },
   "plays": {
-    "delaylag": {
-      "L": "retardo de la tubería",
-      "T": "periodo de oscilación"
+    "poleRead": {
+      "sig": "distancia de los polos a la izquierda del eje",
+      "w": "altura de los polos, omega",
+      "noWiggle": "nada (no oscila en absoluto)",
+      "never": "nunca",
+      "noOvershoot": "nada (sin sobreimpulso)",
+      "pct": "{v}%"
     },
-    "smoother": {
-      "w": "velocidad de oscilación ω"
+    "gains": {
+      "sig": "distancia de los polos a la izquierda del eje",
+      "w": "altura de los polos, omega",
+      "negKd": "Eso es una Kd *negativa*: el rozamiento por sí solo ya amortigua más de lo que quieren estos polos, así que el controlador tiene que empujar *a favor* del movimiento."
     },
-    "total": {
-      "w": "velocidad de oscilación ω",
-      "before": "Todavía no está del revés.",
-      "flip": "Del revés: una cresta sale como un valle.",
-      "past": "Más allá del revés."
+    "dominant": {
+      "time": "tiempo, en segundos",
+      "almostNothing": "casi nada",
+      "pct": "{v}%"
     },
-    "handloop": {
-      "w": "velocidad de oscilación ω"
+    "push": {
+      "sig": "pareja de polos sobre la línea de 45°",
+      "canDo": "los motores pueden con eso",
+      "justOver": "justo por encima de los 20 N que tienen los motores",
+      "farBeyond": "muy por encima de lo que dan los motores"
     },
-    "pgain": {
-      "K": "fuerza de la mano de posición K",
-      "dies": "Las oscilaciones se apagan.",
-      "edge": "Justo en el borde: oscilaciones que ni crecen ni menguan.",
-      "grows": "Las oscilaciones crecen."
+    "budget": {
+      "dr": "tamaño del escalón, en metros"
     },
-    "double": {
-      "L": "retardo de la tubería"
+    "zeroKick": {
+      "z": "distancia del cero a 0",
+      "pct": "{v}%"
     },
-    "delaymargin": {
-      "kp": "ganancia P Kp",
-      "ki": "ganancia I Ki",
-      "margin": "el margen de fase es de {pm}° a {wc} rad/s, así que la tubería podría alargarse {dm} s antes de que este robot empiece a oscilar sin parar.",
-      "none": "no hay nada de margen de fase: este robot ya oscila sin parar."
+    "lap": {
+      "kp": "ganancia proporcional Kp, en newtons por metro"
     }
   }
 }

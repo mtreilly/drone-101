@@ -4,7 +4,7 @@
 > splitting each in two, so each new chapter keeps one driving question, its own mistake,
 > recap, quiz, concept-map nodes and cliffhanger. The course grows from 12 to 14 chapters.
 > **Baseline:** `0.9.0` at `7aa5682` (main, 2026-09-27).
-> **Status (2026-09-27): in progress.**
+> **Status (2026-09-27): built** (`0.10.0`). See "Built" at the end.
 
 ## The new order
 
@@ -47,3 +47,28 @@ Chapters 0–4 keep their numbers.
 `pnpm test` (locale validator, concept graph, claim tests), `pnpm lint`, `pnpm build`, full
 `pnpm a11y` over the 16 routes in every language, screenshots of the new chapter ends and the
 concept map at 1280 and 375 px, and a translator pass on every renumbered sentence.
+
+## Built
+
+- **Prose:** `scratch/split/remap.py` decided every English reference to old 5 or 7 by what it
+  points at (three by hand: Chapter 5's *i*, the probe chapter's kicker, and the ch08 sentence
+  that cites both the spinning numbers and the spring's twin), carried the decision string by
+  string to all ten locales (Arabic ordinal words, Italian "dal … al …", Chinese "第 N 到第 M 章"
+  included) and checked the chapter numbers per string against English. The translators then
+  proofread the renumbered sentences; none needed a grammar fix.
+- **Split:** ch05 keeps arrows, turns, spin (widgets rotate, turns, tiny, spinner); ch06 has
+  twins, map, fourier (widgets twins, smap, fourier, with `canvases.ts`). ch08 keeps probe and
+  explode (widgets probe, explode, unspin; plays stepArea, longArea, scream; shared
+  `area-plot.ts`); ch09 has rule, table, pieces, solve (widgets derivRule, table, pieces, solve;
+  plays ruleExp, scale, square, residues) and imports ch08's `tools.ts`.
+- **New content:** ch05 wrap (recap + velocity item, quiz `ch5-q1`, new `ch5-q5` period of a
+  turn, `ch5-q6` direction of the velocity; cliffhanger into the twins); ch06 opening line and
+  Fourier recap item; ch08 wrap (new recap item on finite areas, Theo's mistake `ch7-q7`, `ch7-q2`
+  reworded, `ch7-q8` where the spinner's transform explodes; cliffhanger into the slope rule);
+  two ch08 forward references now point at "the next chapter". Quiz and prediction ids are
+  unchanged (they are saved answers). Numbers pinned in `ch05.test.ts` and `ch08.test.ts`.
+- **Code:** registry (14 chapters), imports, concept graph anchors, concept map (14 clusters,
+  a fourth row, viewBox 1320 high), a11y routes, `progress.migrate` (course 2) with tests, and
+  comments.
+- **Docs:** course plan (four chapter sections), glossary (renumbered live references, new
+  names table, review notes), AGENTS.md lesson, historical-numbering notes in the older plans.

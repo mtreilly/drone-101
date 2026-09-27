@@ -6,10 +6,23 @@ export interface Progress {
   quiz: Record<string, number>;
   /** arbitrary per-widget saved data, e.g. the learner's Chapter 0 shower run */
   saved: Record<string, unknown>;
+  /** which chapter numbering `visited` / `completed` use; missing means the 12-chapter course */
+  course?: number;
 }
 
 const KEY = 'feedback-adventure:v1';
-const empty = (): Progress => ({ visited: [], completed: [], predictions: {}, quiz: {}, saved: {} });
+const COURSE = 2;
+const empty = (): Progress => ({ visited: [], completed: [], predictions: {}, quiz: {}, saved: {}, course: COURSE });
+
+/** Old chapter → new chapters, from when Chapters 5 and 7 were each split in two (12 → 14 chapters). */
+const SPLIT: Record<number, number[]> = { 5: [5, 6], 6: [7], 7: [8, 9], 8: [10], 9: [11], 10: [12], 11: [13] };
+const renumber = (chs: number[]): number[] => [...new Set(chs.flatMap((ch) => SPLIT[ch] ?? [ch]))];
+
+/** Brings progress saved by an older course layout up to the current chapter numbers. */
+export function migrate(p: Progress): Progress {
+  if ((p.course ?? 1) >= COURSE) return p;
+  return { ...p, visited: renumber(p.visited), completed: renumber(p.completed), course: COURSE };
+}
 
 let state: Progress = load();
 const listeners = new Set<(p: Progress) => void>();
@@ -18,7 +31,8 @@ function load(): Progress {
   try {
     const rawValue = localStorage.getItem(KEY);
     if (!rawValue) return empty();
-    return { ...empty(), ...(JSON.parse(rawValue) as Partial<Progress>) };
+    const saved = JSON.parse(rawValue) as Partial<Progress>;
+    return migrate({ ...empty(), course: undefined, ...saved });
   } catch {
     return empty();
   }

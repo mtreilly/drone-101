@@ -1,571 +1,203 @@
 {
   "kicker": "Rozdział 8",
-  "title": "Transmitancje, bieguny i zera",
-  "question": "Czy da się odczytać cały charakter układu z jednego ułamka?",
+  "title": "Sonda Laplace'a",
+  "question": "Czy jedno zmierzone pole powie nam, gdzie mieszka sygnał?",
   "sections": [
     {
-      "id": "recipe",
-      "title": "Przepis na układ",
+      "id": "probe",
+      "title": "Sonda do sygnałów",
       "blocks": [
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "think",
-          "text": "Zaczynamy od drona zawieszonego na wysokości 1 m; podstawowy ciąg 4,9 N równoważy grawitację. Zarówno żądaną, jak i rzeczywistą zmianę wysokości mierzymy względem tej wartości. Tuż przed nowym poleceniem obie zmiany wynoszą zero. W przykładzie skoku wartość zadana skacze do 2 m w chwili $t=0$: żądana zmiana wynosi wtedy 1 m, a dron nadal jest na wysokości 1 m."
-        },
         {
           "t": "say",
           "who": "theo",
-          "mood": "think",
-          "text": "Dobrze, bo w poprzednim rozdziale pominęliśmy kawałki z $-h(0)$ i wzór skłamał. Mierzone od zawisu te wartości początkowe naprawdę **są** zerowe, więc tym razem znikają uczciwie."
-        },
-        {
-          "t": "math",
-          "tex": "\\Delta\\out{H}(s) = \\underbrace{\\frac{\\eff{K_p}}{m s^2 + c s + \\eff{K_p}}}_{G(s)} \\cdot \\Delta\\sp{R}(s)"
-        },
-        {
-          "t": "callout",
-          "title": "Skąd się bierze przepis",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Ciąg zawisu znosi grawitację, więc w równaniu drona zostają tylko *zmiany*. Teraz reguła z rozdziału 7: każde nachylenie zamienia się w × $s$ minus jego wartość początkowa. Od zawisu każda wartość początkowa jest zerowa, więc nic nie odejmujemy:"
-            },
-            {
-              "t": "math",
-              "tex": "\\begin{gathered} m\\,\\Delta\\out{h}'' + c\\,\\Delta\\out{h}' = \\eff{K_p}\\,(\\Delta\\sp{r} - \\Delta\\out{h}) \\\\[2pt] \\Big\\downarrow\\ {\\scriptstyle \\Delta h(0)\\,=\\,\\Delta h'(0)\\,=\\,0} \\\\[2pt] (m s^2 + c s + \\eff{K_p})\\,\\Delta\\out{H}(s) = \\eff{K_p}\\,\\Delta\\sp{R}(s) \\end{gathered}"
-            },
-            {
-              "t": "p",
-              "text": "Podziel przez $m s^2 + c s + \\eff{K_p}$ i oto $G(s)$. Jej mianownik to dokładnie to równanie, które w rozdziałach 4–6 dostawaliśmy, zgadując $e^{st}$."
-            },
-            {
-              "t": "say",
-              "who": "mika",
-              "mood": "happy",
-              "text": "Czyli to nie magia. To własne równanie drona, w którym każde nachylenie zamieniło się w $s$."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "$\\Delta\\sp{R}(s)$ to transformata **żądanego przesunięcia** od 1 m, a $\\Delta\\out{H}(s)$ to transformata **rzeczywistego przesunięcia** od 1 m. $G(s)$ zależy od drona i regulatora. To **transmitancja**: zmiana wyjścia podzielona przez zmianę wejścia, przy obu zmianach równych zeru na początku."
-        },
-        {
-          "t": "p",
-          "text": "Wykres nadal pokazuje wysokości nad ziemią. Dodaj początkowy metr do przesunięcia przewidzianego przez wzór, aby otrzymać niebieską wysokość na wykresie."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "June miała rację: ten ułamek **jest** dronem. To jakby jego **przepis**. Wrzuć dowolny składnik, a powie ci, co wyjdzie!"
-        },
-        {
-          "t": "p",
-          "text": "Wypróbuj trzy różne wejścia na tym samym dronie. Przepis nigdy się nie zmienia, zmienia się tylko $\\Delta\\sp{R}(s)$."
-        },
-        {
-          "t": "widget",
-          "id": "recipe"
-        },
-        {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Transmitancja $G(s)$",
-              "def": "Transformata zmiany wyjścia ÷ transformata zmiany wejścia, przy tym samym stanie spoczynku na początku. Dla tego liniowego drona to iloraz wielomianów zmiennej $s$."
-            },
-            {
-              "term": "Start ze spoczynku (zerowe warunki początkowe)",
-              "def": "Każda zmiana i jej prędkość są zerowe w chwili $t = 0$, tak jak przy pomiarze od zawisu. Wtedy składniki z wartościami początkowymi z rozdziału 7, takie jak $-h(0)$, też są zerowe, a $G(s)$ mówi wszystko."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "poles",
-      "title": "Bieguny: tam, gdzie układ chce mieszkać",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Gdzie $G(s)$ **rośnie bez ograniczeń**? Tam, gdzie jej mianownik jest zerem. Te punkty to **bieguny**, oznaczane ×. Ten dron ma dwa, po jednym na każdy z dwóch naturalnych ruchów $e^{st}$ z rozdziału 6."
-        },
-        {
-          "t": "p",
-          "text": "W rozdziale 7 transformata $e^{at}$ krzyczała w $s = a$. Przeczytaj to od tyłu: wszędzie, gdzie $G$ krzyczy, ukrywa się ruch $e^{pt}$."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Czyli bieguny to **mody** z rozdziału 6, siedzące na mapie!"
-        },
-        {
-          "t": "callout",
-          "title": "Dlaczego bieguny to ruchy",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Odpowiedź skokowa to $G(s)$ razy $\\frac{1}{s}$ skoku. Rozbij ją na proste kawałki, ułamki proste z rozdziału 7 (lustrzana para biegunów dostaje liczniki będące lustrzanymi bliźniakami): własny biegun skoku w 0 daje końcową zmianę $A$, a każdy biegun $G$ daje jeden kawałek $\\frac{B}{s-p}$."
-            },
-            {
-              "t": "math",
-              "tex": "\\begin{aligned} \\Delta\\out{H}(s) = G(s)\\cdot\\frac{1}{s} &= \\frac{A}{s} + \\frac{B}{s-p} + \\frac{\\bar B}{s-\\bar p} \\\\[4pt] \\Longrightarrow\\quad \\Delta\\out{h}(t) &= A + B e^{pt} + \\bar B e^{\\bar p t} \\end{aligned}"
-            },
-            {
-              "t": "p",
-              "text": "Tabela z rozdziału 7 zamienia każdy kawałek z powrotem w ruch. Nic innego nie może się pojawić: bieguny to cała obsada."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "think",
-              "text": "A biegun z $\\sigma > 0$ to kawałek, który rośnie. Nic dziwnego, że prawa połowa wybucha."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Teraz odwróćmy sytuację. Zamiast wybierać wzmocnienia i szukać biegunów, **przeciągajmy bieguny** i zobaczmy, jakiego drona dostaniemy. Do tego trzeba drugiego pokrętła, $\\eff{K_d}$: pchnięcia przeciwnego do prędkości, które porządnie poznamy w rozdziale 9. Dodaje się ono do oporu $c$, a dwa pierwiastki to $p$ i jego lustrzany bliźniak $\\bar p$ (kreska zmienia znak części urojonej, jak u bliźniaków z rozdziału 5):"
-        },
-        {
-          "t": "math",
-          "tex": "\\begin{aligned} & m s^2 + (c + \\eff{K_d})\\,s + \\eff{K_p} = 0 \\\\ \\Longrightarrow\\quad & s = p,\\ \\bar p \\qquad \\text{(bieguny)} \\end{aligned}"
-        },
-        {
-          "t": "play",
-          "id": "gains",
-          "text": "Żeby postawić bieguny w −{scrub|sig} ± {scrub|w}i, regulator potrzebuje $\\eff{K_p} = m(\\sigma^2+\\omega^2)$ = {calc|kp|eff} N/m oraz $c + \\eff{K_d} = 2m|\\sigma|$ = {calc|damp} N·s/m, czyli $\\eff{K_d}$ = {calc|kd|eff} N·s/m. Plac zabaw poniżej trzyma się tych liczb. {calc|note}"
-        },
-        {
-          "t": "predict",
-          "id": "ch8-rhp",
-          "gate": true,
-          "q": "Co zrobi dron, jeśli przeciągniemy bieguny do **prawej połowy** płaszczyzny s?",
-          "options": [
-            {
-              "text": "Łagodnie wyląduje",
-              "sketch": "sluggish",
-              "why": "Lądowanie wymaga, żeby wszystko się uspokoiło, a bieguny w prawej połowie robią coś przeciwnego."
-            },
-            {
-              "text": "Będzie wisiał, trochę się chybocząc",
-              "sketch": "steady-wiggle",
-              "why": "Równomierne chybotanie dostajesz dokładnie **na** osi pionowej. Tuż za nią wszystko rośnie."
-            },
-            {
-              "text": "Będzie się wahał coraz mocniej, aż się rozbije albo odleci",
-              "sketch": "growing-wiggle",
-              "correct": true,
-              "why": "W prawej połowie $e^{st}$ ma $\\sigma > 0$: rosnącą spiralę. Wahania są większe z każdym cyklem."
-            }
-          ]
-        },
-        {
-          "t": "widget",
-          "id": "playground"
-        },
-        {
-          "t": "h3",
-          "text": "Jak czytać mapę"
-        },
-        {
-          "t": "p",
-          "text": "Pobaw się. Od razu widać kilka reguł, a każda to stary znajomy w przebraniu:"
-        },
-        {
-          "t": "list",
-          "items": [
-            "**Lewa połowa = uspokaja się, prawa połowa = wybucha.** Część rzeczywista $\\sigma$ to tempo malenia lub wzrostu $e^{\\sigma t}$.",
-            "**Bardziej w lewo = szybciej.** Ustalanie trwa około $4/|\\sigma|$ sekund (przerywane pionowe linie): cztery stałe czasowe z rozdziału 6, bo $e^{-|\\sigma| t}$ spada poniżej 2 % po $\\ln 50/|\\sigma| \\approx 3{,}9/|\\sigma|$ sekundach.",
-            "**Wyżej = bardziej rozkołysany.** Wysokość $\\omega$ to pulsacja tłumiona z rozdziału 6, więc jedno wahnięcie trwa $2\\pi/\\omega$ sekund.",
-            "**Kąt ustala przeregulowanie.** Kąt $\\theta$ od ujemnej półosi rzeczywistej daje $\\zeta = \\cos\\theta$ (okrąg z rozdziału 6), a przeregulowanie to $e^{-\\pi|\\sigma|/\\omega}$ (przerywane promienie). Blisko osi rzeczywistej prawie nie ma przeregulowania, blisko osi pionowej jest duże. (Dokładnie dla dwóch biegunów bez zera, przy starcie ze spoczynku. Zero to zmienia: w następnej sekcji jedno zero zamienia 12 % w 15 %.)"
-          ]
-        },
-        {
-          "t": "say",
-          "who": "mika",
           "mood": "worried",
-          "text": "Chciałam tylko **jeden** biegun wysoko i jeden nisko. Nie pozwala mi! Dolny ciągle kopiuje górny."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "Pamiętasz bliźniacze bączki z rozdziału 5? Prawdziwy dron ma prawdziwy ruch, więc każde wirujące $e^{st}$ potrzebuje lustrzanego bliźniaka, żeby znieść części urojone. Bieguny zespolone **zawsze** występują w lustrzanych parach."
-        },
-        {
-          "t": "callout",
-          "title": "Dlaczego kąt ustala przeregulowanie",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Dron mija cel i zawraca po połowie wahnięcia, w chwili $t = \\pi/\\omega$. Do tego czasu malejące $e^{-|\\sigma| t}$ działa już tak długo, a to, co zostaje z wychylenia, to przeregulowanie. Liczy się tylko stosunek $|\\sigma|/\\omega$, a ten stosunek to *kąt* bieguna. Na okręgu z rozdziału 6 cosinus tego kąta to $\\zeta$."
-            },
-            {
-              "t": "math",
-              "tex": "\\begin{aligned} t_{\\text{szczyt}} &= \\frac{\\pi}{\\omega} \\\\[4pt] \\text{przeregulowanie} &= e^{-|\\sigma|\\,t_{\\text{szczyt}}} = e^{-\\pi|\\sigma|/\\omega} \\\\[4pt] &= e^{-\\pi\\zeta/\\sqrt{1-\\zeta^2}}, \\qquad \\zeta = \\cos\\theta \\end{aligned}"
-            },
-            {
-              "t": "play",
-              "id": "poleRead",
-              "text": "Bieguny w −{scrub|sig} ± {scrub|w}i: wahania maleją jak $e^{-|\\sigma| t}$, więc ustala się po około {calc|ts} s. Jedno wahnięcie trwa {calc|period} s. Pierwszy szczyt przychodzi po połowie wahnięcia, po {calc|tp} s, a do tego czasu malenie zostawia przeregulowanie {calc|os}."
-            },
-            {
-              "t": "say",
-              "who": "theo",
-              "mood": "happy",
-              "text": "Czyli każdy promień z 0 to jedno $\\zeta$ i jedno przeregulowanie."
-            }
-          ]
-        },
-        {
-          "t": "predict",
-          "id": "ch8-up",
-          "gate": true,
-          "q": "Zostaw $\\sigma = -2$ i przesuń bieguny **prosto w górę**, z $\\pm 4i$ do $\\pm 8i$. Co się zmieni?",
-          "options": [
-            {
-              "text": "Ustala się dwa razy szybciej",
-              "why": "Ustalanie zależy od tempa malenia $\\sigma$, które się nie ruszyło. Pomiar: 1,87 s zmienia się w 1,72 s, prawie tyle samo."
-            },
-            {
-              "text": "Szybsze wahania i większe przeregulowanie; czas ustalania prawie ten sam",
-              "correct": true,
-              "why": "Jedno wahnięcie skraca się z 1,57 s do 0,79 s, a przeregulowanie rośnie z 21 % do 46 %, ale obwiednia $e^{-2t}$ się nie zmienia, więc czas ustalania zostaje w okolicy $4/2 = 2$ s."
-            },
-            {
-              "text": "Staje się niestabilny",
-              "why": "O tym decyduje tylko położenie lewo–prawo. Ruch w górę i w dół nigdy nie przenosi do prawej połowy."
-            }
-          ]
+          "text": "Za każdym razem, gdy coś rozwiązywaliśmy, *zgadywaliśmy* $e^{st}$, wstawialiśmy i modliliśmy się. A teraz dodaj grawitację, wysokość początkową, regulator… mój zeszyt płonie."
         },
         {
           "t": "say",
           "who": "june",
-          "mood": "excited",
-          "text": "Plac zabaw skoczył, kiedy odpowiedzieliśmy: para-duch siedzi w $\\pm 4i$, nowa w $\\pm 8i$. Ta sama obwiednia, dwa razy więcej wahnięć i dużo większe pierwsze wychylenie."
-        },
-        {
-          "t": "note",
-          "text": "Nasz dron zaczynał w $-1 \\pm 6{,}24i$: to dron z $K_p = 20$ z rozdziału 2. Wysoko (bardzo rozkołysany) i blisko osi (wolno się ustala). Teraz *widać*, dlaczego podskakiwał."
+          "mood": "think",
+          "text": "Kiedy coś buduję, trik zawsze polega na zamianie trudnej roboty w łatwą. Trudna: analiza z nachyleniami nachyleń. Łatwa: zwykła algebra z $+$, $-$, $\\times$, $\\div$."
         },
         {
           "t": "say",
           "who": "mika",
-          "mood": "think",
-          "text": "A gdyby oba bieguny siedziały na osi rzeczywistej, jeden w $-0{,}2$, a drugi w $-5$?"
+          "mood": "excited",
+          "text": "Czyli potrzebujemy maszyny, która zjada krzywą i wypluwa coś, w czym nachylenia zamieniają się w mnożenie? Coś takiego istnieje?"
         },
         {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "Szybki znika w sekundę. Wolny tu rządzi."
+          "t": "p",
+          "text": "Istnieje, i możemy ją zbudować z rzeczy, które już mamy. Pomysł jest taki. Weź dowolny **sygnał**, czyli dowolną krzywą zmieniającą się w czasie, $f(t)$. Pomnóż go przez **sondę**, wykładniczą $e^{-st}$ z rozdziału 4 (dla dodatniego $s$ maleje). Potem zmierz **całkowite pole** pod iloczynem (zebrane pole z rozdziału 3), aż do $t = \\infty$."
         },
         {
-          "t": "play",
-          "id": "dominant",
-          "text": "Bieguny rzeczywiste w −0,2 i −5. Po {scrub|time} s szybkiemu ruchowi $e^{-5t}$ zostaje {calc|fast} wartości początkowej, a wolnemu $e^{-0{,}2t}$ wciąż {calc|slow}. Decyduje więc wolny biegun: ustalanie trwa około $4/0{,}2 = 20$ s."
+          "t": "math",
+          "tex": "F(s) = \\int_0^\\infty \\out{f(t)}\\; e^{-st}\\,dt"
         },
         {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Biegun",
-              "def": "Wartość $s$, przy której transmitancja rośnie bez ograniczeń. Każdy biegun $p$ to jeden ruch $e^{pt}$ układu."
-            },
-            {
-              "term": "Lustrzana para $p,\\ \\bar p$",
-              "def": "W podręcznikach: para sprzężona. Dwa bieguny o tej samej części rzeczywistej i przeciwnych częściach urojonych. Zespolone bieguny rzeczywistego układu zawsze występują w takich parach."
-            },
-            {
-              "term": "Biegun dominujący",
-              "def": "Biegun najbliżej osi pionowej. Jego wolny ruch trwa dłużej niż pozostałe, więc zwykle to on wyznacza czas ustalania, chyba że prawie na nim siedzi zero (w rozdziale 9 jest taki przypadek)."
-            }
-          ]
+          "t": "p",
+          "text": "I tyle. Liczba $s$ wchodzi, pole wychodzi. Wypróbuj różne wartości $s$, a dostaniesz całą nową krzywą $F(s)$. Ta krzywa to **transformata Laplace'a** sygnału $f$: odcisk palca sygnału. Dwa różne (rozsądne) sygnały nigdy nie mają tej samej $F(s)$, i właśnie dlatego później będziemy mogli odczytywać odpowiedzi wstecz."
         },
         {
           "t": "callout",
-          "title": "Na ile dobre jest 4/|σ|?",
+          "title": "Dlaczego taka sonda?",
           "blocks": [
-            {
-              "t": "p",
-              "text": "Czwórka to zaokrąglone $\\ln 50 \\approx 3{,}9$ z rozdziału 6: czas, w którym *obwiednia* maleje do 2 %. Prawdziwa krzywa mieści się w obwiedni, więc często ustala się trochę wcześniej. Później ustala się, gdy bieguny leżą na osi rzeczywistej lub blisko niej, bo biegun podwójny ma składnik $t\\,e^{-|\\sigma| t}$, który się ciągnie."
-            },
-            {
-              "t": "math",
-              "tex": "\\begin{array}{c|ccccc} \\zeta & 0{,}3 & 0{,}5 & 0{,}8 & 0{,}95 & 1 \\\\ \\hline |\\sigma|\\,T_s & 3{,}37 & 4{,}04 & 3{,}01 & 5{,}00 & 5{,}83 \\end{array}"
-            },
             {
               "t": "say",
-              "who": "mika",
+              "who": "theo",
               "mood": "think",
-              "text": "Sprawdziłam $\\sigma = -1$: reguła mówiła 4 s, a prawdziwe czasy wynosiły od 3,0 s do 5,8 s, zależnie od $\\zeta$. Wystarczy, żeby celować, ale nie, żeby obiecywać."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "zeros",
-      "title": "Zera: szybkie spojrzenie",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Licznik też może być zerem. Takie punkty to **zera**, oznaczane ○. Zwykle zmieniają **udział** ruchu każdego bieguna widoczny na wyjściu. Jeśli zero leży dokładnie na biegunie, wspólny czynnik się skraca i ten biegun znika z tego przepisu od wejścia do wyjścia. Ale nadal siedzi w układzie: szturchnij drona w inny sposób, podmuchem, a ten ruch wraca. To bardzo ważne, jeśli ukryty biegun leży po prawej stronie."
-        },
-        {
-          "t": "p",
-          "text": "Oto układ ze stałymi biegunami w $-2 \\pm 3i$ i jednym zerem, które możesz przesuwać. ($\\eff{K_d}$ z naszego placu zabaw pcha przeciw *prędkości* drona, więc jego przepis nie ma zera. Pchaj zamiast tego przeciw prędkości *uchybu*, jak w rozdziale 9, a pojawi się zero w $-\\eff{K_p}/\\eff{K_d}$: dla tych biegunów to $-6{,}5$, z przeregulowaniem 15 % zamiast 12 %.)"
-        },
-        {
-          "t": "widget",
-          "id": "zero"
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "surprised",
-          "text": "Te same bieguny, ale gdy zero zbliża się do początku układu, odpowiedź wyskakuje w górę dużo szybciej i bardziej przestrzeliwuje!"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Te same bieguny to te same ruchy. Zero nie może więc dodać nowego. Musi dokładać trochę czegoś, co już mamy."
-        },
-        {
-          "t": "play",
-          "id": "zeroKick",
-          "text": "Z zerem w −{scrub|z} wyjście to krzywa bez zera **plus {calc|gain} × jej nachylenie**, a przeregulowanie wynosi {calc|os} (12 % bez zera)."
-        },
-        {
-          "t": "p",
-          "text": "Mnożenie przez $s$ daje nachylenie (rozdział 7), więc czynnik $(1 + s/|z|)$ dokłada $1/|z|$ razy nachylenie. Dlatego zero blisko początku układu sprawia, że układ tak mocno reaguje na **zmiany**: przeregulowanie rośnie, choć bieguny się nie ruszyły. Daleko zero prawie nie ma znaczenia. Na razie to wszystko, czego potrzebujemy o zerach."
-        },
-        {
-          "t": "callout",
-          "title": "Co blokuje zero",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Biegun to ruch, który układ *wykonuje*; zero to ruch, którego układ *nie chce przepuścić*. Podaj temu układowi (zero w $-3$) dokładnie $e^{-3t}$, a nic z tego nie wyjdzie: tylko własne kołysanie układu, które wygasa. Bez zera $1{,}3\\,e^{-3t}$ przeszłoby prosto na wyjście."
-            },
-            {
-              "t": "math",
-              "tex": "\\begin{aligned} G(s) &= \\tfrac{13}{3}\\,\\frac{s+3}{s^2+4s+13}, \\qquad u = e^{-3t} \\\\[4pt] Y(s) &= \\tfrac{13}{3}\\,\\frac{\\cancel{s+3}}{(s^2+4s+13)\\,\\cancel{(s+3)}} \\\\[4pt] \\Longrightarrow\\quad y(t) &= \\tfrac{13}{9}\\,e^{-2t}\\sin 3t \\end{aligned}"
+              "text": "Czemu akurat *ta* krzywa? Czemu nie garb albo sinus?"
             },
             {
               "t": "say",
               "who": "june",
-              "mood": "excited",
-              "text": "Jak słuchawki z redukcją szumu na jedno konkretne buczenie."
-            }
-          ]
-        },
-        {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Zero",
-              "def": "Wartość $s$, przy której transmitancja jest zerem: ruch $e^{zt}$, którego układ nie przepuszcza."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "limits",
-      "title": "Czy bardziej w lewo to zawsze lepiej?",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Proste: przeciągnijmy bieguny *daleko* w lewo. Ustala się w mgnieniu oka. Najlepszy dron świata!"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Tylko jakiego ciągu to wymaga? Do tej pory udawaliśmy, że silniki mogą pchać tak mocno, jak chce matematyka."
-        },
-        {
-          "t": "p",
-          "text": "Czas na szczerość. Nasze silniki mogą pchać od **0 N** do **20 N** (mniej więcej czterokrotność ciężaru drona). Poniżej bieguny przesuwają się w lewo wzdłuż linii 45° (to $\\zeta \\approx 0{,}71$, złoty środek z rozdziału 6). Przerywane krzywe to matematyka z wyimaginowanymi, nieograniczonymi silnikami; ciągłe to prawdziwe silniki."
-        },
-        {
-          "t": "widget",
-          "id": "limit"
-        },
-        {
-          "t": "play",
-          "id": "push",
-          "text": "W pierwszej chwili skoku o 1 m uchyb to cały metr, a dron jeszcze się nie rusza, więc matematyka żąda ciągu zawisu plus $\\eff{K_p}$ × 1 m. Przy biegunach w {scrub|sig} to {calc|sum|eff} N: {calc|verdict}."
-        },
-        {
-          "t": "p",
-          "text": "Za mniej więcej $-3{,}9 \\pm 3{,}9i$ matematyka żąda ponad 20 N. {eff|Pomarańczowy ciąg} spłaszcza się na ograniczeniu, a za mniej więcej $-6 \\pm 6i$ matematyka chce nawet ciągnąć drona *w dół*, czego śmigła nie potrafią. Prawdziwy dron przestaje podążać za ładną liniową prognozą. Jego czas ustalania przestaje się poprawiać przy około 0,7 s, w okolicy $-6{,}5 \\pm 6{,}5i$, a dalej w lewo robi się *gorzej*, z dodatkowym przeregulowaniem."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "surprised",
-          "text": "Przesunęłam go aż do $-8 \\pm 8i$. Matematyka mówi 0,53 s. Prawdziwy dron potrzebuje 0,77 s: wolniej niż przy $-6{,}5$!"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "A jego przeregulowanie wzrosło z 4 % do 16 %. Tego całego dodatkowego ciągu nigdy nie było skąd wziąć."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "worried",
-          "text": "Czyli „bardziej w lewo” jest lepsze tylko do momentu, gdy skończy się silnik. Rozmieszczanie biegunów to kompromis, a nie wyścig."
-        },
-        {
-          "t": "callout",
-          "title": "Budżet ciągu to okrąg",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "W pierwszej chwili dron się jeszcze nie ruszył, więc pcha tylko $\\eff{K_p}$, a $\\eff{K_p} = m|p|^2$: kwadrat odległości biegunów od 0. Podwój odległość, a potrzebujesz czterokrotnie większego pchnięcia, niezależnie od kierunku. Przy skoku o 1 m nasze silniki pozwalają na bieguny do około 5,5 od 0 (blady pomarańczowy okrąg na placu zabaw). Poproś o skok o 2 m, a okrąg kurczy się do 3,9."
+              "mood": "happy",
+              "text": "Z dwóch powodów, policzę je na palcach. Po pierwsze: to wyjątkowa krzywa z rozdziału 4. Jej nachylenie to po prostu $-s$ razy ona sama, więc kiedy pojawią się nachylenia, zamienią się w mnożenie przez $s$. Po drugie: to dokładne przeciwieństwo $e^{st}$, które ciągle zgadywaliśmy. Przyłóż ją do $e^{at}$, a przy $s = a$ obie się zniosą."
             },
             {
               "t": "math",
-              "tex": "\\begin{aligned} T(0^+) &= mg + \\eff{K_p}\\,\\Delta\\sp{r} \\\\[4pt] &= mg + m\\,|p|^2\\,\\Delta\\sp{r} \\le 20\\ \\text{N} \\\\[4pt] \\Longrightarrow\\quad |p| &\\le \\sqrt{\\frac{20\\ \\text{N} - mg}{m\\,\\Delta\\sp{r}}} \\end{aligned}"
+              "tex": "\\frac{d}{dt}\\,e^{-st} = -s\\,e^{-st} \\qquad e^{at}\\cdot e^{-st} = e^{(a-s)t}"
+            },
+            {
+              "t": "p",
+              "text": "Znoszenie zobaczymy w następnej części, a nachylenia w następnym rozdziale."
+            }
+          ]
+        },
+        {
+          "t": "predict",
+          "id": "ch7-step",
+          "gate": true,
+          "q": "Weź najprostszy sygnał, skok: $f(t) = 1$ na zawsze. Gdy **zwiększamy** $s$, co dzieje się z polem pod $1 \\cdot e^{-st}$?",
+          "options": [
+            {
+              "text": "Rośnie",
+              "why": "Większe $s$ sprawia, że sonda wygasa *szybciej*, więc jest jej mniej."
+            },
+            {
+              "text": "Maleje",
+              "correct": true,
+              "why": "Tak. Większe $s$ szybciej spłaszcza sondę, więc pola jest mniej. Pole wynosi dokładnie $1/s$ (udowodnimy to, gdy będziemy budować tabelkę)."
+            },
+            {
+              "text": "Zostaje takie samo",
+              "why": "Kształt sondy zależy od $s$: większe $s$ to szybszy spadek, więc mniejsze pole."
+            }
+          ]
+        },
+        {
+          "t": "widget",
+          "id": "probe"
+        },
+        {
+          "t": "play",
+          "id": "stepArea",
+          "text": "Zbadaj skok sondą przy s = {scrub|s}: pole wynosi 1 ÷ {calc|s} = {calc|F}. Podwój s, a pole spadnie o połowę."
+        },
+        {
+          "t": "p",
+          "text": "Przesuwaj $s$ w widżecie, a kropki ułożą się dokładnie w to $1/s$. Wypróbuj też inne sygnały. Rosnący sygnał $e^{0{,}5t}$ ma skończone pole tylko wtedy, gdy sonda maleje **szybciej**, niż sygnał rośnie, czyli gdy $s > 0{,}5$. Poniżej tej wartości pole ucieka do nieskończoności. Kołysanie $\\sin 2t$ zawodzi inaczej: przy $s = 0$ jego pole po prostu przelewa się tam i z powrotem między 0 a 1 (ujemne pole z rozdziału 3 znosi dodatnie) i nigdy nie ustala się na jednej liczbie."
+        },
+        {
+          "t": "callout",
+          "title": "Nieskończone pole, które przestaje rosnąć",
+          "blocks": [
+            {
+              "t": "say",
+              "who": "mika",
+              "mood": "worried",
+              "text": "Zaraz. Sonda ciągnie się w nieskończoność. Jak nieskończoność może mieć skończone pole?"
+            },
+            {
+              "t": "p",
+              "text": "Bo prawie cała ta nieskończoność to prawie nic. Każda kolejna sekunda dokłada mniej niż poprzednia. Po jednej sekundzie pole pod $e^{-t}$ to już 63 % całości (znowu linijka τ z rozdziału 3). Po pięciu ponad 99 %."
+            },
+            {
+              "t": "math",
+              "tex": "\\int_0^{T} e^{-t}\\,dt = 1 - e^{-T} \\;\\to\\; 1"
             },
             {
               "t": "play",
-              "id": "budget",
-              "text": "Przy skoku o {scrub|dr} m pierwsze pchnięcie mieści się poniżej 20 N tylko wtedy, gdy bieguny leżą w odległości do {calc|r} od 0, w dowolnym kierunku."
+              "id": "longArea",
+              "text": "Przestań sumować pole pod $e^{-t}$ w t = {scrub|T} s, a masz już {calc|A}. Wszystko, co dalej, dokłada tylko {calc|left}."
+            },
+            {
+              "t": "say",
+              "who": "theo",
+              "mood": "happy",
+              "text": "Czyli nieskończoność nie przeszkadza, byle ogon dość szybko robił się cienki. Właśnie po to jest sonda."
             }
           ]
+        },
+        {
+          "t": "p",
+          "text": "Całkowite pole musi ustalić się na skończonej wartości, żeby każde $s$ dostało jedną liczbę. Jeśli sonda zanika zbyt wolno, pole rośnie bez końca i takie $s$ nie ma odpowiedzi."
         },
         {
           "t": "note",
-          "text": "Od teraz ograniczenie 20 N zostaje włączone."
-        },
-        {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Pierwsze pchnięcie",
-              "def": "Ciąg żądany w pierwszej chwili skoku: $mg + \\eff{K_p}\\,\\Delta r$, zanim dron się ruszy."
-            },
-            {
-              "term": "Budżet ciągu",
-              "def": "Położenia biegunów, na które stać silniki przy danym skoku: okrąg wokół 0."
-            },
-            {
-              "term": "Ograniczenie silników (nasycenie)",
-              "def": "Prawdziwy ciąg jest obcinany do 0–20 N, czegokolwiek żąda matematyka."
-            }
-          ]
+          "text": "Na razie używamy tylko rzeczywistych $s$. Zespolone $s$ pojawią się za chwilę i to tam dzieje się magia.",
+          "aside": true
         }
       ]
     },
     {
-      "id": "loop",
-      "title": "Zamykamy pętlę na papierze",
+      "id": "explode",
+      "title": "Transformata zdradza, gdzie „mieszka” sygnał",
       "blocks": [
         {
-          "t": "say",
-          "who": "june",
-          "mood": "think",
-          "text": "W rozdziale 1 narysowaliśmy pętlę jako bloki i strzałki. W świecie s każdy blok po prostu **mnoży**. Czy bloki mogą zrobić za nas algebrę?"
-        },
-        {
           "t": "p",
-          "text": "Daj każdemu blokowi jego przepis. Regulator to $C(s)$, na razie po prostu $\\eff{K_p}$. Sam dron, ze zmianą ciągu na wejściu i zmianą wysokości na wyjściu, to $P(s) = \\frac{1}{ms^2 + cs}$: P od angielskiego *plant*, czyli **obiekt**, słowo z rozdziału 1, a nie P z regulacji P. Wynika prosto z równania drona, tak samo jak przepis powyżej."
+          "text": "Przyjrzyjmy się bliżej $f(t) = e^{at}$. Zbadaj go sondą $e^{-st}$, a iloczyn wyniesie $e^{(a-s)t}$, zwykłą wykładniczą. Dopóki $s > a$, zanika, a jej pole to $\\frac{1}{s-a}$ (porządnie wyprowadzimy to, gdy w następnym rozdziale zbudujemy naszą tabelkę)."
         },
         {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Proste. Polecenie idzie przez regulator, a potem przez drona. Mnożymy wzdłuż linii!"
-        },
-        {
-          "t": "math",
-          "tex": "\\Delta\\out{H} \\overset{?}{=} C\\,P\\,\\Delta\\sp{R} = \\frac{\\eff{K_p}}{ms^2 + cs}\\,\\Delta\\sp{R}"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Bieguny w 0 i −2? Żadnego kołysania i biegun w 0, który nigdy się nie ustala. To układ otwarty z rozdziału 1: powiedz dronowi, co ma robić, i nigdy nie patrz. Regulator nie widzi polecenia, June. Widzi **uchyb**."
-        },
-        {
-          "t": "p",
-          "text": "Strzałka wracająca od drona to cały sens sprzężenia zwrotnego. Regulator działa na $\\Delta\\sp{R} - \\Delta\\out{H}$, więc wyjście pojawia się po obu stronach. Zbierz je i podziel:"
-        },
-        {
-          "t": "math",
-          "tex": "\\begin{aligned} \\Delta\\out{H} &= C\\,P\\,\\big(\\Delta\\sp{R} - \\Delta\\out{H}\\big) \\\\ \\Delta\\out{H}\\,\\big(1 + C\\,P\\big) &= C\\,P\\,\\Delta\\sp{R} \\\\ \\Delta\\out{H} &= \\frac{C\\,P}{1 + C\\,P}\\,\\Delta\\sp{R} \\end{aligned}"
-        },
-        {
-          "t": "p",
-          "text": "Wstaw $C = \\eff{K_p}$ i $P = 1/(ms^2+cs)$, a potem pomnóż licznik i mianownik przez $ms^2 + cs$:"
-        },
-        {
-          "t": "math",
-          "tex": "\\frac{C\\,P}{1 + C\\,P} = \\frac{\\eff{K_p}/(ms^2+cs)}{1 + \\eff{K_p}/(ms^2+cs)} = \\frac{\\eff{K_p}}{ms^2 + cs + \\eff{K_p}}"
+          "t": "widget",
+          "id": "explode"
         },
         {
           "t": "say",
           "who": "mika",
           "mood": "surprised",
-          "text": "To przepis z początku tego rozdziału! Dostaliśmy go dwa razy: raz z równania drona, raz z bloków."
-        },
-        {
-          "t": "p",
-          "text": "Czyli bieguny pętli leżą tam, gdzie mianownik, $1 + C(s)\\,P(s)$, jest zerem. To to samo co $C\\,P = -1$. Czytaj $C\\,P$ jako **jedno okrążenie** pętli: to, co regulator, a potem dron robią z sygnałem. W biegunie okrążenie oddaje sygnał w tej samej wielkości, ale odwrócony, a minus w uchybie odwraca go z powrotem. Sygnał podtrzymuje się więc sam, bez żadnego polecenia."
-        },
-        {
-          "t": "math",
-          "tex": "1 + C(s)\\,P(s) = 0 \\quad\\Longleftrightarrow\\quad C(s)\\,P(s) = -1"
-        },
-        {
-          "t": "p",
-          "text": "Wypróbuj to na równomiernym wahaniu, $s = i\\omega$. Jedno okrążenie zamienia strzałkę wahania w $C(i\\omega)\\,P(i\\omega)$: krótszą lub dłuższą i obróconą wstecz. Widżet rysuje tę strzałkę dla każdej prędkości wahań oraz punkt −1, do którego musiałaby dotrzeć."
-        },
-        {
-          "t": "widget",
-          "id": "loop"
+          "text": "Gdy $s$ zbliża się do $a$, liczba robi się **ogromna**! Przy $s = a$ sonda dokładnie znosi wzrost, iloczyn jest płaski na zawsze, a pole jest nieskończone."
         },
         {
           "t": "say",
           "who": "theo",
-          "mood": "surprised",
-          "text": "Choćbym nie wiem jak podkręcał $\\eff{K_p}$, krzywa wygina się w stronę −1, ale nigdy jej nie dotyka. Najbliżej jest mniej więcej przy własnej prędkości wahań drona."
-        },
-        {
-          "t": "p",
-          "text": "Oto dlaczego. Opór obraca okrążenie wstecz najwyżej o 90°, a masa najwyżej o kolejne 90°, ale razem dochodzą do 180° dopiero przy nieskończenie szybkich wahaniach. Dlatego sama regulacja P nigdy nie zepchnie tego drona za krawędź. Większe $\\eff{K_p}$ sprawia tylko, że okrążenie przechodzi **bliżej** −1, a bliżej znaczy mniej tłumienia: „więcej $K_p$, więcej kołysania” z rozdziału 2, teraz jako obrazek."
+          "mood": "excited",
+          "text": "Czyli transformata **wybucha dokładnie w tym** $s$, **w którym mieszka sygnał**. Gdybym dostał tylko $F(s)$, mógłbym znaleźć $a$ sygnału, szukając miejsca, w którym wybucha."
         },
         {
           "t": "play",
-          "id": "lap",
-          "text": "Przy $\\eff{K_p}$ = {scrub|kp|eff} N/m okrążenie zbliża się do −1 na odległość {calc|d}, przy około {calc|w} rad/s. Tłumienie pętli wynosi ζ = {calc|z}."
+          "id": "scream",
+          "text": "Sygnał $e^{at}$ z a = {scrub|a|out}, sonda s = {scrub|s}: iloczyn zanika w tempie s − a = {calc|gap} na sekundę, więc jego pole wynosi {calc|F}. {calc|verdict}"
         },
         {
-          "t": "note",
-          "text": "Zapamiętaj ten obrazek. W rozdziale 9 pokrętło I dodaje stos, czyli kolejne 90° opóźnienia, i krzywa w końcu może dotrzeć do −1. W rozdziale 10 to samo robi rura prysznica, a okrążenie $C\\,P$ dostaje własną nazwę."
+          "t": "say",
+          "who": "mika",
+          "mood": "happy",
+          "text": "To jak czujnik dymu. Przesuwaj $s$ w stronę $a$, a wyje coraz głośniej. Stań dokładnie na $a$, a nie przestanie nigdy."
+        },
+        {
+          "t": "p",
+          "text": "Teraz niech $s$ będzie zespolone, $s = \\sigma + i\\omega$, jak nasze wirujące liczby z rozdziału 5. Jako sygnał weź bączka sprężyny z rozdziału 6, $e^{2it}$ (połowę jego bliźniaczej pary). Sonda $e^{-st}$ go zmniejsza (to część pozioma, $\\sigma$) **i obraca go do tyłu** (to część pionowa, $\\omega$). Poniżej małe kawałki pola iloczynu są dodawane jako strzałki, koniec do początku, jedna strzałka na każdą ćwierć sekundy. Obserwuj bieżącą sumę."
+        },
+        {
+          "t": "widget",
+          "id": "unspin"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "Kiedy sonda wiruje dokładnie z prędkością 2, sygnał przestaje wirować, wszystkie kawałki wskazują w tę samą stronę i suma jest największa z możliwych: $1/\\sigma$, która ucieka do nieskończoności, gdy σ maleje do 0. Kiedy się nie zgadzają, strzałki zawijają się w kółko i znoszą."
+        },
+        {
+          "t": "p",
+          "text": "Ta sama lekcja, o jeden wymiar wyżej: transformata wybucha w zespolonym $s$, w którym mieszka sygnał. Dlatego od teraz każde $s$ będziemy rysować na mapie z $\\sigma$ w poziomie i $\\omega$ w pionie. Nasza „mapa $s$” z rozdziału 6 wreszcie dostaje dorosłą nazwę: **płaszczyzna s**."
         },
         {
           "t": "vocab",
           "items": [
             {
-              "term": "Układ zamknięty",
-              "def": "Regulator działa na uchyb, więc wyjście wraca na wejście pętli: $\\Delta H = \\frac{C\\,P}{1 + C\\,P}\\,\\Delta R$."
-            },
-            {
-              "term": "Wzmocnienie pętli $C(s)\\,P(s)$",
-              "def": "To, co jedno okrążenie pętli robi z sygnałem. Bieguny układu zamkniętego leżą tam, gdzie jest ono równe −1."
+              "term": "Płaszczyzna s",
+              "def": "Mapa liczb zespolonych $s = \\sigma + i\\omega$. Lewo oznacza malenie, prawo wzrost, góra i dół wirowanie. Każdy sygnał $e^{st}$ mieszka w jednym jej punkcie, i tam właśnie wybucha jego transformata."
             }
           ]
         }
@@ -578,91 +210,71 @@
         {
           "t": "recap",
           "items": [
-            "Tak, wystarczy jeden ułamek. **Transmitancja** $G(s)$ = zmiana wyjścia ÷ zmiana wejścia w świecie s, przy starcie ze spoczynku. To przepis na układ, $\\Delta\\out{H} = G\\cdot\\Delta\\sp{R}$, i wynika wprost z równania drona.",
-            "**Bieguny** (×) to miejsca, gdzie $G(s)$ wybucha: mody $e^{pt}$, z których zbudowany jest układ.",
-            "Lewa połowa = stabilny, prawa połowa = wybucha. Bardziej w lewo = szybciej (ustala się po około $4/|\\sigma|$ s, praktyczna reguła), wyżej = bardziej rozkołysany (jedno wahnięcie = $2\\pi/\\omega$ s), kąt = tłumienie $\\zeta$ = przeregulowanie $e^{-\\pi|\\sigma|/\\omega}$. Biegun najbliżej osi tu rządzi.",
-            "Bieguny zespolone zawsze występują w lustrzanych parach.",
-            "**Zera** (○) zmieniają to, ile każdego modu dostajesz. Blisko początku układu dodają szarpnięcie: $1/|z|$ razy nachylenie.",
-            "Zamknij pętlę na papierze, a przepis to $\\frac{C\\,P}{1 + C\\,P}$. Bieguny leżą tam, gdzie jedno okrążenie pętli, $C\\,P$, jest równe −1.",
-            "Pierwsze pchnięcie przy skoku o 1 m to $mg + m|p|^2$, więc dalekie bieguny wymagają ciągu, którego silniki nie mają."
+            "Transformata Laplace'a to **sonda**: pomnóż przez $e^{-st}$ i zmierz całkowite pole. $F(s) = \\int_0^\\infty f(t)e^{-st}dt$.",
+            "**Wybucha dokładnie tam, gdzie mieszka sygnał**: $e^{at}$ daje $1/(s-a)$, co wybucha przy $s = a$. Dla zespolonych $s$ sonda odkręca wirujące sygnały. Wszystko to rysujemy na **płaszczyźnie s**.",
+            "Pole ciągnące się *w nieskończoność* nadal może być skończone, byle ogon dość szybko robił się cienki. Jeśli sonda zanika wolniej, niż sygnał rośnie, takie $s$ w ogóle nie ma transformaty."
           ]
         },
         {
           "t": "quiz",
           "items": [
             {
-              "id": "ch8-q1",
-              "q": "Która para biegunów ustala się **najszybciej**?",
+              "id": "ch7-q7",
+              "q": "Transformata $e^{3t}$ to $\\frac{1}{s-3}$. Theo wstawia $s = 1$ i dostaje $-\\frac12$. Co poszło nie tak?",
               "options": [
                 {
-                  "text": "$-1 \\pm 2i$",
-                  "why": "Ustalanie ≈ $4/1 = 4$ s. Wysokość (2) wpływa tylko na kołysanie, a nie na ustalanie się."
-                },
-                {
-                  "text": "$-4 \\pm 2i$",
+                  "text": "Przy $s = 1$ pole nigdy się nie ustala, więc transformaty tam nie ma",
                   "correct": true,
-                  "why": "Najbardziej w lewo: ustalanie ≈ $4/4 = 1$ s."
+                  "why": "Iloczyn to $e^{3t}e^{-t} = e^{2t}$, który rośnie w nieskończoność. Wzór działa tylko tam, gdzie sonda wygrywa, czyli dla $s > 3$."
                 },
                 {
-                  "text": "$-0{,}5 \\pm 5i$",
-                  "why": "Wysoko oznacza mnóstwo szybkich wahnięć, ale para jest blisko osi, więc wygasają powoli (≈ 8 s)."
+                  "text": "Nic: pole naprawdę wynosi $-\\frac12$",
+                  "why": "Dodatni sygnał razy dodatnia sonda nie może mieć ujemnego pola. Wzór został użyty tam, gdzie nie działa."
+                },
+                {
+                  "text": "Powinien był użyć $\\frac{1}{s+3}$",
+                  "why": "$\\frac{1}{s+3}$ należy do $e^{-3t}$. Wzór jest w porządku, gorzej z tym $s$."
                 }
               ]
             },
             {
-              "id": "ch8-q2",
-              "q": "$G(s) = \\dfrac{3}{s^2 + 2s + 10}$. Gdzie są bieguny i jak wygląda odpowiedź?",
+              "id": "ch7-q2",
+              "q": "$F(s) = \\dfrac{5}{s+4}$. Jaki to sygnał?",
               "options": [
                 {
-                  "text": "$-1 \\pm 3i$: stabilna i się kołysze",
+                  "text": "$5e^{-4t}$: zaczyna od 5 i zanika",
+                  "sketch": "decaying-plain",
                   "correct": true,
-                  "why": "$s = \\frac{-2 \\pm \\sqrt{4 - 40}}{2} = -1 \\pm 3i$. Lewa połowa oznacza stabilność, część urojona oznacza kołysanie."
+                  "why": "Wybucha w $s = -4$, więc sygnał mieszka w $e^{-4t}$. 5 w liczniku to jego wielkość."
                 },
                 {
-                  "text": "$+1 \\pm 3i$: niestabilna",
-                  "why": "Pomyłka w znaku. Dla $s^2 + bs + q$ część rzeczywista to $-b/2 = -1$, czyli lewa połowa."
+                  "text": "$5e^{4t}$: rośnie",
+                  "sketch": "growing-plain",
+                  "why": "Rosnące $e^{4t}$ wybuchałoby w $s = +4$. Ta transformata wybucha w $s = -4$."
                 },
                 {
-                  "text": "$-2$ i $-10$: bez kołysania",
-                  "why": "To tylko współczynniki wielomianu. Bieguny to jego pierwiastki: $-1 \\pm 3i$."
+                  "text": "Kołysanie",
+                  "sketch": "decaying-wiggle",
+                  "why": "Kołysanie wymaga pary zespolonych punktów wybuchu: bączka i jego lustrzanego bliźniaka. Tutaj jest jeden rzeczywisty, w $-4$."
                 }
               ]
             },
             {
-              "id": "ch8-q3",
-              "q": "Chcesz **mniejszego przeregulowania** przy **tym samym czasie ustalania**. Jak przesuwasz bieguny?",
+              "id": "ch7-q8",
+              "q": "Gdzie na płaszczyźnie s wybucha transformata bączka $e^{2it}$?",
               "options": [
                 {
-                  "text": "Prosto w stronę osi rzeczywistej (σ bez zmian, mniejsze ω)",
+                  "text": "W $s = 2i$, na pionowej linii",
                   "correct": true,
-                  "why": "Ta sama odległość od osi zachowuje tę samą *obwiednię*, więc czas ustalania prawie się nie zmienia (reguła $4/|\\sigma|$; blisko osi rzeczywistej jest zgrubna). Mniejszy kąt względem osi rzeczywistej to więcej tłumienia, więc mniejsze przeregulowanie."
+                  "why": "Bączek to $e^{st}$ z $s = 2i$, więc tam właśnie mieszka. Tam sonda dokładnie go odkręca."
                 },
                 {
-                  "text": "Prosto w górę (większe ω)",
-                  "why": "To obraca kąt w stronę osi pionowej: *większe* przeregulowanie i szybsze kołysanie."
+                  "text": "W $s = 2$",
+                  "why": "Tam mieszka $e^{2t}$: rosnący sygnał, który w ogóle nie wiruje."
                 },
                 {
-                  "text": "W prawo",
-                  "why": "Wtedy układ ustala się wolniej, a za osią staje się niestabilny."
-                }
-              ]
-            },
-            {
-              "id": "ch8-q4",
-              "q": "Układ ma bieguny rzeczywiste w $-0{,}2$ i $-5$. Który z nich po dwóch sekundach wciąż kształtuje odpowiedź?",
-              "options": [
-                {
-                  "text": "Ten w $-0{,}2$, blisko osi",
-                  "correct": true,
-                  "why": "$e^{-0{,}2t}$ po 2 s ma jeszcze 67 %; $e^{-5t}$ spada do 0,005 %. Rządzi wolny biegun, więc ustalanie trwa około $4/0{,}2 = 20$ s."
-                },
-                {
-                  "text": "Ten w $-5$, dalej w lewo",
-                  "why": "Dalej w lewo znaczy, że wygasa *szybciej*. Już po 1 s ma mniej niż 1 % wartości początkowej (0,67 %)."
-                },
-                {
-                  "text": "Oba po równo",
-                  "why": "Jeden maleje 25 razy szybciej niż drugi ($5 \\div 0{,}2$). Po pół sekundzie szybki ma 8 %, a wolny wciąż 90 %."
+                  "text": "W $s = 0$",
+                  "why": "To dom skoku. Punkt wybuchu bączka jest wyżej, w $2i$."
                 }
               ]
             }
@@ -673,170 +285,85 @@
         },
         {
           "t": "cliff",
-          "text": "Theo: „Bieguny są piękne. Ale chwila: przez cały rozdział oszukiwaliśmy, dając dronowi ciąg zawisu w prezencie. Bez niego grawitacja wciąż powoduje **zwis**. Z naszą mapą wszystko w porządku. To nasz *regulator* wymaga naprawy.”"
+          "text": "Theo: „Czyli sonda mówi nam, *gdzie* mieszka sygnał. Ale chcieliśmy, żeby nachylenia zamieniały się w mnożenie. **Co sonda robi z nachyleniem?**”"
         }
       ]
     }
   ],
   "widgets": {
-    "recipe": {
-      "title": "Jeden przepis, trzy wejścia",
-      "choose": "O co prosimy?",
-      "in": {
-        "step": "skok w górę",
-        "pulse": "łagodny skok",
-        "wave": "fala"
+    "probe": {
+      "title": "Sonda",
+      "signal": "Sygnał",
+      "sig": {
+        "step": "$\\text{skok } 1$",
+        "decay": "$e^{-t}$",
+        "grow": "$e^{0{,}5t}$",
+        "wiggle": "$\\sin 2t$"
       },
-      "input": "wartość zadana (wejście)",
-      "output": "wysokość (wyjście)",
-      "plotAria": "Wartość zadana i wysokość drona w czasie dla wybranego wejścia.",
-      "same": "bez zmian",
-      "changes": "zmienia się",
-      "describe": {
-        "step": "Wartość zadana skacze z 1 na 2 metry, a dron podąża za nią ze skocznym przeregulowaniem.",
-        "pulse": "Wartość zadana płynnie przechodzi z 1 na 2 metry; dron podąża za nią z mniejszym podskokiem.",
-        "wave": "Wartość zadana faluje w górę i w dół; dron podąża za falą."
-      },
-      "droneCap": "dron, który za tym podąża",
-      "status": {
-        "step": "Przeregulowanie do {p} m, zanim ustali się na 2 m.",
-        "pulse": "Łagodniejszy start: szczyt tylko na {p} m.",
-        "wave": "Przepis zamienia falę {a} m w falę {b} m."
-      }
+      "f": "sygnał f(t)",
+      "probe": "sonda e^(−st)",
+      "product": "f(t)·e^(−st)",
+      "plotAria": "Sygnał, sonda i ich iloczyn w czasie, z zacieniowanym polem pod iloczynem.",
+      "fAria": "Zmierzone wartości całkowitego pola F w zależności od s, jedna kropka na każde wypróbowane s.",
+      "formula": "wzór",
+      "traced": "twoje pomiary",
+      "area": "pole do tej pory",
+      "total": "całkowite pole F(s)",
+      "s": "Tempo sondy $s$",
+      "sweep": "Zbierz pole jeszcze raz",
+      "showFormula": "Odsłoń krzywą ze wzoru",
+      "help": "Przesuń s i puść (albo odczekaj chwilę po strzałkach): pole zostaje zmierzone, a na wykresie F(s) pojawia się kropka. Po 5 kropkach dla różnych s możesz odsłonić wzór.",
+      "finite": "Przy s = {s} całkowite pole wynosi {F}.",
+      "infinite": "Tutaj sonda nie maleje szybciej niż sygnał. Pole nigdy się nie ustala: jest nieskończone.",
+      "describe": "Tempo sondy s = {s}; całkowite pole {A}.",
+      "sloshes": "Tutaj pole nigdy się nie ustala. Przelewa się tam i z powrotem, więc to s nie ma jednej odpowiedzi.",
+      "window": "Rysunek pokazuje pierwsze 8 s; reszta dokłada {rest}.",
+      "noArea": "brak skończonego pola"
     },
-    "playground": {
-      "title": "Plac zabaw z biegunami",
-      "planeAria": "Płaszczyzna s z parą biegunów do przeciągania. Lewa połowa się uspokaja, prawa wybucha. Użyj strzałek, żeby przesunąć wybrany biegun.",
-      "pole": "p",
-      "poles": "bieguny",
-      "zeta": "tłumienie ζ",
-      "wn": "ωn = |p|",
-      "settle": "ustala się, reguła 4/σ",
-      "settleReal": "ustala się (pomiar)",
-      "overshoot": "przeregulowanie",
-      "push": "pierwsze pchnięcie (skok 1 m)",
-      "pct": "{v} %",
-      "response": "wysokość po skoku o 1 m",
-      "target": "cel",
-      "plotAria": "Odpowiedź skokowa drona dla wybranych biegunów; poprzednia odpowiedź widoczna jako duch.",
-      "over": "przeregulowanie",
-      "never": "nigdy",
-      "notIn": "nie w ciągu {T} s",
-      "wiggle": "jedno wahnięcie ≈ {T} s",
-      "wnCircle": "ωn = {w}",
-      "budget": "budżet 20 N",
-      "verdict": {
-        "stable": "Lewa połowa: uspokaja się.",
-        "unstable": "Prawa połowa: wybucha!",
-        "marginal": "Dokładnie na osi: waha się w nieskończoność.",
-        "hitPage": "Wyleciał poza rysunek, uderzył w to, co jest nad nim, i spadł. Przesuń biegun, żeby spróbować jeszcze raz.",
-        "hitGround": "Rozbił się o ziemię. Przesuń biegun, żeby spróbować jeszcze raz.",
-        "hitPageMarginal": "Każde wahnięcie sięgało 3 m, akurat tyle, by dotknąć strony; silniki stanęły i dron spadł."
-      },
-      "negKd": "Kd jest tu ujemne: sam opór tłumi już bardziej, niż pozwalają te bieguny, więc regulator musi pchać zgodnie z ruchem.",
-      "pushWarn": "Pierwsze pchnięcie przekracza 20 N, więcej niż mają prawdziwe silniki. Zaraz zobaczymy, ile to kosztuje.",
-      "challenge": "Minizadanie: przeregulowanie poniżej 10 % i ustalenie w ciągu 2 s",
-      "chalOk": "Zadanie wykonane! Przeregulowanie {o} %, ustalenie po {s} s.",
-      "chalNo": "Jeszcze nie: przeregulowanie {o} %, ustala się po {s} s. Celuj w podświetloną strefę.",
-      "help": "Przeciągnij dowolny × (albo przejdź do niego Tabem i użyj strzałek, z Shiftem większe kroki). Dron za każdym razem odtwarza swoją odpowiedź skokową.",
-      "describe": "Bieguny w {p}. Współczynnik tłumienia {z}. Ustala się po około {s} sekundach, przeregulowanie około {o} procent.",
-      "re": "σ",
-      "im": "ω"
+    "explode": {
+      "title": "Gdzie to wybucha?",
+      "product": "e^(at)·e^(−st)",
+      "prodAria": "Iloczyn e do potęgi a t i sondy, z zacieniowanym polem.",
+      "fAria": "Transformata 1 przez s minus a, z pionową linią tam, gdzie wybucha.",
+      "noArea": "brak skończonego pola",
+      "a": "Tempo sygnału $a$ w $e^{at}$",
+      "s": "Sonda $s$",
+      "never": "s jest równe a lub mniejsze: iloczyn nigdy nie maleje, więc pole jest nieskończone.",
+      "close": "Coraz bliżej a: pole wynosi {F} i rośnie!",
+      "calm": "Daleko od a: ładne, skończone pole.",
+      "window": "Rysunek pokazuje tylko pierwsze 10 s; wciąż brakuje {pct} % pola.",
+      "readF": "F(s)",
+      "curve": "1/(s − a)"
     },
-    "zero": {
-      "title": "Przesuń zero",
-      "planeAria": "Płaszczyzna s z dwoma stałymi biegunami w minus 2 plus minus 3 i oraz zerem do przeciągania na osi rzeczywistej.",
-      "zero": "zero",
-      "y": "wyjście",
-      "noZero": "bez zera (te same bieguny)",
-      "withZero": "z zerem",
-      "slope": "+ {g} × jej nachylenie",
-      "plotAria": "Odpowiedzi skokowe z zerem i bez niego.",
-      "osNo": "przeregulowanie bez zera",
-      "osYes": "przeregulowanie z zerem",
-      "pct": "{v} %",
-      "note": "Zero w {z}; przeskalowana, by nadal kończyć na 1.",
-      "near": "Blisko początku układu: część z nachyleniem to {g} × dawne nachylenie, więc start mocno szarpie.",
-      "mid": "Umiarkowane szarpnięcie: {g} × nachylenie.",
-      "far": "Daleko: tylko {g} × nachylenie. Prawie tego nie widać.",
-      "describe": "Zero w {z}, przeregulowanie {o} procent.",
-      "re": "σ",
-      "im": "ω",
-      "help": "Przeciągaj ○ wzdłuż osi (albo przejdź do niego Tabem i użyj ← →). Bieguny × zostają na miejscu."
-    },
-    "limit": {
-      "title": "Prawdziwe silniki mają ograniczenia",
-      "ideal": "nieograniczone silniki (matematyka)",
-      "real": "prawdziwy dron",
-      "idealT": "ciąg, którego chce matematyka",
-      "realT": "ciąg, który dostajemy",
-      "hAria": "Wysokość po skoku dla nieograniczonych i dla prawdziwych silników.",
-      "tAria": "Ciąg w czasie, z ograniczeniami silników 0 i 20 niutonów.",
-      "max": "maks. silników 20 N",
-      "min": "silniki nie ciągną w dół",
-      "peak": "szczytowy ciąg, którego chce matematyka",
-      "tsIdeal": "ustala się (matematyka)",
-      "tsReal": "ustala się (naprawdę)",
-      "osReal": "przeregulowanie (naprawdę)",
-      "pct": "{v} %",
-      "notYet": "nie w ciągu 3 s",
-      "sigma": "Położenie biegunów (w lewo wzdłuż 45°)",
-      "toggle": "Prawdziwe silniki: 0–20 N",
-      "capped": "Matematyka chce {p} N; silniki kończą się na 20 N. Prawdziwy czas ustalania {s} s i żadne „bardziej w lewo” nie zejdzie poniżej około {b} s.",
-      "fantasy": "Wyimaginowane silniki chętnie dają {p} N. Włącz ograniczenia z powrotem.",
-      "fine": "W zakresie silników: matematyka i rzeczywistość się zgadzają."
-    },
-    "loop": {
-      "title": "Raz dookoła pętli",
-      "aria": "Płaszczyzna z zaznaczonym punktem minus 1, krzywa jednego okrążenia pętli dla każdej prędkości wahań i strzałka do okrążenia przy wybranej prędkości.",
+    "unspin": {
+      "title": "Sonda, która odkręca",
       "re": "część rzeczywista",
       "im": "część urojona",
-      "kp": "Regulator $K_p$",
-      "w": "Prędkość wahań ω",
-      "lap": "C·P",
-      "cliff": "−1",
-      "size": "wielkość okrążenia |C·P|",
-      "angle": "kąt okrążenia",
-      "distance": "odległość do −1",
-      "zeta": "tłumienie ζ",
-      "status": "Najbliżej −1: {d}, przy około {w} rad/s. Kąt pozostaje powyżej −180°, więc okrążenie nigdy tam nie dociera. Tłumienie ζ = {z}.",
-      "help": "Przesuwaj ω, aby przesunąć strzałkę wzdłuż krzywej; przesuwaj Kp, aby rozciągnąć całą krzywą. Przerywana linia to odległość do −1."
+      "path": "bieżąca suma (strzałka co ¼ s)",
+      "plotAria": "Bieżąca suma zespolonego pola narysowana jako ścieżka na płaszczyźnie, zmierzająca do wartości końcowej.",
+      "limit": "suma końcowa",
+      "mag": "wielkość sumy |F|",
+      "spin": "pozostałe wirowanie",
+      "sigma": "Malenie sondy $\\sigma$",
+      "omega": "Wirowanie sondy $\\omega$ (sygnał wiruje z prędkością 2)",
+      "again": "Odtwórz ponownie",
+      "matched": "Wirowania dopasowane! Każdy kawałek wskazuje w tę samą stronę. Suma wynosi {m} = 1/⁠σ i dąży do nieskończoności, gdy σ → 0.",
+      "spinning": "Kawałki zawijają się w kółko i w większości się znoszą. Suma zostaje mała."
     }
   },
   "plays": {
-    "poleRead": {
-      "sig": "odległość biegunów na lewo od osi",
-      "w": "wysokość biegunów, omega",
-      "noWiggle": "nic (w ogóle bez wahań)",
-      "never": "nigdy",
-      "noOvershoot": "nic (bez przeregulowania)",
-      "pct": "{v} %"
+    "stepArea": {
+      "s": "tempo sondy s"
     },
-    "gains": {
-      "sig": "odległość biegunów na lewo od osi",
-      "w": "wysokość biegunów, omega",
-      "negKd": "To *ujemne* Kd: sam opór tłumi już bardziej, niż chcą te bieguny, więc regulator musi pchać *zgodnie* z ruchem."
+    "longArea": {
+      "T": "czas zatrzymania T, sekundy"
     },
-    "dominant": {
-      "time": "czas w sekundach",
-      "almostNothing": "prawie nic",
-      "pct": "{v} %"
-    },
-    "push": {
-      "sig": "para biegunów na linii 45°",
-      "canDo": "silniki dają radę",
-      "justOver": "tuż ponad 20 N, które mają silniki",
-      "farBeyond": "daleko poza możliwościami silników"
-    },
-    "budget": {
-      "dr": "wielkość skoku, metry"
-    },
-    "zeroKick": {
-      "z": "odległość zera od 0",
-      "pct": "{v} %"
-    },
-    "lap": {
-      "kp": "wzmocnienie proporcjonalne Kp, niutony na metr"
+    "scream": {
+      "a": "tempo sygnału a, na sekundę",
+      "s": "tempo sondy s, na sekundę",
+      "none": "Nigdy nie zanika, więc skończonego pola nie ma wcale.",
+      "loud": "Wyje!",
+      "calm": "Spokojne, skończone pole."
     }
   }
 }

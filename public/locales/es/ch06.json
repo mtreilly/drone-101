@@ -1,67 +1,43 @@
 {
   "kicker": "Capítulo 6",
-  "title": "La verdadera personalidad del dron",
-  "question": "¿Por qué el dron rebota como un resorte?",
+  "title": "El mapa de s",
+  "question": "¿Cómo produce una oscilación real un número que gira, y qué pinta tiene cada s?",
   "sections": [
     {
-      "id": "spring",
-      "title": "El controlador es un resorte",
+      "id": "twins",
+      "title": "De vuelta al resorte (y un error nuevo)",
       "blocks": [
         {
           "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "June preguntó dónde vive nuestro dron en el mapa. Pista: ¿te acuerdas del dron saltarín del capítulo 2? Cuanto más subíamos $\\eff{K_p}$, más botaba. Parecía exactamente un peso colgado de un resorte."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "\"Parecía\" no es una prueba. Pongámoslos uno al lado del otro y escribamos las dos ecuaciones."
+          "who": "june",
+          "mood": "excited",
+          "text": "La última vez construimos un número que gira. Vamos a dárselo al resorte, a ver si se porta bien."
         },
         {
           "t": "p",
-          "text": "A la izquierda: una masa de 0,5 kg colgada de un resorte con un amortiguador (un pistoncito lleno de aceite que se resiste al movimiento). A la derecha: nuestro dron, misma masa, mismo rozamiento, con control proporcional."
-        },
-        {
-          "t": "p",
-          "text": "Primero, escribamos todas las fuerzas sobre la masa, una por una. Medimos su posición $x$ desde el punto de reposo, con el sentido hacia arriba como positivo."
-        },
-        {
-          "t": "list",
-          "items": [
-            "**El resorte** tira de vuelta hacia el reposo, más fuerte cuanto más estirado está: $-\\eff{k}\\,x$. Estíralo el doble y tira el doble de fuerte.",
-            "**El amortiguador** empuja contra el *movimiento*, no contra la posición: $-c\\,\\dot{x}$. Quieto, no hace nada. Moviéndose rápido, empuja fuerte en contra. ($\\dot{x}$ es la velocidad del capítulo 3.)",
-            "**La gravedad** solo baja un poco el punto de reposo. Medir desde el reposo ya la tiene en cuenta."
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Fuerza = masa × aceleración, y la aceleración es la pendiente de la pendiente (capítulo 3). Suma las fuerzas y pasa todo a un lado:"
-        },
-        {
-          "t": "math",
-          "tex": "m\\,\\ddot{x} = -\\eff{k}\\,x - c\\,\\dot{x} \\quad\\Longrightarrow\\quad m\\,\\ddot{x} + c\\,\\dot{x} + \\eff{k}\\,x = 0"
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "¿O sea que el amortiguador es aire que odia la velocidad?"
+          "text": "El resorte necesitaba $a^2 = -k/m = -4$. Prueba $a = 2i$: $(2i)^2 = 4\\,i^2 = -4$. ✓ Y $a = -2i$ también funciona."
         },
         {
           "t": "say",
           "who": "theo",
           "mood": "happy",
-          "text": "Más o menos. Y en nuestro dron, el amortiguador *es* el aire."
+          "text": "Vale, me equivoqué. El truco de probar con una exponencial sobrevive. El resorte es $e^{2it}$, un girador que da dos vueltas cada… 2π segundos."
+        },
+        {
+          "t": "say",
+          "who": "mika",
+          "mood": "excited",
+          "text": "¿Entonces la posición del resorte es $e^{2it}$? ¿Ahora mismo está en… $0{,}4 + 0{,}9i$ metros?"
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "worried",
+          "text": "Un resorte no puede estar a 0,9 metros *de lado*. Solo se mueve arriba y abajo."
         },
         {
           "t": "p",
-          "text": "En el widget, la {eff|flecha naranja} sobre la masa es el tirón del resorte y la gris es el empuje del amortiguador. Fíjate en cómo la flecha del amortiguador desaparece cada vez que la masa se para un instante arriba o abajo de una oscilación."
-        },
-        {
-          "t": "note",
-          "text": "Para que la gravedad no nos distraiga, aquí le regalamos al dron su empuje de vuelo estacionario (4,9 N), así que no cae. Nos lo ganaremos honradamente en el capítulo 9."
+          "text": "Mika se olvidó de la otra respuesta. Encontramos **dos** soluciones, $e^{2it}$ y $e^{-2it}$: un girador y su **gemelo reflejado**, que gira en sentido contrario. Súmalos:"
         },
         {
           "t": "widget",
@@ -69,562 +45,189 @@
         },
         {
           "t": "say",
-          "who": "june",
+          "who": "mika",
           "mood": "surprised",
-          "text": "Las curvas están **una encima de la otra**. No parecidas. *Idénticas.*"
+          "text": "¡Las partes de lado se cancelan a la perfección! La suma solo se desliza por la recta real, de un lado a otro."
+        },
+        {
+          "t": "math",
+          "tex": "x(t) = \\tfrac12\\left(e^{i\\omega t} + e^{-i\\omega t}\\right) = \\cos(\\omega t),\\qquad \\omega = \\sqrt{k/m}"
+        },
+        {
+          "t": "note",
+          "text": "El ½ está porque cada gemelo aporta la mitad: el widget suma dos giradores de tamaño completo, así que su suma llega hasta 2. Además, esta pareja arranca soltada desde 1 m, en reposo. Si la pones en marcha con velocidad, los dos gemelos simplemente empiezan con inclinaciones opuestas, y su suma sigue sin salirse de la recta real."
         },
         {
           "t": "p",
-          "text": "Mira las dos ecuaciones. El resorte empuja de vuelta con una fuerza $\\eff{k}\\,x$: cuanto más estirado, más fuerte tira. Nuestro controlador empuja con $\\eff{K_p}(\\sp{2} - \\out{h})$: cuanto más lejos del objetivo, más fuerte empuja. **La misma regla.** El controlador *es* un resorte: uno invisible, que tira del dron hacia los 2 m."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "Así que un controlador P es un resorte virtual, y el rozamiento del aire $c$ es un amortiguador virtual. Todo lo que aprendamos sobre resortes nos sale gratis."
-        },
-        {
-          "t": "callout",
-          "title": "Comprobación de unidades",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "La rigidez de un resorte $\\eff{k}$ se mide en **newtons por metro**: newtons de tirón por cada metro de estiramiento. Nuestra ganancia $\\eff{K_p}$ convierte metros de error en newtons de empuje, así que también son newtons por metro. El controlador no solo se *parece* a un resorte. Por las unidades, *es* uno."
-            },
-            {
-              "t": "play",
-              "id": "units",
-              "text": "Con $\\eff{K_p}$ = {scrub|kp|eff} N/m, un dron que está {scrub|e} m demasiado bajo recibe {calc|f|eff} N de empuje extra."
-            }
-          ]
-        },
-        {
-          "t": "callout",
-          "title": "Amortiguadores de verdad",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Los amortiguadores de un coche son justo eso: aceite que se aprieta a través de agujeritos, así que luchan contra el movimiento rápido y apenas notan el lento. También lo son las bisagras de cierre suave de un armario de cocina y el cierrapuertas de lo alto de una puerta pesada. Quítale los amortiguadores a un coche y cada bache lo pone a botar. Hazlos demasiado duros y cada bache te llega entero."
-            }
-          ]
+          "text": "¿Por qué siempre está el gemelo? La regla del muelle solo tiene números reales ($m$ y $k$, ninguna $i$). Voltea una solución de arriba abajo, convirtiendo cada $i$ en $-i$, y la regla no nota la diferencia: la imagen reflejada también es una solución. Así que, para cualquier cosa real, los giradores vienen en **parejas reflejadas**, y al juntarlos sus partes de lado se cancelan y queda una oscilación real que podemos medir."
         }
       ]
     },
     {
-      "id": "knobs",
-      "title": "Dos mandos de personalidad",
+      "id": "map",
+      "title": "El mapa de s",
       "blocks": [
         {
           "t": "p",
-          "text": "Todo sistema masa-resorte-amortiguador, y por tanto todo dron con control P, se describe con solo **dos números**. Ganémonoslos uno por uno."
-        },
-        {
-          "t": "h3",
-          "text": "Lo rápido: la frecuencia natural"
-        },
-        {
-          "t": "p",
-          "text": "Quita el amortiguador y volvemos al capítulo 5: el resorte oscila como $\\cos(\\omega t)$ con $\\omega = \\sqrt{k/m}$. A esa velocidad la llamamos **frecuencia natural** $\\omega_n$: lo rápido que el sistema *quiere* oscilar cuando nada lo frena."
+          "text": "El capítulo 4 nos dio exponenciales que **crecen o se encogen**. Ahora tenemos giradores que **oscilan**. Juntémoslos: $e^{st}$ con $s = \\sigma + i\\omega$."
         },
         {
           "t": "math",
-          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{k}}{m}} \\qquad\\qquad \\text{una oscilación completa cada } \\frac{2\\pi}{\\omega_n} \\text{ s}"
-        },
-        {
-          "t": "play",
-          "id": "wn",
-          "text": "Con k = {scrub|k|eff} N/m y m = 0,5 kg, $\\omega_n$ ≈ {calc|wn} rad/s: una oscilación completa cada {calc|period} s."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "Resorte más rígido, oscilación más rápida. ¡Pues subo $\\eff{k}$ al máximo y todo mejora!"
+          "tex": "e^{st} = e^{(\\sigma + i\\omega)t} = \\underbrace{e^{\\sigma t}}_{\\text{crecer/encoger}}\\cdot\\underbrace{e^{i\\omega t}}_{\\text{girar}}"
         },
         {
           "t": "p",
-          "text": "Un resorte más rígido tira más fuerte, así que oscila más rápido. Una masa más pesada cuesta más de mover, así que oscila más despacio. (Los radianes por segundo son la velocidad de giro del capítulo 5: una vuelta completa son 2π radianes, un borde de 2π radios.)"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "worried",
-          "text": "Cuidado. En el capítulo 2, subir $\\eff{K_p}$ hizo el dron más rápido *y* más rebotón. Primero escuchemos qué dice el amortiguador."
-        },
-        {
-          "t": "h3",
-          "text": "Lo saltarín: el coeficiente de amortiguamiento"
-        },
-        {
-          "t": "p",
-          "text": "Ahora vuelve a poner el amortiguador. ¿Cuánto amortiguamiento es \"mucho\"? Depende del resorte: un amortiguador que doma un resorte blando apenas frena uno rígido. Así que comparamos con una cantidad especial, el **amortiguamiento crítico** $c_{\\text{crit}}$: el menor amortiguamiento que elimina por completo el sobreimpulso."
-        },
-        {
-          "t": "math",
-          "tex": "c_{\\text{crit}} = 2\\sqrt{m\\,\\eff{k}} \\qquad\\qquad \\zeta = \\frac{c}{c_{\\text{crit}}} = \\frac{c}{2\\sqrt{m\\,\\eff{k}}}"
-        },
-        {
-          "t": "p",
-          "text": "El **coeficiente de amortiguamiento** ζ (la letra griega zeta) es nuestro amortiguamiento como fracción de esa cantidad. Es un número puro, sin unidades. ζ = 0 oscila para siempre, ζ = 1 es exactamente crítico, y ζ = 0,5 tiene la mitad del amortiguamiento que haría falta para eliminar el sobreimpulso."
-        },
-        {
-          "t": "play",
-          "id": "zeta",
-          "text": "Con c = {scrub|c} N·s/m en un resorte de k = 20 N/m, $c_{\\text{crit}}$ = {calc|ccrit} N·s/m, así que ζ = {calc|zeta}: {calc|regime}."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "surprised",
-          "text": "Espera. ¿0,16? ¡Es justo el ζ del dron en el primer widget!"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "happy",
-          "text": "Misma masa, mismo rozamiento, misma rigidez: mismo ζ. El resorte y el dron son gemelos de verdad."
-        },
-        {
-          "t": "h3",
-          "text": "Los dos puntos del mapa"
-        },
-        {
-          "t": "p",
-          "text": "Ahora volvamos al mapa de $s$. Probar con $x = e^{st}$, como en los capítulos 4 y 5, convierte la ecuación en $m s^2 + c s + k = 0$. Divide entre $m$ y escribe los dos coeficientes con nuestros mandos:"
-        },
-        {
-          "t": "math",
-          "tex": "s^2 + \\underbrace{\\frac{c}{m}}_{2\\zeta\\omega_n}\\, s + \\underbrace{\\frac{\\eff{k}}{m}}_{\\omega_n^2} = 0"
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Un momento. ¿De dónde sale ese $2\\zeta\\omega_n$? Parece inventado."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "Multiplícalo: $2\\zeta\\omega_n = 2 \\cdot \\frac{c}{2\\sqrt{mk}} \\cdot \\sqrt{\\frac{k}{m}} = \\frac{c}{m}$. Es el mismo número con otro nombre, para que nuestros dos mandos aparezcan en la ecuación."
-        },
-        {
-          "t": "p",
-          "text": "Resuélvela con la fórmula de la ecuación de segundo grado y salen los dos valores de $s$:"
-        },
-        {
-          "t": "math",
-          "tex": "\\begin{aligned} & s^2 + 2\\zeta\\omega_n\\, s + \\omega_n^2 = 0 \\\\ \\Longrightarrow\\quad & s = -\\zeta\\omega_n \\pm \\omega_n\\sqrt{\\zeta^2 - 1} \\end{aligned}"
-        },
-        {
-          "t": "callout",
-          "title": "De dónde sale el ±",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Cualquier ecuación $s^2 + b\\,s + q = 0$ se puede resolver completando el cuadrado: $(s + b/2)^2 = b^2/4 - q$. Una raíz cuadrada tiene dos respuestas, una con + y otra con −, así que siempre hay **dos** valores de $s$:"
-            },
-            {
-              "t": "math",
-              "tex": "s = -\\frac{b}{2} \\pm \\sqrt{\\frac{b^2}{4} - q}"
-            },
-            {
-              "t": "p",
-              "text": "Con $b = 2\\zeta\\omega_n$ y $q = \\omega_n^2$, lo que queda bajo la raíz es $\\omega_n^2(\\zeta^2 - 1)$. Cuando ζ < 1 es negativo, y necesitamos la $i$ del capítulo 5: las dos respuestas se convierten en una pareja reflejada, $-\\zeta\\omega_n \\pm i\\,\\omega_n\\sqrt{1-\\zeta^2}$. En ζ = 1 la raíz vale exactamente cero y las dos respuestas se juntan. De ahí sale $c_{\\text{crit}} = 2\\sqrt{mk}$: es el amortiguamiento que hace desaparecer la raíz."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "El signo ± da dos respuestas, una por cada punto. La posición horizontal de un punto es **σ** (sigma): lo rápido que se encoge esa parte del movimiento. Su altura es **ω**: lo rápido que gira. Cuando el amortiguamiento es menor que 1, los puntos comparten posición horizontal, pero tienen alturas opuestas. En 1 se juntan; por encima de 1 ambos quedan en el eje horizontal."
-        },
-        {
-          "t": "vocab",
-          "items": [
-            {
-              "term": "Respuesta al escalón",
-              "def": "Cómo responde un sistema a un salto repentino de su objetivo, aquí de 0 a 1 m. Es la forma habitual de mostrar una personalidad."
-            },
-            {
-              "term": "Tiempo de establecimiento (2 %)",
-              "def": "Cuánto tarda la respuesta en quedarse para siempre dentro del 2 % del objetivo."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Juega con los dos mandos. Fíjate en los {out|puntos azules} del mapa: son los dos valores de $s$, y, sumado a la altura en la que acaba quedándose, el movimiento es una mezcla de $e^{s_1 t}$ y $e^{s_2 t}$. (Con ζ = 1 exacto, los dos puntos son uno solo, y el segundo ingrediente pasa a ser $t\\,e^{s_1 t}$.)"
-        },
-        {
-          "t": "widget",
-          "id": "personality"
-        },
-        {
-          "t": "vocab",
-          "title": "Tres personalidades",
-          "items": [
-            {
-              "term": "Subamortiguado ($\\zeta < 1$)",
-              "def": "Los dos valores de $s$ son una pareja reflejada fuera del eje real, sobre un círculo de radio $\\omega_n$. La respuesta tiene sobreimpulso y oscila mientras se estabiliza."
-            },
-            {
-              "term": "Amortiguamiento crítico ($\\zeta = 1$)",
-              "def": "La pareja se encuentra sobre el eje real como un único punto doble, así que el movimiento es $(A + B\\,t)\\,e^{-\\omega_n t}$. La respuesta más rápida sin sobreimpulso."
-            },
-            {
-              "term": "Sobreamortiguado ($\\zeta > 1$)",
-              "def": "La pareja se separa a lo largo del eje real: uno se va a la izquierda y el otro se arrastra hacia el cero. Sin sobreimpulso, pero lento."
-            }
-          ]
-        },
-        {
-          "t": "p",
-          "text": "Un detalle más se esconde en los puntos subamortiguados: su altura es $\\omega_n\\sqrt{1-\\zeta^2}$, algo **menor** que $\\omega_n$. El amortiguamiento no solo encoge la oscilación, también la frena un poco. Es la **frecuencia amortiguada** $\\omega_d$, y el widget la muestra."
-        },
-        {
-          "t": "math",
-          "tex": "\\omega_d = \\omega_n\\sqrt{1 - \\zeta^2}"
-        },
-        {
-          "t": "callout",
-          "title": "¿Por qué un círculo?",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "El círculo discontinuo del widget no es decoración. Para ζ < 1 los puntos están en $\\sigma = -\\zeta\\omega_n$ y $\\omega = \\pm\\omega_n\\sqrt{1-\\zeta^2}$. Por Pitágoras, su distancia a 0 es"
-            },
-            {
-              "t": "math",
-              "tex": "\\sqrt{\\sigma^2 + \\omega^2} = \\sqrt{\\zeta^2\\omega_n^2 + \\omega_n^2\\,(1 - \\zeta^2)} = \\omega_n"
-            },
-            {
-              "t": "play",
-              "id": "circle",
-              "text": "Con $\\omega_n$ = 3 y ζ = {scrub|z}, los puntos están en {calc|roots}, a una distancia {calc|r} de 0."
-            },
-            {
-              "t": "p",
-              "text": "Así que cambiar ζ solo desliza los puntos por el círculo, y cambiar $\\omega_n$ cambia el tamaño del círculo."
-            }
-          ]
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "excited",
-          "text": "¡O sea que las espirales del capítulo 5 eran la personalidad del dron desde el principio! Girar = oscilar, encogerse = estabilizarse."
-        }
-      ]
-    },
-    {
-      "id": "damping",
-      "title": "¿Más amortiguamiento siempre es mejor?",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "Fácil. Las oscilaciones son malas y el amortiguamiento las mata. Así que pongo $\\zeta = 5$ por si acaso. El dron más seguro de la historia."
+          "text": "Así que cada número s es una receta: **σ** (la parte a lo largo) dice lo rápido que crece o se encoge, y **ω** (la parte de lado) dice lo rápido que gira. Juntos dibujan una **espiral**, y la sombra de la espiral es la señal que veríamos."
         },
         {
           "t": "predict",
-          "id": "ch6-damping",
+          "id": "ch5-shadow",
           "gate": true,
-          "q": "Mismo resorte, misma $\\omega_n$. Subimos el amortiguamiento de $\\zeta = 1$ a $\\zeta = 3$. ¿Llega al objetivo **más rápido** o **más despacio**?",
+          "q": "Pon s en $-0{,}5 + 3i$. ¿Qué pinta tiene la sombra de $e^{st}$?",
           "options": [
             {
-              "text": "Más rápido: más amortiguamiento, menos movimiento desperdiciado",
-              "sketch": "smooth",
-              "why": "Es verdad que no hay sobreimpulso. Pero el amortiguador espeso también se resiste al movimiento *hacia* el objetivo."
+              "text": "Una oscilación que crece",
+              "sketch": "growing-wiggle",
+              "why": "Para crecer hace falta σ > 0. Aquí σ = −0,5 es negativo."
             },
             {
-              "text": "Más o menos igual",
-              "sketch": "overshoot",
-              "why": "Pasado $\\zeta = 1$ ya no queda nada que calmar, y el amortiguamiento extra solo lo frena todo."
-            },
-            {
-              "text": "Más despacio: se arrastra",
-              "sketch": "sluggish",
+              "text": "Una oscilación que se apaga",
+              "sketch": "decaying-wiggle",
               "correct": true,
-              "why": "Exacto. El amortiguador se resiste a **todo** movimiento, incluido el que quieres. Con $\\zeta = 3$ tarda unas cuatro veces más."
-            }
-          ]
-        },
-        {
-          "t": "widget",
-          "id": "race"
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "worried",
-          "text": "Mi dron \"seguro\" tarda una eternidad. Es como moverse en miel."
-        },
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "¡Fíjate en el mapa! Un punto se ha ido corriendo a la izquierda, rapidísimo. Pero el otro está muy cerquita del cero."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "excited",
-          "text": "Y $e^{st}$ con $s$ cerca de cero se apaga **muy** despacio. El rápido desaparece en un pestañeo. El lento es el que manda."
-        },
-        {
-          "t": "p",
-          "text": "Cada ingrediente $e^{st}$ del movimiento se llama **modo**. El movimiento es una mezcla de modos, y cuando los rápidos se han apagado, solo queda el más lento. Así que en esta respuesta al escalón, el **modo más lento que realmente aparece** determina la espera larga."
-        },
-        {
-          "t": "callout",
-          "title": "¿Cuánto es \"estabilizado\"?",
-          "blocks": [
-            {
-              "t": "p",
-              "text": "Un modo $e^{-at}$ se ha encogido hasta el 2 % cuando $e^{-at} = 0{,}02$, lo que tarda $t = \\ln 50 / a \\approx 3{,}9/a$. Con una constante de tiempo $\\tau = 1/a$, son unas cuatro constantes de tiempo: otra vez la regla del capítulo 3. Tras 4τ solo queda $e^{-4} \\approx 1{,}8\\%$."
+              "why": "ω = 3 la hace girar (una oscilación cada 2 s, más o menos), y σ = −0,5 la encoge por un factor $e^{-0{,}5} \\approx 0{,}61$ cada segundo."
             },
             {
-              "t": "play",
-              "id": "settle",
-              "text": "Un modo que se encoge con a = {scrub|a} por segundo queda dentro del 2 % tras unos {calc|ts} s."
+              "text": "Un decaimiento suave, sin oscilación",
+              "sketch": "decaying-plain",
+              "why": "Eso es lo que saldría con ω = 0 (s sobre el eje horizontal). Aquí ω = 3, así que gira."
             }
           ]
         },
         {
-          "t": "p",
-          "text": "Poco amortiguamiento hace oscilar; demasiado hace avanzar a rastras. Entre medias hay un punto justo. Elige ζ = 0,7 en la carrera: tiene un sobreimpulso de menos del 5 %, pero llega **a menos del 5 % del objetivo** mucho antes que ζ = 1. Muchos diseños buscan un ζ entre 0,7 y 1, más o menos, y cambian un pequeño sobreimpulso por rapidez. Otras tareas pueden preferir otro equilibrio."
-        }
-      ]
-    },
-    {
-      "id": "drone",
-      "title": "De vuelta al dron",
-      "blocks": [
-        {
-          "t": "p",
-          "text": "Ahora el capítulo 2 por fin tiene sentido. Para nuestro dron, la constante del resorte *es* la ganancia:"
-        },
-        {
-          "t": "math",
-          "tex": "\\omega_n = \\sqrt{\\frac{\\eff{K_p}}{m}}, \\qquad \\zeta = \\frac{c}{2\\sqrt{m\\,\\eff{K_p}}}"
-        },
-        {
-          "t": "p",
-          "text": "$\\eff{K_p}$ está *abajo* en la fórmula del amortiguamiento. Subir la ganancia hace el dron más rápido ($\\omega_n$ más grande), pero **menos amortiguado**. Con $\\eff{K_p} = 20$ N/m: $\\zeta = 1/(2\\sqrt{0.5 \\times 20}) \\approx 0{,}16$. Muy saltarín, tal como vimos. En el mapa, sus dos valores de $s$ están muy arriba y solo un poco a la izquierda del eje vertical. Ahí vive nuestro dron."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "worried",
-          "text": "Y no podemos conseguir más amortiguamiento sin bajar muchísimo $\\eff{K_p}$, lo que nos devuelve la caída. Necesitamos una forma de añadir amortiguamiento *a propósito*."
-        },
-        {
-          "t": "p",
-          "text": "Arrastra la ganancia y mira el compromiso en una sola frase:"
-        },
-        {
-          "t": "play",
-          "id": "drone",
-          "text": "Con $\\eff{K_p}$ = {scrub|kp|eff} N/m: ζ = {calc|zeta}, $\\omega_n$ = {calc|wn} rad/s, y sin el empuje de vuelo estacionario regalado caería {calc|droop} m."
-        }
-      ]
-    },
-    {
-      "id": "arrows",
-      "title": "Las flechas tienen longitud y ángulo",
-      "blocks": [
-        {
-          "t": "say",
-          "who": "mika",
-          "mood": "think",
-          "text": "Espera. Los puntos están sobre un círculo de radio $\\omega_n$, y ζ solo los desliza por él. O sea que un punto son en realidad dos cosas: **a qué distancia** está de 0 y **hacia dónde**."
-        },
-        {
-          "t": "p",
-          "text": "Toda flecha $z = a + b\\,i$ se puede describir al revés: por su **longitud** $|z|$ y su **ángulo**. Pitágoras nos da la longitud. Para una flecha que apunta a la derecha ($a > 0$), el ángulo es aquel cuya tangente (lo que sube dividido entre lo que avanza) es $b/a$. Se llama **arcotangente**, $\\arctan$: el botón de deshacer de la tangente."
-        },
-        {
-          "t": "math",
-          "tex": "|z| = \\sqrt{a^2 + b^2}, \\qquad \\angle z = \\arctan\\frac{b}{a} \\quad (a > 0)"
-        },
-        {
-          "t": "play",
-          "id": "arrowRead",
-          "text": "La flecha {scrub|a} + {scrub|b}i mide {calc|len} y apunta a {calc|ang}° del eje real."
-        },
-        {
-          "t": "p",
-          "text": "En el capítulo 5 vimos que multiplicar flechas **multiplica sus longitudes y suma sus ángulos**. Dividir tiene que deshacer eso, así que divide las longitudes y **resta** los ángulos."
-        },
-        {
-          "t": "say",
-          "who": "theo",
-          "mood": "think",
-          "text": "Entonces $1/(1+i)$: longitud $1/\\sqrt 2$, y el ángulo es 45° más 45°, o sea, ¿90°? Mmm. Si lo vuelvo a multiplicar por $1+i$, apunta a 135°, nada que ver con 1."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "happy",
-          "text": "Pues restando. $1/\\sqrt 2$ de longitud a −45°. Por $\\sqrt 2$ a +45°, y queda longitud 1 a 0°: exactamente 1. Cuadra."
-        },
-        {
           "t": "widget",
-          "id": "arrows"
+          "id": "smap"
         },
         {
           "t": "p",
-          "text": "La flecha discontinua y tenue es el **gemelo reflejado** $\\bar z = a - b\\,i$ del capítulo 5 (los matemáticos lo llaman *conjugado*): misma longitud, ángulo opuesto. Multiplica una flecha por su gemelo y los ángulos se cancelan: queda un simple número positivo, la longitud al cuadrado. La tabla del capítulo 7 necesitará justo esto:"
+          "text": "Date una vuelta por el mapa arrastrando s (o con las flechas del teclado):"
         },
         {
-          "t": "math",
-          "tex": "z\\,\\bar z = |z|^2 = a^2 + b^2, \\qquad (s - i\\omega)(s + i\\omega) = s^2 + \\omega^2"
-        },
-        {
-          "t": "p",
-          "text": "¿Y el círculo? Un polo en $-\\zeta\\omega_n + i\\,\\omega_n\\sqrt{1-\\zeta^2}$ tiene longitud $\\omega_n$. Mide su ángulo θ desde el eje real *negativo* y la parte hacia la izquierda es $\\omega_n\\cos\\theta$. Así que $\\zeta = \\cos\\theta$: el amortiguamiento es el ángulo."
-        },
-        {
-          "t": "say",
-          "who": "june",
-          "mood": "excited",
-          "text": "Prueba el segundo modo del widget: 1 + iωτ. Es la regla del café del capítulo 3 encontrándose con una oscilación. Dividir entre ella encoge y gira hacia atrás, cada vez más cuanto más rápida es la oscilación, pero nunca más de un cuarto de vuelta. Apuesto a que a la ducha le importa."
-        },
-        {
-          "t": "vocab",
+          "t": "list",
           "items": [
-            {
-              "term": "Longitud $|z|$",
-              "def": "Lo larga que es una flecha: $\\sqrt{a^2+b^2}$ para $z = a + b\\,i$. Multiplicar flechas multiplica sus longitudes."
-            },
-            {
-              "term": "Ángulo $\\angle z$",
-              "def": "Hacia dónde apunta una flecha, medido desde el eje real positivo. $\\arctan(b/a)$ para una flecha que apunta a la derecha. Multiplicar suma ángulos; dividir los resta."
-            },
-            {
-              "term": "Gemelo reflejado $\\bar z$",
-              "def": "La flecha reflejada respecto al eje real, $a - b\\,i$ (el conjugado). $z\\,\\bar z = |z|^2$."
-            }
+            "**Mitad izquierda** (σ < 0): la espiral se encoge y la oscilación se apaga.",
+            "**Mitad derecha** (σ > 0): la espiral crece y la oscilación se dispara.",
+            "**Sobre la línea vertical** (σ = 0): un círculo perfecto, una oscilación que dura para siempre.",
+            "**Sobre la línea horizontal** (ω = 0): nada de giro, solo las exponenciales normales del capítulo 4.",
+            "**Más lejos de la línea horizontal** (arriba o abajo): giro más rápido, oscilaciones más rápidas. **Más a la izquierda**: se apaga más rápido."
           ]
+        },
+        {
+          "t": "say",
+          "who": "june",
+          "mood": "excited",
+          "text": "O sea que un solo punto en este mapa es toda una personalidad: lo rápido que oscila y si se calma o se dispara."
+        },
+        {
+          "t": "note",
+          "text": "Este mapa va a convertirse en nuestro dibujo más importante. Recibe su nombre oficial en el capítulo 8."
+        }
+      ]
+    },
+    {
+      "id": "fourier",
+      "title": "Un pequeño desvío: muchas formas nacen de giros",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Una última sorpresa. Toma giradores de distintas velocidades (1, 3, 5, 7… veces más rápidos), encoge cada uno en su justa medida, hazlo empezar justo en el ángulo adecuado y suma sus sombras. Con suficientes puedes construir un montón de formas distintas, incluso una onda cuadrada con esquinas afiladas."
+        },
+        {
+          "t": "widget",
+          "id": "fourier"
+        },
+        {
+          "t": "p",
+          "text": "**Fourier** mostró cómo construir muchas señales periódicas con piezas que giran. La onda cuadrada es un ejemplo: más piezas perfilan mejor sus partes planas y sus bordes bruscos. Es una forma potente de describir señales, con condiciones y límites que podremos explorar después."
+        },
+        {
+          "t": "note",
+          "text": "Rincón de la honestidad: justo al lado de cada salto, la suma siempre se pasa en torno a un 9 % del salto, por muchas piezas que añadas. El pico se estrecha, pero nunca desaparece."
         }
       ]
     },
     {
       "id": "wrap",
-      "title": "Lo que sabemos ahora",
+      "title": "Lo que sabemos hasta ahora",
       "blocks": [
         {
           "t": "recap",
           "items": [
-            "Un dron con control P obedece **exactamente** la misma ecuación que una masa colgada de un resorte: el controlador es un resorte virtual.",
-            "Dos números resumen su personalidad: $\\omega_n$ (lo rápido) y $\\zeta$ (lo saltarín).",
-            "$\\omega_n = \\sqrt{k/m}$ es la velocidad de oscilación sin amortiguador. $\\zeta = c/c_{\\text{crit}}$ compara el amortiguamiento con el amortiguamiento crítico $2\\sqrt{mk}$, el justo para eliminar el sobreimpulso.",
-            "El movimiento es una mezcla de dos términos $e^{st}$. Los dos valores de $s$ están sobre un círculo de radio $\\omega_n$ cuando está subamortiguado, y se separan a lo largo del eje real cuando está sobreamortiguado.",
-            "Una flecha tiene **longitud** y **ángulo** ($\\arctan$). Multiplicar multiplica longitudes y suma ángulos; dividir divide y resta. $\\zeta = \\cos\\theta$.",
-            "El amortiguamiento también frena un poco la oscilación: $\\omega_d = \\omega_n\\sqrt{1-\\zeta^2}$.",
-            "Más amortiguamiento no siempre es mejor: pasado $\\zeta = 1$, el valor lento de $s$ se arrastra hacia el cero y todo se ralentiza.",
-            "Para el dron, más $K_p$ significa menos amortiguamiento. Por eso se tambaleaba más."
+            "Las oscilaciones reales vienen de **giradores gemelos reflejados** cuyas partes de lado se cancelan.",
+            "$e^{st}$ con $s = \\sigma + i\\omega$ gira *y* crece o se encoge: una espiral. Su sombra es una oscilación que crece o se apaga.",
+            "El **mapa de s**: a la izquierda se calma, a la derecha se dispara, más arriba significa oscilaciones más rápidas.",
+            "Muchas señales periódicas, incluso una onda cuadrada, se pueden construir sumando giradores de distintas velocidades (Fourier). Justo al lado de un salto, la suma siempre se pasa en torno a un 9 %."
           ]
         },
         {
           "t": "quiz",
           "items": [
             {
-              "id": "ch6-q1",
-              "q": "Los dos valores de $s$ de un sistema son $-1 \\pm 4i$. ¿Qué respuesta es?",
+              "id": "ch5-q2",
+              "q": "Pon s justo sobre la línea vertical, en $s = 2i$. ¿Cuál es la sombra de $e^{st}$?",
               "options": [
                 {
-                  "text": "Se pasa y oscila",
-                  "sketch": "overshoot",
+                  "text": "Una oscilación que dura para siempre",
+                  "sketch": "steady-wiggle",
                   "correct": true,
-                  "why": "Una parte imaginaria (±4) significa giro, o sea, oscilación. Una parte real negativa (−1) significa que las oscilaciones se encogen."
+                  "why": "σ = 0 significa que ni crece ni se encoge: un círculo perfecto, y su sombra es un coseno constante."
                 },
                 {
-                  "text": "Sube suavemente, sin sobreimpulso",
-                  "sketch": "smooth",
-                  "why": "Las subidas suaves vienen de valores de $s$ sobre el eje real (sin giro). Estos tienen una parte imaginaria de ±4."
+                  "text": "Una oscilación que se apaga",
+                  "sketch": "decaying-wiggle",
+                  "why": "Para apagarse hace falta σ < 0 (a la izquierda de la línea vertical)."
                 },
                 {
-                  "text": "Sube arrastrándose despacio",
-                  "sketch": "sluggish",
-                  "why": "La subida lenta viene de un valor real de $s$ muy cercano a cero. Los valores dados tienen parte imaginaria, así que la respuesta oscila."
+                  "text": "Crecimiento explosivo",
+                  "sketch": "growing-plain",
+                  "why": "Crecer sin oscilar es la mitad derecha de la línea *horizontal*: σ > 0, ω = 0."
                 }
               ]
             },
             {
-              "id": "ch6-q2",
-              "q": "Nuestro dron ($m = 0{,}5$ kg, $c = 1$ N·s/m) con $K_p = 20$ N/m está…",
+              "id": "ch5-q3",
+              "q": "Una cuerda de guitarra suena con una nota clara y se va apagando despacio. ¿Dónde vive en el mapa de s?",
               "options": [
                 {
-                  "text": "Subamortiguado, $\\zeta \\approx 0{,}16$",
+                  "text": "Justo a la izquierda de la línea vertical, bastante por encima de la horizontal",
                   "correct": true,
-                  "why": "$\\zeta = 1/(2\\sqrt{0.5\\cdot 20}) = 1/(2\\sqrt{10}) \\approx 0{,}158$. Muy por debajo de 1, así que saltarín."
+                  "why": "Apagarse despacio significa σ ligeramente negativo, y una nota clara significa una ω grande (muchas oscilaciones por segundo)."
                 },
                 {
-                  "text": "Con amortiguamiento crítico, $\\zeta = 1$",
-                  "why": "Para eso haría falta $c = 2\\sqrt{m K_p} \\approx 6{,}3$ N·s/m, más de seis veces el rozamiento que tenemos."
+                  "text": "En la mitad derecha",
+                  "why": "La mitad derecha *crece*. Una cuerda que sonara cada vez más fuerte sola sería alarmante."
                 },
                 {
-                  "text": "Sobreamortiguado, $\\zeta > 1$",
-                  "why": "Para sobreamortiguar hace falta mucho amortiguamiento en comparación con la rigidez. Nuestra ganancia es alta y nuestro rozamiento, pequeño: justo lo contrario."
+                  "text": "Sobre la línea horizontal, muy a la izquierda",
+                  "why": "Sin ω no hay oscilación (ni nota), y muy a la izquierda significa que se apaga al instante. Eso es un golpe sordo."
                 }
               ]
             },
             {
-              "id": "ch6-q5",
-              "q": "Un resorte con $k = 8$ N/m sostiene una masa de 0,5 kg. ¿Cuánto amortiguamiento $c$ hace falta para que tenga amortiguamiento crítico?",
+              "id": "ch5-q4",
+              "q": "¿Por qué los giradores de una oscilación real, física, siempre vienen en parejas reflejadas?",
               "options": [
                 {
-                  "text": "$c = 4$ N·s/m",
+                  "text": "La regla solo tiene números reales, así que la imagen reflejada de un girador también la cumple",
                   "correct": true,
-                  "why": "$c_{\\text{crit}} = 2\\sqrt{m k} = 2\\sqrt{0.5 \\cdot 8} = 2\\sqrt{4} = 4$ N·s/m."
+                  "why": "Voltea $e^{i\\omega t}$ de arriba abajo y obtienes $e^{-i\\omega t}$. Una regla sin ninguna $i$ no puede distinguirlos, así que los dos son soluciones, y un movimiento real usa los dos: sus partes de lado se cancelan."
                 },
                 {
-                  "text": "$c = 16$ N·s/m",
-                  "why": "Eso es $2k$. El amortiguamiento crítico usa la raíz cuadrada de masa × rigidez: $2\\sqrt{mk}$."
+                  "text": "Porque $i^2 = -1$",
+                  "why": "Es cierto, pero eso explica por qué *existen* los giradores, no por qué van en parejas."
                 },
                 {
-                  "text": "$c = 1$ N·s/m",
-                  "why": "Ese es el rozamiento del aire de nuestro dron, que aquí da $\\zeta = 0{,}25$: subamortiguado."
-                }
-              ]
-            },
-            {
-              "id": "ch6-q3",
-              "q": "Usando solo control P, ¿qué $K_p$ haría que el dron tuviera amortiguamiento crítico ($\\zeta = 1$)?",
-              "options": [
-                {
-                  "text": "$K_p = 0{,}5$ N/m",
-                  "correct": true,
-                  "why": "Iguala $c/(2\\sqrt{m K_p}) = 1$ y sale $K_p = c^2/(4m) = 0{,}5$ N/m. Pero con un resorte tan débil el dron tendría que estar 9,8 m *por debajo* del objetivo solo para sostenerse, así que nunca despega. El control P solo no nos da las dos cosas."
-                },
-                {
-                  "text": "$K_p = 20$ N/m",
-                  "why": "Ese es nuestro valor saltarín de siempre, con $\\zeta \\approx 0{,}16$. Más ganancia significa *menos* amortiguamiento."
-                },
-                {
-                  "text": "$K_p = 200$ N/m",
-                  "why": "Más ganancia baja $\\zeta$ todavía más (hasta unos 0,05). La ganancia está en el denominador."
-                }
-              ]
-            },
-            {
-              "id": "ch6-q4",
-              "q": "Un sistema sobreamortiguado tiene valores de $s$ $-0{,}2$ y $-10$. ¿Cuál decide cuánto esperas?",
-              "options": [
-                {
-                  "text": "$-0{,}2$",
-                  "correct": true,
-                  "why": "$e^{-0.2t}$ tarda unos 20 s en bajar al 2 %, mientras que $e^{-10t}$ desaparece en 0,4 s. El más cercano al eje vertical es el que manda."
-                },
-                {
-                  "text": "$-10$",
-                  "why": "$e^{-10t}$ se desvanece en una fracción de segundo. Es la parte rápida, que acaba antes de que te des cuenta."
-                },
-                {
-                  "text": "Los dos por igual",
-                  "why": "Se apagan a velocidades muy distintas, así que el lento domina lo que ves."
+                  "text": "Porque un resorte tiene dos extremos",
+                  "why": "Bonito, pero no. Un solo péndulo oscilando también tiene giradores gemelos."
                 }
               ]
             }
@@ -635,130 +238,60 @@
         },
         {
           "t": "cliff",
-          "text": "Theo: \"Hemos llegado a estos valores de $s$ *a base de suposiciones*. Añade gravedad, viento, paquetes y un controlador más listo, y suponer se pone feo. ¿Existe una máquina que convierta este cálculo en **álgebra pura y simple**?\""
+          "text": "June: \"Entonces, **¿en qué parte de este mapa vive nuestro dron?**\""
         }
       ]
     }
   ],
   "widgets": {
     "twins": {
-      "title": "Resorte vs. dron",
-      "spring": "masa colgada de un resorte",
-      "drone": "dron con control P",
-      "msdAria": "Una masa colgada de un resorte y un amortiguador, rebotando alrededor de su posición de reposo.",
-      "plotY": "distancia al objetivo (m)",
-      "plotAria": "Distancia al objetivo a lo largo del tiempo para el dron y para el resorte. Las dos curvas quedan una encima de la otra.",
-      "target": "objetivo / reposo",
-      "kp": "Rigidez: resorte $k$ = ganancia del dron $K_p$",
-      "personality": "personalidad",
-      "help": "Los dos empiezan 1 m por debajo de su objetivo y se sueltan. El control deslizante pone la rigidez del resorte y la ganancia del dron al mismo número.",
-      "describe": "El dron está a {d} m del objetivo; la masa del resorte, a {s} m del reposo.",
-      "together": "los dos, en una gráfica",
-      "forceSpring": "tirón del resorte",
-      "forceDamper": "empuje del amortiguador"
+      "title": "Un girador y su gemelo reflejado",
+      "re": "a lo largo",
+      "im": "de lado",
+      "sum": "suma",
+      "spinnerLabel": "girador",
+      "twinLabel": "gemelo",
+      "toggle": "Añadir el gemelo reflejado",
+      "axis": "valor",
+      "realPart": "parte a lo largo de la suma",
+      "sidePart": "parte de lado de la suma",
+      "alone": "Un girador solo: la suma se escapa de lado (curva discontinua).",
+      "withTwin": "Al añadir su gemelo, punta con cola, las partes de lado se cancelan. La suma se queda en la recta real: 2·cos(ωt).",
+      "aria": "Dos flechas que giran en sentidos opuestos, sumadas punta con cola. Su suma está marcada con un anillo.",
+      "plotAria": "Las partes a lo largo y de lado de la suma a lo largo del tiempo."
     },
-    "personality": {
-      "title": "Dos mandos, dos puntos, una personalidad",
-      "response": "respuesta a un escalón de 1 m",
-      "target": "objetivo",
-      "plotAria": "Respuesta al escalón de un sistema de segundo orden para la frecuencia natural y el coeficiente de amortiguamiento elegidos.",
-      "planeAria": "El mapa de s, con los dos valores de s del sistema y un círculo discontinuo de radio omega n.",
-      "msdAria": "Una masa colgada de un resorte que reproduce la respuesta al escalón.",
-      "panelAria": "Pequeña respuesta al escalón con coeficiente de amortiguamiento {z}.",
-      "panel": {
-        "0": "subamortiguado (ζ = {z})",
-        "1": "crítico (ζ = {z})",
-        "2": "sobreamortiguado (ζ = {z})"
-      },
-      "radius": "radio ωn = {w}",
-      "wn": "Frecuencia natural $\\omega_n$",
-      "zeta": "Coeficiente de amortiguamiento $\\zeta$",
-      "overshoot": "sobreimpulso",
-      "settle": "se estabiliza (2 %)",
-      "roots": "los dos valores de s",
-      "personality": "personalidad",
-      "never": "nunca",
-      "playSpring": "Reproducir en el resorte",
-      "stopSpring": "Pausar el resorte",
-      "describe": "Coeficiente de amortiguamiento {z}, frecuencia natural {w} radianes por segundo, valores de s {r}.",
-      "planeCap": "los dos valores de s",
-      "springCap": "míralo en un resorte",
-      "re": "σ",
-      "im": "ω",
-      "offMap": "{v} está fuera del mapa ←",
-      "wd": "velocidad de oscilación ωd",
-      "noWiggle": "sin oscilación"
+    "smap": {
+      "title": "El mapa de s",
+      "re": "σ: encoge ← → crece",
+      "im": "ω: gira",
+      "reShort": "a lo largo",
+      "imShort": "de lado",
+      "time": "tiempo →",
+      "shadow": "sombra de e^(st)",
+      "shadowAxis": "sombra",
+      "mirror": "Mostrar el gemelo reflejado",
+      "readS": "s",
+      "readTurns": "vueltas",
+      "readSize": "cambio de tamaño",
+      "spins": "Da {n} vueltas por segundo",
+      "noSpin": "No gira nada",
+      "grows": "y crece.",
+      "shrinks": "y se encoge.",
+      "steady": "y mantiene el tamaño.",
+      "help": "Arrastra el punto s por el mapa (o selecciónalo y usa las flechas). A la derecha: la espiral e^(st) en 3D, con el tiempo avanzando hacia la derecha. Su sombra azul se dibuja debajo.",
+      "mapAria": "El mapa de s: arrastra el punto para elegir sigma y omega.",
+      "spiralAria": "Espiral tridimensional de e elevado a s por t, con el tiempo avanzando hacia la derecha, y su sombra en la pared del fondo.",
+      "plotAria": "Sombra de e elevado a s por t a lo largo del tiempo."
     },
-    "race": {
-      "title": "La carrera del amortiguamiento",
-      "choose": "Tu amortiguamiento",
-      "ref": "ζ = 1 (crítico)",
-      "yours": "tu ζ",
-      "yoursZ": "ζ = {z}",
-      "msdAria": "Una masa colgada de un resorte que se mueve hacia su posición de reposo.",
-      "plotAria": "Respuestas al escalón con amortiguamiento crítico y con el coeficiente de amortiguamiento elegido.",
-      "planeAria": "Los dos valores de s para el coeficiente de amortiguamiento elegido.",
-      "settleRef": "ζ = 1 se estabiliza",
-      "settleYours": "tu ζ se estabiliza",
-      "slow": "el lento",
-      "fast": "el rápido",
-      "never": "no en 12 s",
-      "same": "Esta es la propia referencia: la respuesta más rápida sin sobreimpulso.",
-      "slower": "Tu amortiguamiento extra lo ha hecho unas {k} veces más lento.",
-      "replay": "Otra carrera",
-      "planeCap": "los dos valores de s",
-      "re": "σ",
-      "im": "ω",
-      "fastOff": "← el rápido en {v} (fuera del mapa)",
-      "double": "los dos aquí",
-      "band5": "dentro del 5 %",
-      "sweet": "ζ = 0,7 tiene un sobreimpulso del {os} %, pero queda dentro del 5 % del objetivo tras {y5} s. ζ = 1 necesita {r5} s."
-    },
-    "arrows": {
-      "title": "Longitud, ángulo y 1 ÷ una flecha",
-      "aria": "Un plano con el círculo unidad, una flecha z, su gemelo reflejado discontinuo y la flecha 1 dividido entre z, con sus ángulos marcados.",
-      "re": "parte real",
-      "im": "parte imaginaria",
-      "mode": "¿Qué flecha?",
-      "modeFree": "cualquier flecha z",
-      "modeSmoother": "el suavizador, 1 + iωτ",
-      "a": "parte real a",
-      "b": "parte imaginaria b",
-      "wt": "velocidad de oscilación × τ (ωτ)",
-      "mirror": "gemelo",
-      "out": "1 ÷ (1 + iωτ)",
-      "len": "longitud |z|",
-      "ang": "ángulo de z",
-      "ilen": "longitud de 1/z",
-      "iang": "ángulo de 1/z",
-      "free": "1/z mide {ilen} (1 ÷ {len}) y está girada al revés, hasta {iang}. Multiplica las dos y obtienes longitud {back} a 0°: exactamente 1.",
-      "smooth": "Con ωτ = {wt}, 1 ÷ (1 + iωτ) conserva {ilen} del tamaño y se retrasa {lag}. Oscilaciones más rápidas: más pequeñas y más tardías, pero nunca más de 90°.",
-      "help": "Desliza a y b para mover z (o cambia al suavizador y desliza ωτ). El arco azul es el ángulo de z; el gris, el ángulo de 1/z."
-    }
-  },
-  "plays": {
-    "units": {
-      "kp": "ganancia Kp, newtons por metro",
-      "e": "error, metros"
-    },
-    "wn": {
-      "k": "rigidez del resorte k, newtons por metro"
-    },
-    "zeta": {
-      "c": "amortiguamiento c, newton segundos por metro"
-    },
-    "circle": {
-      "z": "coeficiente de amortiguamiento zeta"
-    },
-    "settle": {
-      "a": "ritmo de encogimiento a, por segundo"
-    },
-    "drone": {
-      "kp": "ganancia Kp, newtons por metro"
-    },
-    "arrowRead": {
-      "a": "parte real a",
-      "b": "parte imaginaria b"
+    "fourier": {
+      "title": "Construir una onda cuadrada con giradores",
+      "axis": "valor",
+      "target": "onda cuadrada",
+      "sum": "suma de sombras de giradores",
+      "pieces": "Número de giradores",
+      "status": "{n} giradores sumados. El más rápido gira {f} veces más rápido que el primero.",
+      "aria": "Una onda cuadrada y la suma de un número elegido de sombras de giradores que la aproxima.",
+      "statusOne": "Un solo girador: una oscilación normal, nada cuadrada todavía."
     }
   }
 }
