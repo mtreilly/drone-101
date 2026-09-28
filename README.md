@@ -32,3 +32,15 @@ See `docs/` for the pedagogical outline and physical parameters (`docs/course-pl
 The course supports English, French, Spanish, Italian, German, Polish, Brazilian Portuguese,
 Japanese, Simplified Chinese, and Modern Standard Arabic. Use the language menu or `?lang=pt-BR`
 (with any supported language code) to choose a translation.
+
+## Search and readable chapters
+
+`pnpm build` runs `scripts/build-discovery.mjs` after Vite. It puts a readable overview in the
+initial homepage HTML and creates `/read/{lang}/{chapter}/` pages from the existing locale
+files. These pages expose the lesson's prose and maths without JavaScript and link back to each
+interactive chapter. The same build writes `robots.txt`, `sitemap.xml`, and `llms.txt` to `dist/`.
+The sitemap has 141 URLs: the homepage and fourteen chapters in ten languages.
+
+After a production deployment, `pnpm indexnow` submits the sitemap URLs. It checks that the
+site's public key file is live first. The sitemap should also be submitted to Google Search
+Console and Bing Webmaster Tools when those properties are available.

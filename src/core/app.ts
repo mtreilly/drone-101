@@ -101,7 +101,7 @@ export async function startApp(root: HTMLElement): Promise<void> {
   applyDocumentLang();
   await Promise.all([loadNamespace('common'), loadFontStyles(getLang())]);
   installGlobalHandlers();
-  root.append(buildShell());
+  root.replaceChildren(buildShell());
   window.addEventListener('hashchange', route);
   progress.subscribe(updateNav);
   // a language switch rebuilds the chrome and the current page in place, no reload

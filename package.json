@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && node scripts/build-discovery.mjs",
     "preview": "vite preview",
     "test": "vitest run",
     "lint": "fd -e ts . src -X oxlint",
     "fmt": "oxfmt src",
-    "a11y": "node scripts/a11y.mjs"
+    "a11y": "node scripts/a11y.mjs",
+    "indexnow": "node scripts/submit-indexnow.mjs"
   },
   "devDependencies": {
     "@axe-core/cli": "^4.13.0",
